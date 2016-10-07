@@ -183,6 +183,9 @@ public class MainTopicListFragment extends Fragment
                         floatingActionMenu.close();
                     }
                     launchFolderSettionActivity();
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                            AnalyticsValue.Action.TapPlusButton_FolderManagement);
+
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_folder,
                 getResources().getString(R.string.jandi_create_folder), () -> {
@@ -190,6 +193,8 @@ public class MainTopicListFragment extends Fragment
                         floatingActionMenu.close();
                     }
                     showCreateNewFolderDialog();
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                            AnalyticsValue.Action.TapPlusButton_CreateNewFolder);
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
                 getResources().getString(R.string.jandi_browse_other_topics), () -> {
@@ -197,6 +202,8 @@ public class MainTopicListFragment extends Fragment
                         floatingActionMenu.close();
                     }
                     onEvent(new JoinableTopicCallEvent());
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                            AnalyticsValue.Action.TapPlusButton_BrowseOtherTopics);
                 });
         floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
                 getResources().getString(R.string.jandi_create_topic), () -> {
@@ -204,6 +211,8 @@ public class MainTopicListFragment extends Fragment
                         floatingActionMenu.close();
                     }
                     launchCreateTopicActivity();
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                            AnalyticsValue.Action.TapPlusButton_CreateNewTopic);
                 });
 
     }
@@ -767,6 +776,7 @@ public class MainTopicListFragment extends Fragment
                 floatingActionMenu.setVisibility(true);
                 floatingActionMenu.setupButtonLocation(btnFab);
                 floatingActionMenu.open();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TapPlusButton);
             });
         }
     }

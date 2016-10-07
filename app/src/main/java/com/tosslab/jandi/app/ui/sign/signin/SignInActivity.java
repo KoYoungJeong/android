@@ -169,6 +169,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     void onClickSignUpButton() {
         SignUpActivity.startActivity(SignInActivity.this, etEmail.getText().toString());
         AnalyticsUtil.sendConversion("Android_Register", "957512006", "l9F-CIeql2MQxvLJyAM");
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignIn, AnalyticsValue.Action.SignUp);
 
     }
 

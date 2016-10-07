@@ -39,20 +39,16 @@ import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameStatusActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.profile.ProfileLabelView;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.io.File;
 
@@ -204,7 +200,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
                     EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
                     tvProfileUserPhone.getContent()
             );
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Mobile);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.PhoneNumber);
         }
     }
 
@@ -218,6 +214,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             intent.putExtra(DeptPositionActivity.EXTRA_DEFAULT, tvProfileUserDivision.getContent());
         }
         startActivityForResult(intent, REQUEST_GET_DEPARTMENT);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Department);
     }
 
     @OnClick(R.id.profile_user_position)
@@ -230,6 +227,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
             intent.putExtra(DeptPositionActivity.EXTRA_DEFAULT, tvProfileUserPosition.getContent());
         }
         startActivityForResult(intent, REQUEST_GET_JOB_TITLE);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.JobTitle);
     }
 
     @OnClick(R.id.profile_user_email)
@@ -557,15 +555,21 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         view.findViewById(R.id.tv_from_galary).setOnClickListener(v -> {
             modifyProfilePresenter.onRequestCropImage(ModifyProfileActivity.this);
             profileChoosedialog.dismiss();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
+                    AnalyticsValue.Action.PhotoEdit, AnalyticsValue.Label.PhotoLibrary);
 
         });
         view.findViewById(R.id.tv_from_camera).setOnClickListener(v -> {
             modifyProfilePresenter.onRequestCamera(ModifyProfileActivity.this);
             profileChoosedialog.dismiss();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
+                    AnalyticsValue.Action.PhotoEdit, AnalyticsValue.Label.Camera);
         });
         view.findViewById(R.id.tv_from_character).setOnClickListener(v -> {
             modifyProfilePresenter.onRequestCharacter(ModifyProfileActivity.this);
             profileChoosedialog.dismiss();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile,
+                    AnalyticsValue.Action.PhotoEdit, AnalyticsValue.Label.ChooseCharacter);
         });
 
     }

@@ -61,6 +61,8 @@ import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
@@ -196,6 +198,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         injectComponent();
 
         setContentView(R.layout.activity_carousel_viewer);
+
         ButterKnife.bind(this);
 
         initProgressWheel();
@@ -355,6 +358,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         FileShareActivity_.intent(this)
                 .fileId(carouselFileInfo.getFileMessageId())
                 .startForResult(FileDetailActivity.REQUEST_CODE_SHARE);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_Share);
     }
 
     void unShare() {
@@ -368,6 +373,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 .fileId(carouselFileInfo.getFileMessageId())
                 .sharedEntities(sharedEntities)
                 .startForResult(FileDetailActivity.REQUEST_CODE_UNSHARE);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_UnShare);
     }
 
     private long[] getSharedEntitiesArray(List<Long> sharedEntities) {
@@ -397,6 +404,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         progressDialog.setCanceledOnTouchOutside(false);
 
         carouselViewerPresenter.onExportFile(carouselFileInfo, progressDialog);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_Export);
     }
 
     void delete() {
@@ -409,6 +417,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 R.string.jandi_file_delete_message, (dialog, which) -> {
                     carouselViewerPresenter.onDeleteFile(carouselFileInfo.getFileMessageId());
                 }, true);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_Delete);
     }
 
     void enableExternalLink() {
@@ -423,6 +433,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
 
         carouselViewerPresenter.onEnableExternalLink(carouselFileInfo);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_CreatePublicLink);
+
     }
 
     public void copyToClipboard(String text) {
@@ -456,6 +468,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 -1, null, /* neutral */
                 R.string.jandi_cancel, null, /* negative */
                 true);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_DeleteLink);
+
     }
 
     @Override
@@ -846,6 +860,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         String externalLink = getExternalLink(carouselFileInfo.getExternalCode());
         copyToClipboard(externalLink);
         ColoredToast.show(R.string.jandi_success_copy_clipboard_external_link);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.FileSubMenu_CopyLink);
+
     }
 
     @Override

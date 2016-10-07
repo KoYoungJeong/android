@@ -16,6 +16,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -152,9 +154,8 @@ public class PhotoViewFragment extends Fragment {
         btnTapToViewOriginal.setVisibility(View.VISIBLE);
         btnTapToViewOriginal.setOnClickListener(v -> {
             btnTapToViewOriginal.setVisibility(View.GONE);
-
             vgProgress.setVisibility(View.VISIBLE);
-
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.ViewOriginalImage);
             loadImage(originalUri);
         });
     }

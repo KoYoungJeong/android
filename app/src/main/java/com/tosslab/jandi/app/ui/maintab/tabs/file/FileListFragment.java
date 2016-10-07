@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -63,20 +62,16 @@ import com.tosslab.jandi.app.ui.maintab.tabs.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenterImpl;
 import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,24 +122,18 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Bind(R.id.progress_file_list)
     ProgressBar moreLoadingProgressBar;
-
-    private ProgressWheel progressWheel;
-
-    private SearchSelectorViewController searchSelectorViewController;
-    private FileUploadController filePickerViewModel;
-
     @Nullable
     @InjectExtra
     long entityId = -1;
-
     @Nullable
     @InjectExtra
     long writerId = -1;
-
     @Nullable
     @InjectExtra
     String fileType = "all";
-
+    private ProgressWheel progressWheel;
+    private SearchSelectorViewController searchSelectorViewController;
+    private FileUploadController filePickerViewModel;
     private SearchedFilesAdapterView searchedFilesAdapterView;
     private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
     private FileSearchActivity.OnSearchText onSearchText;
@@ -152,16 +141,16 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private boolean isForeground;
     private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
-    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
-        this.onSearchItemSelect = onSearchItemSelect;
-    }
-
     public static FileListFragment create(Context context, long entityId, long writerId, String fileType) {
         Bundle bundle = new Bundle();
         bundle.putString("fileType", fileType);
         bundle.putLong("entityId", entityId);
         bundle.putLong("writerId", writerId);
         return (FileListFragment) Fragment.instantiate(context, FileListFragment.class.getName(), bundle);
+    }
+
+    public void setOnSearchItemSelect(FileSearchActivity.OnSearchItemSelect onSearchItemSelect) {
+        this.onSearchItemSelect = onSearchItemSelect;
     }
 
     @Override

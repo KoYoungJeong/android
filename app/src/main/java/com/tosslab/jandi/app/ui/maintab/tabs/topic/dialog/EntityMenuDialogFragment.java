@@ -182,9 +182,12 @@ public class EntityMenuDialogFragment extends DialogFragment {
         requestStarred();
 
         boolean starred = TeamInfoLoader.getInstance().isStarred(roomId);
-        AnalyticsValue.Screen category = roomId != entityId ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
-        AnalyticsValue.Action action = starred ? AnalyticsValue.Action.TopicSubMenu_Unstar : AnalyticsValue.Action.TopicSubMenu_Star;
-        AnalyticsUtil.sendEvent(category, action);
+        AnalyticsValue.Screen category = roomId !=
+                entityId ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
+        AnalyticsValue.Action action = AnalyticsValue.Action.TopicSubMenu_Star;
+        AnalyticsValue.Label label = starred ? AnalyticsValue.Label.Star : AnalyticsValue.Label.Unstar;
+        AnalyticsUtil.sendEvent(category, action, label);
+
     }
 
     @Background

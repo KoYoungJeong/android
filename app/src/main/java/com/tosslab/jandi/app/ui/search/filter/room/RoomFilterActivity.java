@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.ui.search.filter.room.component.DaggerRoomFilterCom
 import com.tosslab.jandi.app.ui.search.filter.room.module.RoomFilterModule;
 import com.tosslab.jandi.app.ui.search.filter.room.presenter.RoomFilterPresenter;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import java.util.List;
 
@@ -107,6 +109,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
         ButterKnife.bind(this);
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SelectRoom);
+
         setupActionBar();
 
         initProgressWheel();
@@ -137,11 +141,15 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
         roomFilterDataView.setOnMemberClickListener(memberId -> {
             roomFilterPresenter.onMemberClickActionForGetRoomId(memberId);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                    AnalyticsValue.Action.ChooseSearchResult);
         });
 
         roomFilterDataView.setOnTopicRoomClickListener(roomId -> {
             setResult(true, roomId, -1l);
             finish();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                    AnalyticsValue.Action.ChooseSearchResult);
         });
     }
 
@@ -200,6 +208,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             hideKeyboard();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                    AnalyticsValue.Action.KeywordSearch);
             return true;
         }
         return false;
@@ -221,6 +231,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         roomType = RoomFilterPresenter.RoomType.Topic;
 
         roomFilterPresenter.onRoomTypeChanged(roomType, etRoomFilter.getText().toString());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                AnalyticsValue.Action.ChooseTopic);
     }
 
     @OnClick(R.id.btn_room_filter_dm)
@@ -235,6 +247,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         roomType = RoomFilterPresenter.RoomType.DirectMessage;
 
         roomFilterPresenter.onRoomTypeChanged(roomType, etRoomFilter.getText().toString());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                AnalyticsValue.Action.ChooseDm);
     }
 
     @Override

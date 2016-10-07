@@ -134,6 +134,8 @@ public class SearchSelectorViewController {
                 case 8:
                     label = AnalyticsValue.Label.Audios;
                     break;
+                case 9:
+                    label = AnalyticsValue.Label.Zipfiles;
             }
 
             AnalyticsValue.Screen screen;
@@ -149,11 +151,6 @@ public class SearchSelectorViewController {
 
         fileSelector.setOnFileTypeDismissListener(() -> {
             setUpTypeTextView(tvFileListType, false);
-            if (context instanceof FileSearchActivity) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTypeFilter);
-            } else {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTypeFilter);
-            }
         });
 
         fileSelector.show(((View) tvFileListType.getParent().getParent()));
@@ -201,11 +198,6 @@ public class SearchSelectorViewController {
 
         userSelector.setOnUserDismissListener(() -> {
             setUpTypeTextView(tvFileListWhom, false);
-            if (context instanceof FileSearchActivity) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseMemberFilter);
-            } else {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseMemberFilter);
-            }
         });
 
         userSelector.show(((View) tvFileListWhom.getParent().getParent()));
@@ -256,23 +248,10 @@ public class SearchSelectorViewController {
             } else {
                 screen = AnalyticsValue.Screen.FilesTab;
             }
-
-            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
-                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.AllTopic);
-            } else if (item.isUser()) {
-                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Member);
-            } else {
-                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter, AnalyticsValue.Label.Topic);
-            }
         });
 
         roomSelector.setOnRoomDismissListener(() -> {
             setUpTypeTextView(tvFileListWhere, false);
-            if (context instanceof FileSearchActivity) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.CloseTopicFilter);
-            } else {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesTab, AnalyticsValue.Action.CloseTopicFilter);
-            }
         });
 
         roomSelector.show(((View) tvFileListWhere.getParent().getParent()));

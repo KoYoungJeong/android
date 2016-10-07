@@ -233,6 +233,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
                 etName.getText().toString().trim(),
                 etEmail.getText().toString(),
                 etPassword.getText().toString());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.SignUpNow);
     }
 
     @Override

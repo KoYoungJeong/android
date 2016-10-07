@@ -39,6 +39,7 @@ public class AnalyticsValue {
         InputPasscode, WrongPasscode, SetPasscode, MyProfile,
         SwitchTeam, MypageTab, Account, TeamTab,
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
+        UniversalSearch, ChooseMember, SelectRoom, Carousel,
     }
 
     public enum Action {
@@ -47,9 +48,6 @@ public class AnalyticsValue {
         SignUp,
         Submit,
         TermofService,
-        AcceptAll,
-        AgreeTermsofService,
-        AgreePrivacyPolicy,
         SignUpNow,
         LaunchJandi,
         Resend,
@@ -152,6 +150,20 @@ public class AnalyticsValue {
         FileSubMenu_Share,
         FileSubMenu_UnShare,
         FileSubMenu_Delete,
+        FileSubMenu_Export,
+        FileSubMenu_CreatePublicLink,
+        FileSubMenu_CopyLink,
+        FileSubMenu_DeleteLink,
+        ViewOriginalImage,
+        MoveToLeft_Click,
+        MoveToLeft_Swipe,
+        MoveToRight_Click,
+        MoveToRight_Swipe,
+        TapCommentCount,
+        Close,
+        CloseBySwipe,
+        Download,
+        TapCommentIcon,
         TapSharedTopic,
         ViewProfile_FromComment,
         CommentLongTap,
@@ -177,6 +189,9 @@ public class AnalyticsValue {
         Email,
         Status,
         Mobile,
+        PhoneNumber,
+        Department,
+        JobTitle,
         Division,
         Position,
         ChooseMention,
@@ -216,11 +231,16 @@ public class AnalyticsValue {
         SignOut,
         KickMember,
         ShowProfilePicture,
+        TapPhoneNumber, TapEmailAddress,
         DirectMessage, TurnOffPasscode, TurnOnPasscode, ChangePasscode, ChangeTopicOrder, Call,
         CreateNewTeam, MemberSearch, ViewMyProfile,
         Notifications, Sounds, Vibrate, PhoneLed,
         Passcode, Account, SetPasscode, ChooseTopicFilter, ChooseMemberFilter, ChooseTypeFilter, Star, Polls, OpenTeamList,
-        ViewPollDetail, ViewChoiceParticipant, ViewPollParticipant, ClosePoll, DeletePoll, AddChoice, DeleteChoice, Anonymous, AllowMultipleChoices, CreatePoll, ViewMember, Vote
+        ViewPollDetail, ViewChoiceParticipant, ViewPollParticipant, ClosePoll, DeletePoll, AddChoice, DeleteChoice, Anonymous, AllowMultipleChoices, CreatePoll, ViewMember, Vote,
+        TapRecentKeywords, DeleteRecentKeyword, DeleteAllKeywords, GoSearchResult, IncludeNotJoinedTopics,
+        ChooseJoinedTopic, ChooseUnJoinedTopic, ChooseDm, CollapseRoomList, ChooseRoomFilter, TapMsgSearchResult,
+        ChooseTopic, KeywordSearch, ChooseAllMember, ChooseMember,
+        TapPlusButton, TapPlusButton_CreateNewTopic, TapPlusButton_CreateNewFolder, TapPlusButton_FolderManagement, TapPlusButton_BrowseOtherTopics
     }
 
     public enum Label {
@@ -228,6 +248,9 @@ public class AnalyticsValue {
         AllTopic, Topic, Member,
         AllMember,
         AllType, GoogleDocs, Words, Presentations, Spreadsheets, PDFs, Images, Videos, Audios,
-        ongoing, completed
+        ongoing, completed,
+        AllRoom, JoinedRoom, Zipfiles, SelectRoom,
+        PhotoLibrary, Camera, ChooseCharacter,
+        Star, Unstar
     }
 }

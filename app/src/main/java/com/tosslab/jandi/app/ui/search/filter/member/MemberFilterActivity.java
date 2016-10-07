@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.ui.search.filter.member.adapter.view.MemberFilterab
 import com.tosslab.jandi.app.ui.search.filter.member.component.DaggerMemberFilterComponent;
 import com.tosslab.jandi.app.ui.search.filter.member.module.MemberFilterModule;
 import com.tosslab.jandi.app.ui.search.filter.member.presenter.MemberFilterPresenter;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import java.util.List;
 
@@ -90,6 +92,8 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
                 .build()
                 .inject(this);
 
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseMember);
+
         setContentView(R.layout.activity_member_filter);
 
         ButterKnife.bind(this);
@@ -111,6 +115,8 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
             data.putExtra(KEY_FILTERED_MEMBER_ID, MEMBER_ID_ALL);
             setResult(RESULT_OK, data);
             finish();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseMember,
+                    AnalyticsValue.Action.ChooseAllMember);
         });
 
         memberFilterableDataView.setOnMemberClickListener(member -> {
@@ -118,6 +124,8 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
             data.putExtra(KEY_FILTERED_MEMBER_ID, member.getId());
             setResult(RESULT_OK, data);
             finish();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseMember,
+                    AnalyticsValue.Action.ChooseMember);
         });
     }
 
@@ -163,6 +171,8 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             hideKeyboard();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseMember,
+                    AnalyticsValue.Action.KeywordSearch);
             return true;
         }
         return false;

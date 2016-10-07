@@ -432,9 +432,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         postStar(futureSelected);
 
         if (futureSelected) {
-            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.TurnOnStar);
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
         } else {
-            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.TurnOffStar);
+            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
         }
     }
 
@@ -630,6 +630,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Click(R.id.tv_member_profile_phone)
     void onPhoneNumberClick() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.TapPhoneNumber);
         new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setItems(R.array.jandi_profile_tel_actions, (dialog, which) -> {
                     switch (which) {
@@ -766,6 +767,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     @Click(R.id.tv_member_profile_email)
     void onEmailClick() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.TapEmailAddress);
         new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setItems(R.array.jandi_profile_email_actions, (dialog, which) -> {
                     switch (which) {

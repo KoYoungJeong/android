@@ -39,6 +39,8 @@ import com.tosslab.jandi.app.ui.search.main.dagger.DaggerSearchComponent;
 import com.tosslab.jandi.app.ui.search.main.dagger.SearchModule;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import java.util.List;
@@ -95,6 +97,8 @@ public class SearchActivity extends BaseAppCompatActivity
 
     private boolean isOnlyMessageMode = false;
 
+    private AnalyticsValue.Screen screenMode = AnalyticsValue.Screen.UniversalSearch;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +138,13 @@ public class SearchActivity extends BaseAppCompatActivity
             searchPresenter.onAccessTypeChanged("joined");
         }
 
+        if (isOnlyMessageMode) {
+            screenMode = AnalyticsValue.Screen.MsgSearch;
+        } else {
+            screenMode = AnalyticsValue.Screen.UniversalSearch;
+        }
+
+        AnalyticsUtil.sendScreenName(screenMode);
     }
 
     @Override
@@ -156,10 +167,14 @@ public class SearchActivity extends BaseAppCompatActivity
             tvSearchKeyword.setText(keyword);
             tvSearchKeyword.setSelection(keyword.length());
             onSearch();
+            AnalyticsUtil.sendEvent(screenMode,
+                    AnalyticsValue.Action.TapRecentKeywords);
         });
 
         searchAdapterViewModel.setOnDeleteHistoryListener(keyword -> {
             searchPresenter.onDeleteaHistoryItemByKeyword(keyword);
+            AnalyticsUtil.sendEvent(screenMode,
+                    AnalyticsValue.Action.DeleteRecentKeyword);
         });
     }
 
@@ -194,6 +209,8 @@ public class SearchActivity extends BaseAppCompatActivity
             searchQueryAdapter.notifyDataSetChanged();
             tvSearchKeyword.dismissDropDown();
             onSearch();
+            AnalyticsUtil.sendEvent(screenMode,
+                    AnalyticsValue.Action.GoSearchResult);
             return true;
         }
         return false;
@@ -224,10 +241,26 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     private void initAdapterViewModel() {
-        searchAdapterViewModel.setOnCheckChangeListener(isChecked -> onCheckUnjoinTopic(isChecked));
+        searchAdapterViewModel.setOnCheckChangeListener(isChecked -> {
+            onCheckUnjoinTopic(isChecked);
+            if (isChecked) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.IncludeNotJoinedTopics, AnalyticsValue.Label.On);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.IncludeNotJoinedTopics, AnalyticsValue.Label.Off);
+            }
+        });
 
         searchAdapterViewModel.setOnClickTopicListener((topicId, isJoined) -> {
             searchPresenter.onLaunchTopicRoom(topicId, isJoined);
+            if (isJoined) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.ChooseJoinedTopic);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.ChooseUnJoinedTopic);
+            }
         });
 
         searchAdapterViewModel.setOnClickMessageListener(searchMessageData -> {
@@ -237,10 +270,14 @@ public class SearchActivity extends BaseAppCompatActivity
             } else {
                 searchPresenter.onMoveToMessageFromSearch(searchMessageData);
             }
+            AnalyticsUtil.sendEvent(screenMode,
+                    AnalyticsValue.Action.TapMsgSearchResult);
         });
 
         searchAdapterViewModel.setOnClickMemberSelectionButtonListener(() -> {
             MemberFilterActivity.startForResult(this, -1, REQUEST_CODE_MEMBER_SELECTION);
+            AnalyticsUtil.sendEvent(screenMode,
+                    AnalyticsValue.Action.ChooseMemberFilter);
         });
 
         searchAdapterViewModel.setOnClickRoomSelectionButtonListener(() -> showChooseRoomDialog());
@@ -248,6 +285,8 @@ public class SearchActivity extends BaseAppCompatActivity
 
         searchAdapterViewModel.setOnClickOneToOneRoomListener(memberId -> {
             moveDirectMessage(memberId);
+            AnalyticsUtil.sendEvent(screenMode,
+                    AnalyticsValue.Action.ChooseDm);
         });
 
         // SCROLL
@@ -276,6 +315,13 @@ public class SearchActivity extends BaseAppCompatActivity
             if (headerId == 2) {
                 isRoomItemFold = !isRoomItemFold;
                 adapter.onClickHeader(headerId, isRoomItemFold);
+            }
+            if (isRoomItemFold) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.CollapseRoomList, AnalyticsValue.Label.On);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.CollapseRoomList, AnalyticsValue.Label.Off);
             }
         });
         lvSearchResult.addOnItemTouchListener(touchListener);
@@ -430,6 +476,8 @@ public class SearchActivity extends BaseAppCompatActivity
 
             builder.setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                 searchPresenter.onDeleteaAllHistoryItem();
+                AnalyticsUtil.sendEvent(screenMode,
+                        AnalyticsValue.Action.DeleteAllKeywords);
             });
 
             builder.setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
@@ -451,11 +499,15 @@ public class SearchActivity extends BaseAppCompatActivity
                 selectedRoomId = -1l;
                 searchPresenter.onAccessTypeChanged("accessible");
                 chooseRoomDialog.dismiss();
+                AnalyticsUtil.sendEvent(screenMode,
+                        AnalyticsValue.Action.ChooseRoomFilter, AnalyticsValue.Label.AllRoom);
             });
             tvJoinedRoomButton.setOnClickListener(v -> {
                 selectedRoomId = -1l;
                 searchPresenter.onAccessTypeChanged("joined");
                 chooseRoomDialog.dismiss();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.ChooseRoomFilter, AnalyticsValue.Label.JoinedRoom);
             });
             tvChooseRoomButton.setOnClickListener(v -> {
                 if (isSelectDirectMessageRoom) {
@@ -466,6 +518,8 @@ public class SearchActivity extends BaseAppCompatActivity
                             this, -1, REQUEST_CODE_ROOM_SELECTION);
                 }
                 chooseRoomDialog.dismiss();
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
+                        AnalyticsValue.Action.ChooseRoomFilter, AnalyticsValue.Label.SelectRoom);
             });
             chooseRoomDialog = new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_280)
                     .setView(view)
