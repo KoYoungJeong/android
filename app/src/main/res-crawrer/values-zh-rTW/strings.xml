@@ -8,6 +8,7 @@
 	<string name="common_accthome_joinedteamlist">"團隊列表"</string>
 	<string name="common_accthome_loggedin">"已登入"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
+	<string name="common_creatteam_done">"確認"</string>
 	<string name="common_hamburger_teamadmin">"團隊管理員"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
 	<string name="common_signup_codeverification">"驗證碼已寄送到以上的電子郵箱，\n請輸入驗證碼完成認證"</string>

@@ -8,6 +8,7 @@
 	<string name="common_accthome_joinedteamlist">"Joined team list"</string>
 	<string name="common_accthome_loggedin">"logged in"</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
+	<string name="common_creatteam_done">"Done"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
