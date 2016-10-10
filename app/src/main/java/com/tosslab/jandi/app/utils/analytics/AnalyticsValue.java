@@ -248,7 +248,9 @@ public class AnalyticsValue {
         TapPlusButton, TapPlusButton_CreateNewTopic, TapPlusButton_CreateNewFolder, TapPlusButton_FolderManagement, TapPlusButton_BrowseOtherTopics,
         TopicSubMenu_Notification,
         SubmitTeam, GoToJANDIMain,
-        SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount
+        SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount,
+        IncorrectPasscode, CorrectPasscode,
+
     }
 
     public enum Label {
