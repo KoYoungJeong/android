@@ -233,6 +233,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         });
         viewPager.setAdapter(carouselViewerAdapter);
         viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+
+            private int latestPosition = -1;
+
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
@@ -253,6 +256,18 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
                 } else {
                     if (position == count - 1) {
                         carouselViewerPresenter.onAfterImageFiles(roomId, fileInfo.getFileMessageId(), count);
+                    }
+                }
+
+                if (latestPosition <= -1) {
+                    latestPosition = position;
+                } else {
+                    if (position > latestPosition) {
+                        AnalyticsUtil.sendEvent(
+                                AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.MoveToRight_Swipe);
+                    } else if (position < latestPosition) {
+                        AnalyticsUtil.sendEvent(
+                                AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.MoveToLeft_Swipe);
                     }
                 }
             }
@@ -587,6 +602,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
         if (currentItem - 1 >= 0) {
             viewPager.setCurrentItem(currentItem - 1);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.MoveToLeft_Click);
         }
     }
 
@@ -596,11 +612,14 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
         if (currentItem + 1 < carouselViewerAdapter.getCount()) {
             viewPager.setCurrentItem(currentItem + 1);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.MoveToRight_Click);
         }
     }
 
     @OnClick(R.id.btn_carousel_download)
     void onFileDownload() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.Download);
+
         CarouselFileInfo fileInfo = getCarouselFileInfo();
         if (fileInfo != null) {
 
@@ -628,6 +647,14 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         setFileStarredState(futureStarred, true);
 
         carouselViewerPresenter.onChangeStarredState(fileMessageId, futureStarred);
+
+        if (futureStarred) {
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
+        } else {
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.Star, AnalyticsValue.Label.Off);
+        }
     }
 
     private void setFileStarredState(boolean futureStarred, boolean withAnimation) {
@@ -660,7 +687,13 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
     @OnClick({R.id.btn_carousel_comment, R.id.tv_carousel_file_comment})
-    void moveToFileDetailActivity() {
+    void moveToFileDetailActivity(View view) {
+        if (view.getId() == R.id.btn_carousel_comment) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.TapCommentIcon);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.TapCommentCount);
+        }
+
         if (fromFileDetail) {
             finish();
             return;
@@ -1035,6 +1068,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Override
     public void onSwipeExit(int direction) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.Close);
+
         finish();
 
         int anim = R.anim.slide_out_to_bottom;
@@ -1070,6 +1105,12 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void setVisibilitySwipeToRightButton(boolean show) {
         btnSwipeToRight.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.Close);
+        super.onBackPressed();
     }
 
     public interface OnCarouselImageClickListener {
