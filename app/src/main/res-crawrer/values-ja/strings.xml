@@ -8,6 +8,7 @@
 	<string name="common_accthome_joinedteamlist">"参加中のチーム一覧"</string>
 	<string name="common_accthome_loggedin">"ログイン完了"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
+	<string name="common_creatteam_done">"確認"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>
 	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。\n認証コードを入力してください。"</string>

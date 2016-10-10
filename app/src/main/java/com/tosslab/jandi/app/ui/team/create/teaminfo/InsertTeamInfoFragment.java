@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.team.create.teaminfo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -83,6 +84,9 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     @Bind(R.id.tv_team_create_done)
     TextView tvTeamCreateDone;
 
+    @Bind(R.id.tv_go_to_main_button)
+    TextView tvGoToMainButton;
+
     private int mode = MODE_FROM_MAIN_LIST;
 
     private boolean isInsertTeamNamePositiveLength = false;
@@ -160,9 +164,15 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         registTeamNameTextWatcher();
         registTeamDomainTextWatcher();
         teamInsertInfoPresenter.checkEmailInfo();
-
+        underlineGotoMainButtonText();
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
         SprinklrScreenView.sendLog(ScreenViewProperty.TEAM_CREATE);
+    }
+
+    private void underlineGotoMainButtonText() {
+        if (tvGoToMainButton != null) {
+            tvGoToMainButton.setPaintFlags(tvGoToMainButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        }
     }
 
     @Override
