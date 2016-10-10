@@ -28,6 +28,7 @@
 
     <dimen name="jandi_sign_up_button_max_width">288dp</dimen>
     <dimen name="jandi_main_tab_navigation_width">264dp</dimen>
+    <dimen name="jandi_member_list_owner_badge_padding">17dp</dimen>
     <!-- Messages -->
     <!--// 글씨 크기-->
     <dimen name="jandi_messages_user_name">13sp</dimen>

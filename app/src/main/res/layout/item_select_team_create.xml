@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="27dp"
         android:layout_weight="1"
-        android:text="새로운 팀 생성"
+        android:text="@string/common_accthome_createteam"
         android:textColor="@color/jandi_accent_color"
         android:textSize="16sp" />
 

@@ -39,7 +39,7 @@ public class DummyMessageDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_280);
 
-        String[] items = {getString(R.string.jandi_try_again), getString(R.string.jandi_action_delete)};
+        String[] items = {getString(R.string.jandi_try_again), getString(R.string.menu_entity_delete)};
         builder.setItems(items, (dialog, which) -> {
             switch (which) {
                 case 0:

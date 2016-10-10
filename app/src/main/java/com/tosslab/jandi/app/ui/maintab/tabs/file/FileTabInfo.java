@@ -26,7 +26,7 @@ public class FileTabInfo implements TabInfo {
     @Override
     public String getTitle() {
         return JandiApplication.getContext()
-                .getResources().getString(R.string.jandi_starred_files);
+                .getResources().getString(R.string.jandi_tab_file);
     }
 
     @Override

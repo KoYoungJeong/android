@@ -40,8 +40,9 @@
         android:src="@drawable/icon_arrow_right" />
 
     <View
+        android:id="@+id/v_dept_job_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
         android:background="@color/rgb_e5e5e5" />
 

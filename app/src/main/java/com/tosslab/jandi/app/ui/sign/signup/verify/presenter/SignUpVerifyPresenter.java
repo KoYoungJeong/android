@@ -49,7 +49,7 @@ public class SignUpVerifyPresenter {
             LogUtil.e(accountActivate.toString());
 
             view.hideProgress();
-            view.showToast(context.getResources().getString(R.string.jandi_tutorial_welcome));
+            view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
 
             SignOutUtil.removeSignData();
             model.setAccountInfo(accountActivate);

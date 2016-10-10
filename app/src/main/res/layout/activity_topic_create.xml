@@ -33,7 +33,7 @@
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
-                    android:text="@string/jandi_entity_create_entity_name"
+                    android:text="@string/jandi_title_name_required"
                     android:textSize="@dimen/jandi_text_size_small" />
 
                 <EditText
@@ -121,7 +121,7 @@
                         android:layout_marginLeft="0dp"
                         android:layout_marginRight="0dp"
                         android:duplicateParentState="true"
-                        android:text="@string/jandi_auto_join_title" />
+                        android:text="@string/jandi_auto_join_title_wild" />
 
                     <TextView
                         android:layout_width="match_parent"

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,17 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
         DeptJob item = getItem(position);
         holder.tvTitle.setText(item.getName(), TextView.BufferType.SPANNABLE);
         holder.tvCount.setText(String.valueOf(item.getCount()));
+
+        if (position < getItemCount() - 1) {
+            DeptJob nextItem = getItem(position + 1);
+            if (TextUtils.equals(item.getHeader(), nextItem.getHeader())) {
+                holder.vDivider.setVisibility(View.VISIBLE);
+            } else {
+                holder.vDivider.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            holder.vDivider.setVisibility(View.VISIBLE);
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
@@ -100,6 +112,9 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
 
         @Bind(R.id.tv_dept_job_count)
         TextView tvCount;
+
+        @Bind(R.id.v_dept_job_divider)
+        View vDivider;
 
         public DeptJobViewHolder(View itemView) {
             super(itemView);

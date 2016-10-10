@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -62,7 +61,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -696,7 +694,7 @@ public class MainTopicListFragment extends Fragment
 
             TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
             EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
-            etInput.setHint(R.string.jandi_entity_create_entity_name);
+            etInput.setHint(R.string.jandi_title_name);
             tvTitle.setText(R.string.jandi_folder_insert_name);
 
             builder.setView(rootView)
