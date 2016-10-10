@@ -62,7 +62,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                     if (teams.size() == 1) {
                         view.showEmptyList();
                         if (firstEntered) {
-                            view.moveCreateTeam();
+                            view.moveCreateTeam(true);
                         }
                     } else {
                         view.showList();

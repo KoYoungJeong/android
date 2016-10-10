@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.account.SettingAccountProfileActivity;
-import com.tosslab.jandi.app.ui.team.create.CreateTeamForNewAccountActivity;
 import com.tosslab.jandi.app.ui.team.select.adapter.TeamSelectListAdapter;
 import com.tosslab.jandi.app.ui.team.select.adapter.viewmodel.TeamSelectListAdapterViewModel;
 import com.tosslab.jandi.app.ui.team.select.dagger.DaggerTeamSelectListComponent;
@@ -28,6 +27,8 @@ import com.tosslab.jandi.app.ui.team.select.dagger.TeamSelectListModule;
 import com.tosslab.jandi.app.ui.team.select.presenter.TeamSelectListPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import javax.inject.Inject;
 
@@ -99,24 +100,29 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
         tvLoginInfoEditButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, SettingAccountProfileActivity.class);
             startActivity(intent);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.EditAccount);
         });
     }
 
     private void bindListeners() {
         adapterViewModel.setOnTeamCreateClickListener(() -> {
-            moveCreateTeam();
+            moveCreateTeam(false);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.CreateTeam);
         });
 
         adapterViewModel.setOnTeamItemClickListener(teamId -> {
             teamSelectListPresenter.onEnterSelectedTeam(teamId);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.ChooseTeam);
         });
 
         adapterViewModel.setOnClickTeamJoinAcceptListener(team -> {
             teamSelectListPresenter.onRequestAcceptJoin(team);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.AcceptTeamInvitation);
         });
 
         adapterViewModel.setOnClickTeamJoinIgnoreListener(team -> {
             teamSelectListPresenter.onRequestIgnoreJoin(team, true);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.IgnoreTeamInvitation);
         });
 
     }
@@ -173,9 +179,11 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
     }
 
     @Override
-    public void moveCreateTeam() {
-        Intent intent = new Intent(this, CreateTeamForNewAccountActivity.class);
-        startActivity(intent);
+    public void moveCreateTeam(boolean isFirstEntered) {
+        startActivity(Henson.with(this)
+                .gotoCreateTeamForNewAccountActivity()
+                .isFirstExecution(isFirstEntered)
+                .build());
     }
 
     @Override

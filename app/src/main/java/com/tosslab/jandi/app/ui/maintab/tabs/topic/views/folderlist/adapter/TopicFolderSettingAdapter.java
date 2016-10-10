@@ -45,6 +45,7 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
                 if (onRecyclerItemClickListener != null) {
                     onRecyclerItemClickListener.onItemClick(holder.itemView, TopicFolderSettingAdapter.this,
                             position, holder.getItemViewType());
+//                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
                 }
             });
         }

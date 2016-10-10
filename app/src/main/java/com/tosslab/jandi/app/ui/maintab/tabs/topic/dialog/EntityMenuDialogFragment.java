@@ -111,6 +111,15 @@ public class EntityMenuDialogFragment extends DialogFragment {
                     showGlobalPushSetupDialog();
                 } else {
                     entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
+                    AnalyticsValue.Label label;
+                    if (isTopicPushOn) {
+                        label = AnalyticsValue.Label.On;
+                    } else {
+                        label = AnalyticsValue.Label.Off;
+                    }
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                            AnalyticsValue.Action.TopicSubMenu_Notification,
+                            label);
                 }
                 dismiss();
             });

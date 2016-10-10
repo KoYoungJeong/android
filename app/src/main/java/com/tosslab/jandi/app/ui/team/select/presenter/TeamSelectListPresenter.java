@@ -33,7 +33,7 @@ public interface TeamSelectListPresenter {
 
         void moveSelectedTeam();
 
-        void moveCreateTeam();
+        void moveCreateTeam(boolean isFirstEntered);
 
         void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener);
 

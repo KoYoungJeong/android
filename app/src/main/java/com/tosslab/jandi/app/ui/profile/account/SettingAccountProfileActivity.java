@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameStat
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignOut;
 
 import javax.inject.Inject;
@@ -98,16 +99,19 @@ public class SettingAccountProfileActivity extends BaseAppCompatActivity impleme
                 .gotoNameStatusActivity()
                 .type(NameStatusActivity.EXTRA_TYPE_NAME_FOR_MAIN_ACCOUNT)
                 .build());
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditAccount, AnalyticsValue.Action.AccountName);
     }
 
     @OnClick(R.id.vg_edit_primary_email)
     void onClickEditPrimaryEmail() {
         presenter.onEmailChoose();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditAccount, AnalyticsValue.Action.ChooseAnEmail);
     }
 
     @OnClick(R.id.vg_log_out)
     void onClickLogOut() {
         showSignOutDialog();
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditAccount, AnalyticsValue.Action.SignOut);
     }
 
     @Override

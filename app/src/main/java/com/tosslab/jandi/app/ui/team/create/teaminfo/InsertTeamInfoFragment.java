@@ -50,6 +50,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     public static final String MODE = "mode";
     public static final int MODE_FROM_MAIN_LIST = 0x01;
     public static final int MODE_FROM_ACCOUNT_HOME = 0x02;
+    public static final String IS_FIRST_EXECUTION = "isFirstExecutionMode";
 
     @Inject
     InsertTeamInfoPresenter teamInsertInfoPresenter;
@@ -71,22 +72,18 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @Bind(R.id.tv_team_domain_insert_error)
     TextView tvTeamDomainInsertError;
-
     @Bind(R.id.vg_button_type1)
     ViewGroup vgButtonType1;
-
     @Bind(R.id.vg_button_type2)
     ViewGroup vgButtonType2;
-
     @Bind(R.id.iv_team_create_done)
     ImageView ivTeamCreateDone;
-
     @Bind(R.id.tv_team_create_done)
     TextView tvTeamCreateDone;
-
     @Bind(R.id.tv_go_to_main_button)
     TextView tvGoToMainButton;
 
+    private boolean isFirstExecution = false;
     private int mode = MODE_FROM_MAIN_LIST;
 
     private boolean isInsertTeamNamePositiveLength = false;
@@ -143,6 +140,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
             vgButtonType1.setVisibility(View.GONE);
             vgButtonType2.setVisibility(View.VISIBLE);
         }
+        isFirstExecution = getArguments().getBoolean(IS_FIRST_EXECUTION);
     }
 
     @Override
@@ -244,6 +242,11 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     @OnClick(R.id.iv_team_create_done)
     void onClickTeamCreateDone() {
         createTeam();
+        if (isFirstExecution) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ForceTeamCreation, AnalyticsValue.Action.SubmitTeam);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CreateaTeam, AnalyticsValue.Action.SubmitATeam);
+        }
     }
 
     private void createTeam() {
@@ -255,6 +258,9 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     @OnClick(R.id.tv_go_to_main_button)
     void onCLickGoToMain() {
         finish();
+        if (isFirstExecution) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ForceTeamCreation, AnalyticsValue.Action.GoToJANDIMain);
+        }
     }
 
     @Override

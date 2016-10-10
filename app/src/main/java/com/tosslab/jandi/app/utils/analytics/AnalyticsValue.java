@@ -40,6 +40,8 @@ public class AnalyticsValue {
         SwitchTeam, MypageTab, Account, TeamTab,
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
         UniversalSearch, ChooseMember, SelectRoom, Carousel,
+        ForceTeamCreation,
+        FolderManagement, EditAccount
     }
 
     public enum Action {
@@ -48,6 +50,9 @@ public class AnalyticsValue {
         SignUp,
         Submit,
         TermofService,
+        AcceptAll,
+        AgreeTermsofService,
+        AgreePrivacyPolicy,
         SignUpNow,
         LaunchJandi,
         Resend,
@@ -240,7 +245,10 @@ public class AnalyticsValue {
         TapRecentKeywords, DeleteRecentKeyword, DeleteAllKeywords, GoSearchResult, IncludeNotJoinedTopics,
         ChooseJoinedTopic, ChooseUnJoinedTopic, ChooseDm, CollapseRoomList, ChooseRoomFilter, TapMsgSearchResult,
         ChooseTopic, KeywordSearch, ChooseAllMember, ChooseMember,
-        TapPlusButton, TapPlusButton_CreateNewTopic, TapPlusButton_CreateNewFolder, TapPlusButton_FolderManagement, TapPlusButton_BrowseOtherTopics
+        TapPlusButton, TapPlusButton_CreateNewTopic, TapPlusButton_CreateNewFolder, TapPlusButton_FolderManagement, TapPlusButton_BrowseOtherTopics,
+        TopicSubMenu_Notification,
+        SubmitTeam, GoToJANDIMain,
+        SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount
     }
 
     public enum Label {
@@ -248,7 +256,7 @@ public class AnalyticsValue {
         AllTopic, Topic, Member,
         AllMember,
         AllType, GoogleDocs, Words, Presentations, Spreadsheets, PDFs, Images, Videos, Audios,
-        ongoing, completed,
+        ongoing, SubmitATeam, completed,
         AllRoom, JoinedRoom, Zipfiles, SelectRoom,
         PhotoLibrary, Camera, ChooseCharacter,
         Star, Unstar
