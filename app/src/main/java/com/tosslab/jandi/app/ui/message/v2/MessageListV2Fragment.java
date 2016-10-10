@@ -827,6 +827,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                         mentionControlViewModel.setUpMention(readyMessage);
 
                         mentionControlViewModel.registClipboardListener();
+
+                        setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
+
                     });
         }
 
