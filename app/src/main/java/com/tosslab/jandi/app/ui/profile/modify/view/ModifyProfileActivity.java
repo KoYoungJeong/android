@@ -185,7 +185,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editName() {
         startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
-                .type(NameStatusActivity.EXTRA_TYPE_NAME)
+                .type(NameStatusActivity.EXTRA_TYPE_NAME_FOR_TEAM_PROFILE)
                 .build(), REQUEST_NAME_STATUS);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);

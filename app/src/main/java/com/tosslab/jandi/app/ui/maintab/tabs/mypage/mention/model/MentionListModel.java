@@ -2,10 +2,13 @@ package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.model;
 
 import android.util.Pair;
 
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqMentionMarkerUpdate;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
@@ -18,6 +21,7 @@ import java.util.List;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -37,7 +41,6 @@ public class MentionListModel {
 
     public Observable<ResStarMentioned> getMentionsObservable(long offset, int limit) {
         final long teamId = TeamInfoLoader.getInstance().getTeamId();
-
         Observable.OnSubscribe<ResStarMentioned> requestMentionsSubscriber = subscriber -> {
             try {
                 ResStarMentioned resStarMentioned =
@@ -71,6 +74,7 @@ public class MentionListModel {
 
         Observable.from(records)
                 .filter(mention -> mention.getMessage() != null)
+                .filter(mentionMessage -> mentionMessage.getRoom().id <= 0 || TeamInfoLoader.getInstance().isRoom(mentionMessage.getRoom().id))
                 .map(mentionMessage -> {
                     User user = TeamInfoLoader.getInstance()
                             .getUser(mentionMessage.getMessage().writerId);
@@ -103,8 +107,36 @@ public class MentionListModel {
         return mentions;
     }
 
-    public int getPollBadgeCount() {
-        return TeamInfoLoader.getInstance().getPollBadge();
+    public long getLastReadMentionId() {
+        InitialInfo.Mention mention = TeamInfoLoader.getInstance().getMention();
+        if (mention == null) {
+            return -1;
+        }
+
+        return mention.getLastMentionedMessageId() <= 0 ? -1 : mention.getLastMentionedMessageId();
     }
 
+    public void clearUnreadMentionMessage() {
+        InitialMentionInfoRepository.getInstance().clearUnreadCount();
+        TeamInfoLoader.getInstance().refreshMention();
+    }
+
+    public void updateLastReadMessageId(long lastReadMentionId) {
+        Observable.defer(() -> {
+            try {
+                long teamId = TeamInfoLoader.getInstance().getTeamId();
+                return Observable.just(messageApi.get().updateMentionMarker(
+                        teamId, ReqMentionMarkerUpdate.create(lastReadMentionId)));
+            } catch (RetrofitException e) {
+                return Observable.error(e);
+            }
+        }).subscribeOn(Schedulers.io())
+                .subscribe(it -> {
+                }, Throwable::printStackTrace);
+    }
+
+    public void increaseMentionUnreadCount() {
+        InitialMentionInfoRepository.getInstance().increaseUnreadCount();
+        TeamInfoLoader.getInstance().refreshMention();
+    }
 }

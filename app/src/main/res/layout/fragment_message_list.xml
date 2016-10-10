@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tosslab.jandi.app.views.SoftInputDetectLinearLayout android:id="@+id/vg_messages_soft_input_detector"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tosslab.jandi.app.views.SoftInputDetectLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vg_messages_soft_input_detector"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -14,7 +15,8 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/layout_search_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/actionbar_icon_back" />
 
         <FrameLayout
             android:id="@+id/vg_easteregg_snow"

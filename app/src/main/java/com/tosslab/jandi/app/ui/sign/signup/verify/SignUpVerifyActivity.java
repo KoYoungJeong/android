@@ -16,8 +16,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.view.SignUpVerifyView;
@@ -66,6 +66,9 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @ViewById(R.id.tv_resend_email)
     TextView tvResendEmail;
 
+    @ViewById(R.id.tv_email)
+    TextView tvEmail;
+
     @ViewsById(value = {
             R.id.tv_signup_verify_code_1,
             R.id.tv_signup_verify_code_2,
@@ -110,6 +113,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
         String resendEmailText = getString(R.string.jandi_signup_resend_email);
         tvResendEmail.setText(Html.fromHtml(resendEmailText));
+        tvEmail.setText(email);
 
         presenter.setView(this);
         progressWheel = new ProgressWheel(this);
@@ -163,6 +167,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @Override
     public void showInvalidVerificationCode(int count) {
         String invalidateText = getString(R.string.jandi_signup_invalidate_code, count);
+        tvEmail.setVisibility(View.GONE);
         tvExplain.setText(invalidateText);
         int invalidTextColor = getResources().getColor(R.color.jandi_signup_invalid);
         tvExplain.setTextColor(invalidTextColor);
@@ -230,11 +235,15 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
 
     @UiThread
     @Override
-    public void moveToAccountHome() {
+    public void moveToSelectTeam() {
 
         AnalyticsUtil.sendConversion("Android_signup", "957512006", "M3MOCM6ij2MQxvLJyAM");
 
-        AccountHomeActivity.startActivity(this, true);
+        startActivity(Henson.with(this)
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(false)
+                .build());
+
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }

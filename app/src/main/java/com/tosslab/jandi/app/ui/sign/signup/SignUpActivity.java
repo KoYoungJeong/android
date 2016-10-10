@@ -58,17 +58,11 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @Inject
     SignUpPresenter signUpPresenter;
 
-    @Bind(R.id.et_layout_name)
-    TextInputLayout etLayoutName;
-
     @Bind(R.id.et_layout_email)
     TextInputLayout etLayoutEmail;
 
     @Bind(R.id.et_layout_password)
     TextInputLayout etLayoutPassword;
-
-    @Bind(R.id.et_name)
-    EditText etName;
 
     @Bind(R.id.et_email)
     EditText etEmail;
@@ -86,8 +80,6 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     ScrollView scrollView;
 
     ProgressWheel progressWheel;
-
-    private boolean isFirstFocus = true;
 
     private android.view.View previousFocusView;
 
@@ -119,13 +111,12 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         initExtra();
 
         btnSignUp.setEnabled(false);
-        etName.addTextChangedListener(new TextInputWatcher());
         etEmail.addTextChangedListener(new TextInputWatcher());
         etPassword.addTextChangedListener(new TextInputWatcher());
         etPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (btnSignUp.isEnabled()) {
-                    signUpPresenter.trySignUp(etName.getText().toString().trim(),
+                    signUpPresenter.trySignUp(
                             etEmail.getText().toString(), etPassword.getText().toString());
                 }
                 return true;
@@ -164,34 +155,11 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
     }
 
-    @OnFocusChange(R.id.et_name)
-    void onNameFocused(boolean focused) {
-        if (focused) {
-            if (!isFirstFocus) {
-                if (previousFocusView == etPassword) {
-                    signUpPresenter.checkPasswordValidation(etPassword.getText().toString());
-                } else if (previousFocusView == etEmail) {
-                    signUpPresenter.checkEmailValidation(etEmail.getText().toString());
-                }
-                removeErrorName();
-            }
-            previousFocusView = etName;
-        }
-        if (etLayoutName.isErrorEnabled()) {
-            setMarginTop(etLayoutName, 8);
-        } else {
-            setMarginTop(etLayoutName, 16);
-        }
-        isFirstFocus = false;
-    }
-
     @OnFocusChange(R.id.et_email)
     void onEmailFocused(boolean focused) {
         if (focused) {
             if (previousFocusView == etPassword) {
                 signUpPresenter.checkPasswordValidation(etPassword.getText().toString());
-            } else if (previousFocusView == etName) {
-                signUpPresenter.checkNameValidation(etName.getText().toString());
             }
             removeErrorEmail();
         }
@@ -209,11 +177,6 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             int marginTopForNormal = 8;
             if (previousFocusView == etEmail) {
                 signUpPresenter.checkEmailValidation(etEmail.getText().toString());
-            } else if (previousFocusView == etName) {
-                if (!etLayoutEmail.isErrorEnabled()) {
-                    marginTopForNormal = 16;
-                }
-                signUpPresenter.checkNameValidation(etName.getText().toString());
             }
             removeErrorPassword();
             if (etLayoutPassword.isErrorEnabled()) {
@@ -230,18 +193,9 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @OnClick(R.id.btn_sign_up)
     void onClickSignUpButton() {
         signUpPresenter.trySignUp(
-                etName.getText().toString().trim(),
                 etEmail.getText().toString(),
                 etPassword.getText().toString());
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.SignUpNow);
-    }
-
-    @Override
-    public void showErrorInsertName() {
-        etLayoutName.setErrorEnabled(true);
-        etLayoutName.setError(getString(R.string.jandi_input_user_name));
-
-        startBounceAnimation(etLayoutName.getChildAt(etLayoutName.getChildCount() - 1));
     }
 
     @Override
@@ -309,12 +263,6 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             }
         });
         bounceAnim.start();
-    }
-
-    @Override
-    public void removeErrorName() {
-        etLayoutName.setError("");
-        etLayoutName.setErrorEnabled(false);
     }
 
     @Override
@@ -439,15 +387,11 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     private class TextInputWatcher extends SimpleTextWatcher {
         @Override
         public void afterTextChanged(Editable editable) {
-            if (etName.getText().length() > 0
-                    && etEmail.getText().length() > 0
+            if (etEmail.getText().length() > 0
                     && etPassword.getText().length() > 0) {
                 btnSignUp.setEnabled(true);
             } else {
                 btnSignUp.setEnabled(false);
-            }
-            if (etName.isFocused() && etLayoutName.isErrorEnabled()) {
-                removeErrorName();
             }
             if (etEmail.isFocused() && etLayoutEmail.isErrorEnabled()) {
                 removeErrorEmail();

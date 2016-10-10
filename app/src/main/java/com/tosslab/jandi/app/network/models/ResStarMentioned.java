@@ -14,6 +14,9 @@ import java.util.List;
 public class ResStarMentioned {
 
     private boolean hasMore;
+    private boolean isLimited;
+    private int unreadCount;
+    private long lastMentionedMessageId;
 
     private List<StarredMessage> records;
 
@@ -31,6 +34,30 @@ public class ResStarMentioned {
 
     public void setRecords(List<StarredMessage> records) {
         this.records = records;
+    }
+
+    public boolean isLimited() {
+        return isLimited;
+    }
+
+    public void setLimited(boolean limited) {
+        isLimited = limited;
+    }
+
+    public int getUnreadCount() {
+        return unreadCount;
+    }
+
+    public void setUnreadCount(int unreadCount) {
+        this.unreadCount = unreadCount;
+    }
+
+    public long getLastMentionedMessageId() {
+        return lastMentionedMessageId;
+    }
+
+    public void setLastMentionedMessageId(long lastMentionedMessageId) {
+        this.lastMentionedMessageId = lastMentionedMessageId;
     }
 
     @Override

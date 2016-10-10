@@ -21,7 +21,6 @@ rootProject.allprojects { project ->
 
             dependencies {
 
-
                 compile rootProject.ext.dependecies.libraries.sprinklrAndroid
                 compile rootProject.ext.dependecies.libraries.photoView
                 compile rootProject.ext.dependecies.libraries.imageZoomCrop
@@ -77,8 +76,6 @@ rootProject.allprojects { project ->
                 // Sliqte ORM
                 compile rootProject.ext.dependecies.libraries.ormlite
 
-                // Analytics & report
-                compile rootProject.ext.dependecies.libraries.parse
                 // RxJava
                 compile rootProject.ext.dependecies.libraries.rxandroid
                 compile rootProject.ext.dependecies.libraries.rxjava
@@ -127,7 +124,7 @@ rootProject.allprojects { project ->
 
             }
 
-            project.apply(plugin : 'com.google.gms.google-services')
+            project.apply(plugin: 'com.google.gms.google-services')
         }
     }
 }

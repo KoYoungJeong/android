@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
+import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
@@ -39,6 +40,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
@@ -47,12 +49,12 @@ import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -61,7 +63,7 @@ import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
-import com.tosslab.jandi.app.services.socket.model.SocketEventVersionModel;
+import com.tosslab.jandi.app.services.socket.model.SocketModelExtractor;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
@@ -82,6 +84,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMentionMarkerUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
@@ -115,7 +118,6 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -145,7 +147,6 @@ public class JandiSocketServiceModel {
     public static final String TAG = JandiSocketServiceModel.class.getSimpleName();
 
     private final Context context;
-    private final ObjectMapper objectMapper;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<DirectMessageApi> directMessageApi;
     PublishSubject<Object> eventPublisher;
@@ -164,7 +165,6 @@ public class JandiSocketServiceModel {
         this.loginApi = loginApi;
         this.historyUpdator = historyUpdator;
         this.directMessageApi = directMessageApi;
-        this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
         historyUpdator.putAllEventActor(initEventActor());
 
         initEventPublisher();
@@ -255,7 +255,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketFileCommentDeletedEvent.class, this::onFileCommentDeleted);
         messageEventActorMapper.put(SocketMessageDeletedEvent.class, this::onMessageDeleted);
         messageEventActorMapper.put(SocketRoomMarkerEvent.class, this::onRoomMarkerUpdated);
-        messageEventActorMapper.put(SocketMessageCreatedEvent.class, this::onMessageCreated);
+        messageEventActorMapper.put(SocketMessageCreatedEvent.class, o -> onMessageCreated(o, true));
         messageEventActorMapper.put(SocketMessageStarredEvent.class, this::onMessageStarred);
         messageEventActorMapper.put(SocketMessageUnstarredEvent.class, this::onMessageUnstarred);
         messageEventActorMapper.put(SocketLinkPreviewMessageEvent.class, this::onLinkPreviewCreated);
@@ -265,6 +265,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketPollDeletedEvent.class, this::onPollDeleted);
         messageEventActorMapper.put(SocketPollFinishedEvent.class, this::onPollFinished);
         messageEventActorMapper.put(SocketPollVotedEvent.class, this::onPollVoted);
+        messageEventActorMapper.put(SocketMentionMarkerUpdatedEvent.class, this::onMentionMarkerUpdated);
 
         return messageEventActorMapper;
 
@@ -299,7 +300,7 @@ public class JandiSocketServiceModel {
     public void onFileDeleted(Object object) {
         try {
             SocketFileDeletedEvent event =
-                    getObject(object, SocketFileDeletedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketFileDeletedEvent.class);
             saveEvent(event);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -321,7 +322,7 @@ public class JandiSocketServiceModel {
     public void onFileCommentCreated(Object object) {
         try {
             SocketFileCommentCreatedEvent socketFileEvent =
-                    getObject(object, SocketFileCommentCreatedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketFileCommentCreatedEvent.class);
             saveEvent(socketFileEvent);
             JandiPreference.setSocketConnectedLastTime(socketFileEvent.getTs());
             postEvent(
@@ -338,7 +339,7 @@ public class JandiSocketServiceModel {
     public void onFileCommentDeleted(Object object) {
         try {
             SocketFileCommentDeletedEvent socketEvent =
-                    getObject(object, SocketFileCommentDeletedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketFileCommentDeletedEvent.class);
             saveEvent(socketEvent);
             JandiPreference.setSocketConnectedLastTime(socketEvent.getTs());
 
@@ -373,7 +374,7 @@ public class JandiSocketServiceModel {
     public void onMessageDeleted(Object object) {
         try {
             SocketMessageDeletedEvent event =
-                    getObject(object, SocketMessageDeletedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketMessageDeletedEvent.class);
             saveEvent(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
@@ -427,7 +428,7 @@ public class JandiSocketServiceModel {
     public void onTopicUpdated(Object object) {
         try {
             SocketTopicUpdatedEvent event =
-                    getObject(object, SocketTopicUpdatedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketTopicUpdatedEvent.class);
             saveEvent(event);
             TopicRepository.getInstance().updateTopic(event.getData().getTopic());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -440,7 +441,7 @@ public class JandiSocketServiceModel {
 
     public void onChatClosed(Object object) {
         try {
-            SocketChatCloseEvent event = getObject(object, SocketChatCloseEvent.class);
+            SocketChatCloseEvent event = SocketModelExtractor.getObject(object, SocketChatCloseEvent.class);
             saveEvent(event);
             SocketChatCloseEvent.Data chat = event.getChat();
             ChatRepository.getInstance().updateChatOpened(chat.getId(), false);
@@ -454,7 +455,7 @@ public class JandiSocketServiceModel {
 
     public void onChatCreated(Object object) {
         try {
-            SocketChatCreatedEvent event = getObject(object, SocketChatCreatedEvent.class);
+            SocketChatCreatedEvent event = SocketModelExtractor.getObject(object, SocketChatCreatedEvent.class);
             saveEvent(event);
             SocketChatCreatedEvent.Data data = event.getData();
 
@@ -501,7 +502,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicLeft(Object object) {
         try {
-            SocketTopicLeftEvent event = getObject(object, SocketTopicLeftEvent.class);
+            SocketTopicLeftEvent event = SocketModelExtractor.getObject(object, SocketTopicLeftEvent.class);
             saveEvent(event);
             SocketTopicLeftEvent.Data data = event.getData();
             if (data.getMemberId() == TeamInfoLoader.getInstance().getMyId()) {
@@ -523,7 +524,7 @@ public class JandiSocketServiceModel {
 
     public void onMemberStarred(Object object) {
         try {
-            SocketMemberStarredEvent event = getObject(object, SocketMemberStarredEvent.class);
+            SocketMemberStarredEvent event = SocketModelExtractor.getObject(object, SocketMemberStarredEvent.class);
             saveEvent(event);
             SocketMemberStarredEvent.Member member = event.getMember();
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -537,7 +538,7 @@ public class JandiSocketServiceModel {
     public void onFileUnshared(Object object) {
         try {
             SocketFileUnsharedEvent event =
-                    getObject(object, SocketFileUnsharedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketFileUnsharedEvent.class);
             saveEvent(event);
 
             long fileId = event.getFile().getId();
@@ -555,7 +556,7 @@ public class JandiSocketServiceModel {
     public void onFileShared(Object object) {
         try {
             SocketFileShareEvent event =
-                    getObject(object, SocketFileShareEvent.class);
+                    SocketModelExtractor.getObject(object, SocketFileShareEvent.class);
             saveEvent(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             long teamId = event.getTeamId();
@@ -569,7 +570,7 @@ public class JandiSocketServiceModel {
     public void onRoomMarkerUpdated(Object object) {
         try {
             SocketRoomMarkerEvent event =
-                    getObject(object, SocketRoomMarkerEvent.class, true, false);
+                    SocketModelExtractor.getObject(object, SocketRoomMarkerEvent.class, true, false);
             saveEvent(event);
 
             SocketRoomMarkerEvent.MarkerRoom room = event.getRoom();
@@ -610,7 +611,7 @@ public class JandiSocketServiceModel {
     public void onLinkPreviewCreated(final Object object) {
         try {
             SocketLinkPreviewMessageEvent event =
-                    getObject(object, SocketLinkPreviewMessageEvent.class);
+                    SocketModelExtractor.getObject(object, SocketLinkPreviewMessageEvent.class);
             saveEvent(event);
 
             SocketLinkPreviewMessageEvent.Data data = event.getData();
@@ -631,7 +632,7 @@ public class JandiSocketServiceModel {
     public void onLinkPreviewImage(final Object object) {
         try {
             SocketLinkPreviewThumbnailEvent socketLinkPreviewMessageEvent =
-                    getObject(object, SocketLinkPreviewThumbnailEvent.class);
+                    SocketModelExtractor.getObject(object, SocketLinkPreviewThumbnailEvent.class);
             saveEvent(socketLinkPreviewMessageEvent);
 
             JandiPreference.setSocketConnectedLastTime(socketLinkPreviewMessageEvent.getTs());
@@ -657,7 +658,7 @@ public class JandiSocketServiceModel {
 
         try {
             SocketAnnouncementCreatedEvent event =
-                    getObject(object, SocketAnnouncementCreatedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketAnnouncementCreatedEvent.class);
             saveEvent(event);
 
             SocketAnnouncementCreatedEvent.Data data = event.getData();
@@ -676,7 +677,7 @@ public class JandiSocketServiceModel {
 
             // 공지사항 정보 갱신 로직
             SocketAnnouncementDeletedEvent event =
-                    getObject(object, SocketAnnouncementDeletedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketAnnouncementDeletedEvent.class);
             saveEvent(event);
 
             TopicRepository.getInstance().removeAnnounce(event.getData().getTopicId());
@@ -692,7 +693,7 @@ public class JandiSocketServiceModel {
 
             // 푸시 정보 갱신 로직 추가
             SocketTopicPushEvent socketTopicPushEvent =
-                    getObject(object, SocketTopicPushEvent.class);
+                    SocketModelExtractor.getObject(object, SocketTopicPushEvent.class);
             saveEvent(socketTopicPushEvent);
 
             SocketTopicPushEvent.Data data = socketTopicPushEvent.getData();
@@ -728,7 +729,7 @@ public class JandiSocketServiceModel {
     public void onMessageUnstarred(Object object) {
         try {
             SocketMessageUnstarredEvent event
-                    = getObject(object, SocketMessageUnstarredEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketMessageUnstarredEvent.class);
             saveEvent(event);
 
             MessageRepository.getRepository().updateStarred(event.getStarredInfo()
@@ -746,7 +747,7 @@ public class JandiSocketServiceModel {
     public void onMessageStarred(Object object) {
         try {
             SocketMessageStarredEvent socketFileEvent
-                    = getObject(object, SocketMessageStarredEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketMessageStarredEvent.class);
             saveEvent(socketFileEvent);
 
             MessageRepository.getRepository().updateStarred(socketFileEvent.getStarredInfo()
@@ -763,7 +764,7 @@ public class JandiSocketServiceModel {
     public void onFolderDeleted(Object object) {
         try {
             SocketTopicFolderDeletedEvent event
-                    = getObject(object, SocketTopicFolderDeletedEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketTopicFolderDeletedEvent.class);
             saveEvent(event);
 
             long folderId = event.getData().getFolderId();
@@ -781,7 +782,7 @@ public class JandiSocketServiceModel {
     public void onFolderItemCreated(Object object) {
         try {
             SocketTopicFolderItemCreatedEvent event
-                    = getObject(object, SocketTopicFolderItemCreatedEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketTopicFolderItemCreatedEvent.class);
             saveEvent(event);
 
             SocketTopicFolderItemCreatedEvent.Data data = event.getData();
@@ -802,7 +803,7 @@ public class JandiSocketServiceModel {
     public void onFolderItemDeleted(Object object) {
         try {
             SocketTopicFolderItemDeletedEvent event
-                    = getObject(object, SocketTopicFolderItemDeletedEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketTopicFolderItemDeletedEvent.class);
             saveEvent(event);
 
             long folderId = event.getData().getFolderId();
@@ -821,7 +822,7 @@ public class JandiSocketServiceModel {
     public void onTopicFolderCreated(Object object) {
         try {
             SocketTopicFolderCreatedEvent event
-                    = getObject(object, SocketTopicFolderCreatedEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketTopicFolderCreatedEvent.class);
             saveEvent(event);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -839,7 +840,7 @@ public class JandiSocketServiceModel {
     public void onTopicFolderUpdated(Object object) {
         try {
             SocketTopicFolderUpdatedEvent event
-                    = getObject(object, SocketTopicFolderUpdatedEvent.class);
+                    = SocketModelExtractor.getObject(object, SocketTopicFolderUpdatedEvent.class);
             saveEvent(event);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -857,7 +858,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamLeft(Object object) {
         try {
-            SocketTeamLeaveEvent event = getObject(object, SocketTeamLeaveEvent.class);
+            SocketTeamLeaveEvent event = SocketModelExtractor.getObject(object, SocketTeamLeaveEvent.class);
             saveEvent(event);
 
             SocketTeamLeaveEvent.Data data = event.getData();
@@ -875,7 +876,11 @@ public class JandiSocketServiceModel {
                                     .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
                             AccountRepository.getRepository().removeSelectedTeamInfo();
-                            AccountHomeActivity.startActivity(JandiApplication.getContext(), true);
+                            JandiApplication.getContext().startActivity(
+                                    Henson.with(JandiApplication.getContext())
+                                            .gotoTeamSelectListActivity()
+                                            .shouldRefreshAccountInfo(true)
+                                            .build());
 
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
@@ -900,7 +905,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamDeleted(Object object) {
         try {
-            SocketTeamDeletedEvent event = getObject(object, SocketTeamDeletedEvent.class, true, false);
+            SocketTeamDeletedEvent event = SocketModelExtractor.getObject(object, SocketTeamDeletedEvent.class, true, false);
             saveEvent(event);
 
             long teamId = event.getData().getTeamId();
@@ -916,7 +921,11 @@ public class JandiSocketServiceModel {
                             ColoredToast.showError(deletedTeam);
 
                             AccountRepository.getRepository().removeSelectedTeamInfo();
-                            AccountHomeActivity.startActivity(JandiApplication.getContext(), true);
+                            JandiApplication.getContext().startActivity(
+                                    Henson.with(JandiApplication.getContext())
+                                            .gotoTeamSelectListActivity()
+                                            .shouldRefreshAccountInfo(true)
+                                            .build());
 
                             InitialInfoRepository.getInstance().removeInitialInfo(teamId);
                             JandiPreference.setSocketConnectedLastTime(-1);
@@ -939,7 +948,7 @@ public class JandiSocketServiceModel {
     public void onTopicKickOut(Object object) {
         try {
             SocketTopicKickedoutEvent event =
-                    getObject(object, SocketTopicKickedoutEvent.class);
+                    SocketModelExtractor.getObject(object, SocketTopicKickedoutEvent.class);
             saveEvent(event);
 
             SocketTopicKickedoutEvent.Data data = event.getData();
@@ -960,9 +969,9 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void onMessageCreated(Object object) {
+    public void onMessageCreated(Object object, boolean fromEventHistory) {
         try {
-            SocketMessageCreatedEvent event = getObject(object, SocketMessageCreatedEvent.class, true, false);
+            SocketMessageCreatedEvent event = SocketModelExtractor.getObject(object, SocketMessageCreatedEvent.class, true, false);
             saveEvent(event);
 
             ResMessages.Link link = event.getData().getLinkMessage();
@@ -982,6 +991,10 @@ public class JandiSocketServiceModel {
                 doAfterMessageCreated(link);
 
                 postEvent(event);
+
+                if (!(fromEventHistory)) {
+                    handleMessageIfMentionToMe(link);
+                }
             }
 
             if (link.message != null) {
@@ -999,6 +1012,44 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
+    }
+
+    private void handleMessageIfMentionToMe(ResMessages.Link link) {
+        Observable.just(link)
+                .filter(link1 -> {
+                    if (link1.message instanceof ResMessages.TextMessage) {
+                        Collection<MentionObject> mentions = ((ResMessages.TextMessage) link1.message).mentions;
+                        return mentions != null && !mentions.isEmpty();
+                    } else if (link1.message instanceof ResMessages.CommentMessage) {
+                        Collection<MentionObject> mentions = ((ResMessages.CommentMessage) link1.message).mentions;
+                        return mentions != null && !mentions.isEmpty();
+                    } else {
+                        return false;
+                    }
+                })
+                .filter(link1 -> {
+                    Collection<MentionObject> mentions;
+                    if (link1.message instanceof ResMessages.TextMessage) {
+                        mentions = ((ResMessages.TextMessage) link1.message).mentions;
+                    } else {
+                        mentions = ((ResMessages.CommentMessage) link1.message).mentions;
+                    }
+                    return Observable.from(mentions)
+                            .takeFirst(mentionObject ->
+                                    "room".equals(mentionObject.getType())
+                                            || mentionObject.getId() == TeamInfoLoader.getInstance().getMyId())
+                            .map(it -> true)
+                            .toBlocking().firstOrDefault(false);
+                })
+                .subscribe(link1 -> {
+
+                    if (EventBus.getDefault().hasSubscriberForEvent(MentionMessageEvent.class)) {
+                        EventBus.getDefault().post(new MentionMessageEvent(link1));
+                    } else {
+                        InitialMentionInfoRepository.getInstance().increaseUnreadCount();
+                    }
+
+                }, Throwable::printStackTrace);
     }
 
     private void doAfterMessageCreated(ResMessages.Link linkMessage) {
@@ -1051,46 +1102,9 @@ public class JandiSocketServiceModel {
         return text;
     }
 
-    private <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz) throws Exception {
-        return getObject(object, clazz, true, true);
-    }
-
-    private <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz, boolean checkVersion, boolean checkTeamId) throws Exception {
-        T t;
-        if (object.getClass() != clazz) {
-            t = objectMapper.readValue(object.toString(), clazz);
-        } else {
-            t = (T) object;
-        }
-        if (checkVersion) {
-            throwExceptionIfInvaildVersion(t);
-        }
-
-        if (checkTeamId) {
-            throwExceptionIfInvaildTeamId(t);
-        }
-        return t;
-    }
-
-    private <T> void throwExceptionIfInvaildTeamId(T t) throws Exception {
-        if (t instanceof EventHistoryInfo) {
-            long teamId = ((EventHistoryInfo) t).getTeamId();
-            if (teamId != 0
-                    && teamId != AccountRepository.getRepository().getSelectedTeamId()) {
-                throw new Exception("Ignore Team : " + t.getClass().getName());
-            }
-        }
-    }
-
-    <T extends EventHistoryInfo> void throwExceptionIfInvaildVersion(T object) throws Exception {
-        if (!SocketEventVersionModel.validVersion(object)) {
-            throw new Exception("Invalid Version : " + object.getClass().getName());
-        }
-    }
-
     public void onConnectBotCreated(Object object) {
         try {
-            SocketConnectBotCreatedEvent event = getObject(object, SocketConnectBotCreatedEvent.class);
+            SocketConnectBotCreatedEvent event = SocketModelExtractor.getObject(object, SocketConnectBotCreatedEvent.class);
             saveEvent(event);
 
             BotRepository.getInstance().addBot(event.getData().getBot());
@@ -1103,7 +1117,7 @@ public class JandiSocketServiceModel {
 
     public void onConnectBotDeleted(Object object) {
         try {
-            SocketConnectBotDeletedEvent event = getObject(object, SocketConnectBotDeletedEvent.class);
+            SocketConnectBotDeletedEvent event = SocketModelExtractor.getObject(object, SocketConnectBotDeletedEvent.class);
             saveEvent(event);
 
             BotRepository.getInstance().updateBotStatus(event.getData().getBotId(), "deleted");
@@ -1117,7 +1131,7 @@ public class JandiSocketServiceModel {
 
     public void onConnectBotUpdated(Object object) {
         try {
-            SocketConnectBotUpdatedEvent event = getObject(object, SocketConnectBotUpdatedEvent.class);
+            SocketConnectBotUpdatedEvent event = SocketModelExtractor.getObject(object, SocketConnectBotUpdatedEvent.class);
             saveEvent(event);
 
             BotRepository.getInstance().updateBot(event.getData().getBot());
@@ -1131,7 +1145,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamJoin(Object object) {
         try {
-            SocketTeamJoinEvent event = getObject(object, SocketTeamJoinEvent.class);
+            SocketTeamJoinEvent event = SocketModelExtractor.getObject(object, SocketTeamJoinEvent.class);
             saveEvent(event);
 
             SocketTeamJoinEvent.Data data = event.getData();
@@ -1146,7 +1160,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicCreated(Object object) {
         try {
-            SocketTopicCreatedEvent event = getObject(object, SocketTopicCreatedEvent.class);
+            SocketTopicCreatedEvent event = SocketModelExtractor.getObject(object, SocketTopicCreatedEvent.class);
             saveEvent(event);
 
             Topic topic = event.getData().getTopic();
@@ -1175,7 +1189,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicJoined(Object object) {
         try {
-            SocketTopicJoinedEvent event = getObject(object, SocketTopicJoinedEvent.class);
+            SocketTopicJoinedEvent event = SocketModelExtractor.getObject(object, SocketTopicJoinedEvent.class);
             saveEvent(event);
 
             SocketTopicJoinedEvent.Data data = event.getData();
@@ -1198,7 +1212,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicInvited(Object object) {
         try {
-            SocketTopicInvitedEvent event = getObject(object, SocketTopicInvitedEvent.class);
+            SocketTopicInvitedEvent event = SocketModelExtractor.getObject(object, SocketTopicInvitedEvent.class);
             saveEvent(event);
 
             SocketTopicInvitedEvent.Data data = event.getData();
@@ -1241,7 +1255,7 @@ public class JandiSocketServiceModel {
 
     public void onMemberUpdated(Object object) {
         try {
-            SocketMemberUpdatedEvent event = getObject(object, SocketMemberUpdatedEvent.class);
+            SocketMemberUpdatedEvent event = SocketModelExtractor.getObject(object, SocketMemberUpdatedEvent.class);
             saveEvent(event);
 
             SocketMemberUpdatedEvent.Data data = event.getData();
@@ -1256,7 +1270,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicDeleted(Object object) {
         try {
-            SocketTopicDeletedEvent event = getObject(object, SocketTopicDeletedEvent.class);
+            SocketTopicDeletedEvent event = SocketModelExtractor.getObject(object, SocketTopicDeletedEvent.class);
             saveEvent(event);
 
             long topicId = event.getData().getTopicId();
@@ -1277,7 +1291,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicStarred(Object object) {
         try {
-            SocketTopicStarredEvent event = getObject(object, SocketTopicStarredEvent.class);
+            SocketTopicStarredEvent event = SocketModelExtractor.getObject(object, SocketTopicStarredEvent.class);
             saveEvent(event);
 
             SocketTopicStarredEvent.Topic topic = event.getTopic();
@@ -1292,7 +1306,7 @@ public class JandiSocketServiceModel {
 
     public void onTopicUnstarred(Object object) {
         try {
-            SocketTopicUnstarredEvent event = getObject(object, SocketTopicUnstarredEvent.class);
+            SocketTopicUnstarredEvent event = SocketModelExtractor.getObject(object, SocketTopicUnstarredEvent.class);
             saveEvent(event);
 
             SocketTopicUnstarredEvent.Topic topic = event.getTopic();
@@ -1308,7 +1322,7 @@ public class JandiSocketServiceModel {
 
     public void onMemberUnstarred(Object object) {
         try {
-            SocketMemberUnstarredEvent event = getObject(object, SocketMemberUnstarredEvent.class);
+            SocketMemberUnstarredEvent event = SocketModelExtractor.getObject(object, SocketMemberUnstarredEvent.class);
             saveEvent(event);
 
             SocketMemberUnstarredEvent.Member member = event.getMember();
@@ -1343,7 +1357,7 @@ public class JandiSocketServiceModel {
 
     public void onAnnouncementStatusUpdated(Object object) {
         try {
-            SocketAnnouncementUpdatedEvent event = getObject(object, SocketAnnouncementUpdatedEvent.class);
+            SocketAnnouncementUpdatedEvent event = SocketModelExtractor.getObject(object, SocketAnnouncementUpdatedEvent.class);
             saveEvent(event);
 
             SocketAnnouncementUpdatedEvent.Data data = event.getData();
@@ -1361,7 +1375,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamUpdated(Object object) {
         try {
-            SocketTeamUpdatedEvent event = getObject(object, SocketTeamUpdatedEvent.class, true, false);
+            SocketTeamUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamUpdatedEvent.class, true, false);
             saveEvent(event);
 
             if (event.getData().getTeam().getId() == TeamInfoLoader.getInstance().getTeamId()) {
@@ -1388,7 +1402,7 @@ public class JandiSocketServiceModel {
 
     public void onPollCreated(Object object) {
         try {
-            SocketPollCreatedEvent event = getObject(object, SocketPollCreatedEvent.class);
+            SocketPollCreatedEvent event = SocketModelExtractor.getObject(object, SocketPollCreatedEvent.class);
             saveEvent(event);
 
             SocketPollCreatedEvent.Data data = event.getData();
@@ -1413,7 +1427,7 @@ public class JandiSocketServiceModel {
 
     public void onPollFinished(Object object) {
         try {
-            SocketPollFinishedEvent event = getObject(object, SocketPollFinishedEvent.class);
+            SocketPollFinishedEvent event = SocketModelExtractor.getObject(object, SocketPollFinishedEvent.class);
             saveEvent(event);
 
             SocketPollFinishedEvent.Data data = event.getData();
@@ -1438,7 +1452,7 @@ public class JandiSocketServiceModel {
 
     public void onPollDeleted(Object object) {
         try {
-            SocketPollDeletedEvent event = getObject(object, SocketPollDeletedEvent.class);
+            SocketPollDeletedEvent event = SocketModelExtractor.getObject(object, SocketPollDeletedEvent.class);
             saveEvent(event);
 
             SocketPollDeletedEvent.Data data = event.getData();
@@ -1463,7 +1477,7 @@ public class JandiSocketServiceModel {
 
     public void onPollVoted(Object object) {
         try {
-            SocketPollVotedEvent event = getObject(object, SocketPollVotedEvent.class);
+            SocketPollVotedEvent event = SocketModelExtractor.getObject(object, SocketPollVotedEvent.class);
             saveEvent(event);
 
             SocketPollVotedEvent.Data data = event.getData();
@@ -1488,7 +1502,7 @@ public class JandiSocketServiceModel {
 
     public void onPollCommentCreated(Object object) {
         try {
-            SocketPollCommentCreatedEvent event = getObject(object, SocketPollCommentCreatedEvent.class);
+            SocketPollCommentCreatedEvent event = SocketModelExtractor.getObject(object, SocketPollCommentCreatedEvent.class);
             saveEvent(event);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -1500,7 +1514,7 @@ public class JandiSocketServiceModel {
 
     public void onPollCommentDeleted(Object object) {
         try {
-            SocketPollCommentDeletedEvent event = getObject(object, SocketPollCommentDeletedEvent.class);
+            SocketPollCommentDeletedEvent event = SocketModelExtractor.getObject(object, SocketPollCommentDeletedEvent.class);
             saveEvent(event);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
@@ -1520,6 +1534,24 @@ public class JandiSocketServiceModel {
 
     private Poll getPollFromDatabase(long pollId) {
         return PollRepository.getInstance().getPollById(pollId);
+    }
+
+    public void onMentionMarkerUpdated(Object object) {
+        try {
+            SocketMentionMarkerUpdatedEvent event = SocketModelExtractor.getObject(object, SocketMentionMarkerUpdatedEvent.class);
+            saveEvent(event);
+
+            InitialInfo.Mention mention = InitialMentionInfoRepository.getInstance().getMention();
+            long lastMentionedMessageId = event == null
+                    ? -1 : event.getData().getLastMentionedMessageId();
+            mention.setLastMentionedMessageId(lastMentionedMessageId);
+            InitialMentionInfoRepository.getInstance().upsertMention(mention);
+            TeamInfoLoader.getInstance().refreshMention();
+
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface Command {

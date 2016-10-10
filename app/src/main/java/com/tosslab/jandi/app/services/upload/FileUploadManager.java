@@ -113,7 +113,9 @@ public class FileUploadManager {
                             fileUploadDTO.getEntity(),
                             fileUploadDTO.getComment(),
                             fileUploadDTO.getMentions(),
-                            callback -> callback.distinctUntilChanged()
+                            callback -> callback
+                                    .onBackpressureBuffer()
+                                    .distinctUntilChanged()
                                     .subscribe(it -> {
                                         progress[1] = it;
                                         FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), it);
@@ -126,7 +128,9 @@ public class FileUploadManager {
                                             showNotification(context);
                                         }
                                     }, t -> {
+                                        fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
                                     }, () -> {
+                                        fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
                                     }));
                     lastRequest = request;
 

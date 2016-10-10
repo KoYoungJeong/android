@@ -80,7 +80,7 @@ public class MentionMemberListAdapter extends ArrayAdapter<SearchedItemVO> {
             holder.getTvName().setText(R.string.jandi_all_of_topic_members);
         } else if (isBot) {
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ImageLoader.loadFromResources(ivIcon, R.drawable.bot_32x40);
+            ImageLoader.loadFromResources(ivIcon, R.drawable.logotype_80);
             holder.getTvName().setText(item.getName());
         } else {
             if (!item.isInactive()) {

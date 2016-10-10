@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="@drawable/btn_rect_white_light"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp">
+
+    <ImageView
+        android:id="@+id/iv_team_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/share_icon_teamlist_inactive" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="27dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/tv_team_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="팀 이름"
+            android:textColor="#ff333333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_team_my_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="jandi.kim@tosslab.com"
+            android:textColor="#ff999999"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="62dp"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_team_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/topiclist_unread_badge"
+            android:gravity="center"
+            android:text="123"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

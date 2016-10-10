@@ -79,4 +79,17 @@ public class PushTokenRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean deleteGcmToken() {
+        return execute(() -> {
+            try {
+                Dao<PushToken, String> dao = getDao(PushToken.class);
+                dao.deleteById("gcm");
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
 }

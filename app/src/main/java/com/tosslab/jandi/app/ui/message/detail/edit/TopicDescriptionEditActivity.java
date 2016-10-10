@@ -1,52 +1,67 @@
 package com.tosslab.jandi.app.ui.message.detail.edit;
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.TextChange;
-import org.androidannotations.annotations.ViewById;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnTextChanged;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
-
-@EActivity(R.layout.activity_topic_description_edit)
-@OptionsMenu(R.menu.topic_description_edit)
 public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
 
     public static final int DESCRIPTION_MAX_LENGTH = 300;
     public static final int REQUEST_EDIT = 321;
 
-    @Extra
+    @InjectExtra
     long entityId;
 
-    @ViewById(R.id.et_topic_description_edit_content)
+    @Bind(R.id.et_topic_description_edit_content)
     EditText etDescpription;
 
-    @ViewById(R.id.tv_topic_description_edit_count)
+    @Bind(R.id.tv_topic_description_edit_count)
     TextView tvDescpriptionLength;
 
-    @Bean
-    EntityClientManager entityClientManager;
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_topic_description_edit);
 
-    @AfterViews
+        ButterKnife.bind(this);
+        Dart.inject(this);
+        initViews();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
+        getMenuInflater().inflate(R.menu.topic_description_edit, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     void initViews() {
 
         setUpActionbar();
@@ -80,39 +95,50 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
 
     }
 
-    @TextChange(R.id.et_topic_description_edit_content)
+    @OnTextChanged(R.id.et_topic_description_edit_content)
     void onChangeDescriptionText(CharSequence text) {
         tvDescpriptionLength.setText(String.format("%d/%d", text.length(), DESCRIPTION_MAX_LENGTH));
     }
 
-    @OptionsItem(R.id.action_topic_description_save)
-    @Background
-    void onSaveOptionSelected() {
-        TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(entityId);
-
-        String description = etDescpription.getText().toString().trim();
-
-        try {
-            if (topicRoom.isPublicTopic()) {
-                entityClientManager.modifyChannelDescription(entityId, description);
-            } else {
-                entityClientManager.modifyPrivateGroupDescription(entityId, description);
-            }
-
-            TopicRepository.getInstance().updateDescription(entityId, description);
-            TeamInfoLoader.getInstance().refresh();
-
-            setResult(RESULT_OK);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_topic_description_save) {
+            onSaveOptionSelected();
+        } else if (item.getItemId() == android.R.id.home) {
             finish();
-
-        } catch (RetrofitException e) {
-            e.printStackTrace();
         }
+        return super.onOptionsItemSelected(item);
     }
 
-    @OptionsItem(android.R.id.home)
-    void onHomeMenuClick() {
-        finish();
+    void onSaveOptionSelected() {
+        Completable.defer(() -> {
+
+            try {
+                TopicRoom topicRoom = TeamInfoLoader.getInstance().getTopic(entityId);
+
+                String description = etDescpription.getText().toString().trim();
+                ReqModifyTopicDescription reqModifyTopicDescription = new ReqModifyTopicDescription();
+                reqModifyTopicDescription.description = description;
+                reqModifyTopicDescription.teamId = topicRoom.getTeamId();
+                if (topicRoom.isPublicTopic()) {
+                    new ChannelApi(RetrofitBuilder.getInstance()).modifyPublicTopicDescription(topicRoom.getTeamId(), reqModifyTopicDescription, entityId);
+                } else {
+                    new GroupApi(RetrofitBuilder.getInstance()).modifyGroupDescription(topicRoom.getTeamId(), reqModifyTopicDescription, entityId);
+                }
+
+                TopicRepository.getInstance().updateDescription(entityId, description);
+                TeamInfoLoader.getInstance().refresh();
+                return Completable.complete();
+            } catch (RetrofitException e) {
+                return Completable.error(e);
+            }
+
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    setResult(RESULT_OK);
+                    finish();
+                }, Throwable::printStackTrace);
+
     }
 
     @Override

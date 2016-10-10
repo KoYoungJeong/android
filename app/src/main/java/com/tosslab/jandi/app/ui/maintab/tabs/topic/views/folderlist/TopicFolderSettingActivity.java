@@ -326,7 +326,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                 .from(this).inflate(R.layout.dialog_fragment_input_text, null);
 
         EditText input = (EditText) vgInputEditText.findViewById(R.id.et_dialog_input_text);
-        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.jandi_folder_renamed);
+        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
         input.setHint(R.string.jandi_entity_create_entity_name);

@@ -21,20 +21,21 @@ ext.dependecies = [
                 henson                           : 'com.f2prateek.dart:henson:2.0.+',
                 henson_processor                 : 'com.f2prateek.dart:henson-processor:2.0.+',
 
-                googleAnalytics                  : 'com.google.android.gms:play-services-analytics:9.4.0',
-                firebase_core                    : 'com.google.firebase:firebase-core:9.4.0',
-                firebase_fcm                     : 'com.google.firebase:firebase-messaging:9.4.0',
+                googleAnalytics                  : 'com.google.android.gms:play-services-analytics:9.6.1',
+                firebase_core                    : 'com.google.firebase:firebase-core:9.6.1',
+                firebase_fcm                     : 'com.google.firebase:firebase-messaging:9.6.1',
 
-                support_appcompat                : 'com.android.support:appcompat-v7:24.2.0',
-                support_v4                       : 'com.android.support:support-v4:24.2.0',
-                support_v13                      : 'com.android.support:support-v13:24.2.0',
-                support_recyclerview             : 'com.android.support:recyclerview-v7:24.2.0',
-                support_cardview                 : 'com.android.support:cardview-v7:24.2.0',
-                support_annotation               : 'com.android.support:support-annotations:24.2.0',
-                support_design                   : 'com.android.support:design:24.2.0',
+                support_appcompat                : 'com.android.support:appcompat-v7:24.2.1',
+                support_v4                       : 'com.android.support:support-v4:24.2.1',
+                support_v13                      : 'com.android.support:support-v13:24.2.1',
+                support_recyclerview             : 'com.android.support:recyclerview-v7:24.2.1',
+                support_cardview                 : 'com.android.support:cardview-v7:24.2.1',
+                support_annotation               : 'com.android.support:support-annotations:24.2.1',
+                support_design                   : 'com.android.support:design:24.2.1',
 
                 supertoast                       : 'com.github.johnpersano:supertoasts:1.3.4@aar',
                 recyclerview_stickyheader        : 'com.eowise:recyclerview-stickyheaders:0.5.2@aar',
+                timehop_stickyheader_recyclerview: 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar',
                 shortcutbadger                   : 'me.leolin:ShortcutBadger:1.1.3@aar',
 
                 eventbus                         : 'de.greenrobot:eventbus:2.4.+',
@@ -45,7 +46,6 @@ ext.dependecies = [
                 glide_transformation             : 'jp.wasabeef:glide-transformations:2.0.1',
 
                 ormlite                          : 'com.j256.ormlite:ormlite-android:4.+',
-                parse                            : 'com.parse:parse-android:1.10.0',
 
                 rxandroid                        : 'io.reactivex:rxandroid:1.2.+',
                 rxjava                           : 'io.reactivex:rxjava:1.1.+',
@@ -56,9 +56,6 @@ ext.dependecies = [
 
                 // Calendar View
                 material_calendarview            : 'com.prolificinteractive:material-calendarview:1.4.0',
-
-                // Joda time
-                joda_time                        : 'net.danlew:android.joda:2.9.4',
 
                 //Retrofit
                 retrofit2                        : 'com.squareup.retrofit2:retrofit:2.0.0',
@@ -88,12 +85,11 @@ ext.dependecies = [
                 assertj_android                  : 'com.squareup.assertj:assertj-android:1.1.1',
                 assertj_android_support          : 'com.squareup.assertj:assertj-android-support-v4:1.1.1@aar',
                 assertj_android_appcompat        : 'com.squareup.assertj:assertj-android-appcompat-v7:1.1.1@aar',
-                assertj_android_recyclerview     : 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
-                timehop_stickyheader_recyclerview: 'com.timehop.stickyheadersrecyclerview:library:0.4.3@aar'
+                assertj_android_recyclerview     : 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar'
         ],
 
         buildscripts: [
-                android             : 'com.android.tools.build:gradle:2.1.3',
+                android             : 'com.android.tools.build:gradle:2.2.0',
                 fabric              : 'io.fabric.tools:gradle:1.+',
                 android_apt         : 'com.neenbedankt.gradle.plugins:android-apt:1.8',
                 google_services     : 'com.google.gms:google-services:3.0.0',

@@ -26,6 +26,7 @@ public class StickerRepository extends LockExecutorTemplate {
     public static final long DEFAULT_GROUP_ID_DAY_ZH_TW = 102;
     public static final long DEFAULT_GROUP_ID_DINGO = 103;
     public static final long DEFAULT_GROUP_ID_MALLOW_DOG = 104;
+    public static final long DEFAULT_GROUP_ID_BANILA = 105;
     public static final long DEFAULT_MOZZI_COUNT = 26;
 
     private static StickerRepository repository;
@@ -78,6 +79,9 @@ public class StickerRepository extends LockExecutorTemplate {
 
                 String[] mallowList = assetManager.list("stickers/default/mallow");
                 addStickerConetentIfNeed(dao, mallowList, DEFAULT_GROUP_ID_MALLOW_DOG);
+
+                String[] banilaList = assetManager.list("stickers/default/banila");
+                addStickerConetentIfNeed(dao, banilaList, DEFAULT_GROUP_ID_BANILA);
 
             } catch (SQLException e) {
                 e.printStackTrace();

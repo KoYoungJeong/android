@@ -28,16 +28,18 @@ public class InitialInfo {
     private Team team;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Poll poll;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Mention mention;
 
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Folder> folders;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Topic> topics;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Chat> chats;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Human> members;
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private Collection<Bot> bots;
 
     @DatabaseField
@@ -134,6 +136,14 @@ public class InitialInfo {
         this.poll = poll;
     }
 
+    public Mention getMention() {
+        return mention;
+    }
+
+    public void setMention(Mention mention) {
+        this.mention = mention;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @DatabaseTable(tableName = "initial_info_self")
@@ -199,6 +209,43 @@ public class InitialInfo {
             return "Poll{" +
                     "votableCount=" + votableCount +
                     '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @DatabaseTable(tableName = "initial_mention_info")
+    public static class Mention {
+        @DatabaseField(id = true)
+        private long id = 1;
+
+        @DatabaseField
+        private int unreadCount;
+        @DatabaseField
+        private long lastMentionedMessageId;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public int getUnreadCount() {
+            return unreadCount;
+        }
+
+        public void setUnreadCount(int unreadCount) {
+            this.unreadCount = unreadCount;
+        }
+
+        public long getLastMentionedMessageId() {
+            return lastMentionedMessageId;
+        }
+
+        public void setLastMentionedMessageId(long lastMentionedMessageId) {
+            this.lastMentionedMessageId = lastMentionedMessageId;
         }
     }
 

@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class AccountRepository extends LockExecutorTemplate {
 
-
     private static AccountRepository repository;
 
     synchronized public static AccountRepository getRepository() {
@@ -27,7 +26,6 @@ public class AccountRepository extends LockExecutorTemplate {
         }
         return repository;
     }
-
 
     public boolean upsertAccountAllInfo(ResAccountInfo accountInfo) {
         return execute(() -> {
@@ -302,5 +300,22 @@ public class AccountRepository extends LockExecutorTemplate {
             return false;
         });
 
+    }
+
+    public boolean isMine(long memberId) {
+        return execute(() -> {
+
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("memberId", memberId)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
     }
 }

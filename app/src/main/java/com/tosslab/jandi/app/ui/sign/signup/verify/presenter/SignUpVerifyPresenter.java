@@ -56,7 +56,7 @@ public class SignUpVerifyPresenter {
             SprinklrSignUp.sendLog();
             AnalyticsUtil.flushSprinkler();
 
-            view.moveToAccountHome();
+            view.moveToSelectTeam();
         } catch (VerifyNetworkException e) {
             view.hideProgress();
 

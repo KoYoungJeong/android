@@ -139,7 +139,7 @@ public class NameStatusPresenterTest {
         doAnswer(mock -> {
             o[0] = mock.getArguments()[0];
             return mock;
-        }).when(mockView).setUser(any());
+        }).when(mockView).setContent(any());
         presenter.onInitUserInfo();
 
         await().until(() -> o[0] != null);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -208,11 +209,13 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+
+
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
 
-        String entityName = TeamInfoLoader.getInstance()
-                .getName(entityId);
+        String entityName = TeamInfoLoader.getInstance().getName(entityId);
 
         searchSelectorViewController.setCurrentEntityNameText(entityName);
 

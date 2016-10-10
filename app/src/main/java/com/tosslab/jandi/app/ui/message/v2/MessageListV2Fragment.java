@@ -7,7 +7,6 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -41,6 +40,7 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
@@ -114,8 +115,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.members.MembersListActivity;
-import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -123,7 +122,7 @@ import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
-import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
@@ -181,8 +180,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 16. 2. 16..
@@ -483,7 +484,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         setUpActionbar();
         setHasOptionsMenu(true);
 
-        trackScreenView();
+        Completable.fromAction(this::trackScreenView)
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
 
         initPresenter();
 
@@ -542,17 +545,15 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     private void setUpActionbar() {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if (activity.getSupportActionBar() == null) {
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null) {
             Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
+            toolbar.setTitle(TeamInfoLoader.getInstance().getName(room.getEntityId()));
             activity.setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+        } else {
+            actionBar.setTitle(TeamInfoLoader.getInstance().getName(room.getEntityId()));
         }
 
-        ActionBar actionBar = activity.getSupportActionBar();
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
-        actionBar.setTitle(TeamInfoLoader.getInstance().getName(room.getEntityId()));
     }
 
     private void trackScreenView() {
@@ -806,22 +807,33 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         List<Long> roomIds = new ArrayList<>();
         roomIds.add(room.getRoomId());
 
-        if (mentionControlViewModel == null) {
-            mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
-                    etMessage,
-                    roomIds,
-                    MentionControlViewModel.MENTION_TYPE_MESSAGE);
-            mentionControlViewModel.setOnMentionShowingListener(
-                    isShowing -> {
-                        btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE);
-                    });
 
-            mentionControlViewModel.setUpMention(readyMessage);
-        } else {
-            mentionControlViewModel.refreshSelectableMembers(teamId, roomIds);
+        if (mentionControlViewModel == null) {
+
+            Completable.fromAction(() -> {
+                mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
+                        etMessage,
+                        roomIds,
+                        MentionControlViewModel.MENTION_TYPE_MESSAGE);
+            }).subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+
+                        mentionControlViewModel.setOnMentionShowingListener(
+                                isShowing -> {
+                                    btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE);
+                                });
+
+                        mentionControlViewModel.setUpMention(readyMessage);
+
+                        mentionControlViewModel.registClipboardListener();
+                    });
         }
 
-        mentionControlViewModel.registClipboardListener();
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.registClipboardListener();
+        }
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1091,10 +1103,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     private void showDummyMessageDialog(DummyMessageLink dummyMessageLink) {
         long localId = dummyMessageLink.getLocalId();
-        DummyMessageDialog_.builder()
-                .localId(localId)
-                .build()
-                .show(getActivity().getFragmentManager(), "dialog");
+        DummyMessageDialog.showDialog(getChildFragmentManager(), localId);
     }
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
@@ -1706,11 +1715,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (!isForeground) {
             return;
         }
-        MembersListActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .entityId(entityId)
-                .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
-                .start();
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .room_id(entityId)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.InviteTeamMembers);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -1788,7 +1800,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateMentionInfo() {
-        mentionControlViewModel.refreshMembers(Arrays.asList(room.getRoomId()));
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.refreshMembers(Arrays.asList(room.getRoomId()));
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -1834,6 +1848,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         view.findViewById(R.id.btn_chat_choose_member_empty)
                 .setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
 
+    }
+
+    public void onEvent(RetrieveTopicListEvent event) {
+        updateMentionInfo();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

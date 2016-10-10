@@ -192,10 +192,19 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
 
                     pollDetailView.initPollDetailExtras(poll);
 
-                }, e -> {
+                }, t -> {
                     pollDetailView.dismissProgress();
-                    LogUtil.e(TAG, Log.getStackTraceString(e));
-                    pollDetailView.showUnExpectedErrorToast();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getResponseCode() == 40000) {
+                            pollDetailView.showInvalidPollToast();
+                        } else {
+                            pollDetailView.showUnExpectedErrorToast();
+                        }
+                    } else {
+                        pollDetailView.showUnExpectedErrorToast();
+                    }
+                    LogUtil.e(TAG, Log.getStackTraceString(t));
                     pollDetailView.finish();
                 });
 

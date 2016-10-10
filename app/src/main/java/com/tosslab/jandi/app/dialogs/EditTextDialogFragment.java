@@ -27,8 +27,6 @@ import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.EFragment;
-
 import de.greenrobot.event.EventBus;
 
 /**
@@ -36,7 +34,6 @@ import de.greenrobot.event.EventBus;
  * 하나의 EditText 와 확인, 취소 버튼이 존재하는 AlertDialogFragment
  * Entity의 생성, 혹은 수정에 사용된다.
  */
-@EFragment
 public class EditTextDialogFragment extends DialogFragment {
     public final static int ACTION_CREATE_TOPIC = 0;
     public final static int ACTION_MODIFY_TOPIC = 1;
@@ -225,6 +222,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_NEW_EMAIL:
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 input.setHint(R.string.jandi_member_profile_email);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(!FormatConverter.isInvalidEmailString(input.getText().toString()));
                 break;
             default:
                 input.setInputType(InputType.TYPE_CLASS_TEXT);

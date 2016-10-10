@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.ui.search.file.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.file.dagger.DaggerFileSearchComponent;
 import com.tosslab.jandi.app.ui.search.file.dagger.FileSearchModule;
 import com.tosslab.jandi.app.ui.search.file.presenter.FileSearchPresenter;
-import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -125,7 +124,6 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
                 resources.getDisplayMetrics());
 
 
-
         addFragments();
         initSearchSelectView();
         hideSoftInput();
@@ -205,11 +203,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         fileSearchPresenter.onSearchVoice();
 
         if (TextUtils.isEmpty(getSearchText())) {
-            if (searchSelectView instanceof MessageSearchFragment) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.DeleteInputField);
-            } else {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.DeleteInputField);
-            }
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.DeleteInputField);
         }
     }
 
@@ -264,11 +258,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
         searchSelectView.onNewQuery(searchText);
 
-        if (searchSelectView instanceof MessageSearchFragment) {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MsgSearch, AnalyticsValue.Action.SearchInputField);
-        } else {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.SearchInputField);
-        }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FilesSearch, AnalyticsValue.Action.SearchInputField);
 
     }
 

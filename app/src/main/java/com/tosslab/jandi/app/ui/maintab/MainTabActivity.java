@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +27,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
+import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -39,11 +39,10 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.push.PushTokenRegister;
+import com.tosslab.jandi.app.services.keep.KeepService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -75,6 +74,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -83,6 +83,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
@@ -134,6 +135,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @InjectExtra
     int tabIndex = -1;
 
+    @Nullable
+    @InjectExtra
+    boolean isLoadInitialInfo = false;
+
     private long selectedEntity = -1;
 
     private OfflineLayer offlineLayer;
@@ -148,6 +153,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_tab);
 
         if (AccountRepository.getRepository().getSelectedTeamInfo() == null) {
@@ -188,6 +194,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             EventBus.getDefault().register(this);
         });
 
+        KeepService.start(this);
         initFirebaseUserProperties();
     }
 
@@ -197,13 +204,24 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         FirebaseAnalytics.getInstance(this)
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
-        if (!PushTokenRepository.getInstance().hasGcmPushToken()) {
-            String token = FirebaseInstanceId.getInstance().getToken();
-            if (!TextUtils.isEmpty(token)) {
-                PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
-                PushTokenRegister.getInstance().updateToken();
+        Completable.fromCallable(() -> {
+
+            if ((System.currentTimeMillis() - JandiPreference.getLatestFcmTokenUpdate()) > 1000 * 60 * 60 * 6) {
+                return Completable.complete();
+            } else {
+                return Completable.never();
             }
-        }
+
+        }).subscribeOn(Schedulers.newThread())
+                .subscribe(() -> {
+                    try {
+                        FirebaseInstanceId.getInstance().deleteInstanceId();
+                        PushTokenRepository.getInstance().deleteGcmToken();
+                        FirebaseInstanceId.getInstance().getToken();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }, Throwable::printStackTrace);
     }
 
     private void initSelectedEntity() {
@@ -290,16 +308,15 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private void initTabBadges() {
         mainTabPresenter.onInitTopicBadge();
         mainTabPresenter.onInitChatBadge();
-        mainTabPresenter.onInitMyPageBadge();
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     private void initTabs() {
         List<TabInfo> tabInfos = TabFactory.getTabs(selectedEntity);
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
-        viewPager.setOffscreenPageLimit(tabInfos.size());
         viewPager.setAdapter(tabPagerAdapter);
-
+//        viewPager.setOffscreenPageLimit(tabInfos.size());
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -323,6 +340,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);
 
                 JandiPreference.setLastSelectedTab(position);
+
+                if (position == MypageTabInfo.INDEX) {
+                    mainTabPresenter.onInitMyPageBadge(false);
+                }
             }
 
             @Override
@@ -410,17 +431,29 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     public void onEventMainThread(TopicBadgeEvent event) {
         int count = event.getCount();
+        if (count > 999) {
+            count = 999;
+        }
         setTopicBadge(count);
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
         int count = event.getCount();
+        if (count > 999) {
+            count = 999;
+        }
         setChatBadge(count);
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         int count = event.getBadgeCount();
+        if (count > 999) {
+            count = 999;
+        }
         setMypageBadge(count);
+    }
+    public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
 
     public void onEventMainThread(TeamInfoChangeEvent event) {

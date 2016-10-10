@@ -62,7 +62,7 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
-import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
@@ -71,7 +71,6 @@ import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -80,13 +79,10 @@ import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -942,10 +938,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public void showDummyMessageDialog(long localId) {
-        DummyMessageDialog_.builder()
-                .localId(localId)
-                .build()
-                .show(getActivity().getFragmentManager(), "dialog");
+        DummyMessageDialog.showDialog(getChildFragmentManager(), localId);
 
     }
 

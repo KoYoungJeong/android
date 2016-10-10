@@ -28,7 +28,7 @@ public class NameChangeFragmentTest {
     public void setUp() throws Exception {
         rule.launchActivity(Henson.with(InstrumentationRegistry.getTargetContext())
                 .gotoNameStatusActivity()
-                .type(NameStatusActivity.EXTRA_TYPE_NAME)
+                .type(NameStatusActivity.EXTRA_TYPE_NAME_FOR_TEAM_PROFILE)
                 .build());
 
         NameStatusActivity activity = rule.getActivity();
@@ -65,7 +65,7 @@ public class NameChangeFragmentTest {
     @Test
     public void setUser() throws Throwable {
         User me = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
-        rule.runOnUiThread(() -> fragment.setUser(me));
+        rule.runOnUiThread(() -> fragment.setContent(me.getName()));
 
         assertThat(fragment.etName).hasTextString(me.getName());
     }

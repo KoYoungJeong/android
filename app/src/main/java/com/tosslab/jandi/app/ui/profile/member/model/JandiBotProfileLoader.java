@@ -2,11 +2,9 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -30,7 +28,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public void setDescription(TextView tvProfileDescription, Member member) {
-        tvProfileDescription.setText(R.string.jandi_bot_status);
+        tvProfileDescription.setText(R.string.common_profilemodal_jandi_botstatus);
     }
 
     @Override
@@ -43,23 +41,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
-        RelativeLayout.LayoutParams layoutParams =
-                ((RelativeLayout.LayoutParams) ivProfileImageSmall.getLayoutParams());
-        layoutParams.height = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                100f,
-                context.getResources().getDisplayMetrics());
-
-        if (!isLandscape()) {
-            int margin = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    60f,
-                    context.getResources().getDisplayMetrics());
-            layoutParams.topMargin = -margin;
-        }
-        ivProfileImageSmall.setLayoutParams(layoutParams);
-
-        ivProfileImageSmall.setImageResource(R.drawable.bot_80x100);
+        ivProfileImageSmall.setImageResource(R.drawable.logotype_80);
     }
 
     @Override

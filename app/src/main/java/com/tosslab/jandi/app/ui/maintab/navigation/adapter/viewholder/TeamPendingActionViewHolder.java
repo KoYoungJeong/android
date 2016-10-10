@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;

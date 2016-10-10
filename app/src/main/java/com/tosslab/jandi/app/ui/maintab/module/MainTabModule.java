@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.module;
 
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.model.MainTabModel;
 import com.tosslab.jandi.app.ui.maintab.presenter.MainTabPresenter;
@@ -28,8 +29,8 @@ public class MainTabModule {
     }
 
     @Provides
-    public MainTabModel providesMainTabModel(Lazy<ConfigApi> configApi) {
-        return new MainTabModel(configApi);
+    public MainTabModel providesMainTabModel(Lazy<ConfigApi> configApi, Lazy<StartApi> startApi) {
+        return new MainTabModel(configApi, startApi);
     }
 
     @Provides

@@ -24,7 +24,10 @@ public class CreateTeamPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment;
         switch (position) {
             case 0:
-                return new InsertTeamInfoFragment();
+                bundle.putInt(InsertTeamInfoFragment.MODE, InsertTeamInfoFragment.MODE_FROM_MAIN_LIST);
+                fragment = new InsertTeamInfoFragment();
+                fragment.setArguments(bundle);
+                return fragment;
             case 1:
                 bundle.putString(InsertProfileFirstPageFragment.MODE, InsertProfileFirstPageFragment.MODE_TEAM_CREATE);
                 fragment = new InsertProfileFirstPageFragment();

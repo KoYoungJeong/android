@@ -8,6 +8,8 @@ public class StringCompareUtil {
     public static int compare(String string1, String string2) {
         int end = Math.min(string1.length(), string2.length());
         char c1, c2;
+        int langType = FirstCharacterUtil.getLocaleType();
+
         for (int i = 0; i < end; ++i) {
             c1 = string1.charAt(i);
             c2 = string2.charAt(i);
@@ -42,20 +44,33 @@ public class StringCompareUtil {
                 return c1 - c2;
             }
 
+
+            int localeC1 = FirstCharacterUtil.getLocale(c1);
+            int localeC2 = FirstCharacterUtil.getLocale(c2);
+
             // 같은 캐릭터라면 대문자가 먼저 나오도록
-            if (Character.isLetter(c1) && Character.isLetter(c2)) {
+            if (localeC1 == FirstCharacterUtil.TYPE_ENGLISH
+                    && localeC2 == FirstCharacterUtil.TYPE_ENGLISH) {
+                // 둘다 영문인 경우
                 if (getAbsChar(c1) == getAbsChar(c2)) {
                     return c1 - c2;
                 }
-            } else if (Character.isLetter(c1)) {
-                return -1;
-            } else if (Character.isLetter(c2)) {
-                return 1;
+
+            } else {
+
+                if (localeC1 == langType && localeC2 == langType) {
+                    return getAbsChar(c1) - getAbsChar(c2);
+                } else if (langType == localeC1) {
+                    return -1;
+                } else if (langType == localeC2) {
+                    return 1;
+                }
+
             }
 
             return getAbsChar(c1) - getAbsChar(c2);
         }
-        return 1;
+        return 0;
     }
 
     private static int getAbsChar(char c) {

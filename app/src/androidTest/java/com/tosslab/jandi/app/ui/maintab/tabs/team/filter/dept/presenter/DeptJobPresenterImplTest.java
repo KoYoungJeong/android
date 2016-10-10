@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.presenter;
 
-import android.util.Pair;
-
 import com.tosslab.jandi.app.local.orm.domain.MemberRecentKeyword;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.model.DeptJobModel;
 
 import org.junit.Before;
@@ -64,7 +63,7 @@ public class DeptJobPresenterImplTest {
 
     @Test
     public void addDatas_more_than_one() throws Exception {
-        presenter.addDatas(Arrays.asList(Pair.create("1", "1")));
+        presenter.addDatas(Arrays.asList(DeptJob.create("1","1",1)));
 
         verify(presenter.deptJobDataModel).clear();
         verify(presenter.view).dismissEmptyView();

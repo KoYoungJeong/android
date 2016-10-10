@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -45,7 +47,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter.MainTopicListPresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
@@ -61,6 +62,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -223,9 +225,9 @@ public class MainTopicListFragment extends Fragment
                 .subscribe(i -> {
                     selectedEntity = -2;
                     setSelectedItem(selectedEntity);
-                    TopicCreateActivity_
-                            .intent(MainTopicListFragment.this)
-                            .start();
+                    startActivity(Henson.with(getActivity())
+                            .gotoTopicCreateActivity()
+                            .build());
                     getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
                             AnalyticsValue.Action.CreateNewTopic);

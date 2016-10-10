@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.model;
 import android.text.SpannableStringBuilder;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import org.junit.Before;
@@ -28,24 +29,23 @@ public class DeptJobModelTest {
 
     @Test
     public void textToSpan_has_span() throws Exception {
-        TestSubscriber<List<CharSequence>> subscriber = TestSubscriber.create();
+        TestSubscriber<DeptJob> subscriber = TestSubscriber.create();
         Observable.just("abc", "bac", "cba", "aaa")
-                .collect((Func0<ArrayList<String>>) ArrayList::new, List::add)
+                .map(it -> Pair.create(it, 1))
                 .compose(deptJobModel.textToSpan("a"))
                 .subscribe(subscriber);
 
         subscriber.awaitTerminalEvent();
 
         subscriber.assertValueCount(1);
-        List<List<CharSequence>> onNextEvents = subscriber.getOnNextEvents();
-        List<CharSequence> charSequences = onNextEvents.get(0);
-        assertThat(charSequences).hasSize(4)
-                .extracting(CharSequence::toString)
+        List<DeptJob> onNextEvents = subscriber.getOnNextEvents();
+        assertThat(onNextEvents).hasSize(4)
+                .extracting(DeptJob::getName)
                 .contains("abc", "bac", "cba", "aaa");
 
-        for (CharSequence charSequence : charSequences) {
-            HighlightSpannable[] spans = new SpannableStringBuilder(charSequence)
-                    .getSpans(0, charSequence.length(), HighlightSpannable.class);
+        for (DeptJob charSequence : onNextEvents) {
+            HighlightSpannable[] spans = new SpannableStringBuilder(charSequence.getName())
+                    .getSpans(0, charSequence.getName().length(), HighlightSpannable.class);
 
             assertThat(spans.length).as("%s", charSequence.toString()).isGreaterThanOrEqualTo(1);
         }
@@ -55,24 +55,22 @@ public class DeptJobModelTest {
 
     @Test
     public void textToSpan_has_nothing() throws Exception {
-        TestSubscriber<List<CharSequence>> subscriber = TestSubscriber.create();
+        TestSubscriber<DeptJob> subscriber = TestSubscriber.create();
         Observable.just("abc", "bac", "cba", "aaa")
-                .collect((Func0<ArrayList<String>>) ArrayList::new, List::add)
+                .map(it -> Pair.create(it, 1))
                 .compose(deptJobModel.textToSpan("1"))
                 .subscribe(subscriber);
 
         subscriber.awaitTerminalEvent();
 
-        subscriber.assertValueCount(1);
-        List<List<CharSequence>> onNextEvents = subscriber.getOnNextEvents();
-        List<CharSequence> charSequences = onNextEvents.get(0);
-        assertThat(charSequences).hasSize(4)
-                .extracting(CharSequence::toString)
+        List<DeptJob> onNextEvents = subscriber.getOnNextEvents();
+        assertThat(onNextEvents).hasSize(4)
+                .extracting(DeptJob::getName)
                 .contains("abc", "bac", "cba", "aaa");
 
-        for (CharSequence charSequence : charSequences) {
-            HighlightSpannable[] spans = new SpannableStringBuilder(charSequence)
-                    .getSpans(0, charSequence.length(), HighlightSpannable.class);
+        for (DeptJob charSequence : onNextEvents) {
+            HighlightSpannable[] spans = new SpannableStringBuilder(charSequence.getName())
+                    .getSpans(0, charSequence.getName().length(), HighlightSpannable.class);
 
             assertThat(spans.length).as("%s", charSequence.toString()).isEqualTo(0);
         }
@@ -90,8 +88,6 @@ public class DeptJobModelTest {
                 .subscribe(subscriber);
 
         subscriber.awaitTerminalEvent();
-
-        subscriber.assertValueCount(1);
 
         List<Pair<CharSequence, String>> pairs = subscriber.getOnNextEvents().get(0);
 

@@ -68,7 +68,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.newThread())
                 .map(String::toLowerCase)
                 .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
                         .compose(sort())
@@ -130,15 +130,24 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     if (selectMode) {
                         return StringCompareUtil.compare(entity.getName(), entity2.getName());
                     } else {
-                        if (entity.getChatChooseItem().isStarred()
-                                && entity.getChatChooseItem().getEntityId() != myId) {
+                        boolean starredLeft = entity.getChatChooseItem().isStarred();
+                        boolean starredRight = entity2.getChatChooseItem().isStarred();
+
+
+                        long entityIdLeft = entity.getChatChooseItem().getEntityId();
+                        long entityIdRight = entity2.getChatChooseItem().getEntityId();
+
+                        if (entityIdLeft != myId && entityIdRight != myId
+                                && starredLeft && starredRight) {
+                            return StringCompareUtil.compare(entity.getName(), entity2.getName());
+                        } else if (starredLeft && entityIdLeft != myId) {
                             return -1;
-                        } else if (entity2.getChatChooseItem().isStarred()
-                                && entity2.getChatChooseItem().getEntityId() != myId) {
+                        } else if (starredRight && entityIdRight != myId) {
                             return 1;
                         } else {
                             return StringCompareUtil.compare(entity.getName(), entity2.getName());
                         }
+
                     }
                 }
         );
@@ -240,7 +249,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     public void inviteToggle() {
         view.showPrgoress();
         teamMemberModel.deferInvite(toggledIds, roomId)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());

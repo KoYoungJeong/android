@@ -6,7 +6,7 @@ package com.tosslab.jandi.app.ui.team.create.teaminfo.presenter;
 public interface InsertTeamInfoPresenter {
     void checkEmailInfo();
 
-    void createTeam(String teamName, String teamDomain);
+    void createTeam(String teamName, String teamDomain, int mode);
 
     interface View {
 
@@ -27,6 +27,8 @@ public interface InsertTeamInfoPresenter {
         void failCreateTeam(int statusCode);
 
         void onMoveInsertProfilePage();
+
+        void onMoveMainTabActivity();
 
         void finish();
     }

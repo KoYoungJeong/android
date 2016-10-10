@@ -125,7 +125,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
             deptJobPresenter.onItemClick(position);
             startActivityForResult(Henson.with(getActivity())
                     .gotoDeptJobGroupActivity()
-                    .keyword(((DeptJobAdapter) adapter1).getItem(position).first.toString())
+                    .keyword(((DeptJobAdapter) adapter1).getItem(position).getName().toString())
                     .type(type)
                     .selectMode(selectMode)
                     .pickMode(selectMode && roomId < 0)

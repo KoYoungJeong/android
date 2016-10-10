@@ -100,6 +100,16 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             }
 
+            if (isSelectedMode) {
+                holder.cbUserSelected.setOnClickListener(v -> {
+                    if (onRecyclerItemClickListener != null) {
+                        onRecyclerItemClickListener.onItemClick(viewHolder.itemView, TeamMemberAdapter.this, position);
+                    }
+                });
+            } else {
+                holder.cbUserSelected.setOnClickListener(null);
+            }
+
         }
         viewHolder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
