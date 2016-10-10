@@ -846,7 +846,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @Override
     public void showCommentUnStarredSuccessToast() {
-        ColoredToast.show(R.string.jandi_message_no_starred);
+        ColoredToast.show(R.string.jandi_unpinned_message);
     }
 
     @Override

@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_weight="1"
-                    android:text="@string/jandi_poll_multiple"
+                    android:text="@string/jandi_poll_multiple_available"
                     android:textColor="@color/jandi_text"
                     android:textSize="16sp" />
 

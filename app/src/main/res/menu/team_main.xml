@@ -6,7 +6,7 @@
         android:id="@+id/menu_team_add"
         android:icon="@drawable/actionbar_icon_add"
         android:orderInCategory="100"
-        android:title="@string/jandi_action_invite"
+        android:title="@string/jandi_invitation"
         app:showAsAction="always" />
 
     <item

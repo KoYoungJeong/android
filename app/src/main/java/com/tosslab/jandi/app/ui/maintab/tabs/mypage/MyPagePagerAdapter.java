@@ -46,7 +46,7 @@ public class MyPagePagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return resources.getString(R.string.jandi_mention_mentions);
             case 1:
-                return resources.getString(R.string.jandi_starred_stars);
+                return resources.getString(R.string.jandi_starred_star);
             case 2:
                 return resources.getString(R.string.jandi_poll);
         }

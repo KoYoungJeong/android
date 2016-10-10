@@ -81,7 +81,7 @@ public class SearchStickyHeaderViewHolder extends RecyclerView.ViewHolder {
             }
         } else if (type == TYPE_MESSAGE) {
             tvStickyTitle.setText(
-                    JandiApplication.getContext().getString(R.string.jandi_messages)
+                    JandiApplication.getContext().getString(R.string.jandi_title_message)
             );
             tvStickyCount.setVisibility(View.GONE);
             ivFolderIcon.setVisibility(View.GONE);

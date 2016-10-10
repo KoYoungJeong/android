@@ -57,7 +57,7 @@
             <com.tosslab.jandi.app.views.profile.ProfileLabelView
                 android:id="@+id/profile_user_realname"
                 style="@style/JandiMemberProfile.Profile"
-                app:textTitle="@string/jandi_entity_create_entity_name" />
+                app:textTitle="@string/jandi_title_name" />
 
             <View
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
             <com.tosslab.jandi.app.views.profile.ProfileLabelView
                 android:id="@+id/profile_user_email"
                 style="@style/JandiMemberProfile.Profile"
-                app:textTitle="@string/jandi_member_profile_email" />
+                app:textTitle="@string/jandi_profile_email" />
 
             <View
                 android:layout_width="match_parent"

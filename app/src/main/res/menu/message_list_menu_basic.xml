@@ -5,21 +5,18 @@
     <item
         android:id="@+id/action_entity_search"
         android:icon="@drawable/actionbar_icon_search"
-        android:showAsAction="always"
         android:title="@string/jandi_action_search"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_entity_move_file_list"
         android:icon="@drawable/actionbar_icon_file"
-        android:showAsAction="always"
-        android:title="@string/jandi_starred_files"
+        android:title="@string/jandi_tab_file"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_entity_more"
         android:icon="@drawable/actionbar_icon_menu"
-        android:showAsAction="always"
-        android:title="@string/jandi_action_more"
+        android:title="@string/jandi_tab_more"
         app:showAsAction="always" />
 
 </menu>
