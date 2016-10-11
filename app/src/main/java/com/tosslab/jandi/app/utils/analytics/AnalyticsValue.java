@@ -249,7 +249,7 @@ public class AnalyticsValue {
         TopicSubMenu_Notification,
         SubmitTeam, GoToJANDIMain,
         SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount,
-        IncorrectPasscode, CorrectPasscode, DeleteaFolder, ArrangeaFolder,
+        IncorrectPasscode, CorrectPasscode, DeleteaFolder, ArrangeaFolder, TapLinkPreview,
 
     }
 
@@ -261,6 +261,6 @@ public class AnalyticsValue {
         ongoing, SubmitATeam, completed,
         AllRoom, JoinedRoom, Zipfiles, SelectRoom,
         PhotoLibrary, Camera, ChooseCharacter,
-        Star, Unstar
+        Star, text, image, Unstar
     }
 }

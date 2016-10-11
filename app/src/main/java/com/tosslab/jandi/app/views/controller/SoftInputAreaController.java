@@ -33,6 +33,8 @@ public class SoftInputAreaController {
     private OnSoftInputAreaShowingListener onSoftInputAreaShowingListener;
 
     private ExpectPanel expectPanel = ExpectPanel.SOFT_INPUT;
+    private OnUploadButtonClickListener onUploadButtonClickListener;
+    private OnStickerButtonClickListener onStickerButtonClickListener;
 
     public SoftInputAreaController(StickerViewModel stickerViewModel,
                                    UploadMenuViewModel uploadMenuViewModel,
@@ -149,6 +151,9 @@ public class SoftInputAreaController {
                 replaceSoftInputAreaAndActionButtons(expectPanel);
             }
 
+            if (onStickerButtonClickListener != null) {
+                onStickerButtonClickListener.onStickerButtonClick();
+            }
         });
     }
 
@@ -164,6 +169,9 @@ public class SoftInputAreaController {
                 replaceSoftInputAreaAndActionButtons(expectPanel);
             }
 
+            if (onUploadButtonClickListener != null) {
+                onUploadButtonClickListener.onUploadButtonClick();
+            }
         });
     }
 
@@ -274,12 +282,28 @@ public class SoftInputAreaController {
         return vgSoftInputArea.getLayoutParams().height;
     }
 
+    public void setOnUploadButtonClickListener(OnUploadButtonClickListener onUploadButtonClickListener) {
+        this.onUploadButtonClickListener = onUploadButtonClickListener;
+    }
+
+    public void setOnStickerButtonClickListener(OnStickerButtonClickListener onStickerButtonClickListener) {
+        this.onStickerButtonClickListener = onStickerButtonClickListener;
+    }
+
     public enum ExpectPanel {
         UPLOAD, STICKER, SOFT_INPUT
     }
 
     public interface OnSoftInputAreaShowingListener {
         void onShowing(boolean isShowing, int softInputHeight);
+    }
+
+    public interface OnUploadButtonClickListener {
+        void onUploadButtonClick();
+    }
+
+    public interface OnStickerButtonClickListener {
+        void onStickerButtonClick();
     }
 
 }

@@ -89,6 +89,7 @@ public class StickerViewModel {
             vgStickerGroups.getChildAt(idx).setOnClickListener(view -> {
                 setupGroupState(finalIdx, vgStickerGroups);
                 updateStickerItems(finalIdx, pagerStickerItems);
+                sendAnalyticsAction(finalIdx);
             });
         }
     }
@@ -96,6 +97,7 @@ public class StickerViewModel {
     private void updateStickerItems(int groupIdx, ViewPager vgStickerItems) {
         List<ResMessages.StickerContent> stickers;
         StickerRepository stickerRepository = StickerRepository.getRepository();
+
         switch (groupIdx) {
             case STICKER_GROUP_RECENT:
                 stickers = stickerRepository.getRecentStickers();
@@ -193,17 +195,41 @@ public class StickerViewModel {
             } else {
                 vgStickerGroups.getChildAt(idx).setSelected(true);
             }
+        }
+    }
 
-            AnalyticsValue.Screen screen;
-            AnalyticsValue.Action action;
-            screen = getScreen();
+    private void sendAnalyticsAction(int groupIdx) {
+        AnalyticsValue.Screen screen = getScreen();
 
-            if (groupIdx == 0) {
-                action = AnalyticsValue.Action.Sticker_RecentTab;
-            } else {
-                action = AnalyticsValue.Action.Sticker_StickerTab;
+        if (groupIdx == 0) {
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.Sticker_RecentTab);
+        } else {
+            String group;
+            switch (groupIdx) {
+                case STICKER_GROUP_BANILA:
+                    group = "(Dingo2)";
+                    break;
+                case STICKER_GROUP_MALLOW:
+                    group = "(Mallow)";
+                    break;
+                case STICKER_GROUP_DINGO:
+                    group = "(Dingo)";
+                    break;
+                case STICKER_GROUP_DAY:
+                    group = "(Day_Emily)";
+                    break;
+                case STICKER_GROUP_MOZZI:
+                    group = "(Mozzi)";
+                    break;
+                default:
+                    group = "";
             }
-            AnalyticsUtil.sendEvent(screen.name(), action.name() + String.valueOf(groupIdx), null);
+
+            AnalyticsValue.Action action = AnalyticsValue.Action.Sticker_StickerTab;
+            String resultAction = new StringBuilder(action.name())
+                    .append(group)
+                    .toString();
+            AnalyticsUtil.sendEvent(screen.name(), resultAction, "");
         }
     }
 

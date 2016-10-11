@@ -40,6 +40,8 @@ public class JandiTelSpan extends UnderlineSpan implements ClickableSpannable {
             ColoredToast.show(R.string.jandi_err_unexpected);
             e.printStackTrace();
         }
+
+
     }
 
     public String getPhoneNumber() {

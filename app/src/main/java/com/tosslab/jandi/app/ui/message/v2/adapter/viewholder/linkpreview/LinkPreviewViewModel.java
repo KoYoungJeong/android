@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -15,10 +14,12 @@ import android.widget.TextView;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.LinkPreviewClickEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 18..
@@ -32,7 +33,6 @@ public class LinkPreviewViewModel {
     private TextView tvDescription;
 
     private ImageView ivThumb;
-    private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
     private ViewGroup vgLinkPreview;
@@ -85,7 +85,16 @@ public class LinkPreviewViewModel {
             tvDescription.setVisibility(View.GONE);
         }
 
-        onLinkPreviewClickListener.setLinkUrl(linkPreview.linkUrl);
+        // LinkPreview 클릭시 이벤트코드 삽입과 액티비티를 필요로 해서 불가피하게 EventBus 사용
+        final String linkUrl = linkPreview.linkUrl;
+        ivThumb.setOnClickListener(v -> {
+            EventBus.getDefault().post(
+                    new LinkPreviewClickEvent(linkUrl, LinkPreviewClickEvent.TouchFrom.IMAGE));
+        });
+        vgSummary.setOnClickListener(v -> {
+            EventBus.getDefault().post(
+                    new LinkPreviewClickEvent(linkUrl, LinkPreviewClickEvent.TouchFrom.IMAGE));
+        });
 
         boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
 
@@ -123,48 +132,15 @@ public class LinkPreviewViewModel {
     }
 
     private void initInnerView(ViewGroup vgLinkPreview) {
-        vgLinkPreview.setOnClickListener(
-                onLinkPreviewClickListener = new OnLinkPreviewClickListener(context));
-
         tvTitle = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_title);
         tvDomain = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) vgLinkPreview.findViewById(R.id.tv_linkpreview_description);
         ivThumb = (ImageView) vgLinkPreview.findViewById(R.id.iv_linkpreview_thumb);
-        vDividier = vgLinkPreview.findViewById(R.id.v_snippet_divider);
         vgSummary = (LinearLayout) vgLinkPreview.findViewById(R.id.vg_snippet_summary);
+        vDividier = vgLinkPreview.findViewById(R.id.v_snippet_divider);
     }
 
     private boolean useThumbnail(String imagUrl) {
         return !TextUtils.isEmpty(imagUrl) && imagUrl.contains("linkpreview-thumb");
-    }
-
-    private static class OnLinkPreviewClickListener implements View.OnClickListener {
-        private final Context context;
-        private String linkUrl;
-
-        public OnLinkPreviewClickListener(Context context) {
-
-            this.context = context;
-        }
-
-        public void setLinkUrl(String linkUrl) {
-            this.linkUrl = linkUrl;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (TextUtils.isEmpty(linkUrl)) {
-                return;
-            }
-
-            ApplicationUtil.startWebBrowser(context, linkUrl);
-
-            if (context instanceof Activity) {
-                Activity activity = ((Activity) context);
-                activity.overridePendingTransition(
-                        R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
-            }
-
-        }
     }
 }

@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.events.messages.AnnouncementUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
 import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
+import com.tosslab.jandi.app.events.messages.LinkPreviewClickEvent;
 import com.tosslab.jandi.app.events.messages.LinkPreviewUpdateEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
@@ -135,6 +136,7 @@ import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -524,6 +526,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 stickerViewModel, uploadMenuViewModel,
                 vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
                 etMessage);
+        softInputAreaController.setOnUploadButtonClickListener(() -> {
+            sendAnalyticsEvent(AnalyticsValue.Action.Upload);
+        });
+        softInputAreaController.setOnStickerButtonClickListener(() -> {
+            sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
+        });
         softInputAreaController.init();
     }
 
@@ -644,6 +652,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         AnalyticsUtil.sendEvent(screen, action);
     }
 
+    private void sendAnalyticsEvent(AnalyticsValue.Action action, AnalyticsValue.Label label) {
+        AnalyticsValue.Screen screen = isInDirectMessage()
+                ? AnalyticsValue.Screen.Message : AnalyticsValue.Screen.TopicChat;
+        AnalyticsUtil.sendEvent(screen, action, label);
+    }
+
     private void initFileUploadStateViewModel() {
         fileUploadStateViewModel.setEntityId(entityId);
     }
@@ -710,6 +724,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         // 아이템 롱클릭했을때 액션
         messageAdapter.setOnItemLongClickListener((adapter, position) -> {
             onMessageLongClick(messageAdapter.getItem(position));
+            sendAnalyticsEvent(AnalyticsValue.Action.MsgLongTap);
             return true;
         });
 
@@ -1529,6 +1544,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
+    public void onEvent(LinkPreviewClickEvent event) {
+        AnalyticsValue.Label label = AnalyticsValue.Label.text;
+        if (event.getTouchFrom() == LinkPreviewClickEvent.TouchFrom.IMAGE) {
+            label = AnalyticsValue.Label.image;
+        }
+
+        sendAnalyticsEvent(AnalyticsValue.Action.TapLinkPreview, label);
+
+        String linkUrl = event.getLinkUrl();
+        if (TextUtils.isEmpty(linkUrl)) {
+            return;
+        }
+
+        ApplicationUtil.startWebBrowser(getActivity(), linkUrl);
+
+        getActivity().overridePendingTransition(
+                R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
+    }
+
     public void onEvent(ProfileChangeEvent event) {
         refreshMessages();
     }
@@ -1577,12 +1611,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             case STARRED:
                 messageListPresenter.onMessageStarredAction(messageId);
 
-                sendAnalyticsEvent(AnalyticsValue.Action.MsgLongTap_Star);
+                sendAnalyticsEvent(
+                        AnalyticsValue.Action.MsgLongTap_Star, AnalyticsValue.Label.On);
                 break;
             case UNSTARRED:
                 messageListPresenter.onMessageUnStarredAction(messageId);
 
-                sendAnalyticsEvent(AnalyticsValue.Action.MsgLongTap_Unstar);
+                sendAnalyticsEvent(
+                        AnalyticsValue.Action.MsgLongTap_Star, AnalyticsValue.Label.Off);
                 break;
         }
     }
