@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.Henson;
 import java.util.List;
 
 @HensonNavigable
-public class KeepService extends Service {
+public class KeepAliveService extends Service {
 
     // Application 을 계속 유지해서 앱의 로딩을 빠르게 하기 위함
     public static void start(Context context) {
@@ -24,7 +24,7 @@ public class KeepService extends Service {
         }
 
         context.startService(Henson.with(context)
-                .gotoKeepService()
+                .gotoKeepAliveService()
                 .build());
     }
 
@@ -37,7 +37,7 @@ public class KeepService extends Service {
             String packageName = runningService.service.getPackageName();
             String className = runningService.service.getClassName();
             if (TextUtils.equals(packageName, context.getPackageName())
-                    && TextUtils.equals(className, KeepService.class.getName())) {
+                    && TextUtils.equals(className, KeepAliveService.class.getName())) {
                 return true;
             }
         }
@@ -51,11 +51,11 @@ public class KeepService extends Service {
         return null;
     }
 
-    private static final String TAG = "KeepService";
+    private static final String TAG = "KeepExecutedService";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.d(TAG, "onStartCommand() called with: intent = [" + intent + "], flags = [" + flags + "], startId = [" + startId + "]");
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 }

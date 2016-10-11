@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.StartApiCalledEvent;
-import com.tosslab.jandi.app.services.keep.KeepService;
+import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.dagger.DaggerIntroComponent;
@@ -62,7 +62,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        keepServiceRunning = KeepService.isServiceRunning(this);
+        keepServiceRunning = KeepExecutedService.isServiceRunning(this);
         if (keepServiceRunning) {
             setContentView(R.layout.activity_intro);
         } else {
