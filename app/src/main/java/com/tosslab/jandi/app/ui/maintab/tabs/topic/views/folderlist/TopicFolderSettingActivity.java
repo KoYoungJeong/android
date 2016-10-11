@@ -100,6 +100,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @AfterViews
     void initView() {
+        if (mode != ITEM_FOLDER_CHOOSE) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FolderManagement);
+        }
+
         setupActionBar();
 
         lvTopicFolder.setLayoutManager(new LinearLayoutManager(TopicFolderSettingActivity.this,
@@ -116,7 +120,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
             case FOLDER_SETTING:
                 tvTitle.setText(R.string.jandi_reorder_from_long_press);
                 TopicFolderSettingAdapter settingAdapter = (TopicFolderSettingAdapter) adapter;
-                ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter);
+                ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter, () -> {
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.ArrangeaFolder);
+                });
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
                 itemTouchHelper.attachToRecyclerView(lvTopicFolder);
                 settingAdapter.setOnFolderSeqChangeLisener(this);
@@ -208,6 +215,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCreateNewFolderDialog() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
+
         if (alertDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderSettingActivity.this,
                     R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -224,7 +233,6 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                     .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                         createNewFolder(etInput.getText().toString().trim());
                         etInput.setText("");
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
                     })
                     .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
                         etInput.setText("");
@@ -304,6 +312,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     private void showDeleteFolderDialog(long folderId) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.DeleteaFolder);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -319,6 +329,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     private void showRenameFolderDialog(long folderId, String name, int seq) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 

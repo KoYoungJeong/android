@@ -249,7 +249,7 @@ public class AnalyticsValue {
         TopicSubMenu_Notification,
         SubmitTeam, GoToJANDIMain,
         SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount,
-        IncorrectPasscode, CorrectPasscode,
+        IncorrectPasscode, CorrectPasscode, DeleteaFolder, ArrangeaFolder,
 
     }
 
