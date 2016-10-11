@@ -20,7 +20,7 @@ public class SignUpModel {
     }
 
     public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitException {
-        ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, email, lang);
+        ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
         return signUpApi.get().signUpAccount(signUpInfo);
     }
 
