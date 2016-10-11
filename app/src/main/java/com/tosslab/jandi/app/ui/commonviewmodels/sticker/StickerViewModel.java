@@ -41,6 +41,7 @@ public class StickerViewModel {
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
     public static final int TYPE_FILE_DETAIL = 13;
+    public static final int TYPE_POLL_DETAIL = 14;
 
     @RootContext
     Context context;
@@ -235,6 +236,8 @@ public class StickerViewModel {
 
     private AnalyticsValue.Screen getScreen() {
         switch (type) {
+            case TYPE_POLL_DETAIL:
+                return AnalyticsValue.Screen.PollDetail;
             case TYPE_FILE_DETAIL:
                 return AnalyticsValue.Screen.FileDetail;
             case TYPE_MESSAGE:

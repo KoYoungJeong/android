@@ -254,7 +254,7 @@ public class AnalyticsValue {
         MembersTab, JobTitlesTab, DepartmentsTab,
         MembersTab_SelectMember, MembersTab_UnSelectMember, MembersTab_SelectAll, MembersTab_Invite,
         CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
-        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect,
+        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote, CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField,
 
     }
 

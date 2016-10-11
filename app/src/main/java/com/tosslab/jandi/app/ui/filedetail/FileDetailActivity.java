@@ -764,6 +764,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .memberId(userEntityId)
                 .from(MemberProfileActivity.EXTRA_FROM_FILE_DETAIL)
                 .start();
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
     }
 
     public boolean onCommentLongClick(ResMessages.OriginalMessage comment) {

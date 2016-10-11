@@ -83,6 +83,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -210,10 +211,15 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         });
         adapter.setOnPollVoteClickListener((pollId, votedItemSeqs) -> {
             pollDetailPresenter.onPollVoteAction(pollId, votedItemSeqs);
-            sendAnalyticsEvent(AnalyticsValue.Action.Vote);
+            sendAnalyticsEvent(AnalyticsValue.Action.SubmitVote);
         });
         adapter.setOnPollStarClickListener(poll -> {
             pollDetailPresenter.onChangePollStarredState(poll);
+
+            boolean futureStarred = !poll.isStarred();
+            AnalyticsValue.Label label = futureStarred ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
+
+            sendAnalyticsEvent(AnalyticsValue.Action.StarVote, label);
         });
     }
 
@@ -340,14 +346,18 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
         long messageId = event.getMessageId();
 
+        AnalyticsValue.Label label = AnalyticsValue.Label.On;
         switch (event.getAction()) {
             case STARRED:
                 pollDetailPresenter.onChangeCommentStarredState(messageId, true);
+                label = AnalyticsValue.Label.On;
                 break;
             case UNSTARRED:
                 pollDetailPresenter.onChangeCommentStarredState(messageId, false);
+                label = AnalyticsValue.Label.Off;
                 break;
         }
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Star, label);
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
@@ -356,6 +366,8 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         }
 
         copyToClipboard(event.contentString);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Copy);
     }
 
     public void onEvent(TopicDeleteEvent event) {
@@ -372,6 +384,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         }
 
         pollDetailPresenter.onDeleteComment(event.messageType, event.messageId, event.feedbackId);
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Delete);
     }
 
     public void onEvent(ShowProfileEvent event) {
@@ -380,6 +393,11 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         MemberProfileActivity_.intent(this)
                 .memberId(userEntityId)
                 .start();
+
+        AnalyticsValue.Action action = event.isFromComment
+                ? AnalyticsValue.Action.ViewProfile_FromComment : AnalyticsValue.Action.ViewVoteCreator;
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PollDetail, action);
     }
 
     private void setUpActionBar() {
@@ -395,6 +413,13 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
                     SuperToast.cancelAllSuperToasts();
                     ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
+    }
+
+    @OnFocusChange(R.id.et_message)
+    void onEditTextFocusChange(boolean focus) {
+        if (focus) {
+            sendAnalyticsEvent(AnalyticsValue.Action.MessageInputField);
+        }
     }
 
     @OnTextChanged(R.id.et_message)
@@ -423,7 +448,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         });
 
         stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
-        stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
+        stickerViewModel.setType(StickerViewModel.TYPE_POLL_DETAIL);
     }
 
     private void initSoftInputAreaController() {
@@ -431,6 +456,11 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
                 stickerViewModel, null,
                 vgSoftInputDetector, vgSoftInputArea, null, btnAction,
                 etComment);
+
+        softInputAreaController.setOnStickerButtonClickListener(() -> {
+            sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
+        });
+
         softInputAreaController.init();
         softInputAreaController.setOnSoftInputAreaShowingListener((isShowing, softInputHeight) -> {
             View lastChild = lvPollDetail.getChildAt(lvPollDetail.getChildCount() - 1);
@@ -594,6 +624,14 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         }
     }
 
+    @OnClick(R.id.iv_poll_detail_preview_sticker_close)
+    void onStickerPreviewClose() {
+        this.stickerInfo = NULL_STICKER;
+        dismissStickerPreview();
+        setCommentSendButtonEnabled();
+        sendAnalyticsEvent(AnalyticsValue.Action.Sticker_cancel);
+    }
+
     @OnClick(R.id.btn_send_message)
     void sendComment() {
         hideKeyboard();
@@ -660,6 +698,10 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action) {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PollDetail, action);
+    }
+
+    private void sendAnalyticsEvent(AnalyticsValue.Action action, AnalyticsValue.Label label) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PollDetail, action, label);
     }
 
     @Override
