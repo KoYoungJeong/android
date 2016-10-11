@@ -147,7 +147,7 @@ public class IntroActivityPresenterTest {
             presenter.checkNewVersion(false);
 
             // Then
-            verify(mockView, timeout(3000)).moveToMainActivity();
+            verify(mockView, timeout(3000)).moveToMainActivity(it);
             reset(mockView);
             reset(mockModel);
         }
