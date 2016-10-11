@@ -29,7 +29,7 @@ public class SocketEmitModel {
             if (AccountRepository.getRepository().getTeamInfo(teamId) == null) {
 
                 String accessToken = TokenUtil.getAccessToken();
-                return SocketUpdateMember.join(accessToken, memberId);
+                return SocketUpdateMember.join(accessToken, memberId, teamId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,9 +42,10 @@ public class SocketEmitModel {
         try {
             SocketTeamLeaveEvent object = SocketModelExtractor.getObject(data, SocketTeamLeaveEvent.class, true, false);
             long memberId = object.getData().getMemberId();
+            long teamId = object.getTeamId();
             if (AccountRepository.getRepository().isMine(memberId)) {
                 String accessToken = TokenUtil.getAccessToken();
-                return SocketUpdateMember.leave(accessToken, memberId);
+                return SocketUpdateMember.leave(accessToken, memberId, teamId);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +63,7 @@ public class SocketEmitModel {
             if (teamInfo != null && teamInfo.getMemberId() > 0) {
                 long memberId = teamInfo.getMemberId();
                 String accessToken = TokenUtil.getAccessToken();
-                return SocketUpdateMember.leave(accessToken, memberId);
+                return SocketUpdateMember.leave(accessToken, memberId, teamId);
             }
         } catch (Exception e) {
             e.printStackTrace();
