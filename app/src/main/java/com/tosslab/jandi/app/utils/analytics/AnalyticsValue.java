@@ -41,7 +41,7 @@ public class AnalyticsValue {
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
         UniversalSearch, ChooseMember, SelectRoom, Carousel,
         ForceTeamCreation,
-        FolderManagement, EditAccount
+        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, EditAccount
     }
 
     public enum Action {
@@ -249,7 +249,12 @@ public class AnalyticsValue {
         TopicSubMenu_Notification,
         SubmitTeam, GoToJANDIMain,
         SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount,
-        IncorrectPasscode, CorrectPasscode, DeleteaFolder, ArrangeaFolder, TapLinkPreview,
+        IncorrectPasscode, CorrectPasscode, DeleteaFolder, ArrangeaFolder,
+        TapLinkPreview, TransferTopicAdmin, AutoInvitation,
+        MembersTab, JobTitlesTab, DepartmentsTab,
+        MembersTab_SelectMember, MembersTab_UnSelectMember, MembersTab_SelectAll, MembersTab_Invite,
+        CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
+        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect,
 
     }
 

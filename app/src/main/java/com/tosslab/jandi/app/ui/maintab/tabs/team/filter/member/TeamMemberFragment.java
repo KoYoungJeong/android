@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger.DaggerTea
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger.TeamMemberModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMemberPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.KeywordObservable;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnSearchModeChangeListener;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnToggledUser;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
@@ -47,7 +48,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser {
+public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser, OnSearchModeChangeListener {
 
     public static final int REQ_DISABLED_MEMBER = 201;
     @Bind(R.id.list_team_member)
@@ -270,5 +271,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void onInvite() {
         presenter.inviteToggle();
+    }
+
+    @Override
+    public void onSearchModeChange(boolean isInSearchMode) {
+        presenter.setIsInSearchMode(isInSearchMode);
     }
 }

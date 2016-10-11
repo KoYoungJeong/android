@@ -204,7 +204,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                         MemberProfileActivity.EXTRA_FROM_PARTICIPANT : MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                 .start();
 
-        AnalyticsUtil.sendEvent(getScreen(), AnalyticsUtil.getProfileAction(event.userId, event.from));
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
     }
 
     public void onEvent(TeamJoinEvent event) {

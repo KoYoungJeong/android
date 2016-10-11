@@ -261,7 +261,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @OnClick(R.id.vg_topic_detail_set_auto_join)
     void onAutoJoinClick() {
-        topicDetailPresenter.onAutoJoin(entityId, !switchAutoJoin.isChecked());
+        boolean futureAutoJoin = !switchAutoJoin.isChecked();
+        topicDetailPresenter.onAutoJoin(entityId, futureAutoJoin);
+
+        AnalyticsValue.Label label = futureAutoJoin ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
+        AnalyticsUtil.sendEvent(
+                AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.AutoInvitation, label);
     }
 
     // Topic Push
@@ -316,7 +321,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @OnClick(R.id.vg_topic_detail_assign_topic_owner)
     void onAssignTopicOwnerClick() {
         topicDetailPresenter.onAssignTopicOwner(entityId);
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Leave);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.TransferTopicAdmin);
     }
 
     @OnClick(R.id.vg_topic_detail_leave)

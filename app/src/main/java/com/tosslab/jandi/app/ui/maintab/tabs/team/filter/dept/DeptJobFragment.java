@@ -19,6 +19,7 @@ import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
@@ -31,10 +32,13 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.dagger.DeptJobModu
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.presenter.DeptJobPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.DeptJobGroupActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.KeywordObservable;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnSearchModeChangeListener;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import javax.inject.Inject;
 
@@ -43,7 +47,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable {
+public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable, OnSearchModeChangeListener {
 
     public static final int EXTRA_TYPE_DEPT = 1;
     public static final int EXTRA_TYPE_JOB = 2;
@@ -78,6 +82,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
 
     @Inject
     DeptJobPresenter deptJobPresenter;
+    private boolean isInSearchMode = false;
 
     public static Fragment create(Context context, int type, boolean selectMode, boolean hasHeader, long roomId) {
         Bundle args = new Bundle(1);
@@ -123,20 +128,46 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
 
         deptJobDataView.setOnItemClick((view, adapter1, position) -> {
             deptJobPresenter.onItemClick(position);
+
+            String keyword = ((DeptJobAdapter) adapter1).getItem(position).getName().toString();
             startActivityForResult(Henson.with(getActivity())
                     .gotoDeptJobGroupActivity()
-                    .keyword(((DeptJobAdapter) adapter1).getItem(position).getName().toString())
+                    .keyword(keyword)
                     .type(type)
                     .selectMode(selectMode)
                     .pickMode(selectMode && roomId < 0)
                     .build(), REQ_MEMBERS_OF_GROUP);
 
+            sendDeptJobAnalyticsEvent(keyword);
         });
 
         deptJobPresenter.onCreate();
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+    }
+
+    private void sendDeptJobAnalyticsEvent(String keyword) {
+        if (!selectMode) {
+            return;
+        }
+
+        boolean isUnDefined = JandiApplication.getContext().getString(R.string.jandi_undefined_member)
+                .contains(keyword);
+
+        AnalyticsValue.Screen screen = isInSearchMode
+                ? AnalyticsValue.Screen.InviteMemberSearch
+                : AnalyticsValue.Screen.InviteTeamMembers;
+
+        if (type == EXTRA_TYPE_DEPT) {
+            AnalyticsUtil.sendEvent(screen,
+                    isUnDefined ? AnalyticsValue.Action.ChooseDepartment
+                            : AnalyticsValue.Action.ChooseDepartment_Undefined);
+        } else if (type == EXTRA_TYPE_JOB) {
+            AnalyticsUtil.sendEvent(screen,
+                    isUnDefined ? AnalyticsValue.Action.ChooseJobTitle
+                            : AnalyticsValue.Action.ChooseJobTitle_Undefined);
         }
     }
 
@@ -173,7 +204,6 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
         }
         super.onDestroy();
     }
-
 
     public void onEvent(MemberStarredEvent event) {
         deptJobPresenter.onRefresh();
@@ -220,5 +250,10 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                 deptJobPresenter.onSearchKeyword(text);
             }
         });
+    }
+
+    @Override
+    public void onSearchModeChange(boolean isInSearchMode) {
+        this.isInSearchMode = isInSearchMode;
     }
 }
