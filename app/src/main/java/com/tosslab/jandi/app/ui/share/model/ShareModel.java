@@ -90,10 +90,9 @@ public class ShareModel {
                         progressDialog.setMax(100);
                         progressDialog.setProgress(it);
                     }
-                }, t -> {}, () -> {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
+                }, t -> {
+                }, () -> {
+
                 }));
 
         progressDialog.setOnCancelListener(dialog -> uploadCall.cancel());
