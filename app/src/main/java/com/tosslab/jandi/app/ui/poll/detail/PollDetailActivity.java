@@ -405,24 +405,21 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     private void initStickers() {
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
-            stickerInfo = new StickerInfo();
-            stickerInfo.setStickerGroupId(groupId);
-            stickerInfo.setStickerId(stickerId);
-            vgStickerPreview.setVisibility(View.VISIBLE);
-
-            if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
-                    || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
-
+            if (oldSticker.getStickerGroupId() == groupId
+                    && oldSticker.getStickerId().equals(stickerId)) {
+                sendComment();
+            } else {
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                vgStickerPreview.setVisibility(View.VISIBLE);
                 StickerManager.getInstance()
                         .loadStickerDefaultOption(ivStickerPreview,
                                 stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+                setCommentSendButtonEnabled();
+                sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
             }
-            setCommentSendButtonEnabled();
-
-            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
         });
-
-        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
     }
 
