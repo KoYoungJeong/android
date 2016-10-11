@@ -115,10 +115,12 @@ public class TopicFolderDialogFragment extends DialogFragment {
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         alertDialog.show();
 
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().length() <= 0) {
+                if (s.toString().trim().length() <= 0 || folderName.equals(s.toString())) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
