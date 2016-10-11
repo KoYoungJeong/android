@@ -92,7 +92,9 @@ public class ShareModel {
                     }
                 }, t -> {
                 }, () -> {
-
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                 }));
 
         progressDialog.setOnCancelListener(dialog -> uploadCall.cancel());

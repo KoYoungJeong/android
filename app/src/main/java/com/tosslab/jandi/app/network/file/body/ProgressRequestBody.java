@@ -40,11 +40,8 @@ public class ProgressRequestBody extends RequestBody {
         try {
             int read;
             while ((read = in.read(buffer)) != -1) {
-                int percent = (int) ((uploaded * 100) / fileLength);
-                if (percent > 99) {
-                    percent = 99;
-                }
-                progressSubject.onNext(percent);
+
+                progressSubject.onNext((int) ((uploaded * 100) / fileLength));
 
                 uploaded += read;
                 try {
