@@ -56,6 +56,6 @@ public class KeepService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Log.d(TAG, "onStartCommand() called with: intent = [" + intent + "], flags = [" + flags + "], startId = [" + startId + "]");
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 }
