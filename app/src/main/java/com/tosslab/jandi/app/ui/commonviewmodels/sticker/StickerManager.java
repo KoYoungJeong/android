@@ -72,7 +72,6 @@ public class StickerManager {
             Uri uri = Uri.parse(stickerAssetPath);
             loadSticker(uri, view, options);
         }
-
     }
 
     private void loadSticker(Uri uri, final ImageView view, final LoadOptions options) {

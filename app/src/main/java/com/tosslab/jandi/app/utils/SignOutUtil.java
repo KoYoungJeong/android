@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
-import com.tosslab.jandi.app.services.keep.KeepService;
+import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import io.intercom.android.sdk.Intercom;
@@ -24,7 +24,7 @@ public class SignOutUtil {
 
         Intercom.client().reset();
 
-        context.stopService(new Intent(context, KeepService.class));
+        context.stopService(new Intent(context, KeepExecutedService.class));
 
     }
 

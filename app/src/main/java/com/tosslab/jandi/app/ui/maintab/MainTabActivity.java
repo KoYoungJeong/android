@@ -42,7 +42,8 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.services.keep.KeepService;
+import com.tosslab.jandi.app.services.keep.KeepAliveService;
+import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -194,7 +195,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             EventBus.getDefault().register(this);
         });
 
-        KeepService.start(this);
+        KeepExecutedService.start(this);
+        KeepAliveService.start(this);
         initFirebaseUserProperties();
     }
 
