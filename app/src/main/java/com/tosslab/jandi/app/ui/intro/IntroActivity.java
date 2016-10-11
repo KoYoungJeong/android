@@ -93,6 +93,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                     .subscribe(() -> {
                         splashDrawable.start();
                     });
+
         }
 
     }

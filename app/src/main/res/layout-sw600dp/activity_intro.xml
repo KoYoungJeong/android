@@ -5,22 +5,23 @@
     android:background="@color/white"
     android:orientation="vertical">
 
-    <View
+    <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="244" />
+        android:layout_weight="1035" />
 
     <ImageView
         android:id="@+id/iv_jandi_icon"
-        android:layout_width="145dp"
+        android:layout_width="200dp"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="145"
-        android:src="@drawable/jandi_symbol_intro" />
+        android:layout_weight="1000"
+        android:scaleType="fitCenter"
+        android:src="@drawable/splash_2_60" />
 
-    <View
+    <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="251" />
+        android:layout_weight="1165" />
 
 </LinearLayout>
