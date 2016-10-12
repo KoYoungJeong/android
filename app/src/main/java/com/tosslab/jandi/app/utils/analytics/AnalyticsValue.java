@@ -41,7 +41,7 @@ public class AnalyticsValue {
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
         UniversalSearch, ChooseMember, SelectRoom, Carousel,
         ForceTeamCreation,
-        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, TeamInformation, TeamTab_Department, TeamTab_JobTitle, TeamTabSearch, ImageFullScreen, HamburgerMenu, NotificationSetting, PasscodeLock, EditAccount
+        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, TeamInformation, TeamTab_Department, TeamTab_JobTitle, TeamTabSearch, ImageFullScreen, HamburgerMenu, NotificationSetting, PasscodeLock, AccountSetting, EditAccount
     }
 
     public enum Action {
