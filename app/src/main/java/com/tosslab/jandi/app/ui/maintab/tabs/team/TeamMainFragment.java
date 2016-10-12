@@ -48,6 +48,32 @@ public class TeamMainFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new TeamViewPagerAdapter(getActivity(), getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MembersTab);
+                        break;
+                    case 1:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.DepartmentsTab);
+                        break;
+                    case 2:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.JobTitlesTab);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         setHasOptionsMenu(true);
     }
 
@@ -67,6 +93,7 @@ public class TeamMainFragment extends Fragment {
                 break;
             case R.id.menu_team_info:
                 TeamInfoActivity.start(getActivity());
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.TeamInformation);
                 break;
             case R.id.menu_team_search:
                 startActivity(Henson.with(getActivity())

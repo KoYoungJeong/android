@@ -149,7 +149,23 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
     }
 
     private void sendDeptJobAnalyticsEvent(String keyword) {
+        boolean isUnDefined = JandiApplication.getContext().getString(R.string.jandi_undefined_member)
+                .contains(keyword);
+
         if (!selectMode) {
+            AnalyticsValue.Screen screen = isInSearchMode
+                    ? AnalyticsValue.Screen.TeamTabSearch
+                    : AnalyticsValue.Screen.TeamTab;
+            if (type == EXTRA_TYPE_DEPT) {
+
+                AnalyticsUtil.sendEvent(screen,
+                        isUnDefined ? AnalyticsValue.Action.ChooseDepartment
+                                : AnalyticsValue.Action.ChooseDepartment_Undefined);
+            } else if (type == EXTRA_TYPE_JOB) {
+                AnalyticsUtil.sendEvent(screen,
+                        isUnDefined ? AnalyticsValue.Action.ChooseJobTitle
+                                : AnalyticsValue.Action.ChooseJobTitle_Undefined);
+            }
             return;
         }
 
@@ -161,9 +177,6 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMemberSearch, action);
             return;
         }
-
-        boolean isUnDefined = JandiApplication.getContext().getString(R.string.jandi_undefined_member)
-                .contains(keyword);
 
         AnalyticsValue.Screen screen = isInSearchMode
                 ? AnalyticsValue.Screen.InviteMemberSearch

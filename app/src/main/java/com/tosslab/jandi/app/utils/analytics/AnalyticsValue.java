@@ -41,7 +41,7 @@ public class AnalyticsValue {
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
         UniversalSearch, ChooseMember, SelectRoom, Carousel,
         ForceTeamCreation,
-        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, EditAccount
+        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, TeamInformation, TeamTab_Department, TeamTab_JobTitle, TeamTabSearch, EditAccount
     }
 
     public enum Action {
@@ -254,7 +254,7 @@ public class AnalyticsValue {
         MembersTab, JobTitlesTab, DepartmentsTab,
         MembersTab_SelectMember, MembersTab_UnSelectMember, MembersTab_SelectAll, MembersTab_Invite,
         CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
-        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote, CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember,
+        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote, CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember, InviteMember_InviteDisabled, TeamInformation,
 
     }
 

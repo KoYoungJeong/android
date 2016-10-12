@@ -135,16 +135,19 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 }
 
                 AnalyticsValue.Screen screen;
+                boolean isInSearchMode = vgSearch.getVisibility() == View.VISIBLE;
                 if (roomId > 0) {
-                    screen = vgSearch.getVisibility() == View.VISIBLE
+                    screen = isInSearchMode
                             ? AnalyticsValue.Screen.InviteMemberSearch
                             : AnalyticsValue.Screen.InviteTeamMembers;
                 } else {
-                    screen = vgSearch.getVisibility() == View.VISIBLE
+                    screen = isInSearchMode
                             ? AnalyticsValue.Screen.SelectTeamMemberSearch
                             : AnalyticsValue.Screen.SelectTeamMember;
                 }
-                AnalyticsUtil.sendEvent(screen, action);
+
+                AnalyticsUtil.sendEvent(!(isSelectMode) ? AnalyticsValue.Screen.TeamTabSearch
+                        : screen, action);
             }
 
             @Override
@@ -197,14 +200,20 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         lvRecentSearch.setLayoutManager(new LinearLayoutManager(lvRecentSearch.getContext()));
         lvRecentSearch.setAdapter(adapter);
 
+        final AnalyticsValue.Screen screen;
+        if (!isSelectMode) {
+            screen = AnalyticsValue.Screen.TeamTabSearch;
+        } else {
+            screen = roomId > 0
+                    ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
+        }
+
         adapter.setOnDeleteAll(() -> {
             MemberRecentKeywordRepository.getInstance().removeAll();
             adapter.clear();
             adapter.add(new MemberRecentEmptyKeyword());
             adapter.notifyDataSetChanged();
 
-            AnalyticsValue.Screen screen = roomId > 0
-                    ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
             AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteAllKeywords);
         });
 
@@ -220,8 +229,6 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             }
 
             adapter.notifyDataSetChanged();
-            AnalyticsValue.Screen screen = roomId > 0
-                    ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
             AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteRecentKeyword);
         });
 
@@ -231,8 +238,6 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             etSearch.setSelection(etSearch.length());
             inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 
-            AnalyticsValue.Screen screen = roomId > 0
-                    ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
             AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.TapRecentKeywords);
         });
 
@@ -272,8 +277,13 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             MemberRecentKeywordRepository.getInstance().upsertKeyword(etSearch.getText().toString());
             inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 
-            AnalyticsValue.Screen screen = roomId > 0
-                    ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
+            final AnalyticsValue.Screen screen;
+            if (!isSelectMode) {
+                screen = AnalyticsValue.Screen.TeamTabSearch;
+            } else {
+                screen = roomId > 0
+                        ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
+            }
             AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.SubmitSearch);
             return true;
         }
@@ -288,12 +298,16 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 showSearchLayout();
                 showRecentKeyword();
 
-                AnalyticsUtil.sendEvent(roomId > 0
-                                ? AnalyticsValue.Screen.InviteTeamMember
-                                : AnalyticsValue.Screen.SelectTeamMember,
-                        roomId > 0
-                                ? AnalyticsValue.Action.SearchInviteMember
-                                : AnalyticsValue.Action.SearchSelectTeamMember);
+                if (!isSelectMode) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MemberSearch);
+                } else {
+                    AnalyticsUtil.sendEvent(roomId > 0
+                                    ? AnalyticsValue.Screen.InviteTeamMember
+                                    : AnalyticsValue.Screen.SelectTeamMember,
+                            roomId > 0
+                                    ? AnalyticsValue.Action.SearchInviteMember
+                                    : AnalyticsValue.Action.SearchSelectTeamMember);
+                }
                 break;
             case R.id.action_select_all:
                 if (adapter.getItem(0) instanceof OnToggledUser) {

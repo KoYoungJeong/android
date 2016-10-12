@@ -40,6 +40,8 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import javax.inject.Inject;
 
@@ -134,8 +136,6 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
             EventBus.getDefault().register(this);
         }
     }
-
-
 
     @Override
     public void moveDisabledMembers() {

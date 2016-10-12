@@ -178,6 +178,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         long userId = item.getChatChooseItem().getEntityId();
         if (!selectMode) {
             view.moveProfile(userId);
+
+            AnalyticsValue.Screen screen = isInSearchMode
+                    ? AnalyticsValue.Screen.TeamTabSearch
+                    : AnalyticsValue.Screen.TeamTab;
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
         } else {
 
             if (roomId > 0) {

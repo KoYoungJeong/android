@@ -80,9 +80,8 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
         InvitationDialogExecutor inviteExecutor = InvitationDialogExecutor_.getInstance_(TeamInfoActivity.this);
         inviteExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_TEAM);
         inviteExecutor.execute();
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamInformation, AnalyticsValue.Action.InviteMember);
     }
-
 
     private void setUpAppVersion() {
         tvAppVersion.setText(String.format("%s : %s", "App Version", ApplicationUtil.getAppVersionName()));

@@ -156,6 +156,10 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                     .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                     .memberId(userId)
                     .start();
+
+            AnalyticsUtil.sendEvent(type == DeptJobFragment.EXTRA_TYPE_DEPT
+                    ? AnalyticsValue.Screen.TeamTab_Department
+                    : AnalyticsValue.Screen.TeamTab_JobTitle, AnalyticsValue.Action.SelectMember);
         }
     }
 
