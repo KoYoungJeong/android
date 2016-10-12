@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
+import com.tosslab.jandi.app.network.client.teams.sendmessage.SendMessageApi;
 import com.tosslab.jandi.app.network.client.validation.ValidationApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 
@@ -58,6 +59,11 @@ public class ApiClientModule {
     @Provides
     DirectMessageApi provideDirectMessageApi(RetrofitBuilder retrofitBuilder) {
         return new DirectMessageApi(retrofitBuilder);
+    }
+
+    @Provides
+    SendMessageApi provideSendMessageApi(RetrofitBuilder retrofitBuilder) {
+        return new SendMessageApi(retrofitBuilder);
     }
 
     @Provides

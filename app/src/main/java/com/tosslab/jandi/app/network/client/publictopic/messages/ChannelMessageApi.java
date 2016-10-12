@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
+import com.tosslab.jandi.app.network.models.ReqSendMessages;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -56,12 +57,6 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
         return call(() -> getApi().getPublicTopicMarkerMessages(channelId, teamId, currentLinkId, count));
     }
 
-    // 채널에서 Message 생성
-    public ResCommon sendPublicTopicMessage(long channelId, long teamId,
-                                            ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
-        return call(() -> getApi().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3));
-    }
-
     // 채널에서 Message 수정
     public ResCommon modifyPublicTopicMessage(ReqModifyMessage message, int channelId,
                                               int messageId) throws RetrofitException {
@@ -107,12 +102,6 @@ public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getPublicTopicMarkerMessages(@Path("channelId") long channelId, @Query("teamId") long teamId,
                                                        @Query("linkId") long currentLinkId, @Query("count") int count);
-
-        // 채널에서 Message 생성
-        @POST("channels/{channelId}/message")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResCommon> sendPublicTopicMessage(@Path("channelId") long channelId, @Query("teamId") long teamId,
-                                               @Body ReqSendMessageV3 reqSendMessageV3);
 
         // 채널에서 Message 수정
         @PUT("channels/{channelId}/messages/{messageId}")

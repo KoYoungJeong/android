@@ -1,17 +1,17 @@
 package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.messages.comments.CommentApi;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApi;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
+import com.tosslab.jandi.app.network.client.teams.sendmessage.SendMessageApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
+import com.tosslab.jandi.app.network.models.ReqSendMessages;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -36,12 +36,18 @@ public class MessageManipulator {
 
     int entityType;
     long entityId;
+
     @Inject
     Lazy<GroupMessageApi> groupMessageApi;
     @Inject
     Lazy<ChannelMessageApi> channelMessageApi;
     @Inject
     Lazy<DirectMessageApi> directMessageApi;
+    @Inject
+    Lazy<SendMessageApi> sendMessageApi;
+    @Inject
+    Lazy<CommentApi> commentApi;
+
     @Inject
     Lazy<StickerApi> stickerApi;
     @Inject
@@ -106,21 +112,12 @@ public class MessageManipulator {
     }
 
     public ResCommon sendMessage(String message, List<MentionObject> mentions) throws RetrofitException {
-        final ReqSendMessage sendingMessage = new ReqSendMessage();
-        sendingMessage.teamId = selectedTeamId;
-        sendingMessage.type = "string";
-        sendingMessage.content = message;
 
-        switch (entityType) {
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return directMessageApi.get().sendDirectMessage(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
-            case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return groupMessageApi.get().sendGroupMessage(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
-            case JandiConstants.TYPE_PUBLIC_TOPIC:
-            default:
-                return channelMessageApi.get().sendPublicTopicMessage(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
-        }
+        final ReqSendMessages reqSendMessages = new ReqSendMessages();
+        reqSendMessages.setText(message);
+        reqSendMessages.setMentions(mentions);
 
+        return sendMessageApi.get().sendMessage(selectedTeamId, entityId, reqSendMessages);
     }
 
     public ResCommon deleteMessage(final long messageId) throws RetrofitException {
@@ -137,18 +134,21 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteSticker(final long messageId, int messageType) throws RetrofitException {
-
-        switch (messageType) {
-            case MessageItem.TYPE_STICKER_COMMNET:
-                return stickerApi.get().deleteStickerComment(messageId, selectedTeamId);
-            case MessageItem.TYPE_STICKER:
+    public ResCommon deleteSticker(final long messageId) throws RetrofitException {
+        switch (entityType) {
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
+                return directMessageApi.get().deleteDirectMessage(selectedTeamId, entityId, messageId);
+            case JandiConstants.TYPE_PRIVATE_TOPIC:
+                return groupMessageApi.get().deletePrivateGroupMessage(selectedTeamId, entityId, messageId);
+            case JandiConstants.TYPE_PUBLIC_TOPIC:
             default:
-                return stickerApi.get().deleteSticker(messageId, selectedTeamId);
+                return channelMessageApi.get().deletePublicTopicMessage(selectedTeamId, entityId, messageId);
         }
-
     }
 
+    public ResCommon deleteStickerComment(final long feedbackId, final long commentId) throws RetrofitException {
+        return commentApi.get().deleteMessageComment(selectedTeamId, feedbackId, commentId);
+    }
 
     public ResMessages getBeforeMarkerMessage(long linkId, int maxCount) throws RetrofitException {
 

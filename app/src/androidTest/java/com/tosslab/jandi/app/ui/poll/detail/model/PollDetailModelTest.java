@@ -257,8 +257,10 @@ public class PollDetailModelTest {
                     long messageId = res.getLinkComment().messageId;
                     System.out.println("messageId = " + messageId);
 
+                    long feedbackId = res.getLinkComment().feedbackId;
+
                     Observable<ResCommon> commentDeleteObservable =
-                            model.getStickerCommentDeleteObservable(messageId, MessageItem.TYPE_STICKER_COMMNET);
+                            model.getStickerCommentDeleteObservable(feedbackId, messageId);
 
                     // When
                     TestSubscriber<ResCommon> testSubscriber = new TestSubscriber<>();

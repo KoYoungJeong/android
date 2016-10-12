@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -15,7 +14,6 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -53,12 +51,6 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
     public ResMessages getGroupMarkerMessages(long teamId, long groupId,
                                               long currentLinkId, int count) throws RetrofitException {
         return call(() -> getApi().getGroupMarkerMessages(groupId, teamId, currentLinkId, count));
-    }
-
-    // Private Group에서의 Message 생성
-    public ResCommon sendGroupMessage(long privateGroupId, long teamId,
-                                      ReqSendMessageV3 reqSendMessageV3) throws RetrofitException {
-        return call(() -> getApi().sendGroupMessage(privateGroupId, teamId, reqSendMessageV3));
     }
 
     // Private Group Message 수정
@@ -105,12 +97,6 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getGroupMarkerMessages(@Path("groupId") long groupId, @Query("teamId") long teamId,
                                                  @Query("linkId") long currentLinkId, @Query("count") int count);
-
-        // Private Group에서의 Message 생성
-        @POST("privateGroups/{privateGroupId}/message")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResCommon> sendGroupMessage(@Path("privateGroupId") long privateGroupId, @Query("teamId") long teamId,
-                                         @Body ReqSendMessageV3 reqSendMessageV3);
 
         // Private Group Message 수정
         @PUT("privateGroups/{groupId}/messages/{messageId}")
