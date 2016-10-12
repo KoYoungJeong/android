@@ -523,7 +523,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
-        if (entityId == event.getId()) {
+        if (entityId == event.getTopicId()) {
             getActivity().finish();
         }
     }

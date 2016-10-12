@@ -148,7 +148,7 @@
 //
 //        // Then
 //        assertThat(initialInfo, is(notNullValue()));
-//        assertThat(instance.getTeamId(), is(equalTo(initialInfo.getTeam().getId())));
+//        assertThat(instance.getTeamId(), is(equalTo(initialInfo.getTeam().getTopicId())));
 //        assertThat(instance.getTeamName(), is(equalTo(initialInfo.getTeam().getName())));
 //        assertThat(instance.getTeamDomain(), is(equalTo(initialInfo.getTeam().getDomain())));
 //
@@ -205,7 +205,7 @@
 //        ResAccountInfo.UserEmail selectedEmailInfo = accountHomeModel.getSelectedEmailInfo();
 //
 //        // Then
-//        assertThat(selectedEmailInfo.getId(), is(equalTo(savedEmail.getId())));
+//        assertThat(selectedEmailInfo.getTopicId(), is(equalTo(savedEmail.getTopicId())));
 //        assertThat(selectedEmailInfo.isPrimary(), is(equalTo(savedEmail.isPrimary())));
 //        assertThat(selectedEmailInfo.getStatus(), is(equalTo(savedEmail.getStatus())));
 //        assertThat(selectedEmailInfo.getConfirmedAt(), is(equalTo(savedEmail.getConfirmedAt())));

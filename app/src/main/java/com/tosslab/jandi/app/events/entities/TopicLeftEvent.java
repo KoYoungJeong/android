@@ -3,17 +3,17 @@ package com.tosslab.jandi.app.events.entities;
 /**
  * Created by Steve SeongUg Jung on 15. 4. 9..
  */
-public class TopicDeleteEvent {
+public class TopicLeftEvent {
     private final long teamId;
-    private final long id;
+    private final long topicId;
 
-    public TopicDeleteEvent(long teamId, long id) {
+    public TopicLeftEvent(long teamId, long topicId) {
         this.teamId = teamId;
-        this.id = id;
+        this.topicId = topicId;
     }
 
     public long getTopicId() {
-        return id;
+        return topicId;
     }
 
     public long getTeamId() {
@@ -25,17 +25,17 @@ public class TopicDeleteEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TopicDeleteEvent that = (TopicDeleteEvent) o;
+        TopicLeftEvent that = (TopicLeftEvent) o;
 
         if (teamId != that.teamId) return false;
-        return id == that.id;
+        return topicId == that.topicId;
 
     }
 
     @Override
     public int hashCode() {
         int result = (int) (teamId ^ (teamId >>> 32));
-        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (int) (topicId ^ (topicId >>> 32));
         return result;
     }
 }

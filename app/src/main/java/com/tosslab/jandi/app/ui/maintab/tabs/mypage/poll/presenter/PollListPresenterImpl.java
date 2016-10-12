@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -73,6 +74,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                         pollListView.showEmptyView();
                         pollListView.setHasMore(false);
                     } else {
+                        pollListDataModel.clearPoll();
                         pollListDataModel.addPolls(pollList);
                         pollListView.setHasMore(resPollList.hasMore());
                         pollListView.notifyDataSetChanged();
@@ -103,6 +105,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                         pollListView.showEmptyView();
                         pollListView.setHasMore(false);
                     } else {
+                        pollListDataModel.clearPoll();
                         pollListDataModel.addPolls(pollList);
                         pollListView.setHasMore(resPollList.hasMore());
                         pollListView.notifyDataSetChanged();
@@ -177,6 +180,22 @@ public class PollListPresenterImpl implements PollListPresenter {
                 deletePoll(poll);
                 break;
         }
+    }
+
+    @Override
+    public void removeOfTopics(long topicId) {
+
+        Completable.fromAction(() -> {
+            for (int idx = pollListDataModel.size() - 1; idx >= 0; idx--) {
+                if (pollListDataModel.getPoll(idx).getTopicId() == topicId) {
+                    pollListDataModel.removePollByIndex(idx);
+                }
+            }
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(pollListView::notifyDataSetChanged, Throwable::printStackTrace);
+
+
     }
 
     private void addPoll(Poll poll) {

@@ -185,4 +185,20 @@ public class PollRepository extends LockExecutorTemplate {
 
         });
     }
+
+    public int removeOfTopic(long topicId) {
+        return execute(() -> {
+            try {
+                Dao<Poll, Long> dao = getDao(Poll.class);
+                DeleteBuilder<Poll, Long> deleteBuilder = dao.deleteBuilder();
+                deleteBuilder.where()
+                        .eq("topicId", topicId);
+
+                return deleteBuilder.delete();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        });
+    }
 }

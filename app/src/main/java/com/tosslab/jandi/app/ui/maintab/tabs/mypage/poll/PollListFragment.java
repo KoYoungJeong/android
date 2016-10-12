@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicJoinEvent;
+import com.tosslab.jandi.app.events.entities.TopicLeftEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.PollListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.view.PollListDataView;
@@ -175,6 +178,19 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
     public void onEvent(SocketPollEvent event) {
         pollListPresenter.onPollDataChanged(event.getType(), event.getPoll());
+    }
+
+    public void onEvent(TopicJoinEvent event) {
+        initPollList();
+    }
+
+    public void onEvent(TopicLeftEvent event) {
+        pollListPresenter.removeOfTopics(event.getTopicId());
+    }
+
+    public void onEvent(TopicDeleteEvent event) {
+        pollListPresenter.removeOfTopics(event.getTopicId());
+
     }
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action) {

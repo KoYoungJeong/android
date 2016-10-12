@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
@@ -88,6 +89,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "member_updated", value = SocketMemberUpdatedEvent.class),
         @JsonSubTypes.Type(name = "file_deleted", value = SocketFileDeletedEvent.class),
         @JsonSubTypes.Type(name = "file_unshared", value = SocketFileUnsharedEvent.class),
+        @JsonSubTypes.Type(name = "file_shared", value = SocketFileShareEvent.class),
         @JsonSubTypes.Type(name = "file_comment_created", value = SocketFileCommentCreatedEvent.class),
         @JsonSubTypes.Type(name = "file_comment_deleted", value = SocketFileCommentDeletedEvent.class),
         @JsonSubTypes.Type(name = "message_deleted", value = SocketMessageDeletedEvent.class),

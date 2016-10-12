@@ -955,7 +955,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (fileMessage == null) {
             return;
         }
-        fileDetailPresenter.onTopicDeleted(event.getId(), fileMessage.shareEntities);
+        fileDetailPresenter.onTopicDeleted(event.getTopicId(), fileMessage.shareEntities);
     }
 
     private void reInitializeOnEvent(long entityId) {

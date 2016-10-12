@@ -18,6 +18,8 @@ public interface PollListPresenter {
 
     void onPollDataChanged(SocketPollEvent.Type type, Poll poll);
 
+    void removeOfTopics(long topicId);
+
     interface View {
 
         void showProgress();
