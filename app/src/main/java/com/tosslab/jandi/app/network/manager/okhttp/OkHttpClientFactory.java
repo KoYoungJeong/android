@@ -39,7 +39,6 @@ public class OkHttpClientFactory {
 
         try {
             okhttpClientBuilder.sslSocketFactory(createSslSocketFactory());
-            okhttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS);
             okhttpClientBuilder.readTimeout(60, TimeUnit.SECONDS);
             okhttpClientBuilder.writeTimeout(60, TimeUnit.SECONDS);
         } catch (KeyManagementException | NoSuchAlgorithmException e) {
