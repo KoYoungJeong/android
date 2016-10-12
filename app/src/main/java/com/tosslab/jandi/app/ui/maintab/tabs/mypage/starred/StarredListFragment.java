@@ -31,6 +31,8 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -134,6 +136,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @OnClick(R.id.btn_starred_list_all)
     void onAllTabClick(View view) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Filter_All);
         if (view.isSelected()) {
             return;
         }
@@ -144,6 +147,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @OnClick(R.id.btn_starred_list_file)
     void onFileTabClick(View view) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Filter_Files);
         if (view.isSelected()) {
             return;
         }

@@ -19,6 +19,8 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.component.DaggerMyPageComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.module.MyPageModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.presenter.MyPagePresenter;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -63,7 +65,23 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         viewPager.setAdapter(tabPagerAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                switch (tab.getPosition()) {
+                    case 0:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab);
+                        break;
+                    case 1:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.StarTab);
+                        break;
+                    case 2:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.PollTab);
+                        break;
+                }
+            }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 super.onTabReselected(tab);

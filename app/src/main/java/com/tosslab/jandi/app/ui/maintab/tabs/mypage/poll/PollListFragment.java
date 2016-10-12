@@ -98,9 +98,11 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
             PollDetailActivity.start(getActivity(), poll.getId());
 
             if ("created".equals(poll.getStatus())) {
-                sendAnalyticsEvent(AnalyticsValue.Action.ViewPollDetail, AnalyticsValue.Label.ongoing);
+                sendAnalyticsEvent("voted".equals(poll.getVoteStatus())
+                        ? AnalyticsValue.Action.PollTab_ChooseOngoingVoted
+                        : AnalyticsValue.Action.PollTab_ChooseOngoingUnvoted);
             } else {
-                sendAnalyticsEvent(AnalyticsValue.Action.ViewPollDetail, AnalyticsValue.Label.completed);
+                sendAnalyticsEvent(AnalyticsValue.Action.PollTab_ChooseCompleted);
             }
 
         });
@@ -178,11 +180,7 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
     }
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action) {
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Polls, action);
-    }
-
-    private void sendAnalyticsEvent(AnalyticsValue.Action action, AnalyticsValue.Label label) {
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Polls, action, label);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, action);
     }
 
     @Override

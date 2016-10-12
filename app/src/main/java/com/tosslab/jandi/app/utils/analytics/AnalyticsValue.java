@@ -254,7 +254,9 @@ public class AnalyticsValue {
         MembersTab, JobTitlesTab, DepartmentsTab,
         MembersTab_SelectMember, MembersTab_UnSelectMember, MembersTab_SelectAll, MembersTab_Invite,
         CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
-        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote, CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember, InviteMember_InviteDisabled, TeamInformation,
+        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote,
+        CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember,
+        InviteMember_InviteDisabled, TeamInformation, MentionTab, StarTab, PollTab, MentionTab_ChooseTopicMsg, MentionTab_ChooseFileComment, StarTab_ChooseMsg, StarTab_ChooseFile, StarTab_ChoosePoll, StarTab_ChooseFileComment, PollTab_ChooseOngoingVoted, PollTab_ChooseOngoingUnvoted, PollTab_ChooseCompleted,
 
     }
 

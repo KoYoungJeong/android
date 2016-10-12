@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.model.Mentio
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.model.MentionListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.List;
@@ -156,6 +158,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 mentionListView.moveToPollDetailActivity(mention.getPollId());
             } else {
                 mentionListView.moveToFileDetailActivity(mention.getFeedbackId(), mention.getMessageId());
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab_ChooseFileComment);
             }
         }
     }
@@ -194,6 +197,8 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         } else {
             mentionListView.showUnknownEntityToast();
         }
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab_ChooseTopicMsg);
     }
 
     @Override
