@@ -156,6 +156,8 @@ public class ImageFileViewHolder extends FileViewHolder {
         ivFileThumb.setOnClickListener(null);
 
         btnTapToView.setOnClickListener(v -> {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewOriginalImage);
+
             btnTapToView.setVisibility(View.GONE);
 
             moveToPhotoViewer(fileMessageId, fileMessage, true);

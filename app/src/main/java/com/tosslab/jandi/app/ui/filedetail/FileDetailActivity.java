@@ -96,6 +96,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FocusChange;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.SystemService;
@@ -210,6 +211,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 });
     }
 
+    @FocusChange(R.id.et_message)
+    void onEditTextFocusChange(boolean focus, View view) {
+        if (focus) {
+            sendAnalyticsEvent(AnalyticsValue.Action.MessageInputField);
+        }
+    }
+
     @AfterTextChange(R.id.et_message)
     void onCommentTextChange(Editable editable) {
         setCommentSendButtonEnabled();
@@ -244,6 +252,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 stickerViewModel, null,
                 vgSoftInputDetector, vgSoftInputArea, null, btnAction,
                 etComment);
+        softInputAreaController.setOnStickerButtonClickListener(() -> {
+            sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
+        });
         softInputAreaController.init();
         softInputAreaController.setOnSoftInputAreaShowingListener((isShowing, softInputHeight) -> {
             View lastChild = listView.getChildAt(listView.getChildCount() - 1);
@@ -363,6 +374,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         showEnableExternalLinkSuccessToast();
 
         registerClipboardListenerForMention();
+
+        sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_CopyLink);
     }
 
     @Override
@@ -731,6 +744,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     public void onImageFileClick(long fileMessageId, ResMessages.FileMessage fileMessage,
                                  boolean shouldOpenImmediately) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
+
         if (fromCarousel) {
             finish();
             return;
@@ -749,8 +764,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             startActivity(intent);
         }
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
-
     }
 
     public void onEvent(ShowProfileEvent event) {
@@ -765,7 +778,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 .from(MemberProfileActivity.EXTRA_FROM_FILE_DETAIL)
                 .start();
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
+        AnalyticsValue.Action action = event.isFromComment
+                ? AnalyticsValue.Action.ViewProfile_FromComment : AnalyticsValue.Action.ViewProfile;
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, action);
     }
 
     public boolean onCommentLongClick(ResMessages.OriginalMessage comment) {
@@ -807,6 +823,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     private void moveToSharedEntity(long entityId) {
+        sendAnalyticsEvent(AnalyticsValue.Action.TapSharedTopic);
+
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
         int entityType;
@@ -873,7 +891,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     public void onEvent(FileStarredStateChangeEvent event) {
-        fileDetailPresenter.onChangeStarredState(fileId, event.getStarredState());
+        boolean star = event.getStarredState();
+        fileDetailPresenter.onChangeStarredState(fileId, star);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.Star,
+                star ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off);
     }
 
     public void onEvent(MessageStarredEvent event) {
@@ -883,14 +905,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         long messageId = event.getMessageId();
 
+        AnalyticsValue.Screen screen = AnalyticsValue.Screen.FileDetail;
+        AnalyticsValue.Action action = AnalyticsValue.Action.CommentLongTap_Star;
         switch (event.getAction()) {
             case STARRED:
                 fileDetailPresenter.onChangeFileCommentStarredState(messageId, true);
-                sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Star);
+                AnalyticsUtil.sendEvent(screen, action, AnalyticsValue.Label.On);
                 break;
             case UNSTARRED:
                 fileDetailPresenter.onChangeFileCommentStarredState(messageId, false);
-                sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Unstar);
+                AnalyticsUtil.sendEvent(screen, action, AnalyticsValue.Label.Off);
                 break;
         }
     }
@@ -939,6 +963,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         fileDetailPresenter.onDeleteComment(event.messageType, event.messageId, event.feedbackId);
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Delete);
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
@@ -947,6 +972,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         copyToClipboard(event.contentString);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Copy);
     }
 
     public void onEvent(TopicDeleteEvent event) {
@@ -1159,6 +1186,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         AlertUtil.showConfirmDialog(this, R.string.jandi_action_delete,
                 R.string.jandi_file_delete_message, (dialog, which) -> {
                     fileDetailPresenter.onDeleteFile(fileId, roomId);
+                    sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Delete);
                 }, true);
     }
 
@@ -1172,6 +1200,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         fileDetailPresenter.onEnableExternalLink(fileId);
+
+        sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_CreatePublicLink);
     }
 
     private String getExternalLink() {
@@ -1193,6 +1223,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 R.string.jandi_are_you_sure_disable_external_link,
                 R.string.jandi_action_delete, (dialog, which) -> {
                     fileDetailPresenter.onDisableExternalLink(fileId);
+                    sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_DeleteLink);
                 }, /* positive */
                 -1, null, /* neutral */
                 R.string.jandi_cancel, null, /* negative */
