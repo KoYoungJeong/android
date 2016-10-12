@@ -33,7 +33,7 @@ public class TeamItemViewHolder extends MainTeamListViewHolder {
         tvTeamMyEmail.setText(team.getUserEmail());
         if (team.getUnread() > 0) {
             tvTeamBadge.setVisibility(View.VISIBLE);
-            tvTeamBadge.setText(String.valueOf(team.getUnread()));
+            tvTeamBadge.setText(String.valueOf(Math.min(team.getUnread(), 999)));
         } else {
             tvTeamBadge.setVisibility(View.GONE);
         }

@@ -129,11 +129,7 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         }
 
         tvPollBadge.setVisibility(View.VISIBLE);
-        if (count > 999) {
-            tvPollBadge.setText(String.valueOf(999));
-        } else {
-            tvPollBadge.setText(String.valueOf(count));
-        }
+        tvPollBadge.setText(String.valueOf(Math.min(count, 999)));
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {

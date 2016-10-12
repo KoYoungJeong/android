@@ -428,7 +428,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
 
         badgeOverFlowMenu.showBadge();
-        badgeOverFlowMenu.setBadgeText(Integer.toString(badgeCount));
+        badgeOverFlowMenu.setBadgeText(String.valueOf(Math.min(badgeCount, 999)));
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
@@ -519,7 +519,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabTopic.showBadge();
-        tabTopic.setBadgeText(Integer.toString(count));
+        tabTopic.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
@@ -529,7 +529,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabChat.showBadge();
-        tabChat.setBadgeText(Integer.toString(count));
+        tabChat.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
@@ -539,7 +539,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabMyPage.showBadge();
-        tabMyPage.setBadgeText(Integer.toString(count));
+        tabMyPage.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
