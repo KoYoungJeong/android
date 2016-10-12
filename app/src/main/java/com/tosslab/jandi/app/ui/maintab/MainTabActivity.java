@@ -70,6 +70,7 @@ import com.tosslab.jandi.app.utils.LongPressListener;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -302,6 +303,34 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(toggle);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+
+            private boolean swiping = false;
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                swiping = true;
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if (swiping) {
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerSwipe);
+                    swiping = false;
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.Close);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         toggle.syncState();
     }
 
@@ -402,6 +431,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             @Override
             public void onLongPressed() {
                 navigationEasterEggOpen();
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerLongTap);
             }
         });
     }
@@ -410,6 +441,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Override
     public void openNavigation() {
         drawerLayout.openDrawer(navigationDirection);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
     }
 
     @Override

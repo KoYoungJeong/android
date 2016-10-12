@@ -144,6 +144,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             notifyDataSetChanged();
             navigationPresenter.initBadgeCount();
         });
+
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
     }
 
     @Override
@@ -176,8 +178,17 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         lvNavigation.setAdapter(navigationAdapter);
 
         navigationDataView.setOnNavigationItemClickListener(this::onOptionsItemSelected);
-        navigationDataView.setOnRequestTeamCreateListener(this::moveToTeamCreate);
-        navigationDataView.setOnTeamClickListener(this::joinToTeam);
+        navigationDataView.setOnRequestTeamCreateListener(() -> {
+            moveToTeamCreate();
+
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.CreateTeam);
+        });
+        navigationDataView.setOnTeamClickListener(team -> {
+            joinToTeam(team);
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.ChooseTeam);
+        });
         navigationDataView.setOnVersionClickListener(() -> usageInformationKnockListener.knock());
     }
 
@@ -199,30 +210,54 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         switch (item.getItemId()) {
             case R.id.nav_setting_notification:
                 moveToSetUpNotification();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.NotificationSetting);
                 return true;
             case R.id.nav_setting_passcode:
                 moveToSetUpPasscode();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PasscodeLock);
                 return true;
             case R.id.nav_setting_orientation:
                 showSettingOrientationDialog();
                 return true;
             case R.id.nav_setting_account:
                 moveToSetUpAccount();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.AccountSetting);
                 return true;
             case R.id.nav_term_of_service:
                 moveToCheckTeamsOfService();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.TermsofService);
                 return true;
             case R.id.nav_privacy_policy:
                 moveToCheckPrivacyPolicy();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PrivacyPolicy);
                 return true;
             case R.id.nav_help:
                 moveToShowHelpPage();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.FAQ);
                 return true;
             case R.id.nav_1_on_1:
                 moveToLiveSupport();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.LiveSupport);
                 return true;
             case R.id.nav_sign_out:
                 signOut();
+
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.SignOut);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -367,12 +402,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     public void onEvent(TeamInviteIgnoreEvent event) {
         navigationPresenter.onTeamInviteIgnoreAction(event.getTeam());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.AcceptTeamInvitation);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         navigationPresenter.onTeamInviteAcceptAction(event.getTeam());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.IgnoreTeamInvitation);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.IgnoreTeamInvitation);
     }
 
     public void onEvent(TeamDeletedEvent event) {
@@ -443,7 +478,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
         }
 
-        ivProfile.setOnClickListener(v -> moveToProfileSettingActivity());
+        ivProfile.setOnClickListener(v -> {
+            moveToProfileSettingActivity();
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.EditProfile);
+        });
         tvName.setText(user.getName());
         vOwnerBadge.setVisibility(user.isTeamOwner() ? View.VISIBLE : View.GONE);
         tvEmail.setText(user.getEmail());
@@ -504,7 +543,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         usageInformationKnockListener = KnockListener.create()
                 .expectKnockCount(10)
                 .expectKnockedIn(5000)
-                .onKnocked(this::showBugReportDialog);
+                .onKnocked(() -> {
+                    showBugReportDialog();
+
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.VersionInfo);
+                });
     }
 
     private void showBugReportDialog() {
