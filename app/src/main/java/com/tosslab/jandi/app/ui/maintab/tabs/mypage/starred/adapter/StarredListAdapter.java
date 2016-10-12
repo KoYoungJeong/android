@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
@@ -14,8 +12,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.viewholder.S
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.viewholder.StarredFileViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.viewholder.StarredMessageViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.viewholder.StarredPollViewHolder;
-import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.views.decoration.DividerViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +30,6 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
     private static final int VIEW_TYPE_FILE_MESSAGE = 1;
     private static final int VIEW_TYPE_POLL_MESSAGE = 2;
     private static final int VIEW_TYPE_COMMENT_MESSAGE = 3;
-    private static final int VIEW_TYPE_DIVIDER = 4;
 
     private long loadMoreOffset;
 
@@ -52,8 +47,6 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
             return StarredPollViewHolder.newInstance(parent);
         } else if (viewType == VIEW_TYPE_COMMENT_MESSAGE) {
             return StarredCommentViewHolder.newInstance(parent);
-        } else if (viewType == VIEW_TYPE_DIVIDER) {
-            return DividerViewHolder.newInstance(parent);
         }
         return null;
     }
@@ -121,21 +114,9 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
         }
         Observable.from(records)
                 .concatMap(starredMessage -> Observable.just(getMessageRow(starredMessage)))
-                .collect(() -> rows, (list, row) -> {
-                    list.add(row);
-                    list.add(getDividerRow());
-                })
+                .collect(() -> rows, List::add)
                 .subscribe();
         return rows;
-    }
-
-    private Row<DividerViewHolder.Info> getDividerRow() {
-        int dividerHeight = (int) UiUtils.getPixelFromDp(1);
-        int dividerColor = JandiApplication.getContext()
-                .getResources().getColor(R.color.rgb_eeeeee);
-        DividerViewHolder.Info dividerInfo =
-                DividerViewHolder.Info.create(dividerHeight, dividerColor);
-        return Row.create(dividerInfo, VIEW_TYPE_DIVIDER);
     }
 
     @Override
@@ -171,7 +152,6 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
         }
 
         rows.add(getMessageRow(message));
-        rows.add(getDividerRow());
         return rows;
     }
 
