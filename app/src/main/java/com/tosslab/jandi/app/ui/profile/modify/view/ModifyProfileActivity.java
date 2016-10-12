@@ -234,8 +234,8 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editEmail() {
         if (NetworkCheckUtil.isConnected()) {
             modifyProfilePresenter.onEditEmailClick();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
         }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Email);
     }
 
     @OnClick(R.id.profile_photo)
