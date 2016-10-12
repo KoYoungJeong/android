@@ -515,7 +515,7 @@ public class JandiSocketServiceModel {
             RoomMarkerRepository.getInstance().deleteMarker(data.getTopicId(), data.getMemberId());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            PollRepository.getInstance().removeOfTopic(data.getTopicId());
+//            PollRepository.getInstance().upsertPollStatus(data.getTopicId(), "deleted");
 
             postEvent(new RetrieveTopicListEvent());
             postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId()));
@@ -962,8 +962,6 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new TopicKickedoutEvent(data.getRoomId(), data.getTeamId()));
-            postEvent(new RetrieveTopicListEvent());
-            postEvent(new RequestRefreshPollBadgeCountEvent(event.getTeamId()));
 
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1281,7 +1279,7 @@ public class JandiSocketServiceModel {
             RoomMarkerRepository.getInstance().deleteMarkers(topicId);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            PollRepository.getInstance().removeOfTopic(topicId);
+//            PollRepository.getInstance().upsertPollStatus(topicId, "deleted");
 
             postEvent(new TopicDeleteEvent(event.getTeamId(), topicId));
             postEvent(new RetrieveTopicListEvent());

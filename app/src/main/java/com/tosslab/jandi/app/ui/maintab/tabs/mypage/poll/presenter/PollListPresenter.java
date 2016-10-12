@@ -30,8 +30,6 @@ public interface PollListPresenter {
 
         void notifyDataSetChanged();
 
-        void showEmptyView();
-
         void setHasMore(boolean hasMore);
 
         void showLoadMoreProgress();

@@ -104,8 +104,12 @@ public class PollRepository extends LockExecutorTemplate {
     public List<Poll> getPolls() {
         return execute(() -> {
             try {
-                return getHelper().getDao(Poll.class)
-                        .queryForAll();
+                return getDao(Poll.class)
+                        .queryBuilder()
+                        .where()
+                        .not()
+                        .eq("status", "deleted")
+                        .query();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -186,19 +190,4 @@ public class PollRepository extends LockExecutorTemplate {
         });
     }
 
-    public int removeOfTopic(long topicId) {
-        return execute(() -> {
-            try {
-                Dao<Poll, Long> dao = getDao(Poll.class);
-                DeleteBuilder<Poll, Long> deleteBuilder = dao.deleteBuilder();
-                deleteBuilder.where()
-                        .eq("topicId", topicId);
-
-                return deleteBuilder.delete();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return 0;
-        });
-    }
 }

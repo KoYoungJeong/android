@@ -110,6 +110,18 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
         lvPollList.setLayoutManager(new LinearLayoutManager(getContext()));
         lvPollList.setAdapter(pollListAdapter);
+
+        pollListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (pollListAdapter.getItemCount() > 0) {
+                    vgEmptyPollList.setVisibility(View.GONE);
+                } else {
+                    vgEmptyPollList.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void injectComponent(PollListAdapter adapter) {
@@ -150,11 +162,6 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
     }
 
     @Override
-    public void showEmptyView() {
-        vgEmptyPollList.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void setHasMore(boolean hasMore) {
         moreRequestHandler.setShouldRequestMore(hasMore);
     }
@@ -180,16 +187,16 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
         pollListPresenter.onPollDataChanged(event.getType(), event.getPoll());
     }
 
-    public void onEvent(TopicJoinEvent event) {
+    public void onEventMainThread(TopicJoinEvent event) {
         initPollList();
     }
 
-    public void onEvent(TopicLeftEvent event) {
-        pollListPresenter.removeOfTopics(event.getTopicId());
+    public void onEventMainThread(TopicLeftEvent event) {
+        initPollList();
     }
 
-    public void onEvent(TopicDeleteEvent event) {
-        pollListPresenter.removeOfTopics(event.getTopicId());
+    public void onEventMainThread(TopicDeleteEvent event) {
+        initPollList();
 
     }
 

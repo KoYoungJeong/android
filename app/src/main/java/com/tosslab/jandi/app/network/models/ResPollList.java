@@ -16,6 +16,7 @@ public class ResPollList {
     private List<Poll> onGoing;
     private List<Poll> finished;
     private boolean hasMore;
+    private int votableCount;
 
     @JsonIgnore
     private List<Poll> pollList;
@@ -50,5 +51,14 @@ public class ResPollList {
 
     public void setPollList(List<Poll> pollList) {
         this.pollList = pollList;
+    }
+
+    public int getVotableCount() {
+        return votableCount;
+    }
+
+    public ResPollList setVotableCount(int votableCount) {
+        this.votableCount = votableCount;
+        return this;
     }
 }

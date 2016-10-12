@@ -5,8 +5,11 @@ import android.util.Pair;
 
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.model.PollListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.model.PollListModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,6 +54,15 @@ public class PollListPresenterImpl implements PollListPresenter {
         pollListView.showProgress();
         pollListModel.getPollListObservable(PollListModel.DEFAULT_REQUEST_ITEM_COUNT)
                 .subscribeOn(Schedulers.newThread())
+                .doOnNext(resPollList -> {
+                    if (resPollList != null) {
+                        int votableCount = resPollList.getVotableCount();
+                        InitialPollInfoRepository.getInstance().updateVotableCount(votableCount);
+                        TeamInfoLoader.getInstance().refreshPollCount();
+                        RefreshPollBadgeCountEvent event = new RefreshPollBadgeCountEvent(votableCount);
+                        EventBus.getDefault().post(event);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(resPollList -> {
                     if (resPollList == null) {
@@ -70,15 +83,16 @@ public class PollListPresenterImpl implements PollListPresenter {
                     pollListView.dismissProgress();
 
                     List<Poll> pollList = resPollList.getPollList();
+                    pollListDataModel.clearPoll();
                     if (pollList == null || pollList.isEmpty()) {
-                        pollListView.showEmptyView();
                         pollListView.setHasMore(false);
                     } else {
-                        pollListDataModel.clearPoll();
+                        Log.d(TAG, "onInitializePollList: initPoll");
                         pollListDataModel.addPolls(pollList);
                         pollListView.setHasMore(resPollList.hasMore());
-                        pollListView.notifyDataSetChanged();
                     }
+
+                    pollListView.notifyDataSetChanged();
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
 
@@ -101,20 +115,20 @@ public class PollListPresenterImpl implements PollListPresenter {
                     pollListView.dismissProgress();
 
                     List<Poll> pollList = resPollList.getPollList();
+                    pollListDataModel.clearPoll();
                     if (pollList == null || pollList.isEmpty()) {
-                        pollListView.showEmptyView();
                         pollListView.setHasMore(false);
                     } else {
-                        pollListDataModel.clearPoll();
                         pollListDataModel.addPolls(pollList);
                         pollListView.setHasMore(resPollList.hasMore());
-                        pollListView.notifyDataSetChanged();
                     }
+                    pollListView.notifyDataSetChanged();
                 }, e -> {
                     LogUtil.e(TAG, Log.getStackTraceString(e));
 
                     pollListView.dismissProgress();
                     pollListView.showUnExpectedErrorToast();
+                    pollListView.notifyDataSetChanged();
                 });
     }
 
@@ -191,7 +205,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     pollListDataModel.removePollByIndex(idx);
                 }
             }
-        }).subscribeOn(Schedulers.computation())
+        }).subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pollListView::notifyDataSetChanged, Throwable::printStackTrace);
 
@@ -201,7 +215,18 @@ public class PollListPresenterImpl implements PollListPresenter {
     private void addPoll(Poll poll) {
         Observable.just(poll)
                 .observeOn(AndroidSchedulers.mainThread())
+                .filter(it -> {
+                    int size = pollListDataModel.size();
+                    for (int idx = 0; idx < size; idx++) {
+                        if (pollListDataModel.getPoll(idx).getId() == poll.getId()) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })
                 .subscribe(poll1 -> {
+                    Log.d(TAG, "addPoll: ");
                     pollListDataModel.addPoll(0, poll);
                     pollListView.notifyDataSetChanged();
                 });
@@ -210,13 +235,10 @@ public class PollListPresenterImpl implements PollListPresenter {
     private void changePoll(Poll poll) {
         Observable.just(poll)
                 .map(poll1 -> pollListDataModel.getIndexById(poll.getId()))
+                .filter(it -> it >= 0)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(index -> {
-                    if (index < 0) {
-                        return;
-                    }
-
                     pollListDataModel.setPoll(index, poll);
                     pollListView.notifyDataSetChanged();
                 });
@@ -228,7 +250,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     int targetToAddIndex = pollListDataModel.getIndexOfFirstFinishedPoll();
                     return Pair.create(targetToAddIndex, poll1);
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
                     Poll poll1 = pair.second;
@@ -248,17 +270,18 @@ public class PollListPresenterImpl implements PollListPresenter {
     }
 
     private void deletePoll(Poll poll) {
-        Observable.just(poll)
-                .map(poll1 -> pollListDataModel.getIndexById(poll.getId()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(index -> {
-                    try {
-                        pollListDataModel.removePollByIndex(index);
-                        pollListView.notifyDataSetChanged();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+        Completable.fromAction(() -> {
+            try {
+                int index = pollListDataModel.getIndexById(poll.getId());
+                if (index >= 0) {
+                    pollListDataModel.removePollByIndex(index);
+                    pollListView.notifyDataSetChanged();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
 
     }
 }

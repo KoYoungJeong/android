@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,6 +85,10 @@ public class PollListModel {
 
         return Observable.from(PollRepository.getInstance().getPolls())
                 .filter(poll -> poll.getTeamId() == teamId)
+                .filter(poll -> {
+                    TopicRoom topic = TeamInfoLoader.getInstance().getTopic(poll.getTopicId());
+                    return topic != null && topic.isJoined();
+                })
                 .toSortedList((poll, poll2) -> {
 
                     Date poll1FinishedAt = poll.getFinishedAt();

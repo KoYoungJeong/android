@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -585,6 +586,14 @@ public class TeamInfoLoader {
 
     public InitialInfo.Mention getMention() {
         return execute(() -> mention);
+    }
+
+    public void refreshPollCount() {
+        execute(() -> {
+            int votableCount = InitialPollInfoRepository.getInstance().getVotableCount();
+            pollBadge = votableCount;
+            initialInfo.getPoll().setVotableCount(votableCount);
+        });
     }
 
     interface Call0<T> {
