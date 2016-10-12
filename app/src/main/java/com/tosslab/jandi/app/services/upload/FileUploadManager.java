@@ -88,8 +88,9 @@ public class FileUploadManager {
     }
 
     private void initSubscription(Context context) {
-        subscription = objectPublishSubject.onBackpressureBuffer()
-                .observeOn(Schedulers.io())
+        subscription = objectPublishSubject
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.newThread())
                 .subscribe(fileUploadDTO -> {
 
                     notificationBuilder.setProgress(100, 0, false)
@@ -115,7 +116,7 @@ public class FileUploadManager {
                             fileUploadDTO.getMentions(),
                             callback -> callback
                                     .onBackpressureBuffer()
-                                    .distinctUntilChanged()
+                                    .distinct()
                                     .subscribe(it -> {
                                         progress[1] = it;
                                         FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), it);
@@ -146,6 +147,7 @@ public class FileUploadManager {
                             fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                         fileUploadDTO.setUploadState(FileUploadDTO.UploadState.FAIL);
                     }
                     EventBus.getDefault().post(new FileUploadFinishEvent(fileUploadDTO));
@@ -272,7 +274,8 @@ public class FileUploadManager {
                         fileUploadDTO.setUploadState(FileUploadDTO.UploadState.SUCCESS);
                         EventBus.getDefault().post(new FileUploadFinishEvent(fileUploadDTO));
                     }
-                }, t -> {});
+                }, t -> {
+                });
 
         fileUploadDTOs.clear();
         if (lastRequest != null && lastRequest.isExecuted() && !lastRequest.isCanceled()) {
