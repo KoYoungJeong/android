@@ -18,12 +18,16 @@ import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.schedulers.Schedulers;
 
 public class TeamMainFragment extends Fragment {
 
@@ -48,7 +52,32 @@ public class TeamMainFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new TeamViewPagerAdapter(getActivity(), getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                super.onTabReselected(tab);
+
+                Fragment fragment = ((TeamViewPagerAdapter) viewPager.getAdapter()).getItem(tab.getPosition());
+                if (fragment instanceof ListScroller) {
+                    ((ListScroller) fragment).scrollToTop();
+                }
+            }
+        });
+
+        viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfTeam());
+
         setHasOptionsMenu(true);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Completable.fromAction(() -> JandiPreference.setLastSelectedTabOfTeam(viewPager.getCurrentItem()))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
+
     }
 
     @Override

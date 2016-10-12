@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
 
@@ -47,7 +48,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser {
+public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser, ListScroller {
 
     public static final int REQ_DISABLED_MEMBER = 201;
     @Bind(R.id.list_team_member)
@@ -270,5 +271,12 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void onInvite() {
         presenter.inviteToggle();
+    }
+
+    @Override
+    public void scrollToTop() {
+        if (lvMember.getAdapter().getItemCount() > 0) {
+            lvMember.scrollToPosition(0);
+        }
     }
 }
