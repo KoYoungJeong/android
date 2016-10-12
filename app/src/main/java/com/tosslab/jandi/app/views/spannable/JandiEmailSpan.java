@@ -8,6 +8,8 @@ import android.text.style.UnderlineSpan;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 public class JandiEmailSpan extends UnderlineSpan implements ClickableSpannable {
 
@@ -38,6 +40,7 @@ public class JandiEmailSpan extends UnderlineSpan implements ClickableSpannable 
             ColoredToast.show(R.string.jandi_err_unexpected);
             e.printStackTrace();
         }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.MsgEmail);
     }
 
     public String getEmail() {

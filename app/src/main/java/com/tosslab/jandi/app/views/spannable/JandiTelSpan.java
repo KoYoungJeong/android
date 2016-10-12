@@ -8,6 +8,8 @@ import android.text.style.UnderlineSpan;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 /**
  * Created by tonyjs on 15. 8. 26..
@@ -41,7 +43,7 @@ public class JandiTelSpan extends UnderlineSpan implements ClickableSpannable {
             e.printStackTrace();
         }
 
-
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.MsgCellPhone);
     }
 
     public String getPhoneNumber() {
