@@ -41,7 +41,7 @@ public class AnalyticsValue {
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
         UniversalSearch, ChooseMember, SelectRoom, Carousel,
         ForceTeamCreation,
-        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, TeamInformation, TeamTab_Department, TeamTab_JobTitle, TeamTabSearch, ImageFullScreen, HamburgerMenu, EditAccount
+        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, TeamInformation, TeamTab_Department, TeamTab_JobTitle, TeamTabSearch, ImageFullScreen, HamburgerMenu, NotificationSetting, EditAccount
     }
 
     public enum Action {
@@ -256,7 +256,7 @@ public class AnalyticsValue {
         CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
         UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote,
         CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember,
-        InviteMember_InviteDisabled, TeamInformation, MentionTab, StarTab, PollTab, MentionTab_ChooseTopicMsg, MentionTab_ChooseFileComment, StarTab_ChooseMsg, StarTab_ChooseFile, StarTab_ChoosePoll, StarTab_ChooseFileComment, PollTab_ChooseOngoingVoted, PollTab_ChooseOngoingUnvoted, PollTab_ChooseCompleted, HamburgerIcon, HamburgerSwipe, HamburgerLongTap, NotificationSetting, PasscodeLock, AccountSetting, LiveSupport, TermsofService, FAQ, VersionInfo, VersionInfo_Close, VersionInfo_Email,
+        InviteMember_InviteDisabled, TeamInformation, MentionTab, StarTab, PollTab, MentionTab_ChooseTopicMsg, MentionTab_ChooseFileComment, StarTab_ChooseMsg, StarTab_ChooseFile, StarTab_ChoosePoll, StarTab_ChooseFileComment, PollTab_ChooseOngoingVoted, PollTab_ChooseOngoingUnvoted, PollTab_ChooseCompleted, HamburgerIcon, HamburgerSwipe, HamburgerLongTap, NotificationSetting, PasscodeLock, AccountSetting, LiveSupport, TermsofService, FAQ, VersionInfo, VersionInfo_Close, VersionInfo_Email, Sounds_Topic, Sounds_DM, Sounds_Mention, PreviewMsgContents,
 
     }
 
@@ -268,6 +268,6 @@ public class AnalyticsValue {
         ongoing, SubmitATeam, completed,
         AllRoom, JoinedRoom, Zipfiles, SelectRoom,
         PhotoLibrary, Camera, ChooseCharacter,
-        Star, text, image, Unstar
+        Star, text, image, All, Public, None, Unstar
     }
 }

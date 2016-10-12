@@ -161,7 +161,7 @@ public class SettingsPushFragment extends Fragment {
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action, boolean on) {
         AnalyticsValue.Label label = on ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Setting, action, label);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting, action, label);
     }
 
     private void setUpParseValue(boolean checked) {
@@ -230,6 +230,7 @@ public class SettingsPushFragment extends Fragment {
                             .commit();
                     setSoundSubStatus();
                 });
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting, AnalyticsValue.Action.Sounds_Topic);
     }
 
     @OnClick(R.id.vg_settings_push_sound_sub_direct_message)
@@ -242,6 +243,7 @@ public class SettingsPushFragment extends Fragment {
                             .commit();
                     setSoundSubStatus();
                 });
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting, AnalyticsValue.Action.Sounds_DM);
     }
 
     @OnClick(R.id.vg_settings_push_sound_sub_mentions)
@@ -254,6 +256,7 @@ public class SettingsPushFragment extends Fragment {
                             .commit();
                     setSoundSubStatus();
                 });
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting, AnalyticsValue.Action.Sounds_Mention);
     }
 
     @OnClick(R.id.vg_settings_push_vibration)
@@ -303,6 +306,22 @@ public class SettingsPushFragment extends Fragment {
                                 .putString(Settings.SETTING_PUSH_PREVIEW, selectedValue)
                                 .commit();
                         setUpPreview();
+
+                        switch (which) {
+                            case 0:
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting,
+                                    AnalyticsValue.Action.PreviewMsgContents, AnalyticsValue.Label.All);
+                                break;
+                            case 1:
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting,
+                                        AnalyticsValue.Action.PreviewMsgContents, AnalyticsValue.Label.Public);
+                                break;
+                            case 2:
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting,
+                                        AnalyticsValue.Action.PreviewMsgContents, AnalyticsValue.Label.None);
+                                break;
+                        }
+
                     }
                     dialog.dismiss();
                 });
