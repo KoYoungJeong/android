@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataView;
-import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderADapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.dagger.DaggerDeptJobComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.dagger.DeptJobModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.presenter.DeptJobPresenter;
@@ -111,7 +111,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                     .setAdapter(adapter)
                     .setRecyclerView(lvMember)
                     .setSticky(true)
-                    .setStickyHeadersAdapter(new DeptJobHeaderADapter(adapter), false)
+                    .setStickyHeadersAdapter(new DeptJobHeaderAdapter(adapter), false)
                     .build());
         }
 
