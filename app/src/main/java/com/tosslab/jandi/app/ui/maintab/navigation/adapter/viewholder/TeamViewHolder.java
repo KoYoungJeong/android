@@ -43,6 +43,6 @@ public class TeamViewHolder extends BaseViewHolder<Team> {
         tvName.setText(team.getName());
 
         tvBadge.setVisibility(team.getUnread() > 0 ? View.VISIBLE : View.GONE);
-        tvBadge.setText("" + team.getUnread());
+        tvBadge.setText(String.valueOf(Math.min(999, team.getUnread())));
     }
 }

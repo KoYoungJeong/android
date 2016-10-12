@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearch
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
 
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable {
+public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable, ListScroller {
 
     public static final int EXTRA_TYPE_DEPT = 1;
     public static final int EXTRA_TYPE_JOB = 2;
@@ -220,5 +221,12 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                 deptJobPresenter.onSearchKeyword(text);
             }
         });
+    }
+
+    @Override
+    public void scrollToTop() {
+        if (lvMember.getAdapter().getItemCount() > 0) {
+            lvMember.scrollToPosition(0);
+        }
     }
 }
