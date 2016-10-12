@@ -42,7 +42,8 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.services.keep.KeepService;
+import com.tosslab.jandi.app.services.keep.KeepAliveService;
+import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -195,7 +196,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             EventBus.getDefault().register(this);
         });
 
-        KeepService.start(this);
+        KeepExecutedService.start(this);
+        KeepAliveService.start(this);
         initFirebaseUserProperties();
     }
 
@@ -345,7 +347,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
-//        viewPager.setOffscreenPageLimit(tabInfos.size());
+        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() -1 , 1));
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -459,7 +461,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
 
         badgeOverFlowMenu.showBadge();
-        badgeOverFlowMenu.setBadgeText(Integer.toString(badgeCount));
+        badgeOverFlowMenu.setBadgeText(String.valueOf(Math.min(badgeCount, 999)));
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
@@ -485,6 +487,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
         setMypageBadge(count);
     }
+
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
@@ -549,7 +552,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabTopic.showBadge();
-        tabTopic.setBadgeText(Integer.toString(count));
+        tabTopic.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
@@ -559,7 +562,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabChat.showBadge();
-        tabChat.setBadgeText(Integer.toString(count));
+        tabChat.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
@@ -569,7 +572,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabMyPage.showBadge();
-        tabMyPage.setBadgeText(Integer.toString(count));
+        tabMyPage.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override

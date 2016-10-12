@@ -615,15 +615,18 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     private void initStickerViewModel() {
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
-            stickerInfo = new StickerInfo();
-            stickerInfo.setStickerGroupId(groupId);
-            stickerInfo.setStickerId(stickerId);
-            showStickerPreview(oldSticker, stickerInfo);
-            setSendButtonEnabled(true);
-            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
+            if (oldSticker.getStickerGroupId() == groupId
+                    && oldSticker.getStickerId().equals(stickerId)) {
+                sendMessage();
+            } else {
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                showStickerPreview(oldSticker, stickerInfo);
+                setSendButtonEnabled(true);
+                sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
+            }
         });
-
-        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendMessage());
 
         stickerViewModel.setType(isInDirectMessage()
                 ? StickerViewModel.TYPE_MESSAGE : StickerViewModel.TYPE_TOPIC);
@@ -843,6 +846,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                         mentionControlViewModel.setUpMention(readyMessage);
 
                         mentionControlViewModel.registClipboardListener();
+
+                        setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
+
                     });
         }
 

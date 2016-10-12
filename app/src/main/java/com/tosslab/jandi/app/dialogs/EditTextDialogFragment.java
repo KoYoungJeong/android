@@ -222,7 +222,9 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_NEW_EMAIL:
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 input.setHint(R.string.jandi_user_id);
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(!FormatConverter.isInvalidEmailString(input.getText().toString()));
+                Button btnConfirm = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                btnConfirm.setEnabled(!FormatConverter.isInvalidEmailString(input.getText().toString()));
+                setConfirmColor(btnConfirm);
                 break;
             default:
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -320,6 +322,11 @@ public class EditTextDialogFragment extends DialogFragment {
                 break;
         }
 
+        setConfirmColor(confirm);
+
+    }
+
+    private void setConfirmColor(Button confirm) {
         if (confirm.isEnabled()) {
             confirm.setTextColor(JandiApplication.getContext()
                     .getResources().getColor(R.color.button_text_color));
@@ -327,7 +334,6 @@ public class EditTextDialogFragment extends DialogFragment {
             confirm.setTextColor(JandiApplication.getContext()
                     .getResources().getColor(R.color.button_text_color_dim));
         }
-
     }
 
     /**

@@ -67,6 +67,9 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @Bind(R.id.et_email)
     EditText etEmail;
 
+    @Bind(R.id.et_name)
+    EditText etName;
+
     @Bind(R.id.et_password)
     EditText etPassword;
 
@@ -117,7 +120,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (btnSignUp.isEnabled()) {
                     signUpPresenter.trySignUp(
-                            etEmail.getText().toString(), etPassword.getText().toString());
+                            etName.getText().toString(), etEmail.getText().toString(), etPassword.getText().toString());
                 }
                 return true;
             }
@@ -193,6 +196,7 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @OnClick(R.id.btn_sign_up)
     void onClickSignUpButton() {
         signUpPresenter.trySignUp(
+                etName.getText().toString(),
                 etEmail.getText().toString(),
                 etPassword.getText().toString());
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignUp, AnalyticsValue.Action.SignUpNow);

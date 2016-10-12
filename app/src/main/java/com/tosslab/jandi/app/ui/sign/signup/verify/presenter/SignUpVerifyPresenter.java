@@ -67,7 +67,6 @@ public class SignUpVerifyPresenter {
 
             switch (errCode) {
                 case EXPIRED_VERIFICATION_CODE:
-
                     view.showExpiredVerificationCode();
                     break;
                 case INVALIDATE_VERIFICATION_CODE:

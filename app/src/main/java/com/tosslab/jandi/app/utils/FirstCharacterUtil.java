@@ -17,8 +17,8 @@ public class FirstCharacterUtil {
 
     public static final int TYPE_ENGLISH = 0;
     public static final int TYPE_HANGUL = 1;
-    public static final int TYPE_JAPANESE = 2;
-    public static final int TYPE_CHINESE = 3;
+    public static final int TYPE_CHINESE = 2;
+    public static final int TYPE_JAPANESE = 3;
     public static final int TYPE_ETC = 4;
 
     public static int getLocale(char text) {

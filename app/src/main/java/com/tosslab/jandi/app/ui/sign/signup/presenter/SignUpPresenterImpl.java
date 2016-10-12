@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrVerificatio
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import rx.Completable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -56,7 +56,7 @@ public class SignUpPresenterImpl implements SignUpPresenter {
     }
 
     @Override
-    public void trySignUp(String email, String password) {
+    public void trySignUp(String name, String email, String password) {
 
         boolean check = checkEmailValidation(email);
         check = checkPasswordValidation(password) && check;
@@ -65,23 +65,23 @@ public class SignUpPresenterImpl implements SignUpPresenter {
             return;
         }
 
-        String lang = LanguageUtil.getLanguage();
 
         view.showProgressWheel();
 
-        Observable.create(subscriber -> {
+
+        Completable.fromCallable(() -> {
             try {
-                model.requestSignUp(email, password, email, lang);
+                String lang = LanguageUtil.getLanguage();
+                model.requestSignUp(email, password, name, lang);
                 AnalyticsUtil.sendConversion("Android_Account mail send", "957512006", "fVnsCMKD_GEQxvLJyAM");
                 SprinklrVerificationMail.sendLog(email);
-                subscriber.onNext(new Object());
+                return Completable.complete();
             } catch (RetrofitException e) {
-                subscriber.onError(e);
+                throw e;
             }
-            subscriber.onCompleted();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> {
+                .subscribe(() -> {
                     view.dismissProgressWheel();
                     view.startSignUpRequestVerifyActivity();
                 }, e -> {

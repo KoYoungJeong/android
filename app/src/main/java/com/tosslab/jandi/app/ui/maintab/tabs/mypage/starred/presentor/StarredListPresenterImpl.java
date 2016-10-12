@@ -44,7 +44,6 @@ public class StarredListPresenterImpl implements StarredListPresenter {
     @Override
     public void onInitializeStarredList(StarredType starredType) {
         isInInitializing = true;
-        starredListView.hideEmptyLayout();
         starredListModel.getStarredListObservable(starredType.getName(), -1, StarredListModel.DEFAULT_COUNT)
                 .map(resStarMentioned -> {
                     List<MultiItemRecyclerAdapter.Row<?>> rows =
@@ -63,15 +62,11 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
                     starredListView.setHasMore(hasMore);
 
-                    if (rows == null || rows.size() <= 0) {
-                        starredListView.showEmptyLayout();
-                    }
                 }, e -> {
                     LogUtil.e(e.getMessage());
                     try {
                         starredListDataModel.clear();
                         starredListView.notifyDataSetChanged();
-                        starredListView.showEmptyLayout();
                         isInInitializing = false;
                     } catch (Exception e1) {
                         e1.printStackTrace();
@@ -205,17 +200,16 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                     if (resStarMentioned == null
                             || resStarMentioned.getRecords() == null
                             || resStarMentioned.getRecords().isEmpty()) {
-                        return Observable.defer(() -> Observable.error(new NullPointerException("empty")));
+                        return Observable.error(new NullPointerException("empty"));
                     }
 
                     StarredMessage message = resStarMentioned.getRecords().get(0);
                     StarredMessage messageById = starredListDataModel.findMessageById(message.getMessage().id);
                     if (messageById != null && messageById.getStarredId() > 0) {
-                        return Observable.defer(() -> Observable.error(new Throwable("already exists")));
+                        return Observable.error(new Throwable("already exists"));
                     }
 
-                    return Observable.defer(() ->
-                            Observable.just(starredListDataModel.getStarredMessageRow(message)));
+                    return Observable.just(starredListDataModel.getStarredMessageRow(message));
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

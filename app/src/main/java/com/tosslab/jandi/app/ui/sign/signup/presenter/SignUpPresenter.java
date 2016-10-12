@@ -10,7 +10,7 @@ public interface SignUpPresenter {
 
     boolean checkEmailValidation(String email);
 
-    void trySignUp(String email, String password);
+    void trySignUp(String name, String email, String password);
 
     interface View {
 

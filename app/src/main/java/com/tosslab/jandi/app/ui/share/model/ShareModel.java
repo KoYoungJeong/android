@@ -90,7 +90,8 @@ public class ShareModel {
                         progressDialog.setMax(100);
                         progressDialog.setProgress(it);
                     }
-                }, t -> {}, () -> {
+                }, t -> {
+                }, () -> {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
