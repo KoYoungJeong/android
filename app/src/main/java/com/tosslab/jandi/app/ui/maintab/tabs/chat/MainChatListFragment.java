@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
@@ -314,6 +315,10 @@ public class MainChatListFragment extends Fragment
 
         mainChatListPresenter.onEntityItemClick(getActivity(), position);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseDM);
+        ChatItem chatItem = getChatItem(position);
+        if (chatItem != null && chatItem.getEntityId() == TeamInfoLoader.getInstance().getJandiBot().getId()) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseJANDI);
+        }
     }
 
     void onEntityLongItemClick(ChatItem chatItem) {

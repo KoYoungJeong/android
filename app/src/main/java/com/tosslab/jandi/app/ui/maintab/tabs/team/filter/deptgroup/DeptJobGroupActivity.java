@@ -142,6 +142,11 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @Override
     public void pickUser(long userId) {
         if (pickMode) {
+            AnalyticsValue.Action action = type == DeptJobFragment.EXTRA_TYPE_DEPT
+                    ? AnalyticsValue.Action.ChooseDepartment_Undefined
+                    : AnalyticsValue.Action.ChooseJobTitle_Undefined;
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMember, action);
+
             Intent intent = new Intent();
             intent.putExtra(EXTRA_RESULT, userId);
             setResult(RESULT_OK, intent);

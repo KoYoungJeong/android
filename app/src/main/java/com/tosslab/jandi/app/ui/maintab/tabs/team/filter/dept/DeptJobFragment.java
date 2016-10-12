@@ -153,6 +153,15 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
             return;
         }
 
+        if (roomId <= 0) {
+            AnalyticsValue.Action action = type == EXTRA_TYPE_DEPT
+                    ? AnalyticsValue.Action.ChooseDepartment
+                    : AnalyticsValue.Action.ChooseJobTitle;
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMemberSearch, action);
+            return;
+        }
+
         boolean isUnDefined = JandiApplication.getContext().getString(R.string.jandi_undefined_member)
                 .contains(keyword);
 

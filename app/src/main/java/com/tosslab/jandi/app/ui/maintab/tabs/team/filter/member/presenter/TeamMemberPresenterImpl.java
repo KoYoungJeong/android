@@ -245,8 +245,15 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
             lastLinkId = -1;
         }
 
-
         view.moveDirectMessage(teamId, userId, roomId, lastLinkId);
+
+        AnalyticsValue.Screen screen = isInSearchMode
+                ? AnalyticsValue.Screen.SelectTeamMemberSearch
+                : AnalyticsValue.Screen.SelectTeamMember;
+        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
+        if (userId == TeamInfoLoader.getInstance().getJandiBot().getId()) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMember, AnalyticsValue.Action.ChooseJANDI);
+        }
     }
 
     @Override

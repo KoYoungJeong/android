@@ -166,6 +166,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FocusChange;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.SystemService;
@@ -1159,6 +1160,13 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     fileUploadVO.getEntity(),
                     fileUploadVO.getFilePath(),
                     fileUploadVO.getComment());
+        }
+    }
+
+    @FocusChange(R.id.et_message)
+    void onEditTextFocusChange(boolean focus, View view) {
+        if (focus) {
+            sendAnalyticsEvent(AnalyticsValue.Action.MessageInputField);
         }
     }
 
