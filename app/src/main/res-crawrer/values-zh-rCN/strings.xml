@@ -8,9 +8,15 @@
 	<string name="common_accthome_joinedteamlist">"团队列表"</string>
 	<string name="common_accthome_loggedin">"已登录"</string>
 	<string name="common_createteam_toaccthome">"前往帐户首页"</string>
+	<string name="common_createteam_welcome">"欢迎！"</string>
 	<string name="common_creatteam_done">"确认"</string>
 	<string name="common_hamburger_teamadmin">"团队管理员"</string>
+	<string name="common_pricingplan_fileupload">"{TeamName}\n 空间使用量已超过上限，上传即将受到限制。现在升级成标准版，拥有无上限的高效体验。"</string>
+	<string name="common_pricingplan_livesupport">"线上客服"</string>
+	<string name="common_pricingplan_moreinfo">"了解更多"</string>
+	<string name="common_pricingplan_msgsearch">"{TeamName}\n 信息传送量已超过上限，搜索即将受到限制。现在升级成标准版，拥有无上限的高效体验。"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
+	<string name="common_sharetojandi_errormsg">"发生错误！请重试一次"</string>
 	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，\n请输入验证码完成认证"</string>
 	<string name="err_delete_file">"文件无法删除"</string>
 	<string name="err_download">"文件无法下载"</string>
@@ -60,7 +66,7 @@
 	<string name="err_team_creation_failed">"电子邮件无法送出"</string>
 	<string name="err_unshare">"文件无法取消分享"</string>
 	<string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"團隊未完成建立"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"账号首页"</string>
@@ -345,7 +351,7 @@
 	<string name="jandi_invite_wechat">"微信"</string>
 	<string name="jandi_invited_topic">"%1$s邀请了%2$s"</string>
 	<string name="jandi_is_newcomer">"还没使用过JANDI吗?"</string>
-	<string name="jandi_is_topic_required">"公开/私人"</string>
+	<string name="jandi_is_topic_required">"公开/私人*"</string>
 	<string name="jandi_it_has_no_topic_description">"(无议题内容)"</string>
 	<string name="jandi_job_title">"职位"</string>
 	<string name="jandi_job_title_list">"所有职称"</string>
