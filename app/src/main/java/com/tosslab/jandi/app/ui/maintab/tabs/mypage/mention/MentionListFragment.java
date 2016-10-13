@@ -191,16 +191,20 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     }
 
     public void onEvent(MessageStarredEvent event) {
-        presenter.onStarred(event.getMessageId());
+        if (isResumed()) {
+            presenter.onStarred(event.getMessageId());
+        }
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
-        Completable.fromAction(() -> {
-            ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboardManager.setPrimaryClip(ClipData.newPlainText("", event.contentString));
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
-            ColoredToast.show(R.string.jandi_copied_to_clipboard);
-        });
+        if (isResumed()) {
+            Completable.fromAction(() -> {
+                ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("", event.contentString));
+            }).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
+                ColoredToast.show(R.string.jandi_copied_to_clipboard);
+            });
+        }
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
