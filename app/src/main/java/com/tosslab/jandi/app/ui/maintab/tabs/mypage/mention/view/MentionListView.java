@@ -33,4 +33,7 @@ public interface MentionListView {
 
     void moveToPollDetailActivity(long pollId);
 
+    void successStarredMessage();
+
+    void failStarredMessage();
 }

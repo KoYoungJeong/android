@@ -16,4 +16,6 @@ public interface MentionListPresenter {
     void reInitializeIfEmpty();
 
     void removeMentionedMessage(long linkId);
+
+    void onStarred(long messageId);
 }

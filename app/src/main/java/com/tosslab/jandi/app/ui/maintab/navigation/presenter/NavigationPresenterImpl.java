@@ -114,6 +114,10 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     private void initBadgeCount(List<Team> teams) {
+
+        if (teams == null) {
+            return;
+        }
         Observable.combineLatest(
                 Observable.from(teams)
                         .filter(team -> team.getStatus() == Team.Status.PENDING)

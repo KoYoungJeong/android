@@ -22,6 +22,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -261,6 +262,18 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .subscribe(index -> {
                     mentionListDataModel.remove(index);
                     mentionListView.notifyDataSetChanged();
+                });
+    }
+
+    @Override
+    public void onStarred(long messageId) {
+        Completable.fromCallable(() -> {
+            mentionListModel.registerStarred(messageId);
+            return Completable.complete();
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mentionListView::successStarredMessage, t -> {
+                    mentionListView.failStarredMessage();
                 });
     }
 }
