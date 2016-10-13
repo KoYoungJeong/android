@@ -66,12 +66,12 @@ public class MentionControlViewModel {
                                     EditText editText,
                                     long teamId,
                                     List<Long> roomIds,
-                                    String mentionType) {
+                                    String mentionType, Runnable callback) {
 
         this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
 
-        init(activity, editText, teamId, roomIds);
+        init(activity, editText, teamId, roomIds, callback);
 
     }
 
@@ -84,7 +84,19 @@ public class MentionControlViewModel {
                 editText,
                 teamId,
                 roomIds,
-                mentionType);
+                mentionType, null);
+    }
+
+    public static MentionControlViewModel newInstance(Activity activity,
+                                                      EditText editText,
+                                                      List<Long> roomIds,
+                                                      String mentionType, Runnable callback) {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        return new MentionControlViewModel(activity,
+                editText,
+                teamId,
+                roomIds,
+                mentionType, callback);
     }
 
     public static MentionControlViewModel newInstance(Activity activity,
@@ -96,7 +108,7 @@ public class MentionControlViewModel {
                 editText,
                 teamId,
                 roomIds,
-                mentionType);
+                mentionType, null);
     }
 
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
@@ -177,7 +189,7 @@ public class MentionControlViewModel {
 
     }
 
-    private void init(Activity activity, EditText editText, long teamId, List<Long> roomIds) {
+    private void init(Activity activity, EditText editText, long teamId, List<Long> roomIds, Runnable callback) {
 
         this.etMessage = (AutoCompleteTextView) editText;
 
@@ -188,13 +200,21 @@ public class MentionControlViewModel {
         List<SearchedItemVO> users = searchMemberModel.getUserSearchByName("");
         mentionMemberListAdapter = new MentionMemberListAdapter(activity, users);
 
-        Completable.fromAction(() -> {
+        if (callback != null) {
+            Completable.fromAction(() -> {
+                etMessage.setAdapter(mentionMemberListAdapter);
+                etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
+                etMessage.setThreshold(1);
+                addTextWatcher(editText);
+            }).subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(callback::run);
+        } else {
             etMessage.setAdapter(mentionMemberListAdapter);
             etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
             etMessage.setThreshold(1);
             addTextWatcher(editText);
-        }).subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+        }
+
     }
 
     public void setOnMentionShowingListener(OnMentionShowingListener onMentionShowingListener) {
