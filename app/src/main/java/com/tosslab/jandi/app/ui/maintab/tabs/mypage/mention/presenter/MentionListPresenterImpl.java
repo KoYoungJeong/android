@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
@@ -273,7 +274,18 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mentionListView::successStarredMessage, t -> {
-                    mentionListView.failStarredMessage();
+                    boolean success = false;
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getResponseCode() == 40015) {
+                            success = true;
+                        }
+                    }
+                    if (success) {
+                        mentionListView.successStarredMessage();
+                    } else {
+                        mentionListView.failStarredMessage();
+                    }
                 });
     }
 }
