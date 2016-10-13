@@ -18,6 +18,7 @@ public class DeptJobHeaderAdapter implements StickyHeadersAdapter<DeptJobHeaderA
     private final DeptJobDataModel deptJobDataModel;
 
     public DeptJobHeaderAdapter(DeptJobDataModel deptJobDataModel) {
+
         this.deptJobDataModel = deptJobDataModel;
     }
 
