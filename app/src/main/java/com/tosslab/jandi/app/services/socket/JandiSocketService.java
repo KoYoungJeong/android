@@ -210,7 +210,7 @@ public class JandiSocketService extends Service {
 
 
         EventListener chatLCloseListener = objects -> jandiSocketServiceModel.onChatClosed(objects[0]);
-        eventHashMap.put("chat_close", chatLCloseListener);
+        eventHashMap.put("chat_closed", chatLCloseListener);
 
         EventListener chatCreatedListener = objects -> jandiSocketServiceModel.onChatCreated(objects[0]);
         eventHashMap.put("chat_created", chatCreatedListener);

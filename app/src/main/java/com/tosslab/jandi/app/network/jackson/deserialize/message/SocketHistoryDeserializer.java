@@ -117,7 +117,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         TeamNameUpdated("team_name_updated", SocketTeamNameUpdatedEvent.class),
         TeamDomainUpdated("team_domain_updated", SocketTeamDomainUpdatedEvent.class),
         TeamUpdated("team_updated", SocketTeamUpdatedEvent.class),
-        ChatClose("chat_close", SocketChatCloseEvent.class),
+        ChatClose("chat_closed", SocketChatCloseEvent.class),
         ChatCreated("chat_created", SocketChatCreatedEvent.class),
         ConnectCreated("connect_created", SocketConnectBotCreatedEvent.class),
         ConnectDeleted("connect_deleted", SocketConnectBotDeletedEvent.class),

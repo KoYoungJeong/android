@@ -14,7 +14,7 @@ public class SocketChatCloseEvent implements EventHistoryInfo {
     private String event;
     private long ts;
     private long teamId;
-    private Data chat;
+    private Data data;
     private String unique;
 
     @Override
@@ -31,13 +31,17 @@ public class SocketChatCloseEvent implements EventHistoryInfo {
         return teamId;
     }
 
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
     @Override
     public String getUnique() {
         return unique;
     }
 
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @Override
@@ -49,12 +53,12 @@ public class SocketChatCloseEvent implements EventHistoryInfo {
         this.event = event;
     }
 
-    public Data getChat() {
-        return chat;
+    public Data getData() {
+        return data;
     }
 
-    public void setChat(Data chat) {
-        this.chat = chat;
+    public void setData(Data data) {
+        this.data = data;
     }
 
     @Override
@@ -66,30 +70,17 @@ public class SocketChatCloseEvent implements EventHistoryInfo {
         this.ts = ts;
     }
 
-    public void setUnique(String unique) {
-        this.unique = unique;
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private long id;
-        private long companionId;
+        private long chatId;
 
-        public long getId() {
-            return id;
+        public long getChatId() {
+            return chatId;
         }
 
-        public void setId(long id) {
-            this.id = id;
-        }
-
-        public long getCompanionId() {
-            return companionId;
-        }
-
-        public void setCompanionId(long companionId) {
-            this.companionId = companionId;
+        public void setChatId(long chatId) {
+            this.chatId = chatId;
         }
     }
 }
