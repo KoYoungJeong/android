@@ -822,10 +822,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             }).subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(() -> {
-                        mentionControlViewModel.setOnMentionShowingListener(
-                                isShowing -> {
-                                    btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE);
-                                });
 
                         mentionControlViewModel.setUpMention(readyMessage);
 
@@ -833,6 +829,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
                         setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
 
+                        mentionControlViewModel.setOnMentionShowingListener(
+                                isShowing -> {
+                                    btnShowMention.setVisibility(!isShowing ? View.VISIBLE : View.GONE);
+                                });
                     });
         }
 

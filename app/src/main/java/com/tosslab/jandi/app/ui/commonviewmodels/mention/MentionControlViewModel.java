@@ -358,7 +358,7 @@ public class MentionControlViewModel {
         }
 
         if (onMentionShowingListener != null) {
-            onMentionShowingListener.onMentionShowing(hasMembers);
+            onMentionShowingListener.onMentionShowing(etMessage.isPopupShowing());
         }
         mentionMemberListAdapter.notifyDataSetChanged();
     }
