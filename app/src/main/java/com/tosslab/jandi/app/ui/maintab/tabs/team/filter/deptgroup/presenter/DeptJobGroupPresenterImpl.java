@@ -75,14 +75,14 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         return user -> {
             if (type == DeptJobFragment.EXTRA_TYPE_JOB) {
                 if (!TextUtils.isEmpty(user.getPosition())) {
-                    return user.getPosition().contains(keyword);
+                    return user.getPosition().equals(keyword);
                 } else {
                     return TextUtils.equals(keyword, undefinedMember);
                 }
             } else {
                 if (!TextUtils.isEmpty(user.getDivision())) {
 
-                    return user.getDivision().contains(keyword);
+                    return user.getDivision().equals(keyword);
                 } else {
                     return TextUtils.equals(keyword, undefinedMember);
                 }
