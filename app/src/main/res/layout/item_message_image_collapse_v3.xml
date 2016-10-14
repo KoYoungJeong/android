@@ -48,6 +48,7 @@
             android:paddingLeft="9dp"
             android:paddingRight="9dp"
             android:paddingTop="7dp"
+            android:maxLines="1"
             android:singleLine="true"
             android:text="가로 긴 이미지.png"
             android:textColor="@color/dark_gray"

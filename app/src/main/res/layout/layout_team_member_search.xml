@@ -16,7 +16,7 @@
             android:layout_height="19dp"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
-            android:background="@drawable/icon_search_bar"/>
+            android:background="@drawable/icon_search_bar" />
 
         <TextView
             android:layout_width="match_parent"
@@ -24,15 +24,16 @@
             android:layout_marginLeft="33dp"
             android:background="@null"
             android:gravity="center_vertical"
+            android:maxLines="1"
             android:singleLine="true"
             android:text="@string/jandi_action_search"
-            android:textColor="@color/jandi_text_light"/>
+            android:textColor="@color/jandi_text_light" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:background="@drawable/jandi_gradient_team_member_search_divider"/>
+        android:background="@drawable/jandi_gradient_team_member_search_divider" />
 
 </LinearLayout>

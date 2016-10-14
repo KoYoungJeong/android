@@ -35,7 +35,6 @@ android {
         versionCode 219
         versionName '2.4.2'
 
-
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -50,8 +49,8 @@ android {
         }
 
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            debuggable true
+            testCoverageEnabled = project.hasProperty("report_coverage") && report_coverage.toBoolean()
         }
 
     }
@@ -62,7 +61,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
-            minSdkVersion 21
+            minSdkVersion 19
         }
 
         qa {       // demo version
@@ -159,11 +158,6 @@ android {
     }
 }
 
-project.gradle.taskGraph.whenReady {
-    connectedDevDebugAndroidTest {
-        ignoreFailures = true
-    }
-}
 
 apt {
     arguments {

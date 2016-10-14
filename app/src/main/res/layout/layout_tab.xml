@@ -8,7 +8,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/tab_title"
@@ -16,10 +16,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:singleLine="true"
         android:layout_marginBottom="7dp"
+        android:maxLines="1"
+        android:singleLine="true"
         android:textColor="@color/text_color_main_tab"
-        android:textSize="11dp"/>
+        android:textSize="11dp" />
 
     <TextView
         android:id="@+id/tab_badge"
@@ -28,6 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tab_icon"
         android:layout_toRightOf="@id/tab_icon"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

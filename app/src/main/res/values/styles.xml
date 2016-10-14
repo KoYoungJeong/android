@@ -57,6 +57,7 @@
     <style name="JandiFileListCategoryTab.Text" parent="JandiFileListCategoryTab">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/jandi_text_light</item>
         <item name="android:drawableRight">@drawable/file_arrow_down_gray</item>
@@ -79,6 +80,7 @@
 
     <style name="JandiMainTabBadge.Text">
         <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
         <item name="android:layout_marginTop">-3dp</item>
         <item name="android:background">@drawable/topiclist_unread_badge</item>
         <item name="android:gravity">center</item>
@@ -107,6 +109,7 @@
     <!-- 튜토리얼 페이지 안의 이메일 주소 창 --><style name="JandiTutorial.EditText" parent="JandiTutorial">
     <item name="android:layout_height">42dp</item>
     <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
     <item name="android:inputType">textEmailAddress</item>
     <item name="android:hint">@string/jandi_profile_email</item>
     <item name="android:background">@drawable/jandi_intro_edittext</item>
@@ -121,6 +124,7 @@
 
     <style name="JandiTutorial.EditText.Dialog" parent="JandiTutorial">
         <item name="android:layout_height">42dp</item>
+        <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
         <item name="android:inputType">textEmailAddress</item>
         <item name="android:hint">@string/jandi_profile_email</item>
@@ -165,6 +169,7 @@
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_marginLeft">24dp</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
         <item name="android:layout_gravity">fill_horizontal</item>
         <item name="android:background">@android:color/transparent</item>

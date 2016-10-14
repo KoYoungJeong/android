@@ -13,9 +13,10 @@
         android:layout_marginLeft="72dp"
         android:layout_weight="1"
         android:ellipsize="end"
+        android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/jandi_text"
-        android:textSize="14dp"/>
+        android:textSize="14dp" />
 
     <FrameLayout
         android:layout_width="62dp"
@@ -27,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="0dp"/>
+            android:layout_marginTop="0dp" />
     </FrameLayout>
 
 </LinearLayout>

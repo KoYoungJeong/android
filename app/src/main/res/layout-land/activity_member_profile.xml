@@ -5,9 +5,9 @@
 
     <FrameLayout
         android:id="@+id/vg_member_profile_img_large"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
 
         <ImageView
             android:id="@+id/iv_member_profile_img_large"
@@ -16,9 +16,9 @@
 
         <View
             android:id="@+id/v_member_profile_img_large_overlay"
-            android:background="@color/jandi_member_profile_img_overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/jandi_member_profile_img_overlay" />
     </FrameLayout>
 
     <com.tosslab.jandi.app.views.SwipeExitLayout
@@ -123,9 +123,9 @@
                     android:layout_alignParentRight="true">
 
                     <View
-                        android:layout_gravity="center"
                         android:layout_width="14dp"
                         android:layout_height="14dp"
+                        android:layout_gravity="center"
                         android:background="@drawable/jandi_member_profile_star_selector" />
                 </FrameLayout>
             </RelativeLayout>
@@ -154,6 +154,7 @@
                         android:background="@drawable/bg_profile_info"
                         android:ellipsize="end"
                         android:gravity="center"
+                        android:maxLines="1"
                         android:singleLine="true"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="13dp" />
@@ -165,6 +166,7 @@
                         android:background="@drawable/bg_profile_info"
                         android:ellipsize="end"
                         android:gravity="center"
+                        android:maxLines="1"
                         android:singleLine="true"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="13dp" />
