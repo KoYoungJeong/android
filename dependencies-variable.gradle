@@ -60,8 +60,8 @@ ext.dependecies = [
                 //Retrofit
                 retrofit2                        : 'com.squareup.retrofit2:retrofit:2.0.0',
                 retrofit2_gson                   : 'com.squareup.retrofit2:converter-gson:2.0.0',
-                okhttp3                          : 'com.squareup.okhttp3:okhttp:3.2.0',
-                okhttp3_ws                       : 'com.squareup.okhttp3:okhttp-ws:3.2.0',
+                okhttp3                          : 'com.squareup.okhttp3:okhttp:3.4.1',
+                okhttp3_ws                       : 'com.squareup.okhttp3:okhttp-ws:3.4.1',
                 jackson                          : 'com.fasterxml.jackson.core:jackson-databind:2.7.2',
                 okhttp3_logging                  : 'com.squareup.okhttp3:logging-interceptor:3.2.0',
 
