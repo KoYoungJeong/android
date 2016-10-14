@@ -26,6 +26,7 @@ public class MentionListAdapter extends RecyclerView.Adapter<BaseViewHolder<Ment
     private List<MentionMessage> mentionMessageList = new ArrayList<>();
 
     private OnMentionClickListener onMentionClickListener;
+    private OnMentionLongClickListener onMentionLongClickListener;
 
     private OnLoadMoreCallback onLoadMoreCallback;
     private long loadMoreOffset;
@@ -69,6 +70,15 @@ public class MentionListAdapter extends RecyclerView.Adapter<BaseViewHolder<Ment
             if (onMentionClickListener != null) {
                 onMentionClickListener.onMentionClick(getItem(position));
             }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (onMentionLongClickListener != null) {
+                onMentionLongClickListener.onMentionLongClick(getItem(position));
+                return true;
+            }
+
+            return false;
         });
 
         if (lastReadMessageId > 0 && mentionMessage.getMessageId() > lastReadMessageId) {
@@ -160,8 +170,16 @@ public class MentionListAdapter extends RecyclerView.Adapter<BaseViewHolder<Ment
         mentionMessageList.add(position, mentionMessage);
     }
 
+    public MentionListAdapter setOnMentionLongClickListener(OnMentionLongClickListener onMentionLongClickListener) {
+        this.onMentionLongClickListener = onMentionLongClickListener;
+        return this;
+    }
+
     public interface OnMentionClickListener {
         void onMentionClick(MentionMessage mention);
+    }
+    public interface OnMentionLongClickListener {
+        void onMentionLongClick(MentionMessage mention);
     }
 
     public interface OnLoadMoreCallback {

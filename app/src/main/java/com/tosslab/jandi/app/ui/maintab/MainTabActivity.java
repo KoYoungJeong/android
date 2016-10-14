@@ -207,7 +207,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         FirebaseAnalytics.getInstance(this)
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
-        Completable.fromCallable(() -> {
+        Completable.defer(() -> {
 
             if ((System.currentTimeMillis() - JandiPreference.getLatestFcmTokenUpdate()) > 1000 * 60 * 60 * 6) {
                 return Completable.complete();

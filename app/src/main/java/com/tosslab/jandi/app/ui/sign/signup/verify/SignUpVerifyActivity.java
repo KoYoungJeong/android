@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.sign.signup.verify;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -242,7 +243,10 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         startActivity(Henson.with(this)
                 .gotoTeamSelectListActivity()
                 .shouldRefreshAccountInfo(false)
-                .build());
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();

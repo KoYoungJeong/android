@@ -70,15 +70,11 @@ public class SignUpPresenterImpl implements SignUpPresenter {
 
 
         Completable.fromCallable(() -> {
-            try {
-                String lang = LanguageUtil.getLanguage();
-                model.requestSignUp(email, password, name, lang);
-                AnalyticsUtil.sendConversion("Android_Account mail send", "957512006", "fVnsCMKD_GEQxvLJyAM");
-                SprinklrVerificationMail.sendLog(email);
-                return Completable.complete();
-            } catch (RetrofitException e) {
-                throw e;
-            }
+            String lang = LanguageUtil.getLanguage();
+            model.requestSignUp(email, password, name, lang);
+            AnalyticsUtil.sendConversion("Android_Account mail send", "957512006", "fVnsCMKD_GEQxvLJyAM");
+            SprinklrVerificationMail.sendLog(email);
+            return Completable.complete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {

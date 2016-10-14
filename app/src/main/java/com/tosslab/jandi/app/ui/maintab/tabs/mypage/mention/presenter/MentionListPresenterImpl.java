@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
@@ -24,6 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -266,6 +268,29 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .subscribe(index -> {
                     mentionListDataModel.remove(index);
                     mentionListView.notifyDataSetChanged();
+                });
+    }
+
+    @Override
+    public void onStarred(long messageId) {
+        Completable.fromCallable(() -> {
+            mentionListModel.registerStarred(messageId);
+            return Completable.complete();
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mentionListView::successStarredMessage, t -> {
+                    boolean success = false;
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getResponseCode() == 40015) {
+                            success = true;
+                        }
+                    }
+                    if (success) {
+                        mentionListView.successStarredMessage();
+                    } else {
+                        mentionListView.failStarredMessage();
+                    }
                 });
     }
 }
