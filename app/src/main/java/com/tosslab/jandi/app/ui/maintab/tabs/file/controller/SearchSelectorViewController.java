@@ -230,7 +230,8 @@ public class SearchSelectorViewController {
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
         roomSelector.setOnRoomSelectListener(item -> {
             long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
-            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
+            boolean isEveryWhere = item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE;
+            if (isEveryWhere) {
                 // 첫번째는 "Everywhere"인 더미 entity
                 currentEntityNameText = context.getString(R.string.jandi_search_category_everywhere);
             } else {
@@ -247,6 +248,14 @@ public class SearchSelectorViewController {
                 screen = AnalyticsValue.Screen.FilesSearch;
             } else {
                 screen = AnalyticsValue.Screen.FilesTab;
+            }
+
+            if (item.isUser()) {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter,
+                        isEveryWhere ? AnalyticsValue.Label.AllMember : AnalyticsValue.Label.Member);
+            } else {
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseTopicFilter,
+                        isEveryWhere ? AnalyticsValue.Label.AllTopic : AnalyticsValue.Label.Topic);
             }
         });
 
