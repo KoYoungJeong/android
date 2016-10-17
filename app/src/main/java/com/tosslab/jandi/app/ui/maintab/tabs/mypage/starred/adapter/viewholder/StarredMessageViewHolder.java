@@ -48,8 +48,8 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         Member member = TeamInfoLoader.getInstance().getMember(starredMessage.getMessage().writerId);
         StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
                 .bind(member);
-        String roomName = starredMessage.getRoom().name;
-        roomName = convertUserNameIfOneToOneRoom(roomName);
+        long roomId = starredMessage.getRoom().id;
+        String roomName = getRoomName(roomId);
 
         tvMentionTopicName.setText(roomName);
 
@@ -78,18 +78,15 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         tvDate.setText(date);
     }
 
-    private String convertUserNameIfOneToOneRoom(String roomName) {
-        long partnerId = -1;
-        if (roomName.contains(TeamInfoLoader.getInstance().getMyId() + ":")) {
-            partnerId =
-                    Long.parseLong(roomName.replace(TeamInfoLoader.getInstance().getMyId() + ":", ""));
-        } else if (roomName.contains(":" + TeamInfoLoader.getInstance().getMyId())) {
-            partnerId =
-                    Long.parseLong(roomName.replace(":" + TeamInfoLoader.getInstance().getMyId(), ""));
+    private String getRoomName(long roomId) {
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+        if (teamInfoLoader.isTopic(roomId)) {
+            return teamInfoLoader.getTopic(roomId).getName();
+        } else if (teamInfoLoader.isChat(roomId)
+                && teamInfoLoader.isUser(teamInfoLoader.getChat(roomId).getCompanionId())) {
+            return teamInfoLoader.getUser(teamInfoLoader.getChat(roomId).getCompanionId()).getName();
         }
-        if (TeamInfoLoader.getInstance().isUser(partnerId)) {
-            roomName = TeamInfoLoader.getInstance().getUser(partnerId).getName();
-        }
-        return roomName;
+        return "";
     }
+
 }
