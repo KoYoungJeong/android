@@ -241,10 +241,13 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 menuInflater.inflate(R.menu.invite_to_direct_message, menu);
             }
 
-            if (showAllSelectOptionsMenu) {
-                menu.findItem(R.id.action_select_all).setVisible(true);
-            } else {
-                menu.findItem(R.id.action_select_all).setVisible(false);
+            MenuItem item = menu.findItem(R.id.action_select_all);
+            if (item != null) {
+                if (showAllSelectOptionsMenu) {
+                    item.setVisible(true);
+                } else {
+                    item.setVisible(false);
+                }
             }
         }
 
