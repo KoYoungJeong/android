@@ -299,8 +299,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
                 if (mentionControlViewModel.hasMentionMember()) {
                     ivMention.setVisibility(isShowing ? View.GONE : View.VISIBLE);
+                } else {
+                    ivMention.setVisibility(View.GONE);
                 }
             });
+
+            ivMention.setVisibility(mentionControlViewModel.hasMentionMember() ? View.VISIBLE : View.GONE);
         } else {
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }

@@ -114,6 +114,10 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     private void initBadgeCount(List<Team> teams) {
+
+        if (teams == null) {
+            return;
+        }
         Observable.combineLatest(
                 Observable.from(teams)
                         .filter(team -> team.getStatus() == Team.Status.PENDING)
@@ -123,7 +127,13 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .filter(team -> team.getTeamId() != TeamInfoLoader.getInstance().getTeamId())
                         .map(Team::getUnread)
                         .reduce((prev, current) -> prev + current),
-                Observable.just(Intercom.client().getUnreadConversationCount()),
+                Observable.defer(() -> {
+                    try {
+                        return Observable.just(Intercom.client().getUnreadConversationCount());
+                    } catch (Exception e) {
+                        return Observable.just(0);
+                    }
+                }),
                 (pendingTeams, unreadCount, intercomCount) -> pendingTeams + unreadCount + intercomCount)
                 .subscribe(total -> {
                     EventBus.getDefault().post(new NavigationBadgeEvent(total));

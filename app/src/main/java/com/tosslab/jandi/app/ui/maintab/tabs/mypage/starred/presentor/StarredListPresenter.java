@@ -51,7 +51,7 @@ public interface StarredListPresenter {
 
         void showUnStarSuccessToast();
 
-        void moveToMessageList(long teamId, long roomId, int entityType, long linkId);
+        void moveToMessageList(long teamId, long entityId, long roomId, int entityType, long linkId);
 
         void showUnJoinedTopicErrorToast();
 

@@ -6,7 +6,9 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepos
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMentionMarkerUpdate;
+import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
+import com.tosslab.jandi.app.network.models.ResStarredMessage;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -138,5 +140,10 @@ public class MentionListModel {
     public void increaseMentionUnreadCount() {
         InitialMentionInfoRepository.getInstance().increaseUnreadCount();
         TeamInfoLoader.getInstance().refreshMention();
+    }
+
+    public ResStarredMessage registerStarred(long messageId) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        return messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
     }
 }

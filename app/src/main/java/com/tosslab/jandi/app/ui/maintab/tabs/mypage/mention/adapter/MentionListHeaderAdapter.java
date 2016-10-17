@@ -6,7 +6,6 @@ import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.model.MentionListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.viewholder.MentionMessageHeaderViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Calendar;
 
@@ -48,7 +47,6 @@ public class MentionListHeaderAdapter implements StickyHeadersAdapter<MentionMes
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        LogUtil.i("tony", "" + calendar.getTimeInMillis());
         return calendar.getTimeInMillis();
     }
 }

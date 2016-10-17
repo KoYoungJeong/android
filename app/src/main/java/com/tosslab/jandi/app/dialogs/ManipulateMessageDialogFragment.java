@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import de.greenrobot.event.EventBus;
@@ -97,6 +98,22 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         args.putBoolean(IS_MINE, isMine);
         args.putBoolean(IS_STARRED, item.isStarred);
         frag.setArguments(args);
+        return frag;
+    }
+
+    public static DialogFragment newInstanceByMentionedMessage(MentionMessage mention) {
+
+        String title = DateTransformator.getTimeString(mention.getCreatedAt());
+
+        ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putLong(MESSAGE_ID, mention.getMessageId());
+        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_COMMENT);
+        args.putString(CURRENT_MESSAGE, mention.getContentBody());
+        args.putBoolean(IS_STARRED, false);
+        frag.setArguments(args);
+
         return frag;
     }
 
@@ -233,5 +250,4 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             lastVisibleChild.setLayoutParams(layoutParams);
         }
     }
-
 }

@@ -129,7 +129,7 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         Call<ResCommon> unregistStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId);
 
         @GET("teams/{teamId}/messages/mentioned")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<ResStarMentioned> getMentionedMessages(@Path("teamId") long teamId,
                                                     @Query("messageId") long messageId, @Query("count") int count);
 

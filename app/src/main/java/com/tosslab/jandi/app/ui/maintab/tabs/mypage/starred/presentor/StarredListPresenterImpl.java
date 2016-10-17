@@ -226,7 +226,7 @@ public class StarredListPresenterImpl implements StarredListPresenter {
     private void moveToMessageList(StarredMessage message) {
         long roomId = message.getRoom().id;
         Collection<Long> members = TeamInfoLoader.getInstance()
-                .getTopic(roomId)
+                .getRoom(roomId)
                 .getMembers();
 
         Observable.from(members)
@@ -243,8 +243,16 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                             : "privateGroup".equals(entityTypeStr)
                             ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
 
+                    long entityId;
+
+                    if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+                        entityId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+                    } else {
+                        entityId = roomId;
+                    }
+
                     starredListView.moveToMessageList(
-                            message.getTeamId(), roomId, entityType, message.getLinkId());
+                            message.getTeamId(), entityId, roomId, entityType, message.getLinkId());
                 }, e -> {
                     LogUtil.e(Log.getStackTraceString(e));
                     starredListView.showUnJoinedTopicErrorToast();
