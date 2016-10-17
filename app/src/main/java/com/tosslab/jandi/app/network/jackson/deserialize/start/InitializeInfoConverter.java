@@ -93,6 +93,16 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
             }
         }
 
+        InitialInfo.Poll poll = value.getPoll();
+        if (poll != null) {
+            poll.setId(value.getTeamId());
+        }
+
+        InitialInfo.Mention mention = value.getMention();
+        if (mention != null) {
+            mention.setId(value.getTeamId());
+        }
+
         return value;
     }
 

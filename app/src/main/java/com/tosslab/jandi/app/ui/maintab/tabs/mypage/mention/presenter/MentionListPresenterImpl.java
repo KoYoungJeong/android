@@ -62,10 +62,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         long lastReadMentionId = mentionListModel.getLastReadMentionId();
         mentionListDataModel.setLastReadMessageId(lastReadMentionId);
 
-        if (lastReadMentionId > 0) {
-            lastReadMentionId += 1;
-        }
-        mentionListModel.getMentionsObservable(lastReadMentionId, MentionListModel.MENTION_LIST_LIMIT)
+        mentionListModel.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
                 .doOnNext(resStarMentioned -> {
                     List<StarredMessage> records = resStarMentioned.getRecords();
                     if (records != null && !(records.isEmpty())) {

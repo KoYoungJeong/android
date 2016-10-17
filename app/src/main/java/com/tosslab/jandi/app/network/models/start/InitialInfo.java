@@ -183,7 +183,7 @@ public class InitialInfo {
     @DatabaseTable(tableName = "initial_poll_info")
     public static class Poll {
         @DatabaseField(id = true)
-        private long id = 1;
+        private long id;
 
         @DatabaseField
         private int votableCount;
@@ -217,7 +217,7 @@ public class InitialInfo {
     @DatabaseTable(tableName = "initial_mention_info")
     public static class Mention {
         @DatabaseField(id = true)
-        private long id = 1;
+        private long id;
 
         @DatabaseField
         private int unreadCount;
