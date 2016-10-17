@@ -33,7 +33,7 @@
         android:gravity="center"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="@string/jandi_team_select_create_a_team"
+        android:text="@string/jandi_action_create_team"
         android:textColor="@color/jandi_border_gray"
         android:textSize="11dp"/>
 
