@@ -11,13 +11,22 @@ import com.tosslab.jandi.app.R;
  */
 public class ColoredToast {
 
-    private static final SuperToast superToast =
-            SuperToast.create(JandiApplication.getContext(), "", SuperToast.Duration.VERY_SHORT);
+    private static ColoredToast instance;
+    private SuperToast superToast;
 
-    public ColoredToast() {
+    private ColoredToast() {
+        superToast = SuperToast.create(JandiApplication.getContext(), "", SuperToast.Duration.VERY_SHORT);
+    }
+
+    private synchronized static ColoredToast getInstance() {
+        if (instance == null) {
+            instance = new ColoredToast();
+        }
+        return instance;
     }
 
     public static void show(String message) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(message);
         superToast.setBackground(SuperToast.Background.BLUE);
@@ -28,6 +37,7 @@ public class ColoredToast {
     }
 
     public static void show(int strResId) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(JandiApplication.getContext().getResources().getString(strResId));
         superToast.setBackground(SuperToast.Background.BLUE);
@@ -37,6 +47,7 @@ public class ColoredToast {
     }
 
     public static void showGray(String message) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -46,6 +57,7 @@ public class ColoredToast {
     }
 
     public static void showGray(int strResId) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(JandiApplication.getContext().getString(strResId));
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -55,6 +67,7 @@ public class ColoredToast {
     }
 
     public static void showLong(String message) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.LONG);
@@ -64,6 +77,7 @@ public class ColoredToast {
     }
 
     public static void showWarning(String message) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -73,6 +87,7 @@ public class ColoredToast {
     }
 
     public static void showWarning(int resId) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(JandiApplication.getContext().getString(resId));
         superToast.setDuration(SuperToast.Duration.VERY_SHORT);
@@ -82,6 +97,7 @@ public class ColoredToast {
     }
 
     public static void showError(String message) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(message);
         superToast.setDuration(SuperToast.Duration.SHORT);
@@ -91,6 +107,7 @@ public class ColoredToast {
     }
 
     public static void showError(int strResId) {
+        SuperToast superToast = getInstance().superToast;
         superToast.cancelAllSuperToasts();
         superToast.setText(JandiApplication.getContext().getResources().getString(strResId));
         superToast.setDuration(SuperToast.Duration.SHORT);
