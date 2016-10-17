@@ -5,6 +5,8 @@ import android.text.TextPaint;
 import android.text.style.UnderlineSpan;
 
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 21..
@@ -33,5 +35,8 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
     @Override
     public void onClick() {
         ApplicationUtil.startWebBrowser(context, url);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat,
+                AnalyticsValue.Action.TapLinkPreview,
+                AnalyticsValue.Label.text);
     }
 }

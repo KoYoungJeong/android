@@ -17,6 +17,8 @@ import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -164,6 +166,10 @@ public class LinkPreviewViewModel {
                 activity.overridePendingTransition(
                         R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
             }
+
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat,
+                    AnalyticsValue.Action.TapLinkPreview,
+                    AnalyticsValue.Label.image);
 
         }
     }

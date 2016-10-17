@@ -122,7 +122,6 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
 
         adapterViewModel.setOnClickTeamJoinIgnoreListener(team -> {
             teamSelectListPresenter.onRequestIgnoreJoin(team, true);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.IgnoreTeamInvitation);
         });
 
     }

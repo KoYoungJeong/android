@@ -169,7 +169,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
             vgFolderList.setVisibility(View.GONE);
             vgNoFolder.setVisibility(View.VISIBLE);
             findViewById(R.id.tv_make_new_folder).setOnClickListener(v -> {
-                showCreateNewFolderDialog();
+                showCreateNewFolderDialog(false);
             });
         }
     }
@@ -199,7 +199,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                 finish();
                 return true;
             case R.id.action_create_new_folder:
-                showCreateNewFolderDialog();
+                showCreateNewFolderDialog(true);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -207,7 +207,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showCreateNewFolderDialog() {
+    public void showCreateNewFolderDialog(boolean fromActionBar) {
         if (alertDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(TopicFolderSettingActivity.this,
                     R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -224,7 +224,11 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                     .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                         createNewFolder(etInput.getText().toString().trim());
                         etInput.setText("");
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
+                        if (fromActionBar) {
+                            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
+                        } else {
+                            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolderonTop);
+                        }
                     })
                     .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
                         etInput.setText("");
@@ -336,6 +340,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                 .setPositiveButton(this.getString(R.string.jandi_confirm), (dialog, which) -> {
                     if (!name.equals(input.getText().toString().trim())) {
                         topicFolderSettingPresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.EditFolder_Rename);
                     }
                     dialog.cancel();
                 })

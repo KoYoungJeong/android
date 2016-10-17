@@ -13,13 +13,14 @@ import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.json.JSONException;
 
 import javax.inject.Inject;
 
@@ -81,6 +82,7 @@ public class EntityMenuDialogModel {
                 updatePushStatus(teamId, entityId, isTopicPushOn);
                 TopicRepository.getInstance().updatePushSubscribe(entityId, isTopicPushOn);
                 TeamInfoLoader.getInstance().refresh();
+
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
@@ -92,6 +94,15 @@ public class EntityMenuDialogModel {
     public void updatePushStatus(long teamId, long entityId, boolean pushOn) throws RetrofitException {
         ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
         roomsApi.get().updateTopicPushSubscribe(teamId, entityId, req);
+        AnalyticsValue.Label label;
+        if (pushOn) {
+            label = AnalyticsValue.Label.On;
+        } else {
+            label = AnalyticsValue.Label.Off;
+        }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                AnalyticsValue.Action.TopicSubMenu_Notification,
+                label);
     }
 
     public boolean isPushOn(long topicId) {

@@ -136,7 +136,7 @@ public class TopicFolderSettingPresenter {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.RemoveFromThisFolder);
                 break;
             case TopicFolderSettingAdapter.TYPE_MAKE_NEW_FOLDER:
-                view.showCreateNewFolderDialog();
+                view.showCreateNewFolderDialog(false);
                 break;
         }
     }
@@ -190,7 +190,7 @@ public class TopicFolderSettingPresenter {
 
         void showFolderList(List<Folder> folders, boolean hasFolder);
 
-        void showCreateNewFolderDialog();
+        void showCreateNewFolderDialog(boolean fromActionBar);
 
         void finishAcitivty();
 

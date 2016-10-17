@@ -111,15 +111,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
                     showGlobalPushSetupDialog();
                 } else {
                     entityMenuDialogModel.updateNotificationOnOff(entityId, !isTopicPushOn);
-                    AnalyticsValue.Label label;
-                    if (isTopicPushOn) {
-                        label = AnalyticsValue.Label.On;
-                    } else {
-                        label = AnalyticsValue.Label.Off;
-                    }
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
-                            AnalyticsValue.Action.TopicSubMenu_Notification,
-                            label);
                 }
                 dismiss();
             });
@@ -189,14 +180,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
     void onStarredClick() {
         showProgressWheel();
         requestStarred();
-
-        boolean starred = TeamInfoLoader.getInstance().isStarred(roomId);
-        AnalyticsValue.Screen category = roomId !=
-                entityId ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
-        AnalyticsValue.Action action = AnalyticsValue.Action.TopicSubMenu_Star;
-        AnalyticsValue.Label label = starred ? AnalyticsValue.Label.Star : AnalyticsValue.Label.Unstar;
-        AnalyticsUtil.sendEvent(category, action, label);
-
     }
 
     @Background
@@ -228,6 +211,13 @@ public class EntityMenuDialogFragment extends DialogFragment {
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
             dismiss();
+
+            starred = TeamInfoLoader.getInstance().isStarred(roomId);
+            AnalyticsValue.Screen category = roomId !=
+                    entityId ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
+            AnalyticsValue.Action action = AnalyticsValue.Action.TopicSubMenu_Star;
+            AnalyticsValue.Label label = starred ? AnalyticsValue.Label.Star : AnalyticsValue.Label.Unstar;
+            AnalyticsUtil.sendEvent(category, action, label);
         } catch (RetrofitException e) {
             e.printStackTrace();
             dismissProgressWheel();

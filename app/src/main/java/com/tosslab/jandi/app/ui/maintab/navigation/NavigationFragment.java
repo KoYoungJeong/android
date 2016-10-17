@@ -183,15 +183,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     private void joinToTeam(Team team) {
         navigationPresenter.onTeamJoinAction(team.getTeamId());
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.ChooseTeam);
     }
 
     private void moveToTeamCreate() {
         Intent intent = new Intent(getActivity(), CreateTeamActivity.class);
         startActivityForResult(intent, REQUEST_TEAM_CREATE);
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.CreateNewTeam);
     }
 
     @Override
@@ -367,12 +363,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     public void onEvent(TeamInviteIgnoreEvent event) {
         navigationPresenter.onTeamInviteIgnoreAction(event.getTeam());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         navigationPresenter.onTeamInviteAcceptAction(event.getTeam());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SwitchTeam, AnalyticsValue.Action.IgnoreTeamInvitation);
     }
 
     public void onEvent(TeamDeletedEvent event) {

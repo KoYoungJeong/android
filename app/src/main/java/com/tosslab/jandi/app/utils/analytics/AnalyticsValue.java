@@ -248,7 +248,7 @@ public class AnalyticsValue {
         TapPlusButton, TapPlusButton_CreateNewTopic, TapPlusButton_CreateNewFolder, TapPlusButton_FolderManagement, TapPlusButton_BrowseOtherTopics,
         TopicSubMenu_Notification,
         SubmitTeam, GoToJANDIMain,
-        SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount
+        SubmitATeam, NewFolderonTop, CreateNewFolder, EditFolder_Rename, TapLinkPreview, EditAccount
     }
 
     public enum Label {
@@ -259,6 +259,6 @@ public class AnalyticsValue {
         ongoing, SubmitATeam, completed,
         AllRoom, JoinedRoom, Zipfiles, SelectRoom,
         PhotoLibrary, Camera, ChooseCharacter,
-        Star, Unstar
+        Star, image, text, Unstar
     }
 }
