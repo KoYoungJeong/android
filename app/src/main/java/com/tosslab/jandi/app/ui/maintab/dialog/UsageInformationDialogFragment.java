@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.EFragment;
 
@@ -42,7 +44,10 @@ public class UsageInformationDialogFragment extends DialogFragment {
                 .setMessage(message)
                 .setTitle("JANDI Usage Information")
                 .setCancelable(false)
-                .setNegativeButton(R.string.jandi_close, null)
+                .setNegativeButton(R.string.jandi_close, (dialog, which) -> {
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.VersionInfo_Close);
+                })
                 .setPositiveButton(R.string.jandi_send_to_email, (dialog, which) -> {
                     Intent intent =
                             new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@tosslab.com"));
@@ -53,6 +58,8 @@ public class UsageInformationDialogFragment extends DialogFragment {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.VersionInfo_Email);
                 })
                 .create();
 

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 
 /**
  * Created by tee on 16. 1. 22..
@@ -11,15 +12,17 @@ import com.tosslab.jandi.app.R;
 public class DragnDropTouchHelper extends ItemTouchHelper.SimpleCallback {
 
     private TopicFolderSettingAdapter topicFolderSettingAdapter;
+    private OnDragStartListener onDragStartListener;
 
     private long startFolderId;
     private int dropPosition;
 
-    public DragnDropTouchHelper(TopicFolderSettingAdapter topicFolderChooseAdapter) {
+    public DragnDropTouchHelper(TopicFolderSettingAdapter topicFolderChooseAdapter,
+                                OnDragStartListener onDragStartListener) {
         super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.topicFolderSettingAdapter = topicFolderChooseAdapter;
+        this.onDragStartListener = onDragStartListener;
     }
-
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -56,11 +59,17 @@ public class DragnDropTouchHelper extends ItemTouchHelper.SimpleCallback {
             startFolderId = topicFolderSettingAdapter.getItem(viewHolder.getAdapterPosition()).getId();
             dropPosition = viewHolder.getAdapterPosition();
             viewHolder.itemView.setBackgroundResource(R.drawable.list_move_shadow);
+            if (onDragStartListener != null) {
+                onDragStartListener.onDragStart();
+            }
         } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
             topicFolderSettingAdapter.sendChangeSeq(startFolderId, dropPosition + 1);
         }
         super.onSelectedChanged(viewHolder, actionState);
     }
 
+    public interface OnDragStartListener {
+        void onDragStart();
+    }
 
 }

@@ -6,6 +6,7 @@ package com.tosslab.jandi.app.events.profile;
 public class ShowProfileEvent {
     public long userId;
     public From from;
+    public boolean isFromComment;
 
     public ShowProfileEvent(long userId) {
         this.userId = userId;
@@ -14,6 +15,10 @@ public class ShowProfileEvent {
     public ShowProfileEvent(long userId, From from) {
         this.userId = userId;
         this.from = from;
+    }
+
+    public void setIsFromComment(boolean isFromComment) {
+        this.isFromComment = isFromComment;
     }
 
     public enum From {

@@ -23,6 +23,8 @@ public interface TeamMemberPresenter {
 
     void onRefresh();
 
+    void setIsInSearchMode(boolean isInSearchMode);
+
     interface View {
 
         void moveDisabledMembers();

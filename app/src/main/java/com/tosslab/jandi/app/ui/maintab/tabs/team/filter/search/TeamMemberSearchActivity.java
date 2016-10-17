@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,9 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.adapter.MemberRe
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.domain.MemberRecentEmptyKeyword;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.domain.MemberRecentSearchKeyword;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.domain.MemberSearchKeyword;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,7 +123,58 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 isSelectMode, false, roomId);
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                AnalyticsValue.Action action = AnalyticsValue.Action.MembersTab;
+                if (position == 0) {
+                    action = AnalyticsValue.Action.MembersTab;
+                } else if (position == 1) {
+                    action = AnalyticsValue.Action.DepartmentsTab;
+                } else if (position == 2) {
+                    action = AnalyticsValue.Action.JobTitlesTab;
+                }
+
+                AnalyticsValue.Screen screen;
+                boolean isInSearchMode = vgSearch.getVisibility() == View.VISIBLE;
+                if (roomId > 0) {
+                    screen = isInSearchMode
+                            ? AnalyticsValue.Screen.InviteMemberSearch
+                            : AnalyticsValue.Screen.InviteTeamMembers;
+                } else {
+                    screen = isInSearchMode
+                            ? AnalyticsValue.Screen.SelectTeamMemberSearch
+                            : AnalyticsValue.Screen.SelectTeamMember;
+                }
+
+                AnalyticsUtil.sendEvent(!(isSelectMode) ? AnalyticsValue.Screen.TeamTabSearch
+                        : screen, action);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         viewPager.setCurrentItem(position);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                super.onTabReselected(tab);
+
+                Fragment fragment = ((TeamViewPagerAdapter) viewPager.getAdapter()).getItem(tab.getPosition());
+                if (fragment instanceof ListScroller) {
+                    ((ListScroller) fragment).scrollToTop();
+                }
+            }
+        });
 
 
         setUpToolbar();
@@ -138,7 +193,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
             ActionBar actionBar = getSupportActionBar();
             if (roomId > 0) {
-                actionBar.setTitle(R.string.jandi_invite_member);
+                actionBar.setTitle(R.string.jandi_invite_member_to_topic);
             } else {
                 actionBar.setTitle(R.string.jandi_choose_1_1_member);
             }
@@ -149,6 +204,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         vgSearch.setVisibility(View.VISIBLE);
         etSearch.requestFocus();
         inputManager.showSoftInput(etSearch, 0);
+        setSearchMode(true);
     }
 
     private void showRecentKeyword() {
@@ -158,11 +214,21 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         lvRecentSearch.setLayoutManager(new LinearLayoutManager(lvRecentSearch.getContext()));
         lvRecentSearch.setAdapter(adapter);
 
+        final AnalyticsValue.Screen screen;
+        if (!isSelectMode) {
+            screen = AnalyticsValue.Screen.TeamTabSearch;
+        } else {
+            screen = roomId > 0
+                    ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
+        }
+
         adapter.setOnDeleteAll(() -> {
             MemberRecentKeywordRepository.getInstance().removeAll();
             adapter.clear();
             adapter.add(new MemberRecentEmptyKeyword());
             adapter.notifyDataSetChanged();
+
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteAllKeywords);
         });
 
         adapter.setOnDeleteItem(position -> {
@@ -177,8 +243,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             }
 
             adapter.notifyDataSetChanged();
-
-
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteRecentKeyword);
         });
 
         adapter.setItemClickListener((view, adapter1, position1) -> {
@@ -186,6 +251,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             etSearch.setText(item.getKeyword());
             etSearch.setSelection(etSearch.length());
             inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.TapRecentKeywords);
         });
 
         List<MemberRecentKeyword> keywords = MemberRecentKeywordRepository.getInstance().getKeywords();
@@ -197,7 +264,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 .subscribe((keywords1) -> {
                     adapter.addAll(keywords1);
                     adapter.notifyDataSetChanged();
-                }, t -> {});
+                }, t -> {
+                });
 
     }
 
@@ -223,6 +291,14 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             MemberRecentKeywordRepository.getInstance().upsertKeyword(etSearch.getText().toString());
             inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
 
+            final AnalyticsValue.Screen screen;
+            if (!isSelectMode) {
+                screen = AnalyticsValue.Screen.TeamTabSearch;
+            } else {
+                screen = roomId > 0
+                        ? AnalyticsValue.Screen.SelectTeamMemberSearch : AnalyticsValue.Screen.InviteMemberSearch;
+            }
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.SubmitSearch);
             return true;
         }
         return false;
@@ -235,12 +311,28 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             case R.id.action_search:
                 showSearchLayout();
                 showRecentKeyword();
+
+                if (!isSelectMode) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MemberSearch);
+                } else {
+                    AnalyticsUtil.sendEvent(roomId > 0
+                                    ? AnalyticsValue.Screen.InviteTeamMember
+                                    : AnalyticsValue.Screen.SelectTeamMember,
+                            roomId > 0
+                                    ? AnalyticsValue.Action.SearchInviteMember
+                                    : AnalyticsValue.Action.SearchSelectTeamMember);
+                }
                 break;
             case R.id.action_select_all:
                 if (adapter.getItem(0) instanceof OnToggledUser) {
                     OnToggledUser onToggledUser = (OnToggledUser) adapter.getItem(0);
                     onToggledUser.onAddAllUser();
 
+                    AnalyticsValue.Screen screen = vgSearch.getVisibility() == View.VISIBLE
+                            ? AnalyticsValue.Screen.InviteMemberSearch
+                            : AnalyticsValue.Screen.InviteTeamMembers;
+
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_SelectAll);
                 }
                 break;
             case android.R.id.home:
@@ -248,6 +340,14 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setSearchMode(boolean isInSearchMode) {
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i) instanceof OnSearchModeChangeListener) {
+                ((OnSearchModeChangeListener) adapter.getItem(i)).onSearchModeChange(isInSearchMode);
+            }
+        }
     }
 
     @OnTextChanged(R.id.tv_search_keyword)
@@ -284,6 +384,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             vgSearch.setVisibility(View.GONE);
             vgRecentSearch.setVisibility(View.GONE);
             inputManager.hideSoftInputFromWindow(etSearch.getWindowToken(), 0);
+
+            setSearchMode(false);
         } else {
             finish();
         }
@@ -332,6 +434,14 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         if (adapter.getItem(0) instanceof OnToggledUser) {
             OnToggledUser onToggledUser = ((OnToggledUser) adapter.getItem(0));
             onToggledUser.onInvite();
+
+            boolean isInSearchMode = vgSearch.getVisibility() == View.VISIBLE;
+
+            AnalyticsValue.Screen screen = isInSearchMode
+                    ? AnalyticsValue.Screen.InviteMemberSearch
+                    : AnalyticsValue.Screen.InviteTeamMembers;
+
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_Invite);
         }
     }
 
@@ -340,6 +450,14 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         if (adapter.getItem(0) instanceof OnToggledUser) {
             OnToggledUser onToggledUser = ((OnToggledUser) adapter.getItem(0));
             onToggledUser.onUnselectAll();
+
+            boolean isInSearchMode = vgSearch.getVisibility() == View.VISIBLE;
+
+            AnalyticsValue.Screen screen = isInSearchMode
+                    ? AnalyticsValue.Screen.InviteMemberSearch
+                    : AnalyticsValue.Screen.InviteTeamMembers;
+
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_CancelSelect);
         }
     }
 

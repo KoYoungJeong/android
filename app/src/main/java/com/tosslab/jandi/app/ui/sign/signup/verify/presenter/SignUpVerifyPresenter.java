@@ -49,7 +49,7 @@ public class SignUpVerifyPresenter {
             LogUtil.e(accountActivate.toString());
 
             view.hideProgress();
-            view.showToast(context.getResources().getString(R.string.jandi_tutorial_welcome));
+            view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
 
             SignOutUtil.removeSignData();
             model.setAccountInfo(accountActivate);
@@ -67,7 +67,6 @@ public class SignUpVerifyPresenter {
 
             switch (errCode) {
                 case EXPIRED_VERIFICATION_CODE:
-
                     view.showExpiredVerificationCode();
                     break;
                 case INVALIDATE_VERIFICATION_CODE:

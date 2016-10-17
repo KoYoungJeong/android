@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.model.StarredListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.model.StarredListModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collection;
@@ -42,7 +44,6 @@ public class StarredListPresenterImpl implements StarredListPresenter {
     @Override
     public void onInitializeStarredList(StarredType starredType) {
         isInInitializing = true;
-        starredListView.hideEmptyLayout();
         starredListModel.getStarredListObservable(starredType.getName(), -1, StarredListModel.DEFAULT_COUNT)
                 .map(resStarMentioned -> {
                     List<MultiItemRecyclerAdapter.Row<?>> rows =
@@ -61,15 +62,11 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
                     starredListView.setHasMore(hasMore);
 
-                    if (rows == null || rows.size() <= 0) {
-                        starredListView.showEmptyLayout();
-                    }
                 }, e -> {
                     LogUtil.e(e.getMessage());
                     try {
                         starredListDataModel.clear();
                         starredListView.notifyDataSetChanged();
-                        starredListView.showEmptyLayout();
                         isInInitializing = false;
                     } catch (Exception e1) {
                         e1.printStackTrace();
@@ -127,14 +124,18 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
             moveToMessageList(message);
 
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.StarTab_ChooseMsg);
+
         } else if ("file".equals(contentType)) {
 
             starredListView.moveToFileDetail(message.getMessage().id, message.getMessage().id);
 
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.StarTab_ChooseFile);
         } else if ("poll".equals(contentType)) {
 
             starredListView.moveToPollDetail(message.getMessage().pollId);
 
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.StarTab_ChoosePoll);
         } else if ("comment".equals(contentType)) {
 
             if ("poll".equals(message.getMessage().feedbackType)) {
@@ -142,6 +143,7 @@ public class StarredListPresenterImpl implements StarredListPresenter {
             } else if ("file".equals(message.getMessage().feedbackType)) {
                 starredListView.moveToFileDetail(
                         message.getMessage().feedbackId, message.getMessage().id);
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.StarTab_ChooseFileComment);
             }
         }
     }
@@ -198,17 +200,16 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                     if (resStarMentioned == null
                             || resStarMentioned.getRecords() == null
                             || resStarMentioned.getRecords().isEmpty()) {
-                        return Observable.defer(() -> Observable.error(new NullPointerException("empty")));
+                        return Observable.error(new NullPointerException("empty"));
                     }
 
                     StarredMessage message = resStarMentioned.getRecords().get(0);
                     StarredMessage messageById = starredListDataModel.findMessageById(message.getMessage().id);
                     if (messageById != null && messageById.getStarredId() > 0) {
-                        return Observable.defer(() -> Observable.error(new Throwable("already exists")));
+                        return Observable.error(new Throwable("already exists"));
                     }
 
-                    return Observable.defer(() ->
-                            Observable.just(starredListDataModel.getStarredMessageRow(message)));
+                    return Observable.just(starredListDataModel.getStarredMessageRow(message));
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

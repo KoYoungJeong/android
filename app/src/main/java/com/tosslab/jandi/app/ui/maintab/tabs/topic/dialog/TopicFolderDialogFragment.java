@@ -102,7 +102,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
         ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
-        input.setHint(R.string.jandi_entity_create_entity_name);
+        input.setHint(R.string.jandi_title_name);
         input.setSelection(name.length());
 
         builder.setView(vgInputEditText)

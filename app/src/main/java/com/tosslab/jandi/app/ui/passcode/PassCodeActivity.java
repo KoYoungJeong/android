@@ -150,16 +150,6 @@ public class PassCodeActivity extends BaseAppCompatActivity
             @Override
             public void onAnimationEnd(Animation animation) {
                 presenter.clearPassCode();
-                if (!isPassCodeSettingMode) {
-                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InputPasscode);
-                }
-            }
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                if (!isPassCodeSettingMode) {
-                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.WrongPasscode);
-                }
             }
         });
 
@@ -218,12 +208,16 @@ public class PassCodeActivity extends BaseAppCompatActivity
 
         if (mode == MODE_TO_SAVE_PASSCODE || mode == MODE_TO_MODIFY_PASSCODE) {
             tvTitle.setText(getString(R.string.jandi_enter_passcode));
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InputPasscode, AnalyticsValue.Action.IncorrectPasscode);
         }
         tvSubTitle.setText(getString(R.string.jandi_incorrect_passcode));
     }
 
     @Override
     public void showSuccess() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InputPasscode, AnalyticsValue.Action.CorrectPasscode);
+
         UnLockPassCodeManager.getInstance().setUnLocked(true);
 
         setResult(RESULT_OK);

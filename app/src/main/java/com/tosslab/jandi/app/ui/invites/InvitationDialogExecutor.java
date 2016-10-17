@@ -16,6 +16,8 @@ import com.tosslab.jandi.app.ui.invites.email.InviteByEmailActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -124,7 +126,14 @@ public class InvitationDialogExecutor {
                 .setMessage(alertText)
                 .setCancelable(false)
                 .setPositiveButton(activity.getResources().getString(R.string.jandi_confirm),
-                        (dialog, id) -> dialog.dismiss())
+                        (dialog, id) -> {
+                            if (from == FROM_MAIN_TEAM) {
+                                AnalyticsUtil.sendEvent(
+                                        AnalyticsValue.Screen.TeamTab,
+                                        AnalyticsValue.Action.InviteMember_InviteDisabled);
+                            }
+                            dialog.dismiss();
+                        })
                 .create().show();
     }
 

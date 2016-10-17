@@ -100,6 +100,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     @AfterViews
     void initView() {
+        if (mode != ITEM_FOLDER_CHOOSE) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FolderManagement);
+        }
+
         setupActionBar();
 
         lvTopicFolder.setLayoutManager(new LinearLayoutManager(TopicFolderSettingActivity.this,
@@ -116,7 +120,10 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
             case FOLDER_SETTING:
                 tvTitle.setText(R.string.jandi_reorder_from_long_press);
                 TopicFolderSettingAdapter settingAdapter = (TopicFolderSettingAdapter) adapter;
-                ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter);
+                ItemTouchHelper.Callback callback = new DragnDropTouchHelper(settingAdapter, () -> {
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.ArrangeaFolder);
+                });
                 ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
                 itemTouchHelper.attachToRecyclerView(lvTopicFolder);
                 settingAdapter.setOnFolderSeqChangeLisener(this);
@@ -217,7 +224,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
             TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
             EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
-            etInput.setHint(R.string.jandi_entity_create_entity_name);
+            etInput.setHint(R.string.jandi_title_name);
             tvTitle.setText(R.string.jandi_folder_insert_name);
 
             builder.setView(rootView)
@@ -308,6 +315,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     private void showDeleteFolderDialog(long folderId) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.DeleteaFolder);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -323,6 +332,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     private void showRenameFolderDialog(long folderId, String name, int seq) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
 
@@ -333,7 +344,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
-        input.setHint(R.string.jandi_entity_create_entity_name);
+        input.setHint(R.string.jandi_title_name);
         input.setSelection(name.length());
 
         builder.setView(vgInputEditText)

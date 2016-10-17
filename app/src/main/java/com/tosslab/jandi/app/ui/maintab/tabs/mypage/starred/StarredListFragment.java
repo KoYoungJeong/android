@@ -31,6 +31,9 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.views.decoration.SimpleColorDividerItemDecoration;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -110,6 +113,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     private void initStarredListView(StarredListAdapter starredListAdapter) {
         lvStarredList.setLayoutManager(new LinearLayoutManager(getActivity()));
         lvStarredList.setAdapter(starredListAdapter);
+        lvStarredList.addItemDecoration(new SimpleColorDividerItemDecoration(lvStarredList.getResources().getColor(R.color.rgb_eeeeee)));
 
         moreRequestHandler = new StarredMessageLoadMoreRequestHandler();
         starredListDataView.setOnLoadMoreCallback(moreRequestHandler);
@@ -119,6 +123,17 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         starredListDataView.setOnItemLongClickListener(messageId -> {
             showUnStarDialog(messageId);
             return true;
+        });
+
+        starredListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (starredListAdapter.isEmpty()) {
+                    showEmptyLayout();
+                } else {
+                    hideEmptyLayout();
+                }
+            }
         });
     }
 
@@ -134,6 +149,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @OnClick(R.id.btn_starred_list_all)
     void onAllTabClick(View view) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Filter_All);
         if (view.isSelected()) {
             return;
         }
@@ -144,6 +160,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @OnClick(R.id.btn_starred_list_file)
     void onFileTabClick(View view) {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.Filter_Files);
         if (view.isSelected()) {
             return;
         }
@@ -158,7 +175,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         btnTabFile.setSelected(starredType == StarredListPresenter.StarredType.File);
     }
 
-    @Override
     public void showEmptyLayout() {
         boolean isAllType = starredType == StarredListPresenter.StarredType.All;
         tvEmptyMessage.setText(isAllType
@@ -198,7 +214,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void showUnStarSuccessToast() {
-        ColoredToast.show(R.string.jandi_message_no_starred);
+        ColoredToast.show(R.string.jandi_unpinned_message);
     }
 
     @Override
@@ -232,7 +248,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         PollDetailActivity.start(getActivity(), pollId);
     }
 
-    @Override
     public void hideEmptyLayout() {
         vgEmptyStarredList.setVisibility(View.GONE);
     }

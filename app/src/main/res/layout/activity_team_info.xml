@@ -18,7 +18,7 @@
         android:id="@+id/label_team_info_name"
         style="@style/JandiMemberProfile.Profile"
         android:layout_below="@+id/actionbar_team_info"
-        app:textTitle="@string/jandi_entity_create_entity_name" />
+        app:textTitle="@string/jandi_name" />
 
     <View
         android:layout_width="match_parent"

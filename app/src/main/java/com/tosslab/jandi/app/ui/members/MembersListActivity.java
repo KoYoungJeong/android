@@ -199,9 +199,9 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         if (type == TYPE_MEMBERS_LIST_TEAM) {
             actionBar.setTitle(R.string.jandi_team_member);
         } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
-            actionBar.setTitle(R.string.jandi_participants);
+            actionBar.setTitle(R.string.jandi_topic_paricipants);
         } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            actionBar.setTitle(R.string.jandi_invite_member);
+            actionBar.setTitle(R.string.jandi_invite_member_to_topic);
         }
 
     }

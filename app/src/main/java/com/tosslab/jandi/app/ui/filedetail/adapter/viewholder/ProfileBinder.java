@@ -12,8 +12,6 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -27,6 +25,7 @@ public class ProfileBinder {
     private View vUserNameDisableIndicator;
     private ImageView ivProfile;
     private View vUserProfileDisableIndicator;
+    private boolean isFromComment = false;
 
     private ProfileBinder(TextView tvUserName, View vUserNameDisableIndicator,
                           ImageView ivUserProfile, View vUserProfileDisableIndicator) {
@@ -128,11 +127,16 @@ public class ProfileBinder {
                 v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name));
     }
 
+    public void setIsFromComment(boolean isFromComment) {
+        this.isFromComment = isFromComment;
+    }
+
     private void onProfileClick(final long writerId, ShowProfileEvent.From clickType) {
         if (TeamInfoLoader.getInstance().isUser(writerId)) {
-            EventBus.getDefault().post(new ShowProfileEvent(writerId, clickType));
+            ShowProfileEvent event = new ShowProfileEvent(writerId, clickType);
+            event.setIsFromComment(isFromComment);
+            EventBus.getDefault().post(event);
         }
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewProfile);
     }
 
 }

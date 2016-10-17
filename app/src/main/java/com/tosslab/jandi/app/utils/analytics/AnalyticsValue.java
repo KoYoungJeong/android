@@ -41,7 +41,7 @@ public class AnalyticsValue {
         Polls, PollDetail, CreatePoll, PollParticipant, ChoiceParticipant,
         UniversalSearch, ChooseMember, SelectRoom, Carousel,
         ForceTeamCreation,
-        FolderManagement, EditAccount
+        FolderManagement, InviteTeamMembers_Department, InviteTeamMembers_JobTitle, InviteMemberSearch, SelectTeamMember, SelectTeamMemberSearch, TeamInformation, TeamTab_Department, TeamTab_JobTitle, TeamTabSearch, ImageFullScreen, HamburgerMenu, NotificationSetting, PasscodeLock, AccountSetting, EditAccount
     }
 
     public enum Action {
@@ -248,7 +248,16 @@ public class AnalyticsValue {
         TapPlusButton, TapPlusButton_CreateNewTopic, TapPlusButton_CreateNewFolder, TapPlusButton_FolderManagement, TapPlusButton_BrowseOtherTopics,
         TopicSubMenu_Notification,
         SubmitTeam, GoToJANDIMain,
-        SubmitATeam, NewFolderonTop, CreateNewFolder, EditFolder_Rename, TapLinkPreview, EditAccount
+        SubmitATeam, NewFolderonTop, CreateNewFolder, EditAccount,
+        IncorrectPasscode, CorrectPasscode, DeleteaFolder, ArrangeaFolder,
+        TapLinkPreview, TransferTopicAdmin, AutoInvitation,
+        MembersTab, JobTitlesTab, DepartmentsTab,
+        MembersTab_SelectMember, MembersTab_UnSelectMember, MembersTab_SelectAll, MembersTab_Invite,
+        CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
+        UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote,
+        CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember,
+        InviteMember_InviteDisabled, TeamInformation, MentionTab, StarTab, PollTab, MentionTab_ChooseTopicMsg, MentionTab_ChooseFileComment, StarTab_ChooseMsg, StarTab_ChooseFile, StarTab_ChoosePoll, StarTab_ChooseFileComment, PollTab_ChooseOngoingVoted, PollTab_ChooseOngoingUnvoted, PollTab_ChooseCompleted, HamburgerIcon, HamburgerSwipe, HamburgerLongTap, NotificationSetting, PasscodeLock, AccountSetting, LiveSupport, TermsofService, FAQ, VersionInfo, VersionInfo_Close, VersionInfo_Email, Sounds_Topic, Sounds_DM, Sounds_Mention, PreviewMsgContents, UseFingerPrint,
+
     }
 
     public enum Label {
@@ -259,6 +268,6 @@ public class AnalyticsValue {
         ongoing, SubmitATeam, completed,
         AllRoom, JoinedRoom, Zipfiles, SelectRoom,
         PhotoLibrary, Camera, ChooseCharacter,
-        Star, image, text, Unstar
+        Star, text, image, All, Public, None, Unstar
     }
 }

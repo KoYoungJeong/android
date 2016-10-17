@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import de.greenrobot.event.EventBus;
  */
 public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
+    private final int teamOwnerPaddingTop;
     @Bind(R.id.iv_profile)
     ImageView ivProfile;
     @Bind(R.id.iv_favorite)
@@ -55,6 +57,8 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     TextView tvUserJobTitle;
     @Bind(R.id.tv_owner_badge)
     TextView tvOwnerBadge;
+    @Bind(R.id.vg_owner_badge)
+    LinearLayout vgOwnerBadge;
     @Bind(R.id.vg_user_kick)
     ViewGroup vgUserKick;
     @Bind(R.id.iv_user_kick)
@@ -76,6 +80,8 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     protected MemberViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+
+        teamOwnerPaddingTop = vgOwnerBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
     }
 
     public static MemberViewHolder createForUser(ViewGroup parent) {
@@ -172,12 +178,16 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         String department = item.getDepartment();
         if (TextUtils.isEmpty(department)) {
             tvUserDepartment.setVisibility(View.GONE);
+            vgOwnerBadge.setGravity(Gravity.CENTER_VERTICAL);
+            vgOwnerBadge.setPadding(0, 0, 0, 0);
         } else {
             tvUserDepartment.setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
             tvUserDepartment.setText(department);
+            vgOwnerBadge.setGravity(Gravity.NO_GRAVITY);
+            vgOwnerBadge.setPadding(0, teamOwnerPaddingTop, 0, 0);
         }
 
         String jobTitle = item.getJobTitle();

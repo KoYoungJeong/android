@@ -64,6 +64,7 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     @Bind(R.id.et_insert_team_domain)
     EditText etInsertTeamDomain;
 
+
     @Bind(R.id.tv_domain_tail)
     TextView tvDomainTail;
 

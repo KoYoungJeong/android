@@ -85,7 +85,7 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         }
 
         AnalyticsValue.Label label = checked ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.SetPasscode, label);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PasscodeLock, AnalyticsValue.Action.Passcode, label);
     }
 
     @OnActivityResult(REQUEST_SET_PASSCODE)
@@ -110,9 +110,13 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
 
     @Click(R.id.vg_setting_privacy_fingerprint)
     void setUseFingerprint() {
-        boolean checked = switchFingerPrint.isChecked();
-        switchFingerPrint.setChecked(!checked);
-        JandiPreference.setUseFingerprint(!checked);
+        boolean futureChecked = !switchFingerPrint.isChecked();
+        switchFingerPrint.setChecked(futureChecked);
+        JandiPreference.setUseFingerprint(futureChecked);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PasscodeLock,
+                AnalyticsValue.Action.UseFingerPrint, futureChecked ?
+                        AnalyticsValue.Label.On : AnalyticsValue.Label.Off);
     }
 
     @Click(R.id.vg_setting_privacy_passcode_modify)
@@ -121,6 +125,6 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
                 .mode(PassCodeActivity.MODE_TO_MODIFY_PASSCODE)
                 .startForResult(REQUEST_SET_PASSCODE);
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SetPasscode, AnalyticsValue.Action.ChangePasscode);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PasscodeLock, AnalyticsValue.Action.ChangePasscode);
     }
 }

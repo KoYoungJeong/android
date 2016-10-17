@@ -12,6 +12,8 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemb
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import java.util.List;
 
@@ -73,14 +75,14 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         return user -> {
             if (type == DeptJobFragment.EXTRA_TYPE_JOB) {
                 if (!TextUtils.isEmpty(user.getPosition())) {
-                    return user.getPosition().contains(keyword);
+                    return user.getPosition().equals(keyword);
                 } else {
                     return TextUtils.equals(keyword, undefinedMember);
                 }
             } else {
                 if (!TextUtils.isEmpty(user.getDivision())) {
 
-                    return user.getDivision().contains(keyword);
+                    return user.getDivision().equals(keyword);
                 } else {
                     return TextUtils.equals(keyword, undefinedMember);
                 }
@@ -95,10 +97,16 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         if (!selectMode || pickMode) {
             view.pickUser(user.getEntityId());
         } else {
+            AnalyticsValue.Screen screen = type == DeptJobFragment.EXTRA_TYPE_DEPT
+                    ? AnalyticsValue.Screen.InviteTeamMembers_Department
+                    : AnalyticsValue.Screen.InviteTeamMembers_JobTitle;
+
             if (toggledUser.containsId(user.getEntityId())) {
                 toggledUser.removeId(user.getEntityId());
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.UnselectMember);
             } else {
                 toggledUser.addId(user.getEntityId());
+                AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.SelectMember);
             }
 
             view.refreshDataView();

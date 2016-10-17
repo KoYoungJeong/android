@@ -18,6 +18,8 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamDisab
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.model.TeamMemberModel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     private long roomId = -1;
 
     private ToggleCollector toggledIds;
-
+    private boolean isInSearchMode = false;
 
     @Inject
     public TeamMemberPresenterImpl(View view,
@@ -176,13 +178,27 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         long userId = item.getChatChooseItem().getEntityId();
         if (!selectMode) {
             view.moveProfile(userId);
+
+            AnalyticsValue.Screen screen = isInSearchMode
+                    ? AnalyticsValue.Screen.TeamTabSearch
+                    : AnalyticsValue.Screen.TeamTab;
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
         } else {
 
             if (roomId > 0) {
+
+                AnalyticsValue.Screen screen = isInSearchMode
+                        ? AnalyticsValue.Screen.InviteMemberSearch
+                        : AnalyticsValue.Screen.InviteTeamMembers;
+
                 if (toggledIds.containsId(userId)) {
                     toggledIds.removeId(userId);
+
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_UnSelectMember);
                 } else {
                     toggledIds.addId(userId);
+
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_SelectMember);
                 }
 
                 view.updateToggledUser(toggledIds.count());
@@ -234,8 +250,15 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
             lastLinkId = -1;
         }
 
-
         view.moveDirectMessage(teamId, userId, roomId, lastLinkId);
+
+        AnalyticsValue.Screen screen = isInSearchMode
+                ? AnalyticsValue.Screen.SelectTeamMemberSearch
+                : AnalyticsValue.Screen.SelectTeamMember;
+        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
+        if (userId == TeamInfoLoader.getInstance().getJandiBot().getId()) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMember, AnalyticsValue.Action.ChooseJANDI);
+        }
     }
 
     @Override
@@ -268,6 +291,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     @Override
     public void onRefresh() {
         filterSubject.onNext(filterSubject.getValue());
+    }
+
+    @Override
+    public void setIsInSearchMode(boolean isInSearchMode) {
+        this.isInSearchMode = isInSearchMode;
     }
 
     @Override

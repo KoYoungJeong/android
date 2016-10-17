@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
@@ -146,6 +145,7 @@ public class JandiSocketService extends Service {
         }
 
         if (isRunning) {
+            checkTokenAndTrySocketConnect();
             return START_NOT_STICKY;
         }
 
@@ -472,13 +472,8 @@ public class JandiSocketService extends Service {
 
         isInRefreshToken = true;
 
-        Observable.create(new Observable.OnSubscribe<Boolean>() {
-            @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                subscriber.onNext(isValidToken());
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
+        Observable.defer(() -> Observable.just(isValidToken()))
+                .subscribeOn(Schedulers.io())
                 .subscribe(isValidToken -> {
                     if (!isValidToken) {
                         LogUtil.e(TAG, "Invalid Token, Stop SocketService");

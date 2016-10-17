@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger.DaggerTea
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger.TeamMemberModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMemberPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.KeywordObservable;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnSearchModeChangeListener;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnToggledUser;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
@@ -39,6 +40,9 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import javax.inject.Inject;
 
@@ -47,7 +51,8 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View, KeywordObservable, OnToggledUser {
+public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View,
+        KeywordObservable, OnToggledUser, ListScroller, OnSearchModeChangeListener {
 
     public static final int REQ_DISABLED_MEMBER = 201;
     @Bind(R.id.list_team_member)
@@ -133,8 +138,6 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
             EventBus.getDefault().register(this);
         }
     }
-
-
 
     @Override
     public void moveDisabledMembers() {
@@ -270,5 +273,17 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void onInvite() {
         presenter.inviteToggle();
+    }
+
+    @Override
+    public void scrollToTop() {
+        if (lvMember.getAdapter().getItemCount() > 0) {
+            lvMember.scrollToPosition(0);
+        }
+    }
+
+    @Override
+    public void onSearchModeChange(boolean isInSearchMode) {
+        presenter.setIsInSearchMode(isInSearchMode);
     }
 }

@@ -42,7 +42,8 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
-import com.tosslab.jandi.app.services.keep.KeepService;
+import com.tosslab.jandi.app.services.keep.KeepAliveService;
+import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -70,6 +71,7 @@ import com.tosslab.jandi.app.utils.LongPressListener;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -194,7 +196,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             EventBus.getDefault().register(this);
         });
 
-        KeepService.start(this);
+        KeepExecutedService.start(this);
+        KeepAliveService.start(this);
         initFirebaseUserProperties();
     }
 
@@ -204,7 +207,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         FirebaseAnalytics.getInstance(this)
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
-        Completable.fromCallable(() -> {
+        Completable.defer(() -> {
 
             if ((System.currentTimeMillis() - JandiPreference.getLatestFcmTokenUpdate()) > 1000 * 60 * 60 * 6) {
                 return Completable.complete();
@@ -302,6 +305,34 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(toggle);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+
+            private boolean swiping = false;
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                swiping = true;
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                if (swiping) {
+                    AnalyticsUtil.sendEvent(
+                            AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerSwipe);
+                    swiping = false;
+                }
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.Close);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         toggle.syncState();
     }
 
@@ -316,7 +347,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
-//        viewPager.setOffscreenPageLimit(tabInfos.size());
+        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() -1 , 1));
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -402,6 +433,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             @Override
             public void onLongPressed() {
                 navigationEasterEggOpen();
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerLongTap);
             }
         });
     }
@@ -410,6 +443,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Override
     public void openNavigation() {
         drawerLayout.openDrawer(navigationDirection);
+
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
     }
 
     @Override
@@ -426,7 +461,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
 
         badgeOverFlowMenu.showBadge();
-        badgeOverFlowMenu.setBadgeText(Integer.toString(badgeCount));
+        badgeOverFlowMenu.setBadgeText(String.valueOf(Math.min(badgeCount, 999)));
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
@@ -452,6 +487,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
         setMypageBadge(count);
     }
+
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
@@ -516,7 +552,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabTopic.showBadge();
-        tabTopic.setBadgeText(Integer.toString(count));
+        tabTopic.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
@@ -526,7 +562,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabChat.showBadge();
-        tabChat.setBadgeText(Integer.toString(count));
+        tabChat.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override
@@ -536,7 +572,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
         tabMyPage.showBadge();
-        tabMyPage.setBadgeText(Integer.toString(count));
+        tabMyPage.setBadgeText(String.valueOf(Math.min(count, 999)));
     }
 
     @Override

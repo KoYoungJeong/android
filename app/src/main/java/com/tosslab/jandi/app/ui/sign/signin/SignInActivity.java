@@ -198,7 +198,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         if (!etLayoutEmail.isErrorEnabled()) {
             etLayoutEmail.setErrorEnabled(true);
         }
-        etLayoutEmail.setError(getString(R.string.err_login_invalid_id));
+        etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
 
         startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }

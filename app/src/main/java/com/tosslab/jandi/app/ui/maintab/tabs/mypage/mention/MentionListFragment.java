@@ -1,8 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +19,10 @@ import android.widget.ProgressBar;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
+import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
@@ -39,6 +46,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -138,6 +147,12 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.ChooseMention);
         });
 
+        adapter.setOnMentionLongClickListener(mention -> {
+            DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByMentionedMessage(
+                    mention);
+            newFragment.show(getChildFragmentManager(), "dioalog");
+        });
+
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -173,6 +188,23 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         }
 
         presenter.addMentionedMessage(link);
+    }
+
+    public void onEvent(MessageStarredEvent event) {
+        if (isResumed()) {
+            presenter.onStarred(event.getMessageId());
+        }
+    }
+
+    public void onEvent(ConfirmCopyMessageEvent event) {
+        if (isResumed()) {
+            Completable.fromAction(() -> {
+                ClipboardManager clipboardManager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("", event.contentString));
+            }).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
+                ColoredToast.show(R.string.jandi_copied_to_clipboard);
+            });
+        }
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
@@ -289,6 +321,16 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     @Override
     public void moveToPollDetailActivity(long pollId) {
         PollDetailActivity.start(getActivity(), pollId);
+    }
+
+    @Override
+    public void successStarredMessage() {
+        ColoredToast.show(R.string.jandi_message_starred);
+    }
+
+    @Override
+    public void failStarredMessage() {
+        ColoredToast.showError(R.string.err_network);
     }
 
     public void onEventMainThread(NetworkConnectEvent event) {

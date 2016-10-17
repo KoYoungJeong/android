@@ -28,7 +28,7 @@ public class MentionMessage {
     private String contentExtensions;
 
     private List<MentionObject> mentions;
-    private long feedbackId;
+    private long feedbackId = -1;
     private String feedbackType;
     private String feedbackTitle;
     private int commentCount;

@@ -19,6 +19,9 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.component.DaggerMyPageComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.module.MyPageModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.presenter.MyPagePresenter;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -26,6 +29,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -58,12 +63,28 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
 
         ButterKnife.bind(this, view);
 
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+                switch (tab.getPosition()) {
+                    case 0:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab);
+                        break;
+                    case 1:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.StarTab);
+                        break;
+                    case 2:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.PollTab);
+                        break;
+                }
+            }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 super.onTabReselected(tab);
@@ -99,6 +120,8 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         tabLayout.addTab(tabLayout.newTab()
                 .setCustomView(pollTab));
 
+        viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfMyPage());
+
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -123,11 +146,7 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         }
 
         tvPollBadge.setVisibility(View.VISIBLE);
-        if (count > 999) {
-            tvPollBadge.setText(String.valueOf(999));
-        } else {
-            tvPollBadge.setText(String.valueOf(count));
-        }
+        tvPollBadge.setText(String.valueOf(Math.min(count, 999)));
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
@@ -156,6 +175,14 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         super.onResume();
 
         presenter.onInitializePollBadge();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Completable.fromAction(() -> JandiPreference.setLastSelectedTabOfMyPage(viewPager.getCurrentItem()))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     @Override

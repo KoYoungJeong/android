@@ -91,7 +91,7 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_ACCOUNT_NAME, currentName);
         newFragment.show(getFragmentManager(), "dialog");
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Account, AnalyticsValue.Action.AccountName);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountSetting, AnalyticsValue.Action.AccountName);
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
@@ -102,7 +102,7 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     void onClickAccountEmail() {
         EmailChooseActivity_.intent(this)
                 .startForResult(REQUEST_EMAIL_CHOOSE);
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Account, AnalyticsValue.Action.ChooseAnEmail);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountSetting, AnalyticsValue.Action.ChooseAnEmail);
     }
 
     @Override

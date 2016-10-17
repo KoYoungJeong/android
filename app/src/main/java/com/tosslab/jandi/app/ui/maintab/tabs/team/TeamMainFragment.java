@@ -18,12 +18,16 @@ import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.schedulers.Schedulers;
 
 public class TeamMainFragment extends Fragment {
 
@@ -48,7 +52,47 @@ public class TeamMainFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new TeamViewPagerAdapter(getActivity(), getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MembersTab);
+                        break;
+                    case 1:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.DepartmentsTab);
+                        break;
+                    case 2:
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.JobTitlesTab);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                super.onTabReselected(tab);
+
+                Fragment fragment = ((TeamViewPagerAdapter) viewPager.getAdapter()).getItem(tab.getPosition());
+                if (fragment instanceof ListScroller) {
+                    ((ListScroller) fragment).scrollToTop();
+                }
+            }
+        });
+
+        viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfTeam());
+
         setHasOptionsMenu(true);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Completable.fromAction(() -> JandiPreference.setLastSelectedTabOfTeam(viewPager.getCurrentItem()))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
+
     }
 
     @Override
@@ -67,6 +111,7 @@ public class TeamMainFragment extends Fragment {
                 break;
             case R.id.menu_team_info:
                 TeamInfoActivity.start(getActivity());
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.TeamInformation);
                 break;
             case R.id.menu_team_search:
                 startActivity(Henson.with(getActivity())

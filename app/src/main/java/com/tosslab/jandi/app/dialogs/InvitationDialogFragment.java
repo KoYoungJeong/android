@@ -86,7 +86,7 @@ public class InvitationDialogFragment extends DialogFragment {
         final int from = getArguments().getInt(INVITATION_FROM, -1);
         final AnalyticsValue.Screen screen = getScreen(from);
 
-        builder.setTitle(R.string.jandi_invite_member)
+        builder.setTitle(R.string.jandi_invite_to_team)
                 .setItems(R.array.types_invitations, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         int eventType = 0;
