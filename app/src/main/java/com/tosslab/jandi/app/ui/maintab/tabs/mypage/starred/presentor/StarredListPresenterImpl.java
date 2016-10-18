@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.model.Starre
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.model.StarredListModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -225,13 +224,20 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
     private void moveToMessageList(StarredMessage message) {
         long roomId = message.getRoom().id;
-        Collection<Long> members = TeamInfoLoader.getInstance()
-                .getRoom(roomId)
-                .getMembers();
 
-        Observable.from(members)
+        Observable.defer(() -> Observable.from(TeamInfoLoader.getInstance()
+                .getRoom(roomId)
+                .getMembers()))
                 .takeFirst(memberId -> memberId == TeamInfoLoader.getInstance().getMyId())
                 .firstOrDefault(-1L)
+                .concatMap(it ->{
+                    if (it > 0) {
+
+                        return Observable.just(it);
+                    } else {
+                        return Observable.error(new Exception("It doesn't contain member"));
+                    }
+                })
                 .subscribe(memberId -> {
                     if (memberId == -1L) {
                         return;

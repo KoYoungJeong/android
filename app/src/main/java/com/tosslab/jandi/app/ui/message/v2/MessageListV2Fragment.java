@@ -814,7 +814,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (mentionControlViewModel == null) {
 
             Completable.fromEmitter(completableEmitter -> {
-                ;
+
                 mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
                         etMessage,
                         roomIds,
