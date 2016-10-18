@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail.adapter.viewholder;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,14 +12,10 @@ import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.UriUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
-import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
-import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 /**
  * Created by tonyjs on 16. 1. 19..
@@ -58,32 +53,9 @@ public class ImageFileViewHolder extends FileViewHolder {
     public void bindFileContent(ResMessages.FileMessage fileMessage) {
         final ResMessages.FileContent content = fileMessage.content;
 
-        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
-
         boolean hasImageUrl = ImageUtil.hasImageUrl(content);
         final String originalUrl =
                 ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.ORIGINAL);
-
-        if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
-            int resourceId = sourceType == MimeTypeUtil.SourceType.Google
-                    ? R.drawable.jandi_down_placeholder_google
-                    : R.drawable.jandi_down_placeholder_dropbox;
-
-            ivFileThumb.setScaleType(ImageView.ScaleType.FIT_XY);
-            ImageLoader.loadFromResources(ivFileThumb, resourceId);
-
-            if (hasImageUrl) {
-                ivFileThumb.setOnClickListener(view -> {
-                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(originalUrl)));
-                    AnalyticsUtil.sendEvent(
-                            AnalyticsValue.Screen.FileDetail, AnalyticsValue.Action.ViewPhoto);
-                });
-            } else {
-                ivFileThumb.setOnClickListener(null);
-            }
-
-            return;
-        }
 
         if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.ext)) {
             ivFileThumb.setVisibility(View.GONE);
