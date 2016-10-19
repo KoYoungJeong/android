@@ -27,7 +27,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/jandi_primary_color"
                     android:clickable="true"
-                    android:longClickable="true"/>
+                    android:longClickable="true" />
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar_main_tab"
@@ -42,7 +42,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
-                        android:singleLine="true"/>
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
                 </android.support.v7.widget.Toolbar>
             </LinearLayout>
@@ -57,13 +58,13 @@
             <android.support.v4.view.ViewPager
                 android:id="@+id/page_main_tab"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
 
             <View
                 android:id="@+id/v_main_tab_top_shadow"
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
-                android:background="@drawable/jandi_gradient_team_member_search_divider"/>
+                android:background="@drawable/jandi_gradient_team_member_search_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -80,7 +81,7 @@
                     android:paddingRight="15dp"
                     android:visibility="gone">
 
-                    <include layout="@layout/layout_network_offline"/>
+                    <include layout="@layout/layout_network_offline" />
 
                 </LinearLayout>
 
@@ -94,7 +95,7 @@
                     android:paddingRight="15dp"
                     android:visibility="gone">
 
-                    <include layout="@layout/layout_in_synchronize"/>
+                    <include layout="@layout/layout_in_synchronize" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -106,7 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_above="@+id/vg_main_tab_tabs_container"
-        android:background="@drawable/menu_shadow"/>
+        android:background="@drawable/menu_shadow" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/vg_main_tab_tabs_container"
@@ -120,7 +121,7 @@
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"
         app:tabPaddingEnd="0dp"
-        app:tabPaddingStart="0dp"/>
+        app:tabPaddingStart="0dp" />
 
     <ImageView
         android:id="@+id/btn_main_tab_fab"
@@ -129,6 +130,6 @@
         android:layout_above="@id/vg_main_tab_tabs_container"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:background="@drawable/btn_chat_fab"/>
+        android:background="@drawable/btn_chat_fab" />
 
 </RelativeLayout>

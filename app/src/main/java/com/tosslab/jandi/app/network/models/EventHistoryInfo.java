@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketConnectBotUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
@@ -69,7 +70,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "team_name_updated", value = SocketTeamNameUpdatedEvent.class),
         @JsonSubTypes.Type(name = "team_domain_updated", value = SocketTeamDomainUpdatedEvent.class),
         @JsonSubTypes.Type(name = "team_updated", value = SocketTeamUpdatedEvent.class),
-        @JsonSubTypes.Type(name = "chat_close", value = SocketChatCloseEvent.class),
+        @JsonSubTypes.Type(name = "chat_closed", value = SocketChatCloseEvent.class),
         @JsonSubTypes.Type(name = "chat_created", value = SocketChatCreatedEvent.class),
         @JsonSubTypes.Type(name = "connect_created", value = SocketConnectBotCreatedEvent.class),
         @JsonSubTypes.Type(name = "connect_deleted", value = SocketConnectBotDeletedEvent.class),
@@ -88,6 +89,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "member_updated", value = SocketMemberUpdatedEvent.class),
         @JsonSubTypes.Type(name = "file_deleted", value = SocketFileDeletedEvent.class),
         @JsonSubTypes.Type(name = "file_unshared", value = SocketFileUnsharedEvent.class),
+        @JsonSubTypes.Type(name = "file_shared", value = SocketFileShareEvent.class),
         @JsonSubTypes.Type(name = "file_comment_created", value = SocketFileCommentCreatedEvent.class),
         @JsonSubTypes.Type(name = "file_comment_deleted", value = SocketFileCommentDeletedEvent.class),
         @JsonSubTypes.Type(name = "message_deleted", value = SocketMessageDeletedEvent.class),

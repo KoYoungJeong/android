@@ -20,13 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="112dp"
             android:layout_marginTop="@dimen/jandi_actionbar_overlay_top_margin"
-            android:background="@drawable/image_slide_view_top"/>
+            android:background="@drawable/image_slide_view_top" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="166dp"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/image_slide_view_bottom"/>
+            android:background="@drawable/image_slide_view_bottom" />
 
         <RelativeLayout
             android:id="@+id/vg_carousel_swipe_buttons"
@@ -40,13 +40,14 @@
                 android:id="@+id/btn_carousel_swipe_to_left"
                 android:layout_width="23dp"
                 android:layout_height="35dp"
-                android:background="@drawable/slideview_arrow_left"/>
+                android:background="@drawable/slideview_arrow_left" />
+
             <View
                 android:id="@+id/btn_carousel_swipe_to_right"
                 android:layout_width="23dp"
                 android:layout_height="35dp"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/slideview_arrow_right"/>
+                android:background="@drawable/slideview_arrow_right" />
 
         </RelativeLayout>
 
@@ -55,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_above="@+id/vg_carousel_buttons"
-            android:background="@color/jandi_transparent_white_40p"/>
+            android:background="@color/jandi_transparent_white_40p" />
 
         <LinearLayout
             android:id="@+id/vg_carousel_buttons"
@@ -70,7 +71,7 @@
                 android:layout_height="54dp"
                 android:layout_weight="1"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_view_icon_star_off"/>
+                android:src="@drawable/image_view_icon_star_off" />
 
             <ImageView
                 android:id="@+id/btn_carousel_download"
@@ -78,7 +79,7 @@
                 android:layout_height="54dp"
                 android:layout_weight="1"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_view_icon_download"/>
+                android:src="@drawable/image_view_icon_download" />
 
             <ImageView
                 android:id="@+id/btn_carousel_comment"
@@ -86,7 +87,7 @@
                 android:layout_height="54dp"
                 android:layout_weight="1"
                 android:scaleType="centerInside"
-                android:src="@drawable/image_view_icon_comment"/>
+                android:src="@drawable/image_view_icon_comment" />
         </LinearLayout>
 
         <TextView
@@ -96,10 +97,11 @@
             android:layout_above="@+id/vg_carousel_file_info"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:maxLines="1"
             android:singleLine="true"
             android:textColor="@color/jandi_text_white"
             android:textSize="@dimen/jandi_carousel_file_writer_txt"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/vg_carousel_file_info"
@@ -116,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/jandi_text_white"
-                android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
+                android:textSize="@dimen/jandi_carousel_file_create_time_txt" />
 
             <View
                 android:id="@+id/v_carousel_file_info_divider"
@@ -124,14 +126,14 @@
                 android:layout_height="10dp"
                 android:layout_marginLeft="7dp"
                 android:layout_marginRight="7dp"
-                android:background="@color/jandi_file_search_item_divider"/>
+                android:background="@color/jandi_file_search_item_divider" />
 
             <TextView
                 android:id="@+id/tv_carousel_file_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/jandi_text_white"
-                android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
+                android:textSize="@dimen/jandi_carousel_file_create_time_txt" />
         </LinearLayout>
 
         <TextView
@@ -143,7 +145,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginRight="16dp"
             android:textColor="@color/jandi_text_white"
-            android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
+            android:textSize="@dimen/jandi_carousel_file_create_time_txt" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar_carousel"
@@ -159,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
-                android:maxLines="2"/>
+                android:maxLines="2" />
 
         </android.support.v7.widget.Toolbar>
     </RelativeLayout>

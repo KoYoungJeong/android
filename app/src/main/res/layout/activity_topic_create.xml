@@ -34,7 +34,7 @@
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
                     android:text="@string/jandi_title_name_required"
-                    android:textSize="@dimen/jandi_text_size_small" />
+                    android:textSize="@dimen/jandi_text_size_large" />
 
                 <EditText
                     android:id="@+id/et_topic_create_title"
@@ -169,7 +169,7 @@
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
-                    android:textSize="@dimen/jandi_text_size_small"
+                    android:textSize="@dimen/jandi_text_size_large"
                     android:text="@string/jandi_topic_description" />
 
                 <EditText

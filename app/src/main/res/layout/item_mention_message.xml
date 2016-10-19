@@ -46,6 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
+                android:lines="1"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="@color/jandi_star_mention_item_name_content_text"
@@ -98,6 +99,7 @@
                 android:layout_toRightOf="@+id/iv_mention_message_content_icon"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:singleLine="true"
                 android:textColor="@color/jandi_star_mention_item_topic_name_text"
                 android:textSize="13sp" />
 

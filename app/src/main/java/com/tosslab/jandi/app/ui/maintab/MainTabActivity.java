@@ -30,8 +30,10 @@ import com.tosslab.jandi.app.events.NavigationBadgeEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
 import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
 import com.tosslab.jandi.app.events.socket.EventUpdateStart;
@@ -485,15 +487,17 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         setChatBadge(count);
     }
 
-    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
-        int count = event.getBadgeCount();
-        if (count > 999) {
-            count = 999;
-        }
-        setMypageBadge(count);
+    public void onEventMainThread(SocketPollEvent event) {
+        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() == MypageTabInfo.INDEX);
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+    }
+    public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+    }
+    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
 

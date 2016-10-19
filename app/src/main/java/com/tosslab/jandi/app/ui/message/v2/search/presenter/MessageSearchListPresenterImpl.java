@@ -368,10 +368,13 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
                 LogUtil.d("deleteMessageInBackground : succeed");
-            } else if (messageType == MessageItem.TYPE_STICKER
-                    || messageType == MessageItem.TYPE_STICKER_COMMNET) {
-                messageListModel.deleteSticker(messageId, messageType);
+            } else if (messageType == MessageItem.TYPE_STICKER) {
+                messageListModel.deleteSticker(messageId);
                 LogUtil.d("deleteStickerInBackground : succeed");
+            } else if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                long feedbackId = MessageRepository.getRepository().getMessage(messageId).feedbackId;
+                messageListModel.deleteStickerComment(feedbackId, messageId);
+                LogUtil.d("deleteStickerCommentInBackground : succeed");
             }
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
             view.deleteLinkByMessageId(messageId);

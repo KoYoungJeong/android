@@ -275,9 +275,9 @@ public class JandiSocketServiceModelTest {
             accept = true;
         });
         SocketChatCloseEvent event = createEvent(SocketChatCloseEvent.class);
-        SocketChatCloseEvent.Data chat = new SocketChatCloseEvent.Data();
-        chat.setId(TeamInfoLoader.getInstance().getChatId(TeamInfoLoader.getInstance().getJandiBot().getId()));
-        event.setChat(chat);
+        SocketChatCloseEvent.Data data = new SocketChatCloseEvent.Data();
+        data.setChatId(TeamInfoLoader.getInstance().getChatId(TeamInfoLoader.getInstance().getJandiBot().getId()));
+        event.setData(data);
         model.onChatClosed(event);
 
         assertThat(accept).isTrue();
@@ -334,7 +334,7 @@ public class JandiSocketServiceModelTest {
         final long[] leftTeamId = new long[1];
         register((TopicDeleteEvent event) -> {
             accept = true;
-            leftTopicId[0] = event.getId();
+            leftTopicId[0] = event.getTopicId();
             leftTeamId[0] = event.getTeamId();
         });
 

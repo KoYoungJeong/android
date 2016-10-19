@@ -16,7 +16,6 @@
 	<string name="common_pricingplan_moreinfo">"More detail"</string>
 	<string name="common_pricingplan_msgsearch">"{TeamName}\n Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
-	<string name="common_settings_lostpasscodedesc">"Please delete and reinstall the app to reset your passcode"</string>
 	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
@@ -741,7 +740,6 @@
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
-	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>

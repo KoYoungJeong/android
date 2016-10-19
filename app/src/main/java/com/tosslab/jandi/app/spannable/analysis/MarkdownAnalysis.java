@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
  * Created by tonyjs on 16. 2. 19..
  */
 public class MarkdownAnalysis implements RuleAnalysis {
+
     private static final Pattern sPattern;
+    public static int STRIKE_THROUGH = 99;
 
     static {
         sPattern = Pattern.compile(
@@ -75,23 +77,22 @@ public class MarkdownAnalysis implements RuleAnalysis {
     }
 
     public enum TextStyle {
-        BOLD_ITALIC(3, 4, 4, 0, 0, new StyleSpan(Typeface.BOLD | Typeface.ITALIC)),
-        ITALIC(1, 10, 10, 0, 0, new StyleSpan(Typeface.ITALIC)),
-        BOLD(2, 7, 7, 0, 0, new StyleSpan(Typeface.BOLD)),
-        STRIKE(2, 1, 1, 1, 0, new StrikethroughSpan());
+        BOLD_ITALIC(3, 4, 4, 0, 0, Typeface.BOLD | Typeface.ITALIC),
+        ITALIC(1, 10, 10, 0, 0, Typeface.ITALIC),
+        BOLD(2, 7, 7, 0, 0, Typeface.BOLD),
+        STRIKE(2, 1, 1, 1, 0, STRIKE_THROUGH);
 
+        private final int typeFace;
         int needCharacterLength, startIndex, endIndex, beforeWhiteSpaces, afterWhiteSpaces;
-        CharacterStyle span;
 
         TextStyle(int needCharacterLength, int startIndex, int endIndex,
-                  int beforeWhiteSpaces, int afterWhiteSpaces,
-                  CharacterStyle span) {
+                  int beforeWhiteSpaces, int afterWhiteSpaces, int typeFace) {
             this.needCharacterLength = needCharacterLength;
             this.startIndex = startIndex;
             this.endIndex = endIndex;
             this.beforeWhiteSpaces = beforeWhiteSpaces;
             this.afterWhiteSpaces = afterWhiteSpaces;
-            this.span = span;
+            this.typeFace = typeFace;
         }
 
         public int getNeedCharacterLength() {
@@ -115,7 +116,11 @@ public class MarkdownAnalysis implements RuleAnalysis {
         }
 
         public CharacterStyle getSpan() {
-            return span;
+            if (typeFace != STRIKE_THROUGH) {
+                return new StyleSpan(typeFace);
+            } else {
+                return new StrikethroughSpan();
+            }
         }
     }
 }

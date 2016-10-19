@@ -8,9 +8,12 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import dagger.Lazy;
@@ -31,39 +34,35 @@ public class PollListModel {
     }
 
     public Observable<ResPollList> getPollListObservable(int count) {
-        return Observable.<ResPollList>create(subscriber -> {
+        return Observable.defer(() -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
-                subscriber.onError(new NullPointerException("has not selected team."));
-                subscriber.onCompleted();
+                return Observable.error(new NullPointerException("has not selected team."));
             } else {
                 try {
                     ResPollList resPollList = pollApi.get().getPollList(teamId, count);
-                    subscriber.onNext(resPollList);
+                    return Observable.just(resPollList);
                 } catch (RetrofitException e) {
-                    subscriber.onError(e);
+                    return Observable.error(e);
                 }
-                subscriber.onCompleted();
             }
         });
     }
 
     public Observable<ResPollList> getPollListObservable(int count, String finishedAt) {
-        return Observable.<ResPollList>create(subscriber -> {
+        return Observable.defer(() -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
 
             if (teamId <= 0l) {
-                subscriber.onError(new NullPointerException("has not selected team."));
-                subscriber.onCompleted();
+                return Observable.error(new NullPointerException("has not selected team."));
             } else {
                 try {
                     ResPollList resPollList = pollApi.get().getPollList(teamId, count, finishedAt);
-                    subscriber.onNext(resPollList);
+                    return Observable.just(resPollList);
                 } catch (RetrofitException e) {
-                    subscriber.onError(e);
+                    return Observable.error(e);
                 }
-                subscriber.onCompleted();
             }
         });
     }
@@ -86,7 +85,31 @@ public class PollListModel {
 
         return Observable.from(PollRepository.getInstance().getPolls())
                 .filter(poll -> poll.getTeamId() == teamId)
-                .toList();
+                .filter(poll -> {
+                    TopicRoom topic = TeamInfoLoader.getInstance().getTopic(poll.getTopicId());
+                    return topic != null && topic.isJoined();
+                })
+                .toSortedList((poll, poll2) -> {
+
+                    Date poll1FinishedAt = poll.getFinishedAt();
+                    Date poll2FinishedAt = poll2.getFinishedAt();
+
+                    Date pollUpdatedAt = poll.getUpdatedAt();
+                    Date poll2UpdatedAt = poll2.getUpdatedAt();
+
+                    if (poll1FinishedAt != null
+                            && poll2FinishedAt != null) {
+                        return poll2FinishedAt.compareTo(poll1FinishedAt);
+                    } else {
+                        if (poll1FinishedAt != null) {
+                            return poll2UpdatedAt.compareTo(poll1FinishedAt);
+                        } else if (poll2FinishedAt != null) {
+                            return poll2FinishedAt.compareTo(pollUpdatedAt);
+                        } else {
+                            return poll2UpdatedAt.compareTo(pollUpdatedAt);
+                        }
+                    }
+                });
     }
 
     public void sortPollListByDueDate(List<Poll> onGoing) {

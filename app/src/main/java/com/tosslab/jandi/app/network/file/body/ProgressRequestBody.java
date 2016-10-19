@@ -47,6 +47,7 @@ public class ProgressRequestBody extends RequestBody {
                 try {
                     sink.write(buffer, 0, read);
                 } catch (IOException e) {
+                    e.printStackTrace();
                     progressSubject.onError(e);
                     throw e;
                 }

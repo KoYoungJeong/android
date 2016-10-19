@@ -76,7 +76,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
-import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
@@ -237,8 +236,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             messageSearchListPresenter.onAnnouncementClose();
             AnalyticsUtil.sendEvent(getScreen(entityId), AnalyticsValue.Action.Accouncement_Minimize);
         });
-
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
 
         AnalyticsUtil.sendScreenName(getScreen(entityId));
 
@@ -523,7 +520,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
-        if (entityId == event.getId()) {
+        if (entityId == event.getTopicId()) {
             getActivity().finish();
         }
     }

@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -28,7 +29,7 @@ public class OkHttpClientFactory {
     public static OkHttpClient getOkHttpClient() {
 
         OkHttpClient.Builder okhttpClientBuilder = new OkHttpClient.Builder()
-                .addInterceptor(chain -> {
+                .addNetworkInterceptor(chain -> {
                     Request newRequest = chain.request().newBuilder()
                             .header(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
                             .header("User-Agent", UserAgentUtil.getDefaultUserAgent())
@@ -38,6 +39,8 @@ public class OkHttpClientFactory {
 
         try {
             okhttpClientBuilder.sslSocketFactory(createSslSocketFactory());
+            okhttpClientBuilder.readTimeout(60, TimeUnit.SECONDS);
+            okhttpClientBuilder.writeTimeout(60, TimeUnit.SECONDS);
         } catch (KeyManagementException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

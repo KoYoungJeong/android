@@ -190,7 +190,7 @@ public class FileDetailPresenter {
                     );
                 } else {
                     SprinklrMessagePost.sendLogWithFileComment(
-                            link.messageId,  fileId,
+                            link.messageId, fileId,
                             mentions.size(), fileDetailModel.hasAllMention(comment, mentions));
                 }
             }
@@ -505,7 +505,7 @@ public class FileDetailPresenter {
 
         try {
             if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
-                fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
+                fileDetailModel.deleteStickerComment(feedbackId, messageId);
             } else {
                 fileDetailModel.deleteComment(messageId, feedbackId);
             }

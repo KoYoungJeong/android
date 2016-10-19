@@ -28,7 +28,7 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
     }
 
     public synchronized void addRow(int position, Row<?> row) {
-        if (getItemCount() - 1 < position) {
+        if (position > getItemCount()) {
             return;
         }
         this.rows.add(position, row);

@@ -375,7 +375,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
             return;
         }
 
-        pollDetailPresenter.onTopicDeleted(event.getId());
+        pollDetailPresenter.onTopicDeleted(event.getTopicId());
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {

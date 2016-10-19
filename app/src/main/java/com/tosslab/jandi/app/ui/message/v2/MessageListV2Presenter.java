@@ -864,9 +864,11 @@ public class MessageListV2Presenter {
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
-            } else if (messageType == MessageItem.TYPE_STICKER
-                    || messageType == MessageItem.TYPE_STICKER_COMMNET) {
-                messageListModel.deleteSticker(messageId, messageType);
+            } else if (messageType == MessageItem.TYPE_STICKER) {
+                messageListModel.deleteSticker(messageId);
+            } else if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                long feedbackId = MessageRepository.getRepository().getMessage(messageId).feedbackId;
+                messageListModel.deleteStickerComment(feedbackId, messageId);
             }
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
 

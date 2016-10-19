@@ -49,8 +49,8 @@ android {
         }
 
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            debuggable true
+            testCoverageEnabled = project.hasProperty("report_coverage") && report_coverage.toBoolean()
         }
 
     }
@@ -158,11 +158,6 @@ android {
     }
 }
 
-project.gradle.taskGraph.whenReady {
-    connectedDevDebugAndroidTest {
-        ignoreFailures = true
-    }
-}
 
 apt {
     arguments {

@@ -16,7 +16,6 @@
 	<string name="common_pricingplan_moreinfo">"了解更多"</string>
 	<string name="common_pricingplan_msgsearch">"{TeamName}\n 信息传送量已超过上限，搜索即将受到限制。现在升级成标准版，拥有无上限的高效体验。"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
-	<string name="common_settings_lostpasscodedesc">"忘记密码了么？请卸载后重新安装"</string>
 	<string name="common_sharetojandi_errormsg">"发生错误！请重试一次"</string>
 	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，\n请输入验证码完成认证"</string>
 	<string name="err_delete_file">"文件无法删除"</string>
@@ -738,7 +737,6 @@
 	<string name="title_file_upload">"上传文件"</string>
 	<string name="today">"今天"</string>
 	<string name="topic_topicchat_mentionall">"@all (议题成员)"</string>
-	<string name="topic_topicsettings_removetopicfromfolder">"议题已从 %s 中移除"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"所有的团队成员已加入此议题"</string>
 	<string name="warn_messages_empty">"现在没有信息"</string>

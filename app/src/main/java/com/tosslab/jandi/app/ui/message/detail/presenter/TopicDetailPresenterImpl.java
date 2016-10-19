@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.message.detail.presenter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -14,8 +12,6 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.members.MembersListActivity;
-import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
 import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -85,20 +81,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic);
         view.setAssignTopicOwnerVisible(owner);
-    }
-
-    @Override
-    public void onTopicInvite(Activity activity, long entityId) {
-        if (topicDetailModel.getTopicMemberCount(entityId) != topicDetailModel.getEnabledTeamMemberCount()) {
-            MembersListActivity_.intent(activity)
-                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    .entityId(entityId)
-                    .type(MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC)
-                    .start();
-        } else {
-            String message = activity.getString(R.string.warn_all_users_are_already_invited);
-            view.showFailToast(message);
-        }
     }
 
     @Override

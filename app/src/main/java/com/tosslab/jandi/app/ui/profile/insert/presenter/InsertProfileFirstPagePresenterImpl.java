@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -109,6 +110,7 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
     public void startUploadProfileImage(Activity activity, String filePath) {
         Observable.just(1)
                 .observeOn(Schedulers.io())
+                .delay(300, TimeUnit.MILLISECONDS)
                 .subscribe(i -> {
                     fileUploadController.startUpload(activity, null, -1, filePath, null);
                 });

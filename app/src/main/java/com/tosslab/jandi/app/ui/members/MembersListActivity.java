@@ -59,7 +59,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     public static final int TYPE_MEMBERS_LIST_TEAM = 1;
     public static final int TYPE_MEMBERS_LIST_TOPIC = 2;
-    public static final int TYPE_MEMBERS_JOINABLE_TOPIC = 3;
     public static final int TYPE_ASSIGN_TOPIC_OWNER = 4;
     public static final String KEY_MEMBER_ID = "memberId";
 
@@ -96,9 +95,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         int ownerType = (type == TYPE_MEMBERS_LIST_TOPIC || type == TYPE_ASSIGN_TOPIC_OWNER)
                 ? ModdableMemberListAdapter.OWNER_TYPE_TOPIC : ModdableMemberListAdapter.OWNER_TYPE_TEAM;
         topicModdableMemberListAdapter = new ModdableMemberListAdapter(ownerType);
-        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            topicModdableMemberListAdapter.setCheckMode();
-        } else if (type == TYPE_ASSIGN_TOPIC_OWNER) {
+        if (type == TYPE_ASSIGN_TOPIC_OWNER) {
             topicModdableMemberListAdapter.setOnMemberClickListener(item ->
                     membersListPresenter.onMemberClickForAssignOwner(entityId, item));
         }
@@ -108,8 +105,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     private AnalyticsValue.Screen getScreen() {
         switch (type) {
-            case TYPE_MEMBERS_JOINABLE_TOPIC:
-                return AnalyticsValue.Screen.InviteTeamMembers;
             default:
             case TYPE_MEMBERS_LIST_TEAM:
                 return AnalyticsValue.Screen.TeamMembers;
@@ -166,11 +161,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Click(R.id.et_topic_member_search)
     void onSearchInputClick() {
-        if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInviteMember);
-        } else {
-            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInputField);
-        }
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInputField);
     }
 
     @Override
@@ -200,8 +191,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             actionBar.setTitle(R.string.jandi_team_member);
         } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             actionBar.setTitle(R.string.jandi_topic_paricipants);
-        } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            actionBar.setTitle(R.string.jandi_invite_member_to_topic);
         }
 
     }
@@ -214,25 +203,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         MenuItem menuItem = menu.findItem(R.id.action_invitation);
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             menuItem.setVisible(false);
-        } else if (type == TYPE_MEMBERS_JOINABLE_TOPIC) {
-            menuItem.setIcon(R.drawable.actionbar_icon_check);
-            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    List<Long> selectedCdp = topicModdableMemberListAdapter.getSelectedUserIds();
-
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMembers, AnalyticsValue.Action.Invite);
-
-                    if (selectedCdp != null && !selectedCdp.isEmpty()) {
-                        membersListPresenter.inviteInBackground(selectedCdp, entityId);
-                        finish();
-                        return true;
-                    } else {
-                        showInviteFailed(getString(R.string.title_cdp_invite));
-                        return false;
-                    }
-                }
-            });
         } else if (type == TYPE_ASSIGN_TOPIC_OWNER) {
             menuItem.setVisible(false);
         }

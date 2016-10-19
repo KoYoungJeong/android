@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.detail.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 
 /**
@@ -11,8 +10,6 @@ public interface TopicDetailPresenter {
     void setView(View view);
 
     void onInit(long entityId);
-
-    void onTopicInvite(Activity activity, long entityId);
 
     void onTopicDescriptionMove(long entityId);
 

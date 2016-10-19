@@ -174,6 +174,21 @@ public class PollListAdapter extends MultiItemRecyclerAdapter
         setRow(index, Row.create(poll, VIEW_TYPE_POLL));
     }
 
+    @Override
+    public void clearPoll() {
+        clear();
+    }
+
+    @Override
+    public int size() {
+        return getItemCount();
+    }
+
+    @Override
+    public Poll getPoll(int position) {
+        return getItem(position);
+    }
+
     public interface OnPollClickListener {
         void onPollClick(Poll poll);
     }

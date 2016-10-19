@@ -14,8 +14,9 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="center"
+        android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/jandi_text_light"
-        android:textSize="14dp"/>
+        android:textSize="14dp" />
 
 </LinearLayout>

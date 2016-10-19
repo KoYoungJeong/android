@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.utils.mimetype;
 
 import com.tosslab.jandi.app.utils.mimetype.filter.IconFilterUtil;
-import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 /**
@@ -16,12 +15,6 @@ public class MimeTypeUtil {
 
         return SourceTypeUtil.getFileIcon(mimeType, sourceType);
 
-    }
-
-    public static int getMimeTypePlaceholderImage(String serverUrl, String iconType) {
-        PlaceholderType placeholderType = PlaceholderUtil.getPlaceholderType(serverUrl, iconType);
-
-        return PlaceholderUtil.getPlaceholderImage(placeholderType);
     }
 
     public static boolean isFileFromGoogleOrDropbox(MimeTypeUtil.SourceType sourceType) {

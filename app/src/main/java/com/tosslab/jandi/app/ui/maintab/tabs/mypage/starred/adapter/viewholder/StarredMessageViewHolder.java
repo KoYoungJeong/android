@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
@@ -49,8 +48,10 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         Member member = TeamInfoLoader.getInstance().getMember(starredMessage.getMessage().writerId);
         StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
                 .bind(member);
+        long roomId = starredMessage.getRoom().id;
+        String roomName = getRoomName(roomId);
 
-        tvMentionTopicName.setText(starredMessage.getRoom().name);
+        tvMentionTopicName.setText(roomName);
 
         String body = starredMessage.getMessage().content.body;
         SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder(body);
@@ -76,4 +77,16 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         String date = DateTransformator.getTimeString(starredMessage.getMessage().createdAt);
         tvDate.setText(date);
     }
+
+    private String getRoomName(long roomId) {
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+        if (teamInfoLoader.isTopic(roomId)) {
+            return teamInfoLoader.getTopic(roomId).getName();
+        } else if (teamInfoLoader.isChat(roomId)
+                && teamInfoLoader.isUser(teamInfoLoader.getChat(roomId).getCompanionId())) {
+            return teamInfoLoader.getUser(teamInfoLoader.getChat(roomId).getCompanionId()).getName();
+        }
+        return "";
+    }
+
 }
