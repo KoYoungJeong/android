@@ -218,7 +218,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEventMainThread(TopicDeleteEvent event) {
-        if (event.getId() == entityId) {
+        if (event.getTopicId() == entityId) {
             leaveTopic();
         }
     }

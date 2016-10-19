@@ -334,7 +334,7 @@ public class JandiSocketServiceModelTest {
         final long[] leftTeamId = new long[1];
         register((TopicDeleteEvent event) -> {
             accept = true;
-            leftTopicId[0] = event.getId();
+            leftTopicId[0] = event.getTopicId();
             leftTeamId[0] = event.getTeamId();
         });
 

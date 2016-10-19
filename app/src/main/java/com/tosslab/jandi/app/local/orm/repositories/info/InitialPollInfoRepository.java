@@ -71,4 +71,17 @@ public class InitialPollInfoRepository extends LockExecutorTemplate {
         });
     }
 
+    public boolean updateVotableCount(int votableCount) {
+        return execute(() -> {
+            try {
+                Dao<InitialInfo.Poll, Object> dao = getDao(InitialInfo.Poll.class);
+                UpdateBuilder<InitialInfo.Poll, Object> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("votableCount", votableCount);
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
 }

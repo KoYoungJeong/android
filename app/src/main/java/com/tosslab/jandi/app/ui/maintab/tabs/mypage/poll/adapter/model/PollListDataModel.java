@@ -22,4 +22,10 @@ public interface PollListDataModel {
     void removePollByIdAndStats(long pollId, String status);
 
     void setPoll(int index, Poll poll);
+
+    void clearPoll();
+
+    int size();
+
+    Poll getPoll(int position);
 }

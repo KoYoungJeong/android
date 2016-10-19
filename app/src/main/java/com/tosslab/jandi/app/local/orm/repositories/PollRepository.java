@@ -104,8 +104,12 @@ public class PollRepository extends LockExecutorTemplate {
     public List<Poll> getPolls() {
         return execute(() -> {
             try {
-                return getHelper().getDao(Poll.class)
-                        .queryForAll();
+                return getDao(Poll.class)
+                        .queryBuilder()
+                        .where()
+                        .not()
+                        .eq("status", "deleted")
+                        .query();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -185,4 +189,5 @@ public class PollRepository extends LockExecutorTemplate {
 
         });
     }
+
 }

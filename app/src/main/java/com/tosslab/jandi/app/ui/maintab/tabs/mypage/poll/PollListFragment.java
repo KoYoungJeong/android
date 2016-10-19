@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicJoinEvent;
+import com.tosslab.jandi.app.events.entities.TopicLeftEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.PollListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.view.PollListDataView;
@@ -107,6 +110,18 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
         lvPollList.setLayoutManager(new LinearLayoutManager(getContext()));
         lvPollList.setAdapter(pollListAdapter);
+
+        pollListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (pollListAdapter.getItemCount() > 0) {
+                    vgEmptyPollList.setVisibility(View.GONE);
+                } else {
+                    vgEmptyPollList.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     private void injectComponent(PollListAdapter adapter) {
@@ -147,11 +162,6 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
     }
 
     @Override
-    public void showEmptyView() {
-        vgEmptyPollList.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void setHasMore(boolean hasMore) {
         moreRequestHandler.setShouldRequestMore(hasMore);
     }
@@ -175,6 +185,19 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
     public void onEvent(SocketPollEvent event) {
         pollListPresenter.onPollDataChanged(event.getType(), event.getPoll());
+    }
+
+    public void onEventMainThread(TopicJoinEvent event) {
+        initPollList();
+    }
+
+    public void onEventMainThread(TopicLeftEvent event) {
+        initPollList();
+    }
+
+    public void onEventMainThread(TopicDeleteEvent event) {
+        initPollList();
+
     }
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action) {
