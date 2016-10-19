@@ -16,6 +16,7 @@
 	<string name="common_pricingplan_moreinfo">"詳細はこちら"</string>
 	<string name="common_pricingplan_msgsearch">"{TeamName}\n 無料ストレージを全部使用しました。検索が制限される可能性があります。今すぐSTANDARDプランにアップグレードし、より効率的なコラボレーションをお楽しみください。"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>
+	<string name="common_settings_lostpasscodedesc">"パスワードを忘れた場合、再インストールしてください。"</string>
 	<string name="common_sharetojandi_errormsg">"予期しないエラーが発生しました。後でもう一度やり直してください。"</string>
 	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。\n認証コードを入力してください。"</string>
 	<string name="err_delete_file">"ファイルが削除できませんでした"</string>
@@ -745,6 +746,7 @@
 	<string name="title_file_upload">"ファイルをアップロード"</string>
 	<string name="today">"今日"</string>
 	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
+	<string name="topic_topicsettings_removetopicfromfolder">"%sフォルダからトピックが除かれました"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"既にメンバー全員がこのトピックに参加しています"</string>
 	<string name="warn_messages_empty">"メッセージはありません"</string>

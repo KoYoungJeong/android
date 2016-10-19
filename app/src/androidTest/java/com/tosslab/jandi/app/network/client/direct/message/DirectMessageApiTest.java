@@ -3,11 +3,7 @@ package com.tosslab.jandi.app.network.client.direct.message;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageRepositoryModel;
@@ -19,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import rx.Observable;
@@ -93,28 +88,4 @@ public class DirectMessageApiTest {
         assertThat(resMessages.records.size()).isGreaterThanOrEqualTo(0);
     }
 
-    @Test
-    public void testSendDirectMessage() throws Exception {
-        ResCommon resCommon = api.sendDirectMessage(entityId, teamId, new ReqSendMessageV3("testSendDirectMessage : " + new Date().toString(), new ArrayList<MentionObject>()));
-        assertThat(resCommon).isNotNull();
-        assertThat(resCommon.id).isGreaterThan(0);
-    }
-
-    @Ignore
-    @Test
-    public void testModifyDirectMessage() throws Exception {
-        ResCommon resCommon = api.sendDirectMessage(entityId, teamId, new ReqSendMessageV3("testModifyDirectMessage : " + new Date().toString(), new ArrayList<MentionObject>()));
-        ReqModifyMessage message = new ReqModifyMessage();
-        message.content = "testModifyDirectMessage2 : " + new Date().toString();
-        message.teamId = teamId;
-        ResCommon resCommon1 = api.modifyDirectMessage(message, entityId, resCommon.id);
-        assertThat(resCommon1).isNotNull();
-    }
-
-    @Test
-    public void testDeleteDirectMessage() throws Exception {
-        ResCommon resCommon = api.sendDirectMessage(entityId, teamId, new ReqSendMessageV3("testDeleteDirectMessage : " + new Date().toString(), new ArrayList<MentionObject>()));
-        ResCommon resCommon1 = api.deleteDirectMessage(teamId, entityId, resCommon.id);
-        assertThat(resCommon1).isNotNull();
-    }
 }

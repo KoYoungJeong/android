@@ -19,9 +19,9 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.component.DaggerMyPageComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.module.MyPageModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.presenter.MyPagePresenter;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
@@ -84,6 +84,12 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.PollTab);
                         break;
                 }
+
+                Fragment fragment = getFragment(tab.getPosition());
+
+                if (fragment != null && fragment instanceof TabFocusListener) {
+                    ((TabFocusListener) fragment).onFocus();
+                }
             }
 
             @Override
@@ -94,17 +100,6 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
                 if (fragment != null && fragment instanceof ListScroller) {
                     ((ListScroller) fragment).scrollToTop();
                 }
-
-                if (fragment != null && fragment instanceof TabFocusListener) {
-                    ((TabFocusListener) fragment).onFocus();
-                }
-            }
-
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                super.onTabSelected(tab);
-
-                Fragment fragment = getFragment(tab.getPosition());
 
                 if (fragment != null && fragment instanceof TabFocusListener) {
                     ((TabFocusListener) fragment).onFocus();
