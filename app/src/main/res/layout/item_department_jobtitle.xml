@@ -24,6 +24,7 @@
         android:layout_toLeftOf="@id/tv_new_added"
         android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:singleLine="true"
         android:text="business f321WQFWEfe wfqfew qfQf231f"
         android:textColor="@color/dark_gray"

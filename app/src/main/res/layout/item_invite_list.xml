@@ -23,6 +23,7 @@
         android:layout_marginLeft="4dp"
         android:layout_weight="1"
         android:ellipsize="end"
+        android:maxLines="1"
         android:singleLine="true"
         android:text="Email"
         android:textColor="@color/jandi_black_89"

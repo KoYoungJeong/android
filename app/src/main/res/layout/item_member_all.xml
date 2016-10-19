@@ -20,6 +20,7 @@
         android:layout_toRightOf="@id/v_member_filter_all"
         android:gravity="center_vertical"
         android:minHeight="24dp"
+        android:maxLines="1"
         android:singleLine="true"
         android:text="@string/jandi_search_category_everyone"
         android:textColor="@color/jandi_text"

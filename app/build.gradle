@@ -35,7 +35,6 @@ android {
         versionCode 223
         versionName '2.4.2'
 
-
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -50,8 +49,8 @@ android {
         }
 
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            debuggable true
+            testCoverageEnabled = project.hasProperty("report_coverage") && report_coverage.toBoolean()
         }
 
     }
@@ -159,11 +158,6 @@ android {
     }
 }
 
-project.gradle.taskGraph.whenReady {
-    connectedDevDebugAndroidTest {
-        ignoreFailures = true
-    }
-}
 
 apt {
     arguments {

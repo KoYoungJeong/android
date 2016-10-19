@@ -23,6 +23,7 @@
         android:layout_toLeftOf="@+id/btn_team_list_ignore"
         android:layout_toRightOf="@+id/iv_team_list_icon"
         android:ellipsize="end"
+        android:maxLines="1"
         android:singleLine="true"
         android:text="Team Name"
         android:textColor="@color/jandi_team_select_pendning_name"

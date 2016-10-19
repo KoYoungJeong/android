@@ -24,6 +24,7 @@
         android:layout_marginLeft="33dp"
         android:layout_weight="1"
         android:ellipsize="end"
+        android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/jandi_team_selector_text_default"
         android:textSize="16sp" />

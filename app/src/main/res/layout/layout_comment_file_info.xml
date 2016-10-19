@@ -64,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
                 android:ellipsize="middle"
+                android:maxLines="1"
                 android:singleLine="true"
                 android:text="jfile name asjhdk lajdlkjhsdlka jfdsafdsafd safdsfsdh flkjahsdf"
                 android:textColor="@color/dark_gray"

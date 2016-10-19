@@ -12,7 +12,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginRight="32dp"
-        android:background="@drawable/side_bar_team"/>
+        android:background="@drawable/side_bar_team" />
 
     <TextView
         android:layout_width="0dp"
@@ -20,10 +20,11 @@
         android:layout_marginRight="16dp"
         android:layout_weight="1"
         android:ellipsize="end"
+        android:maxLines="1"
         android:singleLine="true"
         android:text="@string/jandi_team_list"
         android:textColor="@color/jandi_text"
-        android:textSize="15dp"/>
+        android:textSize="15dp" />
 
     <TextView
         android:id="@+id/btn_team_create"
@@ -35,6 +36,6 @@
         android:paddingRight="8dp"
         android:text="@string/jandi_action_create_team"
         android:textColor="@color/jandi_border_gray"
-        android:textSize="11dp"/>
+        android:textSize="11dp" />
 
 </LinearLayout>
