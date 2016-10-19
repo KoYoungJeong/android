@@ -102,6 +102,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     private PublishSubject<String> keywordSubject;
     private InputMethodManager inputManager;
 
+    private boolean showAllSelectOptionsMenu = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +122,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
         adapter = new TeamViewPagerAdapter(this, getSupportFragmentManager(), keywordObservable,
                 isSelectMode, false, roomId);
         viewPager.setAdapter(adapter);
+        setOnViewpagerChangeListener();
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setCurrentItem(position);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -135,9 +138,33 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
             }
         });
 
-
         setUpToolbar();
 
+    }
+
+    private void setOnViewpagerChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    showAllSelectOptionsMenu = true;
+                    invalidateOptionsMenu();
+                } else {
+                    showAllSelectOptionsMenu = false;
+                    invalidateOptionsMenu();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void setUpToolbar() {
@@ -211,7 +238,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 .subscribe((keywords1) -> {
                     adapter.addAll(keywords1);
                     adapter.notifyDataSetChanged();
-                }, t -> {});
+                }, t -> {
+                });
 
     }
 
@@ -225,6 +253,15 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 menuInflater.inflate(R.menu.invite_to_topic, menu);
             } else {
                 menuInflater.inflate(R.menu.invite_to_direct_message, menu);
+            }
+
+            MenuItem item = menu.findItem(R.id.action_select_all);
+            if (item != null) {
+                if (showAllSelectOptionsMenu) {
+                    item.setVisible(true);
+                } else {
+                    item.setVisible(false);
+                }
             }
         }
 
