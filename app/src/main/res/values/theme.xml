@@ -36,7 +36,9 @@
         <item name="colorPrimary">@color/jandi_primary_color</item>
         <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
         <item name="android:windowBackground">@drawable/popup_bg</item>
-        <item name="colorAccent">@color/jandi_accent_color</item>
+        <item name="colorAccent">@color/button_text_color</item>
+        <item name="android:textColorSecondary">@color/button_text_color_dim</item>
+        <item name="android:disabledAlpha">1</item>
 
         <item name="windowMinWidthMinor">@dimen/jandi_dialog_min_width</item>
         <item name="windowMinWidthMajor">@dimen/jandi_dialog_min_width</item>
