@@ -29,7 +29,6 @@ ext.dependecies = [
                 support_v4                       : 'com.android.support:support-v4:24.2.1',
                 support_v13                      : 'com.android.support:support-v13:24.2.1',
                 support_recyclerview             : 'com.android.support:recyclerview-v7:24.2.1',
-                support_cardview                 : 'com.android.support:cardview-v7:24.2.1',
                 support_annotation               : 'com.android.support:support-annotations:24.2.1',
                 support_design                   : 'com.android.support:design:24.2.1',
 

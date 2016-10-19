@@ -49,7 +49,6 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.support_v4
                 compile rootProject.ext.dependecies.libraries.support_v13
                 compile rootProject.ext.dependecies.libraries.support_recyclerview
-                compile rootProject.ext.dependecies.libraries.support_cardview
                 compile rootProject.ext.dependecies.libraries.support_annotation
                 compile rootProject.ext.dependecies.libraries.support_design
 
