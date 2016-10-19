@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import javax.inject.Inject;
 
@@ -52,7 +53,7 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MentionListFragment extends Fragment implements MentionListView, ListScroller {
+public class MentionListFragment extends Fragment implements MentionListView, ListScroller,TabFocusListener {
 
     @Inject
     MentionListPresenter presenter;
@@ -348,6 +349,13 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     @Override
     public void scrollToTop() {
         lvMyPage.scrollToPosition(0);
+    }
+
+    @Override
+    public void onFocus() {
+        if (presenter != null) {
+            presenter.onUpdateMentionMarker();
+        }
     }
 
     private class MentionMessageMoreRequestHandler implements MentionListAdapter.OnLoadMoreCallback {

@@ -1542,6 +1542,7 @@ public class JandiSocketServiceModel {
             saveEvent(event);
 
             InitialInfo.Mention mention = InitialMentionInfoRepository.getInstance().getMention();
+            mention.setId(event.getTeamId());
             long lastMentionedMessageId = event == null
                     ? -1 : event.getData().getLastMentionedMessageId();
             mention.setLastMentionedMessageId(lastMentionedMessageId);
