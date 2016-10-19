@@ -116,7 +116,7 @@ public class FileUploadManager {
                             fileUploadDTO.getMentions(),
                             callback -> callback
                                     .onBackpressureBuffer()
-                                    .distinct()
+                                    .distinctUntilChanged()
                                     .subscribe(it -> {
                                         progress[1] = it;
                                         FileUploadProgressEvent event = new FileUploadProgressEvent(fileUploadDTO.getEntity(), it);
