@@ -108,8 +108,8 @@ public class FileDetailModel {
         entityClientManager.deleteMessageComment(messageId, feedbackId);
     }
 
-    public void deleteStickerComment(long messageId, int messageType) throws RetrofitException {
-        messageManipulator.deleteSticker(messageId, messageType);
+    public void deleteStickerComment(long feedbackId, long messageId) throws RetrofitException {
+        messageManipulator.deleteStickerComment(feedbackId, messageId);
     }
 
     public List<ResMessages.OriginalMessage> getEnableMessages(

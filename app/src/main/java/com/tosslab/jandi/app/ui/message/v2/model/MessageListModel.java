@@ -120,8 +120,12 @@ public class MessageListModel {
         messageManipulator.deleteMessage(messageId);
     }
 
-    public void deleteSticker(long messageId, int messageType) throws RetrofitException {
-        messageManipulator.deleteSticker(messageId, messageType);
+    public void deleteSticker(long messageId) throws RetrofitException {
+        messageManipulator.deleteSticker(messageId);
+    }
+
+    public void deleteStickerComment(long feedbackId, long messageId) throws RetrofitException {
+        messageManipulator.deleteStickerComment(feedbackId, messageId);
     }
 
     public boolean isFileType(ResMessages.OriginalMessage message) {

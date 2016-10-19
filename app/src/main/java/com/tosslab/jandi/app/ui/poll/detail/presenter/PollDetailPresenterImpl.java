@@ -359,7 +359,8 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 stickerIdStringBuilder.toString(),
                                 pollId
                         );
-                    } if(resPollCommentCreated.getLinkComment() != null) {
+                    }
+                    if (resPollCommentCreated.getLinkComment() != null) {
                         messageId = resPollCommentCreated.getLinkComment().messageId;
                         SprinklrMessagePost.sendLogWithPollComment(
                                 messageId,
@@ -368,7 +369,6 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                                 pollDetailModel.hasAllMention(message, mentions)
                         );
                     }
-
 
 
                 }, throwable -> {
@@ -493,7 +493,7 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
         };
 
         if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
-            deleteStickerComment(messageType, messageId, errorAction);
+            deleteStickerComment(feedbackId, messageId, errorAction);
         } else {
             deleteComment(messageId, feedbackId, errorAction);
         }
@@ -509,8 +509,8 @@ public class PollDetailPresenterImpl implements PollDetailPresenter {
                 }, errorAction);
     }
 
-    void deleteStickerComment(int messageType, long messageId, Action1<Throwable> errorAction) {
-        pollDetailModel.getStickerCommentDeleteObservable(messageId, messageType)
+    void deleteStickerComment(long feedbackId, long messageId, Action1<Throwable> errorAction) {
+        pollDetailModel.getStickerCommentDeleteObservable(feedbackId, messageId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {

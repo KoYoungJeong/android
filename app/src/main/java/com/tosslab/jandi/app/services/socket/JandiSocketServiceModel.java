@@ -445,8 +445,8 @@ public class JandiSocketServiceModel {
         try {
             SocketChatCloseEvent event = SocketModelExtractor.getObject(object, SocketChatCloseEvent.class);
             saveEvent(event);
-            SocketChatCloseEvent.Data chat = event.getChat();
-            ChatRepository.getInstance().updateChatOpened(chat.getId(), false);
+            SocketChatCloseEvent.Data data = event.getData();
+            ChatRepository.getInstance().updateChatOpened(data.getChatId(), false);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new ChatListRefreshEvent());

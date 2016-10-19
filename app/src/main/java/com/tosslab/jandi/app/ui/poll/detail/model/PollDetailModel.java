@@ -243,10 +243,10 @@ public class PollDetailModel {
         });
     }
 
-    public Observable<ResCommon> getStickerCommentDeleteObservable(long messageId, int messageType) {
+    public Observable<ResCommon> getStickerCommentDeleteObservable(long feedbackId, long messageId) {
         return Observable.<ResCommon>create(subscriber -> {
             try {
-                ResCommon resCommon = messageManipulator.deleteSticker(messageId, messageType);
+                ResCommon resCommon = messageManipulator.deleteStickerComment(feedbackId, messageId);
                 subscriber.onNext(resCommon);
             } catch (RetrofitException e) {
                 subscriber.onError(e);

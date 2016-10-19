@@ -70,7 +70,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "team_name_updated", value = SocketTeamNameUpdatedEvent.class),
         @JsonSubTypes.Type(name = "team_domain_updated", value = SocketTeamDomainUpdatedEvent.class),
         @JsonSubTypes.Type(name = "team_updated", value = SocketTeamUpdatedEvent.class),
-        @JsonSubTypes.Type(name = "chat_close", value = SocketChatCloseEvent.class),
+        @JsonSubTypes.Type(name = "chat_closed", value = SocketChatCloseEvent.class),
         @JsonSubTypes.Type(name = "chat_created", value = SocketChatCreatedEvent.class),
         @JsonSubTypes.Type(name = "connect_created", value = SocketConnectBotCreatedEvent.class),
         @JsonSubTypes.Type(name = "connect_deleted", value = SocketConnectBotDeletedEvent.class),

@@ -275,9 +275,9 @@ public class JandiSocketServiceModelTest {
             accept = true;
         });
         SocketChatCloseEvent event = createEvent(SocketChatCloseEvent.class);
-        SocketChatCloseEvent.Data chat = new SocketChatCloseEvent.Data();
-        chat.setId(TeamInfoLoader.getInstance().getChatId(TeamInfoLoader.getInstance().getJandiBot().getId()));
-        event.setChat(chat);
+        SocketChatCloseEvent.Data data = new SocketChatCloseEvent.Data();
+        data.setChatId(TeamInfoLoader.getInstance().getChatId(TeamInfoLoader.getInstance().getJandiBot().getId()));
+        event.setData(data);
         model.onChatClosed(event);
 
         assertThat(accept).isTrue();
