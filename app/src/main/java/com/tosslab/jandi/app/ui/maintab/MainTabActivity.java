@@ -74,6 +74,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -345,6 +346,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
                 if (position == MypageTabInfo.INDEX) {
                     mainTabPresenter.onInitMyPageBadge(false);
+                    Fragment fragment = getFragment(position);
+                    if (fragment != null && fragment instanceof TabFocusListener) {
+                        ((TabFocusListener) fragment).onFocus();
+                    }
                 }
             }
 
@@ -626,9 +631,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Nullable
     private Fragment getFragment(int position) {
         try {
-            Object item = tabPagerAdapter.instantiateItem(viewPager, position);
-            if (item != null && item instanceof Fragment) {
-                return (Fragment) item;
+            Fragment item = tabPagerAdapter.getItem(position);
+            if (item != null) {
+                return item;
             }
         } catch (Exception e) {
             e.printStackTrace();

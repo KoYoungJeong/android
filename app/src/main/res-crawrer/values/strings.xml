@@ -8,9 +8,16 @@
 	<string name="common_accthome_joinedteamlist">"Joined team list"</string>
 	<string name="common_accthome_loggedin">"logged in"</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
+	<string name="common_createteam_welcome">"Welcome!"</string>
 	<string name="common_creatteam_done">"Done"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
+	<string name="common_pricingplan_fileupload">"{TeamName}\n Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
+	<string name="common_pricingplan_livesupport">"Live Support"</string>
+	<string name="common_pricingplan_moreinfo">"More detail"</string>
+	<string name="common_pricingplan_msgsearch">"{TeamName}\n Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
+	<string name="common_settings_lostpasscodedesc">"Please delete and reinstall the app to reset your passcode"</string>
+	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
 	<string name="err_download">"File could not be downloaded"</string>
@@ -60,7 +67,7 @@
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>
@@ -345,7 +352,7 @@
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 	<string name="jandi_is_newcomer">"New to JANDI?"</string>
-	<string name="jandi_is_topic_required">"Type"</string>
+	<string name="jandi_is_topic_required">"Type*"</string>
 	<string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
 	<string name="jandi_job_title">"Job Titles"</string>
 	<string name="jandi_job_title_list">"All Job Titles"</string>
@@ -734,6 +741,7 @@
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
+	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>
