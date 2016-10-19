@@ -67,7 +67,7 @@
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>
@@ -230,7 +230,7 @@
 	<string name="jandi_enable_external_link">"Create public link"</string>
 	<string name="jandi_enter_name">"Please enter your name"</string>
 	<string name="jandi_enter_new_passcode">"Enter New Passcode"</string>
-	<string name="jandi_enter_passcode">"Enter your password"</string>
+	<string name="jandi_enter_passcode">"Enter Passcode"</string>
 	<string name="jandi_enter_phone_number">"Please enter your phone number"</string>
 	<string name="jandi_enter_your_dept">"Enter your Department"</string>
 	<string name="jandi_enter_your_job_title">"Enter your Job Title"</string>
