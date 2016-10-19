@@ -142,7 +142,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -517,7 +516,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         initMessages(true /* withProgress */);
 
-        showCoachMarkIfNeed();
     }
 
     private void initSoftInputAreaController() {
@@ -1986,11 +1984,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void updateRecyclerViewInfo() {
         messageRecyclerViewManager.updateFirstVisibleItem();
         messageRecyclerViewManager.updateLastVisibleItem();
-    }
-
-    private void showCoachMarkIfNeed() {
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(
-                entityType == JandiConstants.TYPE_DIRECT_MESSAGE, getActivity());
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

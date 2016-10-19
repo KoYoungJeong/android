@@ -141,8 +141,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC
                 || type == MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER) {
             members = memberModel.getTopicMembers(entityId);
-        } else if (type == MembersListActivity.TYPE_MEMBERS_JOINABLE_TOPIC) {
-            members = memberModel.getUnjoinedTopicMembers(entityId);
         } else {
             members = memberModel.getTeamMembers();
         }
