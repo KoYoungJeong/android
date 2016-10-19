@@ -146,4 +146,9 @@ public class MentionListModel {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         return messageApi.get().registStarredMessage(teamId, messageId, new ReqNull());
     }
+
+    public void decreaseMentionCount() {
+        InitialMentionInfoRepository.getInstance().decreaseUnreadCount();
+        TeamInfoLoader.getInstance().refreshMention();
+    }
 }

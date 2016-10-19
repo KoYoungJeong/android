@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -232,13 +231,20 @@ public class StarredListPresenterImpl implements StarredListPresenter {
 
     private void moveToMessageList(StarredMessage message) {
         long roomId = message.getRoom().id;
-        Collection<Long> members = TeamInfoLoader.getInstance()
-                .getTopic(roomId)
-                .getMembers();
 
-        Observable.from(members)
+        Observable.defer(() -> Observable.from(TeamInfoLoader.getInstance()
+                .getRoom(roomId)
+                .getMembers()))
                 .takeFirst(memberId -> memberId == TeamInfoLoader.getInstance().getMyId())
                 .firstOrDefault(-1L)
+                .concatMap(it ->{
+                    if (it > 0) {
+
+                        return Observable.just(it);
+                    } else {
+                        return Observable.error(new Exception("It doesn't contain member"));
+                    }
+                })
                 .subscribe(memberId -> {
                     if (memberId == -1L) {
                         return;
@@ -250,8 +256,16 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                             : "privateGroup".equals(entityTypeStr)
                             ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
 
+                    long entityId;
+
+                    if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+                        entityId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+                    } else {
+                        entityId = roomId;
+                    }
+
                     starredListView.moveToMessageList(
-                            message.getTeamId(), roomId, entityType, message.getLinkId());
+                            message.getTeamId(), entityId, roomId, entityType, message.getLinkId());
                 }, e -> {
                     LogUtil.e(Log.getStackTraceString(e));
                     starredListView.showUnJoinedTopicErrorToast();

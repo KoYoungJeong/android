@@ -218,11 +218,11 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     }
 
     @Override
-    public void moveToMessageList(long teamId, long roomId, int entityType, long linkId) {
+    public void moveToMessageList(long teamId, long entityId, long roomId, int entityType, long linkId) {
         MessageListV2Activity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(teamId)
-                .entityId(roomId)
+                .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromSearch(true)

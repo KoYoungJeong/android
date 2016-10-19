@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import javax.inject.Inject;
 
@@ -35,7 +36,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MyPageFragment extends Fragment implements MyPagePresenter.View {
+public class MyPageFragment extends Fragment implements MyPagePresenter.View, TabFocusListener {
 
     @Bind(R.id.pager_mypage)
     ViewPager viewPager;
@@ -93,14 +94,29 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
                 if (fragment != null && fragment instanceof ListScroller) {
                     ((ListScroller) fragment).scrollToTop();
                 }
+
+                if (fragment != null && fragment instanceof TabFocusListener) {
+                    ((TabFocusListener) fragment).onFocus();
+                }
+            }
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+
+                Fragment fragment = getFragment(tab.getPosition());
+
+                if (fragment != null && fragment instanceof TabFocusListener) {
+                    ((TabFocusListener) fragment).onFocus();
+                }
             }
 
             @Nullable
             private Fragment getFragment(int position) {
                 try {
-                    Object item = tabPagerAdapter.instantiateItem(viewPager, position);
-                    if (item != null && item instanceof Fragment) {
-                        return (Fragment) item;
+                    Fragment item = tabPagerAdapter.getItem(position);
+                    if (item != null) {
+                        return item;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -191,5 +207,18 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
             EventBus.getDefault().unregister(this);
         }
         super.onDestroyView();
+    }
+
+    @Override
+    public void onFocus() {
+        if (tabPagerAdapter != null && viewPager != null) {
+
+            Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
+
+            if (item != null && item instanceof TabFocusListener) {
+                ((TabFocusListener) item).onFocus();
+            }
+        }
+
     }
 }
