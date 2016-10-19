@@ -33,7 +33,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 224
-        versionName '2.4.2'
+        versionName '2.4.3'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
