@@ -103,6 +103,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
@@ -994,27 +995,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
-        if (user != null) {
-
+        long writerId = item.message.writerId;
+        if (TeamInfoLoader.getInstance().isUser(writerId)) {
+            User user = TeamInfoLoader.getInstance().getUser(item.message.writerId);
             tvPreviewUserName.setText(user.getName());
-
-            if (!TeamInfoLoader.getInstance().isBot(user.getId())) {
-                ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
-            } else {
-                Uri uri = Uri.parse(user.getPhotoUrl());
-                ImageLoader.newInstance()
-                        .fragment(this)
-                        .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
-                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                        .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
-                                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
-                                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
-                                Color.WHITE))
-                        .uri(uri)
-                        .into(ivPreviewProfile);
-
-            }
+            ImageUtil.loadProfileImage(ivPreviewProfile, user.getPhotoUrl(), R.drawable.profile_img);
+        } else if (TeamInfoLoader.getInstance().isBot(writerId)) {
+            WebhookBot bot = TeamInfoLoader.getInstance().getBot(writerId);
+            tvPreviewUserName.setText(bot.getName());
+            Uri uri = Uri.parse(bot.getPhotoUrl());
+            ImageLoader.newInstance()
+                    .fragment(this)
+                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .transformation(new JandiProfileTransform(ivPreviewProfile.getContext(),
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                            Color.WHITE))
+                    .uri(uri)
+                    .into(ivPreviewProfile);
         }
 
         String message;
