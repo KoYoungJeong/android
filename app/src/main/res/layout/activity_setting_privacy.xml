@@ -47,7 +47,7 @@
             android:layout_marginTop="8dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:text="@string/jandi_set_passcode_detail"
+            android:text="@string/common_settings_lostpasscodedesc"
             android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
             android:textSize="@dimen/jandi_text_size_small"/>
 

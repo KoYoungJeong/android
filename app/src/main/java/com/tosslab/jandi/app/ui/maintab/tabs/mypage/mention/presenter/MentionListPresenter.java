@@ -18,4 +18,6 @@ public interface MentionListPresenter {
     void removeMentionedMessage(long linkId);
 
     void onStarred(long messageId);
+
+    void onUpdateMentionMarker();
 }
