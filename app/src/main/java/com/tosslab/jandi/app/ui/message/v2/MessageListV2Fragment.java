@@ -116,6 +116,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -1769,6 +1770,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 .gotoTeamMemberSearchActivity()
                 .isSelectMode(true)
                 .room_id(entityId)
+                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
 

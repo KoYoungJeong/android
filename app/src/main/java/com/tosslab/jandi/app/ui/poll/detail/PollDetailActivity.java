@@ -217,7 +217,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
             pollDetailPresenter.onChangePollStarredState(poll);
 
             boolean futureStarred = !poll.isStarred();
-            AnalyticsValue.Label label = futureStarred ? AnalyticsValue.Label.On : AnalyticsValue.Label.Off;
+            AnalyticsValue.Label label = futureStarred ? AnalyticsValue.Label.Off : AnalyticsValue.Label.On;
 
             sendAnalyticsEvent(AnalyticsValue.Action.StarVote, label);
         });

@@ -200,7 +200,13 @@ public class MentionListPresenterImpl implements MentionListPresenter {
             mentionListView.showUnknownEntityToast();
         }
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab_ChooseTopicMsg);
+
+        if (TextUtils.isEmpty(mention.getFeedbackTitle())) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab_ChooseTopicMsg);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionTab_ChooseFileComment);
+        }
+
     }
 
     @Override

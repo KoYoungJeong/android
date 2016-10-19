@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
@@ -307,6 +308,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .gotoTeamMemberSearchActivity()
                 .isSelectMode(true)
                 .room_id(entityId)
+                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
 

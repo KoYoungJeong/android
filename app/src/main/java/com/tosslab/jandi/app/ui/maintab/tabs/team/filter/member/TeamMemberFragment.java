@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberAdapter;
@@ -40,9 +41,9 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
 
@@ -55,6 +56,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         KeywordObservable, OnToggledUser, ListScroller, OnSearchModeChangeListener {
 
     public static final int REQ_DISABLED_MEMBER = 201;
+
     @Bind(R.id.list_team_member)
     RecyclerView lvMember;
 
@@ -66,6 +68,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Inject
     TeamMemberPresenter presenter;
+
     @Nullable
     @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE)
     boolean selectMode;
@@ -78,14 +81,23 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID)
     long roomId = -1;
 
-    private TeamMemberDataView teamMemberDataView;
-    ProgressWheel progressWheel;
+    @Nullable
+    @InjectExtra(TeamMemberSearchActivity.EXTRA_FROM)
+    int from = TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB;
 
-    public static Fragment create(Context context, boolean selectMode, boolean hasHeader, long roomId) {
+    ProgressWheel progressWheel;
+    private TeamMemberDataView teamMemberDataView;
+
+    private boolean isInSearchMode = false;
+
+    private AnalyticsValue.Screen screen = AnalyticsValue.Screen.TeamTab;
+
+    public static Fragment create(Context context, boolean selectMode, boolean hasHeader, long roomId, int from) {
         Bundle args = new Bundle();
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE, selectMode);
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER, hasHeader);
         args.putLong(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID, roomId);
+        args.putInt(TeamMemberSearchActivity.EXTRA_FROM, from);
         return Fragment.instantiate(context, TeamMemberFragment.class.getName(), args);
     }
 
@@ -103,6 +115,8 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         super.onActivityCreated(savedInstanceState);
 
         Dart.inject(this, getArguments());
+
+        setAnalyticsScreen();
 
         TeamMemberAdapter adapter = new TeamMemberAdapter();
         adapter.setSelectedMode(selectMode && roomId > 0);
@@ -131,11 +145,33 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         presenter.onCreate();
 
         teamMemberDataView.setOnItemClickListener((view, adapter1, position) -> {
-
-            presenter.onItemClick(position);
+            presenter.onItemClick(position, screen);
         });
+
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+    }
+
+    private void setAnalyticsScreen() {
+        if (from == TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB) {
+            if (isInSearchMode) {
+                screen = AnalyticsValue.Screen.TeamTabSearch;
+            } else {
+                screen = AnalyticsValue.Screen.TeamTab;
+            }
+        } else if (from == TeamMemberSearchActivity.EXTRA_FROM_INVITE_CHAT) {
+            if (isInSearchMode) {
+                screen = AnalyticsValue.Screen.SelectTeamMemberSearch;
+            } else {
+                screen = AnalyticsValue.Screen.SelectTeamMember;
+            }
+        } else if (from == TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC) {
+            if (isInSearchMode) {
+                screen = AnalyticsValue.Screen.InviteMemberSearch;
+            } else {
+                screen = AnalyticsValue.Screen.InviteTeamMembers;
+            }
         }
     }
 
@@ -185,6 +221,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
                 .memberId(userId)
                 .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                 .start();
+        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
     }
 
     @Override
@@ -204,6 +241,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .lastReadLinkId(lastLinkId)
                 .start();
+        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
+        if (userId == TeamInfoLoader.getInstance().getJandiBot().getId()) {
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseJANDI);
+        }
         getActivity().finish();
     }
 
@@ -284,6 +325,8 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void onSearchModeChange(boolean isInSearchMode) {
-        presenter.setIsInSearchMode(isInSearchMode);
+        this.isInSearchMode = isInSearchMode;
+        setAnalyticsScreen();
     }
+
 }

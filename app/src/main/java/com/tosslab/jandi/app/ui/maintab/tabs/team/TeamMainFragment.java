@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -118,6 +119,7 @@ public class TeamMainFragment extends Fragment {
                         .gotoTeamMemberSearchActivity()
                         .position(viewPager.getCurrentItem())
                         .isSelectMode(false)
+                        .from(TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB)
                         .build());
                 break;
         }

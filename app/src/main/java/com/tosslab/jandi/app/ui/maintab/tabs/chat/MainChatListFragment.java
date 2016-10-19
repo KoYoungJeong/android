@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -331,10 +332,10 @@ public class MainChatListFragment extends Fragment
 
     @Click(R.id.btn_chat_list_no_messages)
     void chooseUser() {
-
         startActivity(Henson.with(getActivity())
                 .gotoTeamMemberSearchActivity()
                 .isSelectMode(true)
+                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_CHAT)
                 .build());
 
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);

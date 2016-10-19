@@ -68,6 +68,9 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
     @Nullable
     @InjectExtra(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID)
     long roomId = -1;
+    @Nullable
+    @InjectExtra(TeamMemberSearchActivity.EXTRA_FROM)
+    int from = TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB;
 
 
     @Bind(R.id.list_team_dept_job)
@@ -84,14 +87,17 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
 
     @Inject
     DeptJobPresenter deptJobPresenter;
-    private boolean isInSearchMode = false;
 
-    public static Fragment create(Context context, int type, boolean selectMode, boolean hasHeader, long roomId) {
+    private boolean isInSearchMode = false;
+    private AnalyticsValue.Screen screen = AnalyticsValue.Screen.TeamTab;
+
+    public static Fragment create(Context context, int type, boolean selectMode, boolean hasHeader, long roomId, int from) {
         Bundle args = new Bundle(1);
         args.putInt(EXTRA_TYPE, type);
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_SELECT_MODE, selectMode);
         args.putBoolean(TeamMemberSearchActivity.EXTRA_KEY_HAS_HEADER, hasHeader);
         args.putLong(TeamMemberSearchActivity.EXTRA_KEY_ROOM_ID, roomId);
+        args.putInt(TeamMemberSearchActivity.EXTRA_FROM, from);
         return Fragment.instantiate(context, DeptJobFragment.class.getName(), args);
     }
 
@@ -108,6 +114,8 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
         super.onActivityCreated(savedInstanceState);
 
         Dart.inject(this, getArguments());
+
+        setAnalyticsScreen();
 
         DeptJobAdapter adapter = new DeptJobAdapter();
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -132,14 +140,15 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
             deptJobPresenter.onItemClick(position);
 
             String keyword = ((DeptJobAdapter) adapter1).getItem(position).getName().toString();
+
             startActivityForResult(Henson.with(getActivity())
                     .gotoDeptJobGroupActivity()
                     .keyword(keyword)
                     .type(type)
                     .selectMode(selectMode)
                     .pickMode(selectMode && roomId < 0)
+                    .from(from)
                     .build(), REQ_MEMBERS_OF_GROUP);
-
             sendDeptJobAnalyticsEvent(keyword);
         });
 
@@ -150,49 +159,49 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
         }
     }
 
-    private void sendDeptJobAnalyticsEvent(String keyword) {
-        boolean isUnDefined = JandiApplication.getContext().getString(R.string.jandi_undefined_member)
-                .contains(keyword);
-
-        if (!selectMode) {
-            AnalyticsValue.Screen screen = isInSearchMode
-                    ? AnalyticsValue.Screen.TeamTabSearch
-                    : AnalyticsValue.Screen.TeamTab;
-            if (type == EXTRA_TYPE_DEPT) {
-
-                AnalyticsUtil.sendEvent(screen,
-                        isUnDefined ? AnalyticsValue.Action.ChooseDepartment
-                                : AnalyticsValue.Action.ChooseDepartment_Undefined);
-            } else if (type == EXTRA_TYPE_JOB) {
-                AnalyticsUtil.sendEvent(screen,
-                        isUnDefined ? AnalyticsValue.Action.ChooseJobTitle
-                                : AnalyticsValue.Action.ChooseJobTitle_Undefined);
+    private void setAnalyticsScreen() {
+        if (from == TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB) {
+            if (isInSearchMode) {
+                screen = AnalyticsValue.Screen.TeamTabSearch;
+            } else {
+                screen = AnalyticsValue.Screen.TeamTab;
             }
-            return;
+        } else if (from == TeamMemberSearchActivity.EXTRA_FROM_INVITE_CHAT) {
+            if (isInSearchMode) {
+                screen = AnalyticsValue.Screen.SelectTeamMemberSearch;
+            } else {
+                screen = AnalyticsValue.Screen.SelectTeamMember;
+            }
+        } else if (from == TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC) {
+            if (isInSearchMode) {
+                screen = AnalyticsValue.Screen.InviteMemberSearch;
+            } else {
+                screen = AnalyticsValue.Screen.InviteTeamMembers;
+            }
         }
+    }
 
-        if (roomId <= 0) {
+    private void sendDeptJobAnalyticsEvent(String keyword) {
+        boolean isUnDefined = JandiApplication.getContext().getString(R.string.jandi_undefined_member).contains(keyword);
+
+        if (screen == AnalyticsValue.Screen.SelectTeamMemberSearch) {
             AnalyticsValue.Action action = type == EXTRA_TYPE_DEPT
                     ? AnalyticsValue.Action.ChooseDepartment
                     : AnalyticsValue.Action.ChooseJobTitle;
-
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMemberSearch, action);
+            AnalyticsUtil.sendEvent(screen, action);
             return;
         }
 
-        AnalyticsValue.Screen screen = isInSearchMode
-                ? AnalyticsValue.Screen.InviteMemberSearch
-                : AnalyticsValue.Screen.InviteTeamMembers;
-
         if (type == EXTRA_TYPE_DEPT) {
             AnalyticsUtil.sendEvent(screen,
-                    isUnDefined ? AnalyticsValue.Action.ChooseDepartment
-                            : AnalyticsValue.Action.ChooseDepartment_Undefined);
+                    isUnDefined ? AnalyticsValue.Action.ChooseDepartment_Undefined
+                            : AnalyticsValue.Action.ChooseDepartment);
         } else if (type == EXTRA_TYPE_JOB) {
             AnalyticsUtil.sendEvent(screen,
-                    isUnDefined ? AnalyticsValue.Action.ChooseJobTitle
-                            : AnalyticsValue.Action.ChooseJobTitle_Undefined);
+                    isUnDefined ? AnalyticsValue.Action.ChooseJobTitle_Undefined
+                            : AnalyticsValue.Action.ChooseJobTitle);
         }
+
     }
 
     @Override
@@ -286,5 +295,6 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
     @Override
     public void onSearchModeChange(boolean isInSearchMode) {
         this.isInSearchMode = isInSearchMode;
+        setAnalyticsScreen();
     }
 }

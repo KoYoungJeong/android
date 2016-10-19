@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.dagger.DeptJo
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.presenter.DeptJobGroupPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataView;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -38,6 +39,7 @@ import de.greenrobot.event.EventBus;
 public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJobGroupPresenter.View {
 
     public static final String EXTRA_RESULT = "result";
+
     @Nullable
     @InjectExtra
     int type;
@@ -53,6 +55,10 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @Nullable
     @InjectExtra
     boolean pickMode = false;
+
+    @Nullable
+    @InjectExtra
+    int from = TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB;
 
     @Bind(R.id.list_dept_job_group)
     RecyclerView lvMembers;
@@ -72,6 +78,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @Bind(R.id.tv_dept_job_group_toggled_invite)
     TextView tvAdded;
 
+    private AnalyticsValue.Screen screen;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,6 +87,8 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
 
         ButterKnife.bind(this);
         Dart.inject(this);
+
+        setAnalyticsScreen();
 
         initActionbar();
 
@@ -120,10 +129,8 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     private void initActionbar() {
-
         toolbar.setTitle(keyword);
         setSupportActionBar(toolbar);
-
     }
 
     @Override
@@ -142,11 +149,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @Override
     public void pickUser(long userId) {
         if (pickMode) {
-            AnalyticsValue.Action action = type == DeptJobFragment.EXTRA_TYPE_DEPT
-                    ? AnalyticsValue.Action.ChooseDepartment_Undefined
-                    : AnalyticsValue.Action.ChooseJobTitle_Undefined;
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMember, action);
-
             Intent intent = new Intent();
             intent.putExtra(EXTRA_RESULT, userId);
             setResult(RESULT_OK, intent);
@@ -156,11 +158,8 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                     .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                     .memberId(userId)
                     .start();
-
-            AnalyticsUtil.sendEvent(type == DeptJobFragment.EXTRA_TYPE_DEPT
-                    ? AnalyticsValue.Screen.TeamTab_Department
-                    : AnalyticsValue.Screen.TeamTab_JobTitle, AnalyticsValue.Action.SelectMember);
         }
+        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.SelectMember);
     }
 
     @Override
@@ -185,22 +184,35 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @OnClick(R.id.tv_dept_job_group_toggled_unselect_all)
     void onUnselectClick() {
         presenter.onUnselectClick();
-
-        AnalyticsValue.Screen screen = type == DeptJobFragment.EXTRA_TYPE_DEPT
-                ? AnalyticsValue.Screen.InviteTeamMembers_Department
-                : AnalyticsValue.Screen.InviteTeamMembers_JobTitle;
-
         AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.CancelSelect);
     }
 
     @OnClick(R.id.tv_dept_job_group_toggled_invite)
     void onAddClick() {
         presenter.onAddClick();
-
-        AnalyticsValue.Screen screen = type == DeptJobFragment.EXTRA_TYPE_DEPT
-                ? AnalyticsValue.Screen.InviteTeamMembers_Department
-                : AnalyticsValue.Screen.InviteTeamMembers_JobTitle;
-
         AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.InviteMembers);
     }
+
+    private void setAnalyticsScreen() {
+        if (from == TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB) {
+            if (type == DeptJobFragment.EXTRA_TYPE_DEPT) {
+                screen = AnalyticsValue.Screen.TeamTab_Department;
+            } else {
+                screen = AnalyticsValue.Screen.TeamTab_JobTitle;
+            }
+        } else if (from == TeamMemberSearchActivity.EXTRA_FROM_INVITE_CHAT) {
+            if (type == DeptJobFragment.EXTRA_TYPE_DEPT) {
+                screen = AnalyticsValue.Screen.SelectTeamMember_Department;
+            } else {
+                screen = AnalyticsValue.Screen.SelectTeamMember_JobTitle;
+            }
+        } else if (from == TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC) {
+            if (type == DeptJobFragment.EXTRA_TYPE_DEPT) {
+                screen = AnalyticsValue.Screen.InviteTeamMembers_Department;
+            } else {
+                screen = AnalyticsValue.Screen.InviteTeamMembers_JobTitle;
+            }
+        }
+    }
+
 }

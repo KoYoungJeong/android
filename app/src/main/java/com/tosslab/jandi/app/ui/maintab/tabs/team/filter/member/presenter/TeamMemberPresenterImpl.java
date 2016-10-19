@@ -48,7 +48,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     private long roomId = -1;
 
     private ToggleCollector toggledIds;
-    private boolean isInSearchMode = false;
 
     @Inject
     public TeamMemberPresenterImpl(View view,
@@ -162,8 +161,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     }
 
     @Override
-    public void onItemClick(int position) {
-
+    public void onItemClick(int position, AnalyticsValue.Screen screen) {
         if (teamMemberDataModel.getItem(position) instanceof TeamDisabledMemberItem) {
             view.moveDisabledMembers();
             return;
@@ -176,46 +174,29 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
         TeamMemberItem item = teamMemberDataModel.getItem(position);
         long userId = item.getChatChooseItem().getEntityId();
+
         if (!selectMode) {
             view.moveProfile(userId);
-
-            AnalyticsValue.Screen screen = isInSearchMode
-                    ? AnalyticsValue.Screen.TeamTabSearch
-                    : AnalyticsValue.Screen.TeamTab;
-            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
         } else {
-
             if (roomId > 0) {
-
-                AnalyticsValue.Screen screen = isInSearchMode
-                        ? AnalyticsValue.Screen.InviteMemberSearch
-                        : AnalyticsValue.Screen.InviteTeamMembers;
-
                 if (toggledIds.containsId(userId)) {
                     toggledIds.removeId(userId);
-
                     AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_UnSelectMember);
                 } else {
                     toggledIds.addId(userId);
-
                     AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_SelectMember);
                 }
-
                 view.updateToggledUser(toggledIds.count());
                 view.refreshDataView();
             } else {
-
                 onUserSelect(userId);
             }
-
-
         }
 
     }
 
     @Override
     public void addToggledUser(long[] users) {
-
         for (long user : users) {
             int position = teamMemberDataModel.findItemOfEntityId(user);
             if (position >= 0) {
@@ -249,16 +230,9 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         } else {
             lastLinkId = -1;
         }
-
         view.moveDirectMessage(teamId, userId, roomId, lastLinkId);
-
-        AnalyticsValue.Screen screen = isInSearchMode
-                ? AnalyticsValue.Screen.SelectTeamMemberSearch
-                : AnalyticsValue.Screen.SelectTeamMember;
-        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
-        if (userId == TeamInfoLoader.getInstance().getJandiBot().getId()) {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMember, AnalyticsValue.Action.ChooseJANDI);
-        }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectTeamMember,
+                AnalyticsValue.Action.Members_ChooseMember);
     }
 
     @Override
@@ -278,7 +252,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());
                     TeamInfoLoader.getInstance().refresh();
                     EventBus.getDefault().post(new InvitationSuccessEvent());
-
                     view.dismissProgress();
                     view.successToInvitation();
                 }, e -> {
@@ -291,11 +264,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     @Override
     public void onRefresh() {
         filterSubject.onNext(filterSubject.getValue());
-    }
-
-    @Override
-    public void setIsInSearchMode(boolean isInSearchMode) {
-        this.isInSearchMode = isInSearchMode;
     }
 
     @Override

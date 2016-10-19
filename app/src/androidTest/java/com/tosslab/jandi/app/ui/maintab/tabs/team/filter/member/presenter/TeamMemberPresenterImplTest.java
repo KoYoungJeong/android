@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger.TeamMembe
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamDisabledMemberItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.domain.TeamMemberItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.model.TeamMemberModel;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,6 @@ import static org.mockito.Mockito.when;
 @org.junit.runner.RunWith(android.support.test.runner.AndroidJUnit4.class)
 public class TeamMemberPresenterImplTest {
 
-
     @Mock
     TeamMemberPresenter.View view;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
@@ -63,7 +63,7 @@ public class TeamMemberPresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-
+        
         try {
             MockitoAnnotations.initMocks(this);
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class TeamMemberPresenterImplTest {
     public void onItemClick_disabled() throws Exception {
         presenter.onCreate();
         doReturn(new TeamDisabledMemberItem(null, null)).when(dataModel).getItem(anyInt());
-        presenter.onItemClick(0);
+        presenter.onItemClick(0, AnalyticsValue.Screen.TeamTab);
         verify(view).moveDisabledMembers();
 
     }
@@ -110,7 +110,7 @@ public class TeamMemberPresenterImplTest {
         reset(view, dataModel);
         doReturn(getMyTeamMemberItem()).when(dataModel).getItem(anyInt());
         presenterImpl.setSelectMode(false);
-        presenter.onItemClick(0);
+        presenter.onItemClick(0, AnalyticsValue.Screen.TeamTab);
 
         verify(view).moveProfile(eq(TeamInfoLoader.getInstance().getMyId()));
 
@@ -124,7 +124,7 @@ public class TeamMemberPresenterImplTest {
         doReturn(getMyTeamMemberItem()).when(dataModel).getItem(anyInt());
         presenterImpl.setSelectMode(true);
         presenterImpl.setRoomId(getNotDefaultTopic());
-        presenter.onItemClick(0);
+        presenter.onItemClick(0, AnalyticsValue.Screen.TeamTab);
 
         verify(view).updateToggledUser(anyInt());
         verify(view).refreshDataView();
@@ -138,7 +138,7 @@ public class TeamMemberPresenterImplTest {
         doReturn(getMyTeamMemberItem()).when(dataModel).getItem(anyInt());
         presenterImpl.setSelectMode(true);
         presenterImpl.setRoomId(-1);
-        presenter.onItemClick(0);
+        presenter.onItemClick(0, AnalyticsValue.Screen.TeamTab);
 
         verify(view).moveDirectMessage(anyLong(), anyLong(), anyLong(), anyLong());
     }

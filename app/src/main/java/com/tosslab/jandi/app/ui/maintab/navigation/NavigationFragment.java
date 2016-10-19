@@ -398,12 +398,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     public void onEvent(TeamInviteIgnoreEvent event) {
         navigationPresenter.onTeamInviteIgnoreAction(event.getTeam());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.AcceptTeamInvitation);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.IgnoreTeamInvitation);
     }
 
     public void onEvent(TeamInviteAcceptEvent event) {
         navigationPresenter.onTeamInviteAcceptAction(event.getTeam());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.IgnoreTeamInvitation);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.AcceptTeamInvitation);
     }
 
     public void onEvent(TeamDeletedEvent event) {

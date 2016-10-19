@@ -1,13 +1,15 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter;
 
 
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+
 public interface TeamMemberPresenter {
 
     void onCreate();
 
     void onDestroy();
 
-    void onItemClick(int position);
+    void onItemClick(int position, AnalyticsValue.Screen screen);
 
     void onSearchKeyword(String text);
 
@@ -22,8 +24,6 @@ public interface TeamMemberPresenter {
     void inviteToggle();
 
     void onRefresh();
-
-    void setIsInSearchMode(boolean isInSearchMode);
 
     interface View {
 

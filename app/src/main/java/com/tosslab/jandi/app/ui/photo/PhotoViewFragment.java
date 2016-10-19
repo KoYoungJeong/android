@@ -39,6 +39,9 @@ import uk.co.senab.photoview.PhotoView;
 @EFragment(R.layout.fragment_photo_view)
 public class PhotoViewFragment extends Fragment {
     public static final String TAG = PhotoViewFragment.class.getSimpleName();
+
+    public static final int EXTRA_MODE_NORMAL = 0x01;
+
     @FragmentArg
     String thumbUrl;
     @FragmentArg
@@ -47,6 +50,8 @@ public class PhotoViewFragment extends Fragment {
     String imageType;
     @FragmentArg
     String extensions;
+    @FragmentArg
+    int mode = 0;
 
     @ViewById(R.id.pv_photoview)
     PhotoView photoView;
@@ -155,7 +160,12 @@ public class PhotoViewFragment extends Fragment {
         btnTapToViewOriginal.setOnClickListener(v -> {
             btnTapToViewOriginal.setVisibility(View.GONE);
             vgProgress.setVisibility(View.VISIBLE);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.ViewOriginalImage);
+            if (mode == EXTRA_MODE_NORMAL) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ImageFullScreen, AnalyticsValue.Action.ViewOriginalImage);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.ViewOriginalImage);
+            }
+
             loadImage(originalUri);
         });
     }

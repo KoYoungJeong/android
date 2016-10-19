@@ -7,7 +7,6 @@ import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.SelfRepository;
@@ -18,15 +17,14 @@ public class AnalyticsUtil {
 
     public static final String KEY_ACTION = "action";
     public static final String KEY_LABEL = "label";
-    private static final String KEY_ADWORDS = "Adwords_";
     public static final String KEY_CONVERSION_ID = "conversionId";
+    private static final String KEY_ADWORDS = "Adwords_";
 
     private AnalyticsUtil() {
     }
 
     public static void sendScreenName(String screenName) {
-        if (BuildConfig.DEBUG) return;
-
+//        if (BuildConfig.DEBUG) return;
         try {
             Tracker tracker = ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER);
             tracker.setScreenName(screenName);
@@ -38,7 +36,7 @@ public class AnalyticsUtil {
     }
 
     public static void sendEvent(String category, String action, String label) {
-        if (BuildConfig.DEBUG) return;
+//        if (BuildConfig.DEBUG) return;
         try {
             ((JandiApplication) JandiApplication.getContext()).getTracker(JandiApplication.TrackerName.APP_TRACKER)
                     .send(new HitBuilders.EventBuilder()

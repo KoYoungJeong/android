@@ -432,7 +432,6 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         progressDialog.setCanceledOnTouchOutside(false);
 
         carouselViewerPresenter.onExportFile(carouselFileInfo, progressDialog);
-        sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Export);
     }
 
     void delete() {
@@ -796,6 +795,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
             startActivity(chooser);
+            sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Export);
         } catch (ActivityNotFoundException e) {
             LogUtil.e(Log.getStackTraceString(e));
             ColoredToast.showError(R.string.jandi_err_unexpected);

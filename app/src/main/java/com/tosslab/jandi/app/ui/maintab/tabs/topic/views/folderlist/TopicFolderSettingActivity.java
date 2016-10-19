@@ -344,14 +344,13 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.jandi_folder_rename);
 
         input.setText(name);
-        input.setHint(R.string.jandi_title_name);
+        input.setHint(R.string.jandi_entity_create_entity_name);
         input.setSelection(name.length());
 
         builder.setView(vgInputEditText)
                 .setPositiveButton(this.getString(R.string.jandi_confirm), (dialog, which) -> {
                     if (!name.equals(input.getText().toString().trim())) {
                         topicFolderSettingPresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
-                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.EditFolder_Rename);
                     }
                     dialog.cancel();
                 })

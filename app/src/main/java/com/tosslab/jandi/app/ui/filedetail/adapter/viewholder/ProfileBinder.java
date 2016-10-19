@@ -25,7 +25,6 @@ public class ProfileBinder {
     private View vUserNameDisableIndicator;
     private ImageView ivProfile;
     private View vUserProfileDisableIndicator;
-    private boolean isFromComment = false;
 
     private ProfileBinder(TextView tvUserName, View vUserNameDisableIndicator,
                           ImageView ivUserProfile, View vUserProfileDisableIndicator) {
@@ -74,9 +73,9 @@ public class ProfileBinder {
                 : resources.getColor(R.color.black));
 
         ivProfile.setOnClickListener(
-                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image));
+                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image, false));
         tvUserName.setOnClickListener(
-                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name));
+                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name, false));
     }
 
     public void bindForComment(User writer) {
@@ -122,16 +121,12 @@ public class ProfileBinder {
                 : resources.getColor(R.color.black));
 
         ivProfile.setOnClickListener(
-                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image));
+                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Image, true));
         tvUserName.setOnClickListener(
-                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name));
+                v -> onProfileClick(writer.getId(), ShowProfileEvent.From.Name, true));
     }
 
-    public void setIsFromComment(boolean isFromComment) {
-        this.isFromComment = isFromComment;
-    }
-
-    private void onProfileClick(final long writerId, ShowProfileEvent.From clickType) {
+    private void onProfileClick(final long writerId, ShowProfileEvent.From clickType, boolean isFromComment) {
         if (TeamInfoLoader.getInstance().isUser(writerId)) {
             ShowProfileEvent event = new ShowProfileEvent(writerId, clickType);
             event.setIsFromComment(isFromComment);

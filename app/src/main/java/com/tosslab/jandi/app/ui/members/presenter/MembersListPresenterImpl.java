@@ -203,7 +203,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 .from(view.getType() == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC ?
                         MemberProfileActivity.EXTRA_FROM_PARTICIPANT : MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
                 .start();
-
+        
         AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
     }
 

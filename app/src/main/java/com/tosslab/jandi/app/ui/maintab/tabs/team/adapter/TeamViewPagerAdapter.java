@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.TeamMemberFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.KeywordObservable;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,22 +26,23 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
 
     List<Fragment> fragments;
 
-
     public TeamViewPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
-        initFragments(false, true, -1);
+        initFragments(false, true, -1, TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB);
     }
 
     public TeamViewPagerAdapter(Context context, FragmentManager fm,
                                 Observable<String> keywordObservable,
                                 boolean isSelectMode,
-                                boolean hasHeader, long roomId) {
+                                boolean hasHeader,
+                                long roomId,
+                                int from) {
         super(fm);
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
-        initFragments(isSelectMode, hasHeader, roomId);
+        initFragments(isSelectMode, hasHeader, roomId, from);
 
         for (int idx = 0; idx < fragments.size(); idx++) {
             Fragment fragment = fragments.get(idx);
@@ -50,18 +52,18 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    private void initFragments(boolean selectMode, boolean hasHeader, long roomId) {
+    private void initFragments(boolean selectMode, boolean hasHeader, long roomId, int from) {
         for (int position = 0; position < TEAM_TITLES.length; position++) {
             switch (position) {
                 case 1:
-                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_DEPT, selectMode, hasHeader, roomId));
+                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_DEPT, selectMode, hasHeader, roomId, from));
                     break;
                 case 2:
-                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_JOB, selectMode, hasHeader, roomId));
+                    fragments.add(DeptJobFragment.create(context, DeptJobFragment.EXTRA_TYPE_JOB, selectMode, hasHeader, roomId, from));
                     break;
                 default:
                 case 0:
-                    fragments.add(TeamMemberFragment.create(context, selectMode, hasHeader, roomId));
+                    fragments.add(TeamMemberFragment.create(context, selectMode, hasHeader, roomId, from));
                     break;
             }
         }

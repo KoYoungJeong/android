@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -34,7 +33,6 @@ public class LinkPreviewViewModel {
     private TextView tvDescription;
 
     private ImageView ivThumb;
-    private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
     private Context context;
     private ViewGroup vgLinkPreview;
