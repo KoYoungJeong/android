@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -134,9 +136,20 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (selectMode) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.dept_jobtitle_menu, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+        } else if (item.getItemId() == R.id.action_select_all) {
+            onAddAllUser();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -218,6 +231,11 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                 screen = AnalyticsValue.Screen.InviteTeamMembers_JobTitle;
             }
         }
+    }
+
+    @Override
+    public void onAddAllUser() {
+        presenter.addToggleOfAll();
     }
 
 }

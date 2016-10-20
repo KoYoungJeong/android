@@ -12,6 +12,8 @@ public interface DeptJobGroupPresenter {
 
     void onRefresh();
 
+    void addToggleOfAll();
+
     interface View {
         void refreshDataView();
 
@@ -20,5 +22,7 @@ public interface DeptJobGroupPresenter {
         void updateToggledUser(int count);
 
         void comeWithResult(long[] toggledUser);
+
+        void onAddAllUser();
     }
 }

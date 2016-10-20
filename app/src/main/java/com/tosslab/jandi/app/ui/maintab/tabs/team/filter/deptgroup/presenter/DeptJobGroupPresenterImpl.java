@@ -135,6 +135,17 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     }
 
     @Override
+    public void addToggleOfAll() {
+        for (int idx = 0, size = teamMemberDataModel.getSize(); idx < size; idx++) {
+            ChatChooseItem chatChooseItem = teamMemberDataModel.getItem(idx).getChatChooseItem();
+            toggledUser.addId(chatChooseItem.getEntityId());
+        }
+
+        view.refreshDataView();
+        view.updateToggledUser(toggledUser.count());
+    }
+
+    @Override
     public void onRefresh() {
         onCreate();
     }
