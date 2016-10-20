@@ -1570,12 +1570,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     public void onEvent(LinkPreviewClickEvent event) {
-        AnalyticsValue.Label label = AnalyticsValue.Label.text;
-        if (event.getTouchFrom() == LinkPreviewClickEvent.TouchFrom.IMAGE) {
-            label = AnalyticsValue.Label.image;
-        }
-
-        sendAnalyticsEvent(AnalyticsValue.Action.TapLinkPreview, label);
 
         String linkUrl = event.getLinkUrl();
         if (TextUtils.isEmpty(linkUrl)) {
