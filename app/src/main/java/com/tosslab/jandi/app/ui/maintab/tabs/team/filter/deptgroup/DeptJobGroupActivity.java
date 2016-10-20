@@ -159,7 +159,12 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                     .memberId(userId)
                     .start();
         }
-        AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.SelectMember);
+        if (screen == AnalyticsValue.Screen.SelectTeamMember_Department ||
+                screen == AnalyticsValue.Screen.SelectTeamMember_JobTitle) {
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
+        } else {
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.SelectMember);
+        }
     }
 
     @Override

@@ -45,7 +45,6 @@ public class PhotoViewActivity extends BaseAppCompatActivity implements OnSwipeE
                 .originalUrl(thumbUrl)
                 .thumbUrl(originalUrl)
                 .extensions(extensions)
-                .mode(PhotoViewFragment.EXTRA_MODE_NORMAL)
                 .build();
 
         getSupportFragmentManager()

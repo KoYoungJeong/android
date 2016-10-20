@@ -232,10 +232,19 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                     .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
                         createNewFolder(etInput.getText().toString().trim());
                         etInput.setText("");
-                        if (fromActionBar) {
-                            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
+
+                        if (mode == ITEM_FOLDER_CHOOSE) {
+                            if (fromActionBar) {
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolderonTop);
+                            } else {
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolder);
+                            }
                         } else {
-                            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MoveToaFolder, AnalyticsValue.Action.NewFolderonTop);
+                            if (fromActionBar) {
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.NewFolderonTop);
+                            } else {
+                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
+                            }
                         }
                     })
                     .setNegativeButton(R.string.jandi_cancel, (dialog, which) -> {
@@ -261,6 +270,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     public void createNewFolder(String title) {
         topicFolderSettingPresentor.onCreateFolers(title, folderId);
+
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -316,7 +327,6 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     private void showDeleteFolderDialog(long folderId) {
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.DeleteaFolder);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -324,6 +334,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         builder.setMessage(R.string.jandi_folder_ask_delete)
                 .setPositiveButton(this.getString(R.string.jandi_confirm), (dialog, which) -> {
                     topicFolderSettingPresentor.removeFolder(folderId);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.DeleteaFolder);
                     dialog.dismiss();
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
@@ -333,7 +344,6 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     private void showRenameFolderDialog(long folderId, String name, int seq) {
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this,
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
@@ -353,6 +363,7 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
                     if (!name.equals(input.getText().toString().trim())) {
                         topicFolderSettingPresentor.modifyNameFolder(folderId, input.getText().toString().trim(), seq);
                     }
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.EditFolder_Rename);
                     dialog.cancel();
                 })
                 .setNegativeButton(this.getString(R.string.jandi_cancel), (dialog, which) -> {

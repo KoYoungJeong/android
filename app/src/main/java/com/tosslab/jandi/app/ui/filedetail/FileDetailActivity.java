@@ -1182,6 +1182,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         progressDialog.setCanceledOnTouchOutside(false);
 
         fileDetailPresenter.onExportFile(fileMessage, progressDialog);
+        sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Export);
     }
 
     @OptionsItem(R.id.action_file_detail_delete)

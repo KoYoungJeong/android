@@ -121,6 +121,7 @@ public class TeamMainFragment extends Fragment {
                         .isSelectMode(false)
                         .from(TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB)
                         .build());
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.MemberSearch);
                 break;
         }
         return super.onOptionsItemSelected(item);

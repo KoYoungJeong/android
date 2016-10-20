@@ -40,7 +40,8 @@ import uk.co.senab.photoview.PhotoView;
 public class PhotoViewFragment extends Fragment {
     public static final String TAG = PhotoViewFragment.class.getSimpleName();
 
-    public static final int EXTRA_MODE_NORMAL = 0x01;
+    public static final int EXTRA_MODE_SINGLE = 0x01;
+    public static final int EXTRA_MODE_CAROUSEL = 0x02;
 
     @FragmentArg
     String thumbUrl;
@@ -51,7 +52,7 @@ public class PhotoViewFragment extends Fragment {
     @FragmentArg
     String extensions;
     @FragmentArg
-    int mode = 0;
+    int mode;
 
     @ViewById(R.id.pv_photoview)
     PhotoView photoView;
@@ -160,7 +161,7 @@ public class PhotoViewFragment extends Fragment {
         btnTapToViewOriginal.setOnClickListener(v -> {
             btnTapToViewOriginal.setVisibility(View.GONE);
             vgProgress.setVisibility(View.VISIBLE);
-            if (mode == EXTRA_MODE_NORMAL) {
+            if (mode == EXTRA_MODE_SINGLE) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ImageFullScreen, AnalyticsValue.Action.ViewOriginalImage);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Carousel, AnalyticsValue.Action.ViewOriginalImage);

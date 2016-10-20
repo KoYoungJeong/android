@@ -16,6 +16,8 @@ import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.LinkPreviewClickEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -90,10 +92,12 @@ public class LinkPreviewViewModel {
         ivThumb.setOnClickListener(v -> {
             EventBus.getDefault().post(
                     new LinkPreviewClickEvent(linkUrl, LinkPreviewClickEvent.TouchFrom.IMAGE));
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TapLinkPreview, AnalyticsValue.Label.image);
         });
         vgSummary.setOnClickListener(v -> {
             EventBus.getDefault().post(
                     new LinkPreviewClickEvent(linkUrl, LinkPreviewClickEvent.TouchFrom.IMAGE));
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.TapLinkPreview, AnalyticsValue.Label.text);
         });
 
         boolean useThumbnail = useThumbnail(linkPreview.imageUrl);
