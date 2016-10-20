@@ -12,6 +12,8 @@ public interface DeptJobGroupPresenter {
 
     void onRefresh();
 
+    void addToggleOfAll();
+
     interface View {
         void refreshDataView();
 

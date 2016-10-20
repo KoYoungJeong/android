@@ -240,7 +240,6 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     static class UserViewHolder extends MemberViewHolder<TeamMemberItem> {
-
         @Bind(R.id.tv_user_name)
         TextView tvName;
 

@@ -240,7 +240,6 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 if (adapter.getItem(0) instanceof OnToggledUser) {
                     OnToggledUser onToggledUser = (OnToggledUser) adapter.getItem(0);
                     onToggledUser.onAddAllUser();
-
                 }
                 break;
             case android.R.id.home:
