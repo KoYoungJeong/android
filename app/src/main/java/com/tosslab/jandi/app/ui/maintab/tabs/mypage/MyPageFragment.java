@@ -19,18 +19,22 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.component.DaggerMyPageComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.module.MyPageModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.presenter.MyPagePresenter;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MyPageFragment extends Fragment implements MyPagePresenter.View {
+public class MyPageFragment extends Fragment implements MyPagePresenter.View, TabFocusListener {
 
     @Bind(R.id.pager_mypage)
     ViewPager viewPager;
@@ -58,12 +62,12 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
 
         ButterKnife.bind(this, view);
 
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 super.onTabReselected(tab);
@@ -72,14 +76,29 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
                 if (fragment != null && fragment instanceof ListScroller) {
                     ((ListScroller) fragment).scrollToTop();
                 }
+
+                if (fragment != null && fragment instanceof TabFocusListener) {
+                    ((TabFocusListener) fragment).onFocus();
+                }
+            }
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                super.onTabSelected(tab);
+
+                Fragment fragment = getFragment(tab.getPosition());
+
+                if (fragment != null && fragment instanceof TabFocusListener) {
+                    ((TabFocusListener) fragment).onFocus();
+                }
             }
 
             @Nullable
             private Fragment getFragment(int position) {
                 try {
-                    Object item = tabPagerAdapter.instantiateItem(viewPager, position);
-                    if (item != null && item instanceof Fragment) {
-                        return (Fragment) item;
+                    Fragment item = tabPagerAdapter.getItem(position);
+                    if (item != null) {
+                        return item;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -98,6 +117,9 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
         tvPollBadge = (TextView) pollTab.findViewById(R.id.tv_badge);
         tabLayout.addTab(tabLayout.newTab()
                 .setCustomView(pollTab));
+
+        viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfMyPage());
+
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
@@ -121,8 +143,9 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
             tvPollBadge.setVisibility(View.GONE);
             return;
         }
+
         tvPollBadge.setVisibility(View.VISIBLE);
-        tvPollBadge.setText(Integer.toString(count));
+        tvPollBadge.setText(String.valueOf(Math.min(count, 999)));
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
@@ -154,10 +177,31 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Completable.fromAction(() -> JandiPreference.setLastSelectedTabOfMyPage(viewPager.getCurrentItem()))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
+    }
+
+    @Override
     public void onDestroyView() {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
         super.onDestroyView();
+    }
+
+    @Override
+    public void onFocus() {
+        if (tabPagerAdapter != null && viewPager != null) {
+
+            Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
+
+            if (item != null && item instanceof TabFocusListener) {
+                ((TabFocusListener) item).onFocus();
+            }
+        }
+
     }
 }

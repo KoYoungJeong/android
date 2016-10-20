@@ -64,10 +64,6 @@ public class UserSelectorImpl implements UserSelector {
                 }))
                 .subscribe(adapter::addAll);
 
-        if (TeamInfoLoader.getInstance().hasJandiBot()) {
-            adapter.add(1, ExpandRoomData.newMemberData(TeamInfoLoader.getInstance().getJandiBot()));
-        }
-
         ExpandRoomData dummyData = new ExpandRoomData();
         dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
         adapter.add(0, dummyData);

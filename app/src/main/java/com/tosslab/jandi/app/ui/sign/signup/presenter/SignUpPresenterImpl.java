@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.ui.sign.signup.presenter;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.ui.sign.signup.model.SignUpModel;
 import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrVerificationMail;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrVerificationMail;
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import rx.Completable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -24,16 +24,6 @@ public class SignUpPresenterImpl implements SignUpPresenter {
     @Inject
     public SignUpPresenterImpl(SignUpPresenter.View view) {
         this.view = view;
-    }
-
-    @Override
-    public boolean checkNameValidation(String name) {
-        if (model.isEmptyName(name)) {
-            view.showErrorInsertName();
-            return false;
-        }
-        view.removeErrorName();
-        return true;
     }
 
     @Override
@@ -68,31 +58,26 @@ public class SignUpPresenterImpl implements SignUpPresenter {
     @Override
     public void trySignUp(String name, String email, String password) {
 
-        boolean check = checkNameValidation(name);
-        check = checkEmailValidation(email) && check;
+        boolean check = checkEmailValidation(email);
         check = checkPasswordValidation(password) && check;
 
         if (!check) {
             return;
         }
 
-        String lang = LanguageUtil.getLanguage();
 
         view.showProgressWheel();
 
-        Observable.create(subscriber -> {
-            try {
-                model.requestSignUp(email, password, name, lang);
-                AnalyticsUtil.sendConversion("Android_Account mail send", "957512006", "fVnsCMKD_GEQxvLJyAM");
-                SprinklrVerificationMail.sendLog(email);
-                subscriber.onNext(new Object());
-            } catch (RetrofitException e) {
-                subscriber.onError(e);
-            }
-            subscriber.onCompleted();
+
+        Completable.fromCallable(() -> {
+            String lang = LanguageUtil.getLanguage();
+            model.requestSignUp(email, password, name, lang);
+            AnalyticsUtil.sendConversion("Android_Account mail send", "957512006", "fVnsCMKD_GEQxvLJyAM");
+            SprinklrVerificationMail.sendLog(email);
+            return Completable.complete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> {
+                .subscribe(() -> {
                     view.dismissProgressWheel();
                     view.startSignUpRequestVerifyActivity();
                 }, e -> {

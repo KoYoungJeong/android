@@ -703,21 +703,24 @@ public class MessageListV2Presenter {
     public void onInitializeEmptyLayout(long entityId) {
         boolean isTopic = messageListModel.isTopic(entityId);
         if (isTopic) {
-            TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
-            int topicMemberCount = topic.getMemberCount();
-            int teamMemberCount = Observable.from(TeamInfoLoader.getInstance().getUserList())
+            Observable.from(TeamInfoLoader.getInstance().getUserList())
                     .filter(User::isEnabled)
                     .count()
-                    .toBlocking()
-                    .firstOrDefault(1) - 1;
+                    .map(it -> it - 1)
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(it -> {
+                        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(entityId);
+                        int topicMemberCount = topic.getMemberCount();
+                        if (it <= 0) {
+                            view.insertTeamMemberEmptyLayout();
+                        } else if (topicMemberCount <= 1) {
+                            view.insertTopicMemberEmptyLayout();
+                        } else {
+                            view.clearEmptyMessageLayout();
+                        }
+                    });
 
-            if (teamMemberCount <= 0) {
-                view.insertTeamMemberEmptyLayout();
-            } else if (topicMemberCount <= 1) {
-                view.insertTopicMemberEmptyLayout();
-            } else {
-                view.clearEmptyMessageLayout();
-            }
 
         } else {
             view.insertMessageEmptyLayout();
@@ -766,8 +769,6 @@ public class MessageListV2Presenter {
     public void restoreStatus() {
         if (room.getRoomId() > 0) {
             messageListModel.removeNotificationSameEntityId(room.getRoomId());
-            String readyMessage = messageListModel.getReadyMessage(room.getRoomId());
-            view.initMentionControlViewModel(readyMessage);
         }
 
         if (NetworkCheckUtil.isConnected()) {

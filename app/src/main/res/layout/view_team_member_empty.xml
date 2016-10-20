@@ -41,7 +41,7 @@
             android:layout_marginTop="14dp"
             android:padding="20dp"
             android:background="@color/transparent"
-            android:text="@string/jandi_invite_to_team_for_member"
+            android:text="@string/jandi_send_invitation"
             android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_large"
             android:textStyle="bold" />

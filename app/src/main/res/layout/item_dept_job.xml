@@ -10,13 +10,24 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_toLeftOf="@+id/v_dept_job_arrow"
+        android:layout_toLeftOf="@+id/tv_dept_job_count"
         android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="@color/jandi_profile_text"
-        android:textSize="@dimen/jandi_text_size_large"/>
+        android:textSize="@dimen/jandi_text_size_large" />
+
+    <TextView
+        android:id="@+id/tv_dept_job_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:text="0"
+        android:textSize="@dimen/jandi_text_size_medium"
+        android:textColor="@color/jandi_text_medium"
+        android:layout_toLeftOf="@+id/v_dept_job_arrow" />
 
     <ImageView
         android:id="@+id/v_dept_job_arrow"
@@ -24,14 +35,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="6dp"
         android:layout_marginRight="16dp"
-        android:src="@drawable/icon_arrow_right"/>
+        android:src="@drawable/icon_arrow_right" />
 
     <View
+        android:id="@+id/v_dept_job_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/rgb_e5e5e5"/>
+        android:background="@color/rgb_e5e5e5" />
 
 </RelativeLayout>

@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +35,7 @@ import de.greenrobot.event.EventBus;
  */
 public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
+    private final int teamOwnerPaddingTop;
     @Bind(R.id.iv_profile)
     ImageView ivProfile;
     @Bind(R.id.iv_favorite)
@@ -56,6 +57,8 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     TextView tvUserJobTitle;
     @Bind(R.id.tv_owner_badge)
     TextView tvOwnerBadge;
+    @Bind(R.id.vg_owner_badge)
+    LinearLayout vgOwnerBadge;
     @Bind(R.id.vg_user_kick)
     ViewGroup vgUserKick;
     @Bind(R.id.iv_user_kick)
@@ -77,6 +80,8 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     protected MemberViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+
+        teamOwnerPaddingTop = vgOwnerBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
     }
 
     public static MemberViewHolder createForUser(ViewGroup parent) {
@@ -173,12 +178,16 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         String department = item.getDepartment();
         if (TextUtils.isEmpty(department)) {
             tvUserDepartment.setVisibility(View.GONE);
+            vgOwnerBadge.setGravity(Gravity.CENTER_VERTICAL);
+            vgOwnerBadge.setPadding(0, 0, 0, 0);
         } else {
             tvUserDepartment.setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
             tvUserDepartment.setText(department);
+            vgOwnerBadge.setGravity(Gravity.NO_GRAVITY);
+            vgOwnerBadge.setPadding(0, teamOwnerPaddingTop, 0, 0);
         }
 
         String jobTitle = item.getJobTitle();
@@ -251,7 +260,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         Resources resources = tvOwnerBadge.getResources();
 
         tvOwnerBadge.setText(isTeamMemberList
-                ? resources.getString(R.string.jandi_team_owner_with_format)
+                ? resources.getString(R.string.jandi_team_owner)
                 : resources.getString(R.string.jandi_topic_owner));
 
         tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
@@ -273,11 +282,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     }
 
     private void setProfileImage(ChatChooseItem item) {
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
         if (!item.isBot()) {
-            ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
-            layoutParams.height = ivProfile.getResources().getDimensionPixelSize(R.dimen.jandi_entity_item_icon);
-            ivProfile.setLayoutParams(layoutParams);
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivProfile, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
@@ -285,12 +290,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
                 ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
             }
         } else {
-            ViewGroup.LayoutParams layoutParams = ivProfile.getLayoutParams();
-            layoutParams.height = Math.round(
-                    TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP, 54f, displayMetrics));
-            ivProfile.setLayoutParams(layoutParams);
-            ivProfile.setImageResource(R.drawable.bot_32x40);
+            ivProfile.setImageResource(R.drawable.logotype_80);
         }
     }
 

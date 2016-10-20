@@ -46,9 +46,9 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
         if (holder instanceof MemberViewHolder) {
             MemberViewHolder memberViewHolder = (MemberViewHolder)holder;
             if (position == getItemCount() - 1) {
-                memberViewHolder.showHalfDivider();
-            } else {
                 memberViewHolder.showFullDivider();
+            } else {
+                memberViewHolder.showHalfDivider();
             }
         }
     }

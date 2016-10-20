@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ReqMentionMarkerUpdate;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -80,6 +81,9 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         return call(() -> getApi().getMentionedMessages(teamId, messageId, count));
     }
 
+    public ResCommon updateMentionMarker(long teamId, ReqMentionMarkerUpdate req) throws RetrofitException {
+        return call(() -> getApi().updateMentionMarker(teamId, req));
+    }
 
     interface Api {
         @POST("entities/{entityId}/marker")
@@ -125,8 +129,12 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         Call<ResCommon> unregistStarredMessage(@Path("teamId") long teamId, @Path("messageId") long messageId);
 
         @GET("teams/{teamId}/messages/mentioned")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<ResStarMentioned> getMentionedMessages(@Path("teamId") long teamId,
                                                     @Query("messageId") long messageId, @Query("count") int count);
+
+        @PUT("teams/{teamId}/messages/mentioned/marker")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<ResCommon> updateMentionMarker(@Path("teamId") long teamId, @Body ReqMentionMarkerUpdate req);
     }
 }

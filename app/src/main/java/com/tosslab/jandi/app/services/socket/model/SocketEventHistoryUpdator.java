@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.services.socket.model;
 
 
+import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.events.StartApiCalledEvent;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
@@ -53,6 +55,7 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class SocketEventHistoryUpdator {
 
@@ -135,7 +138,6 @@ public class SocketEventHistoryUpdator {
 
     Observable<EventHistoryInfo> checkEventHistory(long socketConnectedLastTime, JandiRestarter restarterPost) {
         return Observable.defer(() -> {
-
             if (System.currentTimeMillis() - socketConnectedLastTime > 1000 * 60 * 60 * 24 * 7) {
                 restartJandi(restarterPost);
                 return Observable.empty();
@@ -151,7 +153,9 @@ public class SocketEventHistoryUpdator {
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 EventBus.getDefault().post(new RetrieveTopicListEvent());
                 EventBus.getDefault().post(new ChatListRefreshEvent());
+                EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
                 EventBus.getDefault().post(new RequestRefreshPollBadgeCountEvent(teamId));
+                EventBus.getDefault().post(new StartApiCalledEvent());
 
                 eventHistory = eventsApi.get().getEventHistory(socketConnectedLastTime, userId, 1);
 
@@ -170,7 +174,8 @@ public class SocketEventHistoryUpdator {
                 restartJandi(restarterPost);
                 return Observable.empty();
             }
-        }).doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
+        }).subscribeOn(Schedulers.newThread())
+                .doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
                 .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);
     }

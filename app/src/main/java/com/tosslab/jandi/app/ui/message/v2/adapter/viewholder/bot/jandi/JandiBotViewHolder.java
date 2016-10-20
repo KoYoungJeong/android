@@ -91,7 +91,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
         }
         User bot = TeamInfoLoader.getInstance().getUser(fromEntityId);
 
-        ivProfile.setImageResource(R.drawable.bot_32x40);
+        ivProfile.setImageResource(R.drawable.logotype_80);
 
         if (bot.isEnabled()) {
             tvName.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));

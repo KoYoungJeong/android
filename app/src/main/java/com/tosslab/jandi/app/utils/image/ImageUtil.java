@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils.image;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -29,6 +30,7 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
@@ -219,7 +221,7 @@ public class ImageUtil {
                 .into(imageView);
     }
 
-    public static  Bitmap getBitmap(Context context, String url) throws Exception {
+    public static Bitmap getBitmap(Context context, String url) throws Exception {
         return ImageLoader.newInstance().uri(Uri.parse(url)).getBitmapRect(context);
     }
 
@@ -353,6 +355,59 @@ public class ImageUtil {
         drawable.draw(canvas);
 
         return bitmap;
+    }
+
+    public static File convertProfileFile(File file) {
+        int desired_width = 640;
+        int desired_height = 640;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        options.inSampleSize = calculateInSampleSize(options, desired_width, desired_height);
+        options.inJustDecodeBounds = false;
+
+        Bitmap smallerBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+
+        FileOutputStream fOut;
+
+        File smallPictureFile = null;
+
+        try {
+            String newPath = file.getPath().replace(file.getName(), "converted-" + file.getName());
+            smallPictureFile = new File(newPath);
+            fOut = new FileOutputStream(smallPictureFile);
+            smallerBm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+            smallerBm.recycle();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return smallPictureFile;
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
     public enum Thumbnails {

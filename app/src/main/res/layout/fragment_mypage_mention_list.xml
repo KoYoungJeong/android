@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_mypage_mention_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -44,7 +45,7 @@
         android:layout_marginRight="48dp"
         android:gravity="center"
         android:lineSpacingExtra="3dp"
-        android:text="@string/jandi_mention_no_mentions"
+        android:text="@string/jandi_mentions_are_empty"
         android:textColor="@color/jandi_text"
         android:textSize="16sp"
         android:visibility="gone"/>

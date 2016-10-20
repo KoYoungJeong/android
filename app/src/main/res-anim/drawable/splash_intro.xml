@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+
+    <item
+        android:drawable="@drawable/splash_2_01"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_02"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_03"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_04"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_05"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_06"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_07"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_08"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_09"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_10"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_11"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_12"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_13"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_14"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_15"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_16"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_17"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_18"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_19"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_20"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_21"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_22"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_23"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_24"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_25"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_26"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_27"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_28"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_29"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_30"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_31"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_32"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_33"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_34"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_35"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_36"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_37"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_38"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_39"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_40"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_41"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_42"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_43"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_44"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_45"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_46"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_47"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_48"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_49"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_50"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_51"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_52"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_53"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_54"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_55"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_56"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_57"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_58"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_59"
+        android:duration="27" />
+    <item
+        android:drawable="@drawable/splash_2_60"
+        android:duration="27" />
+</animation-list>

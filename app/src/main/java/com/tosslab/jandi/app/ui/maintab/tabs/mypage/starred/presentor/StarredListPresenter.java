@@ -2,9 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.presentor;
 
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 
-/**
- * Created by tonyjs on 2016. 8. 9..
- */
 public interface StarredListPresenter {
 
     void onInitializeStarredList(StarredType starredType);
@@ -43,7 +40,6 @@ public interface StarredListPresenter {
     }
 
     interface View {
-        void showEmptyLayout();
 
         void notifyDataSetChanged();
 
@@ -55,7 +51,7 @@ public interface StarredListPresenter {
 
         void showUnStarSuccessToast();
 
-        void moveToMessageList(long teamId, long roomId, int entityType, long linkId);
+        void moveToMessageList(long teamId, long entityId, long roomId, int entityType, long linkId);
 
         void showUnJoinedTopicErrorToast();
 
@@ -63,7 +59,6 @@ public interface StarredListPresenter {
 
         void moveToPollDetail(long pollId);
 
-        void hideEmptyLayout();
     }
 
 }

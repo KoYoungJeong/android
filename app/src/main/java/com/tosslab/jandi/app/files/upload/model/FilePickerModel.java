@@ -196,5 +196,4 @@ public class FilePickerModel {
         return intent.getStringArrayListExtra(ImageAlbumActivity.EXTRA_DATAS);
     }
 
-
 }

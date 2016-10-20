@@ -9,7 +9,7 @@
 
     <group android:id="@+id/group_main_tab_privacy">
         <item android:id="@+id/nav_term_of_service" android:title="@string/jandi_term_of_service"/>
-        <item android:id="@+id/nav_privacy_policy" android:title="@string/jandi_pp"/>
+        <item android:id="@+id/nav_privacy_policy" android:title="@string/jandi_privacy_policy"/>
         <item android:id="@+id/nav_help" android:title="@string/jandi_help"/>
         <item android:id="@+id/nav_1_on_1" android:title="@string/jandi_1_on_1_support"/>
     </group>

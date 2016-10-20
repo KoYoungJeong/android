@@ -13,13 +13,15 @@ public interface MainTabPresenter {
 
     void onInitChatBadge();
 
-    void onInitMyPageBadge();
+    void onInitMyPageBadge(boolean withUnreadMention);
 
     void onCheckIfNotLatestVersion(Action0 completeAction);
 
     void onCheckIfNotProfileSetUp();
 
     void onCheckIfNOtShowInvitePopup();
+
+    void refreshInitialInfo();
 
     interface View {
         void showInvitePopup();

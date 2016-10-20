@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.sign.signin;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,10 +19,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.ui.account.AccountHomeActivity;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.DaggerSignInComponent;
 import com.tosslab.jandi.app.ui.sign.signin.dagger.SignInModule;
@@ -196,7 +197,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         if (!etLayoutEmail.isErrorEnabled()) {
             etLayoutEmail.setErrorEnabled(true);
         }
-        etLayoutEmail.setError(getString(R.string.err_login_invalid_id));
+        etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
 
         startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
@@ -312,7 +313,12 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @Override
     public void moveToTeamSelectionActivity(String myEmailId) {
-        AccountHomeActivity.startActivity(SignInActivity.this, false);
+        startActivity(Henson.with(this)
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(false)
+                .build().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();
     }

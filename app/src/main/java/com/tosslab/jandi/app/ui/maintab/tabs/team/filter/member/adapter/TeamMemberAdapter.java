@@ -95,7 +95,7 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     if (isSameStarredToNext(position)) {
                         holder.showHalfDivider();
                     } else {
-                        holder.showFullDivider();
+                        holder.dismissDividers();
                     }
                 }
             }

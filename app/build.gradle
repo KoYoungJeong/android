@@ -32,8 +32,9 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 216
-        versionName '2.4.1'
+        versionCode 224
+        versionName '2.4.2'
+
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -88,6 +89,7 @@ android {
         }
 
         main.res.srcDirs += 'src/main/res-crawrer'
+        main.res.srcDirs += 'src/main/res-anim'
         main.java.srcDirs += 'src/main/java-push'
     }
 
@@ -101,6 +103,7 @@ android {
             'META-INF/NOTICE',
             'NOTICE',
             'asm-license.txt',
+            '.readme',
             'META-INF/NOTICE.txt',
             'META-INF/notice.txt',
             'META-INF/ASL2.0',
@@ -140,7 +143,6 @@ android {
 
     dexOptions {
         javaMaxHeapSize "2g"
-        incremental true
         maxProcessCount Math.max(1, ((int) (Runtime.getRuntime().availableProcessors() / 2)))
     }
 

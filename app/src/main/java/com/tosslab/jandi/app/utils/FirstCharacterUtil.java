@@ -1,26 +1,27 @@
 package com.tosslab.jandi.app.utils;
 
 
+import android.os.Build;
 import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.Character.UnicodeBlock;
 
 public class FirstCharacterUtil {
 
+    public static final int TYPE_ENGLISH = 0;
+    public static final int TYPE_HANGUL = 1;
+    public static final int TYPE_CHINESE = 2;
+    public static final int TYPE_JAPANESE = 3;
+    public static final int TYPE_ETC = 4;
     private static final List<Character> HANGUL = Arrays.asList('ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ');
     private static final int HANGUL_FIRST_1 = 21 * 28;
     private static final int HANGUL_FIRST_2 = 44032;
 
-    private static final int TYPE_ENGLISH = 0;
-    private static final int TYPE_HANGUL = 1;
-    private static final int TYPE_JAPANESE = 2;
-    private static final int TYPE_CHINESE = 3;
-    private static final int TYPE_ETC = 4;
-
-    private static int getLocale(char text) {
+    public static int getLocale(char text) {
 
         UnicodeBlock unicodeBlock = UnicodeBlock.of(text);
 
@@ -43,7 +44,7 @@ public class FirstCharacterUtil {
         return TYPE_ETC;
     }
 
-    private static boolean isEnglish(char text) {
+    public static boolean isEnglish(char text) {
         return (0x61 <= text && text <= 0x7A) || (0x41 <= text && text <= 0x5A);
     }
 
@@ -57,7 +58,7 @@ public class FirstCharacterUtil {
         UnicodeBlock unicodeBlock = UnicodeBlock.of(text);
         if (unicodeBlock == UnicodeBlock.HIRAGANA) {
             return String.valueOf(text);
-        } else if (unicodeBlock == UnicodeBlock.KATAKANA){
+        } else if (unicodeBlock == UnicodeBlock.KATAKANA) {
             return String.valueOf(((char) (text - 96)));
         } else {
             return String.valueOf(text);
@@ -68,6 +69,10 @@ public class FirstCharacterUtil {
         return UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS.equals(unicodeBlock) ||
                 UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A.equals(unicodeBlock) ||
                 UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B.equals(unicodeBlock) ||
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
+                        (UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C.equals(unicodeBlock) ||
+                                UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D.equals(unicodeBlock))
+                ) ||
                 UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS.equals(unicodeBlock) ||
                 UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT.equals(unicodeBlock);
     }
@@ -115,4 +120,20 @@ public class FirstCharacterUtil {
         }
     }
 
+    public static int getLocaleType() {
+        Locale locale = Locale.getDefault();
+
+        switch (locale.getLanguage().toLowerCase()) {
+            case "en":
+                return TYPE_ENGLISH;
+            case "ko":
+                return TYPE_HANGUL;
+            case "zh":
+                return TYPE_CHINESE;
+            case "ja":
+                return TYPE_JAPANESE;
+            default:
+                return TYPE_ETC;
+        }
+    }
 }

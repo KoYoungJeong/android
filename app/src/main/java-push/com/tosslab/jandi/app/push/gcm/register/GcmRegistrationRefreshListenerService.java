@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.push.PushTokenRegister;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.io.IOException;
 
@@ -40,6 +41,7 @@ public class GcmRegistrationRefreshListenerService extends FirebaseInstanceIdSer
             Log.d(TAG, "onTokenRefresh() called Token : " + token);
             subscribeTopics();
             PushTokenRepository.getInstance().upsertPushToken(new PushToken("gcm", token));
+            JandiPreference.setLatestFcmTokenUpdate(System.currentTimeMillis());
             PushTokenRegister.getInstance().updateToken();
         } catch (IOException e) {
             e.printStackTrace();

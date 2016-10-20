@@ -56,6 +56,9 @@ public class JandiPreference {
     private static final String PREF_EMAIL_AUTH_SEND_TIME = "email_auth_send_time";
 
     private static final String PREF_NAVIGATION_POSITION = "navigation_position";
+    public static final String PREF_LATEST_FCM_TOKEN_UPDATE = "latest_fcm_token_update";
+    public static final String PREF_LAST_SELECTED_OF_MYPAGE = "last_selected_of_mypage";
+    private static final String PREF_LAST_SELECTED_OF_TEAM = "last_selected_of_team";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -410,4 +413,31 @@ public class JandiPreference {
                 .commit();
     }
 
+    public static void setLatestFcmTokenUpdate(long time) {
+        getSharedPreferences().edit()
+                .putLong(PREF_LATEST_FCM_TOKEN_UPDATE, time)
+                .commit();
+    }
+
+    public static long getLatestFcmTokenUpdate() {
+        return getSharedPreferences().getLong(PREF_LATEST_FCM_TOKEN_UPDATE, 0);
+    }
+
+    public static void setLastSelectedTabOfMyPage(int position) {
+        getSharedPreferences().edit().putInt(PREF_LAST_SELECTED_OF_MYPAGE, position)
+                .commit();
+    }
+    public static int getLastSelectedTabOfMyPage() {
+        return getSharedPreferences().getInt(PREF_LAST_SELECTED_OF_MYPAGE, 0);
+    }
+
+
+    public static void setLastSelectedTabOfTeam(int position) {
+        getSharedPreferences().edit().putInt(PREF_LAST_SELECTED_OF_TEAM, position)
+                .commit();
+    }
+
+    public static int getLastSelectedTabOfTeam() {
+        return getSharedPreferences().getInt(PREF_LAST_SELECTED_OF_TEAM, 0);
+    }
 }

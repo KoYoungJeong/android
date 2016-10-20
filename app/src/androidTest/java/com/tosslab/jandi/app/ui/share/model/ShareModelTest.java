@@ -56,7 +56,6 @@ public class ShareModelTest {
         ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getTeamInfo(teamId);
         assertThat(inviteTeam.getTeamDomain(), is(equalTo(userTeam.getTeamDomain())));
         assertThat(inviteTeam.getName(), is(equalTo(userTeam.getName())));
-
     }
 
     @Test

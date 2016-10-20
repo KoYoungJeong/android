@@ -2,13 +2,14 @@ package com.tosslab.jandi.app.ui.intro.presenter;
 
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -17,13 +18,10 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.parse.PushUtil;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -35,7 +33,6 @@ public class IntroActivityPresenter {
 
     IntroActivityModel model;
     View view;
-    private Subscription timerSubs;
 
     @Inject
     public IntroActivityPresenter(View view, IntroActivityModel model) {
@@ -162,13 +159,10 @@ public class IntroActivityPresenter {
 
         // 팀 정보가 있는 경우
         hasTeamObservable.filter(it -> it)
-                .doOnNext(it ->
-                        timerSubs = Observable.timer(2000, TimeUnit.MILLISECONDS)
-                                .subscribe(a -> {
-                                    view.moveToMainActivity();
-                                }))
                 .doOnNext(it -> PushUtil.registPush())
                 .observeOn(Schedulers.io())
+                // 서비스 실행상태 확인 하고 넘김
+                .map(it -> JandiSocketService.isServiceRunning(JandiApplication.getContext()))
                 .doOnNext(it -> {
                     if (NetworkCheckUtil.isConnected()) {
 
@@ -185,12 +179,17 @@ public class IntroActivityPresenter {
                             model.refreshEntityInfo();
                         }
                     }
-                    view.startSocketService();
+                    if (!it) {
+                        view.startSocketService();
+                    }
+                })
+                .doOnNext(it -> {
+                    SprinklrSignIn.sendLog(true, true);
+                    AnalyticsUtil.flushSprinkler();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    SprinklrSignIn.sendLog(true, true);
-                    AnalyticsUtil.flushSprinkler();
+                    view.moveToMainActivity(!it);
                 }, t -> {
                 });
 
@@ -204,16 +203,10 @@ public class IntroActivityPresenter {
                 });
     }
 
-    public void cancelAll() {
-        if (timerSubs != null && !(timerSubs.isUnsubscribed())) {
-            timerSubs.unsubscribe();
-        }
-    }
-
     public interface View {
         void moveToSignHomeActivity();
 
-        void moveToMainActivity();
+        void moveToMainActivity(boolean needDelay);
 
         void moveTeamSelectActivity();
 
@@ -222,6 +215,7 @@ public class IntroActivityPresenter {
         void showUpdateDialog();
 
         void startSocketService();
+
     }
 
 }

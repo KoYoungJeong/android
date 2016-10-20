@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -29,19 +30,19 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
-                android:theme="@style/FloatingEditTextTheme">
+                app:theme="@style/FloatingEditTextTheme">
 
                 <EditText
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/jandi_entity_create_entity_name"
+                    android:hint="@string/jandi_name"
                     android:imeOptions="actionNext"
-                    android:inputType="text"
+                    android:inputType="textImeMultiLine"
                     android:maxLength="30"
                     android:maxLines="1"
-                    android:nextFocusDown="@+id/et_email"
-                    android:textSize="16sp"/>
+                    android:nextFocusDown="@+id/et_password"
+                    android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -51,19 +52,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:theme="@style/FloatingEditTextTheme">
+                app:theme="@style/FloatingEditTextTheme">
 
                 <EditText
                     android:id="@+id/et_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/jandi_member_profile_email"
+                    android:hint="@string/jandi_profile_email"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                     android:maxLength="60"
                     android:maxLines="1"
                     android:nextFocusDown="@+id/et_password"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -73,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:theme="@style/FloatingEditTextTheme">
+                app:theme="@style/FloatingEditTextTheme">
 
                 <EditText
                     android:id="@+id/et_password"
@@ -84,7 +85,7 @@
                     android:inputType="textPassword"
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -100,7 +101,7 @@
                 android:gravity="center"
                 android:text="@string/jandi_next"
                 android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_term_line"
@@ -113,7 +114,7 @@
                 android:lineSpacingExtra="2dp"
                 android:maxLines="2"
                 android:text="@string/jandi_tab_tos_and_pp"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
         </LinearLayout>
 
     </ScrollView>

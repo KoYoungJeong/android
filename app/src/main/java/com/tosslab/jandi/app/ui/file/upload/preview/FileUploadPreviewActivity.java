@@ -62,7 +62,7 @@ import rx.subjects.PublishSubject;
 /**
  * Created by Bill MinWook Heo on 15. 6. 15..
  */
-@EActivity(R.layout.activity_file_upload_insert_commnet)
+@EActivity(R.layout.activity_file_upload_insert_comment)
 @OptionsMenu(R.menu.file_insert_comment_menu)
 public class FileUploadPreviewActivity extends BaseAppCompatActivity implements FileUploadPresenter.View {
 

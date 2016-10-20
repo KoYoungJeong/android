@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataView;
-import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderADapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.dagger.DaggerDeptJobComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.dagger.DeptJobModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.presenter.DeptJobPresenter;
@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearch
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
 
@@ -43,7 +44,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable {
+public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, KeywordObservable, ListScroller {
 
     public static final int EXTRA_TYPE_DEPT = 1;
     public static final int EXTRA_TYPE_JOB = 2;
@@ -111,7 +112,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                     .setAdapter(adapter)
                     .setRecyclerView(lvMember)
                     .setSticky(true)
-                    .setStickyHeadersAdapter(new DeptJobHeaderADapter(adapter), false)
+                    .setStickyHeadersAdapter(new DeptJobHeaderAdapter(adapter), false)
                     .build());
         }
 
@@ -125,7 +126,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
             deptJobPresenter.onItemClick(position);
             startActivityForResult(Henson.with(getActivity())
                     .gotoDeptJobGroupActivity()
-                    .keyword(((DeptJobAdapter) adapter1).getItem(position).first.toString())
+                    .keyword(((DeptJobAdapter) adapter1).getItem(position).getName().toString())
                     .type(type)
                     .selectMode(selectMode)
                     .pickMode(selectMode && roomId < 0)
@@ -220,5 +221,12 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View, 
                 deptJobPresenter.onSearchKeyword(text);
             }
         });
+    }
+
+    @Override
+    public void scrollToTop() {
+        if (lvMember.getAdapter().getItemCount() > 0) {
+            lvMember.scrollToPosition(0);
+        }
     }
 }

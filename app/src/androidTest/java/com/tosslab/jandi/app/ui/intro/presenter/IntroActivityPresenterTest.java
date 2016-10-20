@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import setup.BaseInitUtil;
 
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.timeout;
@@ -147,7 +148,7 @@ public class IntroActivityPresenterTest {
             presenter.checkNewVersion(false);
 
             // Then
-            verify(mockView, timeout(3000)).moveToMainActivity();
+            verify(mockView, timeout(3000)).moveToMainActivity(anyBoolean());
             reset(mockView);
             reset(mockModel);
         }

@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.DaggerNameStatusComponent;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.NameStatusModule;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.presenter.NameStatusPresenter;
@@ -30,7 +29,12 @@ import butterknife.OnTextChanged;
 
 public class NameChangeFragment extends Fragment implements NameStatusPresenter.View {
 
+    public static final String NAME_CHANGE_MODE = "name_change_mode";
+    public static final int MODE_FROM_TEAM_PROFILE = 0x01;
+    public static final int MODE_FROM_MAIN_ACCOUNT = 0x02;
+
     public static final int NAME_MAX_LENGTH = 30;
+
     @Bind(R.id.et_name_change)
     EditText etName;
 
@@ -41,6 +45,7 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
     Toolbar toolbar;
     @Inject
     NameStatusPresenter presenter;
+    int mode = MODE_FROM_TEAM_PROFILE;
     private ProgressWheel progressWheel;
 
     @Nullable
@@ -60,7 +65,13 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
                 .build()
                 .inject(this);
 
-        presenter.onInitUserInfo();
+        mode = getArguments().getInt(NAME_CHANGE_MODE, MODE_FROM_TEAM_PROFILE);
+
+        if (mode == MODE_FROM_TEAM_PROFILE) {
+            presenter.onInitUserInfo();
+        } else if (mode == MODE_FROM_MAIN_ACCOUNT) {
+            presenter.onInitUserNameForMainAccount();
+        }
 
         setUpActionbar();
         setHasOptionsMenu(true);
@@ -106,7 +117,12 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
 
     void updateName() {
         showProgress();
-        presenter.updateName(etName.getText().toString());
+        if (mode == MODE_FROM_TEAM_PROFILE) {
+            presenter.updateName(etName.getText().toString());
+        } else if (mode == MODE_FROM_MAIN_ACCOUNT) {
+            presenter.updateNameForMainAccount(etName.getText().toString());
+        }
+
     }
 
     private void showProgress() {
@@ -115,9 +131,7 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
         } else if (progressWheel.isShowing()) {
             return;
         }
-
         progressWheel.show();
-
     }
 
     @Override
@@ -152,8 +166,8 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
     }
 
     @Override
-    public void setUser(User user) {
-        etName.setText(user.getName());
-        etName.setSelection(etName.length());
+    public void setContent(String content) {
+        etName.setText(content);
+        etName.setSelection(content.length());
     }
 }

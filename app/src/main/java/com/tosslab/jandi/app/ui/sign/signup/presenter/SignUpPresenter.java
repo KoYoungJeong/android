@@ -6,8 +6,6 @@ package com.tosslab.jandi.app.ui.sign.signup.presenter;
 
 public interface SignUpPresenter {
 
-    boolean checkNameValidation(String name);
-
     boolean checkPasswordValidation(String password);
 
     boolean checkEmailValidation(String email);
@@ -31,10 +29,6 @@ public interface SignUpPresenter {
         void removeErrorPassword();
 
         void showErrorShortPassword();
-
-        void showErrorInsertName();
-
-        void removeErrorName();
 
         void showErrorWeakPassword();
 

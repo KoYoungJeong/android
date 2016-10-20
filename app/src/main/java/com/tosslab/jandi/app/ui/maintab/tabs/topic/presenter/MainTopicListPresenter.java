@@ -37,6 +37,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by tee on 15. 8. 26..
@@ -81,6 +82,8 @@ public class MainTopicListPresenter {
         item.setUnreadCount(0);
 
         mainTopicModel.getUnreadCount()
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
                     EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
                 });

@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+
 public class MentionControlViewModel {
     public static final Pattern MENTION_PATTERN = Pattern.compile("(?:@)([^\\u2063]+)(?:\\u2063)(\\d+)(?:\\u2063)");
     public static final Pattern MENTION_PATTERN_FOR_SEARCH = Pattern.compile("(?:(?:^|\\s)([@\\uff20]((?:[^@\\uff20]){0,30})))$");
@@ -63,12 +66,12 @@ public class MentionControlViewModel {
                                     EditText editText,
                                     long teamId,
                                     List<Long> roomIds,
-                                    String mentionType) {
+                                    String mentionType, Runnable callback) {
 
         this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
 
-        init(activity, editText, teamId, roomIds);
+        init(activity, editText, teamId, roomIds, callback);
 
     }
 
@@ -81,7 +84,19 @@ public class MentionControlViewModel {
                 editText,
                 teamId,
                 roomIds,
-                mentionType);
+                mentionType, null);
+    }
+
+    public static MentionControlViewModel newInstance(Activity activity,
+                                                      EditText editText,
+                                                      List<Long> roomIds,
+                                                      String mentionType, Runnable callback) {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        return new MentionControlViewModel(activity,
+                editText,
+                teamId,
+                roomIds,
+                mentionType, callback);
     }
 
     public static MentionControlViewModel newInstance(Activity activity,
@@ -93,7 +108,7 @@ public class MentionControlViewModel {
                 editText,
                 teamId,
                 roomIds,
-                mentionType);
+                mentionType, null);
     }
 
     // 현재까지의 editText에서 멘션 가공된 message와 mention object 리스트를 얻어오는 메서드
@@ -168,18 +183,15 @@ public class MentionControlViewModel {
                 mentions.add(mentionInfo);
             }
 
-
         }
 
         return new ResultMentionsVO(builder.toString(), mentions);
 
     }
 
-    private void init(Activity activity, EditText editText, long teamId, List<Long> roomIds) {
+    private void init(Activity activity, EditText editText, long teamId, List<Long> roomIds, Runnable callback) {
 
         this.etMessage = (AutoCompleteTextView) editText;
-
-        addTextWatcher(editText);
 
         searchMemberModel = SearchMemberModel_.getInstance_(activity);
 
@@ -188,9 +200,20 @@ public class MentionControlViewModel {
         List<SearchedItemVO> users = searchMemberModel.getUserSearchByName("");
         mentionMemberListAdapter = new MentionMemberListAdapter(activity, users);
 
-        etMessage.setAdapter(mentionMemberListAdapter);
-        etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
-        etMessage.setThreshold(1);
+        if (callback != null) {
+            Completable.fromAction(() -> {
+                etMessage.setAdapter(mentionMemberListAdapter);
+                etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
+                etMessage.setThreshold(1);
+                addTextWatcher(editText);
+            }).subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(callback::run);
+        } else {
+            etMessage.setAdapter(mentionMemberListAdapter);
+            etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
+            etMessage.setThreshold(1);
+            addTextWatcher(editText);
+        }
 
     }
 
@@ -335,7 +358,7 @@ public class MentionControlViewModel {
         }
 
         if (onMentionShowingListener != null) {
-            onMentionShowingListener.onMentionShowing(hasMembers);
+            onMentionShowingListener.onMentionShowing(etMessage.isPopupShowing());
         }
         mentionMemberListAdapter.notifyDataSetChanged();
     }

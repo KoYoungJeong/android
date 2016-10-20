@@ -39,20 +39,16 @@ import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.property.dept.DeptPositionActivity;
 import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameStatusActivity;
-import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.profile.ProfileLabelView;
-import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
 import java.io.File;
 
@@ -189,7 +185,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editName() {
         startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
-                .type(NameStatusActivity.EXTRA_TYPE_NAME)
+                .type(NameStatusActivity.EXTRA_TYPE_NAME_FOR_TEAM_PROFILE)
                 .build(), REQUEST_NAME_STATUS);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.EditProfile, AnalyticsValue.Action.Name);

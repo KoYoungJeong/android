@@ -62,9 +62,9 @@ public class DeptPositionAdapter extends RecyclerView.Adapter {
         }
 
         if (mode.equals(DeptPositionActivity.EXTRA_JOB_TITLE_MODE)) {
-            viewHolder.getTvNewAdd().setText(R.string.jandi_insert_new_job_title);
+            viewHolder.getTvNewAdd().setText(R.string.jandi_new_job_title);
         } else if (mode.equals(DeptPositionActivity.EXTRA_DEPARTMENT_MODE)) {
-            viewHolder.getTvNewAdd().setText(R.string.jandi_insert_new_department);
+            viewHolder.getTvNewAdd().setText(R.string.jandi_new_department);
         }
 
         if (!datas.get(position).second) {

@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
@@ -51,7 +50,8 @@ public class TopicCreateModelTest {
     @Before
     public void setUp() throws Exception {
 
-        topicCreateModel = TopicCreateModel_.getInstance_(JandiApplication.getContext());
+        topicCreateModel = new TopicCreateModel(() -> new ChannelApi(RetrofitBuilder.getInstance()),
+                () -> new GroupApi(RetrofitBuilder.getInstance()));
     }
 
     @Test

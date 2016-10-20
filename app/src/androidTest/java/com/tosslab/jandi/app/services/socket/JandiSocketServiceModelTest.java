@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 import com.tosslab.jandi.app.services.socket.dagger.SocketServiceModule;
+import com.tosslab.jandi.app.services.socket.model.SocketModelExtractor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementUpdatedEvent;
@@ -701,7 +702,7 @@ public class JandiSocketServiceModelTest {
         SocketMessageCreatedEvent.Data data = new SocketMessageCreatedEvent.Data();
         data.setLinkMessage(link);
         event.setData(data);
-        model.onMessageCreated(event);
+        model.onMessageCreated(event, false);
 
         assertThat(accept).isTrue();
     }
@@ -711,7 +712,7 @@ public class JandiSocketServiceModelTest {
         SocketMessageCreatedEvent event = new SocketMessageCreatedEvent();
         event.setVersion(0);
         try {
-            model.throwExceptionIfInvaildVersion(event);
+            SocketModelExtractor.throwExceptionIfInvaildVersion(event);
             fail("It cannot be occured");
         } catch (Exception e) {
             e.printStackTrace();

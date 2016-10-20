@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.model;
 
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
@@ -17,9 +16,11 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 2016. 8. 9..
@@ -55,7 +56,6 @@ public class StarredListModelTest {
 
         ResStarMentioned resStarMentioned = testSubscriber.getOnNextEvents().get(0);
 
-        Log.i("tony", resStarMentioned.toString());
         assertNotNull(resStarMentioned);
         assertTrue(resStarMentioned.getRecords() != null && !resStarMentioned.getRecords().isEmpty());
         assertThat(resStarMentioned.getRecords().size(), is(lessThan(20)));

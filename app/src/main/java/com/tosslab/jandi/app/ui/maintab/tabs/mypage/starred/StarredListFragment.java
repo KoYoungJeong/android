@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.views.decoration.SimpleColorDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -110,6 +111,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     private void initStarredListView(StarredListAdapter starredListAdapter) {
         lvStarredList.setLayoutManager(new LinearLayoutManager(getActivity()));
         lvStarredList.setAdapter(starredListAdapter);
+        lvStarredList.addItemDecoration(new SimpleColorDividerItemDecoration(lvStarredList.getResources().getColor(R.color.rgb_eeeeee)));
 
         moreRequestHandler = new StarredMessageLoadMoreRequestHandler();
         starredListDataView.setOnLoadMoreCallback(moreRequestHandler);
@@ -119,6 +121,17 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         starredListDataView.setOnItemLongClickListener(messageId -> {
             showUnStarDialog(messageId);
             return true;
+        });
+
+        starredListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                if (starredListAdapter.isEmpty()) {
+                    showEmptyLayout();
+                } else {
+                    hideEmptyLayout();
+                }
+            }
         });
     }
 
@@ -158,7 +171,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         btnTabFile.setSelected(starredType == StarredListPresenter.StarredType.File);
     }
 
-    @Override
     public void showEmptyLayout() {
         boolean isAllType = starredType == StarredListPresenter.StarredType.All;
         tvEmptyMessage.setText(isAllType
@@ -198,15 +210,15 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void showUnStarSuccessToast() {
-        ColoredToast.show(R.string.jandi_message_no_starred);
+        ColoredToast.show(R.string.jandi_unpinned_message);
     }
 
     @Override
-    public void moveToMessageList(long teamId, long roomId, int entityType, long linkId) {
+    public void moveToMessageList(long teamId, long entityId, long roomId, int entityType, long linkId) {
         MessageListV2Activity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(teamId)
-                .entityId(roomId)
+                .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromSearch(true)
@@ -232,7 +244,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         PollDetailActivity.start(getActivity(), pollId);
     }
 
-    @Override
     public void hideEmptyLayout() {
         vgEmptyStarredList.setVisibility(View.GONE);
     }

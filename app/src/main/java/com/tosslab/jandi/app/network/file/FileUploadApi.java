@@ -30,8 +30,8 @@ public class FileUploadApi {
                                             String comment,
                                             List<MentionObject> mentions,
                                             File file,
-                                            ProgressCallback prgoress) {
-        ProgressRequestBody fileBody = new ProgressRequestBody(file, prgoress);
+                                            ProgressCallback progressCallback) {
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, progressCallback);
 
         MultipartBody.Part titlePart = MultipartBody.Part.createFormData("title", title);
         MultipartBody.Part entityPart = MultipartBody.Part.createFormData("share", String.valueOf(shareEntity));

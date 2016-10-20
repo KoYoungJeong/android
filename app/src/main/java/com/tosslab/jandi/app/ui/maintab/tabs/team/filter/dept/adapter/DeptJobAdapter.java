@@ -2,13 +2,14 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter;
 
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import butterknife.ButterKnife;
 
 public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobViewHolder>
         implements DeptJobDataModel, DeptJobDataView {
-    private List<Pair<CharSequence, String>> names;
+    private List<DeptJob> names;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
 
     public DeptJobAdapter() {
@@ -41,8 +42,20 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
 
     @Override
     public void onBindViewHolder(DeptJobViewHolder holder, int position) {
-        Pair<CharSequence, String> item = getItem(position);
-        holder.tvTitle.setText(item.first, TextView.BufferType.SPANNABLE);
+        DeptJob item = getItem(position);
+        holder.tvTitle.setText(item.getName(), TextView.BufferType.SPANNABLE);
+        holder.tvCount.setText(String.valueOf(item.getCount()));
+
+        if (position < getItemCount() - 1) {
+            DeptJob nextItem = getItem(position + 1);
+            if (TextUtils.equals(item.getHeader(), nextItem.getHeader())) {
+                holder.vDivider.setVisibility(View.VISIBLE);
+            } else {
+                holder.vDivider.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            holder.vDivider.setVisibility(View.VISIBLE);
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (onRecyclerItemClickListener != null) {
@@ -52,7 +65,7 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
     }
 
     @Override
-    public Pair<CharSequence, String> getItem(int position) {
+    public DeptJob getItem(int position) {
         return names.get(position);
     }
 
@@ -73,12 +86,12 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
     }
 
     @Override
-    public void add(Pair<CharSequence, String> item) {
+    public void add(DeptJob item) {
         names.add(item);
     }
 
     @Override
-    public void addAll(List<Pair<CharSequence, String>> items) {
+    public void addAll(List<DeptJob> items) {
         names.addAll(items);
     }
 
@@ -96,6 +109,12 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
 
         @Bind(R.id.tv_dept_job_title)
         TextView tvTitle;
+
+        @Bind(R.id.tv_dept_job_count)
+        TextView tvCount;
+
+        @Bind(R.id.v_dept_job_divider)
+        View vDivider;
 
         public DeptJobViewHolder(View itemView) {
             super(itemView);

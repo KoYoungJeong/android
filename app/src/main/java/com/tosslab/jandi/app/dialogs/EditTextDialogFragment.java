@@ -27,8 +27,6 @@ import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.EFragment;
-
 import de.greenrobot.event.EventBus;
 
 /**
@@ -36,7 +34,6 @@ import de.greenrobot.event.EventBus;
  * 하나의 EditText 와 확인, 취소 버튼이 존재하는 AlertDialogFragment
  * Entity의 생성, 혹은 수정에 사용된다.
  */
-@EFragment
 public class EditTextDialogFragment extends DialogFragment {
     public final static int ACTION_CREATE_TOPIC = 0;
     public final static int ACTION_MODIFY_TOPIC = 1;
@@ -212,10 +209,10 @@ public class EditTextDialogFragment extends DialogFragment {
                 input.setHint(R.string.jandi_enter_phone_number);
                 break;
             case ACTION_MODIFY_PROFILE_DIVISION:
-                input.setHint(R.string.jandi_profile_division);
+                input.setHint(R.string.jandi_profile_division_hint);
                 break;
             case ACTION_MODIFY_PROFILE_POSITION:
-                input.setHint(R.string.jandi_profile_position);
+                input.setHint(R.string.jandi_profile_position_hint);
                 break;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
@@ -224,7 +221,10 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_FORGOT_PASSWORD:
             case ACTION_NEW_EMAIL:
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-                input.setHint(R.string.jandi_member_profile_email);
+                input.setHint(R.string.jandi_user_id);
+                Button btnConfirm = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                btnConfirm.setEnabled(!FormatConverter.isInvalidEmailString(input.getText().toString()));
+                setConfirmColor(btnConfirm);
                 break;
             default:
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -322,6 +322,11 @@ public class EditTextDialogFragment extends DialogFragment {
                 break;
         }
 
+        setConfirmColor(confirm);
+
+    }
+
+    private void setConfirmColor(Button confirm) {
         if (confirm.isEnabled()) {
             confirm.setTextColor(JandiApplication.getContext()
                     .getResources().getColor(R.color.button_text_color));
@@ -329,7 +334,6 @@ public class EditTextDialogFragment extends DialogFragment {
             confirm.setTextColor(JandiApplication.getContext()
                     .getResources().getColor(R.color.button_text_color_dim));
         }
-
     }
 
     /**
@@ -355,10 +359,10 @@ public class EditTextDialogFragment extends DialogFragment {
                 return R.string.jandi_profile_position;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                return R.string.jandi_entity_create_entity_name;
+                return R.string.jandi_title_name;
             case ACTION_FORGOT_PASSWORD:
             case ACTION_NEW_EMAIL:
-                return R.string.jandi_member_profile_email;
+                return R.string.jandi_user_id;
             default:
                 return R.string.jandi_default_space;
         }

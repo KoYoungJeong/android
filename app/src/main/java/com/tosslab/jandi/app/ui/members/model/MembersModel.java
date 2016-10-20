@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -33,29 +32,6 @@ import rx.functions.Func0;
 public class MembersModel {
     @Inject
     Lazy<RoomsApi> roomsApi;
-
-    public static List<User> getEnabledTeamMember() {
-        List<User> members = new ArrayList<>();
-
-        members.addAll(TeamInfoLoader.getInstance().getUserList());
-
-        Observable.from(members)
-                .filter(User::isEnabled)
-                .toSortedList((entity, entity2) -> {
-                    if (entity.isBot()) {
-                        return -1;
-                    } else if (entity2.isBot()) {
-                        return 1;
-                    } else {
-                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
-                    }
-                })
-                .subscribe(entities -> {
-                    members.clear();
-                    members.addAll(entities);
-                });
-        return members;
-    }
 
     @AfterInject
     void initObject() {

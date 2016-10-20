@@ -39,7 +39,6 @@ import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerTopicDetailComponent;
 import com.tosslab.jandi.app.ui.message.detail.dagger.TopicDetailModule;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity;
-import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity_;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
@@ -529,9 +528,10 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Override
     public void moveTopicDescriptionEdit() {
-        TopicDescriptionEditActivity_.intent(TopicDetailFragment.this)
+        startActivity(Henson.with(getActivity())
+                .gotoTopicDescriptionEditActivity()
                 .entityId(entityId)
-                .startForResult(TopicDescriptionEditActivity.REQUEST_EDIT);
+                .build());
     }
 
 

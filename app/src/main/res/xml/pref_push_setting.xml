@@ -9,8 +9,8 @@
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="setting_push_alarm_sound"
-        android:summaryOff="@string/jandi_auto_join_off"
-        android:summaryOn="@string/jandi_auto_join_on"
+        android:summaryOff="@string/jandi_off"
+        android:summaryOn="@string/jandi_on"
         android:title="@string/jandi_sounds" />
     <CheckBoxPreference
         android:defaultValue="true"

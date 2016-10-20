@@ -2,28 +2,31 @@ package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.ResStarMentioned;
+import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.model.MentionListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.model.MentionListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -32,58 +35,79 @@ public class MentionListPresenterImpl implements MentionListPresenter {
 
     public static final String TAG = MentionListPresenter.class.getSimpleName();
 
-    private final MentionListModel model;
-    private final MentionListView view;
+    private final MentionListModel mentionListModel;
+    private final MentionListView mentionListView;
+    private final MentionListDataModel mentionListDataModel;
 
     private boolean isInInitializing = false;
 
+    private long actuallLastMarkerId = -1;
+
     @Inject
-    public MentionListPresenterImpl(MentionListModel model, MentionListView view) {
-        this.model = model;
-        this.view = view;
+    public MentionListPresenterImpl(MentionListModel mentionListModel,
+                                    MentionListDataModel mentionListDataModel,
+                                    MentionListView mentionListView) {
+        this.mentionListModel = mentionListModel;
+        this.mentionListDataModel = mentionListDataModel;
+        this.mentionListView = mentionListView;
     }
 
     @Override
     public void onInitializeMyPage(final boolean isRefreshAction) {
         isInInitializing = true;
-        view.clearLoadMoreOffset();
+        mentionListView.clearLoadMoreOffset();
 
         if (!isRefreshAction) {
-            view.showProgress();
+            mentionListView.showProgress();
         }
-        model.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
-                .concatMap(model::getConvertedMentionObservable)
+
+        long lastReadMentionId = mentionListModel.getLastReadMentionId();
+        actuallLastMarkerId = lastReadMentionId;
+        mentionListDataModel.setLastReadMessageId(lastReadMentionId);
+
+        mentionListModel.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
+                .doOnNext(resStarMentioned -> {
+                    List<StarredMessage> records = resStarMentioned.getRecords();
+                    if (records != null && !(records.isEmpty())) {
+                        mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
+                    }
+                })
+                .map(resStarMentioned -> {
+                    List<MentionMessage> mentionMessages =
+                            mentionListModel.getConvertedMentionList(resStarMentioned.getRecords());
+                    return Pair.create(resStarMentioned, mentionMessages);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
                     if (isRefreshAction) {
-                        view.hideRefreshProgress();
+                        mentionListView.hideRefreshProgress();
                     } else {
-                        view.hideProgress();
+                        mentionListView.hideProgress();
                     }
 
-                    view.setHasMore(pair.first);
+                    ResStarMentioned resStarMentioned = pair.first;
+                    mentionListView.setHasMore(resStarMentioned.hasMore());
 
-                    view.clearMentions();
+                    mentionListDataModel.clear();
 
-                    List<MentionMessage> records = pair.second;
-                    if (records == null || records.isEmpty()) {
-                        view.showEmptyMentionView();
+                    List<MentionMessage> mentionMessages = pair.second;
+                    if (mentionMessages == null || mentionMessages.isEmpty()) {
+                        mentionListView.showEmptyMentionView();
                     } else {
-                        view.hideEmptyMentionView();
-                        view.addMentions(records);
-                        view.notifyDataSetChanged();
+                        mentionListView.hideEmptyMentionView();
+                        mentionListDataModel.addAll(mentionMessages);
                     }
+                    mentionListView.notifyDataSetChanged();
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
-                    view.hideProgress();
+                    mentionListView.hideProgress();
                     if (isRefreshAction) {
-                        view.hideRefreshProgress();
+                        mentionListView.hideRefreshProgress();
                     } else {
-                        view.hideProgress();
-                        view.hideEmptyMentionView();
-                        view.clearMentions();
-                        view.notifyDataSetChanged();
+                        mentionListView.hideEmptyMentionView();
+                        mentionListDataModel.clear();
+                        mentionListView.notifyDataSetChanged();
                     }
                     isInInitializing = false;
                 });
@@ -91,27 +115,32 @@ public class MentionListPresenterImpl implements MentionListPresenter {
 
     @Override
     public void loadMoreMentions(long offset) {
-        view.showMoreProgress();
+        mentionListView.showMoreProgress();
 
-        model.getMentionsObservable(offset, MentionListModel.MENTION_LIST_LIMIT)
-                .concatMap(model::getConvertedMentionObservable)
+        mentionListModel.getMentionsObservable(offset, MentionListModel.MENTION_LIST_LIMIT)
+                .map(resStarMentioned -> {
+                    List<MentionMessage> mentionMessages =
+                            mentionListModel.getConvertedMentionList(resStarMentioned.getRecords());
+                    return Pair.create(resStarMentioned, mentionMessages);
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pair -> {
-                    view.hideMoreProgress();
+                    mentionListView.hideMoreProgress();
 
-                    view.setHasMore(pair.first);
+                    ResStarMentioned resStarMentioned = pair.first;
+                    mentionListView.setHasMore(resStarMentioned.hasMore());
 
-                    List<MentionMessage> records = pair.second;
-                    if (records == null || records.isEmpty()) {
+                    List<MentionMessage> mentionMessages = pair.second;
+                    if (mentionMessages == null || mentionMessages.isEmpty()) {
                         return;
                     }
 
-                    view.addMentions(records);
-                    view.notifyDataSetChanged();
+                    mentionListDataModel.addAll(mentionMessages);
+                    mentionListView.notifyDataSetChanged();
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
-                    view.hideMoreProgress();
+                    mentionListView.hideMoreProgress();
                 });
     }
 
@@ -123,12 +152,12 @@ public class MentionListPresenterImpl implements MentionListPresenter {
             onClickTextTypeMessage(mention);
 
         } else if (TextUtils.equals("file", contentType)) {
-            view.moveToFileDetailActivity(mention.getMessageId(), mention.getMessageId());
+            mentionListView.moveToFileDetailActivity(mention.getMessageId(), mention.getMessageId());
         } else if (TextUtils.equals("comment", contentType)) {
             if ("poll".equals(mention.getFeedbackType())) {
-                view.moveToPollDetailActivity(mention.getPollId());
+                mentionListView.moveToPollDetailActivity(mention.getPollId());
             } else {
-                view.moveToFileDetailActivity(mention.getFeedbackId(), mention.getMessageId());
+                mentionListView.moveToFileDetailActivity(mention.getFeedbackId(), mention.getMessageId());
             }
         }
     }
@@ -137,7 +166,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
 
         if (!TeamInfoLoader.getInstance().isTopic(mention.getRoomId())
                 && !TeamInfoLoader.getInstance().isChat(mention.getRoomId())) {
-            view.showUnknownEntityToast();
+            mentionListView.showUnknownEntityToast();
             return;
         }
 
@@ -152,7 +181,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         long roomId = entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1;
         long linkId = mention.getLinkId();
         if (TeamInfoLoader.getInstance().isUser(mention.getRoomId())) {
-            view.moveToMessageListActivity(teamId, entityId, entityType, roomId, linkId);
+            mentionListView.moveToMessageListActivity(teamId, entityId, entityType, roomId, linkId);
             return;
         }
 
@@ -163,9 +192,9 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .firstOrDefault(-1L);
 
         if (searchedMemberId != -1L) {
-            view.moveToMessageListActivity(teamId, entityId, entityType, roomId, linkId);
+            mentionListView.moveToMessageListActivity(teamId, entityId, entityType, roomId, linkId);
         } else {
-            view.showUnknownEntityToast();
+            mentionListView.showUnknownEntityToast();
         }
     }
 
@@ -173,29 +202,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     public void addMentionedMessage(ResMessages.Link link) {
         Observable.just(link)
                 .observeOn(Schedulers.io())
-                .filter(link1 -> {
-                    if (link1.message instanceof ResMessages.TextMessage) {
-                        Collection<MentionObject> mentions = ((ResMessages.TextMessage) link1.message).mentions;
-                        return mentions != null && !mentions.isEmpty();
-                    } else if (link1.message instanceof ResMessages.CommentMessage) {
-                        Collection<MentionObject> mentions = ((ResMessages.CommentMessage) link1.message).mentions;
-                        return mentions != null && !mentions.isEmpty();
-                    } else {
-                        return false;
-                    }
-                })
-                .filter(link1 -> {
-                    Collection<MentionObject> mentions;
-                    if (link1.message instanceof ResMessages.TextMessage) {
-                        mentions = ((ResMessages.TextMessage) link1.message).mentions;
-                    } else {
-                        mentions = ((ResMessages.CommentMessage) link1.message).mentions;
-                    }
-                    return Observable.from(mentions)
-                            .takeFirst(mentionObject -> mentionObject.getId() == TeamInfoLoader.getInstance().getMyId())
-                            .map(it -> true)
-                            .toBlocking().firstOrDefault(false);
-                })
                 //내 메션인 있으면 멘션 메세지 받아오기
                 .map(link1 -> {
                     long roomId = link1.toEntity.get(0);
@@ -220,19 +226,87 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     }
                     return MentionMessage.createForMentions(link1, roomType, roomName, userName, photoUrl);
                 })
+                .doOnNext(mentionMessage -> {
+
+                    mentionListModel.increaseMentionUnreadCount();
+                    EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mentionMessage -> {
+                    mentionListView.hideEmptyMentionView();
                     // 새로운 멘션 메세지 추가
-                    view.addNewMention(mentionMessage);
-                    view.notifyDataSetChanged();
-                }, t -> {LogUtil.d(TAG, t.getMessage());});
+                    if (mentionListDataModel.indexOfLink(mentionMessage.getLinkId()) < 0) {
+                        mentionListDataModel.add(0, mentionMessage);
+                        mentionListView.notifyDataSetChanged();
+                    }
+                }, t -> {
+                    LogUtil.d(TAG, t.getMessage());
+                });
 
     }
 
     @Override
-    public void reInitializeIfEmpty(boolean isEmpty) {
+    public void reInitializeIfEmpty() {
+        boolean isEmpty = mentionListDataModel.getItemCount() <= 0;
         if (isEmpty && !isInInitializing) {
             onInitializeMyPage(false);
         }
     }
+
+    @Override
+    public void removeMentionedMessage(long linkId) {
+        Observable.just(linkId)
+                .map(mentionListDataModel::indexOfLink)
+                .filter(index -> index >= 0)
+                .doOnNext(index -> {
+                    MentionMessage item = mentionListDataModel.getItem(index);
+                    if (item != null
+                            && item.getMessageId() > actuallLastMarkerId) {
+                        mentionListModel.decreaseMentionCount();
+
+                        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(index -> {
+                    mentionListDataModel.remove(index);
+                    mentionListView.notifyDataSetChanged();
+                });
+    }
+
+    @Override
+    public void onStarred(long messageId) {
+        Completable.fromCallable(() -> {
+            mentionListModel.registerStarred(messageId);
+            return Completable.complete();
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mentionListView::successStarredMessage, t -> {
+                    boolean success = false;
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getResponseCode() == 40015) {
+                            success = true;
+                        }
+                    }
+                    if (success) {
+                        mentionListView.successStarredMessage();
+                    } else {
+                        mentionListView.failStarredMessage();
+                    }
+                });
+    }
+
+    @Override
+    public void onUpdateMentionMarker() {
+        MentionMessage item = mentionListDataModel.getItem(0);
+        if (item != null
+                && actuallLastMarkerId > 0
+                && item.getMessageId() > actuallLastMarkerId) {
+            mentionListModel.updateLastReadMessageId(item.getMessageId());
+            actuallLastMarkerId = item.getMessageId();
+        }
+
+    }
+
 }

@@ -63,7 +63,7 @@ public class TermActivity extends BaseAppCompatActivity {
 
         switch (mode) {
             case Privacy:
-                actionBar.setTitle(getString(R.string.jandi_pp));
+                actionBar.setTitle(getString(R.string.jandi_privacy_policy));
                 break;
             case Agreement:
                 actionBar.setTitle(getString(R.string.jandi_term_of_service));

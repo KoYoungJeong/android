@@ -1,19 +1,22 @@
 package com.tosslab.jandi.app.utils;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import io.intercom.android.sdk.Intercom;
 
 public class SignOutUtil {
     public static void removeSignData() {
-        JandiPreference.signOut(JandiApplication.getContext());
-        BadgeUtils.clearBadge(JandiApplication.getContext());
-        PushUtil.unsubscribeParsePush();
-        OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+        Context context = JandiApplication.getContext();
+        JandiPreference.signOut(context);
+        BadgeUtils.clearBadge(context);
+        OpenHelperManager.getHelper(context, OrmDatabaseHelper.class)
                 .clearAllData();
         TeamInfoLoader instance = TeamInfoLoader.getInstance();
         instance = null;
@@ -21,10 +24,11 @@ public class SignOutUtil {
 
         Intercom.client().reset();
 
+        context.stopService(new Intent(context, KeepExecutedService.class));
+
     }
 
     public static void initSignData() {
-        PushUtil.unsubscribeParsePush();
         BadgeUtils.clearBadge(JandiApplication.getContext());
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();

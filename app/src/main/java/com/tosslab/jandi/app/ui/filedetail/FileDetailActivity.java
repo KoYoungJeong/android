@@ -218,24 +218,23 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private void initStickers() {
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
-            stickerInfo = new StickerInfo();
-            stickerInfo.setStickerGroupId(groupId);
-            stickerInfo.setStickerId(stickerId);
-            vgStickerPreview.setVisibility(View.VISIBLE);
-
-            if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId()
-                    || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
-
+            if (oldSticker.getStickerGroupId() == groupId
+                    && oldSticker.getStickerId().equals(stickerId)) {
+                sendComment();
+            } else {
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                vgStickerPreview.setVisibility(View.VISIBLE);
                 StickerManager.getInstance()
                         .loadStickerDefaultOption(ivStickerPreview,
                                 stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-            }
-            setCommentSendButtonEnabled();
+                setCommentSendButtonEnabled();
 
-            sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
+                sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Select);
+            }
         });
 
-        stickerViewModel.setOnStickerDoubleTapListener((groupId, stickerId) -> sendComment());
         stickerViewModel.setType(StickerViewModel.TYPE_FILE_DETAIL);
     }
 
@@ -300,8 +299,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             mentionControlViewModel.setOnMentionShowingListener(isShowing -> {
                 if (mentionControlViewModel.hasMentionMember()) {
                     ivMention.setVisibility(isShowing ? View.GONE : View.VISIBLE);
+                } else {
+                    ivMention.setVisibility(View.GONE);
                 }
             });
+
+            ivMention.setVisibility(mentionControlViewModel.hasMentionMember() ? View.VISIBLE : View.GONE);
         } else {
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
@@ -583,7 +586,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void showUnstarredSuccessToast() {
-        showToast(getString(R.string.jandi_message_no_starred), false /* isError */);
+        showToast(getString(R.string.jandi_unpinned_message), false /* isError */);
     }
 
     @Override
@@ -593,7 +596,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void showCommentUnStarredSuccessToast() {
-        showToast(getString(R.string.jandi_message_no_starred), true /* isError */);
+        showToast(getString(R.string.jandi_unpinned_message), true /* isError */);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -657,7 +660,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             }
         }
 
-        String title = getString(R.string.jandi_starred_files);
+        String title = getString(R.string.jandi_tab_file);
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
         if (fileMessage != null && fileMessage.content != null) {
             title = fileMessage.content.title;

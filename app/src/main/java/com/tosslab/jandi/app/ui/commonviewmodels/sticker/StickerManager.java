@@ -32,6 +32,7 @@ public class StickerManager {
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DAY_ZH_TW);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DINGO);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MALLOW_DOG);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_BANILA);
     }
 
     public static StickerManager getInstance() {
@@ -71,7 +72,6 @@ public class StickerManager {
             Uri uri = Uri.parse(stickerAssetPath);
             loadSticker(uri, view, options);
         }
-
     }
 
     private void loadSticker(Uri uri, final ImageView view, final LoadOptions options) {
@@ -120,10 +120,10 @@ public class StickerManager {
             group = "day/zh_tw";
         } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_DINGO) {
             group = "dingo";
-        } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_MOZZI) {
-            group = "mozzi";
         } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_MALLOW_DOG) {
             group = "mallow";
+        } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_BANILA) {
+            group = "banila";
         } else {
             group = "";
         }

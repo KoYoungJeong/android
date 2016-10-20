@@ -3,9 +3,8 @@ package com.tosslab.jandi.app.ui.search.filter.member.presenter;
 import android.util.Log;
 
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.members.search.model.MemberSearchModel;
-import com.tosslab.jandi.app.ui.members.search.presenter.base.BaseMemberSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.model.MemberFilterableDataModel;
+import com.tosslab.jandi.app.ui.search.filter.member.model.MemberSearchModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.List;

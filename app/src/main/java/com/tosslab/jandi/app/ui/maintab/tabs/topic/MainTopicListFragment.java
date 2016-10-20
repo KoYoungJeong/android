@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -45,7 +46,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter.MainTopicListPresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
@@ -214,9 +214,9 @@ public class MainTopicListFragment extends Fragment
                 .subscribe(i -> {
                     selectedEntity = -2;
                     setSelectedItem(selectedEntity);
-                    TopicCreateActivity_
-                            .intent(MainTopicListFragment.this)
-                            .start();
+                    startActivity(Henson.with(getActivity())
+                            .gotoTopicCreateActivity()
+                            .build());
                     getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
                             AnalyticsValue.Action.CreateNewTopic);
@@ -685,7 +685,7 @@ public class MainTopicListFragment extends Fragment
 
             TextView tvTitle = (TextView) rootView.findViewById(R.id.tv_popup_title);
             EditText etInput = (EditText) rootView.findViewById(R.id.et_dialog_input_text);
-            etInput.setHint(R.string.jandi_entity_create_entity_name);
+            etInput.setHint(R.string.jandi_title_name);
             tvTitle.setText(R.string.jandi_folder_insert_name);
 
             builder.setView(rootView)

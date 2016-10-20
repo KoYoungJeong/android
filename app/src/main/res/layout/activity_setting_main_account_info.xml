@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        style="@style/Jandi.Default.ActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <LinearLayout
+        android:id="@+id/vg_edit_account_name"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="@string/jandi_name_in_jandi"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_edit_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tee"
+            android:textColor="@color/activate_text_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/jandi_d1d1d1" />
+
+    <LinearLayout
+        android:id="@+id/vg_edit_primary_email"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="@string/jandi_signup_input_email"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_edit_primary_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="tee@tosslab.com"
+            android:textColor="@color/activate_text_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/jandi_d1d1d1" />
+
+    <LinearLayout
+        android:id="@+id/vg_log_out"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="@string/jandi_setting_sign_out"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/jandi_d1d1d1" />
+
+</LinearLayout>
