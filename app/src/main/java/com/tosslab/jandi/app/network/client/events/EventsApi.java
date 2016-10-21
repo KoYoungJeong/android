@@ -20,12 +20,6 @@ public class EventsApi extends ApiTemplate<EventsApi.Api> {
         return call(() -> getApi().getEventHistory(ts, memberId, size));
     }
 
-    @Deprecated
-    public ResEventHistory getEventHistory(long ts, long memberId,
-                                           String eventType) throws RetrofitException {
-        return call(() -> getApi().getEventHistory(ts, memberId, eventType));
-    }
-
     public ResEventHistory getEventHistory(long ts, long memberId) throws RetrofitException {
         return call(() -> getApi().getEventHistory(ts, memberId));
     }
@@ -36,11 +30,6 @@ public class EventsApi extends ApiTemplate<EventsApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResEventHistory> getEventHistory(@Query("ts") long ts, @Query("memberId") long memberId,
                                               @Query("size") int size);
-
-        @GET("events")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResEventHistory> getEventHistory(@Query("ts") long ts, @Query("memberId") long memberId,
-                                              @Query("eventType") String eventType);
 
         @GET("events?size=10000")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

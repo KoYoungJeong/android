@@ -121,6 +121,10 @@ rootProject.allprojects { project ->
                 androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
                 androidTestApt rootProject.ext.dependecies.libraries.dagger2Apt
 
+                testCompile rootProject.ext.dependecies.libraries.junit
+                testCompile rootProject.ext.dependecies.libraries.assertj
+                testCompile rootProject.ext.dependecies.libraries.mockito
+
             }
 
             project.apply(plugin: 'com.google.gms.google-services')

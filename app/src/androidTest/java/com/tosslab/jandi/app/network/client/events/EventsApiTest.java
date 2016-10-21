@@ -49,15 +49,4 @@ public class EventsApiTest {
         assertThat(message.getRecords().size()).isLessThanOrEqualTo(size);
     }
 
-    @Test
-    public void testGetEventHistory_without_size() throws Exception {
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        ResEventHistory message = eventsApi.getEventHistory(calendar.getTimeInMillis(), myId, "message");
-        assertThat(message).isNotNull();
-        assertThat(message.getSize()).isGreaterThanOrEqualTo(0);
-        assertThat(message.getRecords().size()).isGreaterThanOrEqualTo(0);
-
-    }
 }

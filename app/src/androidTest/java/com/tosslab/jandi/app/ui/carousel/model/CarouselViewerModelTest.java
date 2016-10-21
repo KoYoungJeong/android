@@ -4,10 +4,11 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 
@@ -55,17 +56,9 @@ public class CarouselViewerModelTest {
 
     }
 
-    private int getLatestFileId() throws RetrofitException {
-        ReqSearchFile reqSearchFile = new ReqSearchFile();
-        reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-        reqSearchFile.fileType = "image";
-        reqSearchFile.writerId = "all";
-        reqSearchFile.keyword = "";
-        reqSearchFile.listCount = 1;
-        reqSearchFile.sharedEntityId = roomId;
-        reqSearchFile.startMessageId = -1;
-        reqSearchFile.teamId = teamId;
-        return new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile).firstIdOfReceivedList;
+    private long getLatestFileId() throws RetrofitException {
+        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
+        return new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords().get(0).getMessageId();
     }
 
     @Test

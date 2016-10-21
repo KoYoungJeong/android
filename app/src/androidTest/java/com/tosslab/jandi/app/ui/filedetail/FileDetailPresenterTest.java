@@ -5,12 +5,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.client.messages.MessageApi;
+import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -155,22 +156,15 @@ public class FileDetailPresenterTest {
     }
 
     private ResMessages.FileMessage getFileMessage() throws RetrofitException {
-        ReqSearchFile reqSearchFile = new ReqSearchFile();
-        reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-        reqSearchFile.listCount = ReqSearchFile.MAX;
-
-        reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_IMAGE;
-        reqSearchFile.writerId = "all";
-        reqSearchFile.sharedEntityId = -1;
-
-        reqSearchFile.startMessageId = -1;
-        reqSearchFile.keyword = "";
-        reqSearchFile.teamId = TeamInfoLoader.getInstance().getTeamId();
-        ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile);
-
-        ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
-
-        return ((ResMessages.FileMessage) originalMessage);
+        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
+        ResSearch.SearchRecord searchRecord = new SearchApi(RetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), builder.build()).getRecords().get(0);
+        long messageId = searchRecord.getMessageId();
+        for (ResMessages.OriginalMessage messageDetail : new MessageApi(RetrofitBuilder.getInstance()).getFileDetail(TeamInfoLoader.getInstance().getTeamId(), messageId).messageDetails) {
+            if (messageDetail instanceof ResMessages.FileMessage) {
+                return ((ResMessages.FileMessage) messageDetail);
+            }
+        }
+        return null;
     }
 
 }
