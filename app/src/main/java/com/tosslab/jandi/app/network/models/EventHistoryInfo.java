@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollVotedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
@@ -64,6 +65,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         include = JsonTypeInfo.As.PROPERTY,
         property = "event")
 @JsonSubTypes({
+        @JsonSubTypes.Type(name = "team_created", value = SocketTeamCreatedEvent.class),
         @JsonSubTypes.Type(name = "team_joined", value = SocketTeamJoinEvent.class),
         @JsonSubTypes.Type(name = "team_left", value = SocketTeamLeaveEvent.class),
         @JsonSubTypes.Type(name = "team_deleted", value = SocketTeamDeletedEvent.class),

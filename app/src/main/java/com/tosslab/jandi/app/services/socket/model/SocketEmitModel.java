@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketUpdateMember;
 import com.tosslab.jandi.app.network.socket.domain.SocketUpdateRoom;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
@@ -21,16 +22,27 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 public class SocketEmitModel {
 
     @Nullable
+    public static SocketUpdateMember teamCreated(Object data) {
+        try {
+            SocketTeamCreatedEvent object = SocketModelExtractor.getObject(data, SocketTeamCreatedEvent.class, true, false);
+            long memberId = object.getData().getMemberId();
+            long teamId = object.getData().getTeam().getTeamId();
+            String accessToken = TokenUtil.getAccessToken();
+            return SocketUpdateMember.created(accessToken, memberId, teamId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Nullable
     public static SocketUpdateMember teamJoin(Object data) {
         try {
             SocketTeamJoinEvent object = SocketModelExtractor.getObject(data, SocketTeamJoinEvent.class, true, false);
             long memberId = object.getData().getMember().getId();
             long teamId = object.getData().getTeamId();
-            if (AccountRepository.getRepository().getTeamInfo(teamId) == null) {
-
-                String accessToken = TokenUtil.getAccessToken();
-                return SocketUpdateMember.join(accessToken, memberId, teamId);
-            }
+            String accessToken = TokenUtil.getAccessToken();
+            return SocketUpdateMember.join(accessToken, memberId, teamId);
         } catch (Exception e) {
             e.printStackTrace();
         }

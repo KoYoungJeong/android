@@ -29,12 +29,12 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketPollCommentCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollVotedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
@@ -110,7 +110,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
     }
 
     public enum EventType {
-
+        TeamCreated("team_created", SocketTeamCreatedEvent.class),
         TeamJoined("team_joined", SocketTeamJoinEvent.class),
         TeamLeft("team_left", SocketTeamLeaveEvent.class),
         TeamDeleted("team_deleted", SocketTeamDeletedEvent.class),

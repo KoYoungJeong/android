@@ -98,6 +98,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketPollDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollFinishedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketPollVotedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
@@ -219,6 +220,7 @@ public class JandiSocketServiceModel {
                 = new HashMap<>();
 
         messageEventActorMapper.put(SocketMemberUpdatedEvent.class, this::onMemberUpdated);
+        messageEventActorMapper.put(SocketTeamCreatedEvent.class, this::onTeamCreated);
         messageEventActorMapper.put(SocketTeamJoinEvent.class, this::onTeamJoin);
         messageEventActorMapper.put(SocketTeamLeaveEvent.class, this::onTeamLeft);
         messageEventActorMapper.put(SocketTeamDeletedEvent.class, this::onTeamDeleted);
@@ -271,6 +273,16 @@ public class JandiSocketServiceModel {
 
         return messageEventActorMapper;
 
+    }
+
+    public void onTeamCreated(Object object) {
+        try {
+            SocketTeamCreatedEvent event = SocketModelExtractor.getObject(object, SocketTeamCreatedEvent.class);
+            saveEvent(event);
+            JandiPreference.setSocketConnectedLastTime(event.getTs());
+        } catch (Exception e) {
+            LogUtil.d(TAG, e.getMessage());
+        }
     }
 
     public SocketStart getStartInfo() {

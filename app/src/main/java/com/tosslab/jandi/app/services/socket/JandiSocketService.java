@@ -172,7 +172,17 @@ public class JandiSocketService extends Service {
         Crashlytics.getInstance().core.log(log);
     }
 
+
     private void initEventMapper() {
+
+        EventListener teamCreateListener = objects -> jandiSocketServiceModel.onTeamCreated(objects[0]);
+        EventListener teamCreateUpdateListener = objects -> {
+            SocketUpdateMember socketUpdateMember = SocketEmitModel.teamCreated(objects[0]);
+            if (socketUpdateMember != null) {
+                jandiSocketManager.sendByJson("update_membership", socketUpdateMember);
+            }
+        };
+        eventsHashMap.put("team_created", Arrays.asList(teamCreateUpdateListener, teamCreateListener));
 
         EventListener teamJoinListener = objects -> jandiSocketServiceModel.onTeamJoin(objects[0]);
         EventListener teamJoinUpdateListener = objects -> {
@@ -386,7 +396,8 @@ public class JandiSocketService extends Service {
             jandiSocketServiceModel.updateEventHistory();
         });
 
-        eventHashMap.put("jandi_ping", objects -> { });
+        eventHashMap.put("jandi_ping", objects -> {
+        });
 
         eventHashMap.put("error_start", objects -> {
             LogUtil.e(TAG, "Get Error - error_connect_team");
