@@ -14,10 +14,6 @@ public class SocketUpdateMember {
         this.teamId = teamId;
     }
 
-    public static SocketUpdateMember created(String token, long memberId, long teamId) {
-        return new SocketUpdateMember(token, "create", memberId, teamId);
-    }
-
     public static SocketUpdateMember join(String token, long memberId, long teamId) {
         return new SocketUpdateMember(token, "join", memberId, teamId);
     }
@@ -36,5 +32,9 @@ public class SocketUpdateMember {
 
     public long getMemberId() {
         return memberId;
+    }
+
+    public long getTeamId() {
+        return teamId;
     }
 }

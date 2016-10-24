@@ -73,7 +73,6 @@ import com.tosslab.jandi.app.utils.LongPressListener;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -350,7 +349,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
-        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() -1 , 1));
+
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -494,9 +493,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
+
     public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
+
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
     }
