@@ -4,13 +4,11 @@ import com.tosslab.jandi.app.OkHttpClientTestFactory;
 import com.tosslab.jandi.app.ValidationUtil;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqNull;
-import com.tosslab.jandi.app.network.models.ReqSearchFile;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class FileApiDeprecatedTest {
 
@@ -44,12 +42,6 @@ public class FileApiDeprecatedTest {
     @Test
     public void searchNewImageFile() throws Exception {
         assertThat(ValidationUtil.isDeprecated(api.searchNewImageFile(1,1,1,1).execute())).isFalse();
-    }
-
-    @Test
-    public void searchFile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.searchFile(new ReqSearchFile()).execute())).isFalse();
-        fail("this is deprecated");
     }
 
     @Test
