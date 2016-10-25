@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.push.dagger.DaggerPushInterfaceComponent;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -42,7 +43,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     long roomId;
     int entityType;
     boolean isFromPush;
-    long teamId;
+    long temId;
     String roomType = "";
     @Inject
     JandiInterfaceModel jandiInterfaceModel;
@@ -184,6 +185,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
         startActivity(Henson.with(this)
                 .gotoMainTabActivity()
+                .tabIndex(TeamInfoLoader.getInstance().isTopic(roomId) ? 0 : 1)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
