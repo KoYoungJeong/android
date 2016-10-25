@@ -28,7 +28,7 @@ public class SocketEmitModel {
             long memberId = object.getData().getMemberId();
             long teamId = object.getData().getTeam().getTeamId();
             String accessToken = TokenUtil.getAccessToken();
-            return SocketUpdateMember.created(accessToken, memberId, teamId);
+            return SocketUpdateMember.join(accessToken, memberId, teamId);
         } catch (Exception e) {
             e.printStackTrace();
         }
