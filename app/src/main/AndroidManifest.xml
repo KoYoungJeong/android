@@ -269,6 +269,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".call.JandiCallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
 
         <!-- GCM -->
         <service android:name=".push.gcm.receiver.GcmPushReceiver">
