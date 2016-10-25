@@ -10,7 +10,10 @@
 	<string name="common_createteam_toaccthome">"잔디 메인으로 가기"</string>
 	<string name="common_createteam_welcome">"안녕하세요!"</string>
 	<string name="common_creatteam_done">"완료"</string>
+	<string name="common_hamburger_invited">"초대 됨"</string>
+	<string name="common_hamburger_manageacct">"잔디 계정 관리"</string>
 	<string name="common_hamburger_teamadmin">"팀 관리자"</string>
+	<string name="common_hamburger_teamlist">"팀 리스트"</string>
 	<string name="common_pricingplan_fileupload">"{TeamName}\n 현재 팀에서 무료 사용량을 초과하여 언제든 업로드가 제한될 수 있습니다. 지금 STANDARD 플랜으로 전환하시고 더욱 더 쾌적하게 협업하세요."</string>
 	<string name="common_pricingplan_livesupport">"1:1 문의하기"</string>
 	<string name="common_pricingplan_moreinfo">"자세히 알아보기"</string>
@@ -67,7 +70,7 @@
 	<string name="err_team_creation_failed">"메일 전송에 실패했습니다"</string>
 	<string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
 	<string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"님을 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
 	<string name="jadi_account_home">"잔디 메인"</string>
@@ -211,7 +214,7 @@
 	<string name="jandi_delete_all">"전체 삭제"</string>
 	<string name="jandi_delete_succeed">"%s 파일이 삭제되었습니다."</string>
 	<string name="jandi_deleted_file">"삭제된 파일"</string>
-	<string name="jandi_deleted_message">"(삭제된 메세지)"</string>
+	<string name="jandi_deleted_message">"(삭제된 메시지)"</string>
 	<string name="jandi_deleted_team">"이 팀은 잔디에서 삭제되었으며 더 이상 존재하지 않습니다."</string>
 	<string name="jandi_department">"부서"</string>
 	<string name="jandi_department_list">"부서 목록"</string>
@@ -247,7 +250,7 @@
 	<string name="jandi_exceeded_max_text_length">"5000자 까지 입력할 수 있습니다."</string>
 	<string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
 	<string name="jandi_explain_global_push_off">"앱의 알림 설정이 꺼져 있습니다. 더보기 > 설정에서 알림을 켜야 알림을 받을 수 있습니다."</string>
-	<string name="jandi_explain_invite">"메세지 검색이 가능한 업무용 메신저 잔디는 
+	<string name="jandi_explain_invite">"메시지 검색이 가능한 업무용 메신저 잔디는 
   팀원 모두와 함께 사용해야 그 진가가 발휘됩니다.
   지금 바로 멤버들을 초대하세요."</string>
 	<string name="jandi_explain_topic_description">"토픽에 대해 소개해주세요. (옵션)"</string>
@@ -436,7 +439,7 @@
 	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
 	<string name="jandi_no_search_history">"최근 검색한 내역이 없습니다."</string>
-	<string name="jandi_no_search_result">"메세지 검색 결과가 없습니다."</string>
+	<string name="jandi_no_search_result">"메시지 검색 결과가 없습니다."</string>
 	<string name="jandi_no_topic_to_join">"참여 가능한 토픽이 없습니다"</string>
 	<string name="jandi_normally_topic_messages">"일반 토픽 메시지"</string>
 	<string name="jandi_not_in_topic">"이미 이 토픽에서 나갔거나 퇴장되었습니다."</string>
@@ -556,8 +559,8 @@
 	<string name="jandi_setting_notification">"알림 설정"</string>
 	<string name="jandi_setting_push">"알림 설정"</string>
 	<string name="jandi_setting_push_subscription">"알림 설정"</string>
-	<string name="jandi_setting_push_subscription_cancel">"푸쉬 알림을 받지 않습니다."</string>
-	<string name="jandi_setting_push_subscription_ok">"푸쉬 알림을 받습니다."</string>
+	<string name="jandi_setting_push_subscription_cancel">"푸시 알림을 받지 않습니다."</string>
+	<string name="jandi_setting_push_subscription_ok">"푸시 알림을 받습니다."</string>
 	<string name="jandi_setting_sign_out">"로그아웃"</string>
 	<string name="jandi_setting_summary_led">"알림을 수신하면 LED가 켜집니다."</string>
 	<string name="jandi_setting_summary_vibrate">"알림을 수신할 경우 진동이 발생됩니다."</string>
@@ -749,6 +752,7 @@
 	<string name="title_file_detail">"파일 상세 정보"</string>
 	<string name="title_file_upload">"파일 업로드"</string>
 	<string name="today">"오늘"</string>
+	<string name="topic_polls_deletedpoll">"삭제된 투표"</string>
 	<string name="topic_topicchat_mentionall">"@all (모든 토픽 멤버)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"토픽이 %s 폴더에서 제거되었습니다."</string>
 	<string name="url">"URL"</string>
