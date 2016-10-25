@@ -207,8 +207,10 @@ public class MainShareActivity extends BaseAppCompatActivity {
                 finish();
                 return true;
             case R.id.action_share:
-                share.startShare();
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.Send);
+                if (share != null) {
+                    share.startShare();
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.Send);
+                }
                 return true;
         }
 

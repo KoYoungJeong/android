@@ -16,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -68,7 +69,7 @@ public class MentionControlViewModel {
                                     List<Long> roomIds,
                                     String mentionType, Runnable callback) {
 
-        this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        this.clipBoard = (ClipboardManager) JandiApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
 
         init(activity, editText, teamId, roomIds, callback);
