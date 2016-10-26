@@ -14,10 +14,10 @@
 	<string name="common_hamburger_manageacct">"JANDIアカウント設定"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_hamburger_teamlist">"チームリスト"</string>
-	<string name="common_pricingplan_fileupload">"現在無料ストレージを全部使用しました。 \n  ファイルのアップロードが制限される可能性があります。 STANDARDプランで、\n  より効率的なコラボレーションをお楽しみください。"</string>
+	<string name="common_pricingplan_fileupload">"{TeamName}\n 現在無料ストレージを全部使用しました。ファイルのアップロードが制限される可能性があります。今すぐSTANDARDプランにアップグレードし、より効率的なコラボレーションをお楽しみください。"</string>
 	<string name="common_pricingplan_livesupport">"お問い合わせ"</string>
 	<string name="common_pricingplan_moreinfo">"詳細はこちら"</string>
-	<string name="common_pricingplan_msgsearch">"無料ストレージを全部使用しました。 \n  検索が制限される可能性があります。STANDARDプランで、 \n  より効率的なコラボレーションをお楽しみください。"</string>
+	<string name="common_pricingplan_msgsearch">"{TeamName}\n 無料ストレージを全部使用しました。検索が制限される可能性があります。今すぐSTANDARDプランにアップグレードし、より効率的なコラボレーションをお楽しみください。"</string>
 	<string name="common_profilemodal_jandi_botstatus">"こんにちは、JANDIと言います。"</string>
 	<string name="common_settings_lostpasscodedesc">"パスワードを忘れた場合、再インストールしてください。"</string>
 	<string name="common_sharetojandi_errormsg">"予期しないエラーが発生しました。後でもう一度やり直してください。"</string>

@@ -91,15 +91,18 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
 
     void bindCreator(Poll poll) {
         long creatorId = poll.getCreatorId();
-        tvCreator.setText(TeamInfoLoader.getInstance().getMemberName(creatorId));
+        if (TeamInfoLoader.getInstance().isUser(creatorId)) {
 
-        Resources resources = tvCreator.getResources();
-        if (TeamInfoLoader.getInstance().getUser(creatorId).isEnabled()) {
-            tvCreator.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));
-            vCreatorCovoer.setVisibility(View.GONE);
-        } else {
-            tvCreator.setTextColor(resources.getColor(R.color.deactivate_text_color));
-            vCreatorCovoer.setVisibility(View.VISIBLE);
+            tvCreator.setText(TeamInfoLoader.getInstance().getMemberName(creatorId));
+
+            Resources resources = tvCreator.getResources();
+            if (TeamInfoLoader.getInstance().getUser(creatorId).isEnabled()) {
+                tvCreator.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));
+                vCreatorCovoer.setVisibility(View.GONE);
+            } else {
+                tvCreator.setTextColor(resources.getColor(R.color.deactivate_text_color));
+                vCreatorCovoer.setVisibility(View.VISIBLE);
+            }
         }
     }
 

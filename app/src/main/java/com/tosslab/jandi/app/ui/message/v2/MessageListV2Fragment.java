@@ -1962,9 +1962,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void showTextMessageMenuDialog(ResMessages.TextMessage textMessage,
                                           boolean isDirectMessage, boolean isMyMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(
-                textMessage, isMyMessage, isDirectMessage);
-        newFragment.show(getActivity().getSupportFragmentManager(), "dioalog");
+        if (isResumed()) {
+            DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(
+                    textMessage, isMyMessage, isDirectMessage);
+            newFragment.show(getChildFragmentManager(), "dioalog");
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

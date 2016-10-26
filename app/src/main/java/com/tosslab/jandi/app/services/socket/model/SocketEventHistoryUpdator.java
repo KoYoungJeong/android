@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
@@ -55,23 +54,19 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 public class SocketEventHistoryUpdator {
 
     private static final String TAG = "SocketEventHistoryUpdat";
     private static final int TIME_OF_PRE_EVENT = 1000 * 60 * 10;
     private final Lazy<EventsApi> eventsApi;
-    private final Lazy<PollApi> pollApi;
     private final Lazy<StartApi> startApi;
     private Map<Class<? extends EventHistoryInfo>, JandiSocketServiceModel.Command> messageEventActorMapper;
 
     @Inject
     public SocketEventHistoryUpdator(Lazy<EventsApi> eventsApi,
-                                     Lazy<PollApi> pollApi,
                                      Lazy<StartApi> startApi) {
         this.eventsApi = eventsApi;
-        this.pollApi = pollApi;
         this.startApi = startApi;
         messageEventActorMapper = new HashMap<>();
     }
@@ -174,7 +169,7 @@ public class SocketEventHistoryUpdator {
                 restartJandi(restarterPost);
                 return Observable.empty();
             }
-        }).subscribeOn(Schedulers.newThread())
+        })
                 .doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
                 .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);

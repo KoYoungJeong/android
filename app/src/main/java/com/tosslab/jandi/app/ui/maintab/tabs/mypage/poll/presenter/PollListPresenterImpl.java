@@ -234,6 +234,7 @@ public class PollListPresenterImpl implements PollListPresenter {
 
     private void changePoll(Poll poll) {
         Observable.just(poll)
+                .filter(Poll::isMine)
                 .map(poll1 -> pollListDataModel.getIndexById(poll.getId()))
                 .filter(it -> it >= 0)
                 .subscribeOn(Schedulers.newThread())

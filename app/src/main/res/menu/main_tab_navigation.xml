@@ -4,7 +4,7 @@
         <item android:id="@+id/nav_setting_notification" android:icon="@drawable/side_bar_notifications" android:title="@string/jandi_setting_notification"/>
         <item android:id="@+id/nav_setting_orientation" android:icon="@drawable/side_bar_rotation" android:title="@string/jandi_screen_orientation" android:visible="false"/>
         <item android:id="@+id/nav_setting_passcode" android:icon="@drawable/side_bar_lock" android:title="@string/jandi_set_passcode"/>
-        <item android:id="@+id/nav_setting_account" android:icon="@drawable/side_bar_setting" android:title="@string/jandi_setting_account"/>
+        <item android:id="@+id/nav_setting_account" android:icon="@drawable/side_bar_setting" android:title="@string/common_hamburger_manageacct"/>
     </group>
 
     <group android:id="@+id/group_main_tab_privacy">

@@ -76,6 +76,7 @@
                 android:ellipsize="end"
                 android:lineSpacingExtra="2dp"
                 android:maxLines="2"
+                android:singleLine="false"
                 android:text="HQ had a discussion around this topic and understood the needs.the needs. the needs the needs. the needs "
                 android:textColor="@color/dark_gray"
                 android:textSize="13dp" />

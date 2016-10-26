@@ -295,11 +295,21 @@ public class TeamInfoLoader {
     }
 
     private Observable<Bot> getBotObservable() {
-        return execute(() -> Observable.from(initialInfo.getBots()));
+        return execute(() -> {
+            if (initialInfo.getBots() == null) {
+                return Observable.empty();
+            }
+            return Observable.from(initialInfo.getBots());
+        });
     }
 
     private Observable<Folder> getFolderObservable() {
-        return execute(() -> Observable.from(initialInfo.getFolders()));
+        return execute(() -> {
+            if (initialInfo.getFolders() == null) {
+                return Observable.empty();
+            }
+            return Observable.from(initialInfo.getFolders());
+        });
     }
 
     private Observable<Topic> getTopicObservable() {
@@ -311,7 +321,12 @@ public class TeamInfoLoader {
     }
 
     private Observable<Chat> getChatObservable() {
-        return execute(() -> Observable.from(initialInfo.getChats()));
+        return execute(() -> {
+            if (initialInfo.getChats() == null) {
+                return Observable.empty();
+            }
+            return Observable.from(initialInfo.getChats());
+        });
     }
 
     public long getMyId() {
@@ -457,7 +472,12 @@ public class TeamInfoLoader {
     }
 
     public long getTeamId() {
-        return execute(() -> team.getId());
+        return execute(() -> {
+            if (team != null) {
+                return team.getId();
+            }
+            return -1L;
+        });
     }
 
     public boolean hasDisabledUser() {
@@ -498,9 +518,9 @@ public class TeamInfoLoader {
     }
 
     public long getDefaultTopicId() {
-        return execute(() -> getTopicObservable()
-                .takeFirst(Topic::isDefault)
-                .map(Topic::getId)
+        return execute(() -> Observable.from(topicRooms.values())
+                .takeFirst(TopicRoom::isDefaultTopic)
+                .map(TopicRoom::getId)
                 .defaultIfEmpty(-1L)
                 .toBlocking()
                 .first());

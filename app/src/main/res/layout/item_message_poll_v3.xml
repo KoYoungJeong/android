@@ -111,7 +111,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
-            android:text="삭제된 투표"
+            android:text="@string/topic_polls_deletedpoll"
             android:textColor="@color/jandi_text_light"
             android:textSize="14sp"
             android:textStyle="bold"

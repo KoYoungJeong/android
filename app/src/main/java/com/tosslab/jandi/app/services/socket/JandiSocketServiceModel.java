@@ -1499,14 +1499,12 @@ public class JandiSocketServiceModel {
             if (poll != null && poll.getId() > 0 && poll.isMine()) {
                 upsertPollVotedStatus(poll);
                 poll = getPollFromDatabase(poll.getId());
+                InitialPollInfoRepository.getInstance().decreaseVotableCount();
             }
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-            if (poll != null && poll.getId() > 0) {
-                InitialPollInfoRepository.getInstance().decreaseVotableCount();
-                postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
-            }
+            postEvent(new SocketPollEvent(poll, SocketPollEvent.Type.VOTED));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -78,12 +78,19 @@ public class FileDownloadApi {
     }
 
     private boolean writeResponseBodyToDisk(ResponseBody body, String targetFile, ProgressCallback progressCallback) {
+
+        if (body == null) {
+            progressCallback.callback(Observable.error(new Exception("It cannot be download")));
+            return false;
+        }
+
         PublishSubject<Integer> callback = PublishSubject.create();
         if (progressCallback != null) {
             progressCallback.callback(callback.onBackpressureBuffer());
         } else {
             callback.subscribe(it -> {}, t -> {});
         }
+
         try {
             File futureStudioIconFile = new File(targetFile);
 
