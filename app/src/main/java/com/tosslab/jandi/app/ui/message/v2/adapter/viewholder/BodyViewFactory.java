@@ -72,7 +72,6 @@ public class BodyViewFactory {
 
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
-
         } else {
             builder = new EmptyViewHolder.Builder();
         }
@@ -133,7 +132,7 @@ public class BodyViewFactory {
 
         } else if (isEventMessage(currentLink)) {
 
-            type = getEventMessageType(currentLink, nextLink);
+            type = getEventMessageType(currentLink, nextLink, roomId);
 
         } else if (isTextMessage(currentLink)) {
 
@@ -178,11 +177,22 @@ public class BodyViewFactory {
     }
 
     private static int getEventMessageType(ResMessages.Link currentLink,
-                                           ResMessages.Link nextLink) {
+                                           ResMessages.Link nextLink,
+                                           long roomId) {
+
         int type = TypeUtil.TYPE_VIEW_EVENT_MESSAGE;
+
+        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+            if (currentLink.info instanceof ResMessages.JoinEvent
+                    || currentLink.info instanceof ResMessages.LeaveEvent) {
+                return TypeUtil.TYPE_EMPTY;
+            }
+        }
+
         if (isNextLinkSerialEventMessage(currentLink, nextLink)) {
             return type;
         }
+
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 
