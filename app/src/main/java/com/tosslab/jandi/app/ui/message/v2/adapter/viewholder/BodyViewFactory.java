@@ -182,13 +182,6 @@ public class BodyViewFactory {
 
         int type = TypeUtil.TYPE_VIEW_EVENT_MESSAGE;
 
-        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
-            if (currentLink.info instanceof ResMessages.JoinEvent
-                    || currentLink.info instanceof ResMessages.LeaveEvent) {
-                return TypeUtil.TYPE_EMPTY;
-            }
-        }
-
         if (isNextLinkSerialEventMessage(currentLink, nextLink)) {
             return type;
         }
