@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresente
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
+import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -101,6 +102,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
 
+    @ViewById(R.id.layout_pricing_plan_warning)
+    ViewGroup layoutPricingPlanWarning;
+
     private MentionControlViewModel mentionControlViewModel;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
@@ -118,7 +122,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         fileUploadPresenter.setView(this);
         fileUploadPresenter.onInitEntity(FileUploadPreviewActivity.this, selectedEntityIdToBeShared);
         fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
-
 
         scrollButtonPublishSubject = PublishSubject.create();
         subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
@@ -147,6 +150,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                     SuperToast.cancelAllSuperToasts();
                     ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
+
+        fileUploadPresenter.onInitPricingInfo();
     }
 
     @Override
@@ -380,5 +385,18 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    @Override
+    public void setPricingLimitView(Boolean isLimited) {
+        if (isLimited) {
+            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
+            PricingPlanWarningViewController.newInstance(this,
+                    layoutPricingPlanWarning,
+                    PricingPlanWarningViewController.TYPE_UPLOAD
+            );
+        } else {
+            layoutPricingPlanWarning.setVisibility(View.GONE);
+        }
     }
 }

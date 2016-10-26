@@ -80,7 +80,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_MEMBER_FILTER = 22;
     private static final int DATABASE_VERSION_BADGE_AT_MYPAGE = 23;
     private static final int DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD = 24;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD;
+    private static final int DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN = 25;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -164,6 +165,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, InitialInfo.Self.class);
             createTable(connectionSource, InitialInfo.Poll.class);
             createTable(connectionSource, InitialInfo.Mention.class);
+            createTable(connectionSource, InitialInfo.TeamPlan.class);
+
             createTable(connectionSource, Team.class);
             createTable(connectionSource, Folder.class);
             createTable(connectionSource, Topic.class);
@@ -365,6 +368,15 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD, () -> {
                         Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
                         dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN, () -> {
+                        createTable(connectionSource, InitialInfo.TeamPlan.class);
+
+                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+                        dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN teamPlan_id INTEGER;");
+                        UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+                        updateBuilder.updateColumnExpression("teamPlan_id", "1");
+                        updateBuilder.update();
                     }));
 
             Observable.from(upgradeCheckers)

@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 @EBean
 public class FileUploadPresenterImpl implements FileUploadPresenter {
 
@@ -46,6 +50,18 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
         view.setEntityInfo(entityName);
         view.setShareEntity(entityId, fileUploadModel.isUser(entityId));
 
+    }
+
+    @Override
+    public void onInitPricingInfo() {
+        rx.Observable.defer(() -> {
+            boolean isLimited = fileUploadModel.isUploadLimited();
+            return Observable.just(isLimited);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isLimited -> {
+                    view.setPricingLimitView(isLimited);
+                });
     }
 
     @Override

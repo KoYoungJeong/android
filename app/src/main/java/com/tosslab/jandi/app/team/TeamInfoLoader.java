@@ -53,6 +53,7 @@ public class TeamInfoLoader {
     private Team team;
     private User jandiBot;
     private InitialInfo.Mention mention;
+    private InitialInfo.TeamPlan teamPlan;
 
     private int pollBadge;
 
@@ -134,11 +135,15 @@ public class TeamInfoLoader {
         setUpMe();
         setUpTopicFolders();
         setUpPollBadge();
-        setUpMention();
+        setUpTeamPlan();
     }
 
     private void setUpMention() {
         this.mention = initialInfo.getMention();
+    }
+
+    private void setUpTeamPlan() {
+        this.teamPlan = initialInfo.getTeamPlan();
     }
 
     public void refreshMention() {
@@ -586,6 +591,10 @@ public class TeamInfoLoader {
 
     public InitialInfo.Mention getMention() {
         return execute(() -> mention);
+    }
+
+    public InitialInfo.TeamPlan getTeamPlan() {
+        return execute(() -> teamPlan);
     }
 
     public void refreshPollCount() {
