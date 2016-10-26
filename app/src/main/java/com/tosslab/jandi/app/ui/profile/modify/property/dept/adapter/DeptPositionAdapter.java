@@ -81,7 +81,11 @@ public class DeptPositionAdapter extends RecyclerView.Adapter {
                     JandiApplication.getContext().getResources().getColor(R.color.dark_gray));
             viewHolder.getTvNewAdd().setVisibility(View.GONE);
             viewHolder.contentView.setOnClickListener(
-                    v -> onItemClickListener.onItemClick(datas.get(position).first));
+                    v -> {
+                        if (position < datas.size()) {
+                            onItemClickListener.onItemClick(datas.get(position).first);
+                        }
+                    });
         } else {
             viewHolder.getTvName().setText(datas.get(position).first);
             viewHolder.getTvName().setTextColor(0xFF00A2E2);

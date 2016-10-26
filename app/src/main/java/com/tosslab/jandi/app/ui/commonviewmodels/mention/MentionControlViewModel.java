@@ -16,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -68,7 +69,6 @@ public class MentionControlViewModel {
                                     List<Long> roomIds,
                                     String mentionType, Runnable callback) {
 
-        this.clipBoard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         this.mentionType = mentionType;
 
         init(activity, editText, teamId, roomIds, callback);
@@ -202,6 +202,7 @@ public class MentionControlViewModel {
 
         if (callback != null) {
             Completable.fromAction(() -> {
+                clipBoard = (ClipboardManager) JandiApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 etMessage.setAdapter(mentionMemberListAdapter);
                 etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
                 etMessage.setThreshold(1);
@@ -209,6 +210,7 @@ public class MentionControlViewModel {
             }).subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe(callback::run);
         } else {
+            clipBoard = (ClipboardManager) JandiApplication.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             etMessage.setAdapter(mentionMemberListAdapter);
             etMessage.setDropDownBackgroundResource(R.drawable.mention_popup);
             etMessage.setThreshold(1);
@@ -358,7 +360,7 @@ public class MentionControlViewModel {
         }
 
         if (onMentionShowingListener != null) {
-            onMentionShowingListener.onMentionShowing(etMessage.isPopupShowing());
+            onMentionShowingListener.onMentionShowing(hasMembers);
         }
         mentionMemberListAdapter.notifyDataSetChanged();
     }
@@ -546,15 +548,17 @@ public class MentionControlViewModel {
     }
 
     public void removeClipboardListener() {
-        if (clipboardListener != null) {
+        if (clipBoard != null && clipboardListener != null) {
             clipBoard.removePrimaryClipChangedListener(clipboardListener);
         }
     }
 
     public void registClipboardListener() {
         removeClipboardListener();
-        clipboardListener = new ClipboardListener();
-        clipBoard.addPrimaryClipChangedListener(clipboardListener);
+        if (clipBoard != null) {
+            clipboardListener = new ClipboardListener();
+            clipBoard.addPrimaryClipChangedListener(clipboardListener);
+        }
     }
 
     public void onConfigurationChanged() {

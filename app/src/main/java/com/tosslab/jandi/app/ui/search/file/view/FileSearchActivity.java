@@ -137,6 +137,9 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
                 .findFragmentByTag(FileListFragment.class.getName());
 
         if (fileListFragment != null) {
+            searchSelectView = fileListFragment;
+            searchSelectView.setOnSearchItemSelect(this::finish);
+            searchSelectView.setOnSearchText(() -> etSearch.getText().toString().trim());
             return;
         }
         fileListFragment = FileListFragment.create(this, entityId, writerId, fileType);

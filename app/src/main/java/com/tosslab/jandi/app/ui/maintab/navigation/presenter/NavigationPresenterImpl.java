@@ -84,9 +84,11 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .doOnNext(teams -> {
                             ResAccountInfo.UserTeam selectedTeamInfo =
                                     AccountRepository.getRepository().getSelectedTeamInfo();
-                            Observable.from(teams)
-                                    .filter(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
-                                    .subscribe(team -> team.setSelected(true));
+                            if (selectedTeamInfo == null) {
+                                Observable.from(teams)
+                                        .takeFirst(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
+                                        .subscribe(team -> team.setSelected(true), t -> {});
+                            }
                         })
                         .map(teams -> {
                             if (NetworkCheckUtil.isConnected()) {

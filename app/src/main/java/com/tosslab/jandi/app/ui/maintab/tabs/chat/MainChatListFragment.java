@@ -332,15 +332,17 @@ public class MainChatListFragment extends Fragment
 
     @Click(R.id.btn_chat_list_no_messages)
     void chooseUser() {
-        startActivity(Henson.with(getActivity())
-                .gotoTeamMemberSearchActivity()
-                .isSelectMode(true)
-                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_CHAT)
-                .build());
+        if (getActivity() != null && !getActivity().isFinishing()) {
+            startActivity(Henson.with(getActivity())
+                    .gotoTeamMemberSearchActivity()
+                    .isSelectMode(true)
+                    .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_CHAT)
+                    .build());
 
-        getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
+            getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
 
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.SelectTeamMember_EmptyData);
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.util.Pair;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.model.StarredListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.model.StarredListModel;
@@ -232,12 +233,16 @@ public class StarredListPresenterImpl implements StarredListPresenter {
     private void moveToMessageList(StarredMessage message) {
         long roomId = message.getRoom().id;
 
-        Observable.defer(() -> Observable.from(TeamInfoLoader.getInstance()
-                .getRoom(roomId)
-                .getMembers()))
+        Observable.defer(() -> {
+            Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+            if (room == null) {
+                return Observable.error(new NullPointerException("It's not valid Room"));
+            }
+            return Observable.from(room.getMembers());
+        })
                 .takeFirst(memberId -> memberId == TeamInfoLoader.getInstance().getMyId())
                 .firstOrDefault(-1L)
-                .concatMap(it ->{
+                .concatMap(it -> {
                     if (it > 0) {
 
                         return Observable.just(it);

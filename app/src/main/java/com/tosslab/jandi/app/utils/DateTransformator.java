@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -34,6 +35,9 @@ public class DateTransformator {
     }
 
     public static String getTimeString(Date date, String format) {
+        if (TextUtils.isEmpty(format) || date == null) {
+            return "";
+        }
         return new SimpleDateFormat(format).format(date);
     }
 
