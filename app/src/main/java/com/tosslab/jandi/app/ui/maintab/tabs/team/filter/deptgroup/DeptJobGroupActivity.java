@@ -149,7 +149,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         if (item.getItemId() == android.R.id.home) {
             finish();
         } else if (item.getItemId() == R.id.action_select_all) {
-
+            presenter.addToggleOfAll();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -231,11 +231,6 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                 screen = AnalyticsValue.Screen.InviteTeamMembers_JobTitle;
             }
         }
-    }
-
-    @Override
-    public void onAddAllUser() {
-        presenter.addToggleOfAll();
     }
 
 }

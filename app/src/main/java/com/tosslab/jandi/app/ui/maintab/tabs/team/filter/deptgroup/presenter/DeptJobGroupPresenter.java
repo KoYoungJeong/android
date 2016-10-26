@@ -23,6 +23,5 @@ public interface DeptJobGroupPresenter {
 
         void comeWithResult(long[] toggledUser);
 
-        void onAddAllUser();
     }
 }
