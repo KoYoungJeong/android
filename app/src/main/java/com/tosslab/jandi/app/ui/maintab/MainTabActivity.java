@@ -349,7 +349,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
-
+        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() -1 , 1));
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
