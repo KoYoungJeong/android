@@ -149,7 +149,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
         if (item.getItemId() == android.R.id.home) {
             finish();
         } else if (item.getItemId() == R.id.action_select_all) {
-            onAddAllUser();
+
         }
         return super.onOptionsItemSelected(item);
     }
