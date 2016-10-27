@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -41,6 +43,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 
@@ -70,6 +73,7 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     private ProgressWheel progressWheel;
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
+    private android.view.inputmethod.InputMethodManager inputMethodManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +99,8 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
         mainTopicListPresenter.onSearchTopic(true, "");
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.BrowseOtherTopics);
+
+        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
 
     @Override
@@ -295,5 +301,19 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     void onSearchTopic(CharSequence query) {
         mainTopicListPresenter.onSearchTopic(false, query);
     }
+
+    @OnEditorAction(R.id.et_joinable_topic_list_search)
+    boolean onSearchAction(TextView view, int actionId) {
+        if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            hideKeyboard();
+            return true;
+        }
+        return false;
+    }
+
+    public void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
 
 }
