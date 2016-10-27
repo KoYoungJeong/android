@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -67,7 +66,10 @@ public class SearchMemberModel {
                 .distinct()
                 .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
                 .filter(it -> !TextUtils.isEmpty(it.getName()))
-                .map(entity -> new SearchedItemVO().setName(entity.getName())
+                .map(entity -> new SearchedItemVO()
+                        .setName(entity.getName())
+                        .setDepartment(entity.getDivision())
+                        .setJobTitle(entity.getPosition())
                         .setId(entity.getId())
                         .setType(SearchType.member.name())
                         .setSmallProfileImageUrl(entity.getPhotoUrl())
