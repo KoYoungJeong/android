@@ -49,7 +49,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:text="@string/jandi_starred_star"
+        android:text="@string/jandi_starred"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="16sp" />
 

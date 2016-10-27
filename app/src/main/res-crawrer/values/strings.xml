@@ -744,6 +744,7 @@
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
 	<string name="topic_polls_deletedpoll">"Deleted Poll"</string>
+	<string name="topic_room_selectallmembers">"Select All"</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>
 	<string name="url">"URL"</string>

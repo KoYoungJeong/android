@@ -31,9 +31,9 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.views.decoration.SimpleColorDividerItemDecoration;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.decoration.SimpleColorDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -214,7 +214,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void showUnStarSuccessToast() {
-        ColoredToast.show(R.string.jandi_unpinned_message);
+        ColoredToast.show(R.string.jandi_message_no_starred);
     }
 
     @Override
@@ -254,7 +254,7 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     private void showUnStarDialog(long messageId) {
         new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setMessage(R.string.jandi_starred_unstar_from_item)
+                .setMessage(R.string.jandi_unstarred)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                     starredListPresenter.unStarMessage(messageId);
                 }).setNegativeButton(R.string.jandi_cancel, null)

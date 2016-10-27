@@ -114,7 +114,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(isStarred -> {
                     if (isStarred) {
-                        view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_starred_unstarred));
+                        view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_no_starred));
                     } else {
                         view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
                     }
