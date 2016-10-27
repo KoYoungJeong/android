@@ -1,95 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="157dp"
-    android:layout_marginEnd="7dp"
-    android:layout_marginStart="7dp"
-    android:background="@drawable/popup_bg">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_call_preview_thumb"
-        android:layout_width="43dp"
-        android:layout_height="43dp"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/profile_img" />
-
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignBottom="@+id/iv_call_preview_thumb"
-        android:layout_alignEnd="@+id/iv_call_preview_thumb"
-        android:layout_marginBottom="-3dp"
-        android:layout_marginEnd="-7dp"
-        android:src="@drawable/popup_member_profile_jandi" />
-
-    <ImageView
-        android:id="@+id/btn_call_preview_close"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/bar_icon_close_grey" />
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp"
-        android:layout_toEndOf="@+id/iv_call_preview_thumb"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_height="116dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginStart="7dp"
+        android:background="@drawable/bg_round_rect_white_stroke_black">
 
-        <TextView
-            android:id="@+id/tv_call_preview_tel"
+        <ImageView
+            android:id="@+id/iv_call_preview_thumb"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/profile_img" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@+id/iv_call_preview_thumb"
+            android:layout_alignEnd="@+id/iv_call_preview_thumb"
+            android:layout_marginBottom="-3dp"
+            android:layout_marginEnd="-7dp"
+            android:src="@drawable/popup_member_profile_jandi" />
+
+        <ImageView
+            android:id="@+id/btn_call_preview_close"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/bar_icon_close_grey" />
+
+        <!--
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="28dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="010504097300                                 "
+                    android:layout_toLeftOf="@+id/btn_call_preview_close"
+                    android:layout_alignTop="@+id/btn_call_preview_close"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="@dimen/jandi_text_size_large" />
+        -->
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="28dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="01050409730"
-            android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_large" />
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_toEndOf="@+id/iv_call_preview_thumb"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_call_preview_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="Diane Kang"
-            android:textColor="@color/jandi_text"
-            android:textSize="21sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_call_preview_tel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:layout_marginEnd="28dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="01050409730"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_large" />
 
-        <TextView
-            android:id="@+id/tv_call_preview_position"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="UI/UX Designer"
-            android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_small" />
+            <TextView
+                android:id="@+id/tv_call_preview_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Diane Kang"
+                android:textColor="@color/jandi_text"
+                android:textSize="21sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_call_preview_dept"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="Design UI/UX"
-            android:textColor="@color/jandi_text_light"
-            android:textSize="@dimen/jandi_text_size_small" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_call_preview_position"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="UI/UX Designer"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_small" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/tv_call_preview_dept"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Design UI/UX"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="@dimen/jandi_text_size_small" />
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

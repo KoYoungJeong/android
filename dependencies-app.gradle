@@ -95,6 +95,9 @@ rootProject.allprojects { project ->
                 // intercom
                 compile rootProject.ext.dependecies.libraries.intercom
 
+                // phonenumber parser
+                compile rootProject.ext.dependecies.libraries.libphonenumber_android
+
                 // Retrofit
                 compile rootProject.ext.dependecies.libraries.retrofit2
                 compile rootProject.ext.dependecies.libraries.okhttp3

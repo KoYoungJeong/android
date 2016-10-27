@@ -73,6 +73,8 @@ ext.dependecies = [
 
                 intercom                         : 'io.intercom.android:intercom-sdk-base:3.+',
 
+                libphonenumber_android           : 'io.michaelrocks:libphonenumber-android:7.7.2',
+
                 testrunner                       : 'com.android.support.test:runner:0.5',
                 testrule                         : 'com.android.support.test:rules:0.5',
                 espresso_core                    : 'com.android.support.test.espresso:espresso-core:2.2.2',
