@@ -69,6 +69,7 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -78,6 +79,7 @@ import de.greenrobot.event.EventBus;
 import io.intercom.android.sdk.Intercom;
 import io.intercom.android.sdk.UnreadConversationCountListener;
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import rx.Completable;
 
 /**
  * Created by tonyjs on 2016. 8. 17..
@@ -205,13 +207,20 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_setting_notification:
-                moveToSetUpNotification();
-
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToSetUpNotification();
+                });
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.NotificationSetting);
                 return true;
             case R.id.nav_setting_passcode:
-                moveToSetUpPasscode();
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToSetUpPasscode();
+                });
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PasscodeLock);
@@ -220,37 +229,60 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 showSettingOrientationDialog();
                 return true;
             case R.id.nav_setting_account:
-                moveToSetUpAccount();
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToSetUpAccount();
+                });
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.AccountSetting);
                 return true;
             case R.id.nav_term_of_service:
-                moveToCheckTeamsOfService();
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToCheckTeamsOfService();
+                });
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.TermsofService);
                 return true;
             case R.id.nav_privacy_policy:
-                moveToCheckPrivacyPolicy();
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToCheckPrivacyPolicy();
+                });
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PrivacyPolicy);
                 return true;
             case R.id.nav_help:
-                moveToShowHelpPage();
-
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToShowHelpPage();
+                });
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.FAQ);
                 return true;
             case R.id.nav_1_on_1:
-                moveToLiveSupport();
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    moveToLiveSupport();
+                });
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.LiveSupport);
                 return true;
             case R.id.nav_sign_out:
-                signOut();
+                Completable.fromAction(() -> {
+                    closeNavigation();
+                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                    signOut();
+                });
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.SignOut);
@@ -475,7 +507,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         }
 
         ivProfile.setOnClickListener(v -> {
-            moveToProfileSettingActivity();
+            Completable.fromAction(() -> {
+                closeNavigation();
+            }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
+                moveToProfileSettingActivity();
+            });
             AnalyticsUtil.sendEvent(
                     AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.EditProfile);
         });
