@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_select_all"
         android:orderInCategory="100"
-        android:title="전체 선택"
+        android:title="@string/topic_room_selectallmembers"
         app:showAsAction="always" />
 
 </menu>
