@@ -121,6 +121,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.settings.call.CallSettingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="멤버 연락처 블라블라" />
+
+        <activity
             android:name=".ui.settings.privacy.SettingPrivacyActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />

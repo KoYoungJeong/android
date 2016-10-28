@@ -61,6 +61,7 @@ public class JandiPreference {
     private static final String PREF_LAST_SELECTED_OF_TEAM = "last_selected_of_team";
 
     private static final String PREF_CALL_PREVIEW_Y = "call_preview_coordinate_y";
+    private static final String PREF_CALL_PERMISSION_POPUP = "call_preview_permission_popup";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -448,5 +449,11 @@ public class JandiPreference {
     }
     public static void setCallPreviewCoordinateY(int callPreviewY) {
         getSharedPreferences().edit().putInt(PREF_CALL_PREVIEW_Y, callPreviewY).commit();
+    }
+    public static boolean isShowCallPermissionPopup() {
+        return getSharedPreferences().getBoolean(PREF_CALL_PERMISSION_POPUP, true);
+    }
+    public static void setShowCallPermissionPopup() {
+        getSharedPreferences().edit().putBoolean(PREF_CALL_PERMISSION_POPUP, false).commit();
     }
 }

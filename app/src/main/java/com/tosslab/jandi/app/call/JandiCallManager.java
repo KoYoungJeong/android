@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.call;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.List;
@@ -46,6 +48,17 @@ public class JandiCallManager {
         subject = PublishSubject.create();
 
         subject.onBackpressureBuffer()
+                .filter(it -> {
+                    if (SdkUtils.isMarshmallow()) {
+                        if (Settings.canDrawOverlays(JandiApplication.getContext())) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                })
                 .concatMap(callState -> {
                     Observable<CallState> initObservable = Observable.just(callState);
                     switch (callState.state) {

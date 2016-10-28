@@ -216,6 +216,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PasscodeLock);
                 return true;
+            case R.id.nav_setting_call_preview:
+                moveoToSetUpCallPreview();
+                AnalyticsUtil.sendEvent(
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.CallPreview);
+                break;
             case R.id.nav_setting_orientation:
                 showSettingOrientationDialog();
                 return true;
@@ -257,6 +262,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveoToSetUpCallPreview() {
+        startActivity(Henson.with(getActivity()).gotoCallSettingActivity().build());
     }
 
     private void moveToLiveSupport() {
