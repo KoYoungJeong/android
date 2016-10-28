@@ -146,7 +146,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         bindSharedTopics(fileMessage.shareEntities);
     }
 
-    private boolean isDeleted(String status) {
+    protected boolean isDeleted(String status) {
         return TextUtils.equals(status, "archived");
     }
 

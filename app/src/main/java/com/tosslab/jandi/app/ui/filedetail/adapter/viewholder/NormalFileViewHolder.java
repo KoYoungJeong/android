@@ -47,7 +47,12 @@ public class NormalFileViewHolder extends FileViewHolder {
         MimeTypeUtil.PlaceholderType placeholderType =
                 PlaceholderUtil.getPlaceholderType(serverUrl, icon);
 
-        ivFileThumb.setImageResource(getResource(placeholderType));
+
+        if (isDeleted(fileMessage.status)) {
+            ivFileThumb.setImageResource(R.drawable.file_icon_delete_198);
+        } else {
+            ivFileThumb.setImageResource(getResource(placeholderType));
+        }
 
         String fileUrl = ImageUtil.getImageFileUrl(content.fileUrl);
         if (TextUtils.isEmpty(fileUrl)) {

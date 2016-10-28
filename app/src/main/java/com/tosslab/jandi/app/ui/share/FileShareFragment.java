@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -76,8 +77,8 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @FragmentArg
     String text;
 
-    @ViewById(R.id.iv_share_image)
-    ImageView ivShareImage;
+    @ViewById(R.id.iv_share_photo)
+    ImageView ivSharePhoto;
 
     @ViewById(R.id.tv_share_image_title)
     TextView tvTitle;
@@ -93,6 +94,9 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     @ViewById(R.id.vg_file_icon)
     LinearLayout vgFileIcon;
+
+    @ViewById(R.id.vg_share_content)
+    ViewGroup vgShareContent;
 
     @ViewById(R.id.iv_share_file_icon)
     ImageView ivShareFileIcon;
@@ -171,17 +175,21 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         tvTitle.setText(fileName);
         if (FileExtensionsUtil.getExtensions(fileName) == FileExtensionsUtil.Extensions.IMAGE) {
             vgFileIcon.setVisibility(View.GONE);
-            ivShareImage.setVisibility(View.VISIBLE);
+            ivSharePhoto.setVisibility(View.VISIBLE);
+            vgShareContent.setBackgroundResource(R.drawable.upload_bg);
+            vgViewer.setBackgroundResource(R.drawable.upload_bg);
 
             ImageLoader.newInstance()
                     .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .uri(Uri.fromFile(file))
-                    .into(ivShareImage);
+                    .into(ivSharePhoto);
         } else {
             vgFileIcon.setVisibility(View.VISIBLE);
             tvShareFileType.setText(FileExtensionsUtil.getFileTypeText(fileName));
-            ivShareImage.setVisibility(View.GONE);
+            ivSharePhoto.setVisibility(View.GONE);
+            vgShareContent.setBackgroundColor(0xffffffff);
+            vgViewer.setBackgroundColor(0xffffffff);
 
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
             ivShareFileIcon.setImageResource(resId);
