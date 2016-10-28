@@ -380,10 +380,10 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     @OnTextChanged(R.id.tv_search_keyword)
     void onSearchTextChanged(CharSequence text) {
         if (text.length() > 0) {
-            ivMic.setImageResource(R.drawable.search_word_delete);
+            ivMic.setImageResource(R.drawable.account_icon_close);
             vgRecentSearch.setVisibility(View.GONE);
         } else {
-            ivMic.setImageResource(R.drawable.btn_search_voice);
+            ivMic.setImageResource(R.drawable.account_icon_mic);
         }
         keywordSubject.onNext(text.toString());
 

@@ -82,7 +82,7 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         if (!TextUtils.isEmpty(localFilePath)) {
             ImageLoader.newInstance()
-                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.FIT_CENTER)
+                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                     .uri(UriUtil.getFileUri(localFilePath))
@@ -92,7 +92,7 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         if (hasThumbnailUrl) {
             ImageLoader.newInstance()
-                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.FIT_CENTER)
+                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                     .uri(Uri.parse(extraInfo.largeThumbnailUrl))
