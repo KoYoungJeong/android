@@ -84,7 +84,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .doOnNext(teams -> {
                             ResAccountInfo.UserTeam selectedTeamInfo =
                                     AccountRepository.getRepository().getSelectedTeamInfo();
-                            if (selectedTeamInfo == null) {
+                            if (selectedTeamInfo != null) {
                                 Observable.from(teams)
                                         .takeFirst(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
                                         .subscribe(team -> team.setSelected(true), t -> {});

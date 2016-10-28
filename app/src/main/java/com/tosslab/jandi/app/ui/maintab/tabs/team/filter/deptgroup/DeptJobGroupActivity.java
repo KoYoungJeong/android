@@ -137,7 +137,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (selectMode) {
+        if (selectMode && !pickMode) {
             MenuInflater menuInflater = getMenuInflater();
             menuInflater.inflate(R.menu.dept_jobtitle_menu, menu);
         }
