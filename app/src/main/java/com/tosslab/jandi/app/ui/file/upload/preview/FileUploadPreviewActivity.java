@@ -391,10 +391,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public void setPricingLimitView(Boolean isLimited) {
         if (isLimited) {
             layoutPricingPlanWarning.setVisibility(View.VISIBLE);
-            PricingPlanWarningViewController.newInstance(this,
-                    layoutPricingPlanWarning,
-                    PricingPlanWarningViewController.TYPE_UPLOAD
-            );
+            PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
+                    .bind(PricingPlanWarningViewController.TYPE_UPLOAD);
         } else {
             layoutPricingPlanWarning.setVisibility(View.GONE);
         }

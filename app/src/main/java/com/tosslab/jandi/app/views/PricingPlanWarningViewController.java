@@ -39,16 +39,19 @@ public class PricingPlanWarningViewController {
 
     private WeakReference<Context> contextWeakReference;
 
-    private PricingPlanWarningViewController(Context context, View view, int type) {
+    private PricingPlanWarningViewController(Context context, View view) {
         contextWeakReference = new WeakReference<>(context);
         ButterKnife.bind(this, view);
         tvShowPricePlanButton.setOnClickListener(v -> onClickShowPricePlan());
         tvRequestInquiryButton.setOnClickListener(v -> onClickRequestInquiry());
-        initInfos(type);
     }
 
-    public static PricingPlanWarningViewController newInstance(Context context, View view, int type) {
-        return new PricingPlanWarningViewController(context, view, type);
+    public static PricingPlanWarningViewController with(Context context, View view) {
+        return new PricingPlanWarningViewController(context, view);
+    }
+
+    public void bind(int type) {
+        initInfos(type);
     }
 
     private void initInfos(int type) {
@@ -66,9 +69,10 @@ public class PricingPlanWarningViewController {
         tvTeamName.setText(teamName);
     }
 
-    public void showRemoveButton(OnClickRemoveViewListener onClickRemoveViewListener) {
+    public PricingPlanWarningViewController addViewRemoveButton(OnClickRemoveViewListener onClickRemoveViewListener) {
         ivRemoveViewButton.setVisibility(View.VISIBLE);
         ivRemoveViewButton.setOnClickListener(v -> onClickRemoveViewListener.onClickRemoveViewListener());
+        return this;
     }
 
     public void onClickShowPricePlan() {
