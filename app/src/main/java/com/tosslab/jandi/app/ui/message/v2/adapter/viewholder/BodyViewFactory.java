@@ -132,7 +132,7 @@ public class BodyViewFactory {
 
         } else if (isEventMessage(currentLink)) {
 
-            type = getEventMessageType(currentLink, nextLink, roomId);
+            type = getEventMessageType(currentLink, nextLink);
 
         } else if (isTextMessage(currentLink)) {
 
@@ -177,8 +177,7 @@ public class BodyViewFactory {
     }
 
     private static int getEventMessageType(ResMessages.Link currentLink,
-                                           ResMessages.Link nextLink,
-                                           long roomId) {
+                                           ResMessages.Link nextLink) {
 
         int type = TypeUtil.TYPE_VIEW_EVENT_MESSAGE;
 
