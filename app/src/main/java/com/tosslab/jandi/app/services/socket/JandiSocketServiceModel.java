@@ -896,7 +896,9 @@ public class JandiSocketServiceModel {
                                     Henson.with(JandiApplication.getContext())
                                             .gotoTeamSelectListActivity()
                                             .shouldRefreshAccountInfo(true)
-                                            .build().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                            .build()
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
