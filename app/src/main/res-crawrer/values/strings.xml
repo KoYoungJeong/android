@@ -14,10 +14,10 @@
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_hamburger_teamlist">"Team List"</string>
-	<string name="common_pricingplan_fileupload">"{TeamName}\n Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
+	<string name="common_pricingplan_fileupload">"Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_pricingplan_livesupport">"Live Support"</string>
 	<string name="common_pricingplan_moreinfo">"More detail"</string>
-	<string name="common_pricingplan_msgsearch">"{TeamName}\n Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
+	<string name="common_pricingplan_msgsearch">"Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
 	<string name="common_settings_lostpasscodedesc">"Please delete and reinstall the app to reset your passcode"</string>
 	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
@@ -744,6 +744,7 @@
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
 	<string name="topic_polls_deletedpoll">"Deleted Poll"</string>
+	<string name="topic_room_selectallmembers">"Select All"</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>
 	<string name="url">"URL"</string>
