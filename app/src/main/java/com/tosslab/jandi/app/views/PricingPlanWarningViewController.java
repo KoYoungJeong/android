@@ -54,13 +54,16 @@ public class PricingPlanWarningViewController {
     private void initInfos(int type) {
         String teamName = TeamInfoLoader.getInstance().getTeamName();
         String message = "";
-        switch (type) {
-            case TYPE_UPLOAD:
-                message = contextWeakReference.get().getString(R.string.common_pricingplan_fileupload);
-                break;
-            case TYPE_MSG_SEARCH:
-                message = contextWeakReference.get().getString(R.string.common_pricingplan_msgsearch);
-                break;
+        Context context = contextWeakReference.get();
+        if (context != null) {
+            switch (type) {
+                case TYPE_UPLOAD:
+                    message = context.getString(R.string.common_pricingplan_fileupload);
+                    break;
+                case TYPE_MSG_SEARCH:
+                    message = context.getString(R.string.common_pricingplan_msgsearch);
+                    break;
+            }
         }
         tvMessage.setText(message);
         tvTeamName.setText(teamName);
@@ -72,23 +75,26 @@ public class PricingPlanWarningViewController {
     }
 
     public void onClickShowPricePlan() {
-        Locale locale = contextWeakReference.get().getResources().getConfiguration().locale;
-        String lang = locale.getLanguage();
-        String url = "https://www.jandi.com/landing/ko/pricing";
+        Context context = contextWeakReference.get();
+        if (context != null) {
+            Locale locale = context.getResources().getConfiguration().locale;
+            String lang = locale.getLanguage();
+            String url = "https://www.jandi.com/landing/ko/pricing";
 
-        if (TextUtils.equals(lang, "en")) {
-            url = "www.jandi.com/landing/en/pricing";
-        } else if (TextUtils.equals(lang, "ja")) {
-            url = "www.jandi.com/landing/ja/pricing";
-        } else if (TextUtils.equals(lang, "ko")) {
-            url = "www.jandi.com/landing/ko/pricing";
-        } else if (TextUtils.equals(lang, "zh-cn")) {
-            url = "www.jandi.com/landing/zh-cn/pricing";
-        } else if (TextUtils.equals(lang, "zh-tw")) {
-            url = "www.jandi.com/landing/zh-tw/pricing";
+            if (TextUtils.equals(lang, "en")) {
+                url = "www.jandi.com/landing/en/pricing";
+            } else if (TextUtils.equals(lang, "ja")) {
+                url = "www.jandi.com/landing/ja/pricing";
+            } else if (TextUtils.equals(lang, "ko")) {
+                url = "www.jandi.com/landing/ko/pricing";
+            } else if (TextUtils.equals(lang, "zh-cn")) {
+                url = "www.jandi.com/landing/zh-cn/pricing";
+            } else if (TextUtils.equals(lang, "zh-tw")) {
+                url = "www.jandi.com/landing/zh-tw/pricing";
+            }
+
+            ApplicationUtil.startWebBrowser(context, url);
         }
-
-        ApplicationUtil.startWebBrowser(contextWeakReference.get(), url);
     }
 
     public void onClickRequestInquiry() {
