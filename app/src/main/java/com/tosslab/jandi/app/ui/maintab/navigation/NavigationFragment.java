@@ -80,6 +80,7 @@ import io.intercom.android.sdk.Intercom;
 import io.intercom.android.sdk.UnreadConversationCountListener;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tonyjs on 2016. 8. 17..
@@ -207,20 +208,20 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_setting_notification:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToSetUpNotification();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToSetUpNotification);
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.NotificationSetting);
                 return true;
             case R.id.nav_setting_passcode:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToSetUpPasscode();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToSetUpPasscode);
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PasscodeLock);
@@ -229,60 +230,60 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 showSettingOrientationDialog();
                 return true;
             case R.id.nav_setting_account:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToSetUpAccount();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToSetUpAccount);
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.AccountSetting);
                 return true;
             case R.id.nav_term_of_service:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToCheckTeamsOfService();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToCheckTeamsOfService);
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.TermsofService);
                 return true;
             case R.id.nav_privacy_policy:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToCheckPrivacyPolicy();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToCheckPrivacyPolicy);
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PrivacyPolicy);
                 return true;
             case R.id.nav_help:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToShowHelpPage();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToShowHelpPage);
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.FAQ);
                 return true;
             case R.id.nav_1_on_1:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    moveToLiveSupport();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToLiveSupport);
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.LiveSupport);
                 return true;
             case R.id.nav_sign_out:
-                Completable.fromAction(() -> {
-                    closeNavigation();
-                }).delay(300, TimeUnit.MILLISECONDS).subscribe(() -> {
-                    signOut();
-                });
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::signOut);
 
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.SignOut);
