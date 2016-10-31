@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -41,6 +42,7 @@ import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import java.util.List;
@@ -79,6 +81,9 @@ public class SearchActivity extends BaseAppCompatActivity
     AutoCompleteTextView tvSearchKeyword;
     @Bind(R.id.progress_more_loading_message)
     ProgressBar progressMoreLoadingMessage;
+    @Bind(R.id.layout_pricing_plan_warning)
+    ViewGroup layoutPricingPlanWarning;
+
     @Inject
     SearchPresenter searchPresenter;
     @Inject
@@ -222,6 +227,7 @@ public class SearchActivity extends BaseAppCompatActivity
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
+                searchPresenter.onInitPricingInfo();
                 flagFirstSearch = false;
             }
             searchPresenter.sendSearchQuery(searchKeyword, isOnlyMessageMode);
@@ -569,4 +575,17 @@ public class SearchActivity extends BaseAppCompatActivity
         builder.show();
     }
 
+    @Override
+    public void setPricingLimitView(Boolean isLimited) {
+        if (isLimited) {
+            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
+            PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
+                    .addViewRemoveButton(() -> {
+                        layoutPricingPlanWarning.setVisibility(View.GONE);
+                    })
+                    .bind(PricingPlanWarningViewController.TYPE_MSG_SEARCH);
+        } else {
+            layoutPricingPlanWarning.setVisibility(View.GONE);
+        }
+    }
 }
