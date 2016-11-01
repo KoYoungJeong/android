@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -407,6 +408,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     public void onEvent(TeamDeletedEvent event) {
+        navigationPresenter.onInitializeTeams();
+    }
+
+    public void onEvent(TeamJoinEvent event) {
         navigationPresenter.onInitializeTeams();
     }
 

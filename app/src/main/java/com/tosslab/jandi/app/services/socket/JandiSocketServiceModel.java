@@ -277,7 +277,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamCreated(Object object) {
         try {
-            SocketTeamCreatedEvent event = SocketModelExtractor.getObject(object, SocketTeamCreatedEvent.class);
+            SocketTeamCreatedEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamCreatedEvent.class);
             saveEvent(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
         } catch (Exception e) {
@@ -920,7 +920,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamDeleted(Object object) {
         try {
-            SocketTeamDeletedEvent event = SocketModelExtractor.getObject(object, SocketTeamDeletedEvent.class, true, false);
+            SocketTeamDeletedEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamDeletedEvent.class);
             saveEvent(event);
 
             long teamId = event.getData().getTeamId();
@@ -1156,7 +1156,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamJoin(Object object) {
         try {
-            SocketTeamJoinEvent event = SocketModelExtractor.getObject(object, SocketTeamJoinEvent.class);
+            SocketTeamJoinEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamJoinEvent.class);
             saveEvent(event);
 
             SocketTeamJoinEvent.Data data = event.getData();
@@ -1387,7 +1387,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamUpdated(Object object) {
         try {
-            SocketTeamUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamUpdatedEvent.class, true, false);
+            SocketTeamUpdatedEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamUpdatedEvent.class);
             saveEvent(event);
 
             if (event.getData().getTeam().getId() == TeamInfoLoader.getInstance().getTeamId()) {
