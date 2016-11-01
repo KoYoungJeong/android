@@ -15,7 +15,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/jandi_team_selector_icon" />
+        android:src="@drawable/share_icon_teamlist_inactive" />
 
     <TextView
         android:id="@+id/tv_team_list_name"
