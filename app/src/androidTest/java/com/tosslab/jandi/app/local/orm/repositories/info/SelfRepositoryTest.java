@@ -21,5 +21,6 @@ public class SelfRepositoryTest {
     @Test
     public void testIsMe() throws Exception {
         assertThat(SelfRepository.getInstance().isMe(TeamInfoLoader.getInstance().getMyId())).isTrue();
+        assertThat(SelfRepository.getInstance().isMe(-1)).isFalse();
     }
 }

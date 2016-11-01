@@ -1,13 +1,10 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Chat;
+import com.tosslab.jandi.app.network.models.start.LastMessage;
 
-import java.sql.SQLException;
-
-public class ChatRepository extends LockExecutorTemplate {
+public class ChatRepository extends RealmRepository {
     private static ChatRepository instance;
 
     synchronized public static ChatRepository getInstance() {
@@ -18,78 +15,49 @@ public class ChatRepository extends LockExecutorTemplate {
     }
 
     public boolean updateChatOpened(long roomId, boolean isOpened) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Long> dao = getHelper().getDao(Chat.class);
-                UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
-                chatUpdateBuilder.updateColumnValue("isOpened", isOpened)
-                        .where()
-                        .eq("id", roomId)
-                        .and()
-                        .eq("isOpened", !isOpened);
-                return chatUpdateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+
+            Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> chat.setIsOpened(isOpened));
             }
-            return false;
+
+            return true;
         });
     }
 
     public Chat getChat(long chatId) {
-        return execute(() -> {
-
-            try {
-                Dao<Chat, Long> dao = getDao(Chat.class);
-                return dao.queryForId(chatId);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        return execute((realm) -> realm.where(Chat.class).equalTo("id", chatId).findFirst());
     }
 
     public boolean addChat(Chat chat) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Object> dao = getDao(Chat.class);
-                return dao.create(chat) > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
+        return execute((realm) -> {
+            realm.executeTransaction(realm1 -> realm.insertOrUpdate(chat));
+            return true;
         });
     }
 
     public boolean updateLastMessage(long roomId, long lastMessageId, String text, String status) {
-        return execute(() -> {
+        return execute((realm) -> {
 
-            try {
-                Dao<Chat, Long> dao = getDao(Chat.class);
-                Chat chat = dao.queryForId(roomId);
+            Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
 
-                Dao<Chat.LastMessage, Long> lastMessageDao = getDao(Chat.LastMessage.class);
-
-                if (chat.getLastMessage() != null) {
-                    long oldLastMessageId = chat.getLastMessage().getId();
-                    lastMessageDao.deleteById(oldLastMessageId);
-                }
-
-                Chat.LastMessage lastMessage = new Chat.LastMessage();
-                lastMessage.setId(lastMessageId);
-                lastMessage.setText(text);
-                lastMessage.setStatus(status);
-
-                UpdateBuilder<Chat, Long> chatUpdateBuilder = dao.updateBuilder();
-                chatUpdateBuilder.updateColumnValue("lastMessage_id", lastMessageId)
-                        .where()
-                        .eq("id", roomId);
-                chatUpdateBuilder.update();
-                lastMessageDao.create(lastMessage);
-
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> {
+                    LastMessage lastMessage = chat.getLastMessage();
+                    if (lastMessage != null) {
+                        lastMessage.setStatus(status);
+                        lastMessage.setText(text);
+                        lastMessage.setId(lastMessageId);
+                    } else {
+                        lastMessage = realm.createObject(LastMessage.class, lastMessageId);
+                        lastMessage.setId(lastMessageId);
+                        lastMessage.setText(text);
+                        lastMessage.setStatus(status);
+                        chat.setLastMessage(lastMessage);
+                    }
+                });
                 return true;
-
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
 
             return false;
@@ -97,32 +65,16 @@ public class ChatRepository extends LockExecutorTemplate {
     }
 
     public boolean isChat(long roomId) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Long> dao = getDao(Chat.class);
-                return dao.queryBuilder()
-                        .where()
-                        .eq("id", roomId)
-                        .countOf() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            return false;
-        });
+        return execute((realm) -> realm.where(Chat.class).equalTo("id", roomId).count() > 0);
     }
 
     public boolean updateUnreadCount(long chatId, int unreadCount) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Long> dao = getDao(Chat.class);
-                UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnValue("unreadCount", unreadCount)
-                        .where()
-                        .eq("id", chatId);
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            Chat chat = realm.where(Chat.class).equalTo("id", chatId).findFirst();
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> chat.setUnreadCount(unreadCount));
+                return true;
             }
 
             return false;
@@ -130,16 +82,10 @@ public class ChatRepository extends LockExecutorTemplate {
     }
 
     public boolean incrementUnreadCount(long chatId) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Long> dao = getDao(Chat.class);
-                UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnExpression("unreadCount", "unreadCount + 1")
-                        .where()
-                        .eq("id", chatId);
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+            Chat chat = realm.where(Chat.class).equalTo("id", chatId).findFirst();
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> chat.setUnreadCount(chat.getUnreadCount() + 1));
             }
 
             return false;
@@ -147,47 +93,44 @@ public class ChatRepository extends LockExecutorTemplate {
     }
 
     public boolean updateLastLinkId(long roomId, long linkId) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Object> dao = getDao(Chat.class);
-                UpdateBuilder<Chat, Object> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnValue("lastLinkId", linkId)
-                        .where()
-                        .eq("id", roomId)
-                        .and()
-                        .lt("lastLinkId", linkId);
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            Chat chat = realm.where(Chat.class)
+                    .equalTo("id", roomId)
+                    .findFirst();
+
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> chat.setLastLinkId(linkId));
+                return true;
             }
+
             return false;
+
         });
     }
 
     public boolean updateReadLinkId(long roomId, long readId) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Long> dao = getDao(Chat.class);
-                UpdateBuilder<Chat, Long> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnValue("readLinkId", readId)
-                        .where()
-                        .eq("id", roomId);
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> chat.setReadLinkId(readId));
+                return true;
             }
+
             return false;
         });
     }
 
     public boolean deleteChat(long chatId) {
-        return execute(() -> {
-            try {
-                Dao<Chat, Object> dao = getDao(Chat.class);
-                return dao.deleteById(chatId) > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            Chat chat = realm.where(Chat.class).equalTo("id", chatId).findFirst();
+            if (chat != null) {
+                realm.executeTransaction(realm1 -> chat.deleteFromRealm());
+                return true;
             }
+
             return false;
         });
     }

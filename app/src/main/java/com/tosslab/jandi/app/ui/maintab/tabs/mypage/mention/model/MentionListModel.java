@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResStarredMessage;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
@@ -110,7 +110,7 @@ public class MentionListModel {
     }
 
     public long getLastReadMentionId() {
-        InitialInfo.Mention mention = TeamInfoLoader.getInstance().getMention();
+        Mention mention = TeamInfoLoader.getInstance().getMention();
         if (mention == null) {
             return -1;
         }

@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.Profile;
 
 import java.sql.SQLException;
 
@@ -27,9 +28,9 @@ public class HumanDaoImpl extends BaseDaoImpl<Human, Long> {
         return row;
     }
 
-    private void createProfile(Human.Profile profile) throws SQLException {
+    private void createProfile(Profile profile) throws SQLException {
         if (profile != null) {
-            Dao<Human.Profile, ?> dao = DaoManager.createDao(getConnectionSource(), Human.Profile.class);
+            Dao<Profile, ?> dao = DaoManager.createDao(getConnectionSource(), Profile.class);
             dao.createOrUpdate(profile);
         }
     }

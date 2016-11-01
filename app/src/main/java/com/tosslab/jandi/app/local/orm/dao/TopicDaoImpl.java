@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
@@ -54,9 +55,9 @@ public class TopicDaoImpl extends BaseDaoImpl<Topic, Long> {
 
     }
 
-    private void createAnnouncement(Topic.Announcement announcement) throws SQLException {
+    private void createAnnouncement(Announcement announcement) throws SQLException {
         if (announcement != null) {
-            Dao<Topic.Announcement, ?> dao = DaoManager.createDao(getConnectionSource(), Topic.Announcement.class);
+            Dao<Announcement, ?> dao = DaoManager.createDao(getConnectionSource(), Announcement.class);
             dao.createIfNotExists(announcement);
         }
     }

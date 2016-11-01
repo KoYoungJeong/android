@@ -3,30 +3,31 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 
-import java.util.Collection;
+import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_folder")
-public class Folder {
-    @DatabaseField(id = true)
+public class Folder extends RealmObject {
+    @PrimaryKey
+    @JsonIgnore
+    private String _id;
     private long id;
-    @DatabaseField
+
+    private long teamId;
+
     private String name;
-    @DatabaseField
     private int seq;
-    @DatabaseField(persisterClass = CollectionLongConverter.class)
-    private Collection<Long> rooms;
+    @Ignore
+    private List<Long> rooms;
+    private RealmList<RealmLong> roomIds;
     @JsonIgnore
-    @DatabaseField
     private boolean isOpened;
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    private InitialInfo initialInfo;
 
     public long getId() {
         return id;
@@ -52,20 +53,12 @@ public class Folder {
         this.seq = seq;
     }
 
-    public Collection<Long> getRooms() {
+    public List<Long> getRooms() {
         return rooms;
     }
 
-    public void setRooms(Collection<Long> rooms) {
+    public void setRooms(List<Long> rooms) {
         this.rooms = rooms;
-    }
-
-    public InitialInfo getInitialInfo() {
-        return initialInfo;
-    }
-
-    public void setInitialInfo(InitialInfo initialInfo) {
-        this.initialInfo = initialInfo;
     }
 
     public boolean isOpened() {
@@ -74,5 +67,29 @@ public class Folder {
 
     public void setOpened(boolean opened) {
         isOpened = opened;
+    }
+
+    public RealmList<RealmLong> getRoomIds() {
+        return roomIds;
+    }
+
+    public void setRoomIds(RealmList<RealmLong> roomIds) {
+        this.roomIds = roomIds;
+    }
+
+    public long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 }

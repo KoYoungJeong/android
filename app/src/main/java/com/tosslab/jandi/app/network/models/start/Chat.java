@@ -1,46 +1,32 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.local.orm.dao.ChatDaoImpl;
-import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 
-import java.util.Collection;
+import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_chat", daoClass = ChatDaoImpl.class)
-public class Chat {
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    private InitialInfo initialInfo;
-    @DatabaseField(id = true)
+public class Chat extends RealmObject {
+    @PrimaryKey
     private long id;
-    @DatabaseField
     private long teamId;
-    @DatabaseField
     private String type;
-    @DatabaseField
     private String status;
-    @DatabaseField
     private long lastLinkId;
-    @DatabaseField(persisterClass = CollectionLongConverter.class)
-    private Collection<Long> members;
-    @ForeignCollectionField(foreignFieldName = "chat")
-    private Collection<Marker> markers;
-    @DatabaseField
+    @Ignore
+    private List<Long> members;
+    private RealmList<RealmLong> memberIds;
+    private RealmList<Marker> markers;
     private long companionId;
-    @DatabaseField
     private boolean isOpened;
-    @DatabaseField
     private long readLinkId;
-    @DatabaseField
     private int unreadCount;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private LastMessage lastMessage;
 
     public long getId() {
@@ -83,19 +69,19 @@ public class Chat {
         this.lastLinkId = lastLinkId;
     }
 
-    public Collection<Long> getMembers() {
+    public List<Long> getMembers() {
         return members;
     }
 
-    public void setMembers(Collection<Long> members) {
+    public void setMembers(List<Long> members) {
         this.members = members;
     }
 
-    public Collection<Marker> getMarkers() {
+    public RealmList<Marker> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(Collection<Marker> markers) {
+    public void setMarkers(RealmList<Marker> markers) {
         this.markers = markers;
     }
 
@@ -131,14 +117,6 @@ public class Chat {
         this.lastMessage = lastMessage;
     }
 
-    public InitialInfo getInitialInfo() {
-        return initialInfo;
-    }
-
-    public void setInitialInfo(InitialInfo initialInfo) {
-        this.initialInfo = initialInfo;
-    }
-
     public long getCompanionId() {
         return companionId;
     }
@@ -147,39 +125,12 @@ public class Chat {
         this.companionId = companionId;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @DatabaseTable(tableName = "initial_info_chat_lastmessage")
-    public static class LastMessage {
-        @DatabaseField(id = true)
-        private long id;
-        @DatabaseField
-        private String text;
-        @DatabaseField
-        private String status;
-
-        public long getId() {
-            return id;
-        }
-
-        public void setId(long id) {
-            this.id = id;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
+    public RealmList<RealmLong> getMemberIds() {
+        return memberIds;
     }
+
+    public void setMemberIds(RealmList<RealmLong> memberIds) {
+        this.memberIds = memberIds;
+    }
+
 }

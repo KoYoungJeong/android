@@ -8,16 +8,17 @@ import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -64,7 +65,7 @@ public class FolderRepositoryTest {
         assertThat(folder1.getSeq()).isEqualTo(folder.getSeq());
         assertThat(folder1.getName()).isEqualTo(folder.getName());
         assertThat(folder1.isOpened()).isEqualTo(folder.isOpened());
-        assertThat(folder1.getRooms()).hasSize(folder.getRooms().size());
+        assertThat(folder1.getRoomIds()).hasSize(folder.getRoomIds().size());
 
         // restore
         FolderRepository.getInstance().deleteFolder(folder.getId());
@@ -80,11 +81,12 @@ public class FolderRepositoryTest {
     @NonNull
     private Folder getFolder() {
         Folder folder = new Folder();
-        folder.setId(1l);
+        folder.set_id("1_1");
+        folder.setId(1);
         folder.setSeq(1);
         folder.setName("hello");
         folder.setOpened(true);
-        folder.setRooms(new ArrayList<>());
+        folder.setRoomIds(new RealmList<>());
         return folder;
     }
 
@@ -134,21 +136,39 @@ public class FolderRepositoryTest {
         FolderRepository.getInstance().addTopic(getFolder().getId(), 1);
 
         Folder folder = getFolderFromDatabase(getFolder().getId());
-        assertThat(folder.getRooms()).contains(1L);
+        boolean contains = false;
+        for (RealmLong realmLong : folder.getRoomIds()) {
+            if (realmLong.getValue() == 1L) {
+                contains = true;
+            }
+        }
+        assertThat(contains).isTrue();
 
     }
 
     @Test
     public void testRemoveTopic() throws Exception {
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         FolderRepository.getInstance().addFolder(teamId, getFolder());
         FolderRepository.getInstance().addTopic(getFolder().getId(), 1);
         FolderRepository.getInstance().addTopic(getFolder().getId(), 2);
 
         FolderRepository.getInstance().removeTopic(getFolder().getId(), 2);
 
-        Collection<Long> rooms = getFolderFromDatabase(getFolder().getId()).getRooms();
-        assertThat(rooms).contains(1L);
-        assertThat(rooms).doesNotContain(2L);
+        RealmList<RealmLong> rooms = getFolderFromDatabase(getFolder().getId()).getRoomIds();
+        boolean containValue = false;
+        boolean notContainValue = false;
+        for (RealmLong roomId : rooms) {
+            if (roomId.getValue() == 1L) {
+                containValue = true;
+            }
+
+            if (roomId.getValue() == 2L) {
+                notContainValue = true;
+            }
+        }
+        assertThat(containValue).isTrue();
+        assertThat(notContainValue).isFalse();
     }
 
     @Test
@@ -174,12 +194,28 @@ public class FolderRepositoryTest {
     @Test
     public void testRemoveTopicOfTeam() throws Exception {
         Folder folder = getFolder();
-        folder.setRooms(Arrays.asList(1L, 2L));
+        RealmLong object = new RealmLong();
+        object.setValue(1L);
+        folder.getRoomIds().add(object);
+        object = new RealmLong();
+        object.setValue(2L);
+        folder.getRoomIds().add(object);
         FolderRepository.getInstance().addFolder(teamId, folder);
         FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(2L));
 
-        Folder folder1 = getFolderFromDatabase(folder.getId());
-        assertThat(folder1.getRooms()).contains(1L);
-        assertThat(folder1.getRooms()).doesNotContain(2L);
+        RealmList<RealmLong> rooms = getFolderFromDatabase(getFolder().getId()).getRoomIds();
+        boolean containValue = false;
+        boolean notContainValue = false;
+        for (RealmLong roomId : rooms) {
+            if (roomId.getValue() == 1L) {
+                containValue = true;
+            }
+
+            if (roomId.getValue() == 2L) {
+                notContainValue = true;
+            }
+        }
+        assertThat(containValue).isTrue();
+        assertThat(notContainValue).isFalse();
     }
 }

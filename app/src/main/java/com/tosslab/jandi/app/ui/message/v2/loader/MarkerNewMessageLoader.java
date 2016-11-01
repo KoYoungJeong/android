@@ -51,7 +51,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                     long myId = TeamInfoLoader.getInstance().getMyId();
                     Marker myMarker = RoomMarkerRepository.getInstance().getMarker(roomId, myId);
 
-                    if (myMarker.getReadLinkId() < lastLinkId) {
+                    if (myMarker == null || myMarker.getReadLinkId() < lastLinkId) {
                         messageListModel.updateLastLinkId(messageState.getLastUpdateLinkId());
                         RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, messageState.getLastUpdateLinkId());
                     }

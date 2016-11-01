@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -224,7 +224,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     private void getAnnouncement() {
         view.dismissProgressWheel();
         if (TeamInfoLoader.getInstance().isTopic(roomId)) {
-            Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
+            Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
             view.setAnnouncement(announcement);
         }
 
@@ -246,7 +246,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     @Override
     public void onCreatedAnnouncement(boolean isRoomInit) {
         if (isRoomInit) {
-            Topic.Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
+            Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
             view.setAnnouncement(announcement);
         }
     }
@@ -267,7 +267,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     @Background
     @Override
     public void checkAnnouncementExistsAndCreate(long messageId) {
-        Topic.Announcement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        Announcement announcement = announcementModel.getAnnouncement(teamId, roomId);
 
         if (announcement == null) {
             createAnnouncement(messageId);

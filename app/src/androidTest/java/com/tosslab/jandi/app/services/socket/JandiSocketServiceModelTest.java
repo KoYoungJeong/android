@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
@@ -480,7 +481,7 @@ public class JandiSocketServiceModelTest {
 
         SocketAnnouncementCreatedEvent event = createEvent(SocketAnnouncementCreatedEvent.class);
         SocketAnnouncementCreatedEvent.Data data = new SocketAnnouncementCreatedEvent.Data();
-        data.setAnnouncement(new Topic.Announcement());
+        data.setAnnouncement(new Announcement());
         event.setData(data);
 
         model.onAnnouncementCreated(event);

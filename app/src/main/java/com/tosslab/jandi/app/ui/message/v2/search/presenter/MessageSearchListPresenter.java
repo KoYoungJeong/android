@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 public interface MessageSearchListPresenter {
@@ -64,7 +64,7 @@ public interface MessageSearchListPresenter {
 
         void dismissProgressWheel();
 
-        void setAnnouncement(Topic.Announcement announcement);
+        void setAnnouncement(Announcement announcement);
 
         void openAnnouncement(boolean opened);
 

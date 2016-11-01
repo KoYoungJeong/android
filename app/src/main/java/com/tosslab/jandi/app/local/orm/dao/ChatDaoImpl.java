@@ -6,6 +6,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.tosslab.jandi.app.network.models.start.Chat;
+import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
 
 import java.sql.SQLException;
@@ -54,9 +55,9 @@ public class ChatDaoImpl extends BaseDaoImpl<Chat, Long> {
 
     }
 
-    private void createLastMessage(Chat.LastMessage announcement) throws SQLException {
+    private void createLastMessage(LastMessage announcement) throws SQLException {
         if (announcement != null) {
-            Dao<Chat.LastMessage, ?> dao = DaoManager.createDao(getConnectionSource(), Chat.LastMessage.class);
+            Dao<LastMessage, ?> dao = DaoManager.createDao(getConnectionSource(), LastMessage.class);
             dao.createIfNotExists(announcement);
         }
     }

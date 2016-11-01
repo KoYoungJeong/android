@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +32,7 @@ public class RoomMarkerRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         TeamInfoLoader.getInstance().refresh();
 

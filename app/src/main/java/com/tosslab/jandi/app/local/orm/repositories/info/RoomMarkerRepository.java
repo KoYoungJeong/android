@@ -1,17 +1,14 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.j256.ormlite.stmt.Where;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
-import java.sql.SQLException;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
-public class RoomMarkerRepository extends LockExecutorTemplate {
+public class RoomMarkerRepository extends RealmRepository {
 
     private static RoomMarkerRepository instance;
 
@@ -23,96 +20,66 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
     }
 
     public boolean upsertRoomMarker(long roomId, long memberId, long lastLinkId) {
-        return execute(() -> {
+        return execute(realm -> {
 
-            try {
-                Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
+            Marker marker = realm.where(Marker.class).equalTo("id", roomId + "_" + memberId).findFirst();
+            if (marker != null) {
+                realm.executeTransaction(realm1 -> marker.setReadLinkId(lastLinkId));
+            } else {
 
-                UpdateBuilder<Marker, Long> markerUpdateBuilder = dao.updateBuilder();
-                markerUpdateBuilder.updateColumnValue("readLinkId", lastLinkId);
-                Where<Marker, Long> whereQuery = markerUpdateBuilder.where();
-                whereQuery.or(whereQuery.eq("chat_id", roomId), whereQuery.eq("topic_id", roomId))
-                        .and()
-                        .eq("memberId", memberId);
-                if (markerUpdateBuilder.update() <= 0) {
-                    Marker newMarker = new Marker();
-                    if (TopicRepository.getInstance().isTopic(roomId)) {
-                        Topic topic = TopicRepository.getInstance().getTopic(roomId);
-                        newMarker.setTopic(topic);
+                realm.executeTransaction(realm1 -> {
+                    Marker marker2 = realm.createObject(Marker.class, roomId + "_" + memberId);
+                    marker2.setReadLinkId(lastLinkId);
+                    marker2.setMemberId(memberId);
+                    marker2.setRoomId(roomId);
 
-                    } else if (ChatRepository.getInstance().isChat(roomId)) {
-                        Chat chat = ChatRepository.getInstance().getChat(roomId);
-                        newMarker.setChat(chat);
-                    } else {
-                        return false;
+                    Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
+                    Topic topic = realm.where(Topic.class).equalTo("id", roomId).findFirst();
+
+                    if (chat != null) {
+                        if (chat.getMarkers() != null) {
+                            chat.getMarkers().add(marker2);
+                        } else {
+                            chat.setMarkers(new RealmList<>(marker2));
+                        }
+                    } else if (topic != null) {
+                        if (topic.getMarkers() != null) {
+                            topic.getMarkers().add(marker2);
+                        } else {
+                            topic.setMarkers(new RealmList<>(marker2));
+                        }
                     }
-                    newMarker.setMemberId(memberId);
-                    newMarker.setReadLinkId(lastLinkId);
-                    return dao.create(newMarker) > 0;
-                } else {
-                    return true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                });
             }
 
-            return false;
+            return true;
+
         });
     }
 
     public Marker getMarker(long roomId, long memberId) {
-
-        return execute(() -> {
-
-            try {
-                Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
-                Where<Marker, Long> where = dao.queryBuilder().where();
-                return where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId))
-                        .and()
-                        .eq("memberId", memberId)
-                        .queryForFirst();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            return new Marker();
-        });
+        return execute(realm -> realm.where(Marker.class)
+                .equalTo("id", roomId + "_" + memberId)
+                .findFirst());
 
     }
 
     public long getRoomMarkerCount(long roomId, long linkId) {
-        return execute(() -> {
-
-            try {
-                Dao<Marker, Long> dao = getHelper().getDao(Marker.class);
-                Where<Marker, Long> where = dao.queryBuilder().where();
-                return where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId))
-                        .and()
-                        .ge("readLinkId", 0)
-                        .and()
-                        .lt("readLinkId", linkId)
-                        .countOf();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            return 0L;
-        });
+        return execute(realm -> realm.where(Marker.class)
+                .equalTo("roomId", roomId)
+                .greaterThanOrEqualTo("readLinkId", 0)
+                .lessThan("readLinkId", linkId)
+                .count());
 
     }
 
     public boolean deleteMarker(long roomId, long memberId) {
-        return execute(() -> {
-            try {
-                Dao<Marker, Object> dao = getDao(Marker.class);
-                DeleteBuilder<Marker, Object> deleteBuilder = dao.deleteBuilder();
-                Where<Marker, Object> where = deleteBuilder.where();
-                where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId))
-                        .and()
-                        .eq("memberId", memberId);
-                return deleteBuilder.delete() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+
+            Marker marker = realm.where(Marker.class).equalTo("id", roomId + "_" + memberId).findFirst();
+            if (marker != null) {
+                realm.executeTransaction(realm1 -> marker.deleteFromRealm());
+                return true;
             }
 
             return false;
@@ -120,17 +87,14 @@ public class RoomMarkerRepository extends LockExecutorTemplate {
     }
 
     public boolean deleteMarkers(long roomId) {
-        return execute(() -> {
-            try {
-                Dao<Marker, Object> dao = getDao(Marker.class);
-                DeleteBuilder<Marker, Object> deleteBuilder = dao.deleteBuilder();
-                Where<Marker, Object> where = deleteBuilder.where();
-                where.or(where.eq("chat_id", roomId), where.eq("topic_id", roomId));
-                return deleteBuilder.delete() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+            RealmResults<Marker> roomId1 = realm.where(Marker.class)
+                    .equalTo("roomId", roomId)
+                    .findAll();
+            if (!roomId1.isEmpty()) {
+                realm.executeTransaction(realm1 -> roomId1.deleteAllFromRealm());
+                return true;
             }
-
             return false;
         });
 

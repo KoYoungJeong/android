@@ -10,7 +10,11 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Mention;
+import com.tosslab.jandi.app.network.models.start.Poll;
+import com.tosslab.jandi.app.network.models.start.Self;
 import com.tosslab.jandi.app.network.models.start.Team;
+import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
 import java.sql.SQLException;
@@ -26,27 +30,27 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
         int id = super.create(data);
 
         if (data.getSelf() != null) {
-            Dao<InitialInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Self.class);
+            Dao<Self, ?> dao = DaoManager.createDao(getConnectionSource(), Self.class);
             dao.createOrUpdate(data.getSelf());
         }
 
         if (data.getPoll() != null) {
-            Dao<InitialInfo.Poll, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Poll.class);
+            Dao<Poll, ?> dao = DaoManager.createDao(getConnectionSource(), Poll.class);
             dao.createOrUpdate(data.getPoll());
         }
 
         if (data.getMention() != null) {
-            Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
+            Dao<Mention, ?> dao = DaoManager.createDao(getConnectionSource(), Mention.class);
             dao.createOrUpdate(data.getMention());
         }
 
         if (data.getTeamPlan() != null) {
-            Dao<InitialInfo.TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.TeamPlan.class);
+            Dao<TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), TeamPlan.class);
             dao.createOrUpdate(data.getTeamPlan());
         }
 
         if (data.getMention() != null) {
-            Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
+            Dao<Mention, ?> dao = DaoManager.createDao(getConnectionSource(), Mention.class);
             dao.createOrUpdate(data.getMention());
         }
 
@@ -179,22 +183,22 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
         int row = super.update(data);
 
         if (data.getSelf() != null) {
-            Dao<InitialInfo.Self, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Self.class);
+            Dao<Self, ?> dao = DaoManager.createDao(getConnectionSource(), Self.class);
             dao.update(data.getSelf());
         }
 
         if (data.getPoll() != null) {
-            Dao<InitialInfo.Poll, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Poll.class);
+            Dao<Poll, ?> dao = DaoManager.createDao(getConnectionSource(), Poll.class);
             dao.update(data.getPoll());
         }
 
         if (data.getMention() != null) {
-            Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
+            Dao<Mention, ?> dao = DaoManager.createDao(getConnectionSource(), Mention.class);
             dao.update(data.getMention());
         }
 
         if (data.getTeamPlan() != null) {
-            Dao<InitialInfo.TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.TeamPlan.class);
+            Dao<TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), TeamPlan.class);
             dao.createOrUpdate(data.getTeamPlan());
         }
 

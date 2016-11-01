@@ -11,7 +11,10 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Mention;
+import com.tosslab.jandi.app.network.models.start.Poll;
 import com.tosslab.jandi.app.network.models.start.Team;
+import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
@@ -52,8 +55,8 @@ public class TeamInfoLoader {
     private User me;
     private Team team;
     private User jandiBot;
-    private InitialInfo.Mention mention;
-    private InitialInfo.TeamPlan teamPlan;
+    private Mention mention;
+    private TeamPlan teamPlan;
 
     private int pollBadge;
 
@@ -148,13 +151,13 @@ public class TeamInfoLoader {
 
     public void refreshMention() {
         execute(() -> {
-            InitialInfo.Mention newMention = InitialMentionInfoRepository.getInstance().getMention();
+            Mention newMention = InitialMentionInfoRepository.getInstance().getMention();
             initialInfo.setMention(this.mention = newMention);
         });
     }
 
     private void setUpPollBadge() {
-        InitialInfo.Poll poll = initialInfo.getPoll();
+        Poll poll = initialInfo.getPoll();
         setPollBadge(poll != null ? poll.getVotableCount() : 0);
     }
 
@@ -609,11 +612,11 @@ public class TeamInfoLoader {
         this.pollBadge = pollBadge;
     }
 
-    public InitialInfo.Mention getMention() {
+    public Mention getMention() {
         return execute(() -> mention);
     }
 
-    public InitialInfo.TeamPlan getTeamPlan() {
+    public TeamPlan getTeamPlan() {
         return execute(() -> teamPlan);
     }
 

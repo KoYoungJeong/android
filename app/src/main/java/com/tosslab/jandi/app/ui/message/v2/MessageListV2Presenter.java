@@ -17,8 +17,8 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.messages.ReqStickerMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -445,7 +445,7 @@ public class MessageListV2Presenter {
         TopicRoom topic = TeamInfoLoader.getInstance().getTopic(room.getRoomId());
         if (topic != null) {
 
-            Topic.Announcement announcement = topic.getAnnouncement();
+            Announcement announcement = topic.getAnnouncement();
             if (announcement != null) {
                 view.setAnnouncement(announcement);
             }
@@ -468,7 +468,7 @@ public class MessageListV2Presenter {
 
     @Background
     public void onCheckAnnouncementExistsAndCreate(long messageId) {
-        Topic.Announcement announcement =
+        Announcement announcement =
                 announcementModel.getAnnouncement(room.getTeamId(), room.getRoomId());
 
         if (announcement == null) {
@@ -1110,7 +1110,7 @@ public class MessageListV2Presenter {
 
         void showInactivedUserLayer();
 
-        void setAnnouncement(Topic.Announcement announcement);
+        void setAnnouncement(Announcement announcement);
 
         void showProgressWheel();
 
