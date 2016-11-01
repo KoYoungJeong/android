@@ -81,7 +81,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         teamMemberDataModel.addAll(users);
                         view.dismissEmptyView();
                     } else {
-                        view.showEmptyView(filterSubject.getValue());
+                        if(selectMode){
+                            view.showToastNotAnyInvitationMembers();
+                        }else {
+                            view.showEmptyView(filterSubject.getValue());
+                        }
                     }
                     view.refreshDataView();
                 }, Throwable::printStackTrace);
