@@ -106,7 +106,7 @@ public class HumanRepository extends RealmRepository {
 
     public List<Human> getContainsPhone(String queryNum) {
         return execute(realm -> realm.where(Human.class)
-                .contains("prifle.phoneNumber", queryNum)
+                .contains("profile.phoneNumber", queryNum)
                 .findAll());
     }
 }
