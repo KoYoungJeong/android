@@ -34,7 +34,7 @@
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
                     android:text="@string/jandi_title_name_required"
-                    android:textSize="@dimen/jandi_text_size_large" />
+                    android:textSize="@dimen/jandi_text_size_small" />
 
                 <EditText
                     android:id="@+id/et_topic_create_title"
@@ -160,8 +160,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="80dp"
                 android:gravity="center_vertical"
+                android:minHeight="80dp"
                 android:orientation="vertical"
                 android:paddingTop="8dp">
 
@@ -169,8 +169,8 @@
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
-                    android:textSize="@dimen/jandi_text_size_large"
-                    android:text="@string/jandi_topic_description" />
+                    android:text="@string/jandi_topic_description"
+                    android:textSize="@dimen/jandi_text_size_small" />
 
                 <EditText
                     android:id="@+id/et_topic_create_description"
