@@ -51,10 +51,11 @@ import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
+import com.tosslab.jandi.app.events.entities.TopicJoinEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
+import com.tosslab.jandi.app.events.entities.TopicLeftEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -1584,6 +1585,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEvent(ProfileChangeEvent event) {
         refreshMessages();
+        updateMentionInfo();
     }
 
     public void onEvent(RefreshConnectBotEvent event) {
@@ -1857,7 +1859,15 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateMentionInfo() {
         if (mentionControlViewModel != null) {
+            boolean popupShowing = etMessage.isPopupShowing();
             mentionControlViewModel.refreshMembers(Arrays.asList(room.getRoomId()));
+            if (popupShowing) {
+                etMessage.showDropDown();
+                btnShowMention.setVisibility(View.GONE);
+            } else {
+                etMessage.dismissDropDown();
+                btnShowMention.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -1906,8 +1916,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    public void onEvent(RetrieveTopicListEvent event) {
-        updateMentionInfo();
+    public void onEvent(TopicLeftEvent event) {
+        if (event.getTopicId() == room.getRoomId()) {
+            updateMentionInfo();
+        }
+    }
+
+    public void onEvent(TopicJoinEvent event) {
+        if (event.getTopicId() == room.getRoomId()) {
+            updateMentionInfo();
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
