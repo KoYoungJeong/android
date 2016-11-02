@@ -3,6 +3,9 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.Profile;
+
+import java.util.List;
 
 public class HumanRepository extends RealmRepository {
     private static HumanRepository instance;
@@ -96,50 +99,14 @@ public class HumanRepository extends RealmRepository {
     }
 
     public boolean containsPhone(String queryNum) {
-        return execute(() -> {
-
-            try {
-                Dao<Human, Object> humanDao = getDao(Human.class);
-                Dao<Human.Profile, Object> dao = getDao(Human.Profile.class);
-                QueryBuilder<Human.Profile, Object> profileQueryBuilder = dao.queryBuilder();
-                profileQueryBuilder
-                        .selectColumns("_id")
-                        .where()
-                        .like("phoneNumber", "%" + queryNum);
-
-                return humanDao.queryBuilder()
-                        .where()
-                        .in("id", profileQueryBuilder).countOf() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-
-            return false;
-        });
+        return execute(realm -> realm.where(Profile.class)
+                .contains("phoneNumber", queryNum)
+                .count() > 0);
     }
 
     public List<Human> getContainsPhone(String queryNum) {
-        return execute(() -> {
-
-            try {
-                Dao<Human, Object> humanDao = getDao(Human.class);
-                Dao<Human.Profile, Object> dao = getDao(Human.Profile.class);
-                QueryBuilder<Human.Profile, Object> profileQueryBuilder = dao.queryBuilder();
-                profileQueryBuilder
-                        .selectColumns("_id")
-                        .where()
-                        .like("phoneNumber", "%" + queryNum);
-
-                return humanDao.queryBuilder()
-                        .where()
-                        .in("id", profileQueryBuilder).query();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-
-            return new ArrayList<Human>(0);
-        });
+        return execute(realm -> realm.where(Human.class)
+                .contains("prifle.phoneNumber", queryNum)
+                .findAll());
     }
 }
