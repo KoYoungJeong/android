@@ -103,6 +103,11 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
             mention.setId(value.getTeamId());
         }
 
+        InitialInfo.TeamPlan teamPlan = value.getTeamPlan();
+        if (teamPlan != null) {
+            teamPlan.setId(value.getTeamId());
+        }
+
         return value;
     }
 

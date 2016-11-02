@@ -477,6 +477,18 @@ public class SearchPresenterImpl implements SearchPresenter {
         searchKeywordSubject.onNext(text);
     }
 
+    @Override
+    public void onInitPricingInfo() {
+        rx.Observable.defer(() -> {
+            boolean isLimited = searchModel.isMessageLimited();
+            return Observable.just(isLimited);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isLimited -> {
+                    view.setPricingLimitView(isLimited);
+                });
+    }
+
     public enum MoreState {
         Idle, Loading
     }

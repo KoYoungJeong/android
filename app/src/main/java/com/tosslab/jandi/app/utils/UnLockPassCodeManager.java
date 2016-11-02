@@ -24,7 +24,7 @@ public class UnLockPassCodeManager {
 
     public static UnLockPassCodeManager getInstance() {
         if (sInstance == null) {
-            LogUtil.i(TAG, "newInstance");
+            LogUtil.i(TAG, "with");
             sInstance = new UnLockPassCodeManager();
         }
         return sInstance;

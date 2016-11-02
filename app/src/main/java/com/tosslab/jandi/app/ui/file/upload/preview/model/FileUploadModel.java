@@ -47,4 +47,10 @@ public class FileUploadModel {
     public boolean isUser(long entityId) {
         return TeamInfoLoader.getInstance().isUser(entityId);
     }
+
+    public boolean isUploadLimited() {
+        boolean isLimited = TeamInfoLoader.getInstance().getTeamPlan().isExceedFile();
+        return isLimited;
+
+    }
 }

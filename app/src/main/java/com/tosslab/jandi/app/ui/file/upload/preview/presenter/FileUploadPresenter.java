@@ -20,6 +20,8 @@ public interface FileUploadPresenter {
 
     void onCommentTextChange(String text, int currentItemPosition);
 
+    void onInitPricingInfo();
+
     void onEntityUpdate(long entityId);
 
     @Deprecated
@@ -42,5 +44,7 @@ public interface FileUploadPresenter {
         void exitOnOk(FileUploadVO fileUploadVO);
 
         void setShareEntity(long entityId, boolean isUser);
+
+        void setPricingLimitView(Boolean isLimited);
     }
 }

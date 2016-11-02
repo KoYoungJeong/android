@@ -58,6 +58,14 @@
         android:layout_below="@id/layout_search_bar"
         android:background="@color/white" />
 
+    <include
+        android:id="@+id/layout_pricing_plan_warning"
+        layout="@layout/layout_pricing_plan_restrict_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/progress_more_loading_message"
         android:layout_width="30dp"

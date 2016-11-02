@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.dagger;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
+import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -57,4 +58,6 @@ public interface ApiClientComponent {
     void inject(TopicFolderSettingModel topicFolderSettingModel);
 
     void inject(com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel topicFolderSettingModel);
+
+    void inject(FileUploadModel fileUploadModel);
 }
