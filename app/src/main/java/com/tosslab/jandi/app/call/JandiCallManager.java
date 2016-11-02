@@ -49,7 +49,6 @@ public class JandiCallManager {
         subject = PublishSubject.create();
 
         subject.onBackpressureBuffer()
-                .delay(500, TimeUnit.MILLISECONDS)
                 .filter(it -> {
                     if (SdkUtils.isMarshmallow()) {
                         if (Settings.canDrawOverlays(JandiApplication.getContext())) {
@@ -89,6 +88,7 @@ public class JandiCallManager {
 
     private Observable<? extends Object> ringingState(Observable<CallState> callStateObservable) {
         return callStateObservable
+                .delay(500, TimeUnit.MILLISECONDS)
                 .filter(it -> {
                     if (TextUtils.isEmpty(it.number)) {
                         return false;
