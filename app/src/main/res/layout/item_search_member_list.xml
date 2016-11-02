@@ -1,31 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/jandi_search_member_list_item_height_size"
+    android:layout_height="60dp"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
     <ImageView
-        android:id="@+id/img_member_item_icon"
-        android:layout_width="@dimen/jandi_messages_profile_size"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/jandi_messages_profile_size"
+        android:id="@+id/iv_member_item_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="16dp"/>
+        android:layout_marginRight="20dp" />
 
-    <TextView
-        android:id="@+id/tv_member_item_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:text="Member Name"
-        android:textColor="@color/black"
-        android:textSize="@dimen/jandi_search_member_list_item_name_font_size"
-        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/vg_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Tee"
+                android:textColor="@color/dark_gray"
+                android:textSize="13dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_job_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="bottom"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="hahahahahahahahahahahah"
+                android:textColor="@color/dark_gray"
+                android:textSize="11dp"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_user_department"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/vg_entity_listitem_name"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/vg_entity_listitem_name"
+            android:layout_marginTop="3dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="So Good"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="11dp"
+            android:visibility="visible" />
+
+    </LinearLayout>
 
 </LinearLayout>
