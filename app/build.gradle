@@ -61,6 +61,10 @@ android {
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
             minSdkVersion 19
         }
+        api {
+            applicationId 'com.tosslab.jandi.app.dev'
+            versionName(defaultConfig.versionName + ".api." + inhouse_version)
+        }
 
         qa {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
@@ -85,9 +89,24 @@ android {
             res.srcDirs = ['src/dev/res']
         }
 
+        api {
+            java.srcDirs = ['src/dev/java']
+            res.srcDirs = ['src/dev/res']
+        }
+
         main.res.srcDirs += 'src/main/res-crawrer'
         main.res.srcDirs += 'src/main/res-anim'
         main.java.srcDirs += 'src/main/java-push'
+    }
+
+    // api 는 release 를 막는다
+    android.variantFilter { variant ->
+        if (variant.buildType.name.equals('release')
+                && (variant.getFlavors().get(0).name.equals('api')
+                || variant.getFlavors().get(0).name.equals('qa')
+                || variant.getFlavors().get(0).name.equals('dev'))) {
+            variant.setIgnore(true);
+        }
     }
 
     packagingOptions.excludes = [
@@ -161,7 +180,9 @@ apt {
     arguments {
         "dart.henson.package" android.defaultConfig.applicationId
         resourcePackageName android.defaultConfig.applicationId
-        androidManifestFile variant.outputs[0].processResources.manifestFile
+        if (variant.outputs.size() > 0) {
+            androidManifestFile variant.outputs[0].processResources.manifestFile
+        }
     }
 }
 
