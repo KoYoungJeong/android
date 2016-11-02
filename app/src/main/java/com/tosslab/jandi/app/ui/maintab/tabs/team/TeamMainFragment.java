@@ -1,16 +1,21 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team;
 
 
+import android.Manifest;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
@@ -20,9 +25,11 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,7 +37,7 @@ import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.schedulers.Schedulers;
 
-public class TeamMainFragment extends Fragment {
+public class TeamMainFragment extends Fragment implements TabFocusListener {
 
     @Bind(R.id.tabs_team_main)
     TabLayout tabLayout;
@@ -125,5 +132,49 @@ public class TeamMainFragment extends Fragment {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFocus() {
+        FragmentActivity activity = getActivity();
+        if (activity != null && JandiPreference.isShowCallPermissionPopup()) {
+
+            View view = LayoutInflater.from(activity).inflate(R.layout.dialog_call_preview_permission, null);
+            CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_call_preview_permission);
+
+            boolean moveSettingBtn;
+            if (SdkUtils.isMarshmallow()) {
+                if (!SdkUtils.hasPermission(activity, Manifest.permission.CALL_PHONE)
+                        || !Settings.canDrawOverlays(activity)) {
+                    moveSettingBtn= true;
+                } else {
+                    checkBox.setVisibility(View.GONE);
+                    moveSettingBtn = false;
+                    JandiPreference.setShowCallPermissionPopup();
+                }
+            } else {
+                checkBox.setVisibility(View.GONE);
+                moveSettingBtn = false;
+                JandiPreference.setShowCallPermissionPopup();
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300);
+            builder.setView(view).setNegativeButton(R.string.jandi_close, null);
+            if (moveSettingBtn) {
+                builder.setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
+                    startActivity(Henson.with(activity)
+                            .gotoCallSettingActivity()
+                            .build());
+                });
+            }
+
+            builder.setOnDismissListener(dialog -> {
+                if (checkBox.isChecked()) {
+                    JandiPreference.setShowCallPermissionPopup();
+                }
+            }).create().show();
+
+
+        }
     }
 }

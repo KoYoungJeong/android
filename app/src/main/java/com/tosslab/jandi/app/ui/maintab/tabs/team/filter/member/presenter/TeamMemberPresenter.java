@@ -48,5 +48,7 @@ public interface TeamMemberPresenter {
         void showEmptyView(String keyword);
 
         void dismissEmptyView();
+
+        void showToastNotAnyInvitationMembers();
     }
 }

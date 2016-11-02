@@ -6,6 +6,8 @@ package com.tosslab.jandi.app.ui.commonviewmodels.mention.vo;
 public class SearchedItemVO {
 
     private String name;
+    private String department;
+    private String jobTitle;
     private long id;
     private String type;
     private int offset;
@@ -15,6 +17,7 @@ public class SearchedItemVO {
     private boolean starred;
     private boolean bot;
     private boolean inactive;
+
 
     public String getName() {
         return name;
@@ -88,13 +91,13 @@ public class SearchedItemVO {
         return this;
     }
 
+    public boolean isBot() {
+        return bot;
+    }
+
     public SearchedItemVO setBot(boolean bot) {
         this.bot = bot;
         return this;
-    }
-
-    public boolean isBot() {
-        return bot;
     }
 
     public boolean isInactive() {
@@ -103,6 +106,24 @@ public class SearchedItemVO {
 
     public SearchedItemVO setInactive(boolean inactive) {
         this.inactive = inactive;
+        return this;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public SearchedItemVO setDepartment(String department) {
+        this.department = department;
+        return this;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public SearchedItemVO setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
         return this;
     }
 }

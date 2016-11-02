@@ -14,10 +14,10 @@
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_hamburger_teamlist">"Team List"</string>
-	<string name="common_pricingplan_fileupload">"{TeamName}\n Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
+	<string name="common_pricingplan_fileupload">"Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_pricingplan_livesupport">"Live Support"</string>
 	<string name="common_pricingplan_moreinfo">"More detail"</string>
-	<string name="common_pricingplan_msgsearch">"{TeamName}\n Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
+	<string name="common_pricingplan_msgsearch">"Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
 	<string name="common_settings_lostpasscodedesc">"Please delete and reinstall the app to reset your passcode"</string>
 	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
@@ -70,7 +70,7 @@
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>

@@ -216,7 +216,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             ImageLoader loader = ImageLoader.newInstance();
             loader.error(R.drawable.comment_no_img, ImageView.ScaleType.CENTER_INSIDE);
             loader.placeHolder(
-                    R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE);
+                    R.drawable.preview_img, ImageView.ScaleType.CENTER);
 
             ImageLoadInfo imageInfo = getImageInfo(extraInfo);
             layoutParams.width = imageInfo.width;
@@ -224,7 +224,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             ivFileImage.setLayoutParams(layoutParams);
 
             if (imageInfo.needCrop) {
-                loader.actualImageScaleType(ImageView.ScaleType.CENTER_CROP);
+                loader.actualImageScaleType(ImageView.ScaleType.CENTER_INSIDE);
             } else {
                 loader.actualImageScaleType(ImageView.ScaleType.FIT_CENTER);
             }

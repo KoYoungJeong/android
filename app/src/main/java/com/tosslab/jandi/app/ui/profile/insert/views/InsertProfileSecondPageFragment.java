@@ -177,7 +177,7 @@ public class InsertProfileSecondPageFragment extends Fragment
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(R.string.jandi_choose_email)
                 .setSingleChoiceItems(emails, checkedIdx, null)

@@ -38,6 +38,15 @@ public class MessageRepositoryModel {
 
         List<ResMessages.Link> oldMessages = MessageRepository.getRepository().getOldMessages(roomId, startLinkId, MAX_COUNT);
 
+        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+            for (int i = oldMessages.size() - 1; i >= 0; i--) {
+                if (oldMessages.get(i).info instanceof ResMessages.InviteEvent
+                        || oldMessages.get(i).info instanceof ResMessages.LeaveEvent) {
+                    oldMessages.remove(i);
+                }
+            }
+        }
+
         if (oldMessages.isEmpty()) {
             if (!isFirst) {
 
@@ -124,10 +133,8 @@ public class MessageRepositoryModel {
         return oldMessages;
     }
 
-    public List<ResMessages.Link> getAfterMessages(long startLinkId) {
+    public List<ResMessages.Link> getAfterMessages(long startLinkId, long roomId) {
         List<ResMessages.Link> messages = new ArrayList<>();
-
-
         boolean hasMore = true;
 
         ResMessages afterMarkerMessage;
@@ -152,6 +159,14 @@ public class MessageRepositoryModel {
             }
         }
 
+        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                if (messages.get(i).info instanceof ResMessages.LeaveEvent
+                        || messages.get(i).info instanceof ResMessages.InviteEvent) {
+                    messages.remove(i);
+                }
+            }
+        }
 
         return messages;
     }

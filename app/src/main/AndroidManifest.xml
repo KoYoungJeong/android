@@ -121,6 +121,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.settings.call.CallSettingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="멤버 연락처 블라블라" />
+
+        <activity
             android:name=".ui.settings.privacy.SettingPrivacyActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
@@ -266,6 +271,12 @@
         <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.push" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".call.JandiCallReceiver">
+            <intent-filter android:priority="1">
+                <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
 

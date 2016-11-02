@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
@@ -20,19 +19,11 @@ public class StickerApi extends ApiTemplate<StickerApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public ResCommon sendSticker(ReqSendSticker reqSendSticker) throws RetrofitException {
-        return call(() -> getApi().sendSticker(reqSendSticker));
-    }
-
     public List<ResMessages.Link> sendStickerComment(ReqSendSticker reqSendSticker) throws RetrofitException {
         return call(() -> getApi().sendStickerComment(reqSendSticker));
     }
 
     interface Api {
-
-        @POST("stickers")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResCommon> sendSticker(@Body ReqSendSticker reqSendSticker);
 
         @POST("stickers/comment")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)

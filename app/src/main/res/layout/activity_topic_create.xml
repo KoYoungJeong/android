@@ -34,7 +34,7 @@
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
                     android:text="@string/jandi_title_name_required"
-                    android:textSize="@dimen/jandi_text_size_large" />
+                    android:textSize="@dimen/jandi_text_size_small" />
 
                 <EditText
                     android:id="@+id/et_topic_create_title"
@@ -46,6 +46,14 @@
                     android:maxLines="1"
                     android:paddingBottom="8dp"
                     android:singleLine="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@color/rgb_cccccc"
+                    android:paddingBottom="8dp" />
 
                 <TextView
                     android:id="@+id/tv_topic_create_name_count"
@@ -160,8 +168,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="80dp"
                 android:gravity="center_vertical"
+                android:minHeight="80dp"
                 android:orientation="vertical"
                 android:paddingTop="8dp">
 
@@ -169,8 +177,8 @@
                 <TextView
                     style="@style/JandiTopic.Create.TextView.Title"
                     android:layout_marginTop="16dp"
-                    android:textSize="@dimen/jandi_text_size_large"
-                    android:text="@string/jandi_topic_description" />
+                    android:text="@string/jandi_topic_description"
+                    android:textSize="@dimen/jandi_text_size_small" />
 
                 <EditText
                     android:id="@+id/et_topic_create_description"
@@ -179,6 +187,14 @@
                     android:hint="@string/jandi_explain_topic_description"
                     android:inputType="text|textMultiLine"
                     android:maxLength="300"
+                    android:paddingBottom="8dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@color/rgb_cccccc"
                     android:paddingBottom="8dp" />
 
             </LinearLayout>

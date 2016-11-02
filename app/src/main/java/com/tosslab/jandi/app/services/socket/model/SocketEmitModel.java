@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.services.socket.model;
 
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
@@ -39,10 +40,13 @@ public class SocketEmitModel {
     public static SocketUpdateMember teamJoin(Object data) {
         try {
             SocketTeamJoinEvent object = SocketModelExtractor.getObject(data, SocketTeamJoinEvent.class, true, false);
-            long memberId = object.getData().getMember().getId();
-            long teamId = object.getData().getTeamId();
-            String accessToken = TokenUtil.getAccessToken();
-            return SocketUpdateMember.join(accessToken, memberId, teamId);
+            String accountId = object.getData().getMember().getAccountId();
+            if (TextUtils.equals(AccountRepository.getRepository().getAccountInfo().getId(), accountId)) {
+                long memberId = object.getData().getMember().getId();
+                long teamId = object.getData().getTeamId();
+                String accessToken = TokenUtil.getAccessToken();
+                return SocketUpdateMember.join(accessToken, memberId, teamId);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
