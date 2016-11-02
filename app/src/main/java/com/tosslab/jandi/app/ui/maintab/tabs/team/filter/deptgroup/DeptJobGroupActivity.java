@@ -62,6 +62,10 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     @InjectExtra
     int from = TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB;
 
+    @Nullable
+    @InjectExtra
+    long roomId = -1;
+
     @Bind(R.id.list_dept_job_group)
     RecyclerView lvMembers;
 
@@ -103,7 +107,7 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
                 .deptJobGroupModule(new DeptJobGroupModule(this, teamMemberAdapter,
                         type,
                         keyword,
-                        selectMode, pickMode))
+                        selectMode, pickMode, roomId))
                 .build()
                 .inject(this);
 
