@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,6 +49,7 @@ public class JandiCallManager {
         subject = PublishSubject.create();
 
         subject.onBackpressureBuffer()
+                .delay(500, TimeUnit.MILLISECONDS)
                 .filter(it -> {
                     if (SdkUtils.isMarshmallow()) {
                         if (Settings.canDrawOverlays(JandiApplication.getContext())) {

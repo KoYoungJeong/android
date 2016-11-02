@@ -275,7 +275,7 @@
         </receiver>
 
         <receiver android:name=".call.JandiCallReceiver">
-            <intent-filter>
+            <intent-filter android:priority="1">
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
