@@ -115,7 +115,7 @@ public class LinkPreviewViewModel {
         vDividier.setVisibility(View.VISIBLE);
         ImageLoader.newInstance()
                 .backgroundColor(resources.getColor(R.color.jandi_messages_image_background))
-                .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.CENTER_INSIDE)
+                .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                 .uri(Uri.parse(linkPreview.imageUrl))
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {

@@ -29,6 +29,14 @@
         android:textColor="@color/text_color_setting_check_title"
         android:textColorHint="@color/jandi_message_search_item_topic_txt_color_sub" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/rgb_cccccc"
+        android:paddingBottom="8dp" />
+
     <TextView
         android:id="@+id/tv_topic_description_edit_count"
         style="@style/JandiTopic.Create.TextView.TextCount"
