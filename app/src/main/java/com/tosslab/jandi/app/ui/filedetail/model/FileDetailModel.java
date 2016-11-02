@@ -155,7 +155,7 @@ public class FileDetailModel {
         try {
 //            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
 //            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-//            EntityManager.getInstance().refreshEntity();
+//            EntityManager.initiate().refreshEntity();
             return true;
 //        } catch (RetrofitException e) {
 //            e.printStackTrace();

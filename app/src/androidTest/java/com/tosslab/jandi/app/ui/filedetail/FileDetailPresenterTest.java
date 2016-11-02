@@ -129,7 +129,7 @@ public class FileDetailPresenterTest {
 //        fileDetailPresenter.onShareAction();
 //        List<Long> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(fileMessage);
 
-//        FormattedEntity entity = EntityManager.getInstance().getEntityById(sharedTopicIds.get(0));
+//        FormattedEntity entity = EntityManager.initiate().getEntityById(sharedTopicIds.get(0));
         // Then
 //        assertThat(sharedTopicIds.size(), is(equalTo(1)));
 //        assertThat(entity.isUser(), is(false));

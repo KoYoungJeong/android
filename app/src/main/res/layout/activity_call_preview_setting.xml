@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_dept_job_group_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:title="멤버 연락처 블라블라"
+        app:titleMarginEnd="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:text="블라 블라 내 폰에 저장되지 않은 팀 멤버에게 수신시 멤버의 연락처를 확인 할 수 있습니다.\n기능을 확인하시려면 하위의 두 개의 권한이 필요합니다."
+        android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+        android:textSize="@dimen/jandi_text_size_small" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/jandi_star_mention_item_divider" />
+
+
+    <RelativeLayout
+        android:id="@+id/vg_call_preview_setting_call"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="25dp"
+            android:text="통화 권한 블라블라"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_call_preview_setting_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="25dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/jandi_star_mention_item_divider" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/vg_call_preview_setting_canvas"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="25dp"
+            android:text="다른 앱 위에 그리기 블라 블라"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_call_preview_setting_canvas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="25dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/jandi_star_mention_item_divider" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

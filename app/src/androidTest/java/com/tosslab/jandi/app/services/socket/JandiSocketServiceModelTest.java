@@ -180,7 +180,7 @@ public class JandiSocketServiceModelTest {
         model.onTeamNameUpdated(event);
 
         assertThat(accept).isTrue();
-//        assertThat(TeamInfoLoader.getInstance().getTeamName()).isEqualToIgnoringCase(name);
+//        assertThat(TeamInfoLoader.initiate().getTeamName()).isEqualToIgnoringCase(name);
     }
 
     @Test
@@ -362,7 +362,7 @@ public class JandiSocketServiceModelTest {
         model.onMemberStarred(event);
 
         assertThat(accept).isTrue();
-//        assertThat(TeamInfoLoader.getInstance().isStarredUser(TeamInfoLoader.getInstance().getJandiBot().getTopicId()))
+//        assertThat(TeamInfoLoader.initiate().isStarredUser(TeamInfoLoader.initiate().getJandiBot().getTopicId()))
 //                .isTrue();
     }
 
@@ -519,8 +519,8 @@ public class JandiSocketServiceModelTest {
 
         assertThat(accept).isTrue();
 
-//        assertThat(TeamInfoLoader.getInstance()
-//                .getTopic(TeamInfoLoader.getInstance().getDefaultTopicId())
+//        assertThat(TeamInfoLoader.initiate()
+//                .getTopic(TeamInfoLoader.initiate().getDefaultTopicId())
 //                .isPushSubscribe())
 //                .isFalse();
     }
@@ -984,7 +984,7 @@ public class JandiSocketServiceModelTest {
         model.onTeamUpdated(event);
 
         assertThat(accept).isTrue();
-//        assertThat(TeamInfoLoader.getInstance().getTeamName()).isEqualToIgnoringCase(name);
+//        assertThat(TeamInfoLoader.initiate().getTeamName()).isEqualToIgnoringCase(name);
     }
 
 

@@ -1,12 +1,15 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HumanRepository extends LockExecutorTemplate {
     private static HumanRepository instance;
@@ -166,6 +169,54 @@ public class HumanRepository extends LockExecutorTemplate {
             }
 
             return false;
+        });
+    }
+
+    public boolean containsPhone(String queryNum) {
+        return execute(() -> {
+
+            try {
+                Dao<Human, Object> humanDao = getDao(Human.class);
+                Dao<Human.Profile, Object> dao = getDao(Human.Profile.class);
+                QueryBuilder<Human.Profile, Object> profileQueryBuilder = dao.queryBuilder();
+                profileQueryBuilder
+                        .selectColumns("_id")
+                        .where()
+                        .like("phoneNumber", "%" + queryNum);
+
+                return humanDao.queryBuilder()
+                        .where()
+                        .in("id", profileQueryBuilder).countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+            return false;
+        });
+    }
+
+    public List<Human> getContainsPhone(String queryNum) {
+        return execute(() -> {
+
+            try {
+                Dao<Human, Object> humanDao = getDao(Human.class);
+                Dao<Human.Profile, Object> dao = getDao(Human.Profile.class);
+                QueryBuilder<Human.Profile, Object> profileQueryBuilder = dao.queryBuilder();
+                profileQueryBuilder
+                        .selectColumns("_id")
+                        .where()
+                        .like("phoneNumber", "%" + queryNum);
+
+                return humanDao.queryBuilder()
+                        .where()
+                        .in("id", profileQueryBuilder).query();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+            return new ArrayList<Human>(0);
         });
     }
 }
