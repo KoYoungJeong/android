@@ -174,6 +174,8 @@ public class ChatDetailFragment extends Fragment {
             setStarred(!isStarred);
             if (!isStarred) {
                 showSuccessToast(getString(R.string.jandi_message_starred));
+            } else {
+                showSuccessToast(getString(R.string.jandi_message_no_starred));
             }
         };
         starredUser.filter(it -> it)
