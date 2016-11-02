@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.Henson;
@@ -895,7 +896,9 @@ public class JandiSocketServiceModel {
                                     Henson.with(JandiApplication.getContext())
                                             .gotoTeamSelectListActivity()
                                             .shouldRefreshAccountInfo(true)
-                                            .build());
+                                            .build()
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
