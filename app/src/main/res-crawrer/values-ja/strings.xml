@@ -70,7 +70,7 @@
 	<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
 	<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"に委譲しますか?"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>
