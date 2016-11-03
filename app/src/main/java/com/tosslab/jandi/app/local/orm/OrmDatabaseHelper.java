@@ -334,11 +334,11 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX, () -> {
 
                         try {
-                            Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
+                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
                             dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN poll_id INTEGER;");
-                            UpdateBuilder<ResAccountInfo.UserTeam, ?> updateBuilder = dao.updateBuilder();
-                            updateBuilder.updateColumnExpression("poll_id", "1");
-                            updateBuilder.update();
+//                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+//                            updateBuilder.updateColumnExpression("poll_id", "1");
+//                            updateBuilder.update();
 
                         } catch (SQLException e) {
                             e.printStackTrace();
