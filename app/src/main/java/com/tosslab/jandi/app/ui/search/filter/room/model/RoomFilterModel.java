@@ -53,7 +53,7 @@ public class RoomFilterModel {
                     }
                 })
                 .collect(() -> searchedDirectMessages, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
         return searchedDirectMessages;
     }
@@ -72,7 +72,7 @@ public class RoomFilterModel {
                         || topic.getName().toLowerCase().contains(query.toLowerCase()))
                 .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .collect(() -> searchedTopics, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
         return searchedTopics;
     }

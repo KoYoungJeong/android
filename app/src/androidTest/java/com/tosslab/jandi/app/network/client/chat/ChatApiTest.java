@@ -38,7 +38,7 @@ public class ChatApiTest {
     public void testDeleteChat() throws Exception {
         List<DirectMessageRoom> rooms = TeamInfoLoader.getInstance().getDirectMessageRooms();
         if (rooms.size() <= 0) return;
-        Long targetUserId = Observable.from(rooms.get(0).getMembers()).takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId()).toBlocking().first();
+        Long targetUserId = Observable.from(rooms.get(0).getMembers()).takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId()).toBlocking().firstOrDefault(-1L);
         ResCommon resCommon = chatApi.deleteChat(TeamInfoLoader.getInstance().getMyId(), targetUserId);
         assertThat(resCommon).isNotNull();
     }

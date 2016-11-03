@@ -25,7 +25,7 @@ public class DisabledEntityChooseModel {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                 })
                 .collect(() -> items, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
         return items;
 
     }

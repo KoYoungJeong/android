@@ -67,7 +67,7 @@ public class MainChatListModel {
                     return chatItem;
                 })
                 .toSortedList((lhs, rhs) -> ((int) (rhs.getLastLinkId() - lhs.getLastLinkId())))
-                .subscribe(chatItems::addAll);
+                .subscribe(chatItems::addAll, Throwable::printStackTrace);
 
         return chatItems;
     }

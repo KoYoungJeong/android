@@ -240,7 +240,7 @@ public class TeamInfoLoader {
                 .toSortedList((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
                 .subscribe(topicFolder -> {
                     topicFolders.addAll(topicFolder);
-                });
+                }, Throwable::printStackTrace);
     }
 
     private <T> T execute(Call0<T> call) {
@@ -448,7 +448,7 @@ public class TeamInfoLoader {
                         .map(memberId -> users.get(memberId))
                         .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
                         .toBlocking()
-                        .first();
+                        .firstOrDefault(new ArrayList<>());
             } else {
                 return new ArrayList<User>();
             }

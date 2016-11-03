@@ -203,7 +203,7 @@ public class RoomSelectorImpl implements RoomSelector {
             for (TopicRoom topic : topics) {
                 topicHashMap.put(topic.getId(), topic);
             }
-        });
+        }, Throwable::printStackTrace);
 
         return topicHashMap;
     }
@@ -332,7 +332,7 @@ public class RoomSelectorImpl implements RoomSelector {
         }
 
         roomObservable.collect(() -> roomDatas, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
         return roomDatas;
     }
