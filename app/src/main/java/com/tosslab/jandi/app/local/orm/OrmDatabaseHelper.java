@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.JandiApplication;
@@ -352,9 +351,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         try {
                             Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
                             dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN mention_id INTEGER;");
-                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
-                            updateBuilder.updateColumnExpression("mention_id", "1");
-                            updateBuilder.update();
+//                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+//                            updateBuilder.updateColumnExpression("mention_id", "1");
+//                            updateBuilder.update();
 
                         } catch (SQLException e) {
                             e.printStackTrace();
