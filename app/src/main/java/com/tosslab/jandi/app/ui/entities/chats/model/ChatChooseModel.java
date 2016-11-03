@@ -118,7 +118,7 @@ public class ChatChooseModel {
                 }))
                 .toSortedList(getChatItemComparator())
                 .collect(() -> chatChooseItems, List::addAll)
-                .subscribe();
+                .subscribe(it -> {} , Throwable::printStackTrace);
 
 
         return chatChooseItems;
@@ -166,7 +166,7 @@ public class ChatChooseModel {
                 }))
                 .toSortedList(getChatItemComparator())
                 .collect(() -> chatChooseItems, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
 
         return chatChooseItems;

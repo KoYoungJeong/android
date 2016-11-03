@@ -82,7 +82,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                         .compose(deptJobModel.textToSpan(it))
                         .toSortedList((deptJob, deptJob2) -> StringCompareUtil.compare(deptJob.getName().toString(), deptJob2.getName().toString())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::addDatas));
+                .subscribe(this::addDatas, Throwable::printStackTrace));
 
 
         subscription.add(searchObservable.filter(it -> type == DeptJobFragment.EXTRA_TYPE_JOB)
@@ -109,7 +109,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                         .compose(deptJobModel.textToSpan(it))
                         .toSortedList((deptJob, deptJob2) -> StringCompareUtil.compare(deptJob.getName().toString(), deptJob2.getName().toString())))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::addDatas));
+                .subscribe(this::addDatas, Throwable::printStackTrace));
 
     }
 

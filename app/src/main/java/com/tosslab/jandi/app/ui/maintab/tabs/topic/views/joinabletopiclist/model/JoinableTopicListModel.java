@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.mode
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -56,7 +55,7 @@ public class JoinableTopicListModel {
                         || topic.getName().toLowerCase().contains(query.toLowerCase()))
                 .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .collect(() -> topics, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
         return topics;
     }
 
