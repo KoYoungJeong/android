@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Profile;
 
 import java.util.List;
@@ -76,9 +77,11 @@ public class HumanRepository extends RealmRepository {
     public boolean addHuman(long teamId, Human member) {
         return execute((realm) -> {
 
-            member.setTeamId(teamId);
-
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(member));
+            InitialInfo initialInfo = realm.where(InitialInfo.class).equalTo("teamId", teamId).findFirst();
+            realm.executeTransaction(realm1 -> {
+                member.setTeamId(teamId);
+                initialInfo.getMembers().add(member);
+            });
 
             return true;
         });

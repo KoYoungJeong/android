@@ -32,12 +32,12 @@ public class User implements Member {
     }
 
     public String getStatusMessage() {
-        return human.getProfile().getStatusMessage();
+        return human.getProfile() != null ? human.getProfile().getStatusMessage() : "";
     }
 
     @Override
     public String getEmail() {
-        return human.getProfile().getEmail();
+        return human.getProfile() != null ? human.getProfile().getEmail() : "";
     }
 
     @Override
@@ -61,15 +61,15 @@ public class User implements Member {
     }
 
     public String getDivision() {
-        return human.getProfile().getDepartment();
+        return human.getProfile() != null ? human.getProfile().getDepartment() : "";
     }
 
     public String getPosition() {
-        return human.getProfile().getPosition();
+        return human.getProfile() != null ? human.getProfile().getPosition() : "";
     }
 
     public String getPhoneNumber() {
-        return human.getProfile().getPhoneNumber();
+        return human.getProfile() != null ? human.getProfile().getPhoneNumber() : "";
     }
 
     @Override
@@ -78,6 +78,6 @@ public class User implements Member {
     }
 
     public boolean isProfileUpdated() {
-        return human.getProfile().isUpdated();
+        return human.getProfile() != null ? human.getProfile().isUpdated() : false;
     }
 }

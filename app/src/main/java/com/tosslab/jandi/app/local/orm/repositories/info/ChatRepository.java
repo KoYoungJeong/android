@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Chat;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 
 public class ChatRepository extends RealmRepository {
@@ -32,7 +34,23 @@ public class ChatRepository extends RealmRepository {
 
     public boolean addChat(Chat chat) {
         return execute((realm) -> {
-            realm.executeTransaction(realm1 -> realm.insertOrUpdate(chat));
+
+            long teamId;
+            if (chat.getTeamId() > 0) {
+                teamId = chat.getTeamId();
+            } else {
+                teamId = AccountRepository.getRepository().getSelectedTeamId();
+                chat.setTeamId(teamId);
+            }
+
+            InitialInfo initialInfo = realm.where(InitialInfo.class).equalTo("teamId", teamId).findFirst();
+            if (initialInfo != null && realm.where(Chat.class)
+                    .equalTo("id", chat.getId())
+                    .count() <= 0) {
+                realm.executeTransaction(realm1 -> {
+                    initialInfo.getChats().add(chat);
+                });
+            }
             return true;
         });
     }
@@ -56,6 +74,7 @@ public class ChatRepository extends RealmRepository {
                         lastMessage.setStatus(status);
                         chat.setLastMessage(lastMessage);
                     }
+
                 });
                 return true;
             }

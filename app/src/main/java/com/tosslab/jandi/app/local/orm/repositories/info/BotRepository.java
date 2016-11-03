@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
 public class BotRepository extends RealmRepository {
     private static BotRepository instance;
@@ -23,9 +24,19 @@ public class BotRepository extends RealmRepository {
     public boolean addBot(Bot bot) {
         return execute(realm -> {
 
-            if (realm.where(Bot.class).equalTo("id", bot.getId()).count() <= 0) {
-                bot.setTeamId(AccountRepository.getRepository().getSelectedTeamId());
-                realm.executeTransaction(it -> realm.copyToRealmOrUpdate(bot));
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            InitialInfo initialInfo = realm.where(InitialInfo.class)
+                    .equalTo("teamId", selectedTeamId)
+                    .findFirst();
+
+            if (initialInfo != null
+                    && realm.where(Bot.class)
+                    .equalTo("id", bot.getId())
+                    .count() <= 0) {
+                realm.executeTransaction(it -> {
+                    bot.setTeamId(selectedTeamId);
+                    initialInfo.getBots().add(bot);
+                });
             }
 
 

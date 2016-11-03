@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Announcement;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
@@ -307,8 +308,15 @@ public class TopicRepository extends RealmRepository {
     public boolean addTopic(Topic topic) {
         return execute((realm) -> {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            topic.setTeamId(selectedTeamId);
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
+            InitialInfo initialInfo = realm.where(InitialInfo.class)
+                    .equalTo("teamId", selectedTeamId)
+                    .findFirst();
+            if (initialInfo != null) {
+                realm.executeTransaction(realm1 -> {
+                    topic.setTeamId(selectedTeamId);
+                    initialInfo.getTopics().add(topic);
+                });
+            }
             return true;
         });
     }

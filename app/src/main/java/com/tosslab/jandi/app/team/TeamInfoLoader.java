@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Poll;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.start.Topic;
@@ -109,9 +110,7 @@ public class TeamInfoLoader {
     public void refresh() {
         execute(() -> {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            if (teamId > 0) {
-                refresh(teamId);
-            }
+            refresh(teamId);
         });
     }
 
@@ -125,20 +124,34 @@ public class TeamInfoLoader {
     public void refresh(long teamId) {
         execute(() -> {
             initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-            if (initialInfo != null) {
-                setUp();
-            }
+            setUp();
         });
     }
 
     private void setUp() {
-        setUpTeam();
-        setUpRooms();
-        setUpMembers();
-        setUpMe();
-        setUpTopicFolders();
-        setUpPollBadge();
-        setUpTeamPlan();
+        if (initialInfo != null) {
+            setUpTeam();
+            setUpRooms();
+            setUpMembers();
+            setUpMe();
+            setUpTopicFolders();
+            setUpPollBadge();
+            setUpTeamPlan();
+            setUpMention();
+        } else {
+            team = null;
+            rooms.clear();
+            chatRooms.clear();
+            topicRooms.clear();
+            members.clear();
+            users.clear();
+            bots.clear();
+            jandiBot = null;
+            me = null;
+            topicFolders.clear();
+            pollBadge = 0;
+            teamPlan = null;
+        }
     }
 
     private void setUpMention() {
@@ -233,9 +246,10 @@ public class TeamInfoLoader {
         getFolderObservable()
                 .map(folder -> {
                     List<TopicRoom> topicRooms = new ArrayList<>();
-                    Collection<Long> rooms = folder.getRooms();
+                    Collection<RealmLong> rooms = folder.getRoomIds();
                     if (rooms != null) {
                         Observable.from(rooms)
+                                .map(RealmLong::getValue)
                                 .filter(roomId -> TeamInfoLoader.this.topicRooms.containsKey(roomId))
                                 .map(roomId -> TeamInfoLoader.this.topicRooms.get(roomId))
                                 .collect(() -> topicRooms, List::add)
