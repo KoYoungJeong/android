@@ -16,9 +16,12 @@ public class BotRepository extends RealmRepository {
     }
 
     public Bot getBot(long memberId) {
-        return execute(realm -> realm.where(Bot.class)
-                .equalTo("id", memberId)
-                .findFirst());
+        return execute(realm -> {
+            Bot bot = realm.where(Bot.class)
+                    .equalTo("id", memberId)
+                    .findFirst();
+            return realm.copyFromRealm(bot);
+        });
     }
 
     public boolean addBot(Bot bot) {

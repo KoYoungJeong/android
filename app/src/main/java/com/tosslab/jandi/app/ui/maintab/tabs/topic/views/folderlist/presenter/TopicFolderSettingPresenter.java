@@ -20,11 +20,11 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import io.realm.RealmList;
 
 
 /**
@@ -64,7 +64,7 @@ public class TopicFolderSettingPresenter {
         try {
             ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
             Folder folder1 = new Folder();
-            folder1.setRooms(new ArrayList<>());
+            folder1.setRoomIds(new RealmList<>());
             folder1.setOpened(false);
             folder1.setName(folder.getName());
             folder1.setId(folder.getId());

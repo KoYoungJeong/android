@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.network.models.start.Profile;
 
 import java.util.List;
 
+import io.realm.RealmResults;
+
 public class HumanRepository extends RealmRepository {
     private static HumanRepository instance;
 
@@ -25,9 +27,12 @@ public class HumanRepository extends RealmRepository {
     }
 
     public Human getHuman(long memberId) {
-        return execute((realm) -> realm.where(Human.class)
-                .equalTo("id", memberId)
-                .findFirst());
+        return execute((realm) -> {
+            Human it = realm.where(Human.class)
+                    .equalTo("id", memberId)
+                    .findFirst();
+            return realm.copyFromRealm(it);
+        });
     }
 
     public int getMemberCount(long teamId) {
@@ -108,8 +113,11 @@ public class HumanRepository extends RealmRepository {
     }
 
     public List<Human> getContainsPhone(String queryNum) {
-        return execute(realm -> realm.where(Human.class)
-                .contains("profile.phoneNumber", queryNum)
-                .findAll());
+        return execute(realm -> {
+            RealmResults<Human> it = realm.where(Human.class)
+                    .contains("profile.phoneNumber", queryNum)
+                    .findAll();
+            return realm.copyFromRealm(it);
+        });
     }
 }

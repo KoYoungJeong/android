@@ -111,10 +111,12 @@ public class InitialInfo extends RealmObject {
         this.teamId = teamId;
     }
 
+    @Deprecated
     public List<Long> getStarredMessageIds() {
         return starredMessageIds;
     }
 
+    @Deprecated
     public void setStarredMessageIds(List<Long> starredMessageIds) {
         this.starredMessageIds = starredMessageIds;
     }

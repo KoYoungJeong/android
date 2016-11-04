@@ -29,7 +29,13 @@ public class ChatRepository extends RealmRepository {
     }
 
     public Chat getChat(long chatId) {
-        return execute((realm) -> realm.where(Chat.class).equalTo("id", chatId).findFirst());
+        return execute((realm) -> {
+            Chat it = realm.where(Chat.class)
+                    .equalTo("id", chatId)
+                    .findFirst();
+
+            return realm.copyFromRealm(it);
+        });
     }
 
     public boolean addChat(Chat chat) {

@@ -24,16 +24,16 @@ public class TopicRepository extends RealmRepository {
     }
 
     public List<Topic> getTopics(long teamId) {
-        return execute((realm) -> realm.where(Topic.class)
+        return execute((realm) -> realm.copyFromRealm(realm.where(Topic.class)
                 .equalTo("teamId", teamId)
-                .findAll());
+                .findAll()));
     }
 
     public Topic getDefaultTopic(long teamId) {
-        return execute((realm) -> realm.where(Topic.class)
+        return execute((realm) -> realm.copyFromRealm(realm.where(Topic.class)
                 .equalTo("teamId", teamId)
                 .equalTo("isDefault", true)
-                .findFirst());
+                .findFirst()));
     }
 
     public boolean updateStarred(long roomId, boolean starred) {
@@ -356,9 +356,9 @@ public class TopicRepository extends RealmRepository {
     }
 
     public Topic getTopic(long roomId) {
-        return execute((realm) -> realm.where(Topic.class)
+        return execute((realm) -> realm.copyFromRealm(realm.where(Topic.class)
                 .equalTo("id", roomId)
-                .findFirst());
+                .findFirst()));
     }
 
     public boolean updateReadId(long roomId, long linkId) {

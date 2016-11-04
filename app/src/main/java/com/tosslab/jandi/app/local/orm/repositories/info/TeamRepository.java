@@ -14,9 +14,12 @@ public class TeamRepository extends RealmRepository {
     }
 
     public Team getTeam(long teamId) {
-        return execute(realm -> realm.where(Team.class)
-                .equalTo("id", teamId)
-                .findFirst());
+        return execute(realm -> {
+            Team it = realm.where(Team.class)
+                    .equalTo("id", teamId)
+                    .findFirst();
+            return realm.copyFromRealm(it);
+        });
     }
 
     public boolean updateTeam(Team team) {

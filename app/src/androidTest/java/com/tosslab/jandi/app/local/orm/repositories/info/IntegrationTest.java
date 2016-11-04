@@ -34,13 +34,17 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmList;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 @org.junit.runner.RunWith(AndroidJUnit4.class)
-public class IntregrationTest {
+public class IntegrationTest {
 
     private static InitialInfo initializeInfo;
     private static long teamId;
@@ -605,6 +609,26 @@ public class IntregrationTest {
         TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement()).isNull();
 
+    }
+
+    @Test
+    public void multiThread() throws Exception {
+
+
+        TestSubscriber<User> subscriber = TestSubscriber.create();
+        Observable.just(TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()))
+                .observeOn(Schedulers.computation())
+                .doOnNext(it -> {
+                    assertThat(it.getEmail()).isNotNull();
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(it -> {
+                    assertThat(it.getEmail()).isNotNull();
+                })
+                .doOnError(throwable -> fail("It cannot be happened"))
+                .subscribe(subscriber);
+
+        subscriber.awaitTerminalEvent();
     }
 
     @Nullable

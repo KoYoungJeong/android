@@ -25,9 +25,13 @@ public class InitialInfoRepository extends RealmRepository {
     }
 
     public InitialInfo getInitialInfo(long teamId) {
-        return execute(realm -> realm.where(InitialInfo.class)
-                .equalTo("teamId", teamId)
-                .findFirst());
+        return execute(realm -> {
+            InitialInfo initialInfo = realm.where(InitialInfo.class)
+                    .equalTo("teamId", teamId)
+                    .findFirst();
+
+            return realm.copyFromRealm(initialInfo);
+        });
     }
 
     public boolean hasInitialInfo(long teamId) {

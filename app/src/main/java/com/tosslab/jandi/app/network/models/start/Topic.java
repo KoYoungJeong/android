@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -124,10 +125,22 @@ public class Topic extends RealmObject {
         this.lastLinkId = lastLinkId;
     }
 
+    @Deprecated
     public List<Long> getMembers() {
-        return members;
+        if (members != null) {
+            return members;
+        } else {
+            members = new ArrayList<>();
+            if (memberIds != null) {
+                for (RealmLong memberId : memberIds) {
+                    members.add(memberId.getValue());
+                }
+            }
+            return members;
+        }
     }
 
+    @Deprecated
     public void setMembers(List<Long> members) {
         this.members = members;
     }

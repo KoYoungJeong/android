@@ -58,9 +58,12 @@ public class RoomMarkerRepository extends RealmRepository {
     }
 
     public Marker getMarker(long roomId, long memberId) {
-        return execute(realm -> realm.where(Marker.class)
-                .equalTo("id", roomId + "_" + memberId)
-                .findFirst());
+        return execute(realm -> {
+            Marker it = realm.where(Marker.class)
+                    .equalTo("id", roomId + "_" + memberId)
+                    .findFirst();
+            return realm.copyFromRealm(it);
+        });
 
     }
 

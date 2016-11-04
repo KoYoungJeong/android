@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import io.realm.RealmList;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -196,7 +197,7 @@ public class MainTopicListPresenter {
         try {
             ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
             Folder folder1 = new Folder();
-            folder1.setRooms(new ArrayList<>());
+            folder1.setRoomIds(new RealmList<>());
             folder1.setOpened(false);
             folder1.setName(folder.getName());
             folder1.setId(folder.getId());

@@ -29,7 +29,12 @@ public class FolderRepository extends RealmRepository {
     }
 
     public List<Folder> getFolders(long teamId) {
-        return execute((realm) -> realm.where(Folder.class).equalTo("teamId", teamId).findAll());
+        return execute((realm) -> {
+            RealmResults<Folder> it = realm.where(Folder.class)
+                    .equalTo("teamId", teamId)
+                    .findAll();
+            return realm.copyFromRealm(it);
+        });
     }
 
     public boolean addFolder(long teamId, Folder folder) {

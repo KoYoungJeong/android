@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -53,10 +54,24 @@ public class Folder extends RealmObject {
         this.seq = seq;
     }
 
+    @Deprecated
     public List<Long> getRooms() {
-        return rooms;
+        if (rooms != null) {
+            return rooms;
+        } else {
+            if (roomIds != null) {
+                rooms = new ArrayList<>();
+                for (RealmLong roomId : roomIds) {
+                    rooms.add(roomId.getValue());
+                }
+            } else {
+                rooms = new ArrayList<>();
+            }
+            return rooms;
+        }
     }
 
+    @Deprecated
     public void setRooms(List<Long> rooms) {
         this.rooms = rooms;
     }
