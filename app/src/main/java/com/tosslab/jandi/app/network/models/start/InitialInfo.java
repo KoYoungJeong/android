@@ -305,7 +305,7 @@ public class InitialInfo {
             return isExceedFile;
         }
 
-        public void setExceedFile(boolean exceedFile) {
+        public void setIsExceedFile(boolean exceedFile) {
             isExceedFile = exceedFile;
         }
 
@@ -313,7 +313,7 @@ public class InitialInfo {
             return isExceedMessage;
         }
 
-        public void setExceedMessage(boolean exceedMessage) {
+        public void setIsExceedMessage(boolean exceedMessage) {
             isExceedMessage = exceedMessage;
         }
 
