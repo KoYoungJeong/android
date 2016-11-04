@@ -2015,7 +2015,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Override
     public void showMessageUnStarSuccessToast() {
         String msg = JandiApplication.getContext()
-                .getResources().getString(R.string.jandi_unpinned_message);
+                .getResources().getString(R.string.jandi_message_no_starred);
 
         showToast(msg, false /* isError */);
     }

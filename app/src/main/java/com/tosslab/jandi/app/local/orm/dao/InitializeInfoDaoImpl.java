@@ -195,7 +195,7 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
 
         if (data.getTeamPlan() != null) {
             Dao<InitialInfo.TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.TeamPlan.class);
-            dao.createOrUpdate(data.getTeamPlan());
+            dao.update(data.getTeamPlan());
         }
 
         if (data.getTeam() != null) {
