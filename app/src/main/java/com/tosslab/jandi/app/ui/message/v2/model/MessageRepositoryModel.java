@@ -38,18 +38,8 @@ public class MessageRepositoryModel {
 
         List<ResMessages.Link> oldMessages = MessageRepository.getRepository().getOldMessages(roomId, startLinkId, MAX_COUNT);
 
-        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
-            for (int i = oldMessages.size() - 1; i >= 0; i--) {
-                if (oldMessages.get(i).info instanceof ResMessages.InviteEvent
-                        || oldMessages.get(i).info instanceof ResMessages.LeaveEvent) {
-                    oldMessages.remove(i);
-                }
-            }
-        }
-
         if (oldMessages.isEmpty()) {
             if (!isFirst) {
-
                 try {
                     ResMessages messages = messageManipulator.getMessages(startLinkId, MAX_COUNT);
                     oldMessages = messages.records;
@@ -128,6 +118,15 @@ public class MessageRepositoryModel {
 
         if (!oldMessages.isEmpty()) {
             isFirst = false;
+        }
+
+        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+            for (int i = oldMessages.size() - 1; i >= 0; i--) {
+                if (oldMessages.get(i).info instanceof ResMessages.InviteEvent
+                        || oldMessages.get(i).info instanceof ResMessages.LeaveEvent) {
+                    oldMessages.remove(i);
+                }
+            }
         }
 
         return oldMessages;
