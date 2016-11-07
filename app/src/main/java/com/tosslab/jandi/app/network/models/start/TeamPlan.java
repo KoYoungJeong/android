@@ -39,7 +39,7 @@ public class TeamPlan extends RealmObject {
         return isExceedFile;
     }
 
-    public void setExceedFile(boolean exceedFile) {
+    public void setIsExceedFile(boolean exceedFile) {
         isExceedFile = exceedFile;
     }
 
@@ -47,7 +47,7 @@ public class TeamPlan extends RealmObject {
         return isExceedMessage;
     }
 
-    public void setExceedMessage(boolean exceedMessage) {
+    public void setIsExceedMessage(boolean exceedMessage) {
         isExceedMessage = exceedMessage;
     }
 
