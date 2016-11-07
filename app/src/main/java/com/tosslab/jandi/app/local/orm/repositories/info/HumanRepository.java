@@ -31,7 +31,11 @@ public class HumanRepository extends RealmRepository {
             Human it = realm.where(Human.class)
                     .equalTo("id", memberId)
                     .findFirst();
-            return realm.copyFromRealm(it);
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
+            }
         });
     }
 
@@ -117,7 +121,11 @@ public class HumanRepository extends RealmRepository {
             RealmResults<Human> it = realm.where(Human.class)
                     .contains("profile.phoneNumber", queryNum)
                     .findAll();
-            return realm.copyFromRealm(it);
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
+            }
         });
     }
 }

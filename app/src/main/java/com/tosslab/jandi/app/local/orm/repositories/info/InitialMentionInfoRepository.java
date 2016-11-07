@@ -32,12 +32,16 @@ public class InitialMentionInfoRepository extends RealmRepository {
 
                 });
 
-                return realm.copyFromRealm(realm.where(Mention.class)
+                mention = realm.where(Mention.class)
                         .equalTo("id", selectedTeamId)
-                        .findFirst());
+                        .findFirst();
             }
 
-            return realm.copyFromRealm(mention);
+            if (mention != null) {
+                return realm.copyFromRealm(mention);
+            } else {
+                return null;
+            }
         });
     }
 

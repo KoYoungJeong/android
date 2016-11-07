@@ -33,8 +33,11 @@ public class ChatRepository extends RealmRepository {
             Chat it = realm.where(Chat.class)
                     .equalTo("id", chatId)
                     .findFirst();
-
-            return realm.copyFromRealm(it);
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
+            }
         });
     }
 

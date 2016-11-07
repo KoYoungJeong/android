@@ -18,7 +18,11 @@ public class TeamRepository extends RealmRepository {
             Team it = realm.where(Team.class)
                     .equalTo("id", teamId)
                     .findFirst();
-            return realm.copyFromRealm(it);
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
+            }
         });
     }
 

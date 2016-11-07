@@ -20,7 +20,11 @@ public class BotRepository extends RealmRepository {
             Bot bot = realm.where(Bot.class)
                     .equalTo("id", memberId)
                     .findFirst();
-            return realm.copyFromRealm(bot);
+            if (bot != null) {
+                return realm.copyFromRealm(bot);
+            } else {
+                return null;
+            }
         });
     }
 

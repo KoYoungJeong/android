@@ -33,7 +33,11 @@ public class FolderRepository extends RealmRepository {
             RealmResults<Folder> it = realm.where(Folder.class)
                     .equalTo("teamId", teamId)
                     .findAll();
-            return realm.copyFromRealm(it);
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
+            }
         });
     }
 

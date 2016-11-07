@@ -30,7 +30,11 @@ public class InitialInfoRepository extends RealmRepository {
                     .equalTo("teamId", teamId)
                     .findFirst();
 
-            return realm.copyFromRealm(initialInfo);
+            if (initialInfo != null) {
+                return realm.copyFromRealm(initialInfo);
+            } else {
+                return null;
+            }
         });
     }
 

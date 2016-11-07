@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class TopicRepository extends RealmRepository {
     private static TopicRepository instance;
@@ -24,16 +25,30 @@ public class TopicRepository extends RealmRepository {
     }
 
     public List<Topic> getTopics(long teamId) {
-        return execute((realm) -> realm.copyFromRealm(realm.where(Topic.class)
-                .equalTo("teamId", teamId)
-                .findAll()));
+        return execute((realm) -> {
+            RealmResults<Topic> it = realm.where(Topic.class)
+                    .equalTo("teamId", teamId)
+                    .findAll();
+            if (it != null && !it.isEmpty()) {
+                return realm.copyFromRealm(it);
+            } else {
+                return it;
+            }
+        });
     }
 
     public Topic getDefaultTopic(long teamId) {
-        return execute((realm) -> realm.copyFromRealm(realm.where(Topic.class)
-                .equalTo("teamId", teamId)
-                .equalTo("isDefault", true)
-                .findFirst()));
+        return execute((realm) -> {
+            Topic it = realm.where(Topic.class)
+                    .equalTo("teamId", teamId)
+                    .equalTo("isDefault", true)
+                    .findFirst();
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
+            }
+        });
     }
 
     public boolean updateStarred(long roomId, boolean starred) {
@@ -356,9 +371,16 @@ public class TopicRepository extends RealmRepository {
     }
 
     public Topic getTopic(long roomId) {
-        return execute((realm) -> realm.copyFromRealm(realm.where(Topic.class)
-                .equalTo("id", roomId)
-                .findFirst()));
+        return execute((realm) -> {
+            Topic it = realm.where(Topic.class)
+                    .equalTo("id", roomId)
+                    .findFirst();
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return it;
+            }
+        });
     }
 
     public boolean updateReadId(long roomId, long linkId) {
