@@ -17,7 +17,7 @@
         <item
             android:id="@+id/nav_setting_call_preview"
             android:icon="@drawable/side_bar_phone"
-            android:title="멤버 연락처 블라" />
+            android:title="@string/common_calleridnotifier_settings" />
         <item
             android:id="@+id/nav_setting_account"
             android:icon="@drawable/side_bar_setting"
