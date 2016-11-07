@@ -131,8 +131,12 @@ public class JandiCallManager {
                             params = new WindowManager.LayoutParams(
                                     WindowManager.LayoutParams.MATCH_PARENT,
                                     WindowManager.LayoutParams.WRAP_CONTENT,
-                                    WindowManager.LayoutParams.TYPE_PHONE,//항상 최 상위. 터치 이벤트 받을 수 있음.
-                                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,  //포커스를 가지지 않음
+                                    WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,//항상 최 상위. 터치 이벤트 받을 수 있음.
+                                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE //포커스를 가지지 않음
+                                            | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                                            | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                                            | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                            | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
                                     PixelFormat.TRANSLUCENT); // 투명
                             params.gravity = Gravity.CENTER;
                             params.y = JandiPreference.getCallPreviewCoordinateY();
