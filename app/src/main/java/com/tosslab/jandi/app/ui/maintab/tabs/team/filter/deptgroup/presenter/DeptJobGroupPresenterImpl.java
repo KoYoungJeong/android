@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
@@ -33,6 +34,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     private String keyword;
     private boolean selectMode;
     private boolean pickMode;
+    private long roomId;
 
     @Inject
     public DeptJobGroupPresenterImpl(View view, TeamMemberDataModel teamMemberDataModel, ToggleCollector toggledUser) {
@@ -48,9 +50,25 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
                 .filter(user -> {
-                    if (pickMode || selectMode) {
-                        return user.getId() != TeamInfoLoader.getInstance().getMyId();
+                    if (!selectMode && roomId < 0) {
+                        return !user.isBot();
                     }
+
+                    if (user.getId() == TeamInfoLoader.getInstance().getMyId()) {
+                        return false;
+                    }
+
+                    // 멀티 셀렉트 모드인 경우 봇은 제외
+                    if (roomId > 0 && user.isBot()) {
+                        return false;
+                    }
+
+                    Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+
+                    if (room != null) {
+                        return !room.getMembers().contains(user.getId());
+                    }
+
                     return true;
                 })
                 .filter(filterKeyword(type, keyword))
@@ -161,5 +179,9 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
 
     public void setPickMode(boolean pickMode) {
         this.pickMode = pickMode;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
     }
 }
