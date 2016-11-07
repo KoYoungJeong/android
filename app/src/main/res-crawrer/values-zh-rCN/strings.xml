@@ -15,7 +15,7 @@
 	<string name="common_calleridnotifier_guide1">"即使手机通讯录没有成员联系信息，成员拨打电话给你时，依然可以快速浏览对方简介信息"</string>
 	<string name="common_calleridnotifier_guide2">"欲有此功能，请先完成以下设置"</string>
 	<string name="common_calleridnotifier_settings">"成员通话设置"</string>
-	<string name="common_calleridnotifier_suggestmodal">"成员通话设置"</string>
+	<string name="common_calleridnotifier_suggestmodal">"试试成员通话设置"</string>
 	<string name="common_calleridnotifier_tosettings">"前往設定"</string>
 	<string name="common_createteam_toaccthome">"前往帐户首页"</string>
 	<string name="common_createteam_welcome">"欢迎！"</string>

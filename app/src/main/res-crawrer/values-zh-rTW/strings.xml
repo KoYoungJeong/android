@@ -15,7 +15,7 @@
 	<string name="common_calleridnotifier_guide1">"即使手機通訊錄沒有成員聯繫資訊，成員撥打電話給你時，依然可以快速瀏覽對方簡介資訊"</string>
 	<string name="common_calleridnotifier_guide2">"欲有此功能，請先完成以下設定"</string>
 	<string name="common_calleridnotifier_settings">"成員通話設定"</string>
-	<string name="common_calleridnotifier_suggestmodal">"成員通話設定"</string>
+	<string name="common_calleridnotifier_suggestmodal">"試試成員通話設定"</string>
 	<string name="common_calleridnotifier_tosettings">"前往設定"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
 	<string name="common_createteam_welcome">"歡迎！"</string>

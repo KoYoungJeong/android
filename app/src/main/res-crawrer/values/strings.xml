@@ -15,7 +15,7 @@
 	<string name="common_calleridnotifier_guide1">"Even if you get a call from a team member who is not saved in your phone contact, you can view their profile instantly."</string>
 	<string name="common_calleridnotifier_guide2">"To enable this feature, you must turn on the following menu."</string>
 	<string name="common_calleridnotifier_settings">"View Members’ Contacts"</string>
-	<string name="common_calleridnotifier_suggestmodal">""</string>
+	<string name="common_calleridnotifier_suggestmodal">"Try 'View Members' Contacts'"</string>
 	<string name="common_calleridnotifier_tosettings">" Move to Settings"</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_createteam_welcome">"Welcome!"</string>
