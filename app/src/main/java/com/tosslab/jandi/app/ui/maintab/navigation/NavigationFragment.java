@@ -228,12 +228,22 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.PasscodeLock);
                 return true;
             case R.id.nav_setting_call_preview:
-                moveoToSetUpCallPreview();
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveoToSetUpCallPreview);
+
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.CallPreview);
                 break;
             case R.id.nav_setting_orientation:
-                showSettingOrientationDialog();
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::showSettingOrientationDialog);
+
                 return true;
             case R.id.nav_setting_account:
                 Completable.fromAction(this::closeNavigation)
