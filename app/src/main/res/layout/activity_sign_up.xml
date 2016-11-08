@@ -42,6 +42,7 @@
                     android:maxLength="30"
                     android:maxLines="1"
                     android:nextFocusDown="@+id/et_password"
+                    android:paddingBottom="16dp"
                     android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
@@ -64,6 +65,7 @@
                     android:maxLength="60"
                     android:maxLines="1"
                     android:nextFocusDown="@+id/et_password"
+                    android:paddingBottom="16dp"
                     android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
@@ -85,6 +87,7 @@
                     android:inputType="textPassword"
                     android:maxLength="20"
                     android:maxLines="1"
+                    android:paddingBottom="16dp"
                     android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>

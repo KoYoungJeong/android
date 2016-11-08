@@ -339,13 +339,11 @@
     <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub
-        </item>
+        <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub</item>
+        <item name="android:theme">@style/FloatingEditTextTheme</item>
         <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
-        <item name="android:textSize">@dimen/jandi_text_size_large</item>
-        <item name="android:background">@null</item>
-        <item name="android:textColor">@color/jandi_text</item>
     </style>
 
     <style name="JandiTopic.Create.TextView.TextCount" parent="JandiTopic">
@@ -618,21 +616,15 @@
     </style>
 
     <style name="FloatingEditTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:textColorHint">#61000000</item>
-        <item name="android:textSize">16sp</item>
-        <item name="colorControlActivated">#61000000</item>
-        <item name="colorControlHighlight">#6A000000</item>
-        <item name="colorControlNormal">#1e000000</item>
+        <item name="android:textColorHint">@color/jandi_text_light</item>
+        <item name="android:textColor">@color/jandi_text</item>
+        <item name="android:textSize">@dimen/jandi_text_size_large</item>
+        <item name="colorAccent">@color/rgb_808080</item>
+        <item name="colorControlNormal">@color/rgb_cccccc</item>
+        <item name="textColorError">@color/jandi_red</item>
     </style>
 
-    <style name="CreatePollEditText" parent="Theme.AppCompat.Light">
-        <item name="android:textColorHint">@color/jandi_line_gray</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:textSize">16sp</item>
-        <item name="colorControlActivated">#7A000000</item>
-        <item name="colorControlHighlight">#7A000000</item>
-        <item name="colorControlNormal">#1E000000</item>
-        <item name="android:background">@android:color/transparent</item>
+    <style name="CreatePollEditText" parent="@style/FloatingEditTextTheme">
     </style>
 
     <style name="DayTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">

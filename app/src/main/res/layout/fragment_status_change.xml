@@ -29,36 +29,22 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@null"
+                android:layout_marginTop="24dp"
                 android:hint="@string/jandi_enter_your_status_message"
                 android:imeOptions="actionDone"
                 android:lineSpacingExtra="2dp"
                 android:maxLength="60"
-                android:minHeight="32dp"
-                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:scrollHorizontally="true"
                 android:scrollbars="horizontal"
-                android:textColor="@color/jandi_text"
-                android:textSize="@dimen/jandi_text_size_large" />
-
-            <View
-                android:id="@+id/tv_status_change_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_alignLeft="@+id/et_status_change"
-                android:layout_alignRight="@+id/et_status_change"
-                android:layout_below="@+id/et_status_change"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/jandi_line_gray" />
+                android:theme="@style/FloatingEditTextTheme" />
 
             <TextView
                 android:id="@+id/tv_status_change_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/tv_status_change_divider"
-                android:layout_below="@+id/tv_status_change_divider"
+                android:layout_alignRight="@+id/et_status_change"
+                android:layout_below="@+id/et_status_change"
                 android:gravity="center"
                 android:text="0/60"
                 android:textColor="@color/jandi_text_light"
