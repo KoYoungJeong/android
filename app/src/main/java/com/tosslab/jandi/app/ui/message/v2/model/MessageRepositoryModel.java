@@ -123,7 +123,8 @@ public class MessageRepositoryModel {
         if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
             for (int i = oldMessages.size() - 1; i >= 0; i--) {
                 if (oldMessages.get(i).info instanceof ResMessages.InviteEvent
-                        || oldMessages.get(i).info instanceof ResMessages.LeaveEvent) {
+                        || oldMessages.get(i).info instanceof ResMessages.LeaveEvent
+                        || oldMessages.get(i).info instanceof ResMessages.JoinEvent) {
                     oldMessages.remove(i);
                 }
             }
@@ -161,7 +162,8 @@ public class MessageRepositoryModel {
         if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
             for (int i = messages.size() - 1; i >= 0; i--) {
                 if (messages.get(i).info instanceof ResMessages.LeaveEvent
-                        || messages.get(i).info instanceof ResMessages.InviteEvent) {
+                        || messages.get(i).info instanceof ResMessages.InviteEvent
+                        || messages.get(i).info instanceof ResMessages.JoinEvent) {
                     messages.remove(i);
                 }
             }
