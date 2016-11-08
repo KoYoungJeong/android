@@ -431,6 +431,20 @@
         <item name="android:popupBackground">@drawable/mention_popup</item>
     </style>
 
+    <style name="Jandi.Default.CheckBox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="colorAccent">@color/rgb_00ace9</item>
+        <item name="colorControlNormal">@color/rgb_666666</item>
+    </style>
+
+    <style name="Jandi.Default.RadioButton" parent="@style/Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="colorAccent">@color/rgb_00ace9</item>
+        <item name="colorControlNormal">@color/rgb_666666</item>
+    </style>
+
+    <style name="Jandi.Default.Switch" parent="@style/Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorAccent">@color/rgb_00ace9</item>
+    </style>
+
 
     <style name="ToolbarText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textColor">@color/white</item>
@@ -607,6 +621,7 @@
         <item name="android:focusableInTouchMode">false</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
+        <item name="android:theme">@style/Jandi.Default.CheckBox</item>
     </style>
 
     <style name="JandiSettings.Divider">
