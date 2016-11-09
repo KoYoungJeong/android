@@ -1,8 +1,12 @@
 package com.tosslab.jandi.app.call;
 
 
+import android.Manifest;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.PixelFormat;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -15,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.jakewharton.rxrelay.PublishRelay;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
@@ -32,13 +37,13 @@ import butterknife.ButterKnife;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.subjects.PublishSubject;
 
 public class JandiCallManager {
+    public static final String[] CONTACTS_PROJECTION = new String[]{ContactsContract.Contacts._ID};
     private static JandiCallManager instance;
     private final PhoneNumberUtil phoneNumberUtil;
 
-    private PublishSubject<CallState> subject;
+    private PublishRelay<CallState> subject;
     private View view;
     private WindowManager.LayoutParams params;
 
@@ -46,7 +51,7 @@ public class JandiCallManager {
 
         phoneNumberUtil = PhoneNumberUtil.createInstance(JandiApplication.getContext());
 
-        subject = PublishSubject.create();
+        subject = PublishRelay.create();
 
         subject.onBackpressureBuffer()
                 .filter(it -> {
@@ -72,7 +77,10 @@ public class JandiCallManager {
                     }
                     return Observable.just(callState);
                 })
-                .subscribe(it -> {}, Crashlytics::logException);
+                .subscribe(it -> {}, (throwable) -> {
+                    throwable.printStackTrace();
+                    Crashlytics.logException(throwable);
+                });
     }
 
     synchronized public static JandiCallManager getInstance() {
@@ -88,7 +96,37 @@ public class JandiCallManager {
 
     private Observable<? extends Object> ringingState(Observable<CallState> callStateObservable) {
         return callStateObservable
+                .filter(it -> {
+                    if (SdkUtils.isMarshmallow()) {
+                        return Settings.canDrawOverlays(JandiApplication.getContext());
+                    } else {
+                        return false;
+                    }
+                })
                 .delay(500, TimeUnit.MILLISECONDS)
+                .filter(callState -> {
+
+                    if (SdkUtils.hasPermission(JandiApplication.getContext(), Manifest.permission.CALL_PHONE)) {
+                        Cursor cursor = JandiApplication.getContext()
+                                .getContentResolver()
+                                .query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(callState.number)),
+                                        CONTACTS_PROJECTION,
+                                        null,
+                                        null,
+                                        null);
+                        if (cursor != null) {
+                            try {
+                                return !(cursor.getCount() > 0);
+                            } finally {
+                                cursor.close();
+                            }
+                        }
+                    } else {
+                        return true;
+                    }
+
+                    return true;
+                })
                 .filter(it -> {
                     if (TextUtils.isEmpty(it.number)) {
                         return false;
@@ -102,7 +140,8 @@ public class JandiCallManager {
                     }
 
                     return HumanRepository.getInstance().containsPhone(queryNum);
-                }).concatMap(callState -> {
+                })
+                .concatMap(callState -> {
                     String queryNum;
                     String number = callState.number.replaceAll("[^0-9]", "");
                     if (number.length() >= 3) {
@@ -187,7 +226,7 @@ public class JandiCallManager {
 
     public void onCall(String inComingNumber, int state) {
 
-        subject.onNext(CallState.create(inComingNumber, state));
+        subject.call(CallState.create(inComingNumber, state));
     }
 
     private static class CallState {

@@ -82,6 +82,7 @@
 	<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s"</string>
 	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"团队未完成建立"</string>
+	<string name="file_detail_nopreview">"此檔案無法預覽"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
 	<string name="jandi_1_1_message">"私訊"</string>
@@ -751,6 +752,7 @@
 	<string name="title_file_upload">"上傳檔案"</string>
 	<string name="today">"今天"</string>
 	<string name="topic_polls_deletedpoll">"已刪除的問卷"</string>
+	<string name="topic_room_deletetopicconfirm">"此議題已被刪除"</string>
 	<string name="topic_room_selectallmembers">"選擇全部"</string>
 	<string name="topic_topicchat_mentionall">"@all (議題成員)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"議題已從 %s 中移除"</string>

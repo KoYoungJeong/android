@@ -78,6 +78,7 @@ rootProject.allprojects { project ->
                 // RxJava
                 compile rootProject.ext.dependecies.libraries.rxandroid
                 compile rootProject.ext.dependecies.libraries.rxjava
+                compile rootProject.ext.dependecies.libraries.rxrelay
 
                 // facebook SDK
                 compile rootProject.ext.dependecies.libraries.facebook

@@ -82,6 +82,7 @@
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
 	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
+	<string name="file_detail_nopreview">"This file can't be previewed."</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
 	<string name="jadi_account_home">"Account Home"</string>
 	<string name="jandi_1_1_message">"1:1 Message"</string>
@@ -754,6 +755,7 @@
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
 	<string name="topic_polls_deletedpoll">"Deleted Poll"</string>
+	<string name="topic_room_deletetopicconfirm">"This topic has been deleted"</string>
 	<string name="topic_room_selectallmembers">"Select All"</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>

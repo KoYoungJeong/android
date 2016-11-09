@@ -82,6 +82,7 @@
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
 	<string name="exclamation_mark">"に委譲しますか?"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
+	<string name="file_detail_nopreview">"プレビュー表示できないファイル形式です。"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>
 	<string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
@@ -759,6 +760,7 @@
 	<string name="title_file_upload">"ファイルをアップロード"</string>
 	<string name="today">"今日"</string>
 	<string name="topic_polls_deletedpoll">"削除された投票"</string>
+	<string name="topic_room_deletetopicconfirm">"このトピックは削除されました。"</string>
 	<string name="topic_room_selectallmembers">"すべて選択"</string>
 	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"%sフォルダからトピックが除かれました"</string>
