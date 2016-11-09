@@ -17,7 +17,9 @@ public class StartApi extends ApiTemplate<StartApi.Api> {
     }
 
     public InitialInfo getInitializeInfo(long teamId) throws RetrofitException {
-        return call(() -> getApi().getInitializeInfo(teamId));
+        return call(() -> {
+            return getApi().getInitializeInfo(teamId);
+        });
     }
 
     interface Api {

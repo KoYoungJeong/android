@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
@@ -36,6 +37,8 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
     BehaviorSubject<String> deptJobSubject;
     CompositeSubscription subscription;
     private int type;
+    private boolean isSelectMode = false;
+    private long roomId = -1;
 
     @Inject
     public DeptJobPresenterImpl(View view, DeptJobDataModel deptJobDataModel, DeptJobModel deptJobModel) {
@@ -50,6 +53,14 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
         this.type = type;
     }
 
+    public void setIsSelectMode(boolean selectMode) {
+        isSelectMode = selectMode;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
     @Override
     public void onCreate() {
         deptJobSubject = BehaviorSubject.create("");
@@ -62,9 +73,29 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(Schedulers.newThread())
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
-                        .map((user) -> {
-                            if (!TextUtils.isEmpty(user.getDivision())) {
+                        .filter(user -> {
+                            if (!isSelectMode && roomId < 0) {
+                                return !user.isBot();
+                            }
 
+                            if (user.getId() == TeamInfoLoader.getInstance().getMyId()) {
+                                return false;
+                            }
+
+                            // 멀티 셀렉트 모드인 경우 봇은 제외
+                            if (roomId > 0 && user.isBot()) {
+                                return false;
+                            }
+
+                            Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+
+                            if (room != null) {
+                                return !room.getMembers().contains(user.getId());
+                            }
+
+                            return true;
+                        }).map((user) -> {
+                            if (!TextUtils.isEmpty(user.getDivision())) {
                                 return user.getDivision();
                             } else {
                                 return undefinedMember;
@@ -90,6 +121,28 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(Schedulers.newThread())
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
+                        .filter(user -> {
+                            if (!isSelectMode && roomId < 0) {
+                                return !user.isBot();
+                            }
+
+                            if (user.getId() == TeamInfoLoader.getInstance().getMyId()) {
+                                return false;
+                            }
+
+                            // 멀티 셀렉트 모드인 경우 봇은 제외
+                            if (roomId > 0 && user.isBot()) {
+                                return false;
+                            }
+
+                            Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+
+                            if (room != null) {
+                                return !room.getMembers().contains(user.getId());
+                            }
+
+                            return true;
+                        })
                         .map((user) -> {
                             if (!TextUtils.isEmpty(user.getPosition())) {
                                 return user.getPosition();

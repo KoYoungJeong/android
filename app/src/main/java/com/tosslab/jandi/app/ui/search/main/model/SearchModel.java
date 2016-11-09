@@ -172,4 +172,10 @@ public class SearchModel {
         return TeamInfoLoader.getInstance().isChat(roomId);
     }
 
+    public boolean isMessageLimited() {
+        boolean isLimited = TeamInfoLoader.getInstance().getTeamPlan().isExceedMessage();
+        return isLimited;
+
+    }
+
 }

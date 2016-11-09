@@ -109,7 +109,7 @@ public class FloatingActionMenu extends FrameLayout {
 
         btMenuIcon.setClickable(true);
         btMenuIcon.setId(R.id.fab_menu_button);
-        btMenuIcon.setImageResource(R.drawable.btn_chat_fab);
+        btMenuIcon.setImageResource(R.drawable.chat_fab_x);
         this.rootView.addView(btMenuIcon, menuIconParams);
 
         vgItems = new ArrayList<>();

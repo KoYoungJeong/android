@@ -73,9 +73,16 @@ public class ImageFileViewHolder extends FileViewHolder {
         ivFileThumb.setOnClickListener(view -> moveToPhotoViewer(fileMessageId, fileMessage, false));
 
         String localFilePath = ImageUtil.getLocalFilePath(fileMessage.id);
+
+        if (isDeleted(fileMessage.status)) {
+
+            ivFileThumb.setImageResource(R.drawable.file_icon_delete_198);
+            return;
+        }
+
         if (!TextUtils.isEmpty(localFilePath)) {
             ImageLoader.newInstance()
-                    .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.FIT_XY)
+                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                     .uri(UriUtil.getFileUri(localFilePath))
@@ -85,7 +92,7 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         if (hasThumbnailUrl) {
             ImageLoader.newInstance()
-                    .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.FIT_XY)
+                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                     .uri(Uri.parse(extraInfo.largeThumbnailUrl))
@@ -98,7 +105,7 @@ public class ImageFileViewHolder extends FileViewHolder {
         ImageLoader.newInstance()
                 // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
                 .blockNetworking(true)
-                .placeHolder(R.drawable.comment_image_preview_download, ImageView.ScaleType.FIT_XY)
+                .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                 .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                     @Override

@@ -11,6 +11,8 @@ import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
@@ -71,7 +73,43 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.newThread())
                 .map(String::toLowerCase)
-                .concatMap(it -> teamMemberModel.getFilteredUser(it, selectMode, roomId)
+                .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
+                        .filter(User::isEnabled)
+                        .filter(user -> user.getName().toLowerCase().contains(it))
+                        .filter(user -> {
+                            if (!selectMode && roomId < 0) {
+                                // bot 아닌 것만 통과
+                                return !user.isBot();
+                            }
+
+                            if (user.getId() == TeamInfoLoader.getInstance().getMyId()) {
+                                return false;
+                            }
+
+                            // 멀티 셀렉트 모드인 경우 봇은 제외
+                            if (roomId > 0 && user.isBot()) {
+                                return false;
+                            }
+
+                            Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+                            if (room != null) {
+                                return !room.getMembers().contains(user.getId());
+                            }
+
+                            return true;
+                        })
+                        .map((user1) -> new TeamMemberItem(user1, it))
+                        .concatWith(Observable.defer(() -> {
+                            // 검색어 없을 때
+                            // 선택 모드
+                            // 1인 pick 모드
+                            return Observable.just(TextUtils.isEmpty(it) && selectMode && roomId < 0)
+                                    .filter(pickmode -> pickmode)
+                                    .flatMap(ttt -> Observable.from(TeamInfoLoader.getInstance().getUserList()))
+                                    .map(User::isEnabled) // enabled 상태 받음
+                                    .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
+                                    .map(disabld -> new TeamDisabledMemberItem(null, it));
+                        }))
                         .compose(sort())
                         .compose(textToSpan(it)))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,7 +119,11 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         teamMemberDataModel.addAll(users);
                         view.dismissEmptyView();
                     } else {
-                        view.showEmptyView(filterSubject.getValue());
+                        if(selectMode){
+                            view.showToastNotAnyInvitationMembers();
+                        }else {
+                            view.showEmptyView(filterSubject.getValue());
+                        }
                     }
                     view.refreshDataView();
                 }, Throwable::printStackTrace);

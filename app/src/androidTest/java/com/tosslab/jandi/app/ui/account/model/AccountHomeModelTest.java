@@ -69,7 +69,7 @@
 //    public void testGetTeamInfos() throws Exception {
 //
 //        // Given
-//        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitBuilder.getInstance()).getPedingTeamInfo();
+//        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitBuilder.initiate()).getPedingTeamInfo();
 //        int pendingCount = 0;
 //        for (ResPendingTeamInfo resPendingTeamInfo : pendingTeamInfo) {
 //            if (TextUtils.equals(resPendingTeamInfo.getStatus(), "pending")) {
@@ -99,13 +99,13 @@
 //        accountHomeModel.updateAccountName(changedName);
 //
 //        // Then
-//        ResAccountInfo newAccountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+//        ResAccountInfo newAccountInfo = new AccountApi(RetrofitBuilder.initiate()).getAccountInfo();
 //        String newName = newAccountInfo.getName();
 //
 //        assertThat(originName, is(not(equalTo(newName))));
 //        assertThat(changedName, is(equalTo(newName)));
 //
-//        new AccountProfileApi(RetrofitBuilder.getInstance()).changeName(new ReqProfileName("Steve"));
+//        new AccountProfileApi(RetrofitBuilder.initiate()).changeName(new ReqProfileName("Steve"));
 //
 //    }
 //
@@ -142,7 +142,7 @@
 //    public void testGetEntityInfo() throws Exception {
 //        // Given
 //        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-//        TeamInfoLoader instance = TeamInfoLoader.getInstance(selectedTeamId);
+//        TeamInfoLoader instance = TeamInfoLoader.initiate(selectedTeamId);
 //        // When
 //        InitialInfo initialInfo = accountHomeModel.getEntityInfo(selectedTeamId);
 //
@@ -161,7 +161,7 @@
 //        List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
 //        long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
 //        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-//        InitialInfo leftSideMenu = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+//        InitialInfo leftSideMenu = new StartApi(RetrofitBuilder.initiate()).getInitializeInfo(teamId);
 //
 //        // When
 //        accountHomeModel.updateEntityInfo(leftSideMenu);

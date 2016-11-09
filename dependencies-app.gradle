@@ -78,6 +78,7 @@ rootProject.allprojects { project ->
                 // RxJava
                 compile rootProject.ext.dependecies.libraries.rxandroid
                 compile rootProject.ext.dependecies.libraries.rxjava
+                compile rootProject.ext.dependecies.libraries.rxrelay
 
                 // facebook SDK
                 compile rootProject.ext.dependecies.libraries.facebook
@@ -94,6 +95,9 @@ rootProject.allprojects { project ->
 
                 // intercom
                 compile rootProject.ext.dependecies.libraries.intercom
+
+                // phonenumber parser
+                compile rootProject.ext.dependecies.libraries.libphonenumber_android
 
                 // Retrofit
                 compile rootProject.ext.dependecies.libraries.retrofit2
@@ -120,6 +124,10 @@ rootProject.allprojects { project ->
                 androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_appcompat
                 androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
                 androidTestApt rootProject.ext.dependecies.libraries.dagger2Apt
+
+                testCompile rootProject.ext.dependecies.libraries.junit
+                testCompile rootProject.ext.dependecies.libraries.assertj
+                testCompile rootProject.ext.dependecies.libraries.mockito
 
             }
 

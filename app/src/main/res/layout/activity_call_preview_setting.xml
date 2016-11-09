@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_dept_job_group_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:title="@string/common_calleridnotifier_settings"
+        app:titleMarginEnd="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/common_calleridnotifier_guide1"
+        android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+        android:textSize="@dimen/jandi_text_size_small" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/common_calleridnotifier_guide2"
+        android:textColor="@color/jandi_text"
+        android:textSize="@dimen/jandi_text_size_small" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/jandi_star_mention_item_divider" />
+
+
+    <RelativeLayout
+        android:id="@+id/vg_call_preview_setting_call"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="25dp"
+            android:text="@string/common_calleridnotifier_authorizecalllog"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_call_preview_setting_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="25dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/jandi_star_mention_item_divider" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/vg_call_preview_setting_canvas"
+        android:layout_width="match_parent"
+        android:layout_height="88dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="25dp"
+            android:layout_toLeftOf="@+id/switch_call_preview_setting_canvas"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/common_calleridnotifier_authorizedrawover1"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_large" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/common_calleridnotifier_authorizedrawover2"
+                android:textColor="@color/jandi_text_medium"
+                android:textSize="@dimen/jandi_text_size_medium" />
+        </LinearLayout>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_call_preview_setting_canvas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="25dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/jandi_star_mention_item_divider" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.Henson;
@@ -277,7 +278,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamCreated(Object object) {
         try {
-            SocketTeamCreatedEvent event = SocketModelExtractor.getObject(object, SocketTeamCreatedEvent.class);
+            SocketTeamCreatedEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamCreatedEvent.class);
             saveEvent(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
         } catch (Exception e) {
@@ -300,7 +301,7 @@ public class JandiSocketServiceModel {
 //            String name = team.getName();
 //
 //            AccountRepository.getRepository().updateTeamName(teamId, name);
-//            TeamRepository.getInstance().updateTeamName(teamId, name);
+//            TeamRepository.initiate().updateTeamName(teamId, name);
 //            JandiPreference.setSocketConnectedLastTime(event.getTs());
 //
 //            postEvent(new TeamInfoChangeEvent());
@@ -527,7 +528,7 @@ public class JandiSocketServiceModel {
             RoomMarkerRepository.getInstance().deleteMarker(data.getTopicId(), data.getMemberId());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-//            PollRepository.getInstance().upsertPollStatus(data.getTopicId(), "deleted");
+//            PollRepository.initiate().upsertPollStatus(data.getTopicId(), "deleted");
 
             postEvent(new RetrieveTopicListEvent());
             postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId()));
@@ -895,7 +896,9 @@ public class JandiSocketServiceModel {
                                     Henson.with(JandiApplication.getContext())
                                             .gotoTeamSelectListActivity()
                                             .shouldRefreshAccountInfo(true)
-                                            .build());
+                                            .build()
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK));
 
                             InitialInfoRepository.getInstance().removeInitialInfo(data.getTeamId());
                             JandiPreference.setSocketConnectedLastTime(-1);
@@ -920,7 +923,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamDeleted(Object object) {
         try {
-            SocketTeamDeletedEvent event = SocketModelExtractor.getObject(object, SocketTeamDeletedEvent.class, true, false);
+            SocketTeamDeletedEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamDeletedEvent.class);
             saveEvent(event);
 
             long teamId = event.getData().getTeamId();
@@ -1156,7 +1159,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamJoin(Object object) {
         try {
-            SocketTeamJoinEvent event = SocketModelExtractor.getObject(object, SocketTeamJoinEvent.class);
+            SocketTeamJoinEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamJoinEvent.class);
             saveEvent(event);
 
             SocketTeamJoinEvent.Data data = event.getData();
@@ -1291,7 +1294,7 @@ public class JandiSocketServiceModel {
             RoomMarkerRepository.getInstance().deleteMarkers(topicId);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
-//            PollRepository.getInstance().upsertPollStatus(topicId, "deleted");
+//            PollRepository.initiate().upsertPollStatus(topicId, "deleted");
 
             postEvent(new TopicDeleteEvent(event.getTeamId(), topicId));
             postEvent(new RetrieveTopicListEvent());
@@ -1357,7 +1360,7 @@ public class JandiSocketServiceModel {
 //            String domain = team.getDomain();
 //
 //            AccountRepository.getRepository().updateTeamDomain(teamId, domain);
-//            TeamRepository.getInstance().updateTeamDomain(teamId, domain);
+//            TeamRepository.initiate().updateTeamDomain(teamId, domain);
 //            JandiPreference.setSocketConnectedLastTime(event.getTs());
 //
 //            postEvent(new TeamInfoChangeEvent());
@@ -1387,7 +1390,7 @@ public class JandiSocketServiceModel {
 
     public void onTeamUpdated(Object object) {
         try {
-            SocketTeamUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamUpdatedEvent.class, true, false);
+            SocketTeamUpdatedEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamUpdatedEvent.class);
             saveEvent(event);
 
             if (event.getData().getTeam().getId() == TeamInfoLoader.getInstance().getTeamId()) {

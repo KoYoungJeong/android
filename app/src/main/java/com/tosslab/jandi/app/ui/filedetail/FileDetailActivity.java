@@ -113,9 +113,6 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by justinygchoi on 2014. 7. 19..
- */
 @EActivity(R.layout.activity_file_detail)
 public class FileDetailActivity extends BaseAppCompatActivity implements FileDetailPresenter.View {
     public static final String TAG = "FileDetail";

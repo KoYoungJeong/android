@@ -119,7 +119,6 @@ public class MessageListV2Presenter {
                         case Old:
                             return messageObservable
                                     .compose(this::composeOldMessage);
-
                         case New:
                             return messageObservable
                                     .compose(this::composeNewMessage)
@@ -281,6 +280,15 @@ public class MessageListV2Presenter {
                     }
 
                     List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), minId, Long.MAX_VALUE);
+                    if (TeamInfoLoader.getInstance().isDefaultTopic(getRoomId())) {
+                        for (int i = messages.size() - 1; i >= 0; i--) {
+                            if (messages.get(i).info instanceof ResMessages.InviteEvent
+                                    || messages.get(i).info instanceof ResMessages.LeaveEvent
+                                    || messages.get(i).info instanceof ResMessages.JoinEvent) {
+                                messages.remove(i);
+                            }
+                        }
+                    }
                     messageListModel.presetTextContent(messages);
                     return messages;
                 })
@@ -607,7 +615,7 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> getNewMessages(NewMessageContainer messageContainer) {
         long lastUpdateLinkId = MessageRepository.getRepository().getLastMessage(room.getRoomId()).id;
-        return messageRepositoryModel.getAfterMessages(lastUpdateLinkId);
+        return messageRepositoryModel.getAfterMessages(lastUpdateLinkId, room.getRoomId());
 
     }
 

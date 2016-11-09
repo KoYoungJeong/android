@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -155,7 +154,7 @@ public class FileDetailModel {
         try {
 //            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
 //            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
-//            EntityManager.getInstance().refreshEntity();
+//            EntityManager.initiate().refreshEntity();
             return true;
 //        } catch (RetrofitException e) {
 //            e.printStackTrace();
@@ -264,13 +263,6 @@ public class FileDetailModel {
 
     public ResMessages.FileMessage disableExternalLink(long teamId, long fileId) throws RetrofitException {
         return fileApi.get().disableFileExternalLink(teamId, fileId);
-    }
-
-    public void updateExternalLink(String fileUrl, boolean externalShared, String externalUrl, String externalCode) {
-        FileDetailRepository.getRepository().updateFileExternalLink(fileUrl,
-                externalShared,
-                externalUrl,
-                externalCode);
     }
 
     public Call<ResponseBody> downloadFile(String downloadUrl, String downloadPath, ProgressCallback callback2) {

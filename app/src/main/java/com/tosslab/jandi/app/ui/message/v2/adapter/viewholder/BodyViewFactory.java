@@ -72,7 +72,6 @@ public class BodyViewFactory {
 
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
-
         } else {
             builder = new EmptyViewHolder.Builder();
         }
@@ -179,10 +178,13 @@ public class BodyViewFactory {
 
     private static int getEventMessageType(ResMessages.Link currentLink,
                                            ResMessages.Link nextLink) {
+
         int type = TypeUtil.TYPE_VIEW_EVENT_MESSAGE;
+
         if (isNextLinkSerialEventMessage(currentLink, nextLink)) {
             return type;
         }
+
         return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
     }
 

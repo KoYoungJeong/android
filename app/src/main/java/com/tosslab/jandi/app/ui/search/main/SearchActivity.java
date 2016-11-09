@@ -8,13 +8,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -41,6 +44,7 @@ import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import java.util.List;
@@ -79,6 +83,12 @@ public class SearchActivity extends BaseAppCompatActivity
     AutoCompleteTextView tvSearchKeyword;
     @Bind(R.id.progress_more_loading_message)
     ProgressBar progressMoreLoadingMessage;
+    @Bind(R.id.layout_pricing_plan_warning)
+    ViewGroup layoutPricingPlanWarning;
+
+    @Bind(R.id.iv_search_mic)
+    ImageView ivSearchMic;
+
     @Inject
     SearchPresenter searchPresenter;
     @Inject
@@ -98,6 +108,8 @@ public class SearchActivity extends BaseAppCompatActivity
     private boolean isOnlyMessageMode = false;
 
     private AnalyticsValue.Screen screenMode = AnalyticsValue.Screen.UniversalSearch;
+
+    private String beforeText = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -199,7 +211,13 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @OnTextChanged(R.id.tv_search_keyword)
     void searchKeywordChanged(CharSequence text) {
+        if (beforeText.isEmpty() && !TextUtils.isEmpty(text)) {
+            setMicToClearImage();
+        } else if (!beforeText.isEmpty() && TextUtils.isEmpty(text)) {
+            setClearToMicImage();
+        }
         searchPresenter.onSearchKeywordChanged(text.toString());
+        beforeText = text.toString();
     }
 
     @OnEditorAction(R.id.tv_search_keyword)
@@ -222,6 +240,7 @@ public class SearchActivity extends BaseAppCompatActivity
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
+                searchPresenter.onInitPricingInfo();
                 flagFirstSearch = false;
             }
             searchPresenter.sendSearchQuery(searchKeyword, isOnlyMessageMode);
@@ -415,14 +434,20 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.iv_search_mic)
     void onVoiceSearch() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        try {
-            startActivityForResult(intent, REQUEST_CODE_SPEECH);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
+
+        if (TextUtils.isEmpty(tvSearchKeyword.getText())) {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            try {
+                startActivityForResult(intent, REQUEST_CODE_SPEECH);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            tvSearchKeyword.setText("");
         }
+
     }
 
     @OnClick(R.id.iv_search_backkey)
@@ -569,4 +594,25 @@ public class SearchActivity extends BaseAppCompatActivity
         builder.show();
     }
 
+    public void setMicToClearImage() {
+        ivSearchMic.setImageResource(R.drawable.account_icon_close);
+    }
+
+    public void setClearToMicImage() {
+        ivSearchMic.setImageResource(R.drawable.account_icon_mic);
+    }
+
+    @Override
+    public void setPricingLimitView(Boolean isLimited) {
+        if (isLimited) {
+            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
+            PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
+                    .addViewRemoveButton(() -> {
+                        layoutPricingPlanWarning.setVisibility(View.GONE);
+                    })
+                    .bind(PricingPlanWarningViewController.TYPE_MSG_SEARCH);
+        } else {
+            layoutPricingPlanWarning.setVisibility(View.GONE);
+        }
+    }
 }

@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.InitializeInfoConverter;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,6 +31,8 @@ public class InitialInfo {
     private Poll poll;
     @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Mention mention;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private TeamPlan teamPlan;
 
     @ForeignCollectionField(eager = true)
     private Collection<Folder> folders;
@@ -144,6 +147,14 @@ public class InitialInfo {
         this.mention = mention;
     }
 
+    public TeamPlan getTeamPlan() {
+        return teamPlan;
+    }
+
+    public void setTeamPlan(TeamPlan teamPlan) {
+        this.teamPlan = teamPlan;
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @DatabaseTable(tableName = "initial_info_self")
@@ -246,6 +257,72 @@ public class InitialInfo {
 
         public void setLastMentionedMessageId(long lastMentionedMessageId) {
             this.lastMentionedMessageId = lastMentionedMessageId;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @DatabaseTable(tableName = "initial_team_plan_info")
+    public static class TeamPlan {
+        @DatabaseField(id = true)
+        private long id;
+        @DatabaseField
+        private long teamId;
+        @DatabaseField
+        private String pricing;
+        @DatabaseField
+        private boolean isExceedFile;
+        @DatabaseField
+        private boolean isExceedMessage;
+        @DatabaseField
+        private Date updatedAt;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public long getTeamId() {
+            return teamId;
+        }
+
+        public void setTeamId(long teamId) {
+            this.teamId = teamId;
+        }
+
+        public String getPricing() {
+            return pricing;
+        }
+
+        public void setPricing(String pricing) {
+            this.pricing = pricing;
+        }
+
+        public boolean isExceedFile() {
+            return isExceedFile;
+        }
+
+        public void setIsExceedFile(boolean exceedFile) {
+            isExceedFile = exceedFile;
+        }
+
+        public boolean isExceedMessage() {
+            return isExceedMessage;
+        }
+
+        public void setIsExceedMessage(boolean exceedMessage) {
+            isExceedMessage = exceedMessage;
+        }
+
+        public Date getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(Date updatedAt) {
+            this.updatedAt = updatedAt;
         }
     }
 

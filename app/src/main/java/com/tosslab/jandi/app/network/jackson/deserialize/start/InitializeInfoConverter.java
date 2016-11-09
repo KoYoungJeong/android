@@ -19,6 +19,7 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
     public InitialInfo convert(InitialInfo value) {
         value.setTeamId(value.getTeam().getId());
         long myId = value.getSelf().getId();
+
         Collection<Folder> folders = value.getFolders();
         if (folders != null && !folders.isEmpty()) {
             for (Folder folder : folders) {
@@ -101,6 +102,11 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
         InitialInfo.Mention mention = value.getMention();
         if (mention != null) {
             mention.setId(value.getTeamId());
+        }
+
+        InitialInfo.TeamPlan teamPlan = value.getTeamPlan();
+        if (teamPlan != null) {
+            teamPlan.setId(value.getTeamId());
         }
 
         return value;

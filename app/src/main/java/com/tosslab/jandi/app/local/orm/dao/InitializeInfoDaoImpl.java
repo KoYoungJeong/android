@@ -40,6 +40,16 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
             dao.createOrUpdate(data.getMention());
         }
 
+        if (data.getTeamPlan() != null) {
+            Dao<InitialInfo.TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.TeamPlan.class);
+            dao.createOrUpdate(data.getTeamPlan());
+        }
+
+        if (data.getMention() != null) {
+            Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
+            dao.createOrUpdate(data.getMention());
+        }
+
         if (data.getTeam() != null) {
             Dao<Team, ?> dao = DaoManager.createDao(getConnectionSource(), Team.class);
             dao.createOrUpdate(data.getTeam());
@@ -181,6 +191,11 @@ public class InitializeInfoDaoImpl extends BaseDaoImpl<InitialInfo, Long> {
         if (data.getMention() != null) {
             Dao<InitialInfo.Mention, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.Mention.class);
             dao.update(data.getMention());
+        }
+
+        if (data.getTeamPlan() != null) {
+            Dao<InitialInfo.TeamPlan, ?> dao = DaoManager.createDao(getConnectionSource(), InitialInfo.TeamPlan.class);
+            dao.update(data.getTeamPlan());
         }
 
         if (data.getTeam() != null) {

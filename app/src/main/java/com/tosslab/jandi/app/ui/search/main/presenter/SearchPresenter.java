@@ -42,6 +42,8 @@ public interface SearchPresenter {
 
     void onSearchKeywordChanged(String text);
 
+    void onInitPricingInfo();
+
     interface View {
 
         void refreshSearchedAll();
@@ -67,5 +69,7 @@ public interface SearchPresenter {
         void hideKeyboard();
 
         void setSearchHints(List<String> keywords);
+
+        void setPricingLimitView(Boolean isLimited);
     }
 }

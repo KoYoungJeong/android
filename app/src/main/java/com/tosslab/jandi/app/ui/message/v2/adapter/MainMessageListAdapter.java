@@ -216,7 +216,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         } finally {
             lock.unlock();
         }
-
     }
 
     @Override

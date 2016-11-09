@@ -40,7 +40,6 @@ public class MessageRepositoryModel {
 
         if (oldMessages.isEmpty()) {
             if (!isFirst) {
-
                 try {
                     ResMessages messages = messageManipulator.getMessages(startLinkId, MAX_COUNT);
                     oldMessages = messages.records;
@@ -121,13 +120,21 @@ public class MessageRepositoryModel {
             isFirst = false;
         }
 
+        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+            for (int i = oldMessages.size() - 1; i >= 0; i--) {
+                if (oldMessages.get(i).info instanceof ResMessages.InviteEvent
+                        || oldMessages.get(i).info instanceof ResMessages.LeaveEvent
+                        || oldMessages.get(i).info instanceof ResMessages.JoinEvent) {
+                    oldMessages.remove(i);
+                }
+            }
+        }
+
         return oldMessages;
     }
 
-    public List<ResMessages.Link> getAfterMessages(long startLinkId) {
+    public List<ResMessages.Link> getAfterMessages(long startLinkId, long roomId) {
         List<ResMessages.Link> messages = new ArrayList<>();
-
-
         boolean hasMore = true;
 
         ResMessages afterMarkerMessage;
@@ -152,6 +159,15 @@ public class MessageRepositoryModel {
             }
         }
 
+        if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                if (messages.get(i).info instanceof ResMessages.LeaveEvent
+                        || messages.get(i).info instanceof ResMessages.InviteEvent
+                        || messages.get(i).info instanceof ResMessages.JoinEvent) {
+                    messages.remove(i);
+                }
+            }
+        }
 
         return messages;
     }

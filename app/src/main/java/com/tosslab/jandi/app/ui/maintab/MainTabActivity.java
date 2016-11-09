@@ -381,6 +381,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                         ((TabFocusListener) fragment).onFocus();
                     }
                 }
+
+                if (position == TeamTabInfo.INDEX) {
+                    Fragment fragment = getFragment(position);
+                    if (fragment != null && fragment instanceof TabFocusListener) {
+                        ((TabFocusListener) fragment).onFocus();
+                    }
+                }
+
             }
 
             @Override

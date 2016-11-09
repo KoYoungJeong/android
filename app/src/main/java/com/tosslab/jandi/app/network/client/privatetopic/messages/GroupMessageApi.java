@@ -4,17 +4,13 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Headers;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -26,15 +22,6 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
     public ResMessages getGroupMessages(long teamId, long groupId,
                                         long fromId, int count) throws RetrofitException {
         return call(() -> getApi().getGroupMessages(groupId, teamId, fromId, count));
-    }
-
-    public ResMessages getGroupMessages(int teamId, int groupId) throws RetrofitException {
-        return call(() -> getApi().getGroupMessages(groupId, teamId));
-    }
-
-    public ResUpdateMessages getGroupMessagesUpdated(int teamId,
-                                                     int groupId, int lastLinkId) throws RetrofitException {
-        return call(() -> getApi().getGroupMessagesUpdated(groupId, lastLinkId, teamId));
     }
 
     public ResMessages getGroupMessagesUpdatedForMarker(long teamId, long groupId,
@@ -53,12 +40,6 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
         return call(() -> getApi().getGroupMarkerMessages(groupId, teamId, currentLinkId, count));
     }
 
-    // Private Group Message 수정
-    public ResCommon modifyPrivateGroupMessage(ReqModifyMessage message,
-                                               int groupId, int messageId) throws RetrofitException {
-        return call(() -> getApi().modifyPrivateGroupMessage(groupId, messageId, message));
-    }
-
     // Private Group Message 삭제
     public ResCommon deletePrivateGroupMessage(long teamId, long groupId,
                                                long messageId) throws RetrofitException {
@@ -73,14 +54,6 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getGroupMessages(@Path("groupId") long groupId, @Query("teamId") long teamId,
                                            @Query("linkId") long fromId, @Query("count") int count);
-
-        @GET("privateGroups/{groupId}/messages?type=old")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResMessages> getGroupMessages(@Path("groupId") int groupId, @Query("teamId") int teamId);
-
-        @GET("privateGroups/{groupId}/messages/update/{lastLinkId}")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<ResUpdateMessages> getGroupMessagesUpdated(@Path("groupId") int groupId, @Path("lastLinkId") int lastLinkId, @Query("teamId") int teamId);
 
         @GET("privateGroups/{groupId}/messages?type=new")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
@@ -97,11 +70,6 @@ public class GroupMessageApi extends ApiTemplate<GroupMessageApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResMessages> getGroupMarkerMessages(@Path("groupId") long groupId, @Query("teamId") long teamId,
                                                  @Query("linkId") long currentLinkId, @Query("count") int count);
-
-        // Private Group Message 수정
-        @PUT("privateGroups/{groupId}/messages/{messageId}")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> modifyPrivateGroupMessage(@Path("groupId") int groupId, @Path("messageId") int messageId, @Body ReqModifyMessage message);
 
         // Private Group Message 삭제
         @HTTP(path = "privateGroups/{groupId}/messages/{messageId}", hasBody = true, method = "DELETE")

@@ -217,7 +217,7 @@
 //        assertThat(newSavedName, is(not(equalTo(originName))));
 //        assertThat(newSavedName, is(equalTo(newName)));
 //
-//        new AccountProfileApi(RetrofitBuilder.getInstance()).changeName(new ReqProfileName(originName));
+//        new AccountProfileApi(RetrofitBuilder.initiate()).changeName(new ReqProfileName(originName));
 //    }
 //
 //    @Test

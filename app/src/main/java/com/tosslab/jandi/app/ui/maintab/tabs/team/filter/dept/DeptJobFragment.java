@@ -132,7 +132,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
 
         lvMember.setAdapter(adapter);
         DaggerDeptJobComponent.builder()
-                .deptJobModule(new DeptJobModule(this, adapter, type))
+                .deptJobModule(new DeptJobModule(this, adapter, type, selectMode, roomId))
                 .build()
                 .inject(this);
 
@@ -148,6 +148,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
                     .selectMode(selectMode)
                     .pickMode(selectMode && roomId < 0)
                     .from(from)
+                    .roomId(roomId)
                     .build(), REQ_MEMBERS_OF_GROUP);
             sendDeptJobAnalyticsEvent(keyword);
         });

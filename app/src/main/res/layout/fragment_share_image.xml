@@ -10,6 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/iv_share_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <LinearLayout
             android:id="@+id/vg_viwer"
             android:layout_width="match_parent"
@@ -17,12 +22,6 @@
             android:layout_above="@+id/vg_share_content"
             android:layout_alignParentTop="true"
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_share_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/vg_file_icon"

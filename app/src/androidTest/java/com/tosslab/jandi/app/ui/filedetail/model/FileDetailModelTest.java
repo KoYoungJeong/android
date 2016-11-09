@@ -4,18 +4,15 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.client.file.FileApi;
+import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
-import org.hamcrest.core.Is;
-import org.hamcrest.core.IsEqual;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,7 +37,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 public class FileDetailModelTest {
 
     private FileDetailModel fileDetailModel;
-    private ResMessages.FileMessage fileMessage;
+    private ResSearch.SearchRecord fileMessage;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -58,23 +55,9 @@ public class FileDetailModelTest {
         fileMessage = getFileMessage();
     }
 
-    private ResMessages.FileMessage getFileMessage() throws RetrofitException {
-        ReqSearchFile reqSearchFile = new ReqSearchFile();
-        reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-        reqSearchFile.listCount = ReqSearchFile.MAX;
-
-        reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_IMAGE;
-        reqSearchFile.writerId = "all";
-        reqSearchFile.sharedEntityId = -1;
-
-        reqSearchFile.startMessageId = -1;
-        reqSearchFile.keyword = "";
-        reqSearchFile.teamId = TeamInfoLoader.getInstance().getTeamId();
-        ResSearchFile resSearchFile = new FileApi(RetrofitBuilder.getInstance()).searchFile(reqSearchFile);
-
-        ResMessages.OriginalMessage originalMessage = resSearchFile.files.get(0);
-
-        return ((ResMessages.FileMessage) originalMessage);
+    private ResSearch.SearchRecord getFileMessage() throws RetrofitException {
+        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
+        return new SearchApi(RetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), builder.build()).getRecords().get(0);
     }
 
     @Test
@@ -92,7 +75,7 @@ public class FileDetailModelTest {
         // Given
         long teamId = fileDetailModel.getTeamId();
         // When
-        ResMessages.FileMessage fileMessage1 = fileDetailModel.enableExternalLink(teamId, fileMessage.id);
+        ResMessages.FileMessage fileMessage1 = fileDetailModel.enableExternalLink(teamId, fileMessage.getMessageId());
 
         // Then
         assertThat(fileMessage1.content.externalShared, is(true));
@@ -106,10 +89,10 @@ public class FileDetailModelTest {
 
         // Given
         long teamId = fileDetailModel.getTeamId();
-        fileDetailModel.enableExternalLink(teamId, this.fileMessage.id);
+        fileDetailModel.enableExternalLink(teamId, this.fileMessage.getMessageId());
 
         // When
-        ResMessages.FileMessage fileMessage = fileDetailModel.disableExternalLink(teamId, this.fileMessage.id);
+        ResMessages.FileMessage fileMessage = fileDetailModel.disableExternalLink(teamId, this.fileMessage.getMessageId());
 
         // Then
         assertThat(fileMessage.content.externalShared, is(false));
@@ -118,31 +101,9 @@ public class FileDetailModelTest {
     }
 
     @Test
-    public void testUpdateExternalLink() throws Exception {
-
-        // Given
-        ResMessages.FileContent fileContent1 = createFileContent();
-
-        String changedCode = "externalCode2";
-        String changedUrl = "externalUrl2";
-        boolean changedShared = false;
-
-        // When
-        fileDetailModel.updateExternalLink(fileContent1.fileUrl, changedShared, changedUrl, changedCode);
-
-        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage(this.fileMessage.id);
-        ResMessages.FileContent fileContent = fileMessage.content;
-
-        // Then
-        assertThat(fileContent.externalCode, Is.is(IsEqual.equalTo(changedCode)));
-        assertThat(fileContent.externalUrl, Is.is(IsEqual.equalTo(changedUrl)));
-        assertThat(fileContent.externalShared, Is.is(changedShared));
-    }
-
-    @Test
     public void testDownloadFile() throws Exception {
-        String fileUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
-        String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
+        String fileUrl = fileDetailModel.getDownloadUrl(fileMessage.getFile().getFileUrl());
+        String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.getFile().getTitle());
 
         final boolean[] finish = {false};
         fileDetailModel.downloadFile(fileUrl, downloadFilePath, callback2 -> callback2.subscribe(it -> {}, t -> {}, () -> finish[0] = true));
@@ -151,7 +112,7 @@ public class FileDetailModelTest {
 
         File file = new File(downloadFilePath);
         assertThat(file.exists(), is(true));
-        assertThat(file.length(), is(equalTo(fileMessage.content.size)));
+        assertThat(file.length(), is(equalTo(fileMessage.getFile().getSize())));
     }
 
     @Test
@@ -177,9 +138,4 @@ public class FileDetailModelTest {
 
     }
 
-    private ResMessages.FileContent createFileContent() throws Exception {
-        ResMessages.FileMessage fileMessage = getFileMessage();
-        MessageRepository.getRepository().upsertFileMessage(fileMessage);
-        return fileMessage.content;
-    }
 }

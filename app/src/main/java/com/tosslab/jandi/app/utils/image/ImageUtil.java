@@ -203,7 +203,10 @@ public class ImageUtil {
         ImageLoader.newInstance()
                 .placeHolder(placeHolderResId, ImageView.ScaleType.FIT_CENTER)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                .transformation(new JandiProfileTransform(imageView.getContext()))
+                .transformation(new JandiProfileTransform(imageView.getContext(),
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                        TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                        Color.WHITE))
                 .uri(uri)
                 .into(imageView);
     }

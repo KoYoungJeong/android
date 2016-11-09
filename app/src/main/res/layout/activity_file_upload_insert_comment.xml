@@ -27,26 +27,31 @@
         android:padding="5dp"
         android:src="@drawable/upload_arrow_right" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/vg_file_upload_preview_content"
         android:layout_width="match_parent"
-        android:layout_height="186dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/upload_bg"
+        android:minHeight="186dp"
         android:orientation="vertical">
+
+        <include
+            android:id="@+id/layout_pricing_plan_warning"
+            layout="@layout/layout_pricing_plan_restrict_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <View
             android:id="@+id/v_file_upload_preview_content_divider_1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_above="@+id/vg_file_upload_preview_content_title"
             android:background="@color/jandi_file_upload_divider" />
 
         <LinearLayout
             android:id="@+id/vg_file_upload_preview_content_title"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_above="@+id/v_file_upload_preview_content_divider_2"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -81,14 +86,12 @@
             android:id="@+id/v_file_upload_preview_content_divider_2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_above="@+id/vg_file_upload_preview_content_entity"
             android:background="@color/jandi_file_upload_divider" />
 
         <LinearLayout
             android:id="@+id/vg_file_upload_preview_content_entity"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_above="@+id/v_file_upload_preview_content_divider_3"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -140,7 +143,7 @@
             android:paddingRight="15dp"
             android:paddingTop="12dp" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/actionbar_file_upload"

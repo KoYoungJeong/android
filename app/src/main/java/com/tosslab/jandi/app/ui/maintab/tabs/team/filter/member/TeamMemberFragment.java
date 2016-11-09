@@ -329,4 +329,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         setAnalyticsScreen();
     }
 
+    @Override
+    public void showToastNotAnyInvitationMembers() {
+        ColoredToast.showError(R.string.warn_all_users_are_already_invited);
+        getActivity().finish();
+    }
+
 }

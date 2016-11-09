@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingEnd="24dp"
+    android:paddingStart="24dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:layout_marginTop="28dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_popup_phone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/common_calleridnotifier_suggestmodal"
+        android:textColor="@color/black"
+        android:textSize="@dimen/jandi_text_size_medium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/common_calleridnotifier_guide1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/jandi_text_size_medium" />
+
+    <CheckBox
+        android:id="@+id/cb_call_preview_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/common_calleridnotifier_dontshowmodal" />
+
+</LinearLayout>

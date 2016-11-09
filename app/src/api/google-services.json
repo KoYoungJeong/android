@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "648623146882",
+    "project_id": "dev-jandi-push"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:648623146882:android:f490d2ecb3fc9398",
+        "android_client_info": {
+          "package_name": "com.tosslab.jandi.app.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD89-26lgiyh51wM7FlVsy4p8bzoOZ2GR0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-29745379-2"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
