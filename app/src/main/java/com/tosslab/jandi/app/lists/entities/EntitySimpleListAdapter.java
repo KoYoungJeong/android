@@ -79,7 +79,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         if (entity.isUser()) {
             // 프로필 사진
             ImageUtil.loadProfileImage(ivIcon,
-                    entity.getPhotoUrl(), R.drawable.profile_img_comment);
+                    entity.getPhotoUrl(), R.drawable.profile_img);
         } else {
             ImageLoader.loadFromResources(ivIcon, entity.getIconImageResId());
         }
