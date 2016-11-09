@@ -276,7 +276,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     private void checkIfNotProfileSetUp() {
-        mainTabPresenter.onCheckIfNotProfileSetUp();
+        if (!isLoadInitialInfo) {
+            mainTabPresenter.onCheckIfNotProfileSetUp();
+        }
     }
 
     private void initOffLineLayer() {

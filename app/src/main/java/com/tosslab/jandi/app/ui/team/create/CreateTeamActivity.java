@@ -28,7 +28,7 @@ public class CreateTeamActivity extends BaseAppCompatActivity
         InsertProfileFirstPageFragment.OnChangePageClickListener,
         InsertProfileSecondPageFragment.OnChangePageClickListener {
 
-    @Bind(value = {R.id.iv_page_icon_first, R.id.iv_page_icon_second, R.id.iv_page_icon_third, R.id.iv_page_icon_forth})
+    @Bind(value = {R.id.iv_page_icon_first, R.id.iv_page_icon_second})
     ImageView[] ivPageIndicator;
 
     @Bind(R.id.viewPager)
