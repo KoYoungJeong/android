@@ -14,11 +14,15 @@ public class DeptJobModule {
     private final DeptJobPresenter.View view;
     private final DeptJobAdapter adapter;
     private final int type;
+    private final long roomId;
+    private final boolean isSelectMode;
 
-    public DeptJobModule(DeptJobPresenter.View view, DeptJobAdapter adapter, int type) {
+    public DeptJobModule(DeptJobPresenter.View view, DeptJobAdapter adapter, int type, boolean isSelectMode, long roomId) {
         this.view = view;
         this.adapter = adapter;
         this.type = type;
+        this.roomId = roomId;
+        this.isSelectMode = isSelectMode;
     }
 
     @Provides
@@ -40,7 +44,8 @@ public class DeptJobModule {
     @Provides
     DeptJobPresenter deptJobPresenter(DeptJobPresenterImpl presenter) {
         presenter.setType(type);
+        presenter.setRoomId(roomId);
+        presenter.setIsSelectMode(isSelectMode);
         return presenter;
     }
-
 }

@@ -7,6 +7,16 @@
 	<string name="common_accthome_jandiacct">"JANDI 帳號"</string>
 	<string name="common_accthome_joinedteamlist">"團隊列表"</string>
 	<string name="common_accthome_loggedin">"已登入"</string>
+	<string name="common_calleridnotifier_authorizecalllog">"允許通話權限"</string>
+	<string name="common_calleridnotifier_authorizedrawover1">"在其他應用程式之上顯示內容"</string>
+	<string name="common_calleridnotifier_authorizedrawover2">"點擊開啟此功能，前往詳細設定"</string>
+	<string name="common_calleridnotifier_closemodal">"關閉"</string>
+	<string name="common_calleridnotifier_dontshowmodal">"不再顯示此訊息"</string>
+	<string name="common_calleridnotifier_guide1">"即使手機通訊錄沒有成員聯繫資訊，成員撥打電話給你時，依然可以快速瀏覽對方簡介資訊"</string>
+	<string name="common_calleridnotifier_guide2">"欲有此功能，請先完成以下設定"</string>
+	<string name="common_calleridnotifier_settings">"成員通話設定"</string>
+	<string name="common_calleridnotifier_suggestmodal">"試試成員通話設定"</string>
+	<string name="common_calleridnotifier_tosettings">"前往設定"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
 	<string name="common_createteam_welcome">"歡迎！"</string>
 	<string name="common_creatteam_done">"確認"</string>
@@ -70,7 +80,7 @@
 	<string name="err_team_creation_failed">"電子郵件無法送出"</string>
 	<string name="err_unshare">"檔案無法取消分享"</string>
 	<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"团队未完成建立"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"帳號首頁"</string>
