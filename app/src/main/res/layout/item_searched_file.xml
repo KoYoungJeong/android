@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/jandi_file_search_item_height"
     android:background="@color/white"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:orientation="horizontal">
 
     <FrameLayout
+        android:id="@+id/vg_file_image"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginLeft="16dp">
@@ -24,11 +25,27 @@
             android:background="@drawable/bg_rect_gray" />
     </FrameLayout>
 
+
+    <TextView
+        android:id="@+id/tv_file_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:background="@color/jandi_transparent_black_50p"
+        android:paddingBottom="2dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingTop="2dp"
+        android:text="1000 KB"
+        android:textColor="@color/white"
+        android:textSize="11dp" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@id/vg_file_image">
 
         <TextView
             android:id="@+id/tv_searched_file_name"
@@ -121,4 +138,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

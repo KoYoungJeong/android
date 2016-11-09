@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import butterknife.Bind;
@@ -46,6 +47,9 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.vg_comment_cnt)
     ViewGroup vgCommentCnt;
+
+    @Bind(R.id.tv_file_size)
+    TextView tvFileSize;
 
     public SearchedFilesViewHolder(View itemView) {
         super(itemView);
@@ -117,7 +121,8 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
                 fileUrl, thumbnailUrl,
                 serverUrl, fileType);
 
-
+        tvFileSize.setText(FileUtil.formatFileSize(searchedFile.getFile().getSize()));
+        
     }
 
 }
