@@ -283,7 +283,8 @@ public class MessageListV2Presenter {
                     if (TeamInfoLoader.getInstance().isDefaultTopic(getRoomId())) {
                         for (int i = messages.size() - 1; i >= 0; i--) {
                             if (messages.get(i).info instanceof ResMessages.InviteEvent
-                                    || messages.get(i).info instanceof ResMessages.LeaveEvent) {
+                                    || messages.get(i).info instanceof ResMessages.LeaveEvent
+                                    || messages.get(i).info instanceof ResMessages.JoinEvent) {
                                 messages.remove(i);
                             }
                         }
