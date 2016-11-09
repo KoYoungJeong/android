@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,7 +13,6 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 import butterknife.Bind;
@@ -24,9 +25,6 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.tv_searched_file_owner_name)
     TextView tvFileOwner;
-
-    @Bind(R.id.tv_searched_file_type)
-    TextView tvFileType;
 
     @Bind(R.id.tv_searched_file_date)
     TextView tvDate;
@@ -46,6 +44,9 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.iv_searched_file_type_comment)
     ImageView ivComment;
 
+    @Bind(R.id.vg_comment_cnt)
+    ViewGroup vgCommentCnt;
+
     public SearchedFilesViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -55,7 +56,28 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
         ResSearch.File content = searchedFile.getFile();
 
         String searchedFileName = content.getTitle();
-        tvFileName.setText(searchedFileName);
+
+        ViewTreeObserver vto = tvFileName.getViewTreeObserver();
+
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ViewTreeObserver obs = tvFileName.getViewTreeObserver();
+                obs.removeGlobalOnLayoutListener(this);
+                if (tvFileName.getLineCount() > 2) {
+                    int lineEndIndex = tvFileName.getLayout().getLineEnd(1);
+                    String text1 = tvFileName.getText().subSequence(0, lineEndIndex - 16).toString();
+                    String text2 = "...";
+                    String text3 = tvFileName.getText().subSequence(tvFileName.length() - 12, tvFileName.length()).toString();
+                    StringBuilder sb = new StringBuilder(text1);
+                    sb.append(text2);
+                    sb.append(text3);
+                    tvFileName.setText(sb.toString().replace(" ", "\u00A0"));
+                }
+            }
+        });
+
+        tvFileName.setText(searchedFileName.replace(" ", "\u00A0"));
 
         User entity = TeamInfoLoader.getInstance().getUser(searchedFile.getWriterId());
 
@@ -66,24 +88,14 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             tvFileOwner.setText("");
         }
 
-        if (content.getSize() > 0) {
-            String fileSize = FileUtil.formatFileSize(content.getSize());
-            tvFileType.setText(String.format("%s, %s", fileSize, content.getExt()));
-        } else {
-            tvFileType.setText(content.getExt());
-        }
-
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.getCreatedAt());
         tvDate.setText(searchedFileDate);
 
-        tvComment.setText(String.valueOf(content.getCommentCount()));
-
         if (content.getCommentCount() > 0) {
-            ivComment.setVisibility(View.VISIBLE);
-            tvComment.setVisibility(View.VISIBLE);
+            vgCommentCnt.setVisibility(View.VISIBLE);
+            tvComment.setText(String.valueOf(content.getCommentCount()));
         } else {
-            ivComment.setVisibility(View.INVISIBLE);
-            tvComment.setVisibility(View.INVISIBLE);
+            vgCommentCnt.setVisibility(View.INVISIBLE);
         }
 
         if (entity != null && entity.isEnabled()) {
@@ -104,6 +116,8 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
                 ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,
                 serverUrl, fileType);
+
+
     }
 
 }

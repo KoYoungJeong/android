@@ -101,10 +101,6 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         private boolean isPublic;
         private boolean starred;
 
-        public void setId(long id) {
-            this.id = id;
-        }
-
         public boolean isPublic() {
             return isPublic;
         }
@@ -123,6 +119,10 @@ public class EntitySimpleListAdapter extends BaseAdapter {
 
         public long getId() {
             return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
         }
 
         public String getName() {
