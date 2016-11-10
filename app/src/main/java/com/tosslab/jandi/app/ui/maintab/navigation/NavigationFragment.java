@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.events.team.TeamBadgeUpdateEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -37,8 +38,6 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
@@ -584,16 +583,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         navigationPresenter.onInitializeTeams();
     }
 
-    public void onEvent(SocketMessageDeletedEvent event) {
-        navigationPresenter.onMessageDeleted(event.getTeamId());
-    }
-
-    public void onEvent(SocketMessageCreatedEvent event) {
-        navigationPresenter.onMessageCreated(event.getTeamId());
-    }
-
     public void onEvent(MessageReadEvent event) {
         navigationPresenter.onMessageRead(event.fromSelf(), event.getTeamId(), event.getReadCount());
+    }
+
+    public void onEvent(TeamBadgeUpdateEvent event) {
+        navigationPresenter.onReloadTeams(event.isLocal());
     }
 
     private void initUsageInformationKnockListener() {

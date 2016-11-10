@@ -6,6 +6,11 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.RealmResults;
+
 public class ChatRepository extends RealmRepository {
     private static ChatRepository instance;
 
@@ -160,6 +165,21 @@ public class ChatRepository extends RealmRepository {
             }
 
             return false;
+        });
+    }
+
+    public List<Chat> getOpenedChats(long teamId) {
+        return execute(realm -> {
+            RealmResults<Chat> it = realm.where(Chat.class)
+                    .equalTo("teamId", teamId)
+                    .equalTo("isOpened", true)
+                    .findAll();
+
+            if (it != null && !it.isEmpty()) {
+                return realm.copyFromRealm(it);
+            } else {
+                return new ArrayList<Chat>();
+            }
         });
     }
 }
