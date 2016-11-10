@@ -1,18 +1,14 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-
-import java.sql.SQLException;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import com.tosslab.jandi.app.network.models.start.Poll;
 
 /**
  * Created by tee on 2016. 8. 17..
  */
 
-public class InitialPollInfoRepository extends LockExecutorTemplate {
+public class InitialPollInfoRepository extends RealmRepository {
 
     private static InitialPollInfoRepository instance;
 
@@ -24,63 +20,56 @@ public class InitialPollInfoRepository extends LockExecutorTemplate {
     }
 
     public int getVotableCount() {
-        return execute(() -> {
-            try {
-                long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-                Dao<InitialInfo.Poll, Long> dao = getDao(InitialInfo.Poll.class);
-                return dao.queryBuilder()
-                        .where().eq("id", selectedTeamId)
-                        .queryForFirst().getVotableCount();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
+            if (poll != null) {
+                return poll.getVotableCount();
             }
+
             return 0;
         });
     }
 
     public boolean increaseVotableCount() {
-        return execute(() -> {
-            try {
-                long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-                Dao<InitialInfo.Poll, Long> dao = getDao(InitialInfo.Poll.class);
-                UpdateBuilder<InitialInfo.Poll, Long> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnExpression("votableCount", "votableCount + 1")
-                        .where().eq("id", selectedTeamId);
+        return execute(realm -> {
 
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
+            if (poll != null) {
+                realm.executeTransaction(realm1 -> poll.setVotableCount(poll.getVotableCount() + 1));
+                return true;
             }
+
             return false;
         });
     }
 
     public boolean decreaseVotableCount() {
-        return execute(() -> {
-            try {
-                long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-                Dao<InitialInfo.Poll, Long> dao = getDao(InitialInfo.Poll.class);
-                UpdateBuilder<InitialInfo.Poll, Long> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnExpression("votableCount", "votableCount - 1")
-                        .where().eq("id", selectedTeamId);
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
+            if (poll != null && poll.getVotableCount() > 0) {
+                realm.executeTransaction(realm1 -> poll.setVotableCount(poll.getVotableCount() - 1));
+                return true;
             }
+
             return false;
         });
     }
 
     public boolean updateVotableCount(int votableCount) {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo.Poll, Object> dao = getDao(InitialInfo.Poll.class);
-                UpdateBuilder<InitialInfo.Poll, Object> updateBuilder = dao.updateBuilder();
-                updateBuilder.updateColumnValue("votableCount", votableCount);
-                return updateBuilder.update() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+
+            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
+            if (poll != null) {
+                realm.executeTransaction(realm1 -> poll.setVotableCount(votableCount));
+                return true;
             }
+
             return false;
         });
     }

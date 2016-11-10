@@ -7,11 +7,15 @@ import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Profile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
+import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,9 +36,17 @@ public class HumanRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         TeamInfoLoader.getInstance().refresh();
 
+    }
+
+    @Test
+    public void testGetHuman() throws Exception {
+        long myId = initializeInfo.getSelf().getId();
+        assertThat(HumanRepository.getInstance().isHuman(myId)).isTrue();
+        assertThat(HumanRepository.getInstance().isHuman(0)).isFalse();
     }
 
     @Test
@@ -51,8 +63,6 @@ public class HumanRepositoryTest {
         assertThat(human1).isNotNull();
         assertThat(human1.getName()).isEqualTo("test");
         assertThat(human1.getPhotoUrl()).isEqualTo("photoUrl");
-        assertThat(human1.getInitialInfo()).isNotNull();
-        assertThat(human1.getInitialInfo().getTeamId()).isEqualTo(teamId);
 
     }
 
@@ -63,9 +73,6 @@ public class HumanRepositoryTest {
         human.setTeamId(teamId);
         human.setName("test");
         human.setPhotoUrl("photoUrl");
-        InitialInfo initialInfo = new InitialInfo();
-        initialInfo.setTeamId(teamId);
-        human.setInitialInfo(initialInfo);
         return human;
     }
 
@@ -107,16 +114,6 @@ public class HumanRepositoryTest {
     }
 
     @Test
-    public void testUpdateName() throws Exception {
-        HumanRepository.getInstance().addHuman(teamId, getHuman());
-        String name = "helloworld";
-        HumanRepository.getInstance().updateName(getHuman().getId(), name);
-
-        Human human = HumanRepository.getInstance().getHuman(getHuman().getId());
-        assertThat(human.getName()).isEqualToIgnoringCase(name);
-    }
-
-    @Test
     public void testUpdatePhotoUrl() throws Exception {
         HumanRepository.getInstance().addHuman(teamId, getHuman());
         String photoUrl = "http://";
@@ -143,5 +140,37 @@ public class HumanRepositoryTest {
 
         assertThat(HumanRepository.getInstance().getHuman(getHuman().getId()).isStarred())
                 .isTrue();
+    }
+
+    @Test
+    public void testContainsPhone() throws Exception {
+        Human human = getHuman();
+        Profile profile = new Profile();
+        profile.setId(human.getId());
+        profile.setPhoneNumber("82 10 1234 5678");
+        human.setProfile(profile);
+
+        HumanRepository.getInstance().addHuman(teamId, human);
+
+        assertThat(HumanRepository.getInstance().containsPhone("678")).isTrue();
+        assertThat(HumanRepository.getInstance().containsPhone("123")).isTrue();
+    }
+
+    @Test
+    public void testGetContainsPhone() throws Exception {
+        Human human = getHuman();
+        Profile profile = new Profile();
+        profile.setId(human.getId());
+        String phoneNumber = "82 10 1234 5678";
+        profile.setPhoneNumber(phoneNumber);
+        human.setProfile(profile);
+
+        HumanRepository.getInstance().addHuman(teamId, human);
+
+        List<Human> containsPhone = HumanRepository.getInstance().getContainsPhone("678");
+        assertThat(containsPhone).isNotNull();
+        assertThat(containsPhone.size()).isGreaterThan(0);
+
+        assertThat(containsPhone.get(0).getProfile().getPhoneNumber()).isEqualTo(phoneNumber);
     }
 }

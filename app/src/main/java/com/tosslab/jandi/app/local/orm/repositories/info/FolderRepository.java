@@ -1,23 +1,24 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.UpdateBuilder;
-import com.j256.ormlite.stmt.Where;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Folder;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import rx.Observable;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
-public class FolderRepository extends LockExecutorTemplate {
+public class FolderRepository extends RealmRepository {
     private static FolderRepository instance;
 
     synchronized public static FolderRepository getInstance() {
@@ -28,175 +29,173 @@ public class FolderRepository extends LockExecutorTemplate {
     }
 
     public List<Folder> getFolders(long teamId) {
-        return execute(() -> {
-            try {
-                Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
-                return dao.queryBuilder()
-                        .orderBy("seq", true)
-                        .where()
-                        .eq("initialInfo_id", teamId)
-                        .query();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+            RealmResults<Folder> it = realm.where(Folder.class)
+                    .equalTo("teamId", teamId)
+                    .findAll();
+            if (it != null) {
+                return realm.copyFromRealm(it);
+            } else {
+                return null;
             }
-
-            return new ArrayList<Folder>();
         });
     }
 
     public boolean addFolder(long teamId, Folder folder) {
-        return execute(() -> {
-            try {
-                Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
-                InitialInfo info = new InitialInfo();
-                info.setTeamId(teamId);
-                folder.setInitialInfo(info);
+        return execute((realm) -> {
 
-                dao.createIfNotExists(folder);
-                return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
+            folder.set_id(teamId + "_" + folder.getId());
+            folder.setTeamId(teamId);
+            realm.executeTransaction(realm1 -> realm.insertOrUpdate(folder));
+            return true;
         });
     }
 
     public boolean updateFolderName(long folderId, String name) {
-        return execute(() -> {
-            try {
-                Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
-                UpdateBuilder<Folder, ?> updateBuilder = dao.updateBuilder();
-                updateBuilder
-                        .updateColumnValue("name", name)
-                        .where()
-                        .eq("id", folderId);
-                return updateBuilder.update() > 0;
+        return execute((realm) -> {
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+
+            Folder folder = realm.where(Folder.class)
+                    .equalTo("_id", selectedTeamId + "_" + folderId)
+                    .findFirst();
+
+            if (folder != null) {
+                realm.executeTransaction(realm1 -> folder.setName(name));
+                return true;
             }
+
+            return false;
         });
     }
 
     public boolean updateFolderSeq(long teamId, long folderId, int newSeq) {
-        return execute(() -> {
-            try {
-                Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
-                Folder folder = dao.queryForId(folderId);
-                int oldSeq = folder.getSeq();
-                if (oldSeq == newSeq) {
-                    return true;
-                }
+        return execute((realm) -> {
 
-                UpdateBuilder<Folder, ?> folderUpdateBuilder = dao.updateBuilder();
-                folderUpdateBuilder.updateColumnValue("seq", newSeq)
-                        .where()
-                        .eq("id", folderId);
-                folderUpdateBuilder.update();
+            Folder changedFolder = realm.where(Folder.class)
+                    .equalTo("_id", teamId + "_" + folderId)
+                    .findFirst();
 
-
-                Where<Folder, Long> where = dao.queryBuilder()
-                        .where()
-                        .eq("initialInfo_id", teamId)
-                        .and()
-                        .ne("id", folderId)
-                        .and();
-                List<Folder> folders;
-                int plusValue;
-                if (oldSeq > newSeq) {
-                    folders = where
-                            .ge("seq", newSeq)
-                            .and()
-                            .le("seq", oldSeq)
-                            .query();
-                    plusValue = 1;
-                } else {
-                    folders = where
-                            .ge("seq", oldSeq)
-                            .and()
-                            .le("seq", newSeq)
-                            .query();
-                    plusValue = -1;
-                }
-                for (Folder folder1 : folders) {
-                    folder1.setSeq(folder1.getSeq() + plusValue);
-                    dao.update(folder1);
-                }
-
-                return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (changedFolder == null) {
+                return false;
             }
 
-            return false;
+            int diffSeq;
+            if (changedFolder.getSeq() > newSeq) {
+                diffSeq = 1;
+            } else {
+                diffSeq = -1;
+            }
+
+            RealmResults<Folder> folders = realm.where(Folder.class)
+                    .equalTo("teamId", teamId)
+                    .greaterThanOrEqualTo("seq", newSeq)
+                    .findAll();
+            realm.executeTransaction(realm1 -> {
+
+                for (Folder folder : folders) {
+                    folder.setSeq(folder.getSeq() + diffSeq);
+                }
+
+                changedFolder.setSeq(newSeq);
+            });
+
+            return true;
         });
     }
 
     public boolean deleteFolder(long folderId) {
-        return execute(() -> {
-            try {
-                Dao<Folder, ?> dao = getHelper().getDao(Folder.class);
-                DeleteBuilder<Folder, ?> folderDeleteBuilder = dao.deleteBuilder();
-                folderDeleteBuilder.where()
-                        .eq("id", folderId);
-                return folderDeleteBuilder.delete() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Folder first = realm.where(Folder.class)
+                    .equalTo("_id", selectedTeamId + "_" + folderId)
+                    .findFirst();
+            if (first != null) {
+                realm.executeTransaction(realm1 -> first.deleteFromRealm());
             }
-            return false;
+
+            return true;
         });
     }
 
     public boolean addTopic(long folderId, long roomId) {
-        return execute(() -> {
-            try {
-                Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
-                Folder folder = dao.queryForId(folderId);
-                Collection<Long> rooms = folder.getRooms();
-                if (rooms == null) {
-                    rooms = new ArrayList<Long>();
-                    folder.setRooms(rooms);
-                }
-                if (!rooms.contains(roomId)) {
-                    rooms.add(roomId);
-                    return dao.update(folder) > 0;
-                } else {
-                    return false;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            Folder folder = realm.where(Folder.class)
+                    .equalTo("_id", teamId + "_" + folderId)
+                    .findFirst();
+
+            if (folder == null) {
+                return false;
             }
+
+            realm.executeTransaction(realm1 -> {
+
+                RealmList<RealmLong> roomIds = folder.getRoomIds();
+
+                if (roomIds == null) {
+                    roomIds = new RealmList<>();
+                    folder.setRoomIds(roomIds);
+                }
+
+                boolean contains = false;
+                for (RealmLong id : roomIds) {
+                    if (id.getValue() == roomId) {
+                        contains = true;
+                        break;
+                    }
+                }
+
+                if (!contains) {
+                    RealmLong object = realm.createObject(RealmLong.class);
+                    object.setValue(roomId);
+                    roomIds.add(object);
+                }
+            });
+
 
             return false;
         });
     }
 
     public boolean removeTopic(long folderId, long roomId) {
-        return execute(() -> {
-            try {
-                Dao<Folder, Long> dao = getHelper().getDao(Folder.class);
-                Folder folder = dao.queryForId(folderId);
-                Collection<Long> rooms = folder.getRooms();
-                if (rooms != null && rooms.contains(roomId)) {
-                    rooms.remove(roomId);
-                    return dao.update(folder) > 0;
-                } else {
-                    return true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute((realm) -> {
+
+            long teamId = AccountRepository.getRepository().getSelectedTeamId();
+            Folder folder = realm.where(Folder.class)
+                    .equalTo("_id", teamId + "_" + folderId)
+                    .findFirst();
+
+            if (folder == null) {
+                return false;
             }
+
+            if (folder.getRoomIds() == null || folder.getRoomIds().isEmpty()) {
+                return true;
+            }
+
+            realm.executeTransaction(realm1 -> {
+                for (RealmLong id : folder.getRoomIds()) {
+                    if (id.getValue() == roomId) {
+                        id.deleteFromRealm();
+                        break;
+                    }
+                }
+            });
 
             return false;
         });
     }
 
     public List<FolderExpand> getFolderExpands() {
-        return execute(() -> {
+        return execute((realm) -> {
+
             try {
                 long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-                Dao<FolderExpand, ?> dao = getHelper().getDao(FolderExpand.class);
+                Dao<FolderExpand, ?> dao = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                        .getDao(FolderExpand.class);
                 return dao.queryBuilder()
                         .where()
                         .eq("teamId", selectedTeamId)
@@ -211,10 +210,11 @@ public class FolderRepository extends LockExecutorTemplate {
     }
 
     public boolean upsertFolderExpands(long folderId, boolean expand) {
-        return execute(() -> {
+        return execute((realm) -> {
             try {
                 long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-                Dao<FolderExpand, ?> dao = getHelper().getDao(FolderExpand.class);
+                Dao<FolderExpand, ?> dao = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
+                        .getDao(FolderExpand.class);
                 FolderExpand data = new FolderExpand();
                 data.setExpand(expand);
                 data.setFolderId(folderId);
@@ -231,37 +231,25 @@ public class FolderRepository extends LockExecutorTemplate {
     }
 
     public boolean removeTopicOfTeam(long teamId, Collection<Long> roomIds) {
-        return execute(() -> {
-            try {
-                Dao<Folder, Object> dao = getDao(Folder.class);
-                List<Folder> folders = dao.queryForEq("initialInfo_id", teamId);
+        return execute((realm) -> {
 
-                List<Folder> newFolders = Observable.from(folders)
-                        .filter(folder -> {
-                            for (Long roomId : roomIds) {
-
-                                if (folder.getRooms() != null && folder.getRooms().contains(roomId)) {
-                                    return true;
-                                }
+            RealmResults<Folder> folders = realm.where(Folder.class)
+                    .equalTo("teamId", teamId)
+                    .findAll();
+            realm.executeTransaction(realm1 -> {
+                for (Folder folder : folders) {
+                    if (folder.getRoomIds() != null) {
+                        for (RealmLong roomId : folder.getRoomIds()) {
+                            if (roomIds.contains(roomId.getValue())) {
+                                roomId.deleteFromRealm();
+                                break;
                             }
-                            return false;
-                        })
-                        .doOnNext(folder -> {
-                            for (Long roomId : roomIds) {
-                                folder.getRooms().remove(roomId);
-                            }
-                        })
-                        .toList()
-                        .toBlocking()
-                        .firstOrDefault(new ArrayList<>());
-                for (Folder newFolder : newFolders) {
-                    dao.update(newFolder);
+                        }
+                    }
                 }
-                return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
+            });
+
+            return true;
         });
     }
 }

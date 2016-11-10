@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
@@ -99,7 +100,7 @@ public class MainTabModel {
     }
 
     public int getUnreadMentionCount() {
-        InitialInfo.Mention mention = TeamInfoLoader.getInstance().getMention();
+        Mention mention = TeamInfoLoader.getInstance().getMention();
         return mention == null ? 0 : mention.getUnreadCount();
     }
 }

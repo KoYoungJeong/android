@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.DeleteBuilder;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
-import java.sql.SQLException;
+import io.realm.RealmResults;
 
-public class InitialInfoRepository extends LockExecutorTemplate {
+public class InitialInfoRepository extends RealmRepository {
     private static InitialInfoRepository instance;
 
     synchronized public static InitialInfoRepository getInstance() {
@@ -18,75 +16,51 @@ public class InitialInfoRepository extends LockExecutorTemplate {
     }
 
     public boolean upsertInitialInfo(InitialInfo initialInfo) {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo, ?> dao = getHelper().getDao(InitialInfo.class);
-                DeleteBuilder<InitialInfo, ?> deleteBuilder = dao.deleteBuilder();
-                deleteBuilder.where().eq("teamId", initialInfo.getTeamId());
-                deleteBuilder.delete();
-                dao.createOrUpdate(initialInfo);
-                return true;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
+        return execute(realm -> {
+
+            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(initialInfo));
+            return true;
         });
 
     }
 
     public InitialInfo getInitialInfo(long teamId) {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo, ?> dao = getHelper().getDao(InitialInfo.class);
-                return dao.queryBuilder()
-                        .where()
-                        .eq("teamId", teamId)
-                        .queryForFirst();
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+            InitialInfo initialInfo = realm.where(InitialInfo.class)
+                    .equalTo("teamId", teamId)
+                    .findFirst();
+
+            if (initialInfo != null) {
+                return realm.copyFromRealm(initialInfo);
+            } else {
+                return null;
             }
-            return null;
         });
     }
 
     public boolean hasInitialInfo(long teamId) {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo, ?> dao = getHelper().getDao(InitialInfo.class);
-                return dao.queryBuilder()
-                        .where()
-                        .eq("teamId", teamId)
-                        .countOf() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
-        });
+        return execute(realm -> realm.where(InitialInfo.class)
+                .equalTo("teamId", teamId)
+                .count() > 0);
     }
 
     public boolean removeInitialInfo(long teamId) {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo, Long> dao = getHelper().getDao(InitialInfo.class);
-                return dao.deleteById(teamId) > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+            RealmResults<InitialInfo> teamInfos = realm.where(InitialInfo.class)
+                    .equalTo("teamId", teamId)
+                    .findAll();
+            if (!teamInfos.isEmpty()) {
+                realm.executeTransaction(realm1 -> teamInfos.deleteAllFromRealm());
+                return true;
             }
             return false;
         });
     }
 
     public boolean clear() {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo, Object> dao = getDao(InitialInfo.class);
-                DeleteBuilder<InitialInfo, Object> deleteBuilder = dao.deleteBuilder();
-                return deleteBuilder.delete() > 0;
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
+        return execute(realm -> {
+            realm.executeTransaction(realm1 -> realm.delete(InitialInfo.class));
+            return true;
         });
     }
 }

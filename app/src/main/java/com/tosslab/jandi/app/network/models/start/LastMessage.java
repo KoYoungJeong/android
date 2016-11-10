@@ -8,13 +8,11 @@ import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Bot extends RealmObject {
+public class LastMessage extends RealmObject {
     @PrimaryKey
+    private long chatId;
     private long id;
-    private long teamId;
-    private String type;
-    private String name;
-    private String photoUrl;
+    private String text;
     private String status;
 
     public long getId() {
@@ -25,28 +23,12 @@ public class Bot extends RealmObject {
         this.id = id;
     }
 
-    public long getTeamId() {
-        return teamId;
+    public String getText() {
+        return text;
     }
 
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getStatus() {
@@ -57,12 +39,11 @@ public class Bot extends RealmObject {
         this.status = status;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public long getChatId() {
+        return chatId;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setChatId(long chatId) {
+        this.chatId = chatId;
     }
-
 }

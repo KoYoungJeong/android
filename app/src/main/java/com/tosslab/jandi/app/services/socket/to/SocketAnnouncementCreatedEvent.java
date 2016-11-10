@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
@@ -115,7 +115,7 @@ public class SocketAnnouncementCreatedEvent implements EventHistoryInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private long topicId;
-        private Topic.Announcement announcement;
+        private Announcement announcement;
 
         public long getTopicId() {
             return topicId;
@@ -125,11 +125,11 @@ public class SocketAnnouncementCreatedEvent implements EventHistoryInfo {
             this.topicId = topicId;
         }
 
-        public Topic.Announcement getAnnouncement() {
+        public Announcement getAnnouncement() {
             return announcement;
         }
 
-        public void setAnnouncement(Topic.Announcement announcement) {
+        public void setAnnouncement(Announcement announcement) {
             this.announcement = announcement;
         }
 

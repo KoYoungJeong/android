@@ -2,30 +2,22 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_team")
-public class Team {
-    @DatabaseField(id = true)
+public class Team extends RealmObject {
+    @PrimaryKey
     private long id;
-    @DatabaseField
     private String name;
-    @DatabaseField
     private String status;
-    @DatabaseField
     private String domain;
-    @DatabaseField
     private String emailDomain;
-    @DatabaseField
     private String invitationStatus;
-    @DatabaseField
     private String invitationCode;
-    @DatabaseField
     private String invitationUrl;
-    @DatabaseField
     private String connectAuth;
 
     public long getId() {

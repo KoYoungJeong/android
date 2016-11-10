@@ -1,71 +1,41 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
-import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.local.orm.dao.TopicDaoImpl;
-import com.tosslab.jandi.app.local.orm.persister.CollectionLongConverter;
-import com.tosslab.jandi.app.local.orm.persister.DateConverter;
 
-import java.util.Collection;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_topic", daoClass = TopicDaoImpl.class)
-public class Topic {
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    InitialInfo initialInfo;
-    @DatabaseField(id = true)
+public class Topic extends RealmObject {
+    @PrimaryKey
     private long id;
-    @DatabaseField
     private long teamId;
-    @DatabaseField
     private String type;
-    @DatabaseField
     private String name;
-    @DatabaseField
     private String status;
-    @DatabaseField
     private String description;
-    @DatabaseField
     private boolean isDefault;
-    @DatabaseField
     private boolean autoJoin;
-    @DatabaseField
     private long creatorId;
-    @DatabaseField
     private long deleterId;
-    @DatabaseField
     private long lastLinkId;
-    @DatabaseField(persisterClass = CollectionLongConverter.class)
-    private Collection<Long> members;
-    @ForeignCollectionField(foreignFieldName = "topic")
-    private Collection<Marker> markers;
-    @DatabaseField
+    @Ignore
+    private List<Long> members;
+    private RealmList<RealmLong> memberIds;
+    private RealmList<Marker> markers;
     private boolean isJoined;
-    @DatabaseField
     private boolean isStarred;
-    @DatabaseField
     private boolean subscribe;
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     private Announcement announcement;
-    @DatabaseField
     private long readLinkId;
-    @DatabaseField
     private int unreadCount;
-
-    public InitialInfo getInitialInfo() {
-        return initialInfo;
-    }
-
-    public void setInitialInfo(InitialInfo initialInfo) {
-        this.initialInfo = initialInfo;
-    }
 
     public String getName() {
         return name;
@@ -155,19 +125,31 @@ public class Topic {
         this.lastLinkId = lastLinkId;
     }
 
-    public Collection<Long> getMembers() {
-        return members;
+    @Deprecated
+    public List<Long> getMembers() {
+        if (members != null) {
+            return members;
+        } else {
+            members = new ArrayList<>();
+            if (memberIds != null) {
+                for (RealmLong memberId : memberIds) {
+                    members.add(memberId.getValue());
+                }
+            }
+            return members;
+        }
     }
 
-    public void setMembers(Collection<Long> members) {
+    @Deprecated
+    public void setMembers(List<Long> members) {
         this.members = members;
     }
 
-    public Collection<Marker> getMarkers() {
+    public RealmList<Marker> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(Collection<Marker> markers) {
+    public void setMarkers(RealmList<Marker> markers) {
         this.markers = markers;
     }
 
@@ -219,80 +201,12 @@ public class Topic {
         this.unreadCount = unreadCount;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @DatabaseTable(tableName = "initial_info_topic_announce")
-    public static class Announcement {
-        @DatabaseField(id = true)
-        private long messageId;
-        @DatabaseField
-        private String content;
-        @DatabaseField
-        private long writerId;
-        @DatabaseField
-        private long creatorId;
-        @DatabaseField(persisterClass = DateConverter.class)
-        private Date writtenAt;
-        @DatabaseField(persisterClass = DateConverter.class)
-        private Date createdAt;
-        @DatabaseField
-        private boolean isOpened;
-
-        public long getMessageId() {
-            return messageId;
-        }
-
-        public void setMessageId(long messageId) {
-            this.messageId = messageId;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        public long getWriterId() {
-            return writerId;
-        }
-
-        public void setWriterId(long writerId) {
-            this.writerId = writerId;
-        }
-
-        public long getCreatorId() {
-            return creatorId;
-        }
-
-        public void setCreatorId(long creatorId) {
-            this.creatorId = creatorId;
-        }
-
-        public Date getWrittenAt() {
-            return writtenAt;
-        }
-
-        public void setWrittenAt(Date writtenAt) {
-            this.writtenAt = writtenAt;
-        }
-
-        public Date getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(Date createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public boolean isOpened() {
-            return isOpened;
-        }
-
-        public void setIsOpened(boolean opened) {
-            isOpened = opened;
-        }
-
+    public RealmList<RealmLong> getMemberIds() {
+        return memberIds;
     }
+
+    public void setMemberIds(RealmList<RealmLong> memberIds) {
+        this.memberIds = memberIds;
+    }
+
 }

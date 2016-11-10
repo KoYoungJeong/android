@@ -19,9 +19,9 @@ import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -67,7 +67,7 @@ public class AnnouncementViewModel {
 
     @RootContext
     Activity activity;
-    private Topic.Announcement announcement;
+    private Announcement announcement;
 
     private boolean isOpened;
     private boolean isAfterViews;
@@ -85,7 +85,7 @@ public class AnnouncementViewModel {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void setAnnouncement(Topic.Announcement announcement) {
+    public void setAnnouncement(Announcement announcement) {
         this.announcement = announcement;
         this.isOpened = announcement != null && announcement.isOpened();
 
@@ -96,7 +96,7 @@ public class AnnouncementViewModel {
         initAnnouncement(announcement, isOpened);
     }
 
-    private void initAnnouncement(Topic.Announcement announcement, boolean isOpened) {
+    private void initAnnouncement(Announcement announcement, boolean isOpened) {
         if (announcement == null) {
             vgAnnouncement.setVisibility(View.GONE);
             return;
