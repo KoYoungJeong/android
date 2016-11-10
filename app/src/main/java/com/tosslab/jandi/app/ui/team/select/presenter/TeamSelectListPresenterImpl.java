@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.team.select.presenter;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -198,7 +201,17 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
     @Override
     public void setUserEmailInfo() {
         String email = model.getMyEmail();
-        view.showLoginEmail(email);
+        if (TextUtils.isEmpty(email)) {
+            Completable.fromAction(() -> model.refreshAccountInfo())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        String email2 = model.getMyEmail();
+                        view.showLoginEmail(email2);
+                    });
+        } else {
+            view.showLoginEmail(email);
+        }
     }
 
 }

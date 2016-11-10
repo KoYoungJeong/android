@@ -132,6 +132,9 @@ public class TeamSelectListModel {
 
     public String getMyEmail() {
         List<ResAccountInfo.UserEmail> emails = AccountRepository.getRepository().getAccountEmails();
+        if (emails == null || emails.isEmpty()) {
+            return "";
+        }
         int length = emails.size();
         String primaryEmail = emails.get(0).getId();
         for (int i = 0; i < length; i++) {

@@ -106,7 +106,7 @@ public class JandiCallManager {
                 .delay(500, TimeUnit.MILLISECONDS)
                 .filter(callState -> {
 
-                    if (SdkUtils.hasPermission(JandiApplication.getContext(), Manifest.permission.CALL_PHONE)) {
+                    if (SdkUtils.hasPermission(JandiApplication.getContext(), Manifest.permission.READ_CONTACTS)) {
                         Cursor cursor = JandiApplication.getContext()
                                 .getContentResolver()
                                 .query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(callState.number)),

@@ -1329,7 +1329,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Nullable
     private ResultMentionsVO getMentionVO() {
-        return !isInDirectMessage() ? mentionControlViewModel.getMentionInfoObject() : null;
+        if (!isInDirectMessage() && mentionControlViewModel != null) {
+            return mentionControlViewModel.getMentionInfoObject();
+        } else {
+            return null;
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
