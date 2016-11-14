@@ -79,7 +79,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         if (entity.isUser()) {
             // 프로필 사진
             ImageUtil.loadProfileImage(ivIcon,
-                    entity.getPhotoUrl(), R.drawable.profile_img_comment);
+                    entity.getPhotoUrl(), R.drawable.profile_img);
         } else {
             ImageLoader.loadFromResources(ivIcon, entity.getIconImageResId());
         }
@@ -101,10 +101,6 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         private boolean isPublic;
         private boolean starred;
 
-        public void setId(long id) {
-            this.id = id;
-        }
-
         public boolean isPublic() {
             return isPublic;
         }
@@ -123,6 +119,10 @@ public class EntitySimpleListAdapter extends BaseAdapter {
 
         public long getId() {
             return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
         }
 
         public String getName() {

@@ -276,7 +276,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void showUnknownEntityToast() {
-        ColoredToast.show(JandiApplication.getContext()
+        ColoredToast.showError(JandiApplication.getContext()
                 .getResources().getString(R.string.jandi_starmention_no_longer_in_topic));
     }
 
