@@ -193,6 +193,8 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
             ivShareFileIcon.setImageResource(resId);
+            vgFileIcon.setBackgroundColor(FileExtensionsUtil.getFileDetailBackground(
+                    FileExtensionsUtil.getExtensions(fileName)));
         }
     }
 

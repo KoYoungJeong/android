@@ -65,7 +65,7 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
         String status = poll.getStatus();
 
         if ("created".equals(status)) {
-            vPollIcon.setImageResource(R.drawable.poll_normal);
+            vPollIcon.setImageResource(R.drawable.poll_icon_normal_192);
             String dueDate = DateTransformator.getRemainingDays(poll.getDueDate());
             tvDueDate.setText(dueDate);
 
@@ -77,7 +77,7 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
             }
 
         } else {
-            vPollIcon.setImageResource(R.drawable.poll_closed);
+            vPollIcon.setImageResource(R.drawable.poll_icon_closed_192);
 
             String finished = DateTransformator.getTimeString(poll.getFinishedAt()) +
                     " " + tvDueDate.getResources().getString(R.string.jandi_finished);

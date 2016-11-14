@@ -172,7 +172,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             setImageViewSizeToDefault();
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
-            int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
+            int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon, SourceTypeUtil.TYPE_C);
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivFileImage, mimeTypeIconImage);
             tvFileSize.setVisibility(View.INVISIBLE);

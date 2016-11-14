@@ -21,7 +21,6 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
     private ImageView ivProfile;
     private TextView tvWriter;
 
-    private ImageView ivPollIcon;
     private TextView tvPollTitle;
     private TextView tvCreatedTime;
 
@@ -30,7 +29,6 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
         ivProfile = (ImageView) itemView.findViewById(R.id.iv_starred_poll_profile);
         tvWriter = (TextView) itemView.findViewById(R.id.tv_starred_poll_writer);
 
-        ivPollIcon = (ImageView) itemView.findViewById(R.id.iv_starred_poll_icon);
         tvPollTitle = (TextView) itemView.findViewById(R.id.tv_starred_poll_title);
         tvCreatedTime = (TextView) itemView.findViewById(R.id.tv_starred_poll_create_date);
     }

@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
@@ -30,6 +29,7 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
     private TextView tvComment;
     private TextView tvFileName;
     private ImageView ivContentIcon;
+    private TextView tvRoomName;
 
     private StarredCommentViewHolder(View itemView) {
         super(itemView);
@@ -40,6 +40,7 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
         tvComment = (TextView) itemView.findViewById(R.id.tv_starred_comment);
         tvFileName = (TextView) itemView.findViewById(R.id.tv_starred_file_name);
         ivContentIcon = (ImageView) itemView.findViewById(R.id.iv_icon_message_content_icon);
+        tvRoomName = (TextView) itemView.findViewById(R.id.tv_room_name);
     }
 
     public static StarredCommentViewHolder newInstance(ViewGroup parent) {
@@ -59,7 +60,13 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
         String body = starredMessage.getMessage().content.body;
         SpannableStringBuilder commentStringBuilder = new SpannableStringBuilder(body);
 
-        long myId = TeamInfoLoader.getInstance().getMyId();
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+
+//        long roomId = starredMessage.getRoom().id;
+//        String roomName = getRoomName(roomId);
+//        tvRoomName.setText(roomName);
+
+        long myId = teamInfoLoader.getMyId();
         MentionAnalysisInfo mentionAnalysisInfo =
                 MentionAnalysisInfo.newBuilder(myId, starredMessage.getMessage().mentions)
                         .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
@@ -86,5 +93,17 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
 
         String date = DateTransformator.getTimeString(starredMessage.getMessage().createdAt);
         tvDate.setText(date);
+    }
+
+    private String getRoomName(long roomId) {
+        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+        if (teamInfoLoader.isChat(roomId)) {
+            String companionName =
+                    teamInfoLoader.getMemberName(teamInfoLoader.getChat(roomId).getCompanionId());
+            return companionName;
+        } else if (teamInfoLoader.isTopic(roomId)) {
+            return teamInfoLoader.getTopic(roomId).getName();
+        }
+        return "";
     }
 }

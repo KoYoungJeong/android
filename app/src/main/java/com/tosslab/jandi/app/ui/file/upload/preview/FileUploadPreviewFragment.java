@@ -49,15 +49,15 @@ public class FileUploadPreviewFragment extends Fragment {
             ImageLoader.newInstance()
                     .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                    .placeHolder(R.drawable.file_icon_img_198, ImageView.ScaleType.CENTER)
+                    .placeHolder(R.drawable.file_detail_img, ImageView.ScaleType.CENTER)
                     .uri(uri)
                     .into(ivFileImage);
         } else {
             ivFileImage.setVisibility(View.GONE);
             vgFileExtensions.setVisibility(View.VISIBLE);
-
             ivFileExtensions.setScaleType(ImageView.ScaleType.FIT_CENTER);
             ivFileExtensions.setImageResource(getFileTypeResource(extensions));
+            vgFileExtensions.setBackgroundColor(getFileDetailBackground(extensions));
             tvFileExtensions.setText(extensions.name().toUpperCase());
         }
     }
@@ -68,40 +68,78 @@ public class FileUploadPreviewFragment extends Fragment {
     }
 
     int getFileTypeResource(FileExtensionsUtil.Extensions extensions) {
-        int resource = R.drawable.file_icon_etc_198;
+        int resource = R.drawable.file_detail_etc;
         switch (extensions) {
             case TXT:
-                resource = R.drawable.file_icon_txt_198;
+                resource = R.drawable.file_detail_text;
                 break;
             case AUDIO:
-                resource = R.drawable.file_icon_audio_198;
+                resource = R.drawable.file_detail_audio;
                 break;
             case VIDEO:
-                resource = R.drawable.file_icon_video_198;
+                resource = R.drawable.file_detail_video;
                 break;
             case EXEL:
-                resource = R.drawable.file_icon_exel_198;
+                resource = R.drawable.file_detail_excel;
                 break;
             case PPT:
-                resource = R.drawable.file_icon_ppt_198;
+                resource = R.drawable.file_detail_ppt;
                 break;
             case PDF:
-                resource = R.drawable.file_icon_pdf_198;
+                resource = R.drawable.file_detail_pdf;
                 break;
             case IMAGE:
-                resource = R.drawable.file_icon_img_198;
+                resource = R.drawable.file_detail_img;
                 break;
             case HWP:
-                resource = R.drawable.file_icon_hwp_198;
+                resource = R.drawable.file_detail_hwp;
                 break;
             case ZIP:
-                resource = R.drawable.file_icon_zip_198;
+                resource = R.drawable.file_detail_zip;
                 break;
             case ETC:
-                resource = R.drawable.file_icon_etc_198;
+                resource = R.drawable.file_detail_etc;
                 break;
         }
 
         return resource;
+    }
+
+    private int getFileDetailBackground(FileExtensionsUtil.Extensions extensions) {
+        int color = 0xffa7a7a7;
+        switch (extensions) {
+            case TXT:
+                color = 0xff426bb7;
+                break;
+            case AUDIO:
+                color = 0xffff992c;
+                break;
+            case VIDEO:
+                color = 0xff8267c1;
+                break;
+            case EXEL:
+                color = 0xff109d57;
+                break;
+            case PPT:
+                color = 0xffed6e3c;
+                break;
+            case PDF:
+                color = 0xffef5050;
+                break;
+            case IMAGE:
+                color = 0xffe88064;
+                break;
+            case HWP:
+                color = 0xff07adad;
+                break;
+            case ZIP:
+                color = 0xff828282;
+                break;
+            case ETC:
+                color = 0xffa7a7a7;
+                break;
+        }
+
+        return color;
     }
 }

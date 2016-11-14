@@ -10,7 +10,7 @@
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"/>
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
 
     <View
         android:id="@+id/v_message_user_profile_cover"
@@ -19,7 +19,7 @@
         android:layout_alignBottom="@+id/iv_message_user_profile"
         android:layout_alignLeft="@+id/iv_message_user_profile"
         android:layout_alignRight="@+id/iv_message_user_profile"
-        android:layout_alignTop="@+id/iv_message_user_profile"/>
+        android:layout_alignTop="@+id/iv_message_user_profile" />
 
     <TextView
         android:id="@+id/tv_message_user_name"
@@ -34,7 +34,7 @@
         android:textColor="@color/jandi_messages_name"
         android:textSize="13sp"
         android:textStyle="bold"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/iv_name_line_through"
@@ -44,7 +44,7 @@
         android:layout_alignLeft="@+id/tv_message_user_name"
         android:layout_alignRight="@+id/tv_message_user_name"
         android:layout_alignTop="@+id/tv_message_user_name"
-        android:src="@drawable/line_gray"/>
+        android:src="@drawable/line_gray" />
 
     <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
         android:id="@+id/vg_message_poll"
@@ -55,31 +55,30 @@
         android:layout_marginTop="5dp"
         android:background="@drawable/bg_message_item_selector"
         android:clickable="true"
-        android:paddingBottom="8dp"
-        android:paddingLeft="8dp"
+        android:paddingBottom="7dp"
+        android:paddingLeft="6.5dp"
         android:paddingRight="9dp"
-        android:paddingTop="8dp"
+        android:paddingTop="7dp"
         app:boundWidth="59dp">
 
         <ImageView
             android:id="@+id/v_message_poll_icon"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:padding="3dp"
-            android:src="@drawable/poll_normal"/>
+            android:src="@drawable/poll_icon_normal_135" />
 
         <TextView
             android:id="@+id/tv_message_poll_subject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="6.5dp"
             android:layout_marginTop="2dp"
+            android:layout_toRightOf="@id/v_message_poll_icon"
             android:ellipsize="end"
             android:maxLines="2"
-            android:layout_toRightOf="@id/v_message_poll_icon"
             android:textColor="@color/jandi_text"
             android:textSize="14sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_message_poll_creator"
@@ -90,7 +89,7 @@
             android:layout_marginTop="5dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:textColor="@color/jandi_text"
-            android:textSize="11sp"/>
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/tv_message_poll_due_date"
@@ -102,7 +101,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:textColor="@color/jandi_text_light"
-            android:textSize="10sp"/>
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/tv_message_poll_deleted"
@@ -115,7 +114,7 @@
             android:textColor="@color/jandi_text_light"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
 
@@ -124,7 +123,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_below="@+id/vg_message_poll"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/vg_message_last_read"

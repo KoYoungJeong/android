@@ -100,14 +100,25 @@ public class MentionListModel {
                     } else {
                         // comment
                         return MentionMessage.create(mentionMessage,
-                                mentionMessage.getMessage().feedbackTitle,
+                                "",
                                 user.getName(), user.getPhotoUrl());
                     }
-
                 })
                 .subscribe(mentions::add, Throwable::printStackTrace);
         return mentions;
     }
+
+//    private String getRoomName(long roomId) {
+//        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+//        if (teamInfoLoader.isChat(roomId)) {
+//            String companionName =
+//                    teamInfoLoader.getMemberName(teamInfoLoader.getChat(roomId).getCompanionId());
+//            return companionName;
+//        } else if (teamInfoLoader.isTopic(roomId)) {
+//            return teamInfoLoader.getTopic(roomId).getName();
+//        }
+//        return "";
+//    }
 
     public long getLastReadMentionId() {
         InitialInfo.Mention mention = TeamInfoLoader.getInstance().getMention();

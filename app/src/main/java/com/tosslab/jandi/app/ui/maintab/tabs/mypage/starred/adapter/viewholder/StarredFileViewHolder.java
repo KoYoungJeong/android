@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 /**
@@ -24,6 +25,7 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
     private View vFileRound;
     private TextView tvFileName;
     private ImageView ivFile;
+    private TextView tvFileSize;
 
     private StarredFileViewHolder(View itemView) {
         super(itemView);
@@ -33,6 +35,8 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
         tvFileName = (TextView) itemView.findViewById(R.id.tv_starred_file_name);
         ivFile = (ImageView) itemView.findViewById(R.id.iv_star_file);
         vFileRound = itemView.findViewById(R.id.v_star_file_round);
+
+        tvFileSize = (TextView) itemView.findViewById(R.id.tv_file_size);
     }
 
     public static StarredFileViewHolder newInstance(ViewGroup parent) {
@@ -61,6 +65,8 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
                 ivFile, vFileRound,
                 fileUrl, thumbnailUrl,
                 serverUrl, fileType);
+
+        tvFileSize.setText(FileUtil.formatFileSize(Integer.parseInt(content.size)));
     }
 
 }

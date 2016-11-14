@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -200,7 +201,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
-                                fileMessage.content.serverUrl, fileMessage.content.icon);
+                                fileMessage.content.serverUrl, fileMessage.content.icon, SourceTypeUtil.TYPE_C);
                 ivFileImage.setImageResource(mimeTypeIconImage);
                 tvCommonFileSize.setVisibility(View.VISIBLE);
                 if (fileContent.size > 0) {

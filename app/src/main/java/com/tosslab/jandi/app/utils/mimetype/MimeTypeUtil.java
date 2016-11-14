@@ -8,12 +8,12 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
  */
 public class MimeTypeUtil {
 
-    public static int getMimeTypeIconImage(String serverUrl, String iconType) {
+    public static int getMimeTypeIconImage(String serverUrl, String iconType, int type) {
 
         FilterType mimeType = IconFilterUtil.getMimeType(iconType);
         SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
 
-        return SourceTypeUtil.getFileIcon(mimeType, sourceType);
+        return SourceTypeUtil.getFileIcon(mimeType, sourceType, type);
 
     }
 

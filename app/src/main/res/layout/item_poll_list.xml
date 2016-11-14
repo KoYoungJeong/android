@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="89dp"
+    android:layout_height="94dp"
     android:background="@color/white">
 
     <ImageView
         android:id="@+id/v_poll_list_icon"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:src="@drawable/poll_normal" />
+        android:src="@drawable/poll_icon_normal_192" />
 
     <RelativeLayout
         android:id="@+id/vg_poll_list_info"
@@ -58,9 +58,12 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="6dp"
             android:layout_toRightOf="@id/tv_poll_list_duedate"
-            android:background="@drawable/admin_bg"
+            android:background="@drawable/bg_round_rect_dark_gray_rad_7"
             android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
             android:text="@string/jandi_poll_voted"
+            android:textColor="@color/white"
             android:textSize="11sp"
             android:visibility="gone" />
 

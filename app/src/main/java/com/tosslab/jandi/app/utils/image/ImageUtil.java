@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -22,6 +23,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
@@ -234,18 +236,13 @@ public class ImageUtil {
                                                   final String thumbnailUrl,
                                                   final String serverUrl,
                                                   final String fileType) {
-        if (vOutLine != null) {
-            vOutLine.setVisibility(View.VISIBLE);
-        }
 
-        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType, SourceTypeUtil.TYPE_A);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
-        if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
-            if (vOutLine != null) {
-                vOutLine.setVisibility(View.GONE);
-            }
 
+        if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
+            setImageViewLayout(imageView, vOutLine, false);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             ImageLoader.loadFromResources(imageView, mimeTypeIconImage);
             return;
@@ -253,13 +250,11 @@ public class ImageUtil {
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
-            if (vOutLine != null) {
-                vOutLine.setVisibility(View.GONE);
-            }
-
+            setImageViewLayout(imageView, vOutLine, false);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             ImageLoader.loadFromResources(imageView, mimeTypeIconImage);
         } else {
+            setImageViewLayout(imageView, vOutLine, true);
             if (TextUtils.isEmpty(thumbnailUrl)) {
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 ImageLoader.loadFromResources(imageView, R.drawable.comment_no_img);
@@ -275,6 +270,28 @@ public class ImageUtil {
         }
     }
 
+    private static void setImageViewLayout(ImageView imageView, View vOutLine, boolean isNeedOutLine) {
+        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+        if (!isNeedOutLine) {
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.GONE);
+            }
+            layoutParams.width = (int) UiUtils.getPixelFromDp(64);
+            layoutParams.height = (int) UiUtils.getPixelFromDp(64);
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+            marginLayoutParams.setMargins(0, 0, 0, 0);
+        } else {
+            if (vOutLine != null) {
+                vOutLine.setVisibility(View.VISIBLE);
+            }
+            layoutParams.width = (int) UiUtils.getPixelFromDp(63);
+            layoutParams.height = (int) UiUtils.getPixelFromDp(63);
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+            marginLayoutParams.setMargins(
+                    (int) UiUtils.getPixelFromDp((float) 0.5), (int) UiUtils.getPixelFromDp((float) 0.5), 0, 0);
+        }
+    }
+
     public static void setResourceIconOrLoadImageForComment(final ImageView imageView,
                                                             final View vOutLine,
                                                             final String fileUrl,
@@ -286,7 +303,7 @@ public class ImageUtil {
             vOutLine.setVisibility(View.GONE);
         }
 
-        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType);
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType, SourceTypeUtil.TYPE_C);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {
@@ -297,6 +314,7 @@ public class ImageUtil {
         }
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
+
         if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
             imageView.setBackgroundColor(Color.TRANSPARENT);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);

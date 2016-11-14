@@ -33,12 +33,12 @@ public class PollBinder {
                     ? DateTransformator.getRemainingDays(poll.getDueDate())
                     : "~" + DateTransformator.getTimeString(poll.getDueDate());
             tvDueDate.setText(dueDate);
-            vPollIcon.setImageResource(R.drawable.poll_normal);
+            vPollIcon.setImageResource(R.drawable.poll_icon_normal_135);
         } else {
             if ("deleted".equals(status)) {
-                vPollIcon.setImageResource(R.drawable.poll_deleted);
+                vPollIcon.setImageResource(R.drawable.poll_icon_deleted_135);
             } else {
-                vPollIcon.setImageResource(R.drawable.poll_closed);
+                vPollIcon.setImageResource(R.drawable.poll_icon_closed_135);
             }
             tvDueDate.setText(R.string.jandi_finished);
         }

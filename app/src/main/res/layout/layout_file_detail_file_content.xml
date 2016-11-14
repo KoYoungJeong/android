@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_background"
     android:layout_width="match_parent"
     android:layout_height="169dp"
     android:background="@color/jandi_file_detail_tab_to_view_bg">
@@ -14,23 +14,24 @@
 
         <ImageView
             android:id="@+id/iv_file_detail_thumb"
-            android:layout_width="50dp"
-            android:layout_height="60dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_marginTop="6dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter" />
 
         <TextView
+            android:id="@+id/tv_tab_to_view"
             android:layout_width="wrap_content"
             android:layout_height="27dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/taptoview"
+            android:background="@drawable/bg_round_rect_for_tab_to_view"
             android:gravity="center"
             android:paddingLeft="19dp"
             android:paddingRight="19dp"
             android:text="Tap to view"
-            android:textColor="@color/jandi_text_medium"
+            android:textColor="@color/white"
             android:textSize="14dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 
