@@ -47,6 +47,9 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
     @Override
     public void initTeamDatas(boolean firstEntered, boolean shouldRefreshAccountInfo) {
         Observable.defer(() -> {
+            if (shouldRefreshAccountInfo) {
+                model.refreshAccountInfo();
+            }
             List<Team> teams = new ArrayList<>();
             try {
                 teams = model.getTeamInfos();
@@ -58,9 +61,6 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(teams -> {
-                    if (shouldRefreshAccountInfo) {
-                        model.refreshAccountInfo();
-                    }
                     // create team 밖에 없을 때
                     if (teams.size() == 1) {
                         view.showEmptyList();
