@@ -30,7 +30,7 @@ public class MemberSearchModel {
                 .subscribe(entities -> {
                     members.clear();
                     members.addAll(entities);
-                });
+                }, Throwable::printStackTrace);
         return members;
     }
 
@@ -72,7 +72,7 @@ public class MemberSearchModel {
                                 .compareTo(entity2.getName().toLowerCase());
                     }
                 })
-                .subscribe(searchedMembers::addAll);
+                .subscribe(searchedMembers::addAll, Throwable::printStackTrace);
 
         return searchedMembers;
     }

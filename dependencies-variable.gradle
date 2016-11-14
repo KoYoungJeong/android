@@ -21,9 +21,9 @@ ext.dependecies = [
                 henson                           : 'com.f2prateek.dart:henson:2.0.+',
                 henson_processor                 : 'com.f2prateek.dart:henson-processor:2.0.+',
 
-                googleAnalytics                  : 'com.google.android.gms:play-services-analytics:9.6.1',
-                firebase_core                    : 'com.google.firebase:firebase-core:9.6.1',
-                firebase_fcm                     : 'com.google.firebase:firebase-messaging:9.6.1',
+                googleAnalytics                  : 'com.google.android.gms:play-services-analytics:9.4.0',
+                firebase_core                    : 'com.google.firebase:firebase-core:9.4.0',
+                firebase_fcm                     : 'com.google.firebase:firebase-messaging:9.4.0',
 
                 support_appcompat                : 'com.android.support:appcompat-v7:24.2.1',
                 support_v4                       : 'com.android.support:support-v4:24.2.1',
@@ -47,7 +47,8 @@ ext.dependecies = [
                 ormlite                          : 'com.j256.ormlite:ormlite-android:4.+',
 
                 rxandroid                        : 'io.reactivex:rxandroid:1.2.+',
-                rxjava                           : 'io.reactivex:rxjava:1.1.+',
+                rxjava                           : 'io.reactivex:rxjava:1.2.+',
+                rxrelay                          : 'com.jakewharton.rxrelay:rxrelay:1.2.+',
 
                 facebook                         : 'com.facebook.android:facebook-android-sdk:4.5.+',
 
@@ -71,7 +72,7 @@ ext.dependecies = [
 
                 retrolambda                      : 'net.orfjackal.retrolambda:retrolambda:2.3.0',
 
-                intercom                         : 'io.intercom.android:intercom-sdk-base:3.+',
+                intercom                         : 'io.intercom.android:intercom-sdk-base:3.0.10',
 
                 libphonenumber_android           : 'io.michaelrocks:libphonenumber-android:7.7.2',
 

@@ -80,7 +80,7 @@ public class InvitationViewModel {
                         .toSortedList((formattedEntity, formattedEntity2) -> StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
                 )
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(adapter::setUnjoinedEntities);
+                .subscribe(adapter::setUnjoinedEntities, Throwable::printStackTrace);
 
         /**
          * 사용자 초대  위한 Dialog    여준 뒤, 체크된 사용자  초대한다.

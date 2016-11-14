@@ -122,7 +122,7 @@ public class DeptPositionActivity extends BaseAppCompatActivity {
                     })
                     .subscribe(pairs -> {
                         datas.addAll(pairs);
-                    });
+                    }, Throwable::printStackTrace);
             adapter.setDatas(datas);
             adapter.setKeyword(keyword);
             adapter.dataRefresh();
@@ -144,7 +144,7 @@ public class DeptPositionActivity extends BaseAppCompatActivity {
                 })
                 .subscribe(pairs -> {
                     datas.addAll(pairs);
-                });
+                }, Throwable::printStackTrace);
         if (datas.size() > 0) {
             if (!datas.contains(new Pair(keyword, false))) {
                 datas.add(new Pair(keyword, true));
@@ -175,7 +175,7 @@ public class DeptPositionActivity extends BaseAppCompatActivity {
                     })
                     .subscribe(pairs -> {
                         datas.addAll(pairs);
-                    });
+                    }, Throwable::printStackTrace);
             adapter.setDatas(datas);
             adapter.setKeyword(keyword);
             adapter.dataRefresh();
@@ -197,7 +197,7 @@ public class DeptPositionActivity extends BaseAppCompatActivity {
                 })
                 .subscribe(pairs -> {
                     datas.addAll(pairs);
-                });
+                }, Throwable::printStackTrace);
         if (datas.size() > 0) {
             if (!datas.contains(new Pair(keyword, false))) {
                 datas.add(new Pair(keyword, true));

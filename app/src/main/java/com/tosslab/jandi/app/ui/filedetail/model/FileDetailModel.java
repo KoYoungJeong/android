@@ -329,12 +329,13 @@ public class FileDetailModel {
     public List<TopicRoom> getTopicRooms() {
         List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
 
-        return Observable.from(topicList)
+        List<TopicRoom> first = Observable.from(topicList)
                 .filter(TopicRoom::isJoined)
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                 })
-                .toBlocking().first();
+                .toBlocking().firstOrDefault(new ArrayList<>());
+        return first;
     }
 
     public List<Member> getMembers() {
@@ -346,7 +347,7 @@ public class FileDetailModel {
                 .toSortedList((formattedEntity, formattedEntity2) -> {
                     return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
                 })
-                .toBlocking().first();
+                .toBlocking().firstOrDefault(new ArrayList<>());
 
         members.add(TeamInfoLoader.getInstance().getJandiBot());
         members.addAll(first);

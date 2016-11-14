@@ -7,6 +7,16 @@
 	<string name="common_accthome_jandiacct">"JANDIアカウント"</string>
 	<string name="common_accthome_joinedteamlist">"参加中のチーム一覧"</string>
 	<string name="common_accthome_loggedin">"ログイン完了"</string>
+	<string name="common_calleridnotifier_authorizecalllog">"発信許可設定"</string>
+	<string name="common_calleridnotifier_authorizedrawover1">"他のアプリの上に重ねて表示"</string>
+	<string name="common_calleridnotifier_authorizedrawover2">"この機能を「on」すると権限設定画面に移動します。"</string>
+	<string name="common_calleridnotifier_closemodal">"閉じる"</string>
+	<string name="common_calleridnotifier_dontshowmodal">"今後表示しない"</string>
+	<string name="common_calleridnotifier_guide1">"連絡先に保存されていないメンバーからの電話着信時、メンバーの電話番号が確認できます。"</string>
+	<string name="common_calleridnotifier_guide2">"機能を利用するには下の二つの権限が必要です。"</string>
+	<string name="common_calleridnotifier_settings">"メンバー連絡先確認の設定"</string>
+	<string name="common_calleridnotifier_suggestmodal">"メンバー連絡先確認機能をお試しください"</string>
+	<string name="common_calleridnotifier_tosettings">"設定に移動"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
 	<string name="common_createteam_welcome">"ようこそ！"</string>
 	<string name="common_creatteam_done">"確認"</string>
@@ -70,8 +80,9 @@
 	<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
 	<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"に委譲しますか?"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
+	<string name="file_detail_nopreview">"プレビュー表示できないファイル形式です。"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>
 	<string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
@@ -749,6 +760,7 @@
 	<string name="title_file_upload">"ファイルをアップロード"</string>
 	<string name="today">"今日"</string>
 	<string name="topic_polls_deletedpoll">"削除された投票"</string>
+	<string name="topic_room_deletetopicconfirm">"このトピックは削除されました。"</string>
 	<string name="topic_room_selectallmembers">"すべて選択"</string>
 	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"%sフォルダからトピックが除かれました"</string>

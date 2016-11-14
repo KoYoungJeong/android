@@ -128,7 +128,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
                 })
                 .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .collect(() -> sharedEntities, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
         if (!sharedEntities.isEmpty()) {
 

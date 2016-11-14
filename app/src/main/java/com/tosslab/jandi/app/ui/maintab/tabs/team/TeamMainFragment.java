@@ -159,9 +159,9 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300);
-            builder.setView(view).setNegativeButton(R.string.jandi_close, null);
+            builder.setView(view).setNegativeButton(R.string.common_calleridnotifier_closemodal, null);
             if (moveSettingBtn) {
-                builder.setPositiveButton(R.string.jandi_go_to_setting, (dialog, which) -> {
+                builder.setPositiveButton(R.string.common_calleridnotifier_tosettings, (dialog, which) -> {
                     startActivity(Henson.with(activity)
                             .gotoCallSettingActivity()
                             .build());

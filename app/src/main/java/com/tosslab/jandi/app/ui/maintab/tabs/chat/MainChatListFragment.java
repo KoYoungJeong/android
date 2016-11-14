@@ -347,7 +347,9 @@ public class MainChatListFragment extends Fragment
 
     @Override
     public void scrollToTop() {
-        lvChat.scrollToPosition(0);
+        if (lvChat != null) {
+            lvChat.scrollToPosition(0);
+        }
     }
 
     @Override

@@ -752,7 +752,9 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void scrollToTop() {
-        lvMainTopic.scrollToPosition(0);
+        if (lvMainTopic != null) {
+            lvMainTopic.scrollToPosition(0);
+        }
     }
 
     @Override
