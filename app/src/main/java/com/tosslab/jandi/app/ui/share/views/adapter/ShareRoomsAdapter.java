@@ -98,7 +98,7 @@ public class ShareRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ImageView ivIcon = roomholder.ivIcon;
         if (item.isUser()) {
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
-            ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
+            ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img);
             roomholder.tvName.setText(item.getName());
         } else if (item.isPublicTopic()) {
             int resId = R.drawable.topiclist_icon_topic_fav;

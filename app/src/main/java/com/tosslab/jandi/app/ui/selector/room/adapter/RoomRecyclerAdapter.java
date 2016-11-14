@@ -132,7 +132,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
 
                 if (!item.isInactive()) {
-                    ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img_comment);
+                    ImageUtil.loadProfileImage(ivIcon, fileUrl, R.drawable.profile_img);
                     name.append(item.getName());
                 } else {
                     ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_32);
