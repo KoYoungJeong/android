@@ -117,7 +117,7 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
 
         setAnalyticsScreen();
 
-        DeptJobAdapter adapter = new DeptJobAdapter();
+        DeptJobAdapter adapter = new DeptJobAdapter(selectMode);
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (hasHeader) {

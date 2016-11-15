@@ -22,8 +22,10 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
         implements DeptJobDataModel, DeptJobDataView {
     private List<DeptJob> names;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
+    private boolean selectMode = false;
 
-    public DeptJobAdapter() {
+    public DeptJobAdapter(boolean selectMode) {
+        this.selectMode = selectMode;
         names = new ArrayList<>();
     }
 
@@ -46,12 +48,12 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
         holder.tvTitle.setText(item.getName(), TextView.BufferType.SPANNABLE);
         holder.tvCount.setText(String.valueOf(item.getCount()));
 
-        if (position < getItemCount() - 1) {
+        if (!selectMode && (position < getItemCount() - 1)) {
             DeptJob nextItem = getItem(position + 1);
             if (TextUtils.equals(item.getHeader(), nextItem.getHeader())) {
-                holder.vDivider.setVisibility(View.INVISIBLE);
-            } else {
                 holder.vDivider.setVisibility(View.VISIBLE);
+            } else {
+                holder.vDivider.setVisibility(View.INVISIBLE);
             }
         } else {
             holder.vDivider.setVisibility(View.VISIBLE);
