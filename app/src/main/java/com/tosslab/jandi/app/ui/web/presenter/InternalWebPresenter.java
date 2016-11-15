@@ -12,9 +12,11 @@ import android.webkit.WebView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.client.MessageManipulator_;
+import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -59,10 +61,14 @@ public class InternalWebPresenter {
     }
 
 
-    public void sendMessageToRoom(long entityId, int entityType, String text, Activity activity) throws RetrofitException {
-        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(activity);
-        messageManipulator.initEntity(entityType, entityId);
-        messageManipulator.sendMessage(text, null);
+    public void sendMessageToRoom(long entityId, String text) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+
+        RoomsApi roomsAPi = new RoomsApi(RetrofitBuilder.getInstance());
+
+        ReqTextMessage reqMessage = new ReqTextMessage(text, null);
+
+        roomsAPi.sendMessage(teamId, entityId, reqMessage);
     }
 
     public String getAvailableUrl(String url) {
@@ -80,10 +86,9 @@ public class InternalWebPresenter {
         Context context = JandiApplication.getContext();
         view.showProgressWheel();
         long entityId = event.getRoomId();
-        int entityType = event.getRoomType();
         try {
             String message = createMessage(title, Url);
-            sendMessageToRoom(entityId, entityType, message, activity);
+            sendMessageToRoom(entityId, message);
             view.showSuccessToast(context, context.getString(R.string.jandi_share_succeed,
                     context.getString(R.string.jandi_message_hint)));
         } catch (RetrofitException e) {
