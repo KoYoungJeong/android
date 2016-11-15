@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -1094,6 +1095,18 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         if (fileInfo != null) {
             Intent data = new Intent();
             data.putExtra(KEY_FILE_ID, fileInfo.getFileMessageId());
+            setResult(RESULT_OK, data);
+        }
+
+        super.finish();
+    }
+
+    @Override
+    public void deletedFinish(long fileId) {
+        if (fileId >= 0) {
+            Intent data = new Intent();
+            data.putExtra(FileListFragment.KEY_FILE_DELETED, true);
+            data.putExtra(FileListFragment.KEY_FILE_ID, fileId);
             setResult(RESULT_OK, data);
         }
 

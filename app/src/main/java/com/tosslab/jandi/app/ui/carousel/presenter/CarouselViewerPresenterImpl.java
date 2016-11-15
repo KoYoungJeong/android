@@ -247,7 +247,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.showDeleteSuccessToast();
-                    view.finish();
+                    view.deletedFinish(fileMessageId);
                 }, e -> {
                     LogUtil.e(Log.getStackTraceString(e));
 
