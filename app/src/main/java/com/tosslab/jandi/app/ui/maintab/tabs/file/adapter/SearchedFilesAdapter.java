@@ -105,7 +105,7 @@ public class SearchedFilesAdapter extends RecyclerView.Adapter
     public int findPositionByFileId(long fileId) {
         int itemCount = getItemCount();
         for (int idx = 0; idx < itemCount; ++idx) {
-            if (getItem(idx).getLinkId() == fileId) {
+            if (getItem(idx).getFile().getId() == fileId) {
                 return idx;
             }
         }
