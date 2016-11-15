@@ -49,9 +49,9 @@ public class DeptJobAdapter extends RecyclerView.Adapter<DeptJobAdapter.DeptJobV
         if (position < getItemCount() - 1) {
             DeptJob nextItem = getItem(position + 1);
             if (TextUtils.equals(item.getHeader(), nextItem.getHeader())) {
-                holder.vDivider.setVisibility(View.VISIBLE);
-            } else {
                 holder.vDivider.setVisibility(View.INVISIBLE);
+            } else {
+                holder.vDivider.setVisibility(View.VISIBLE);
             }
         } else {
             holder.vDivider.setVisibility(View.VISIBLE);
