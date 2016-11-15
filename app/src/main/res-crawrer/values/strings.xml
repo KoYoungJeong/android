@@ -2,7 +2,7 @@
 <resources>
 	<string name="app_name">"JANDI"</string>
 	<string name="comment">"Comment"</string>
-	<string name="common_accthome_createteam">"Create a new team"</string>
+	<string name="common_accthome_createteam">"CREATE"</string>
 	<string name="common_accthome_createteamguide">"You are currently not part of any team.\nTap on the 'Create a new team' button below\nto experience JANDI."</string>
 	<string name="common_accthome_jandiacct">"JANDI account"</string>
 	<string name="common_accthome_joinedteamlist">"Joined team list"</string>
@@ -12,7 +12,7 @@
 	<string name="common_calleridnotifier_authorizedrawover2">"Turning on this feature will move you to the ’Draw over other apps’ settings."</string>
 	<string name="common_calleridnotifier_closemodal">"Close"</string>
 	<string name="common_calleridnotifier_dontshowmodal">"Do not show this message again."</string>
-	<string name="common_calleridnotifier_guide1">"Even if you get a call from a team member who is not saved in your phone contact, you can view their profile instantly."</string>
+	<string name="common_calleridnotifier_guide1">"A JANDI member's mobile number and name will appear in caller ID without being saved in your contact list prior."</string>
 	<string name="common_calleridnotifier_guide2">"To enable this feature, you must turn on the following menu."</string>
 	<string name="common_calleridnotifier_settings">"View Members’ Contacts"</string>
 	<string name="common_calleridnotifier_suggestmodal">"Try 'View Members' Contacts'"</string>
@@ -750,6 +750,8 @@
 	<string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"Team Information"</string>
+	<string name="team_invite_email_disabledmember_desc">"To invite this member, ask your team administrator to undo the disable."</string>
+	<string name="team_invite_email_disabledmember_title">"This member has been disabled."</string>
 	<string name="title_cdp_invite">"Choose members to invite"</string>
 	<string name="title_file_detail">"Description"</string>
 	<string name="title_file_upload">"Upload File"</string>

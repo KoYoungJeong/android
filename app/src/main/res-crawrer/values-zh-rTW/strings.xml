@@ -275,7 +275,7 @@
 	<string name="jandi_file_category_pdf">"PDF"</string>
 	<string name="jandi_file_category_presentation">"簡報"</string>
 	<string name="jandi_file_category_spreadsheet">"試算表"</string>
-	<string name="jandi_file_category_video">"影片"</string>
+	<string name="jandi_file_category_video">"影片檔"</string>
 	<string name="jandi_file_category_zip">"壓縮檔"</string>
 	<string name="jandi_file_delete">"刪除檔案"</string>
 	<string name="jandi_file_delete_message">"您確定要刪除此檔案？ 請注意留言的部分不會被刪除。"</string>
@@ -712,7 +712,7 @@
 	<string name="jandi_upload_menu_camera">"相機"</string>
 	<string name="jandi_upload_menu_file">"檔案"</string>
 	<string name="jandi_upload_menu_gallay">"照片集"</string>
-	<string name="jandi_upload_menu_video">"影片"</string>
+	<string name="jandi_upload_menu_video">"影片檔"</string>
 	<string name="jandi_use_fingerprint">"使用指紋"</string>
 	<string name="jandi_user_default_email">"主要電子郵件地址"</string>
 	<string name="jandi_user_id">"電子郵件"</string>
@@ -747,6 +747,8 @@
 	<string name="sent_auth_email_short">"電子郵件已經成功寄出。 請查看您的郵箱"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"團隊資料"</string>
+	<string name="team_invite_email_disabledmember_desc">"聯繫團隊管理員重啟權限"</string>
+	<string name="team_invite_email_disabledmember_title">"此成員權限已被關閉"</string>
 	<string name="title_cdp_invite">"請選擇欲邀請的成員"</string>
 	<string name="title_file_detail">"敘述"</string>
 	<string name="title_file_upload">"上傳檔案"</string>

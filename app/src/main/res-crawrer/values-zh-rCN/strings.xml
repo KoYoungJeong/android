@@ -747,6 +747,8 @@
 	<string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"团队资料"</string>
+	<string name="team_invite_email_disabledmember_desc">"联系团队管理员重启权限"</string>
+	<string name="team_invite_email_disabledmember_title">"此成员权限已被关闭"</string>
 	<string name="title_cdp_invite">"请选择欲邀请的成员"</string>
 	<string name="title_file_detail">"叙述"</string>
 	<string name="title_file_upload">"上传文件"</string>
