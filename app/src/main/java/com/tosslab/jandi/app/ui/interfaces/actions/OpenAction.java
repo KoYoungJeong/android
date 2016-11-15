@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
@@ -17,14 +16,10 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -81,7 +76,6 @@ public class OpenAction implements Action {
             } else {
                 access_token = removeSpecialChar(access_token);
                 refresh_token = removeSpecialChar(refresh_token);
-
                 checkSession(access_token, refresh_token);
             }
         } else {
@@ -96,20 +90,19 @@ public class OpenAction implements Action {
 
     void checkSession(final String accessToken, final String refreshToken) {
         ResAccessToken originToken = TokenUtil.getTokenObject();
-        if (originToken == null || TextUtils.isEmpty(originToken.getAccessToken())) {
-            ResAccessToken resAccessToken = new ResAccessToken();
-            resAccessToken.setAccessToken(accessToken);
-            resAccessToken.setRefreshToken(refreshToken);
-            TokenUtil.saveTokenInfoByRefresh(resAccessToken);
 
-            signIn(refreshToken);
+        String previousRefreshToken = null;
 
-        } else {
-
-            deleteOriginalTokenAndSignIn(accessToken, refreshToken);
-
+        if (originToken != null && !TextUtils.isEmpty(originToken.getAccessToken())) {
+            previousRefreshToken = originToken.getRefreshToken();
         }
 
+        ResAccessToken resAccessToken = new ResAccessToken();
+        resAccessToken.setAccessToken(accessToken);
+        resAccessToken.setRefreshToken(refreshToken);
+        TokenUtil.saveTokenInfoByRefresh(resAccessToken);
+        signIn(refreshToken);
+        deletePreviousToken(previousRefreshToken);
     }
 
     private void signIn(String refreshToken) {
@@ -153,74 +146,17 @@ public class OpenAction implements Action {
 
     }
 
-    private void deleteOriginalTokenAndSignIn(String accessToken, String refreshToken) {
-        // deviceId 가 없는 경우에 대한 방어코드, deviceId 가 비어 있는 경우 400 error 가 떨어짐.
-        // UUID RFC4122 규격 맞춘 아무 값이나 필요
-        final String deviceIdOrigin = TextUtils.isEmpty(TokenUtil.getTokenObject().getDeviceId())
-                ? UUID.randomUUID().toString()
-                : TokenUtil.getTokenObject().getDeviceId();
-
-        Observable.just(deviceIdOrigin)
-                .subscribeOn(Schedulers.io())
-                .concatMap(deviceId -> {
-                    try {
-                        ResCommon resCommon =
-                                loginApi.get().deleteToken(TokenUtil.getRefreshToken(), deviceId);
-                        return Observable.just(resCommon);
-                    } catch (RetrofitException e) {
-                        LogUtil.e(Log.getStackTraceString(e));
-                        return Observable.error(e);
-                    }
-                })
-                .onErrorReturn(throwable -> new ResCommon())
-                .doOnNext(o -> {
-                    SignOutUtil.removeSignData();
-                    BadgeUtils.clearBadge(JandiApplication.getContext());
-                    JandiSocketService.stopService(JandiApplication.getContext());
-                })
-                .concatMap(o -> {
-                    ResAccessToken resAccessTokenTemp = new ResAccessToken();
-                    resAccessTokenTemp.setAccessToken(accessToken);
-                    resAccessTokenTemp.setRefreshToken(refreshToken);
-                    TokenUtil.saveTokenInfoByRefresh(resAccessTokenTemp);
-
-                    ReqAccessToken newAccessToken = ReqAccessToken.createRefreshReqToken(refreshToken);
-                    try {
-                        ResAccessToken resAccessToken = loginApi.get().getAccessToken(newAccessToken);
-                        TokenUtil.saveTokenInfoByRefresh(resAccessToken);
-                        return Observable.just(resAccessToken);
-                    } catch (RetrofitException e) {
-                        LogUtil.e(Log.getStackTraceString(e));
-                        return Observable.error(e);
-                    }
-                })
-                .concatMap(resAccessToken -> {
-                    try {
-                        ResAccountInfo accountInfo = accountApi.get().getAccountInfo();
-
-                        ReqSubscribeToken subscibeToken = new ReqSubscribeToken(true);
-                        deviceApi.get().updateSubscribe(resAccessToken.getDeviceId(), subscibeToken);
-
-                        return Observable.just(accountInfo);
-                    } catch (RetrofitException e) {
-                        e.printStackTrace();
-                        return Observable.error(e);
-                    }
-                })
-                .doOnNext(resAccountInfo -> {
-                    AccountUtil.removeDuplicatedTeams(resAccountInfo);
-                    AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::successAccessToken,
-                        e -> {
-                            TokenUtil.clearTokenInfo();
-                            AccountRepository.getRepository().clearAccountData();
-                            failAccessToken();
-                        }, () -> {
-                            JandiApplication.updatePlatformStatus(true);
-                            startIntroActivity();
-                        });
+    private void deletePreviousToken(String previousRefreshToken) {
+        if (!TextUtils.isEmpty(previousRefreshToken)) {
+            final String deviceIdOrigin = TextUtils.isEmpty(TokenUtil.getTokenObject().getDeviceId())
+                    ? UUID.randomUUID().toString()
+                    : TokenUtil.getTokenObject().getDeviceId();
+            try {
+                loginApi.get().deleteToken(previousRefreshToken, deviceIdOrigin);
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
