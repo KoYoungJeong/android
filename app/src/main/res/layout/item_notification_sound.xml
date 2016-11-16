@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingLeft="24dp"
-    android:paddingRight="30dp"
-    android:orientation="horizontal">
+    android:paddingRight="30dp">
 
     <TextView
         android:id="@+id/tv_item_notification_sound"
@@ -15,10 +15,13 @@
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="@dimen/jandi_text_size_larger_2" />
 
-    <ImageView
+    <RadioButton
         android:id="@+id/iv_item_notification_sound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
-        android:src="@drawable/btn_radio_selector" />
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:theme="@style/Jandi.Default.RadioButton" />
 </LinearLayout>

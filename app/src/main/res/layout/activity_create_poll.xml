@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/jandi_material_grey_50"
@@ -31,7 +32,7 @@
                 android:layout_marginTop="8dp"
                 android:hint="@string/jandi_input_poll_subject"
                 android:maxLength="200"
-                android:minHeight="48dp"
+                android:paddingBottom="16dp"
                 android:theme="@style/CreatePollEditText" />
 
             <LinearLayout
@@ -165,7 +166,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:checked="false"
-                        android:clickable="false" />
+                        android:clickable="false"
+                        app:theme="@style/Jandi.Default.Switch" />
                 </FrameLayout>
 
             </LinearLayout>
@@ -203,7 +205,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:checked="false"
-                        android:clickable="false" />
+                        android:clickable="false"
+                        app:theme="@style/Jandi.Default.Switch" />
                 </FrameLayout>
             </LinearLayout>
 

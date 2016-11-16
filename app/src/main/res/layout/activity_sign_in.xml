@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -28,7 +29,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
-                android:theme="@style/FloatingEditTextTheme">
+                android:paddingBottom="16dp"
+                app:theme="@style/FloatingEditTextTheme">
 
                 <AutoCompleteTextView
                     android:id="@+id/et_email"
@@ -38,6 +40,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                     android:maxLength="60"
+                    android:paddingBottom="16dp"
                     android:nextFocusDown="@+id/et_password"
                     android:textSize="16sp" />
 
@@ -49,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:theme="@style/FloatingEditTextTheme">
+                app:theme="@style/FloatingEditTextTheme">
 
                 <EditText
                     android:id="@+id/et_password"
@@ -59,6 +62,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:maxLength="20"
+                    android:paddingBottom="16dp"
                     android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
