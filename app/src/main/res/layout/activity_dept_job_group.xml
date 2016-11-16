@@ -17,7 +17,8 @@
         android:id="@+id/list_dept_job_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/layout_dept_job_group_bar" />
+        android:layout_above="@+id/vg_dept_job_group_toggled"
+        android:layout_below="@id/layout_dept_job_group_bar" />
 
     <RelativeLayout
         android:id="@+id/vg_dept_job_group_toggled"

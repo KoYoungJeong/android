@@ -44,7 +44,6 @@ public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
 
     interface Api {
 
-
         @PUT("teams/{teamId}/rooms/{roomId}/subscribe")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> updateTopicPushSubscribe(@Path("teamId") long teamId, @Path("roomId") long topicId, @Body ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);

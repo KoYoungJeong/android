@@ -11,12 +11,10 @@ import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import io.realm.RealmList;
 
 
 public class TopicCreateModel {
@@ -52,10 +50,10 @@ public class TopicCreateModel {
     }
 
     public void addTopic(Topic topic) {
-        List<Marker> markers = new ArrayList<>();
+        RealmList<Marker> markers = new RealmList<>();
         for (Long memberId : topic.getMembers()) {
             Marker marker = new Marker();
-            marker.setTopic(topic);
+            marker.setRoomId(topic.getId());
             marker.setMemberId(memberId);
             marker.setReadLinkId(-1);
             markers.add(marker);

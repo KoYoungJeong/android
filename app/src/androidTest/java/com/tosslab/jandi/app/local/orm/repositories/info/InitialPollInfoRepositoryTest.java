@@ -2,16 +2,16 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,48 +22,52 @@ import static org.assertj.core.api.Assertions.assertThat;
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class InitialPollInfoRepositoryTest {
 
-    public static final int STANDARD_VALUE = 10;
+    private static final int STANDARD_VALUE = 10;
+
+    private static InitialInfo initializeInfo;
+    private static long teamId;
 
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
+        teamId = TeamInfoLoader.getInstance().getTeamId();
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
     }
 
     @Before
     public void setUp() throws Exception {
-
-        OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-        Dao<InitialInfo.Poll, ?> dao = helper.getDao(InitialInfo.Poll.class);
-        InitialInfo.Poll data = new InitialInfo.Poll();
-        data.setVotableCount(STANDARD_VALUE);
-        dao.createOrUpdate(data);
-
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
+        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         TeamInfoLoader.getInstance().refresh();
+
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            realm.where(Poll.class).equalTo("id",teamId).findFirst().setVotableCount(STANDARD_VALUE);
+        });
     }
 
     @Test
     public void plusVotableCount() throws Exception {
-        boolean success = InitialPollInfoRepository.getInstance().increaseVotableCount();
-        assertThat(success).isTrue();
+        assertThat(InitialPollInfoRepository.getInstance().increaseVotableCount()).isTrue();
 
-        int votableCount = InitialPollInfoRepository.getInstance().getVotableCount();
-        assertThat(votableCount).isEqualTo(STANDARD_VALUE + 1);
+        assertThat(InitialPollInfoRepository.getInstance().getVotableCount()).isEqualTo(STANDARD_VALUE + 1);
     }
 
     @Test
     public void minusVotableCount() throws Exception {
-        boolean success = InitialPollInfoRepository.getInstance().decreaseVotableCount();
-        assertThat(success).isTrue();
-
-        int votableCount = InitialPollInfoRepository.getInstance().getVotableCount();
-        assertThat(votableCount).isEqualTo(STANDARD_VALUE - 1);
+        assertThat(InitialPollInfoRepository.getInstance().decreaseVotableCount()).isTrue();
+        assertThat(InitialPollInfoRepository.getInstance().getVotableCount()).isEqualTo(STANDARD_VALUE - 1);
     }
 
     @Test
     public void getVotableCount() throws Exception {
         assertThat(InitialPollInfoRepository.getInstance().getVotableCount())
-                .isEqualTo(TeamInfoLoader.getInstance().getPollBadge())
                 .isEqualTo(STANDARD_VALUE);
+    }
+
+    @Test
+    public void updateVotableCount() throws Exception {
+        assertThat(InitialPollInfoRepository.getInstance().updateVotableCount(STANDARD_VALUE + 5)).isTrue();
+        assertThat(InitialPollInfoRepository.getInstance().getVotableCount()).isEqualTo(STANDARD_VALUE + 5);
     }
 
 

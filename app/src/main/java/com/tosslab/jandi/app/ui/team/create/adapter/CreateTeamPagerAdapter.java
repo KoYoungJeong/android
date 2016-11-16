@@ -5,14 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.tosslab.jandi.app.ui.profile.insert.views.InsertProfileFirstPageFragment;
-import com.tosslab.jandi.app.ui.profile.insert.views.InsertProfileSecondPageFragment;
 import com.tosslab.jandi.app.ui.team.create.invite.InviteTeamMemberFragment;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.InsertTeamInfoFragment;
 
 public class CreateTeamPagerAdapter extends FragmentStatePagerAdapter {
 
-    final int NUM_PAGE = 4;
+    final int NUM_PAGE = 2;
 
     public CreateTeamPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -28,17 +26,17 @@ public class CreateTeamPagerAdapter extends FragmentStatePagerAdapter {
                 fragment = new InsertTeamInfoFragment();
                 fragment.setArguments(bundle);
                 return fragment;
+//            case 1:
+//                bundle.putString(InsertProfileFirstPageFragment.MODE, InsertProfileFirstPageFragment.MODE_TEAM_CREATE);
+//                fragment = new InsertProfileFirstPageFragment();
+//                fragment.setArguments(bundle);
+//                return fragment;
+//            case 2:
+//                bundle.putString(InsertProfileFirstPageFragment.MODE, InsertProfileFirstPageFragment.MODE_TEAM_CREATE);
+//                fragment = new InsertProfileSecondPageFragment();
+//                fragment.setArguments(bundle);
+//                return fragment;
             case 1:
-                bundle.putString(InsertProfileFirstPageFragment.MODE, InsertProfileFirstPageFragment.MODE_TEAM_CREATE);
-                fragment = new InsertProfileFirstPageFragment();
-                fragment.setArguments(bundle);
-                return fragment;
-            case 2:
-                bundle.putString(InsertProfileFirstPageFragment.MODE, InsertProfileFirstPageFragment.MODE_TEAM_CREATE);
-                fragment = new InsertProfileSecondPageFragment();
-                fragment.setArguments(bundle);
-                return fragment;
-            case 3:
                 return new InviteTeamMemberFragment();
         }
         return new InsertTeamInfoFragment();

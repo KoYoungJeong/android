@@ -126,6 +126,8 @@ public interface CarouselViewerPresenter {
 
         void finish();
 
+        void deletedFinish(long fileId);
+
         void notifyDataSetChanged();
 
         void setVisibilitySwipeToLeftButton(boolean show);

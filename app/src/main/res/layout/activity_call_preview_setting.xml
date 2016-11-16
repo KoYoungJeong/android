@@ -65,7 +65,8 @@
             android:layout_marginEnd="25dp"
             android:clickable="false"
             android:focusable="false"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            app:theme="@style/Jandi.Default.Switch" />
 
         <View
             android:layout_width="match_parent"
@@ -115,7 +116,8 @@
             android:layout_marginEnd="25dp"
             android:clickable="false"
             android:focusable="false"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            app:theme="@style/Jandi.Default.Switch" />
 
         <View
             android:layout_width="match_parent"

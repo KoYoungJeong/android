@@ -41,6 +41,7 @@ import butterknife.ButterKnife;
 
 public class TeamSelectListActivity extends BaseAppCompatActivity implements TeamSelectListPresenter.View {
 
+    public static final int REQ_ACCOUNT_SETTING = 301;
     @Inject
     TeamSelectListPresenter teamSelectListPresenter;
 
@@ -84,14 +85,9 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
         lvTeamList.setAdapter(teamSelectListAdapter);
         bindListeners();
         teamSelectListPresenter.initTeamDatas(true, shouldRefreshAccountInfo);
+        teamSelectListPresenter.setUserEmailInfo();
         progressWheel = new ProgressWheel(this);
         setEditButton();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        teamSelectListPresenter.setUserEmailInfo();
     }
 
     private void setEditButton() {
@@ -99,9 +95,16 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
                 tvLoginInfoEditButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvLoginInfoEditButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, SettingAccountProfileActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQ_ACCOUNT_SETTING);
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountHome, AnalyticsValue.Action.EditAccount);
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_ACCOUNT_SETTING) {
+            teamSelectListPresenter.setUserEmailInfo();
+        }
     }
 
     private void bindListeners() {

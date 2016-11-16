@@ -3,25 +3,21 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_marker")
-public class Marker {
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    private Chat chat;
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    private Topic topic;
+public class Marker extends RealmObject {
 
-    @DatabaseField(generatedId = true)
-    private long _id;
-    @DatabaseField
+    @JsonIgnore
+    @PrimaryKey
+    private String id;
+    @JsonIgnore
+    private long roomId;
+
     private long memberId;
-    @DatabaseField
     private long readLinkId;
 
     public long getMemberId() {
@@ -40,27 +36,19 @@ public class Marker {
         this.readLinkId = readLinkId;
     }
 
-    public Topic getTopic() {
-        return topic;
+    public String getId() {
+        return id;
     }
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Chat getChat() {
-        return chat;
+    public long getRoomId() {
+        return roomId;
     }
 
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
-
-    public long get_id() {
-        return _id;
-    }
-
-    public void set_id(long _id) {
-        this._id = _id;
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
     }
 }

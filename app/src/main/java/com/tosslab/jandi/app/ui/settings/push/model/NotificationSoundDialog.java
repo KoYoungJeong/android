@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -140,7 +140,7 @@ public class NotificationSoundDialog {
         @Override
         public void onBindViewHolder(SoundViewHolder holder, int position) {
             holder.tvTitle.setText(getItem(position));
-            holder.ivSelected.setSelected(selectedPosition == position);
+            holder.ivSelected.setChecked(selectedPosition == position);
 
             holder.itemView.setOnClickListener(v -> {
                 if (onRecyclerItemClickListener != null) {
@@ -170,12 +170,12 @@ public class NotificationSoundDialog {
     static class SoundViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvTitle;
-        private ImageView ivSelected;
+        private RadioButton ivSelected;
 
         public SoundViewHolder(View itemView) {
             super(itemView);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_item_notification_sound);
-            ivSelected = (ImageView) itemView.findViewById(R.id.iv_item_notification_sound);
+            ivSelected = (RadioButton) itemView.findViewById(R.id.iv_item_notification_sound);
         }
     }
 }

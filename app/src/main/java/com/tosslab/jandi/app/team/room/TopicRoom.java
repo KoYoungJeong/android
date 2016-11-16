@@ -2,10 +2,14 @@ package com.tosslab.jandi.app.team.room;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class TopicRoom implements Room {
     private final Topic topic;
@@ -61,7 +65,7 @@ public class TopicRoom implements Room {
         return topic.getAnnouncement() != null && topic.getAnnouncement().isOpened();
     }
 
-    public Topic.Announcement getAnnouncement() {
+    public Announcement getAnnouncement() {
         return topic.getAnnouncement();
     }
 
@@ -94,12 +98,16 @@ public class TopicRoom implements Room {
     }
 
     public int getMemberCount() {
-        return topic.getMembers().size();
+        return topic.getMemberIds().size();
     }
 
     @Override
     public Collection<Long> getMembers() {
-        return topic.getMembers();
+        List<Long> ids = new ArrayList<>();
+        for (RealmLong realmLong : topic.getMemberIds()) {
+            ids.add(realmLong.getValue());
+        }
+        return ids;
     }
 
     public boolean isDefaultTopic() {

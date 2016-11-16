@@ -85,7 +85,7 @@ public class MainTopicModel {
             for (Topic topic : topics) {
                 topicHashMap.put(topic.getEntityId(), topic);
             }
-        });
+        }, Throwable::printStackTrace);
 
         return topicHashMap;
 
@@ -101,7 +101,7 @@ public class MainTopicModel {
 
         Observable.from(topicFolders)
                 .toSortedList((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
-                .subscribe(orderedFolders::addAll);
+                .subscribe(orderedFolders::addAll, Throwable::printStackTrace);
 
         List<Pair<TopicFolderData,
                 List<TopicItemData>>> datas = new LinkedList<>();

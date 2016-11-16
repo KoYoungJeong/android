@@ -93,7 +93,7 @@ public class SearchModel {
                     }
                 })
                 .collect(() -> topics, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
         return topics;
     }
@@ -117,7 +117,7 @@ public class SearchModel {
                     return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
                 })
                 .collect(() -> searchOneToOneRoomDatas, List::addAll)
-                .subscribe();
+                .subscribe(it -> {}, Throwable::printStackTrace);
 
         return searchOneToOneRoomDatas;
 

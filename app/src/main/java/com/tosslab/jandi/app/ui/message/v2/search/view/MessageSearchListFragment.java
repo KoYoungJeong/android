@@ -53,7 +53,7 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
@@ -805,7 +805,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     @Override
-    public void setAnnouncement(Topic.Announcement announcement) {
+    public void setAnnouncement(Announcement announcement) {
         announcementViewModel.setAnnouncement(announcement);
     }
 

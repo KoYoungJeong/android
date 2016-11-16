@@ -12,7 +12,7 @@
 	<string name="common_calleridnotifier_authorizedrawover2">"この機能を「on」すると権限設定画面に移動します。"</string>
 	<string name="common_calleridnotifier_closemodal">"閉じる"</string>
 	<string name="common_calleridnotifier_dontshowmodal">"今後表示しない"</string>
-	<string name="common_calleridnotifier_guide1">"連絡先に保存されていないメンバーからの電話着信時、メンバーの電話番号が確認できます。"</string>
+	<string name="common_calleridnotifier_guide1">"JANDIメンバーからの電話着信時、連絡先に保存されずメンバーの名前と電話番号が確認できます。"</string>
 	<string name="common_calleridnotifier_guide2">"機能を利用するには下の二つの権限が必要です。"</string>
 	<string name="common_calleridnotifier_settings">"メンバー連絡先確認の設定"</string>
 	<string name="common_calleridnotifier_suggestmodal">"メンバー連絡先確認機能をお試しください"</string>
@@ -82,6 +82,7 @@
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
 	<string name="exclamation_mark">"に委譲しますか?"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
+	<string name="file_detail_nopreview">"プレビュー表示できないファイル形式です。"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
 	<string name="jadi_account_home">"アカウントホーム"</string>
 	<string name="jandi_1_1_message">"ダイレクトメッセージ"</string>
@@ -754,11 +755,14 @@
 	<string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"チーム情報"</string>
+	<string name="team_invite_email_disabledmember_desc">"解除をご希望の場合、チーム管理者にお問い合わせください。"</string>
+	<string name="team_invite_email_disabledmember_title">"無効化されたメンバーです。"</string>
 	<string name="title_cdp_invite">"招待するメンバーを選択してください"</string>
 	<string name="title_file_detail">"説明"</string>
 	<string name="title_file_upload">"ファイルをアップロード"</string>
 	<string name="today">"今日"</string>
 	<string name="topic_polls_deletedpoll">"削除された投票"</string>
+	<string name="topic_room_deletetopicconfirm">"このトピックは削除されました。"</string>
 	<string name="topic_room_selectallmembers">"すべて選択"</string>
 	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"%sフォルダからトピックが除かれました"</string>

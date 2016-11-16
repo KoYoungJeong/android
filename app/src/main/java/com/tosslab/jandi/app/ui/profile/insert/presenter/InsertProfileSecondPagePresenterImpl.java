@@ -1,7 +1,10 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -9,6 +12,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import javax.inject.Inject;
 
+import rx.Completable;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -96,30 +100,25 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
     public void uploadExtraInfo(
             String department, String position, String phoneNumber, String statusMessage) {
 
-        Observable.create(subscriber -> {
+        view.showProgressWheel();
+
+        Completable.fromCallable(() -> {
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.department = department;
             reqUpdateProfile.position = position;
             reqUpdateProfile.phoneNumber = phoneNumber;
             reqUpdateProfile.statusMessage = statusMessage;
-            try {
-                modifyProfileModel.updateProfile(reqUpdateProfile);
-                subscriber.onNext(new Object());
-            } catch (RetrofitException e) {
-                subscriber.onError(e);
-            }
-            subscriber.onCompleted();
+            Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
+            HumanRepository.getInstance().updateHuman(human);
+            TeamInfoLoader.getInstance().refresh();
+            return human;
         }).subscribeOn(Schedulers.io())
-                .doOnSubscribe(() -> view.showProgressWheel())
-                .doOnUnsubscribe(() -> {
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
                     view.dismissProgressWheel();
                     view.finish();
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(o -> view.updateProfileSucceed())
-                .subscribe(o -> {
-                }, e -> {
-                    LogUtil.e("get profile failed", e);
+                }, t -> {
+                    LogUtil.e("get profile failed", t);
                     view.updateProfileFailed();
                 });
     }

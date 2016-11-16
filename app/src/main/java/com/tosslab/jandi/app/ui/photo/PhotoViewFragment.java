@@ -52,7 +52,7 @@ public class PhotoViewFragment extends Fragment {
     @FragmentArg
     String extensions;
     @FragmentArg
-    int mode;
+    int mode; // only for use Sprinklr
 
     @ViewById(R.id.pv_photoview)
     PhotoView photoView;

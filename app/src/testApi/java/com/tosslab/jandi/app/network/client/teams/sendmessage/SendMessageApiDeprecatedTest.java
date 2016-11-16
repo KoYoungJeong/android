@@ -26,7 +26,7 @@ public class SendMessageApiDeprecatedTest {
 
     @Test
     public void sendMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.sendPublicTopicMessage(1,1, new ReqSendMessages()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.sendMessage(1, 1, new ReqSendMessages()).execute())).isFalse();
     }
 
 

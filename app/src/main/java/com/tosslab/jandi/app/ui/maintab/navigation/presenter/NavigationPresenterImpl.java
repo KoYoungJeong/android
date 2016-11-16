@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import de.greenrobot.event.EventBus;
 import io.intercom.android.sdk.Intercom;
 import io.intercom.android.sdk.identity.Registration;
+import rx.Completable;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -317,28 +318,30 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     @Override
-    public void onMessageDeleted(long teamId) {
-        if (!badgeCountingQueueSubscription.isUnsubscribed()) {
-            badgeCountingQueue.onNext(Pair.create(teamId, -1));
-        }
-    }
-
-    @Override
-    public void onMessageCreated(long teamId) {
-        if (!badgeCountingQueueSubscription.isUnsubscribed()) {
-            badgeCountingQueue.onNext(Pair.create(teamId, 1));
-        }
-    }
-
-    @Override
     public void onMessageRead(boolean fromSelf, long teamId, int readCount) {
         if (fromSelf && readCount > 0) {
             if (!badgeCountingQueueSubscription.isUnsubscribed()) {
                 badgeCountingQueue.onNext(Pair.create(teamId, -readCount));
             }
         } else {
-            // 다른 플랫폼에서 읽으면 노답인데...
-            onInitializeTeams();
+            // 다른 플랫폼에서 메세지 관련 이벤트가 발생하면
+            // 서버로 Account 정보만 요청해서 refresh 함
+            Completable.fromAction(navigationModel::refreshAccountInfo)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(() -> {
+                        navigationModel.getTeamsObservable()
+                                .flatMap(Observable::from)
+                                .subscribe(team -> {
+                                    Observable.from(navigationDataModel.getTeams())
+                                            .takeFirst(it -> it.getTeamId() == team.getTeamId())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(it -> {
+                                                it.setUnread(team.getUnread());
+                                                navigationView.notifyDataSetChanged();
+                                            });
+                                }, Throwable::printStackTrace, this::initBadgeCount);
+
+                    });
         }
     }
 
@@ -368,6 +371,22 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 });
 
 
+    }
+
+    @Override
+    public void onReloadTeams(boolean local) {
+        navigationModel.getTeamsObservable()
+                .flatMap(Observable::from)
+                .subscribe(team -> {
+                    Observable.from(navigationDataModel.getTeams())
+                            .takeFirst(it -> it.getTeamId() == team.getTeamId())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(it -> {
+                                it.setUnread(team.getUnread());
+                                navigationView.notifyDataSetChanged();
+                            }, Throwable::printStackTrace, this::initBadgeCount);
+
+                });
     }
 
     @Override

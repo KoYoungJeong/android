@@ -62,7 +62,7 @@ public class UserSelectorImpl implements UserSelector {
 
                     subscriber.onCompleted();
                 }))
-                .subscribe(adapter::addAll);
+                .subscribe(adapter::addAll, Throwable::printStackTrace);
 
         ExpandRoomData dummyData = new ExpandRoomData();
         dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);

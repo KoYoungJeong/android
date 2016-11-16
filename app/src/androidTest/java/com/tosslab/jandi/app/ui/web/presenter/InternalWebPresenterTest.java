@@ -62,7 +62,7 @@ public class InternalWebPresenterTest {
 
         {
             // given 성공 케이스
-            Mockito.doNothing().when(presenter).sendMessageToRoom(anyInt(), anyInt(), anyString(), anyObject());
+            Mockito.doNothing().when(presenter).sendMessageToRoom(anyInt(), anyString());
             String message = presenter.createMessage(title, url);
 
             // When
@@ -70,14 +70,14 @@ public class InternalWebPresenterTest {
 
             //then
             verify(mockView).showProgressWheel();
-            verify(presenter).sendMessageToRoom(anyInt(), anyInt(), eq(message), anyObject());
+            verify(presenter).sendMessageToRoom(anyInt(), eq(message));
             verify(mockView).showSuccessToast(anyObject(), anyObject());
             verify(mockView).dismissProgressWheel();
         }
 
         {
             // given 실패 케이스
-            Mockito.doThrow(RetrofitException.class).when(presenter).sendMessageToRoom(anyInt(), anyInt(), anyString(), anyObject());
+            Mockito.doThrow(RetrofitException.class).when(presenter).sendMessageToRoom(anyInt(), anyString());
 
             // When
             presenter.sendMessage(activity, title, url, shareSelectRoomEvent);

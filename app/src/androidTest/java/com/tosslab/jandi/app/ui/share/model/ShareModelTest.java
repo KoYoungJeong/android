@@ -3,10 +3,9 @@ package com.tosslab.jandi.app.ui.share.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -18,11 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import setup.BaseInitUtil;
 
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -64,9 +63,8 @@ public class ShareModelTest {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
 
-        ResCommon result = shareModel.sendMessage(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC, "hello", new ArrayList<>());
-        assertThat(result, is(notNullValue()));
-        assertThat(result.id, is(greaterThan(0L)));
+        List<ResMessages.Link> links = shareModel.sendMessage(teamId, topicId, "hello", new ArrayList<>());
+        assertThat(links, is(notNullValue()));
     }
 
     @Test

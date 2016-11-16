@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.androidannotations.annotations.AfterInject;
@@ -49,7 +49,7 @@ public class AnnouncementModel {
     }
 
     @Nullable
-    public Topic.Announcement getAnnouncement(long teamId, long topicId) {
+    public Announcement getAnnouncement(long teamId, long topicId) {
         return TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement();
     }
 

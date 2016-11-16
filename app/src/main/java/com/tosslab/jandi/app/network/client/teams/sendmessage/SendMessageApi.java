@@ -25,15 +25,15 @@ public class SendMessageApi extends ApiTemplate<SendMessageApi.Api> {
 
     public ResCommon sendMessage(long teamId, long roomId,
                                  ReqSendMessages reqSendMessages) throws RetrofitException {
-        return call(() -> getApi().sendPublicTopicMessage(teamId, roomId, reqSendMessages));
+        return call(() -> getApi().sendMessage(teamId, roomId, reqSendMessages));
     }
 
     interface Api {
-        @POST("/teams/{teamId}/rooms/{roomId}/messages")
+        @POST("teams/{teamId}/rooms/{roomId}/messages")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> sendPublicTopicMessage(@Path("teamId") long teamId,
-                                               @Path("roomId") long roomId,
-                                               @Body ReqSendMessages reqSendMessages);
+        Call<ResCommon> sendMessage(@Path("teamId") long teamId,
+                                    @Path("roomId") long roomId,
+                                    @Body ReqSendMessages reqSendMessages);
     }
 
 }

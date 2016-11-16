@@ -82,6 +82,7 @@
 	<string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
 	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"團隊未完成建立"</string>
+	<string name="file_detail_nopreview">"此文件无法预览"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
 	<string name="jadi_account_home">"账号首页"</string>
 	<string name="jandi_1_1_message">"私信"</string>
@@ -746,11 +747,14 @@
 	<string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"团队资料"</string>
+	<string name="team_invite_email_disabledmember_desc">"联系团队管理员重启权限"</string>
+	<string name="team_invite_email_disabledmember_title">"此成员权限已被关闭"</string>
 	<string name="title_cdp_invite">"请选择欲邀请的成员"</string>
 	<string name="title_file_detail">"叙述"</string>
 	<string name="title_file_upload">"上传文件"</string>
 	<string name="today">"今天"</string>
 	<string name="topic_polls_deletedpoll">"已删除的问卷"</string>
+	<string name="topic_room_deletetopicconfirm">"此议题已被删除"</string>
 	<string name="topic_room_selectallmembers">"选择全部"</string>
 	<string name="topic_topicchat_mentionall">"@all (议题成员)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"议题已从 %s 中移除"</string>

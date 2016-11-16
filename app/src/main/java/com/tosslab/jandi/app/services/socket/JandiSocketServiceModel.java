@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.events.team.TeamBadgeUpdateEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -63,6 +64,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
@@ -142,6 +144,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
+import io.realm.RealmList;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -389,7 +392,15 @@ public class JandiSocketServiceModel {
     public void onMessageDeleted(Object object) {
         try {
             SocketMessageDeletedEvent event =
-                    SocketModelExtractor.getObject(object, SocketMessageDeletedEvent.class);
+                    SocketModelExtractor.getObject(object, SocketMessageDeletedEvent.class, true, false);
+
+            if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+                if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
+                    accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
+                }
+                return;
+            }
+
             saveEvent(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
@@ -403,6 +414,8 @@ public class JandiSocketServiceModel {
                 Chat chat = ChatRepository.getInstance().getChat(roomId);
                 if (chat.getReadLinkId() <= linkId) {
                     ChatRepository.getInstance().updateUnreadCount(roomId, chat.getUnreadCount() - 1);
+                    AccountRepository.getRepository().decreaseUnread(event.getTeamId());
+                    postEvent(TeamBadgeUpdateEvent.fromLocal());
                 }
                 if (chat.getLastMessage() != null
                         && data.getLinkId() >= chat.getLastMessage().getId()) {
@@ -428,6 +441,8 @@ public class JandiSocketServiceModel {
                 Topic topic = TopicRepository.getInstance().getTopic(roomId);
                 if (topic.getReadLinkId() <= linkId) {
                     TopicRepository.getInstance().updateUnreadCount(roomId, topic.getUnreadCount() - 1);
+                    AccountRepository.getRepository().decreaseUnread(event.getTeamId());
+                    postEvent(TeamBadgeUpdateEvent.fromLocal());
                 }
             } else {
                 return;
@@ -477,26 +492,25 @@ public class JandiSocketServiceModel {
             Chat chat = data.getChat();
             InitialInfo initialInfo = new InitialInfo();
             initialInfo.setTeamId(chat.getTeamId());
-            chat.setInitialInfo(initialInfo);
-            Collection<Marker> markers = chat.getMarkers();
+            RealmList<Marker> markers = chat.getMarkers();
             if (markers == null) {
-                markers = new ArrayList<>();
+                markers = new RealmList<>();
                 chat.setMarkers(markers);
             }
 
             if (markers.isEmpty()) {
-                markers = new ArrayList<>();
+                markers = new RealmList<>();
 
                 for (Long memberId : chat.getMembers()) {
                     Marker marker = new Marker();
-                    marker.setChat(chat);
+                    marker.setRoomId(chat.getId());
                     marker.setReadLinkId(-1);
                     marker.setMemberId(memberId);
                     markers.add(marker);
                 }
             } else {
                 for (Marker marker : chat.getMarkers()) {
-                    marker.setChat(chat);
+                    marker.setRoomId(chat.getId());
                 }
             }
 
@@ -608,17 +622,38 @@ public class JandiSocketServiceModel {
             }
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-
             postEvent(new RoomMarkerEvent(event.getRoom().getId()));
+
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             final long markeredMemberId = memberId;
-            // 내 마커가 갱신된 경우 뱃지 갱신하도록 함
+            // 내 마커가 갱신된 경우
             Observable.from(AccountRepository.getRepository().getAccountTeams())
                     .takeFirst(userTeam -> userTeam.getMemberId() == markeredMemberId)
                     .subscribe(it -> {
-                        if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
-                            accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
+                        if (it.getTeamId() != selectedTeamId) {
+                            if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
+                                accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
+                            }
+                        } else {
+                            Observable.just(it)
+                            .concatMap(userTeam -> {
+                                        return Observable.concat(
+                                                Observable.from(TopicRepository.getInstance().getJoinedTopics(selectedTeamId))
+                                                        .map(Topic::getUnreadCount),
+                                                Observable.from(ChatRepository.getInstance().getOpenedChats(selectedTeamId))
+                                                        .map(Chat::getUnreadCount));
+
+                                    })
+                                    .filter(count -> count > 0)
+                                    .defaultIfEmpty(0)
+                                    .reduce((integer, integer2) -> integer + integer2)
+                                    .subscribe(count -> {
+                                        AccountRepository.getRepository().updateUnread(selectedTeamId, count);
+                                        postEvent(TeamBadgeUpdateEvent.fromLocal());
+                                    }, Throwable::printStackTrace);
                         }
                     });
+
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }
@@ -1012,15 +1047,9 @@ public class JandiSocketServiceModel {
             }
 
             if (link.message != null) {
-                final long markeredMemberId = link.message.writerId;
-                // 내가 아닌 사람이 메세지를 쓴 경우 뱃지가 갱신되도록 함
-                Observable.from(AccountRepository.getRepository().getAccountTeams())
-                        .takeFirst(userTeam -> userTeam.getMemberId() != markeredMemberId)
-                        .subscribe(it -> {
-                            if (accountRefreshSubject != null && !accountRefreshSubscribe.isUnsubscribed()) {
-                                accountRefreshSubject.onNext(new SocketRoomMarkerEvent());
-                            }
-                        });
+                long teamId = event.getData().getLinkMessage().teamId;
+                AccountRepository.getRepository().increaseUnread(teamId);
+                postEvent(TeamBadgeUpdateEvent.fromLocal());
             }
 
         } catch (Exception e) {
@@ -1179,10 +1208,10 @@ public class JandiSocketServiceModel {
 
             Topic topic = event.getData().getTopic();
 
-            List<Marker> markers = new ArrayList<>();
+            RealmList<Marker> markers = new RealmList<>();
             for (Long memberId : topic.getMembers()) {
                 Marker marker = new Marker();
-                marker.setTopic(topic);
+                marker.setRoomId(topic.getId());
                 marker.setMemberId(memberId);
                 marker.setReadLinkId(-1);
                 markers.add(marker);
@@ -1240,11 +1269,11 @@ public class JandiSocketServiceModel {
             TopicRepository.getInstance().deleteTopic(topicId);
 
             if (topic.getMarkers() == null) {
-                ArrayList<Marker> markers = new ArrayList<>();
+                RealmList<Marker> markers = new RealmList<>();
                 topic.setMarkers(markers);
                 for (Long memberId : topic.getMembers()) {
                     Marker marker = new Marker();
-                    marker.setTopic(topic);
+                    marker.setRoomId(topic.getId());
                     marker.setMemberId(memberId);
                     marker.setReadLinkId(-1);
 
@@ -1554,7 +1583,7 @@ public class JandiSocketServiceModel {
             SocketMentionMarkerUpdatedEvent event = SocketModelExtractor.getObject(object, SocketMentionMarkerUpdatedEvent.class);
             saveEvent(event);
 
-            InitialInfo.Mention mention = InitialMentionInfoRepository.getInstance().getMention();
+            Mention mention = InitialMentionInfoRepository.getInstance().getMention();
             mention.setId(event.getTeamId());
             long lastMentionedMessageId = event == null
                     ? -1 : event.getData().getLastMentionedMessageId();

@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.j256.ormlite.dao.Dao;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
-import java.sql.SQLException;
-
-public class BotRepository extends LockExecutorTemplate {
+public class BotRepository extends RealmRepository {
     private static BotRepository instance;
 
     synchronized public static BotRepository getInstance() {
@@ -18,63 +16,63 @@ public class BotRepository extends LockExecutorTemplate {
     }
 
     public Bot getBot(long memberId) {
-        return execute(() -> {
-            try {
-                Dao<Bot, Long> dao = getHelper().getDao(Bot.class);
-                return dao.queryForId(memberId);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        return execute(realm -> {
+            Bot bot = realm.where(Bot.class)
+                    .equalTo("id", memberId)
+                    .findFirst();
+            if (bot != null) {
+                return realm.copyFromRealm(bot);
+            } else {
+                return null;
             }
-            return null;
         });
     }
 
     public boolean addBot(Bot bot) {
-        return execute(() -> {
-            try {
-                Dao<Bot, Long> dao = getHelper().getDao(Bot.class);
+        return execute(realm -> {
 
-                InitialInfo initialInfo = new InitialInfo();
-                initialInfo.setTeamId(bot.getTeamId());
-                bot.setInitialInfo(initialInfo);
+            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            InitialInfo initialInfo = realm.where(InitialInfo.class)
+                    .equalTo("teamId", selectedTeamId)
+                    .findFirst();
 
-                return dao.create(bot) > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (initialInfo != null
+                    && realm.where(Bot.class)
+                    .equalTo("id", bot.getId())
+                    .count() <= 0) {
+                realm.executeTransaction(it -> {
+                    bot.setTeamId(selectedTeamId);
+                    initialInfo.getBots().add(bot);
+                });
             }
-            return false;
+
+
+            return true;
         });
 
     }
 
     public boolean updateBotStatus(long botId, String status) {
-        return execute(() -> {
-            try {
-                Dao<Bot, Long> dao = getHelper().getDao(Bot.class);
-                Bot bot = dao.queryForId(botId);
-                bot.setStatus(status);
-                return dao.update(bot) > 0;
+        return execute(realm -> {
 
-            } catch (SQLException e) {
-                e.printStackTrace();
+            Bot bot = realm.where(Bot.class).equalTo("id", botId).findFirst();
+            if (bot != null) {
+                realm.executeTransaction(realm1 -> bot.setStatus(status));
+                return true;
             }
+
             return false;
         });
 
     }
 
     public boolean updateBot(Bot bot) {
-        return execute(() -> {
-            try {
-                Dao<Bot, Long> dao = getHelper().getDao(Bot.class);
-                Bot savedBot = dao.queryForId(bot.getId());
-                bot.setInitialInfo(savedBot.getInitialInfo());
-                return dao.update(bot) > 0;
+        return execute(realm -> {
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
+            bot.setTeamId(AccountRepository.getRepository().getSelectedTeamId());
+            realm.executeTransaction(it -> realm.copyToRealmOrUpdate(bot));
+
+            return true;
         });
 
     }

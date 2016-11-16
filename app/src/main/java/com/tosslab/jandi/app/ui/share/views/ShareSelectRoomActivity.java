@@ -188,7 +188,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                         expandRoomDatas1.get(0).setIsFirstAmongNoFolderItem(true);
                     }
                     expandRoomDatas.addAll(expandRoomDatas1);
-                });
+                }, Throwable::printStackTrace);
 
         return expandRoomDatas;
     }
@@ -222,7 +222,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                         })
 //                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::addToggledUser)
                         .toBlocking()
-                        .first();
+                        .firstOrDefault(new ArrayList<>());
 
         showDirectMessages(userRoomDatas);
 

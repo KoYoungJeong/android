@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/jandi_material_grey_50"
@@ -44,16 +45,7 @@
                     android:hint="@string/jandi_input_topic_name"
                     android:maxLength="60"
                     android:maxLines="1"
-                    android:paddingBottom="8dp"
                     android:singleLine="true" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@color/rgb_cccccc"
-                    android:paddingBottom="8dp" />
 
                 <TextView
                     android:id="@+id/tv_topic_create_name_count"
@@ -156,7 +148,8 @@
                         android:layout_gravity="center"
                         android:checked="false"
                         android:clickable="false"
-                        android:duplicateParentState="true" />
+                        android:duplicateParentState="true"
+                        app:theme="@style/Jandi.Default.Switch" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -186,16 +179,7 @@
                     android:layout_marginTop="8dp"
                     android:hint="@string/jandi_explain_topic_description"
                     android:inputType="text|textMultiLine"
-                    android:maxLength="300"
-                    android:paddingBottom="8dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@color/rgb_cccccc"
-                    android:paddingBottom="8dp" />
+                    android:maxLength="300" />
 
             </LinearLayout>
 

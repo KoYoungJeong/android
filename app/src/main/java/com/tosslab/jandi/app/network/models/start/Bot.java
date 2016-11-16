@@ -1,30 +1,21 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-@DatabaseTable(tableName = "initial_info_bot")
-public class Bot {
-    @DatabaseField(id = true)
+public class Bot extends RealmObject {
+    @PrimaryKey
     private long id;
-    @DatabaseField
     private long teamId;
-    @DatabaseField
     private String type;
-    @DatabaseField
     private String name;
-    @DatabaseField
     private String photoUrl;
-    @DatabaseField
     private String status;
-    @JsonIgnore
-    @DatabaseField(foreign = true)
-    private InitialInfo initialInfo;
 
     public long getId() {
         return id;
@@ -74,11 +65,4 @@ public class Bot {
         this.photoUrl = photoUrl;
     }
 
-    public InitialInfo getInitialInfo() {
-        return initialInfo;
-    }
-
-    public void setInitialInfo(InitialInfo initialInfo) {
-        this.initialInfo = initialInfo;
-    }
 }
