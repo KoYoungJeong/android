@@ -43,23 +43,8 @@ public class TeamRepositoryTest {
     }
 
     @Test
-    public void testUpdateTeamName() throws Exception {
-        String name = "hello world";
-        assertThat(TeamRepository.getInstance().updateTeamName(teamId, name)).isTrue();
-        assertThat(TeamRepository.getInstance().getTeam(teamId).getName()).isEqualToIgnoringCase(name);
-
-    }
-
-    @Test
-    public void testUpdateTeamDomain() throws Exception {
-        String domain = "hello";
-        assertThat(TeamRepository.getInstance().updateTeamDomain(teamId, domain)).isTrue();
-        assertThat(TeamRepository.getInstance().getTeam(teamId).getDomain()).isEqualToIgnoringCase(domain);
-    }
-
-    @Test
     public void testUpdateTeam() throws Exception {
-        Team team = TeamRepository.getInstance().getTeam(teamId);
+        Team team = initializeInfo.getTeam();
         String name = "hello world";
         String domain = "hello";
         team.setName(name);

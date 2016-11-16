@@ -4,13 +4,22 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.models.start.Bot;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import io.realm.Realm;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class BotRepositoryTest {
+
+
+    @Before
+    public void setUp() throws Exception {
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
+    }
 
     @Test
     public void testGetBot() throws Exception {
@@ -33,15 +42,17 @@ public class BotRepositoryTest {
 
     @Test
     public void testAddBot() throws Exception {
+        int botId = 1;
+
         Bot bot = new Bot();
-        bot.setId(1l);
+        bot.setId(botId);
         bot.setName("hello world");
         bot.setTeamId(1);
         bot.setType("connect");
 
         BotRepository.getInstance().addBot(bot);
 
-        Bot bot1 = BotRepository.getInstance().getBot(bot.getId());
+        Bot bot1 = BotRepository.getInstance().getBot(botId);
 
         assertThat(bot1.getId()).isEqualTo(bot.getId());
         assertThat(bot1.getName()).isEqualTo(bot.getName());
@@ -62,9 +73,14 @@ public class BotRepositoryTest {
         String name = "hello";
 
         long botId = getBotId();
-        Bot bot = BotRepository.getInstance().getBot(botId);
 
+        Bot bot = new Bot();
         bot.setName(name);
+        bot.setId(botId);
+        bot.setTeamId(1);
+        bot.setStatus("enabled");
+        bot.setPhotoUrl("http");
+        bot.setType("bot");
         BotRepository.getInstance().updateBot(bot);
 
         bot = BotRepository.getInstance().getBot(botId);

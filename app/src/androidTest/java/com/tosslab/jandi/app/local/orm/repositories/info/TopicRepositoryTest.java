@@ -6,7 +6,9 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -18,9 +20,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 
 @org.junit.runner.RunWith(AndroidJUnit4.class)
@@ -38,6 +42,7 @@ public class TopicRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         TeamInfoLoader.getInstance().refresh();
         selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
@@ -59,7 +64,7 @@ public class TopicRepositoryTest {
         assertThat(defaultTopic.getName()).isEqualTo(topic.getName());
         assertThat(defaultTopic.getDescription()).isEqualTo(topic.getDescription());
         assertThat(defaultTopic.isAutoJoin()).isEqualTo(topic.isAutoJoin());
-        assertThat(defaultTopic.getMembers().size()).isEqualTo(topic.getMemberCount());
+        assertThat(defaultTopic.getMemberIds().size()).isEqualTo(topic.getMemberCount());
         assertThat(defaultTopic.getUnreadCount()).isEqualTo(topic.getUnreadCount());
     }
 
@@ -71,8 +76,6 @@ public class TopicRepositoryTest {
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
         assertThat(topic.isStarred()).isTrue();
 
-        // restore
-        TopicRepository.getInstance().updateStarred(defaultTopicId, false);
     }
 
     @Test
@@ -83,8 +86,6 @@ public class TopicRepositoryTest {
         assertThat(success).isTrue();
         assertThat(TopicRepository.getInstance().isTopic(defaultTopicId)).isFalse();
 
-        // restore
-        TopicRepository.getInstance().addTopic(originTopic);
     }
 
     @Test
@@ -95,8 +96,6 @@ public class TopicRepositoryTest {
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
         assertThat(topic.isSubscribe()).isFalse();
 
-        // restore
-        TopicRepository.getInstance().updatePushSubscribe(defaultTopicId, true);
     }
 
     @Test
@@ -107,8 +106,6 @@ public class TopicRepositoryTest {
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
         assertThat(topic.isJoined()).isFalse();
 
-        // restore
-        TopicRepository.getInstance().updateTopicJoin(defaultTopicId, true);
     }
 
     @Test
@@ -118,10 +115,14 @@ public class TopicRepositoryTest {
         assertThat(success).isTrue();
 
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
-        assertThat(topic.getMembers()).contains(tempMemberId);
+        boolean contains = false;
+        for (RealmLong realmLong : topic.getMemberIds()) {
+            if (realmLong.getValue() == tempMemberId) {
+                contains = true;
+            }
+        }
+        assertThat(contains).isTrue();
 
-        // restore
-        TopicRepository.getInstance().removeMember(defaultTopicId, tempMemberId);
     }
 
     @Test
@@ -130,10 +131,13 @@ public class TopicRepositoryTest {
         assertThat(success).isTrue();
 
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
-        assertThat(topic.getMembers()).doesNotContain(TeamInfoLoader.getInstance().getMyId());
-
-        // restore
-        TopicRepository.getInstance().addMember(defaultTopicId, Arrays.asList(TeamInfoLoader.getInstance().getMyId()));
+        boolean contains = false;
+        for (RealmLong realmLong : topic.getMemberIds()) {
+            if (realmLong.getValue() == TeamInfoLoader.getInstance().getMyId()) {
+                contains = true;
+                fail("It couldn't be");
+            }
+        }
     }
 
     @Test
@@ -145,6 +149,17 @@ public class TopicRepositoryTest {
         int unreadCount1 = TopicRepository.getInstance().getTopic(defaultTopicId).getUnreadCount();
         assertThat(unreadCount1).isEqualTo(unreadCount);
 
+    }
+
+    @Test
+    public void testIncrementUnreadCount() throws Exception {
+        long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
+        TopicRoom topic = TeamInfoLoader.getInstance().getTopic(defaultTopicId);
+        int unreadCount = topic.getUnreadCount();
+        TopicRepository.getInstance().incrementUnreadCount(defaultTopicId);
+        int newUnreadCount = TopicRepository.getInstance().getTopic(defaultTopicId).getUnreadCount();
+
+        assertThat(newUnreadCount).isGreaterThan(unreadCount);
     }
 
     @Test
@@ -191,12 +206,12 @@ public class TopicRepositoryTest {
 
     @Test
     public void testCreateAnnounce() throws Exception {
-        Topic.Announcement announce = getAnnouncement();
+        Announcement announce = getAnnouncement();
 
         boolean success = TopicRepository.getInstance().createAnnounce(defaultTopicId, announce);
         assertThat(success).isTrue();
 
-        Topic.Announcement announcement = TopicRepository.getInstance().getTopic(defaultTopicId).getAnnouncement();
+        Announcement announcement = TopicRepository.getInstance().getTopic(defaultTopicId).getAnnouncement();
         assertThat(announcement.isOpened()).isEqualTo(announce.isOpened());
         assertThat(announcement.getCreatedAt()).isEqualTo(announce.getCreatedAt());
         assertThat(announcement.getCreatorId()).isEqualTo(announce.getCreatorId());
@@ -208,8 +223,8 @@ public class TopicRepositoryTest {
     }
 
     @NonNull
-    private Topic.Announcement getAnnouncement() {
-        Topic.Announcement announce = new Topic.Announcement();
+    private Announcement getAnnouncement() {
+        Announcement announce = new Announcement();
         announce.setIsOpened(true);
         announce.setContent("hahahahah");
         announce.setCreatedAt(new Date());
@@ -222,7 +237,7 @@ public class TopicRepositoryTest {
 
     @Test
     public void testRemoveAnnounce() throws Exception {
-        Topic.Announcement announcement = getAnnouncement();
+        Announcement announcement = getAnnouncement();
         TopicRepository.getInstance().createAnnounce(defaultTopicId, announcement);
 
         boolean success = TopicRepository.getInstance().removeAnnounce(defaultTopicId);
@@ -249,7 +264,13 @@ public class TopicRepositoryTest {
 
     @Test
     public void testUpdateTopic() throws Exception {
-        Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
+        Topic topic = null;
+        for (Topic t : initializeInfo.getTopics()) {
+            if (t.getId() == defaultTopicId) {
+                topic =t;
+                break;
+            }
+        }
         topic.setName("hellow");
         boolean success = TopicRepository.getInstance().updateTopic(topic);
 
@@ -285,10 +306,11 @@ public class TopicRepositoryTest {
 
     @Test
     public void testUpdateReadId() throws Exception {
-        int readId = 101;
-        boolean success = TopicRepository.getInstance().updateReadId(defaultTopicId, readId);
-        Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
-        assertThat(success).isTrue();
-        assertThat(topic.getReadLinkId()).isEqualTo(readId);
+
+        assertThat(TopicRepository.getInstance().updateReadId(defaultTopicId, TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId() - 1)).isFalse();
+
+        long newReadId = TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId() + 1;
+        assertThat(TopicRepository.getInstance().updateReadId(defaultTopicId, newReadId)).isTrue();
+        assertThat(TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId()).isEqualTo(newReadId);
     }
 }

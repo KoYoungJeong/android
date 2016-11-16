@@ -91,7 +91,7 @@ import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
-import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
@@ -898,7 +898,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setAnnouncement(Topic.Announcement announcement) {
+    public void setAnnouncement(Announcement announcement) {
         announcementViewModel.setAnnouncement(announcement);
     }
 

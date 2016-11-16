@@ -45,6 +45,7 @@ import java.util.logging.LogManager;
 import io.fabric.sdk.android.Fabric;
 import io.intercom.android.sdk.Intercom;
 import io.intercom.android.sdk.logger.IntercomLogger;
+import io.realm.Realm;
 import okhttp3.OkHttpClient;
 
 /**
@@ -96,6 +97,8 @@ public class JandiApplication extends MultiDexApplication {
         FacebookSdk.sdkInitialize(this);
 
         initIntercom();
+
+        Realm.init(this);
 
         // Set AndroidAnnotations Background pool
         BackgroundExecutor.setExecutor(

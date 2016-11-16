@@ -1,12 +1,9 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.j256.ormlite.dao.Dao;
-import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import com.tosslab.jandi.app.network.models.start.Self;
 
-import java.sql.SQLException;
-
-public class SelfRepository extends LockExecutorTemplate {
+public class SelfRepository extends RealmRepository {
     private static SelfRepository instance;
 
     synchronized public static SelfRepository getInstance() {
@@ -17,17 +14,8 @@ public class SelfRepository extends LockExecutorTemplate {
     }
 
     public boolean isMe(long userId) {
-        return execute(() -> {
-            try {
-                Dao<InitialInfo.Self, ?> dao = SelfRepository.this.getHelper().getDao(InitialInfo.Self.class);
-                return dao.queryBuilder()
-                        .where()
-                        .eq("id", userId)
-                        .countOf() > 0;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return false;
-        });
+        return execute((realm) -> realm.where(Self.class)
+                .equalTo("id", userId)
+                .count() > 0);
     }
 }

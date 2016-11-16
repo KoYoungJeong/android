@@ -36,14 +36,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.network.models.start.Bot;
-import com.tosslab.jandi.app.network.models.start.Chat;
-import com.tosslab.jandi.app.network.models.start.Folder;
-import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.Marker;
-import com.tosslab.jandi.app.network.models.start.Team;
-import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.sql.SQLException;
@@ -161,22 +153,22 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, PushToken.class);
             createTable(connectionSource, PushHistory.class);
 
-            createTable(connectionSource, InitialInfo.class);
-            createTable(connectionSource, InitialInfo.Self.class);
-            createTable(connectionSource, InitialInfo.Poll.class);
-            createTable(connectionSource, InitialInfo.Mention.class);
-            createTable(connectionSource, InitialInfo.TeamPlan.class);
-
-            createTable(connectionSource, Team.class);
-            createTable(connectionSource, Folder.class);
-            createTable(connectionSource, Topic.class);
-            createTable(connectionSource, Topic.Announcement.class);
-            createTable(connectionSource, Chat.class);
-            createTable(connectionSource, Chat.LastMessage.class);
-            createTable(connectionSource, Marker.class);
-            createTable(connectionSource, Human.class);
-            createTable(connectionSource, Human.Profile.class);
-            createTable(connectionSource, Bot.class);
+//            createTable(connectionSource, InitialInfo.class);
+//            createTable(connectionSource, InitialInfo.Self.class);
+//            createTable(connectionSource, InitialInfo.Poll.class);
+//            createTable(connectionSource, InitialInfo.Mention.class);
+//            createTable(connectionSource, InitialInfo.TeamPlan.class);
+//
+//            createTable(connectionSource, Team.class);
+//            createTable(connectionSource, Folder.class);
+//            createTable(connectionSource, Topic.class);
+//            createTable(connectionSource, Topic.Announcement.class);
+//            createTable(connectionSource, Chat.class);
+//            createTable(connectionSource, Chat.LastMessage.class);
+//            createTable(connectionSource, Marker.class);
+//            createTable(connectionSource, Human.class);
+//            createTable(connectionSource, Human.Profile.class);
+//            createTable(connectionSource, Bot.class);
 
             createTable(connectionSource, Poll.class);
             createTable(connectionSource, Poll.Item.class);
@@ -286,18 +278,18 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API, () -> {
-                        createTable(connectionSource, InitialInfo.class);
-                        createTable(connectionSource, InitialInfo.Self.class);
-                        createTable(connectionSource, Team.class);
-                        createTable(connectionSource, Folder.class);
-                        createTable(connectionSource, Topic.class);
-                        createTable(connectionSource, Topic.Announcement.class);
-                        createTable(connectionSource, Chat.class);
-                        createTable(connectionSource, Chat.LastMessage.class);
-                        createTable(connectionSource, Marker.class);
-                        createTable(connectionSource, Human.class);
-                        createTable(connectionSource, Human.Profile.class);
-                        createTable(connectionSource, Bot.class);
+//                        createTable(connectionSource, InitialInfo.class);
+//                        createTable(connectionSource, InitialInfo.Self.class);
+//                        createTable(connectionSource, Team.class);
+//                        createTable(connectionSource, Folder.class);
+//                        createTable(connectionSource, Topic.class);
+//                        createTable(connectionSource, Topic.Announcement.class);
+//                        createTable(connectionSource, Chat.class);
+//                        createTable(connectionSource, Chat.LastMessage.class);
+//                        createTable(connectionSource, Marker.class);
+//                        createTable(connectionSource, Human.class);
+//                        createTable(connectionSource, Human.Profile.class);
+//                        createTable(connectionSource, Bot.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API_ROOM_MESSAGE_RELATION, () -> {
                         createTable(connectionSource, RoomLinkRelation.class);
@@ -332,16 +324,16 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, SocketEvent.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO, () -> {
-                        createTable(connectionSource, InitialInfo.Poll.class);
+//                        createTable(connectionSource, InitialInfo.Poll.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX, () -> {
 
                         try {
-                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+                            Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
                             dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN poll_id INTEGER;");
-//                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
-//                            updateBuilder.updateColumnExpression("poll_id", "1");
-//                            updateBuilder.update();
+                            UpdateBuilder<ResAccountInfo.UserTeam, ?> updateBuilder = dao.updateBuilder();
+                            updateBuilder.updateColumnExpression("poll_id", "1");
+                            updateBuilder.update();
 
                         } catch (SQLException e) {
                             e.printStackTrace();
@@ -352,31 +344,31 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, MemberRecentKeyword.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_BADGE_AT_MYPAGE, () -> {
-                        try {
-                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-                            dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN mention_id INTEGER;");
+//                        try {
+//                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+//                            dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN mention_id INTEGER;");
 //                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
 //                            updateBuilder.updateColumnExpression("mention_id", "1");
 //                            updateBuilder.update();
+//
+//                        } catch (SQLException e) {
+//                            e.printStackTrace();
+//                        }
 
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
-                        createTable(connectionSource, InitialInfo.Mention.class);
+//                        createTable(connectionSource, InitialInfo.Mention.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD, () -> {
-                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-                        dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
+//                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+//                        dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN, () -> {
-                        createTable(connectionSource, InitialInfo.TeamPlan.class);
-
-                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-                        dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN teamPlan_id INTEGER;");
-                        UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
-                        updateBuilder.updateColumnExpression("teamPlan_id", "1");
-                        updateBuilder.update();
+//                        createTable(connectionSource, InitialInfo.TeamPlan.class);
+//
+//                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
+//                        dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN teamPlan_id INTEGER;");
+//                        UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
+//                        updateBuilder.updateColumnExpression("teamPlan_id", "1");
+//                        updateBuilder.update();
                     }));
 
             Observable.from(upgradeCheckers)
@@ -455,20 +447,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 //        clearTable(getConnectionSource(), PushToken.class);
         clearTable(getConnectionSource(), PushHistory.class);
 
-        clearTable(getConnectionSource(), InitialInfo.class);
-        clearTable(getConnectionSource(), InitialInfo.Self.class);
-        clearTable(getConnectionSource(), InitialInfo.Poll.class);
-        clearTable(getConnectionSource(), InitialInfo.Mention.class);
-        clearTable(getConnectionSource(), Team.class);
-        clearTable(getConnectionSource(), Folder.class);
-        clearTable(getConnectionSource(), Topic.class);
-        clearTable(getConnectionSource(), Topic.Announcement.class);
-        clearTable(getConnectionSource(), Chat.class);
-        clearTable(getConnectionSource(), Chat.LastMessage.class);
-        clearTable(getConnectionSource(), Marker.class);
-        clearTable(getConnectionSource(), Human.class);
-        clearTable(getConnectionSource(), Human.Profile.class);
-        clearTable(getConnectionSource(), Bot.class);
+//        clearTable(getConnectionSource(), InitialInfo.class);
+//        clearTable(getConnectionSource(), InitialInfo.Self.class);
+//        clearTable(getConnectionSource(), InitialInfo.Poll.class);
+//        clearTable(getConnectionSource(), InitialInfo.Mention.class);
+//        clearTable(getConnectionSource(), Team.class);
+//        clearTable(getConnectionSource(), Folder.class);
+//        clearTable(getConnectionSource(), Topic.class);
+//        clearTable(getConnectionSource(), Topic.Announcement.class);
+//        clearTable(getConnectionSource(), Chat.class);
+//        clearTable(getConnectionSource(), Chat.LastMessage.class);
+//        clearTable(getConnectionSource(), Marker.class);
+//        clearTable(getConnectionSource(), Human.class);
+//        clearTable(getConnectionSource(), Human.Profile.class);
+//        clearTable(getConnectionSource(), Bot.class);
 
         clearTable(getConnectionSource(), Poll.class);
         clearTable(getConnectionSource(), Poll.Item.class);

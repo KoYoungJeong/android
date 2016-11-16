@@ -3,9 +3,13 @@ package com.tosslab.jandi.app.team.room;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.start.Chat;
+import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class DirectMessageRoom implements Room {
 
@@ -77,21 +81,25 @@ public class DirectMessageRoom implements Room {
 
     @Override
     public Collection<Long> getMembers() {
-        return chat.getMembers();
+        List<Long> ids = new ArrayList<>();
+        for (RealmLong realmLong : chat.getMemberIds()) {
+            ids.add(realmLong.getValue());
+        }
+        return ids;
     }
 
     public String getLastMessageStatus() {
-        Chat.LastMessage lastMessage = chat.getLastMessage();
+        LastMessage lastMessage = chat.getLastMessage();
         return lastMessage != null ? lastMessage.getStatus() : "";
     }
 
     public String getLastMessage() {
-        Chat.LastMessage lastMessage = chat.getLastMessage();
+        LastMessage lastMessage = chat.getLastMessage();
         return lastMessage != null ? lastMessage.getText() : "";
     }
 
     public long getLastMessageId() {
-        Chat.LastMessage lastMessage = chat.getLastMessage();
+        LastMessage lastMessage = chat.getLastMessage();
         return lastMessage != null ? lastMessage.getId() : -1;
     }
 }
