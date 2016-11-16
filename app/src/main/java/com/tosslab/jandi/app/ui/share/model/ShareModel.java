@@ -6,8 +6,6 @@ import android.net.Uri;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -15,11 +13,12 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.file.FileUploadApi;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -60,16 +59,11 @@ public class ShareModel {
         return teamApi.get().getTeamInfo(teamId);
     }
 
-    public ResCommon sendMessage(long teamId, long entityId, int entityType, String messageText, List<MentionObject> mention) throws RetrofitException {
+    public List<ResMessages.Link> sendMessage(long teamId, long entityId, String messageText, List<MentionObject> mention) throws RetrofitException {
 
-        MessageManipulator messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
+        ReqTextMessage reqMessage = new ReqTextMessage(messageText, mention);
 
-        messageManipulator.initEntity(entityType, entityId);
-
-        messageManipulator.setTeamId(teamId);
-
-        return messageManipulator.sendMessage(messageText, mention);
-
+        return roomsApi.get().sendMessage(teamId, entityId, reqMessage);
     }
 
     public String getImagePath(String uriString) {

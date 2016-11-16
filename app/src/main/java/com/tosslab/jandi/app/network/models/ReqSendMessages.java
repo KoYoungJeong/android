@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
 import java.util.List;
@@ -8,10 +9,11 @@ import java.util.List;
  * Created by tee on 2016. 10. 12..
  */
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ReqSendMessages {
 
     private String stickerId;
-    private long groupId;
+    private Long groupId;
     private String text;
     private List<MentionObject> mentions;
 
@@ -23,11 +25,11 @@ public class ReqSendMessages {
         this.stickerId = stickerId;
     }
 
-    public long getGroupId() {
+    public Long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(long groupId) {
+    public void setGroupId(Long groupId) {
         this.groupId = groupId;
     }
 
@@ -46,4 +48,5 @@ public class ReqSendMessages {
     public void setMentions(List<MentionObject> mentions) {
         this.mentions = mentions;
     }
+
 }

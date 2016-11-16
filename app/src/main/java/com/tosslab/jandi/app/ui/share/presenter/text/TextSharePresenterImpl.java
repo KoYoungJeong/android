@@ -98,7 +98,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         view.showProgressBar();
         int roomType = getRoomType(roomId);
         try {
-            shareModel.sendMessage(teamId, roomId, roomType, messageText, mentions);
+            shareModel.sendMessage(teamId, roomId, messageText, mentions);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
             view.finishOnUiThread();
         } catch (RetrofitException e) {
