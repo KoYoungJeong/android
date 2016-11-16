@@ -54,6 +54,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicLeftEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
 
@@ -84,7 +85,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "topic_joined", value = SocketTopicJoinedEvent.class),
         @JsonSubTypes.Type(name = "topic_updated", value = SocketTopicUpdatedEvent.class),
         @JsonSubTypes.Type(name = "topic_starred", value = SocketTopicStarredEvent.class),
-        @JsonSubTypes.Type(name = "topic_unstarred", value = SocketTopicStarredEvent.class),
+        @JsonSubTypes.Type(name = "topic_unstarred", value = SocketTopicUnstarredEvent.class),
         @JsonSubTypes.Type(name = "topic_kicked_out", value = SocketTopicKickedoutEvent.class),
         @JsonSubTypes.Type(name = "member_starred", value = SocketMemberStarredEvent.class),
         @JsonSubTypes.Type(name = "member_unstarred", value = SocketMemberUnstarredEvent.class),

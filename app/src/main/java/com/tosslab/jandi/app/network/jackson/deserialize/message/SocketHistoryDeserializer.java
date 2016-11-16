@@ -54,6 +54,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicKickedoutEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicLeftEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicStarredEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
 
@@ -129,7 +130,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         TopicJoined("topic_joined", SocketTopicJoinedEvent.class),
         TopicUpdated("topic_updated", SocketTopicUpdatedEvent.class),
         TopicStarred("topic_starred", SocketTopicStarredEvent.class),
-        TopicUnstarred("topic_unstarred", SocketTopicStarredEvent.class),
+        TopicUnstarred("topic_unstarred", SocketTopicUnstarredEvent.class),
         TopicKickedOut("topic_kicked_out", SocketTopicKickedoutEvent.class),
         MemberStarred("member_starred", SocketMemberStarredEvent.class),
         MemberUnstarred("member_unstarred", SocketMemberUnstarredEvent.class),
