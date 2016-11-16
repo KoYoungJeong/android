@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,21 @@ public class TopicRepository extends RealmRepository {
             if (it != null && !it.isEmpty()) {
                 return realm.copyFromRealm(it);
             } else {
-                return it;
+                return new ArrayList<Topic>();
+            }
+        });
+    }
+
+    public List<Topic> getJoinedTopics(long teamId) {
+        return execute(realm -> {
+            RealmResults<Topic> it = realm.where(Topic.class)
+                    .equalTo("teamId", teamId)
+                    .equalTo("isJoined", true)
+                    .findAll();
+            if (it != null && !it.isEmpty()) {
+                return realm.copyFromRealm(it);
+            } else {
+                return new ArrayList<Topic>();
             }
         });
     }

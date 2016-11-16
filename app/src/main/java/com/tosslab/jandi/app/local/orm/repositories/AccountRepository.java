@@ -318,4 +318,59 @@ public class AccountRepository extends LockExecutorTemplate {
             return false;
         });
     }
+
+    public boolean increaseUnread(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                UpdateBuilder<ResAccountInfo.UserTeam, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnExpression("unread", "unread + 1")
+                        .where()
+                        .eq("teamId", teamId);
+
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateUnread(long teamId, int unreadCount) {
+        return execute(() -> {
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                UpdateBuilder<ResAccountInfo.UserTeam, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnValue("unread", unreadCount)
+                        .where()
+                        .eq("teamId", teamId);
+
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
+
+    public boolean decreaseUnread(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                UpdateBuilder<ResAccountInfo.UserTeam, Long> updateBuilder = dao.updateBuilder();
+                updateBuilder.updateColumnExpression("unread", "unread - 1")
+                        .where()
+                        .eq("teamId", teamId);
+
+                return updateBuilder.update() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+
+    }
 }

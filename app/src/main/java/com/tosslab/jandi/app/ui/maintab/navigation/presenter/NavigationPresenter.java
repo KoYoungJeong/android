@@ -38,13 +38,11 @@ public interface NavigationPresenter {
 
     void initializeBadgeCountingQueue();
 
-    void onMessageDeleted(long teamId);
-
-    void onMessageCreated(long teamId);
-
     void onMessageRead(boolean fromSelf, long teamId, int readCount);
 
     void onInitIntercom();
+
+    void onReloadTeams(boolean local);
 
     interface View {
 
