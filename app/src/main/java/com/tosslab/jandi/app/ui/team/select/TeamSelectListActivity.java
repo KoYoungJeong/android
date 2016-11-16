@@ -85,6 +85,7 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
         lvTeamList.setAdapter(teamSelectListAdapter);
         bindListeners();
         teamSelectListPresenter.initTeamDatas(true, shouldRefreshAccountInfo);
+        teamSelectListPresenter.setUserEmailInfo();
         progressWheel = new ProgressWheel(this);
         setEditButton();
     }
