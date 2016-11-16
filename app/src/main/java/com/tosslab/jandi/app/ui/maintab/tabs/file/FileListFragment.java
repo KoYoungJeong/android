@@ -92,6 +92,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public static final String KEY_COMMENT_COUNT = "comment_count";
     public static final String KEY_FILE_ID = "file_id";
     public static final String PARAM_ENTITY_ID = "param_entity_id";
+    public static final String KEY_FILE_DELETED = "file_deleted";
 
     @Inject
     FileListPresenter fileListPresenter;
@@ -317,7 +318,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public void moveToCarousel(ResMessages.FileMessage fileMessage) {
         Intent intent = CarouselViewerActivity.getImageViewerIntent(getActivity(), fileMessage)
                 .build();
-        startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        startActivityForResult(intent, JandiConstants.TYPE_FILE_IMAGE_VIEW_REFRESH);
     }
 
     @Override
@@ -592,7 +593,25 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
                 onFileDetailShowResult(resultCode, data);
                 break;
+            case JandiConstants.TYPE_FILE_IMAGE_VIEW_REFRESH:
+                onFileImageViewResult(resultCode, data);
+                break;
         }
+    }
+
+    private void onFileImageViewResult(int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        boolean isDeleted = data.getBooleanExtra(KEY_FILE_DELETED, false);
+        long fileId = data.getLongExtra(KEY_FILE_ID, -1);
+
+        if (isDeleted && fileId >= 0) {
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            fileListPresenter.onFileDeleted(teamId, fileId);
+        }
+
     }
 
     private void onCameraActivityResult(int resultCode, Intent intent) {
@@ -629,7 +648,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         long fileId = intent.getLongExtra(KEY_FILE_ID, -1);
         int commentCount = intent.getIntExtra(KEY_COMMENT_COUNT, -1);
-        if (fileId <= 0 || commentCount < 0) {
+
+        if ((fileId <= 0 || commentCount < 0)) {
             return;
         }
 
