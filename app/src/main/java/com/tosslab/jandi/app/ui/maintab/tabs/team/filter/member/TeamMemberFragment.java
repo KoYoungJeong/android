@@ -22,6 +22,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
@@ -193,7 +196,6 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         }
     }
 
-    @Override
     public void onDestroy() {
         presenter.onDestroy();
         if (EventBus.getDefault().isRegistered(this)) {
@@ -207,6 +209,18 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     }
 
     public void onEvent(ProfileChangeEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(TeamJoinEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(TeamInfoChangeEvent event) {
         presenter.onRefresh();
     }
 
