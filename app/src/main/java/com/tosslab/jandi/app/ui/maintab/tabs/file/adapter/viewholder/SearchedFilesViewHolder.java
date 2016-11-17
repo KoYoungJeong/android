@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.viewholder;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,28 +59,22 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
         ResSearch.File content = searchedFile.getFile();
 
         String searchedFileName = content.getTitle();
-
-        ViewTreeObserver vto = tvFileName.getViewTreeObserver();
-
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ViewTreeObserver obs = tvFileName.getViewTreeObserver();
-                obs.removeGlobalOnLayoutListener(this);
-                if (tvFileName.getLineCount() > 2) {
-                    int lineEndIndex = tvFileName.getLayout().getLineEnd(1);
-                    String text1 = tvFileName.getText().subSequence(0, lineEndIndex - 16).toString();
-                    String text2 = "...";
-                    String text3 = tvFileName.getText().subSequence(tvFileName.length() - 12, tvFileName.length()).toString();
-                    StringBuilder sb = new StringBuilder(text1);
-                    sb.append(text2);
-                    sb.append(text3);
-                    tvFileName.setText(sb.toString().replace(" ", "\u00A0"));
-                }
+        tvFileName.setText(searchedFileName);
+        tvFileName.post(() -> {
+            while (tvFileName.getLineCount() == 0 && !tvFileName.getText().toString().isEmpty()) {
+            }
+            if (tvFileName.getLineCount() > 2) {
+                int lineEndIndex = tvFileName.getLayout().getLineEnd(1);
+                String text1 = tvFileName.getText().subSequence(0, lineEndIndex - 16).toString();
+                String text2 = "...";
+                String text3 = tvFileName.getText().subSequence(tvFileName.length() - 12,
+                        tvFileName.length()).toString();
+                StringBuilder sb = new StringBuilder(text1);
+                sb.append(text2);
+                sb.append(text3);
+                tvFileName.setText(sb.toString().replace(" ", "\u00A0"));
             }
         });
-
-        tvFileName.setText(searchedFileName.replace(" ", "\u00A0"));
 
         User entity = TeamInfoLoader.getInstance().getUser(searchedFile.getWriterId());
 
@@ -122,7 +115,7 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
                 serverUrl, fileType);
 
         tvFileSize.setText(FileUtil.formatFileSize(searchedFile.getFile().getSize()));
-        
+
     }
 
 }

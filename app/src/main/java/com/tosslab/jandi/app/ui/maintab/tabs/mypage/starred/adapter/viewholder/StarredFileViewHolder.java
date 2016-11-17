@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
  */
 public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
 
+
     private ImageView ivProfile;
     private TextView tvWriter;
 
@@ -26,6 +27,8 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
     private TextView tvFileName;
     private ImageView ivFile;
     private TextView tvFileSize;
+    private View vFullDivider;
+    private View vSemiDivider;
 
     private StarredFileViewHolder(View itemView) {
         super(itemView);
@@ -37,6 +40,8 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
         vFileRound = itemView.findViewById(R.id.v_star_file_round);
 
         tvFileSize = (TextView) itemView.findViewById(R.id.tv_file_size);
+        vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
+        vFullDivider = itemView.findViewById(R.id.v_full_divider);
     }
 
     public static StarredFileViewHolder newInstance(ViewGroup parent) {
@@ -52,7 +57,25 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
                 .bind(user);
 
         StarredMessage.Message.Content content = starredMessage.getMessage().content;
+
         tvFileName.setText(content.title);
+
+        tvFileName.post(() -> {
+            while (tvFileName.getLineCount() == 0 && !tvFileName.getText().toString().isEmpty()) {
+            }
+
+            if (tvFileName.getLineCount() > 3) {
+                int lineEndIndex = tvFileName.getLayout().getLineEnd(2);
+                String text1 = tvFileName.getText().subSequence(0, lineEndIndex - 16).toString();
+                String text2 = "...";
+                String text3 = tvFileName.getText().subSequence(tvFileName.length() - 12,
+                        tvFileName.length()).toString();
+                StringBuilder sb = new StringBuilder(text1);
+                sb.append(text2);
+                sb.append(text3);
+                tvFileName.setText(sb.toString().replace(" ", "\u00A0"));
+            }
+        });
 
         String serverUrl = content.serverUrl;
         String fileType = content.icon;
@@ -67,6 +90,14 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
                 serverUrl, fileType);
 
         tvFileSize.setText(FileUtil.formatFileSize(Integer.parseInt(content.size)));
+
+        if (starredMessage.hasSemiDivider()) {
+            vSemiDivider.setVisibility(View.VISIBLE);
+            vFullDivider.setVisibility(View.GONE);
+        } else {
+            vFullDivider.setVisibility(View.VISIBLE);
+            vSemiDivider.setVisibility(View.GONE);
+        }
     }
 
 }

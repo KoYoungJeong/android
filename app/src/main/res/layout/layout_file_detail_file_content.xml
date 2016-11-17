@@ -16,8 +16,8 @@
             android:id="@+id/iv_file_detail_thumb"
             android:layout_width="65dp"
             android:layout_height="65dp"
-            android:layout_marginTop="6dp"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/file_detail_etc" />
 
         <TextView
             android:id="@+id/tv_tab_to_view"
@@ -30,8 +30,7 @@
             android:paddingRight="19dp"
             android:text="Tap to view"
             android:textColor="@color/white"
-            android:textSize="14dp"
-            android:textStyle="bold" />
+            android:textSize="14dp" />
 
     </LinearLayout>
 

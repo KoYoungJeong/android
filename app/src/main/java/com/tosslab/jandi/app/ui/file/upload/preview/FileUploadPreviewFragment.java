@@ -49,7 +49,6 @@ public class FileUploadPreviewFragment extends Fragment {
             ImageLoader.newInstance()
                     .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                    .placeHolder(R.drawable.file_detail_img, ImageView.ScaleType.CENTER)
                     .uri(uri)
                     .into(ivFileImage);
         } else {

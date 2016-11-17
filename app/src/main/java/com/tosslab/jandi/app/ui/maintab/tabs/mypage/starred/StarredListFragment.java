@@ -33,7 +33,6 @@ import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.decoration.SimpleColorDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import javax.inject.Inject;
@@ -113,8 +112,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     private void initStarredListView(StarredListAdapter starredListAdapter) {
         lvStarredList.setLayoutManager(new LinearLayoutManager(getActivity()));
         lvStarredList.setAdapter(starredListAdapter);
-        lvStarredList.addItemDecoration(new SimpleColorDividerItemDecoration(lvStarredList.getResources().getColor(R.color.rgb_eeeeee)));
-
         moreRequestHandler = new StarredMessageLoadMoreRequestHandler();
         starredListDataView.setOnLoadMoreCallback(moreRequestHandler);
         starredListDataView.setOnItemClickListener(message -> {

@@ -2,14 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="94dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <ImageView
         android:id="@+id/v_poll_list_icon"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
         android:src="@drawable/poll_icon_normal_192" />
 
     <RelativeLayout
@@ -17,8 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="21dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_toRightOf="@id/v_poll_list_icon">
 
         <TextView
@@ -29,8 +29,8 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="File Name"
-            android:textColor="@color/jandi_file_search_item_name_text"
-            android:textSize="@dimen/jandi_file_search_item_name_text"
+            android:textColor="@color/rgb_333333"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <TextView
@@ -46,8 +46,8 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="3d"
-            android:textColor="@color/jandi_file_search_item_type_text"
-            android:textSize="13sp"
+            android:textColor="@color/rgb_999999"
+            android:textSize="12dp"
             android:textStyle="bold" />
 
         <TextView
@@ -56,6 +56,7 @@
             android:layout_height="17dp"
             android:layout_alignBottom="@id/tv_poll_list_duedate"
             android:layout_gravity="center_vertical"
+            android:layout_marginBottom="1dp"
             android:layout_marginLeft="6dp"
             android:layout_toRightOf="@id/tv_poll_list_duedate"
             android:background="@drawable/bg_round_rect_dark_gray_rad_7"
@@ -64,8 +65,26 @@
             android:paddingRight="4dp"
             android:text="@string/jandi_poll_voted"
             android:textColor="@color/white"
-            android:textSize="11sp"
+            android:textSize="11dp"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_poll_list_finished_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_alignBottom="@id/tv_poll_list_duedate"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@id/tv_poll_list_duedate"
+            android:background="@drawable/bg_round_rect_bright_gray_rad_7"
+            android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="@string/jandi_finished"
+            android:textColor="@color/rgb_808080"
+            android:textSize="11dp"
+            android:visibility="visible" />
 
         <com.tosslab.jandi.app.views.FixedLinearLayout
             android:layout_width="match_parent"
@@ -87,8 +106,8 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="Justin"
-                    android:textColor="@color/jandi_file_search_item_owner_text"
-                    android:textSize="@dimen/jandi_file_search_item_owner_text" />
+                    android:textColor="@color/rgb_333333"
+                    android:textSize="13dp" />
 
                 <ImageView
                     android:id="@+id/v_poll_list_creator_line_through"
@@ -106,11 +125,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/tv_poll_list_creator"
-                android:layout_marginLeft="6dp"
+                android:layout_marginLeft="8dp"
                 android:layout_toRightOf="@id/tv_poll_list_creator"
                 android:text="Date"
-                android:textColor="@color/jandi_file_search_item_type_text"
-                android:textSize="@dimen/jandi_file_search_item_date_text" />
+                android:textColor="@color/rgb_999999"
+                android:textSize="12dp" />
         </com.tosslab.jandi.app.views.FixedLinearLayout>
 
     </RelativeLayout>

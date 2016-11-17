@@ -154,7 +154,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
             setImageViewSizeToDefault();
-            ImageLoader.loadFromResources(ivFileImage, R.drawable.file_icon_deleted);
+            ImageLoader.loadFromResources(ivFileImage, R.drawable.file_icon_deleted_135);
             return;
         }
 

@@ -95,6 +95,7 @@ public class StarredListPresenterImpl implements StarredListPresenter {
                     starredListView.notifyDataSetChanged();
 
                     starredListView.setHasMore(hasMore);
+                    starredListView.hideMoreProgress();
                 }, e -> {
                     try {
                         starredListView.hideMoreProgress();

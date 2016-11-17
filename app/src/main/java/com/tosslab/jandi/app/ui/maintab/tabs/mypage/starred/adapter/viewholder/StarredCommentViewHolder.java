@@ -30,6 +30,8 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
     private TextView tvFileName;
     private ImageView ivContentIcon;
     private TextView tvRoomName;
+    private View vSemiDivider;
+    private View vFullDivider;
 
     private StarredCommentViewHolder(View itemView) {
         super(itemView);
@@ -41,6 +43,8 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
         tvFileName = (TextView) itemView.findViewById(R.id.tv_starred_file_name);
         ivContentIcon = (ImageView) itemView.findViewById(R.id.iv_icon_message_content_icon);
         tvRoomName = (TextView) itemView.findViewById(R.id.tv_room_name);
+        vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
+        vFullDivider = itemView.findViewById(R.id.v_full_divider);
     }
 
     public static StarredCommentViewHolder newInstance(ViewGroup parent) {
@@ -93,6 +97,14 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
 
         String date = DateTransformator.getTimeString(starredMessage.getMessage().createdAt);
         tvDate.setText(date);
+
+        if (starredMessage.hasSemiDivider()) {
+            vSemiDivider.setVisibility(View.VISIBLE);
+            vFullDivider.setVisibility(View.GONE);
+        } else {
+            vFullDivider.setVisibility(View.VISIBLE);
+            vSemiDivider.setVisibility(View.GONE);
+        }
     }
 
     private String getRoomName(long roomId) {

@@ -93,7 +93,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     TextView tvRoomName;
 
     @ViewById(R.id.vg_file_icon)
-    LinearLayout vgFileIcon;
+    ViewGroup vgFileIcon;
 
     @ViewById(R.id.vg_share_content)
     ViewGroup vgShareContent;

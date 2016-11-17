@@ -27,6 +27,8 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
     TextView tvDueDate;
     @Bind(R.id.tv_poll_list_status_badge)
     TextView tvStatusBadge;
+    @Bind(R.id.tv_poll_list_finished_badge)
+    TextView tvFinishedBadge;
     @Bind(R.id.tv_poll_list_creator)
     TextView tvCreator;
     @Bind(R.id.v_poll_list_creator_line_through)
@@ -37,6 +39,7 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
     ImageView vPollIcon;
     @Bind(R.id.vg_poll_list_info)
     View vgPollListInfo;
+
 
     private PollViewHolder(View itemView) {
         super(itemView);
@@ -72,19 +75,19 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
             tvStatusBadge.setVisibility("voted".equals(poll.getVoteStatus())
                     ? View.VISIBLE : View.GONE);
 
+            tvFinishedBadge.setVisibility(View.GONE);
+
             if (vgPollListInfo.getAlpha() < 1.0f) {
                 vgPollListInfo.setAlpha(1.0f);
             }
-
         } else {
             vPollIcon.setImageResource(R.drawable.poll_icon_closed_192);
 
-            String finished = DateTransformator.getTimeString(poll.getFinishedAt()) +
-                    " " + tvDueDate.getResources().getString(R.string.jandi_finished);
+            String finished = DateTransformator.getTimeString(poll.getFinishedAt());
             tvDueDate.setText(finished);
 
             tvStatusBadge.setVisibility(View.GONE);
-
+            tvFinishedBadge.setVisibility(View.VISIBLE);
             vgPollListInfo.setAlpha(0.3f);
         }
     }

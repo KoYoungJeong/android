@@ -63,8 +63,8 @@
 
         <ImageView
             android:id="@+id/iv_message_common_file"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:scaleType="fitCenter" />
 
@@ -92,7 +92,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="middle"
-                android:maxLines="1"                android:singleLine="true"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:text="jfile name asjhdk lajdlkjhsdlka jfdsafdsafd safdsfsdh flkjahsdf"
                 android:textColor="@color/dark_gray"
                 android:textSize="14sp"
