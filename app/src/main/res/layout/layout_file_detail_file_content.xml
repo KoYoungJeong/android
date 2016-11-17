@@ -22,12 +22,14 @@
         <TextView
             android:id="@+id/tv_tab_to_view"
             android:layout_width="wrap_content"
-            android:layout_height="27dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_round_rect_for_tab_to_view"
             android:gravity="center"
+            android:paddingBottom="4dp"
             android:paddingLeft="19dp"
             android:paddingRight="19dp"
+            android:paddingTop="3dp"
             android:text="Tap to view"
             android:textColor="@color/white"
             android:textSize="14dp" />

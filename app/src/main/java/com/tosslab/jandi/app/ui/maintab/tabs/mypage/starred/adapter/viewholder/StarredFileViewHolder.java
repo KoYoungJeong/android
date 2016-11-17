@@ -1,16 +1,20 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.viewholder;
 
+import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.commonobject.StarredMessage;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
@@ -58,24 +62,7 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
 
         StarredMessage.Message.Content content = starredMessage.getMessage().content;
 
-        tvFileName.setText(content.title);
-
-        tvFileName.post(() -> {
-            while (tvFileName.getLineCount() == 0 && !tvFileName.getText().toString().isEmpty()) {
-            }
-
-            if (tvFileName.getLineCount() > 3) {
-                int lineEndIndex = tvFileName.getLayout().getLineEnd(2);
-                String text1 = tvFileName.getText().subSequence(0, lineEndIndex - 16).toString();
-                String text2 = "...";
-                String text3 = tvFileName.getText().subSequence(tvFileName.length() - 12,
-                        tvFileName.length()).toString();
-                StringBuilder sb = new StringBuilder(text1);
-                sb.append(text2);
-                sb.append(text3);
-                tvFileName.setText(sb.toString().replace(" ", "\u00A0"));
-            }
-        });
+        setFileName(content.title);
 
         String serverUrl = content.serverUrl;
         String fileType = content.icon;
@@ -98,6 +85,42 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
             vFullDivider.setVisibility(View.VISIBLE);
             vSemiDivider.setVisibility(View.GONE);
         }
+    }
+
+    private void setFileName(String starredFileName) {
+
+        String fileName = convertNoLineBreakText(starredFileName);
+
+        tvFileName.setText(fileName);
+
+        Paint fileNamePaint = tvFileName.getPaint();
+
+        int fileNameWidth = (int) fileNamePaint.measureText(fileName);
+
+        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+
+        int displayWidth = displayMetrics.widthPixels;
+
+        int fileNameAreaWidth = displayWidth - (int) UiUtils.getPixelFromDp(168);
+
+        if (fileNameWidth > 3 * fileNameAreaWidth) {
+
+            String text1 = fileName.subSequence(0, 30).toString();
+            String text2 = "...";
+            String text3 = fileName.subSequence(tvFileName.length() - 12,
+                    tvFileName.length()).toString();
+
+            StringBuilder sb = new StringBuilder(text1);
+            sb.append(text2);
+            sb.append(text3);
+            tvFileName.setText(sb.toString());
+        }
+    }
+
+    private String convertNoLineBreakText(String s) {
+        return s.replace('-', '\u2011')
+                .replace(' ', '\u00A0')
+                .replace('/', '\u2215').toString();
     }
 
 }

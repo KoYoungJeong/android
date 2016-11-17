@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.viewholder;
 
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,6 +14,7 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
@@ -59,22 +62,7 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
         ResSearch.File content = searchedFile.getFile();
 
         String searchedFileName = content.getTitle();
-        tvFileName.setText(searchedFileName);
-        tvFileName.post(() -> {
-            while (tvFileName.getLineCount() == 0 && !tvFileName.getText().toString().isEmpty()) {
-            }
-            if (tvFileName.getLineCount() > 2) {
-                int lineEndIndex = tvFileName.getLayout().getLineEnd(1);
-                String text1 = tvFileName.getText().subSequence(0, lineEndIndex - 16).toString();
-                String text2 = "...";
-                String text3 = tvFileName.getText().subSequence(tvFileName.length() - 12,
-                        tvFileName.length()).toString();
-                StringBuilder sb = new StringBuilder(text1);
-                sb.append(text2);
-                sb.append(text3);
-                tvFileName.setText(sb.toString().replace(" ", "\u00A0"));
-            }
-        });
+        setFileName(searchedFileName);
 
         User entity = TeamInfoLoader.getInstance().getUser(searchedFile.getWriterId());
 
@@ -90,7 +78,13 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
 
         if (content.getCommentCount() > 0) {
             vgCommentCnt.setVisibility(View.VISIBLE);
-            tvComment.setText(String.valueOf(content.getCommentCount()));
+            if (content.getCommentCount() > 99) {
+                tvComment.setText(String.valueOf(99));
+            } else {
+                tvComment.setText(String.valueOf(content.getCommentCount()));
+            }
+
+
         } else {
             vgCommentCnt.setVisibility(View.INVISIBLE);
         }
@@ -115,7 +109,39 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
                 serverUrl, fileType);
 
         tvFileSize.setText(FileUtil.formatFileSize(searchedFile.getFile().getSize()));
+    }
 
+    private void setFileName(String searchedFileName) {
+        String fileName = convertNoLineBreakText(searchedFileName);
+
+        tvFileName.setText(fileName);
+
+        Paint fileNamePaint = tvFileName.getPaint();
+
+        int fileNameWidth = (int) fileNamePaint.measureText(fileName);
+
+        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
+
+        int displayWidth = displayMetrics.widthPixels;
+
+        int fileNameAreaWidth = displayWidth - (int) UiUtils.getPixelFromDp(176);
+
+        if (fileNameWidth > 2 * fileNameAreaWidth) {
+            String text1 = fileName.subSequence(0, 15).toString();
+            String text2 = "...";
+            String text3 = fileName.subSequence(tvFileName.length() - 11,
+                    tvFileName.length()).toString();
+            StringBuilder sb = new StringBuilder(text1);
+            sb.append(text2);
+            sb.append(text3);
+            tvFileName.setText(sb.toString());
+        }
+    }
+
+    private String convertNoLineBreakText(String s) {
+        return s.replace('-', '\u2011')
+                .replace(' ', '\u00A0')
+                .replace('/', '\u2215').toString();
     }
 
 }

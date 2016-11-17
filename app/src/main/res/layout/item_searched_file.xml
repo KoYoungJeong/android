@@ -56,6 +56,7 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/vg_comment_cnt"
             android:maxLines="2"
+            android:text="d1-abcdefewqfjowiqefjoiwejfewqfewqfwefqofijoweiqjfiweqfweq"
             android:textColor="@color/rgb_333333"
             android:textSize="16dp"
             android:textStyle="bold" />

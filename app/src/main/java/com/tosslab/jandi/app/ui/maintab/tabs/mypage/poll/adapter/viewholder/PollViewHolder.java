@@ -77,9 +77,12 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
 
             tvFinishedBadge.setVisibility(View.GONE);
 
-            if (vgPollListInfo.getAlpha() < 1.0f) {
-                vgPollListInfo.setAlpha(1.0f);
-            }
+            tvCreator.setTextColor(0xff333333);
+            tvSubject.setTextColor(0xff333333);
+            tvDueDate.setTextColor(0xff999999);
+            tvCreateDate.setTextColor(0xff999999);
+
+
         } else {
             vPollIcon.setImageResource(R.drawable.poll_icon_closed_192);
 
@@ -88,7 +91,12 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
 
             tvStatusBadge.setVisibility(View.GONE);
             tvFinishedBadge.setVisibility(View.VISIBLE);
-            vgPollListInfo.setAlpha(0.3f);
+
+            tvCreator.setTextColor(0xffcccccc);
+            tvSubject.setTextColor(0xffcccccc);
+            tvDueDate.setTextColor(0xffcccccc);
+            tvCreateDate.setTextColor(0xffcccccc);
+
         }
     }
 
