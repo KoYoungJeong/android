@@ -88,7 +88,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                             if (selectedTeamInfo != null) {
                                 Observable.from(teams)
                                         .takeFirst(team -> selectedTeamInfo.getTeamId() == team.getTeamId())
-                                        .subscribe(team -> team.setSelected(true), t -> {});
+                                        .subscribe(team -> team.setSelected(true), t -> {
+                                        });
                             }
                         })
                         .map(teams -> {
@@ -113,7 +114,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void initBadgeCount() {
-        initBadgeCount(navigationDataModel.getTeams());
+        List<Team> teams = navigationDataModel.getTeams();
+        initBadgeCount(teams);
+        initLauncherBadgeCount(teams);
     }
 
     private void initBadgeCount(List<Team> teams) {
@@ -121,6 +124,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         if (teams == null) {
             return;
         }
+
         Observable.combineLatest(
                 Observable.from(teams)
                         .filter(team -> team.getStatus() == Team.Status.PENDING)
@@ -150,6 +154,19 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         if (!teamInitializeQueueSubscription.isUnsubscribed()) {
             teamInitializeQueue.onNext(new Object());
         }
+    }
+
+    @Override
+    public void initLauncherBadgeCount(List<Team> teams) {
+        Observable.from(teams)
+                .filter(team -> team.getStatus() == Team.Status.JOINED)
+                .map(Team::getUnread)
+                .reduce((prev, current) -> prev + current)
+                .subscribe(totalActivedBadge -> {
+                    BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                }, t -> {
+                    LogUtil.e(TAG, Log.getStackTraceString(t));
+                });
     }
 
     @Override

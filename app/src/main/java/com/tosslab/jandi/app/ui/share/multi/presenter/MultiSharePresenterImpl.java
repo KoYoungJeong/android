@@ -149,7 +149,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     }
 
     @Override
-    public void onSelectRoom(long roomId) {
+    public void onSelectRoom(long roomId, long roomType) {
         shareTarget.setRoomId(roomId);
         String entityName = teamInfoLoader.getName(roomId);
         view.setRoomName(entityName);
@@ -158,7 +158,6 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void startShare() {
-
         SearchMemberModel model = new SearchMemberModel();
         model.refreshSelectableMembers(shareTarget.getTeamId(),
                 Arrays.asList(shareTarget.getRoomId()),

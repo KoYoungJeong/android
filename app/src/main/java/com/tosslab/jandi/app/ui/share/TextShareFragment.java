@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.Henson;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -165,7 +164,8 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     public void onEvent(ShareSelectRoomEvent event) {
         long roomId = event.getRoomId();
-        textSharePresenterImpl.setEntity(roomId);
+        int roomType = event.getRoomType();
+        textSharePresenterImpl.setEntity(roomId, roomType);
     }
 
     @Override
@@ -248,7 +248,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void moveEntity(long teamId, long roomId, int roomType) {
+    public void moveEntity(long teamId, long roomId, long entityId, int roomType) {
         if (getActivity() == null) {
             return;
         }
@@ -259,8 +259,8 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
-                .roomId(roomType != JandiConstants.TYPE_DIRECT_MESSAGE ? roomId : -1)
-                .entityId(roomId)
+                .roomId(roomId)
+                .entityId(entityId)
                 .entityType(roomType)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();

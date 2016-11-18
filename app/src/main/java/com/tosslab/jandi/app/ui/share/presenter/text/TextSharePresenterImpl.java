@@ -25,6 +25,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     ShareModel shareModel;
     long roomId;
     long teamId;
+    long entityId;
     TeamInfoLoader teamInfoLoader;
     private View view;
 
@@ -71,15 +72,18 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     }
 
     @Override
-    public void setEntity(long roomId) {
-        this.roomId = roomId;
-        int roomType = getRoomType(roomId);
+    public void setEntity(long roomId, int roomType) {
 
+        if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            this.roomId = TeamInfoLoader.getInstance().getChatId(roomId);
+            this.entityId = roomId;
+        } else {
+            this.roomId = roomId;
+            this.entityId = roomId;
+        }
         view.setTeamName(teamInfoLoader.getTeamName());
         view.setRoomName(teamInfoLoader.getName(roomId));
         view.setMentionInfo(teamId, roomId, roomType);
-
-
     }
 
     @Override
@@ -107,7 +111,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         } finally {
             view.dismissProgressBar();
             setupSelectedTeam(teamId);
-            view.moveEntity(teamId, roomId, roomType);
+            view.moveEntity(teamId, roomId, entityId, roomType);
         }
     }
 

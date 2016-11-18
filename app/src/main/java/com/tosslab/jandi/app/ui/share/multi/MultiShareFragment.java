@@ -303,7 +303,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     public void onEvent(ShareSelectRoomEvent event) {
         long roomId = event.getRoomId();
-        multiSharePresenter.onSelectRoom(roomId);
+        long roomType = event.getRoomType();
+        multiSharePresenter.onSelectRoom(roomId, roomType);
 
     }
 

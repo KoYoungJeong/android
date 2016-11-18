@@ -24,6 +24,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderAdapter;
@@ -298,4 +301,17 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
         this.isInSearchMode = isInSearchMode;
         setAnalyticsScreen();
     }
+
+    public void onEvent(TeamJoinEvent event) {
+        deptJobPresenter.onRefresh();
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        deptJobPresenter.onRefresh();
+    }
+
+    public void onEvent(TeamInfoChangeEvent event) {
+        deptJobPresenter.onRefresh();
+    }
+
 }

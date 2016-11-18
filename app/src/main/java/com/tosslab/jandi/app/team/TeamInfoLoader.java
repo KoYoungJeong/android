@@ -374,7 +374,6 @@ public class TeamInfoLoader {
 
     public String getName(long id) {
         return execute(() -> {
-
             if (topicRooms.containsKey(id)) {
                 return topicRooms.get(id).getName();
             } else if (users.containsKey(id)) {

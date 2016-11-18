@@ -9,7 +9,7 @@ public interface TextSharePresenter {
 
     void initEntityData(long teamId);
 
-    void setEntity(long roomId);
+    void setEntity(long roomId, int roomType);
 
     void setView(View view);
 
@@ -37,6 +37,6 @@ public interface TextSharePresenter {
 
         void dismissProgressBar();
 
-        void moveEntity(long teamId, long roomId, int roomType);
+        void moveEntity(long teamId, long roomId, long entityId, int roomType);
     }
 }

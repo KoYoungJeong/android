@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.ui.maintab.navigation.presenter;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
+import java.util.List;
+
 /**
  * Created by tonyjs on 2016. 8. 17..
  */
@@ -13,6 +15,8 @@ public interface NavigationPresenter {
     void initializeTeamInitializeQueue();
 
     void initBadgeCount();
+
+    void initLauncherBadgeCount(List<Team> teams);
 
     void onInitializeTeams();
 

@@ -12,7 +12,7 @@ public interface MultiSharePresenter {
 
     void initShareData(List<String> uris);
 
-    void onSelectRoom(long roomId);
+    void onSelectRoom(long roomId, long roomType);
 
     void startShare();
 

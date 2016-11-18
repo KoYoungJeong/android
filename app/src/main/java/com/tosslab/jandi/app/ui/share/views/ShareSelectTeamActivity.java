@@ -41,7 +41,6 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     @Bind(R.id.lv_select_team)
     RecyclerView lvSelectTeam;
 
-
     @Inject
     Lazy<StartApi> startApi;
     ShareTeamsAdapter adapter;
@@ -57,9 +56,7 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
 
         adapter = new ShareTeamsAdapter();
         initViews();
-
     }
-
 
     void initViews() {
         setupActionbar();
@@ -120,7 +117,6 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
 
     @Override
     public void onItemClick(long teamId, String teamName) {
-
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
@@ -150,8 +146,6 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
                     EventBus.getDefault().post(event);
                     finish();
                 });
-
-
     }
 
 }
