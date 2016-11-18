@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.team.create.teaminfo;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -75,14 +73,6 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
     TextView tvTeamDomainInsertError;
     @Bind(R.id.vg_button_type1)
     ViewGroup vgButtonType1;
-    @Bind(R.id.vg_button_type2)
-    ViewGroup vgButtonType2;
-    @Bind(R.id.iv_team_create_done)
-    ImageView ivTeamCreateDone;
-    @Bind(R.id.tv_team_create_done)
-    TextView tvTeamCreateDone;
-    @Bind(R.id.tv_go_to_main_button)
-    TextView tvGoToMainButton;
 
     private boolean isFirstExecution = false;
     private int mode = MODE_FROM_MAIN_LIST;
@@ -109,38 +99,8 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
                 .inject(this);
     }
 
-    private void setActiveDoneButton() {
-        if (mode != MODE_FROM_ACCOUNT_HOME) {
-            return;
-        }
-
-        boolean active;
-
-        if (etInsertTeamDomain.getText().length() > 0 &&
-                etInsertTeamName.getText().length() > 0) {
-            active = true;
-        } else {
-            active = false;
-        }
-
-        if (active) {
-            ivTeamCreateDone.setImageResource(R.drawable.icon_profile_check_active);
-            tvTeamCreateDone.setTextColor(0xff00a4e6);
-        } else {
-            ivTeamCreateDone.setImageResource(R.drawable.icon_profile_check_inactive);
-            tvTeamCreateDone.setTextColor(0xff999999);
-        }
-    }
-
     private void setMode() {
         mode = getArguments().getInt(MODE);
-        if (mode == MODE_FROM_MAIN_LIST) {
-            vgButtonType1.setVisibility(View.VISIBLE);
-            vgButtonType2.setVisibility(View.GONE);
-        } else {
-            vgButtonType1.setVisibility(View.GONE);
-            vgButtonType2.setVisibility(View.VISIBLE);
-        }
         isFirstExecution = getArguments().getBoolean(IS_FIRST_EXECUTION);
     }
 
@@ -163,15 +123,8 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         registTeamNameTextWatcher();
         registTeamDomainTextWatcher();
         teamInsertInfoPresenter.checkEmailInfo();
-        underlineGotoMainButtonText();
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.CreateaTeam);
         SprinklrScreenView.sendLog(ScreenViewProperty.TEAM_CREATE);
-    }
-
-    private void underlineGotoMainButtonText() {
-        if (tvGoToMainButton != null) {
-            tvGoToMainButton.setPaintFlags(tvGoToMainButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        }
     }
 
     @Override
@@ -232,21 +185,27 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
     @OnClick(R.id.iv_team_create_cancel)
     void onClickTeamCreateCancel() {
-        getActivity().finish();
+        if (mode == MODE_FROM_MAIN_LIST) {
+            finish();
+        } else {
+            finish();
+            if (isFirstExecution) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ForceTeamCreation, AnalyticsValue.Action.GoToJANDIMain);
+            }
+        }
     }
 
     @OnClick(R.id.iv_team_create_next)
     void onClickTeamCreateNext() {
-        createTeam();
-    }
-
-    @OnClick(R.id.iv_team_create_done)
-    void onClickTeamCreateDone() {
-        createTeam();
-        if (isFirstExecution) {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ForceTeamCreation, AnalyticsValue.Action.SubmitTeam);
+        if (mode == MODE_FROM_MAIN_LIST) {
+            createTeam();
         } else {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CreateaTeam, AnalyticsValue.Action.SubmitATeam);
+            createTeam();
+            if (isFirstExecution) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ForceTeamCreation, AnalyticsValue.Action.SubmitTeam);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.CreateaTeam, AnalyticsValue.Action.SubmitATeam);
+            }
         }
     }
 
@@ -254,14 +213,6 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         String teamName = etInsertTeamName.getText().toString().trim();
         String teamDomain = etInsertTeamDomain.getText().toString().trim();
         teamInsertInfoPresenter.createTeam(teamName, teamDomain.toLowerCase(), mode);
-    }
-
-    @OnClick(R.id.tv_go_to_main_button)
-    void onCLickGoToMain() {
-        finish();
-        if (isFirstExecution) {
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ForceTeamCreation, AnalyticsValue.Action.GoToJANDIMain);
-        }
     }
 
     @Override
@@ -307,7 +258,6 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
             @Override
             public void afterTextChanged(Editable editable) {
-                setActiveDoneButton();
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) etInsertTeamName.getLayoutParams();
 
                 int margin = (int) TypedValue.applyDimension(
@@ -363,7 +313,6 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
 
             @Override
             public void afterTextChanged(Editable editable) {
-                setActiveDoneButton();
                 if (isShownTeamDomainError) {
                     hideTeamDomainError();
                 }
