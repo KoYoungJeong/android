@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.Henson;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -268,8 +267,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     @UiThread
     @Override
-    public void moveEntity(long teamId, long entityId, int entityType) {
-
+    public void moveEntity(long teamId, long roomId, long entityId, int entityType) {
         if (getActivity() == null) {
             return;
         }
@@ -280,7 +278,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
-                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
+                .roomId(roomId)
                 .entityId(entityId)
                 .entityType(entityType)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

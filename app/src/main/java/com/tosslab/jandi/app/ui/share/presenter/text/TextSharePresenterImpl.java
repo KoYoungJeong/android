@@ -49,6 +49,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
         String teamName = teamInfoLoader.getTeamName();
         this.roomId = teamInfoLoader.getDefaultTopicId();
+        this.entityId = teamInfoLoader.getDefaultTopicId();
         String roomName = teamInfoLoader.getName(roomId);
         int roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
 
@@ -59,7 +60,6 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     }
 
     private int getRoomType(long entityId) {
-
         if (teamInfoLoader.isTopic(entityId)) {
             if (teamInfoLoader.isPublicTopic(entityId)) {
                 return JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -73,7 +73,6 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Override
     public void setEntity(long roomId, int roomType) {
-
         if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
             this.roomId = TeamInfoLoader.getInstance().getChatId(roomId);
             this.entityId = roomId;

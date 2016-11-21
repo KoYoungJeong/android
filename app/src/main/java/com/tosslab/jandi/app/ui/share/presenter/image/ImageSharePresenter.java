@@ -41,7 +41,7 @@ public interface ImageSharePresenter {
 
         void setRoomName(String name);
 
-        void moveEntity(long teamId, long entityId, int entityType);
+        void moveEntity(long teamId, long roomId, long entityId, int entityType);
 
         String getComment();
 

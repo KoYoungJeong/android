@@ -35,6 +35,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
 
     private long teamId;
     private long roomId;
+    private long entityId;
     private String teamName;
     private String roomName;
     private boolean isPublic;
@@ -81,7 +82,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     @Override
     @Background
     public void initEntityData(long teamId, String teamName) {
-
         this.teamId = teamId;
         this.teamName = teamName;
 
@@ -89,6 +89,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 
         this.roomId = teamInfoLoader.getDefaultTopicId();
+        this.entityId = teamInfoLoader.getDefaultTopicId();
         TopicRoom entity = teamInfoLoader.getTopic(roomId);
         this.roomName = entity.getName();
         this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -97,16 +98,21 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         view.setTeamName(this.teamName);
         view.setRoomName(this.roomName);
         view.setMentionInfo(teamId, this.roomId, this.roomType);
-
     }
 
     @Override
     @Background
     public void setEntityData(long roomId, String roomName, int roomType) {
-
-        this.roomId = roomId;
+        if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            this.roomId = TeamInfoLoader.getInstance().getChatId(roomId);
+            this.entityId = roomId;
+        } else {
+            this.roomId = roomId;
+            this.entityId = roomId;
+        }
         this.roomName = roomName;
         this.roomType = roomType;
+
         if (roomType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             isPublic = true;
         } else {
@@ -116,7 +122,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         view.setTeamName(this.teamName);
         view.setRoomName(this.roomName);
         view.setMentionInfo(this.teamId, this.roomId, this.roomType);
-
     }
 
     @Override
@@ -126,13 +131,12 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
                            ProgressDialog uploadProgress, List<MentionObject> mentions) {
         try {
             shareModel.uploadFile(imageFile,
-                    tvTitle, commentText, teamId, roomId, uploadProgress, isPublic, mentions);
+                    tvTitle, commentText, teamId, entityId, uploadProgress, isPublic, mentions);
             view.showSuccessToast(JandiApplication.getContext()
                     .getString(R.string.jandi_file_upload_succeed));
             setupSelectedTeam(teamId);
             view.dismissDialog(uploadProgress);
-            view.moveEntity(teamId, roomId, roomType);
-
+            view.moveEntity(teamId, roomId, entityId, roomType);
             view.finishOnUiThread();
         } catch (Exception e) {
             view.dismissDialog(uploadProgress);
