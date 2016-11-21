@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
@@ -57,7 +58,6 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void onRoomChange() {
         view.callRoomSelector(shareTarget.getTeamId());
-
     }
 
     @Override
@@ -79,6 +79,8 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shareSelectModel -> {
                     shareTarget.setRoomId(shareSelectModel.getDefaultTopicId());
+                    shareTarget.setEntityId(shareSelectModel.getDefaultTopicId());
+                    shareTarget.setRoomType(JandiConstants.TYPE_PUBLIC_TOPIC);
                     String roomName = shareSelectModel.getName(shareTarget.getRoomId());
                     String teamName = shareSelectModel.getTeamName();
                     view.setTeamName(teamName);
@@ -149,8 +151,10 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     }
 
     @Override
-    public void onSelectRoom(long roomId, long roomType) {
+    public void onSelectRoom(long roomId, int roomType) {
         shareTarget.setRoomId(roomId);
+        shareTarget.setEntityId(roomId);
+        shareTarget.setRoomType(roomType);
         String entityName = teamInfoLoader.getName(roomId);
         view.setRoomName(entityName);
         view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());
@@ -158,30 +162,46 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void startShare() {
-        SearchMemberModel model = new SearchMemberModel();
-        model.refreshSelectableMembers(shareTarget.getTeamId(),
-                Arrays.asList(shareTarget.getRoomId()),
-                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
-                map -> {
-                    Observable.range(0, shareAdapterDataModel.size())
-                            .subscribe(idx -> {
-                                ShareData item = shareAdapterDataModel.getShareData(idx);
-                                if (item == null) {
-                                    return;
-                                }
-                                ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
-                                List<MentionObject> mentions = mentionInfoObject.getMentions();
-                                String message = mentionInfoObject.getMessage();
-                                Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
-                                FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
-                                object.setTeamId(shareTarget.getTeamId());
-                                object.setMentions(stringListPair.second);
-                                FileUploadManager.getInstance().add(object);
-                            }, t -> {
-                            });
+        if (shareTarget.getRoomType() == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            Observable.range(0, shareAdapterDataModel.size())
+                    .subscribe(idx -> {
+                        ShareData item = shareAdapterDataModel.getShareData(idx);
+                        if (item == null) {
+                            return;
+                        }
+                        FileUploadDTO object =
+                                new FileUploadDTO(item.getData(), MultiSharePresenterImpl.this.getFileName(item.getData()), shareTarget.getRoomId(), comments.get(idx));
+                        object.setTeamId(shareTarget.getTeamId());
+                        FileUploadManager.getInstance().add(object);
+                        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                    }, t -> {
+                    });
+        } else {
+            SearchMemberModel model = new SearchMemberModel();
+            model.refreshSelectableMembers(shareTarget.getTeamId(),
+                    Arrays.asList(shareTarget.getRoomId()),
+                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
+                    map -> {
+                        Observable.range(0, shareAdapterDataModel.size())
+                                .subscribe(idx -> {
+                                    ShareData item = shareAdapterDataModel.getShareData(idx);
+                                    if (item == null) {
+                                        return;
+                                    }
+                                    ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
+                                    List<MentionObject> mentions = mentionInfoObject.getMentions();
+                                    String message = mentionInfoObject.getMessage();
+                                    Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
+                                    FileUploadDTO object = new FileUploadDTO(item.getData(), MultiSharePresenterImpl.this.getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
+                                    object.setTeamId(shareTarget.getTeamId());
+                                    object.setMentions(stringListPair.second);
+                                    FileUploadManager.getInstance().add(object);
+                                }, t -> {
+                                });
 
-                    view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
-                });
+                        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                    });
+        }
     }
 
     @Override
