@@ -253,7 +253,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setCommentText(String comment) {
         etComment.setText(comment);
-        mentionControlViewModel.setUpMention(comment);
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.setUpMention(comment);
+        }
     }
 
     @Override

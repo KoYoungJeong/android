@@ -7,8 +7,9 @@ import android.provider.MediaStore;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.share.model.ShareModel_;
+import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import dagger.Component;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -59,8 +61,8 @@ public class MultiSharePresenterImplTest {
 
         mockDataModel = mock(ShareAdapterDataModel.class);
         mockView = mock(MultiSharePresenter.View.class);
-        multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel);
-        ((MultiSharePresenterImpl) multiSharePresenter).teamInfoLoader = ShareModel_.getInstance_(JandiApplication.getContext()).getTeamInfoLoader(TeamInfoLoader.getInstance().getTeamId());
+//        multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel, shareModel);
+//        ((MultiSharePresenterImpl) multiSharePresenter).teamInfoLoader = ShareModel_.getInstance_(JandiApplication.getContext()).getTeamInfoLoader(TeamInfoLoader.getInstance().getTeamId());
     }
 
     @Test
@@ -174,5 +176,10 @@ public class MultiSharePresenterImplTest {
         }
         cursor.close();
         return photos;
+    }
+
+    @Component(modules = {MultiShareModule.class, ApiClientModule.class})
+    public interface TestComponent {
+        void inject(MultiSharePresenterImplTest test);
     }
 }

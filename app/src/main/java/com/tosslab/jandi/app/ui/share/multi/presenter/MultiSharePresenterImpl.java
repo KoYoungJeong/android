@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
-import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareTarget;
@@ -44,11 +43,13 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     private int lastPageIndex = 0;
 
     @Inject
-    public MultiSharePresenterImpl(View view, ShareAdapterDataModel shareAdapterDataModel) {
+    public MultiSharePresenterImpl(View view,
+                                   ShareModel shareModel,
+                                   ShareAdapterDataModel shareAdapterDataModel) {
         this.view = view;
+        this.shareModel = shareModel;
         this.shareAdapterDataModel = shareAdapterDataModel;
         shareTarget = new ShareTarget();
-        this.shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
         comments = new ArrayList<>();
 
     }
@@ -152,7 +153,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void startShare() {
 
-        if (shareTarget.getTeamId() <= 0 || shareTarget.getRoomId() <=0) {
+        if (shareTarget.getTeamId() <= 0 || shareTarget.getRoomId() <= 0) {
             view.showSelectRoomToast();
             return;
         }

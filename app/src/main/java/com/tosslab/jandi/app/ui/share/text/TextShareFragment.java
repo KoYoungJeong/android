@@ -1,15 +1,21 @@
-package com.tosslab.jandi.app.ui.share;
+package com.tosslab.jandi.app.ui.share.text;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
@@ -20,10 +26,11 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
-import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
+import com.tosslab.jandi.app.ui.share.MainShareActivity;
+import com.tosslab.jandi.app.ui.share.text.dagger.DaggerTextShareComponent;
+import com.tosslab.jandi.app.ui.share.text.dagger.TextShareModule;
+import com.tosslab.jandi.app.ui.share.text.presenter.TextSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -32,56 +39,70 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
-@EFragment(R.layout.fragment_share_text)
 public class TextShareFragment extends Fragment implements MainShareActivity.Share, TextSharePresenter.View {
 
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     String subject;
 
-    @FragmentArg
+    @InjectExtra
     String text;
 
-    @ViewById(R.id.et_share_comment)
+    @Bind(R.id.et_share_comment)
     EditText etComment;
 
-    @ViewById(R.id.progress_share_image)
+    @Bind(R.id.progress_share_image)
     ProgressBar downloadingProgressBar;
 
-    @ViewById(R.id.tv_room_name)
+    @Bind(R.id.tv_room_name)
     TextView tvRoomName;
 
-    @ViewById(R.id.tv_team_name)
+    @Bind(R.id.tv_team_name)
     TextView tvTeamName;
 
-    @Bean(TextSharePresenterImpl.class)
+    @Inject
     TextSharePresenter textSharePresenterImpl;
 
     MentionControlViewModel mentionControlViewModel;
 
-    @AfterInject
-    void initObject() {
-        textSharePresenterImpl.setView(this);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_share_text, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
-    @AfterViews
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            Dart.inject(this, arguments);
+        }
+
+        DaggerTextShareComponent.builder()
+                .textShareModule(new TextShareModule(this))
+                .build()
+                .inject(this);
+        initViews();
+
+    }
+
     void initViews() {
         StringBuffer buffer = new StringBuffer();
         if (!TextUtils.isEmpty(subject)) {
@@ -134,7 +155,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     }
 
 
-    @Click(R.id.vg_team)
+    @OnClick(R.id.vg_team)
     void clickSelectTeam() {
         LogUtil.e("team");
         startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
@@ -142,7 +163,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }
 
-    @Click(R.id.vg_room)
+    @OnClick(R.id.vg_room)
     void clickSelectRoom() {
         LogUtil.e("room");
         ShareSelectRoomActivity_
@@ -152,7 +173,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
 
-    @Click(R.id.et_share_comment)
+    @OnClick(R.id.et_share_comment)
     void clickComment() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TapComment);
     }
@@ -185,41 +206,25 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showFailToast(String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnUiThread() {
         getActivity().finish();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void moveIntro() {
-        if (getActivity() == null) {
-            return;
-        }
-        IntroActivity.startActivity(getActivity(), false);
-
-        finishOnUiThread();
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setTeamName(String teamName) {
         tvTeamName.setText(teamName);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setRoomName(String roomName) {
         tvRoomName.setText(roomName);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setMentionInfo(long teamId, long roomId, int roomType) {
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment,
@@ -228,25 +233,21 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
                 MentionControlViewModel.MENTION_TYPE_FILE_COMMENT);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressBar() {
         downloadingProgressBar.setVisibility(View.VISIBLE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressBar() {
         downloadingProgressBar.setVisibility(View.GONE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int roomType) {
         if (getActivity() == null) {
@@ -291,4 +292,10 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         }
     }
 
+    public static TextShareFragment create(Context context, String subject, String text) {
+        Bundle bundle = new Bundle();
+        bundle.putString("subject", subject);
+        bundle.putString("text", text);
+        return (TextShareFragment) Fragment.instantiate(context, TextShareFragment.class.getName(), bundle);
+    }
 }

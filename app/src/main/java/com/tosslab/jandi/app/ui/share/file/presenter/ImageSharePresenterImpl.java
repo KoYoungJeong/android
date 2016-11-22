@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.share.presenter.image;
+package com.tosslab.jandi.app.ui.share.file.presenter;
 
 import android.app.ProgressDialog;
 import android.text.TextUtils;
@@ -15,23 +15,21 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
 
-@EBean
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+
 public class ImageSharePresenterImpl implements ImageSharePresenter {
 
-    @Bean
     ShareModel shareModel;
-    private View view;
+    View view;
     private File imageFile;
-
     private long teamId;
     private long roomId = -1;
     private long entityId = -1;
@@ -41,12 +39,14 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     private int roomType;
     private TeamInfoLoader teamInfoLoader;
 
-    @Override
-    public void setView(View view) {
+    @Inject
+    public ImageSharePresenterImpl(ShareModel shareModel, View view) {
+        this.shareModel = shareModel;
         this.view = view;
+        initObject();
     }
 
-    @AfterInject
+
     void initObject() {
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
         teamId = teamInfoLoader.getTeamId();
@@ -79,19 +79,22 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     }
 
     @Override
-    @Background
     public void initEntityData(long teamId, String teamName) {
         this.teamId = teamId;
         this.teamName = teamName;
 
-        shareModel.refreshPollList(teamId);
-        teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+        Completable.fromAction(() -> {
 
-        view.setTeamName(this.teamName);
+            shareModel.refreshPollList(teamId);
+            teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> view.setTeamName(this.teamName));
+
+
     }
 
     @Override
-    @Background
     public void setEntityData(long roomId, String roomName, int roomType) {
         if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
             this.roomId = TeamInfoLoader.getInstance().getChatId(roomId);
@@ -109,13 +112,16 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             isPublic = false;
         }
 
-        view.setTeamName(this.teamName);
-        view.setRoomName(this.roomName);
-        view.setMentionInfo(this.teamId, this.roomId, this.roomType);
+        Completable.fromAction(() -> {
+
+            view.setTeamName(this.teamName);
+            view.setRoomName(this.roomName);
+            view.setMentionInfo(this.teamId, this.roomId, this.roomType);
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
+
     }
 
     @Override
-    @Background
     public void uploadFile(File imageFile,
                            String tvTitle, String commentText,
                            ProgressDialog uploadProgress, List<MentionObject> mentions) {
@@ -126,20 +132,27 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             return;
         }
 
-        try {
+
+        Completable.fromCallable(() -> {
             shareModel.uploadFile(imageFile,
                     tvTitle, commentText, teamId, entityId, uploadProgress, isPublic, mentions);
-            view.showSuccessToast(JandiApplication.getContext()
-                    .getString(R.string.jandi_file_upload_succeed));
+
             setupSelectedTeam(teamId);
-            view.dismissDialog(uploadProgress);
-            view.moveEntity(teamId, roomId, entityId, roomType);
-            view.finishOnUiThread();
-        } catch (Exception e) {
-            view.dismissDialog(uploadProgress);
-            view.showFailToast(JandiApplication.getContext()
-                    .getString(R.string.err_file_upload_failed));
-        }
+            return true;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    view.showSuccessToast(JandiApplication.getContext()
+                            .getString(R.string.jandi_file_upload_succeed));
+                    view.dismissDialog(uploadProgress);
+                    view.moveEntity(teamId, roomId, entityId, roomType);
+                    view.finishOnUiThread();
+                }, t -> {
+                    view.dismissDialog(uploadProgress);
+                    view.showFailToast(JandiApplication.getContext()
+                            .getString(R.string.err_file_upload_failed));
+                });
+
     }
 
     public boolean setupSelectedTeam(long teamId) {
@@ -150,18 +163,18 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         return true;
     }
 
-    @Background
     void downloadImage(String path, String downloadDir, String downloadName) {
         view.showProgressBar();
-        try {
+
+        Completable.fromCallable(() -> {
             File file = GoogleImagePickerUtil
                     .downloadFile(null, path, downloadDir, downloadName);
             imageFile = file;
-            view.bindImage(file);
-        } catch (Exception e) {
-        } finally {
-            view.dismissProgressBar();
-        }
+            return true;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> view.bindImage(imageFile),
+                        t -> view.dismissProgressBar());
     }
 
     @Override

@@ -61,6 +61,7 @@ public class SearchMemberModel {
         long myId = teamInfoLoader.getMyId();
 
         Observable.from(topicIds)
+                .filter(teamInfoLoader::isTopic)
                 .flatMap(topicId -> Observable.from(teamInfoLoader.getTopic(topicId).getMembers()))
                 .filter(it -> it != myId)
                 .distinct()
