@@ -52,12 +52,15 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         Completable.fromAction(() -> {
             teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
             shareModel.refreshPollList(teamId);
+            roomId = -1;
+            entityId = -1;
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-            String teamName = teamInfoLoader.getTeamName();
-            view.setTeamName(teamName);
-        }, Throwable::printStackTrace);
+                    String teamName = teamInfoLoader.getTeamName();
+                    view.setTeamName(teamName);
+                    view.setRoomName("");
+                }, Throwable::printStackTrace);
 
 
     }

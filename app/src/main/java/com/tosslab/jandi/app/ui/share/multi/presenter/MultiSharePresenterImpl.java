@@ -81,6 +81,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     shareTarget.setRoomId(-1);
                     String teamName = shareSelectModel.getTeamName();
                     view.setTeamName(teamName);
+                    view.setRoomName("");
                     view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());
                 }, t -> {
                     t.printStackTrace();

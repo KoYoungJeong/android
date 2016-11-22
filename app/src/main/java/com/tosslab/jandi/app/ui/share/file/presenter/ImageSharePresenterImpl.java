@@ -87,9 +87,14 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
 
             shareModel.refreshPollList(teamId);
             teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+            roomId = -1;
+            entityId = -1;
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> view.setTeamName(this.teamName));
+                .subscribe(() -> {
+                    view.setTeamName(this.teamName);
+                    view.setRoomName("");
+                });
 
 
     }
@@ -126,7 +131,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
                            String tvTitle, String commentText,
                            ProgressDialog uploadProgress, List<MentionObject> mentions) {
 
-        if (roomId <= 0 || entityId <= 0) {
+        if (teamId <= 0 || entityId <= 0) {
             view.dismissDialog(uploadProgress);
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_title_cdp_to_be_shared));
             return;
