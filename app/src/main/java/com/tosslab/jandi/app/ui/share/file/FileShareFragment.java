@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -43,6 +42,7 @@ import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -79,9 +79,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Bind(R.id.et_share_comment)
     EditText etComment;
 
-    @Bind(R.id.progress_share_image)
-    ProgressBar downloadingProgressBar;
-
     @Bind(R.id.tv_room_name)
     TextView tvRoomName;
 
@@ -113,6 +110,8 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     ScrollViewHelper scrollViewHelper;
 
+    ProgressWheel progressWheel;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -132,6 +131,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
                 .fileShareModule(new FileShareModule(this))
                 .build()
                 .inject(this);
+        initProgressWheel();
         initViews();
     }
 
@@ -139,6 +139,11 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        initProgressWheel();
+    }
+
+    private void initProgressWheel() {
+        progressWheel = new ProgressWheel(getActivity());
     }
 
     void initViews() {
@@ -221,12 +226,16 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     @Override
     public void dismissProgressBar() {
-        downloadingProgressBar.setVisibility(View.GONE);
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     @Override
     public void showProgressBar() {
-        downloadingProgressBar.setVisibility(View.VISIBLE);
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     private ProgressDialog getUploadProgress(String absolutePath, String name) {

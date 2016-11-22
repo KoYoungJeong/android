@@ -47,6 +47,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Override
     public void initEntityData(long teamId) {
+        view.showProgressBar();
         this.teamId = teamId;
 
         Completable.fromAction(() -> {
@@ -60,6 +61,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
                     String teamName = teamInfoLoader.getTeamName();
                     view.setTeamName(teamName);
                     view.setRoomName("");
+                    view.dismissProgressBar();
                 }, Throwable::printStackTrace);
 
 

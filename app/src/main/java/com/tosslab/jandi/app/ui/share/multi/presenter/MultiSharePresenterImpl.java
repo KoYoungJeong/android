@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
@@ -57,7 +58,6 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void onRoomChange() {
         view.callRoomSelector(shareTarget.getTeamId());
-
     }
 
     @Override
@@ -79,6 +79,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shareSelectModel -> {
                     shareTarget.setRoomId(-1);
+                    shareTarget.setEntityId(-1);
                     String teamName = shareSelectModel.getTeamName();
                     view.setTeamName(teamName);
                     view.setRoomName("");
@@ -181,8 +182,9 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                             }, t -> {
                             });
 
-                    view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
-                });
+                        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                    });
+        }
     }
 
     @Override

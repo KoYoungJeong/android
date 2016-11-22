@@ -128,11 +128,4 @@
             android:background="#FFDADADA" />
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progress_share_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
-
 </RelativeLayout>

@@ -49,16 +49,6 @@
 
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/progress_share_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/vg_viwer"
-            android:layout_alignLeft="@+id/vg_viwer"
-            android:layout_alignRight="@+id/vg_viwer"
-            android:layout_alignTop="@+id/vg_viwer"
-            android:visibility="gone" />
-
         <LinearLayout
             android:id="@+id/vg_share_content"
             android:layout_width="match_parent"

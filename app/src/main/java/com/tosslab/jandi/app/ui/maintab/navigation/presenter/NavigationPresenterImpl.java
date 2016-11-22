@@ -158,12 +158,15 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void initLauncherBadgeCount(List<Team> teams) {
+        if (teams == null) {
+            return;
+        }
         Observable.from(teams)
                 .filter(team -> team.getStatus() == Team.Status.JOINED)
-                .map(Team::getUnread)
+                .map((team1) -> team1.getUnread())
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
-                    BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                   BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
                 }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
                 });

@@ -55,7 +55,6 @@ public class SearchMemberModel {
 
         selectableMembersLinkedHashMap.clear();
 
-
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance(teamId);
 
         long myId = teamInfoLoader.getMyId();
