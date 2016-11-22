@@ -5,7 +5,6 @@ import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -94,13 +93,13 @@ public class TextShareFragmentTest {
     @Test
     public void testShowProgressBar() throws Throwable {
         rule.runOnUiThread(textShareFragment::showProgressBar);
-        assertThat(textShareFragment.downloadingProgressBar.getVisibility(), is(equalTo(View.VISIBLE)));
+        assertThat(textShareFragment.progressWheel.isShowing(), is(true));
     }
 
     @Test
     public void testDismissProgressBar() throws Throwable {
         rule.runOnUiThread(textShareFragment::dismissProgressBar);
-        assertThat(textShareFragment.downloadingProgressBar.getVisibility(), is(equalTo(View.GONE)));
+        assertThat(textShareFragment.progressWheel.isShowing(), is(false));
 
     }
 

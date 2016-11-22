@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
@@ -182,9 +181,8 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                             }, t -> {
                             });
 
-                        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
-                    });
-        }
+                    view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                });
     }
 
     @Override
