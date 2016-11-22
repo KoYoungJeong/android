@@ -42,6 +42,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Override
     @Background
     public void initEntityData(long teamId) {
+        view.showProgressBar();
         this.teamId = teamId;
 
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
@@ -56,6 +57,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         view.setTeamName(teamName);
         view.setRoomName(roomName);
         view.setMentionInfo(teamId, roomId, roomType);
+        view.dismissProgressBar();
 
     }
 

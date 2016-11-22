@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -35,6 +34,7 @@ import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -85,9 +85,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @ViewById(R.id.et_share_comment)
     EditText etComment;
 
-    @ViewById(R.id.progress_share_image)
-    ProgressBar downloadingProgressBar;
-
     @ViewById(R.id.tv_room_name)
     TextView tvRoomName;
 
@@ -119,10 +116,17 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     ScrollViewHelper scrollViewHelper;
 
+    ProgressWheel progressWheel;
+
     @AfterInject
     void initObject() {
         imageSharePresenter.setView(this);
         EventBus.getDefault().register(this);
+        initProgressWheel();
+    }
+
+    private void initProgressWheel() {
+        progressWheel = new ProgressWheel(getActivity());
     }
 
     @AfterViews
@@ -210,13 +214,17 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @UiThread
     @Override
     public void dismissProgressBar() {
-        downloadingProgressBar.setVisibility(View.GONE);
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     @UiThread
     @Override
     public void showProgressBar() {
-        downloadingProgressBar.setVisibility(View.VISIBLE);
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     private ProgressDialog getUploadProgress(String absolutePath, String name) {

@@ -636,7 +636,7 @@ public class JandiSocketServiceModel {
                             }
                         } else {
                             Observable.just(it)
-                            .concatMap(userTeam -> {
+                                    .concatMap(userTeam -> {
                                         return Observable.concat(
                                                 Observable.from(TopicRepository.getInstance().getJoinedTopics(selectedTeamId))
                                                         .map(Topic::getUnreadCount),

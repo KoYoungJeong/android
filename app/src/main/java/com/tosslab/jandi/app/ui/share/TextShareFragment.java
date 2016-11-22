@@ -5,9 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
@@ -27,6 +25,7 @@ import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -47,6 +46,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -62,9 +62,6 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @ViewById(R.id.et_share_comment)
     EditText etComment;
 
-    @ViewById(R.id.progress_share_image)
-    ProgressBar downloadingProgressBar;
-
     @ViewById(R.id.tv_room_name)
     TextView tvRoomName;
 
@@ -76,9 +73,12 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     MentionControlViewModel mentionControlViewModel;
 
+    ProgressWheel progressWheel;
+
     @AfterInject
     void initObject() {
         textSharePresenterImpl.setView(this);
+        initProgressWheel();
     }
 
     @AfterViews
@@ -102,6 +102,10 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
                     ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
         textSharePresenterImpl.initViews();
+    }
+
+    private void initProgressWheel() {
+        progressWheel = new ProgressWheel(getActivity());
     }
 
     @Override
@@ -231,7 +235,9 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressBar() {
-        downloadingProgressBar.setVisibility(View.VISIBLE);
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -243,7 +249,9 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressBar() {
-        downloadingProgressBar.setVisibility(View.GONE);
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -252,18 +260,24 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         if (getActivity() == null) {
             return;
         }
-        startActivity(Henson.with(getActivity())
-                .gotoMainTabActivity()
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
-        MessageListV2Activity_.intent(getActivity())
-                .teamId(teamId)
-                .roomId(roomId)
-                .entityId(entityId)
-                .entityType(roomType)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        Completable.fromAction(() -> {
+            startActivity(Henson.with(getActivity())
+                    .gotoMainTabActivity()
+                    .build()
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        }).delay(300, TimeUnit.MILLISECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    MessageListV2Activity_.intent(getActivity())
+                            .teamId(teamId)
+                            .roomId(roomId)
+                            .entityId(entityId)
+                            .entityType(roomType)
+                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .start();
+                });
+
 
     }
 
