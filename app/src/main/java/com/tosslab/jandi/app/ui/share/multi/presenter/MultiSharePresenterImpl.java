@@ -30,7 +30,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
@@ -78,11 +77,9 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shareSelectModel -> {
-                    shareTarget.setRoomId(shareSelectModel.getDefaultTopicId());
-                    String roomName = shareSelectModel.getName(shareTarget.getRoomId());
+                    shareTarget.setRoomId(-1);
                     String teamName = shareSelectModel.getTeamName();
                     view.setTeamName(teamName);
-                    view.setRoomName(roomName);
                     view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());
                 }, t -> {
                     t.printStackTrace();
@@ -94,20 +91,16 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void initShareData(List<String> uris) {
         view.showProgress();
-        Observable.create(new Observable.OnSubscribe<FileShareData>() {
-            @Override
-            public void call(Subscriber<? super FileShareData> subscriber) {
-                for (String uri : uris) {
-                    Uri paredUri = Uri.parse(uri);
-                    String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
-                    if (!TextUtils.isEmpty(path)) {
-                        subscriber.onNext(new FileShareData(path));
-                    }
+        Observable.create((Observable.OnSubscribe<FileShareData>) subscriber -> {
+            for (String uri : uris) {
+                Uri paredUri = Uri.parse(uri);
+                String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
+                if (!TextUtils.isEmpty(path)) {
+                    subscriber.onNext(new FileShareData(path));
                 }
-                subscriber.onCompleted();
             }
-        })
-                .subscribeOn(Schedulers.io())
+            subscriber.onCompleted();
+        }).subscribeOn(Schedulers.io())
                 .map(fileShareData -> {
                     String path = fileShareData.getData();
                     if (path.startsWith("http")) {
@@ -149,7 +142,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     }
 
     @Override
-    public void onSelectRoom(long roomId, long roomType) {
+    public void onSelectRoom(long roomId) {
         shareTarget.setRoomId(roomId);
         String entityName = teamInfoLoader.getName(roomId);
         view.setRoomName(entityName);
@@ -158,6 +151,12 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void startShare() {
+
+        if (shareTarget.getTeamId() <= 0 || shareTarget.getRoomId() <=0) {
+            view.showSelectRoomToast();
+            return;
+        }
+
         SearchMemberModel model = new SearchMemberModel();
         model.refreshSelectableMembers(shareTarget.getTeamId(),
                 Arrays.asList(shareTarget.getRoomId()),

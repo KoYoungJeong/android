@@ -125,7 +125,7 @@ public class TextShareFragmentTest {
         Intents.init();
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
-        rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
+        rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         Intents.intended(IntentMatchers.hasComponent(MainTabActivity.class.getName()));
         Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity_.class.getName()));

@@ -23,9 +23,9 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Bean
     ShareModel shareModel;
-    long roomId;
+    long roomId = -1;
     long teamId;
-    long entityId;
+    long entityId = -1;
     TeamInfoLoader teamInfoLoader;
     private View view;
 
@@ -48,14 +48,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         shareModel.refreshPollList(teamId);
 
         String teamName = teamInfoLoader.getTeamName();
-        this.roomId = teamInfoLoader.getDefaultTopicId();
-        this.entityId = teamInfoLoader.getDefaultTopicId();
-        String roomName = teamInfoLoader.getName(roomId);
-        int roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
-
         view.setTeamName(teamName);
-        view.setRoomName(roomName);
-        view.setMentionInfo(teamId, roomId, roomType);
 
     }
 
@@ -98,6 +91,12 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Override
     @Background
     public void sendMessage(String messageText, List<MentionObject> mentions) {
+
+        if (teamId <= 0 || roomId <=0) {
+            view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_title_cdp_to_be_shared));
+            return;
+        }
+
         view.showProgressBar();
         int roomType = getRoomType(roomId);
         try {

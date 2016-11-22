@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
@@ -34,8 +33,8 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     private File imageFile;
 
     private long teamId;
-    private long roomId;
-    private long entityId;
+    private long roomId = -1;
+    private long entityId = -1;
     private String teamName;
     private String roomName;
     private boolean isPublic;
@@ -88,16 +87,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         shareModel.refreshPollList(teamId);
         teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
 
-        this.roomId = teamInfoLoader.getDefaultTopicId();
-        this.entityId = teamInfoLoader.getDefaultTopicId();
-        TopicRoom entity = teamInfoLoader.getTopic(roomId);
-        this.roomName = entity.getName();
-        this.roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
-        isPublic = true;
-
         view.setTeamName(this.teamName);
-        view.setRoomName(this.roomName);
-        view.setMentionInfo(teamId, this.roomId, this.roomType);
     }
 
     @Override
@@ -129,6 +119,13 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     public void uploadFile(File imageFile,
                            String tvTitle, String commentText,
                            ProgressDialog uploadProgress, List<MentionObject> mentions) {
+
+        if (roomId <= 0 || entityId <= 0) {
+            view.dismissDialog(uploadProgress);
+            view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_title_cdp_to_be_shared));
+            return;
+        }
+
         try {
             shareModel.uploadFile(imageFile,
                     tvTitle, commentText, teamId, entityId, uploadProgress, isPublic, mentions);
