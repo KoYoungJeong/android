@@ -74,7 +74,7 @@ public class NavigationModel {
     }
 
     public boolean isPhoneMode() {
-        return DeviceUtil.isCallableDevice();
+        return JandiApplication.getContext().getResources().getBoolean(R.bool.portrait_only);
     }
 
     public void refreshAccountInfo() {
