@@ -78,7 +78,7 @@ public class TextSharePresenterImplTest {
                 .toBlocking().first();
         textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        textSharePresenter.setEntity(entity.getId());
+        textSharePresenter.setEntity(entity.getId(), JandiConstants.TYPE_DIRECT_MESSAGE);
 
         verify(mockView).setRoomName(eq(entity.getName()));
         verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));
@@ -94,7 +94,7 @@ public class TextSharePresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).moveEntity(anyLong(), anyLong(), anyInt());
+        }).when(mockView).moveEntity(anyLong(), anyLong(), anyInt(), anyInt());
 
         textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
         textSharePresenter.roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
@@ -107,6 +107,6 @@ public class TextSharePresenterImplTest {
         verify(mockView).finishOnUiThread();
         verify(mockView).moveEntity(eq(textSharePresenter.teamId),
                 eq(textSharePresenter.roomId),
-                eq(JandiConstants.TYPE_PUBLIC_TOPIC));
+                eq(JandiConstants.TYPE_PUBLIC_TOPIC), anyInt());
     }
 }
