@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -101,6 +103,7 @@ public class CallSettingActivity extends BaseAppCompatActivity {
         }
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_CONTACTS}, REQ_PERMISSIONS);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamPhoneNumberSetting, AnalyticsValue.Action.AllowPhoneCalls);
     }
 
     @Override
@@ -110,7 +113,8 @@ public class CallSettingActivity extends BaseAppCompatActivity {
         Permissions.getResult()
                 .activity(this)
                 .addRequestCode(REQ_PERMISSIONS)
-                .addPermission(Manifest.permission.CALL_PHONE, () -> {})
+                .addPermission(Manifest.permission.CALL_PHONE, () -> {
+                })
                 .neverAskAgain(() -> {
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -129,5 +133,6 @@ public class CallSettingActivity extends BaseAppCompatActivity {
         if (SdkUtils.isMarshmallow()) {
             startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.fromParts("package", getPackageName(), null)));
         }
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamPhoneNumberSetting, AnalyticsValue.Action.DrawOverApps);
     }
 }

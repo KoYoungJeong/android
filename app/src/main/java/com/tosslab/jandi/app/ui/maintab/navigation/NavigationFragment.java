@@ -234,7 +234,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                         .subscribe(this::moveoToSetUpCallPreview);
 
                 AnalyticsUtil.sendEvent(
-                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.CallPreview);
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.TeamPhoneNumberSetting);
+
                 break;
             case R.id.nav_setting_orientation:
                 Completable.fromAction(this::closeNavigation)

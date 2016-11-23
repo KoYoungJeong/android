@@ -69,6 +69,10 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     public static final int REQUEST_CODE = 17863;
     public static final String KEY_SINGLE_FILE_UPLOADVO = "file_uploadvo";
+    public static final int FROM_SELECT_IMAGE = 0x01;
+    public static final int FROM_TAKE_PHOTO = 0x02;
+    public static final int FROM_SELECT_FILE = 0x03;
+
     @Extra
     long selectedEntityIdToBeShared;    // Share 할 chat-room
 
@@ -76,34 +80,29 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     boolean singleUpload = false;
 
     @Extra
-    ArrayList<String> realFilePathList;
+    int from = FROM_SELECT_IMAGE;
 
+    @Extra
+    ArrayList<String> realFilePathList;
     @Bean(FileUploadPresenterImpl.class)
     FileUploadPresenter fileUploadPresenter;
-
     @SystemService
     InputMethodManager inputMethodManager;
-
     @ViewById(R.id.vp_file_upload_preview)
     ViewPager vpFilePreview;
-
     @ViewById(R.id.tv_file_upload_title)
     TextView tvFileTitle;
-
     @ViewById(R.id.tv_file_upload_entity)
     TextView tvEntity;
-
     @ViewById(R.id.et_file_upload_comment)
     EditText etComment;
-
     @ViewById(R.id.vg_file_upload_preview_content)
     ViewGroup vgFileInfo;
-
     @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
-
     @ViewById(R.id.layout_pricing_plan_warning)
     ViewGroup layoutPricingPlanWarning;
+
 
     private MentionControlViewModel mentionControlViewModel;
     private PublishSubject<Object> scrollButtonPublishSubject;
@@ -391,8 +390,15 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public void setPricingLimitView(Boolean isLimited) {
         if (isLimited) {
             layoutPricingPlanWarning.setVisibility(View.VISIBLE);
-            PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
-                    .bind(PricingPlanWarningViewController.TYPE_UPLOAD);
+            PricingPlanWarningViewController pricingPlanWarningViewController
+                    = PricingPlanWarningViewController.with(this, layoutPricingPlanWarning);
+            if (from == FROM_SELECT_IMAGE) {
+                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_IMAGE);
+            } else if (from == FROM_TAKE_PHOTO) {
+                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_TAKE_PHOTO);
+            } else if (from == FROM_SELECT_FILE) {
+                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_FILE);
+            }
         } else {
             layoutPricingPlanWarning.setVisibility(View.GONE);
         }
