@@ -36,6 +36,7 @@ public class JandiConstants {
     public static class Entity {
 
         public static final int TYPE_EVERYWHERE = 6;
+        public static final int TYPE_JOINED_ROOM = 7;
     }
 
     public static class NetworkError {
