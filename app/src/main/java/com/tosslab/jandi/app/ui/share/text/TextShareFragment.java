@@ -50,7 +50,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
-import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -263,24 +262,17 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
             return;
         }
 
-        Completable.fromAction(() -> {
-            startActivity(Henson.with(getActivity())
-                    .gotoMainTabActivity()
-                    .build()
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        }).delay(300, TimeUnit.MILLISECONDS)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    MessageListV2Activity_.intent(getActivity())
-                            .teamId(teamId)
-                            .roomId(roomId)
-                            .entityId(entityId)
-                            .entityType(roomType)
-                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .start();
-                });
-
-
+        startActivity(Henson.with(getActivity())
+                .gotoMainTabActivity()
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(teamId)
+                .roomId(roomId)
+                .entityId(entityId)
+                .entityType(roomType)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
     @Override
