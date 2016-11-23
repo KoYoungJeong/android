@@ -1522,6 +1522,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void onEventMainThread(TopicDeleteEvent event) {
         if (room.getRoomId() == event.getTopicId()) {
             finish();
+            String msg = JandiApplication.getContext().getString(R.string.topic_room_deletetopicconfirm);
+            showToast(msg, true);
         }
     }
 
