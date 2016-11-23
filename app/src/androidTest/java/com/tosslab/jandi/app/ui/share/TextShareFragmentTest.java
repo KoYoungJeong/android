@@ -5,7 +5,6 @@ import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -109,13 +108,13 @@ public class TextShareFragmentTest {
     @Test
     public void testShowProgressBar() throws Throwable {
         rule.runOnUiThread(textShareFragment::showProgressBar);
-        assertThat(textShareFragment.downloadingProgressBar.getVisibility(), is(equalTo(View.VISIBLE)));
+        assertThat(textShareFragment.progressWheel.isShowing(), is(true));
     }
 
     @Test
     public void testDismissProgressBar() throws Throwable {
         rule.runOnUiThread(textShareFragment::dismissProgressBar);
-        assertThat(textShareFragment.downloadingProgressBar.getVisibility(), is(equalTo(View.GONE)));
+        assertThat(textShareFragment.progressWheel.isShowing(), is(false));
 
     }
 
@@ -125,7 +124,7 @@ public class TextShareFragmentTest {
         Intents.init();
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
-        rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
+        rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         Intents.intended(IntentMatchers.hasComponent(MainTabActivity.class.getName()));
         Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity_.class.getName()));
