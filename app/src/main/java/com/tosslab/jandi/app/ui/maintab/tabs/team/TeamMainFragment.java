@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
+import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -137,7 +138,10 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
     @Override
     public void onFocus() {
         FragmentActivity activity = getActivity();
-        if (activity != null && JandiPreference.isShowCallPermissionPopup()) {
+
+        if (activity != null
+                && DeviceUtil.isCallableDevice()
+                && JandiPreference.isShowCallPermissionPopup()) {
 
             View view = LayoutInflater.from(activity).inflate(R.layout.dialog_call_preview_permission, null);
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_call_preview_permission);
@@ -146,7 +150,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
             if (SdkUtils.isMarshmallow()) {
                 if (!SdkUtils.hasPermission(activity, Manifest.permission.CALL_PHONE)
                         || !Settings.canDrawOverlays(activity)) {
-                    moveSettingBtn= true;
+                    moveSettingBtn = true;
                 } else {
                     checkBox.setVisibility(View.GONE);
                     moveSettingBtn = false;
@@ -173,8 +177,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
                     JandiPreference.setShowCallPermissionPopup();
                 }
             }).create().show();
-
-
+            
         }
     }
 }

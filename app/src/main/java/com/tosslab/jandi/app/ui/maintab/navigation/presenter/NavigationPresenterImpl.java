@@ -166,7 +166,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .map((team1) -> team1.getUnread())
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
-                   BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
                 }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
                 });
@@ -276,7 +276,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .doOnNext(menuBuilder -> {
                     MenuItem item = menuBuilder.findItem(R.id.nav_setting_orientation);
                     if (item != null) {
-                        item.setVisible(!(navigationModel.isPhoneMode()));
+                        item.setVisible(navigationModel.isPhoneMode());
                     }
                 })
                 .map(navigationDataModel::getNavigationRows)

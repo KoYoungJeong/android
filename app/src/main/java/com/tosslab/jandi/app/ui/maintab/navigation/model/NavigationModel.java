@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -73,7 +74,7 @@ public class NavigationModel {
     }
 
     public boolean isPhoneMode() {
-        return JandiApplication.getContext().getResources().getBoolean(R.bool.portrait_only);
+        return DeviceUtil.isCallableDevice();
     }
 
     public void refreshAccountInfo() {
