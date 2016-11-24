@@ -278,6 +278,11 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     if (item != null) {
                         item.setVisible(!(navigationModel.isPhoneMode()));
                     }
+
+                    MenuItem domainItem = menuBuilder.findItem(R.id.nav_change_domain);
+                    if (domainItem != null) {
+                        domainItem.setVisible(AccountRepository.getRepository().hasTeamInfo(279));
+                    }
                 })
                 .map(navigationDataModel::getNavigationRows)
                 .doOnNext(rows -> {

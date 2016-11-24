@@ -41,6 +41,9 @@
 
     <group android:id="@+id/group_main_tab_authenticate">
         <item
+            android:id="@+id/nav_change_domain"
+            android:title="Change Server" />
+        <item
             android:id="@+id/nav_sign_out"
             android:title="@string/jandi_setting_sign_out" />
     </group>

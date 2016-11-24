@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.DomainUtil;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signin.SignInActivity;
 import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
@@ -16,8 +17,11 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 
 public class SignHomeActivity extends BaseAppCompatActivity {
+
+    private int clickCount = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +34,7 @@ public class SignHomeActivity extends BaseAppCompatActivity {
     }
 
     @OnClick(R.id.btn_sign_up)
-    public void onClickSignUp() {
+    void onClickSignUp() {
         if (!NetworkCheckUtil.isConnected()) {
             ColoredToast.showError(R.string.jandi_msg_network_offline_warn);
             return;
@@ -42,8 +46,24 @@ public class SignHomeActivity extends BaseAppCompatActivity {
 
     }
 
+    @OnClick(R.id.iv_jandi_icon)
+    void onIconClick() {
+        clickCount++;
+    }
+
+    @OnLongClick(R.id.iv_jandi_icon)
+    boolean onIconLongClick() {
+        if (clickCount >= 5) {
+            DomainUtil.showDomainDialog(this);
+        }
+
+        clickCount = 0;
+
+        return true;
+    }
+
     @OnClick(R.id.vg_sign_in)
-    public void onClickSignIn() {
+    void onClickSignIn() {
         if (!NetworkCheckUtil.isConnected()) {
             ColoredToast.showError(R.string.jandi_msg_network_offline_warn);
             return;

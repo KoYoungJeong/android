@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
+import com.tosslab.jandi.app.network.DomainUtil;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
@@ -303,8 +304,15 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.SignOut);
                 return true;
+            case R.id.nav_change_domain:
+                showChangeDomainDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChangeDomainDialog() {
+        DomainUtil.showDomainDialog(getActivity());
     }
 
     private void moveoToSetUpCallPreview() {

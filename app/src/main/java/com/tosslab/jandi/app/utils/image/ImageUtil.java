@@ -48,7 +48,7 @@ public class ImageUtil {
         if (url.startsWith("http")) {
             return url.replaceAll(" ", "%20");
         } else {
-            return JandiConstantsForFlavors.SERVICE_FILE_URL + url.replaceAll(" ", "%20");
+            return JandiConstantsForFlavors.getServiceFileUrl() + url.replaceAll(" ", "%20");
         }
     }
 
