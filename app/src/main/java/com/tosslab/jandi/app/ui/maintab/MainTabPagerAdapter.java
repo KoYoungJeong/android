@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
 
 import java.util.List;
@@ -26,7 +27,13 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
                 .subscribe(tabInfo -> {
                     int index = tabInfo.getIndex();
                     titles.put(index, tabInfo.getTitle());
-                    fragments.put(index, tabInfo.getFragment());
+
+                    Fragment frag = supportFragmentManager.findFragmentByTag(makeFragmentName(R.id.page_main_tab, index));
+                    if (frag != null) {
+                        fragments.put(index, frag);
+                    } else {
+                        fragments.put(index, tabInfo.getFragment());
+                    }
                 });
     }
 
@@ -43,6 +50,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return titles.get(position);
+    }
+
+    private static String makeFragmentName(int viewId, long id) {
+        return "android:switcher:" + viewId + ":" + id;
     }
 
 }
