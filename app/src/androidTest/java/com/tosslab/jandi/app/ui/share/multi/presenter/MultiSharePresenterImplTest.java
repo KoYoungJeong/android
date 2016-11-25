@@ -8,7 +8,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
@@ -120,7 +119,7 @@ public class MultiSharePresenterImplTest {
 
     @Test
     public void testOnSelectRoom() throws Exception {
-        multiSharePresenter.onSelectRoom(TeamInfoLoader.getInstance().getDefaultTopicId(), JandiConstants.TYPE_PUBLIC_TOPIC);
+        multiSharePresenter.onSelectRoom(TeamInfoLoader.getInstance().getDefaultTopicId());
 
         verify(mockView).setRoomName(anyString());
         verify(mockView).setMentionInfo(anyLong(), anyLong());

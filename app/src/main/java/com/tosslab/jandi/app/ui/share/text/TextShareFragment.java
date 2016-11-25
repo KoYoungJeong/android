@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -49,6 +51,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -100,6 +103,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
                 .inject(this);
         initProgressWheel();
         initViews();
+        setHasOptionsMenu(true);
 
     }
 
@@ -158,6 +162,20 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         super.onDestroy();
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (menu != null) {
+            MenuItem item = menu.findItem(R.id.action_share);
+            if (item != null) {
+                item.setEnabled(etComment.length() > 0 && tvRoomName.length() > 0);
+            }
+        }
+    }
+
+    @OnTextChanged(R.id.et_share_comment)
+    void onCommentTextChanged(CharSequence text) {
+        getActivity().supportInvalidateOptionsMenu();
+    }
 
     @OnClick(R.id.vg_team)
     void clickSelectTeam() {
@@ -227,6 +245,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @Override
     public void setRoomName(String roomName) {
         tvRoomName.setText(roomName);
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override

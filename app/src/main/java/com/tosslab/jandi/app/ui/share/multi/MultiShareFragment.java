@@ -9,6 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -126,6 +128,18 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
         multiSharePresenter.initShareTarget();
         multiSharePresenter.initShareData(uris);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (menu != null) {
+            MenuItem item = menu.findItem(R.id.action_share);
+            if (item != null) {
+                item.setEnabled(tvRoomName.length() > 0);
+            }
+        }
     }
 
     @Override
@@ -230,6 +244,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setRoomName(String roomName) {
         tvRoomName.setText(roomName);
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override

@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -133,6 +135,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
                 .inject(this);
         initProgressWheel();
         initViews();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -140,6 +143,16 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         initProgressWheel();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (menu != null) {
+            MenuItem item = menu.findItem(R.id.action_share);
+            if (item != null) {
+                item.setEnabled(tvRoomName.length() > 0);
+            }
+        }
     }
 
     private void initProgressWheel() {
@@ -195,7 +208,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             vgFileIcon.setVisibility(View.GONE);
             ivSharePhoto.setVisibility(View.VISIBLE);
             vgShareContent.setBackgroundResource(R.drawable.upload_bg);
-            vgViewer.setBackgroundResource(R.drawable.upload_bg);
 
             ImageLoader.newInstance()
                     .fragment(this)
@@ -310,6 +322,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Override
     public void setRoomName(String name) {
         tvRoomName.setText(name);
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override
