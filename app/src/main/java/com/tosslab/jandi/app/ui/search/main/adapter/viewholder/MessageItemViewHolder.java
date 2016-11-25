@@ -135,15 +135,7 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         }
 
 
-        long roomId = searchMessageData.getRoomId();
-
-        if (teamInfoLoader.isChat(roomId)) {
-            String companionName =
-                    teamInfoLoader.getMemberName(teamInfoLoader.getChat(roomId).getCompanionId());
-            tvRoomName.setText(companionName);
-        } else if (teamInfoLoader.isTopic(roomId)) {
-            tvRoomName.setText(teamInfoLoader.getTopic(roomId).getName());
-        }
+        String roomName;
 
         String feedbackType = searchMessageData.getFeedbackType();
 
@@ -151,6 +143,9 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
             tvDivideBar.setVisibility(View.GONE);
             ivSharedItemIcon.setVisibility(View.GONE);
             tvSharedItemTitle.setVisibility(View.GONE);
+
+            roomName = getRoomName(teamInfoLoader, searchMessageData.getRoomId());
+
         } else {
             tvDivideBar.setVisibility(View.VISIBLE);
             ivSharedItemIcon.setVisibility(View.VISIBLE);
@@ -159,12 +154,28 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
                 ivSharedItemIcon.setImageDrawable(JandiApplication.getContext().getResources()
                         .getDrawable(R.drawable.account_icon_upload));
                 tvSharedItemTitle.setText(searchMessageData.getFile().getTitle());
+
+                int sharedCount = searchMessageData.getFile().getSharedCount();
+                if (sharedCount <= 1) {
+                    roomName = getRoomName(teamInfoLoader, searchMessageData.getRoomId());
+                } else {
+                    roomName = new StringBuilder()
+                            .append(tvRoomName.getContext().getString(R.string.commcon_search_result_sharedin))
+                            .append(" : ")
+                            .append(sharedCount)
+                            .toString();
+                }
+
             } else if (feedbackType.equals("poll") && searchMessageData.getPoll() != null) {
                 ivSharedItemIcon.setImageDrawable(JandiApplication.getContext().getResources()
                         .getDrawable(R.drawable.account_icon_poll));
                 tvSharedItemTitle.setText(searchMessageData.getPoll().getSubject());
+                roomName = getRoomName(teamInfoLoader, searchMessageData.getRoomId());
+            } else {
+                roomName = getRoomName(teamInfoLoader, searchMessageData.getRoomId());
             }
         }
+        tvRoomName.setText(roomName);
 
         if (searchMessageData.hasHalfLine()) {
             vFullDivider.setVisibility(View.GONE);
@@ -181,6 +192,16 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         if (onClickMessageListener != null) {
             itemView.setOnClickListener(v -> onClickMessageListener.onClickMessage(searchMessageData));
         }
+    }
+
+    protected String getRoomName(TeamInfoLoader teamInfoLoader, long roomId) {
+        if (teamInfoLoader.isChat(roomId)) {
+            return
+                    teamInfoLoader.getMemberName(teamInfoLoader.getChat(roomId).getCompanionId());
+        } else if (teamInfoLoader.isTopic(roomId)) {
+            return teamInfoLoader.getTopic(roomId).getName();
+        }
+        return "";
     }
 
     private void setMentionAndHighlight(SearchMessageData searchMessageData) {
