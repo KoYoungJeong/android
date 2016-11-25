@@ -23,7 +23,7 @@ public class SocketEventRepository extends LockExecutorTemplate {
 
             try {
                 Dao<SocketEvent, String> dao = getDao(SocketEvent.class);
-                dao.createIfNotExists(SocketEvent.createEvent(event));
+                dao.create(SocketEvent.createEvent(event));
                 return true;
             } catch (SQLException e) {
                 e.printStackTrace();
