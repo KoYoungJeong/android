@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -279,18 +280,24 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         if (getActivity() == null) {
             return;
         }
-        startActivity(Henson.with(getActivity())
-                .gotoMainTabActivity()
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
-        MessageListV2Activity_.intent(getActivity())
-                .teamId(teamId)
-                .roomId(roomId)
-                .entityId(entityId)
-                .entityType(entityType)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        Completable.fromAction(() -> {
+            startActivity(Henson.with(getActivity())
+                    .gotoMainTabActivity()
+                    .build()
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    MessageListV2Activity_.intent(getActivity())
+                            .teamId(teamId)
+                            .roomId(roomId)
+                            .entityId(entityId)
+                            .entityType(entityType)
+                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .start();
+                });
     }
 
     @Override
