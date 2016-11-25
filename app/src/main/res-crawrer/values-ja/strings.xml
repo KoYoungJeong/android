@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">"JANDI"</string>
+	<string name="commcon_search_result_sharedin">"共有範囲"</string>
 	<string name="comment">"コメント"</string>
 	<string name="common_accthome_createteam">"新しいチーム作成"</string>
 	<string name="common_accthome_createteamguide">"参加中のチームがありません。\n下の「新しいチーム作成」をタッチし、\nJANDIを体験してみてください。"</string>
@@ -80,7 +81,7 @@
 	<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
 	<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
 	<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-	<string name="exclamation_mark">"に委譲しますか?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
 	<string name="file_detail_nopreview">"プレビュー表示できないファイル形式です。"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
@@ -546,6 +547,7 @@
 	<string name="jandi_search_no_topic_room">"検索キーワードに一致するトークルームは見つかりませんでした。"</string>
 	<string name="jandi_search_result_count">"<b>%s</b>件のメッセージ検索結果があります。"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>の検索結果が<b><font color=#404040>%2$d</font></b>件あります]]>"</string>
+	<string name="jandi_search_roomsearch">"トークルーム検索"</string>
 	<string name="jandi_select_character">"キャラクターを選択"</string>
 	<string name="jandi_select_direct_messages">"送信相手を選択"</string>
 	<string name="jandi_select_gallery">"写真を選択"</string>
