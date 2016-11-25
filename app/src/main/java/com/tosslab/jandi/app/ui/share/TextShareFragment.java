@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -260,17 +261,22 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
             return;
         }
 
-        startActivity(Henson.with(getActivity())
-                .gotoMainTabActivity()
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        MessageListV2Activity_.intent(getActivity())
-                .teamId(teamId)
-                .roomId(roomId)
-                .entityId(entityId)
-                .entityType(roomType)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        Completable.fromAction(() -> {
+            startActivity(Henson.with(getActivity())
+                    .gotoMainTabActivity()
+                    .build()
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        }).delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    MessageListV2Activity_.intent(getActivity())
+                            .teamId(teamId)
+                            .roomId(roomId)
+                            .entityId(entityId)
+                            .entityType(roomType)
+                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .start();
+                });
     }
 
     @Override

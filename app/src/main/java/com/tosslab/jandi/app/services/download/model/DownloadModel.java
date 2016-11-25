@@ -149,6 +149,7 @@ public class DownloadModel {
         LogUtil.e(DownloadController.TAG, Log.getStackTraceString(e));
     }
 
+    // Image정보를 Content Provider에 넣기 위한 코드
     public static void addToGalleryIfFileIsImage(File image, String fileType) {
         if (!isMediaFile(fileType)) {
             return;

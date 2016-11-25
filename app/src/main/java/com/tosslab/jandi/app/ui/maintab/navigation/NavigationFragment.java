@@ -147,7 +147,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             notifyDataSetChanged();
             navigationPresenter.initBadgeCount();
         });
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
     }
 
