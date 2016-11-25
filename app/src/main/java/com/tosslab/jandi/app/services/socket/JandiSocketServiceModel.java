@@ -1531,6 +1531,7 @@ public class JandiSocketServiceModel {
             if (poll != null && poll.getId() > 0 && poll.isMine()) {
                 upsertPollVotedStatus(poll);
                 poll = getPollFromDatabase(poll.getId());
+                poll.setIsMine(true);
                 InitialPollInfoRepository.getInstance().decreaseVotableCount();
             }
 
