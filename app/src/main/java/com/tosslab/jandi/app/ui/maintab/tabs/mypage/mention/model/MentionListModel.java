@@ -23,7 +23,6 @@ import java.util.List;
 
 import dagger.Lazy;
 import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by tonyjs on 16. 3. 17..
@@ -118,23 +117,10 @@ public class MentionListModel {
         return mention.getLastMentionedMessageId() <= 0 ? -1 : mention.getLastMentionedMessageId();
     }
 
-    public void clearUnreadMentionMessage() {
-        InitialMentionInfoRepository.getInstance().clearUnreadCount();
-        TeamInfoLoader.getInstance().refreshMention();
-    }
-
-    public void updateLastReadMessageId(long lastReadMentionId) {
-        Observable.defer(() -> {
-            try {
-                long teamId = TeamInfoLoader.getInstance().getTeamId();
-                return Observable.just(messageApi.get().updateMentionMarker(
-                        teamId, ReqMentionMarkerUpdate.create(lastReadMentionId)));
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        }).subscribeOn(Schedulers.io())
-                .subscribe(it -> {
-                }, Throwable::printStackTrace);
+    public void updateLastReadMessageId(long lastReadMentionId) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        messageApi.get().updateMentionMarker(
+                teamId, ReqMentionMarkerUpdate.create(lastReadMentionId));
     }
 
     public void increaseMentionUnreadCount() {

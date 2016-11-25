@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
+import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -377,7 +378,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 JandiPreference.setLastSelectedTab(position);
 
                 if (position == MypageTabInfo.INDEX) {
-                    mainTabPresenter.onInitMyPageBadge(false);
+                    mainTabPresenter.onInitMyPageBadge(true);
                     Fragment fragment = getFragment(position);
                     if (fragment != null && fragment instanceof TabFocusListener) {
                         ((TabFocusListener) fragment).onFocus();
@@ -497,19 +498,23 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     public void onEventMainThread(SocketPollEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() == MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
+    }
+
+    public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(TeamInfoChangeEvent event) {
