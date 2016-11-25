@@ -237,7 +237,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.web.InternalWebActivity_"
+            android:name=".ui.web.InternalWebActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
