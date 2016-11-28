@@ -154,6 +154,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private int navigationDirection;
     private InvitationDialogExecutor invitationDialogExecutor;
 
+    private boolean swiping = true;
+    private boolean isFirstLoadActivity = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -311,25 +314,27 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         drawerLayout.addDrawerListener(toggle);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
 
-            private boolean swiping = false;
-
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                swiping = true;
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 if (swiping) {
+                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
                     AnalyticsUtil.sendEvent(
                             AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerSwipe);
-                    swiping = false;
+                } else {
+                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
                 }
+                swiping = true;
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.Close);
+                sendAnalyticsCurrentScreen();
             }
 
             @Override
@@ -458,14 +463,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @OnClick(R.id.btn_main_tab_menu)
     @Override
     public void openNavigation() {
+        swiping = false;
         drawerLayout.openDrawer(navigationDirection);
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
     }
 
     @Override
     public void closeNavigation() {
         drawerLayout.closeDrawer(navigationDirection);
+        sendAnalyticsCurrentScreen();
     }
 
     public void onEventMainThread(NavigationBadgeEvent event) {
@@ -551,12 +556,30 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     public void onResume() {
         super.onResume();
 
+        if (isFirstLoadActivity) {
+            isFirstLoadActivity = false;
+        } else {
+            sendAnalyticsCurrentScreen();
+        }
+
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
         } else {
             offlineLayer.showOfflineView();
         }
 
+    }
+
+    private void sendAnalyticsCurrentScreen() {
+        if (viewPager.getCurrentItem() == TopicTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicsTab);
+        } else if (viewPager.getCurrentItem() == ChatTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageTab);
+        } else if (viewPager.getCurrentItem() == TeamTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TeamTab);
+        } else if (viewPager.getCurrentItem() == MypageTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MypageTab);
+        }
     }
 
     @Override

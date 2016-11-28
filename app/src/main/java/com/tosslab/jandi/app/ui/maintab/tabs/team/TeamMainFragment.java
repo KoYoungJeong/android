@@ -93,6 +93,13 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TeamTab);
+        }
+    }
 
     @Override
     public void onPause() {
@@ -146,7 +153,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
             if (SdkUtils.isMarshmallow()) {
                 if (!SdkUtils.hasPermission(activity, Manifest.permission.CALL_PHONE)
                         || !Settings.canDrawOverlays(activity)) {
-                    moveSettingBtn= true;
+                    moveSettingBtn = true;
                 } else {
                     checkBox.setVisibility(View.GONE);
                     moveSettingBtn = false;
