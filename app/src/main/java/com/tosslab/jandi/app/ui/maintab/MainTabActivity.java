@@ -351,7 +351,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
-        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() -1 , 1));
+        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() - 1, 1));
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -459,7 +459,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Override
     public void openNavigation() {
         drawerLayout.openDrawer(navigationDirection);
-
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
     }
 

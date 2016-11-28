@@ -254,19 +254,18 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int roomType) {
         if (getActivity() == null) {
             return;
         }
 
-        Completable.fromAction(() -> {
-            startActivity(Henson.with(getActivity())
-                    .gotoMainTabActivity()
-                    .build()
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        }).subscribeOn(AndroidSchedulers.mainThread())
+        Completable.fromAction(() ->
+                startActivity(Henson.with(getActivity())
+                        .gotoMainTabActivity()
+                        .build()
+                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)))
                 .delay(100, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {

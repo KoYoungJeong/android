@@ -159,6 +159,12 @@ public class MainTopicListFragment extends Fragment
         setFloatingActionMenu();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicsTab);
+    }
+
     private void initUpdatedTopicAdapter() {
         updatedTopicAdapter = new UpdatedTopicAdapter(getActivity());
         updatedTopicAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {

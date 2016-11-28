@@ -184,7 +184,7 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
     @Override
     public void onResume() {
         super.onResume();
-
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MypageTab);
         presenter.onInitializePollBadge();
     }
 

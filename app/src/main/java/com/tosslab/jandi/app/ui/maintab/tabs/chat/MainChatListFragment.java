@@ -113,7 +113,7 @@ public class MainChatListFragment extends Fragment
     public void onResume() {
         super.onResume();
         foreground = true;
-
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageTab);
         mainChatListAdapter.startAnimation();
         mainChatListPresenter.onReloadChatList();
 

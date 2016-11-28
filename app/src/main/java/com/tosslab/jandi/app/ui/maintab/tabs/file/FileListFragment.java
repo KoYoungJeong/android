@@ -186,6 +186,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     @Override
     public void onResume() {
         super.onResume();
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesTab);
         isForeground = true;
     }
 

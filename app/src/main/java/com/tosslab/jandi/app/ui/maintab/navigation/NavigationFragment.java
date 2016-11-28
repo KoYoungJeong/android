@@ -147,8 +147,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             notifyDataSetChanged();
             navigationPresenter.initBadgeCount();
         });
-
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
     }
 
     @Override
