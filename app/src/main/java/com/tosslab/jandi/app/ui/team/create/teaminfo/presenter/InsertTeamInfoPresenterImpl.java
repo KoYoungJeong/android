@@ -87,14 +87,12 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                 .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(o -> {
+                .subscribe(o -> {
                     if (mode == InsertTeamInfoFragment.MODE_FROM_MAIN_LIST) {
                         view.onMoveInsertProfilePage();
                     } else {
                         view.onMoveMainTabActivity();
                     }
-                })
-                .subscribe(o -> {
                 }, e1 -> {
                     if (e1 instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) e1;

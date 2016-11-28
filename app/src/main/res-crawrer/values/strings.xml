@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">"JANDI"</string>
+	<string name="commcon_search_result_sharedin">"Shared in"</string>
 	<string name="comment">"Comment"</string>
 	<string name="common_accthome_createteam">"CREATE"</string>
 	<string name="common_accthome_createteamguide">"You are currently not part of any team.\nTap on the 'Create a new team' button below\nto experience JANDI."</string>
@@ -80,7 +81,7 @@
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_detail_nopreview">"This file can't be previewed."</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
@@ -541,6 +542,7 @@
 	<string name="jandi_search_no_topic_room">"No matching room for the keyword."</string>
 	<string name="jandi_search_result_count">"You have <b>%s</b> message search result(s)."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%2$d</font></b> matches for <b><font color=#404040>%1$s</font></b>]]>"</string>
+	<string name="jandi_search_roomsearch">"Search rooms."</string>
 	<string name="jandi_select_character">"Select a JANDI character"</string>
 	<string name="jandi_select_direct_messages">"Select Direct Message"</string>
 	<string name="jandi_select_gallery">"Select Pictures"</string>
