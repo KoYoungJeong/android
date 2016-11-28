@@ -33,6 +33,7 @@
                 android:hint="@string/jandi_enter_your_status_message"
                 android:imeOptions="actionDone"
                 android:lineSpacingExtra="2dp"
+                android:paddingTop="0dp"
                 android:maxLength="60"
                 android:paddingBottom="16dp"
                 android:scrollHorizontally="true"
