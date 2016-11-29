@@ -123,10 +123,10 @@
         <activity
             android:name=".ui.settings.call.CallSettingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="멤버 연락처 블라블라" />
+            android:label="@string/common_calleridnotifier_settings" />
 
         <activity
-            android:name=".ui.settings.privacy.SettingPrivacyActivity_"
+            android:name=".ui.settings.privacy.SettingPrivacyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

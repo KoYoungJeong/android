@@ -20,7 +20,7 @@ import com.tosslab.jandi.app.ui.settings.main.dagger.DaggerSettingsComponent;
 import com.tosslab.jandi.app.ui.settings.main.dagger.SettingsModule;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenter;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
-import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
+import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -116,8 +116,7 @@ public class SettingsFragment extends Fragment implements SettingsPresenter.View
 
     @OnClick(R.id.vg_settings_main_passcode)
     void onPasscodeClick() {
-        SettingPrivacyActivity_.intent(getActivity())
-                .start();
+        startActivity(new Intent(getActivity(), SettingPrivacyActivity.class));
     }
 
     @OnClick(R.id.vg_settings_main_orientation)
