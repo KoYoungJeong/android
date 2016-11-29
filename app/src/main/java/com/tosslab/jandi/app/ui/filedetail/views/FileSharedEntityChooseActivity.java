@@ -2,63 +2,70 @@ package com.tosslab.jandi.app.ui.filedetail.views;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
+import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
 
-/**
- * Created by tee on 15. 9. 30..
- */
-@EActivity(R.layout.activity_file_unshare_entity_choose)
 public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
     public static final String KEY_ENTITY_ID = "entity_id";
 
     public static final int MODE_UNSHARE = 0;
     public static final int MODE_PICK = 1;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     long fileId;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     long[] sharedEntities;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     int mode = MODE_UNSHARE;
 
-    @ViewById(R.id.lv_shared_entity)
+    @Bind(R.id.lv_shared_entity)
     ListView lvSharedEntities;
 
-    @ViewById(R.id.layout_search_bar)
+    @Bind(R.id.layout_search_bar)
     Toolbar toolbar;
 
-    @Bean
     FileDetailModel fileDetailModel;
 
-    @AfterViews
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_file_unshare_entity_choose);
+        ButterKnife.bind(this);
+        Dart.inject(this);
+        fileDetailModel = FileDetailModel_.getInstance_(this);
+        initViews();
+    }
+
     void initViews() {
         setupActionbar();
         showList();
@@ -92,19 +99,14 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
     public void showList() {
         long myId = fileDetailModel.getMyId();
 
-        List<Long> sharedEntityWithoutMe = new ArrayList<>();
         List<EntitySimpleListAdapter.SimpleEntity> sharedEntities = new ArrayList<>();
 
-        Observable.create(new Observable.OnSubscribe<Long>() {
-            @Override
-            public void call(Subscriber<? super Long> subscriber) {
-                for (long sharedEntity : FileSharedEntityChooseActivity.this.sharedEntities) {
-                    subscriber.onNext(sharedEntity);
-                }
-                subscriber.onCompleted();
+        Observable.create((Subscriber<? super Long> subscriber) -> {
+            for (long sharedEntity : FileSharedEntityChooseActivity.this.sharedEntities) {
+                subscriber.onNext(sharedEntity);
             }
-        })
-                .distinct()
+            subscriber.onCompleted();
+        }).distinct()
                 .filter(integerWrapper -> integerWrapper != myId)
                 .filter(entityId -> TeamInfoLoader.getInstance().isTopic(entityId)
                         || TeamInfoLoader.getInstance().isUser(entityId))
@@ -146,7 +148,6 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
         }
     }
 
-    @UiThread
     public void showErrorToast(String message) {
         ColoredToast.showError(message);
     }

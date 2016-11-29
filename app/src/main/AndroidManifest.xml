@@ -363,7 +363,7 @@
 
 
         <activity
-            android:name=".ui.interfaces.JandiInterfaceActivity_"
+            android:name=".ui.interfaces.JandiInterfaceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -460,7 +460,7 @@
         </activity>
 
         <activity
-            android:name=".ui.filedetail.views.FileSharedEntityChooseActivity_"
+            android:name=".ui.filedetail.views.FileSharedEntityChooseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_title_cdp_to_be_unshared"
             android:screenOrientation="portrait">
