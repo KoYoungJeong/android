@@ -34,13 +34,11 @@ import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.file.dagger.DaggerFileShareComponent;
 import com.tosslab.jandi.app.ui.share.file.dagger.FileShareModule;
 import com.tosslab.jandi.app.ui.share.file.presenter.ImageSharePresenter;
 import com.tosslab.jandi.app.ui.share.file.presenter.ImageSharePresenterImpl;
-import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
@@ -115,6 +113,12 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     ScrollViewHelper scrollViewHelper;
 
     ProgressWheel progressWheel;
+
+    public static FileShareFragment create(Context context, String uri) {
+        Bundle bundle = new Bundle();
+        bundle.putString("uri", uri);
+        return (FileShareFragment) Fragment.instantiate(context, FileShareFragment.class.getName(), bundle);
+    }
 
     @Nullable
     @Override
@@ -270,7 +274,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         }
     }
 
-
     @Override
     public void onPause() {
         if (mentionControlViewModel != null) {
@@ -417,11 +420,5 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             searchedItemVO.setType(event.getType());
             mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
         }
-    }
-
-    public static FileShareFragment create(Context context, String uri) {
-        Bundle bundle = new Bundle();
-        bundle.putString("uri", uri);
-        return (FileShareFragment) Fragment.instantiate(context, FileShareFragment.class.getName(), bundle);
     }
 }

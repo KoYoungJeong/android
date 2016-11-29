@@ -27,14 +27,10 @@ import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.text.dagger.DaggerTextShareComponent;
 import com.tosslab.jandi.app.ui.share.text.dagger.TextShareModule;
 import com.tosslab.jandi.app.ui.share.text.presenter.TextSharePresenter;
-import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
-import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -84,6 +80,13 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     MentionControlViewModel mentionControlViewModel;
 
     ProgressWheel progressWheel;
+
+    public static TextShareFragment create(Context context, String subject, String text) {
+        Bundle bundle = new Bundle();
+        bundle.putString("subject", subject);
+        bundle.putString("text", text);
+        return (TextShareFragment) Fragment.instantiate(context, TextShareFragment.class.getName(), bundle);
+    }
 
     @Nullable
     @Override
@@ -150,7 +153,6 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
             mentionControlViewModel.registClipboardListener();
         }
     }
-
 
     @Override
     public void onPause() {
@@ -314,12 +316,5 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
             searchedItemVO.setType(event.getType());
             mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
         }
-    }
-
-    public static TextShareFragment create(Context context, String subject, String text) {
-        Bundle bundle = new Bundle();
-        bundle.putString("subject", subject);
-        bundle.putString("text", text);
-        return (TextShareFragment) Fragment.instantiate(context, TextShareFragment.class.getName(), bundle);
     }
 }
