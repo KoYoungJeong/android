@@ -4,14 +4,21 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
@@ -19,16 +26,15 @@ import com.tosslab.jandi.app.utils.OnSwipeExitListener;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import uk.co.senab.photoview.PhotoView;
@@ -36,36 +42,80 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 9..
  */
-@EFragment(R.layout.fragment_photo_view)
 public class PhotoViewFragment extends Fragment {
     public static final String TAG = PhotoViewFragment.class.getSimpleName();
 
     public static final int EXTRA_MODE_SINGLE = 0x01;
     public static final int EXTRA_MODE_CAROUSEL = 0x02;
 
-    @FragmentArg
+    private static final long MB_1 = 1024 * 1024;
+
+    @Nullable
+    @InjectExtra
     String thumbUrl;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     String originalUrl;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     String imageType;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     String extensions;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
+    long size = -1;
+    @Nullable
+    @InjectExtra
     int mode; // only for use Sprinklr
 
-    @ViewById(R.id.pv_photoview)
+    @Bind(R.id.pv_photoview)
     PhotoView photoView;
-    @ViewById(R.id.progress_photoview)
+    @Bind(R.id.progress_photoview)
     CircleProgressBar progressBar;
-    @ViewById(R.id.tv_photoview_percentage)
+    @Bind(R.id.tv_photoview_percentage)
     TextView tvPercentage;
-    @ViewById(R.id.vg_photoview_progress)
-    LinearLayout vgProgress;
-    @ViewById(R.id.vg_photoview_tap_to_view)
+    @Bind(R.id.vg_photoview_progress)
+    RelativeLayout vgProgress;
+    @Bind(R.id.vg_photoview_tap_to_view)
     View btnTapToViewOriginal;
+
+    @Bind(R.id.tv_photoview_play_size)
+    TextView tvPlayGif;
+
+    @Bind(R.id.vg_photoview_play)
+    View vgPlayGif;
+
+
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
     private OnSwipeExitListener onSwipeExitListener;
+
+    public static PhotoViewFragment create(String thumbUrl,
+                                           String originalUrl,
+                                           String imageType,
+                                           String extensions,
+                                           long size,
+                                           int mode) {
+
+        Bundle bundle = new Bundle();
+        bundle.putString("thumbUrl", thumbUrl);
+        bundle.putString("originalUrl", originalUrl);
+        bundle.putString("imageType", imageType);
+        bundle.putString("extensions", extensions);
+        bundle.putLong("size", size);
+        bundle.putInt("mode", mode);
+        PhotoViewFragment fragment = new PhotoViewFragment();
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_photo_view, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -75,7 +125,17 @@ public class PhotoViewFragment extends Fragment {
         }
     }
 
-    @AfterViews
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            Dart.inject(this, arguments);
+        }
+        initView();
+    }
+
+
     void initView() {
         setupProgress();
 
@@ -109,7 +169,37 @@ public class PhotoViewFragment extends Fragment {
             return;
         }
 
-        if (!TextUtils.isEmpty(thumbUrl)) {
+        if (!TextUtils.isEmpty(imageType)
+                && imageType.toLowerCase().contains("gif")
+                && size > 0) {
+
+            // gif 인 경우 1MB 이상은 플레이 버튼 누르도록 함
+            if (size < MB_1) {
+                loadImage(Uri.parse(originalUrl));
+            } else {
+                hideProgress();
+                ImageLoader.newInstance()
+                        // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                        .blockNetworking(true)
+                        .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                            @Override
+                            public boolean onException(Exception e, Uri model,
+                                                       Target<GlideDrawable> target,
+                                                       boolean isFirstResource) {
+                                // cache 가 되어 있지 않음
+                                vgPlayGif.setVisibility(View.VISIBLE);
+                                tvPlayGif.setText(getExt(imageType).toUpperCase() + ", " + FileUtil.formatFileSize(size));
+                                loadImage(Uri.parse(thumbUrl));
+                                return true;
+                            }
+                        })
+                        .fragment(this)
+                        .uri(Uri.parse(originalUrl))
+                        .into(photoView);
+            }
+
+        } else if (!TextUtils.isEmpty(thumbUrl)) {
 
             loadImage(Uri.parse(thumbUrl));
 
@@ -153,6 +243,24 @@ public class PhotoViewFragment extends Fragment {
         }
     }
 
+    @NonNull
+    private String getExt(String imageType) {
+        if (!TextUtils.isEmpty(imageType)) {
+            int index = imageType.indexOf("/");
+            if (index >= 0 && index < imageType.length()) {
+                return imageType.substring(index + 1);
+            }
+        }
+        return "";
+    }
+
+    @OnClick(R.id.btn_photoview_play)
+    void onPlayGifClick() {
+        vgPlayGif.setVisibility(View.GONE);
+        loadImage(Uri.parse(originalUrl));
+
+    }
+
     private void showTapToView(Uri originalUri) {
         // PhotoView 그려진 이미지(Drawable)이 없으면 ViewTapListener 가 동작하지 않는다.
         photoView.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -180,30 +288,18 @@ public class PhotoViewFragment extends Fragment {
         progressBar.setMax(100);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void updateProgress(float progress) {
-        if (progressBar.getProgress() == 100) {
-            return;
-        }
-
-        int percentage = (int) (progress * 100);
-        percentage = Math.min(percentage, 99);
-
-        progressBar.setProgress(percentage);
-        tvPercentage.setText(percentage + "%");
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void hideProgress() {
-        if (vgProgress.getVisibility() == View.VISIBLE) {
-            progressBar.setProgress(100);
-            tvPercentage.setText(100 + "%");
-        }
-        vgProgress.setVisibility(View.GONE);
+        Completable.fromAction(() -> {
+
+            if (vgProgress.getVisibility() == View.VISIBLE) {
+                progressBar.setProgress(100);
+                tvPercentage.setText("100 %");
+            }
+            vgProgress.setVisibility(View.GONE);
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void loadImage(Uri uri) {
         ImageLoader.newInstance()
                 .uri(uri)
@@ -219,6 +315,9 @@ public class PhotoViewFragment extends Fragment {
                 .intoWithProgress(photoView, () -> Observable.just(0)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(it -> {
+                                    if (vgProgress.getVisibility() != View.VISIBLE) {
+                                        vgProgress.setVisibility(View.VISIBLE);
+                                    }
                                     progressBar.setMax(100);
                                     progressBar.setProgress(it);
                                     tvPercentage.setText("0 %");
@@ -234,9 +333,10 @@ public class PhotoViewFragment extends Fragment {
                         this::hideProgress);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showError() {
-        ImageLoader.loadFromResources(photoView, R.drawable.file_noimage);
+        Completable.fromAction(() -> {
+            ImageLoader.loadFromResources(photoView, R.drawable.file_noimage);
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     public void setOnCarouselImageClickListener(

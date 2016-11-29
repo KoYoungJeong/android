@@ -161,12 +161,6 @@
             android:theme="@style/JandiTheme.CarouselViewer" />
 
         <activity
-            android:name=".ui.photo.PhotoViewActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.ActionBarOverlay" />
-
-        <activity
             android:name=".ui.term.TermActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />

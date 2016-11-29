@@ -211,6 +211,10 @@ public class ResSearch {
         private String icon;
         private String ext;
         private int sharedCount;
+        private String thumbnailUrl;
+        private String smallThumbnailUrl;
+        private String mediumThumbnailUrl;
+        private String largeThumbnailUrl;
 
         public String getFileUrl() {
             return fileUrl;
@@ -298,6 +302,42 @@ public class ResSearch {
 
         public void setExt(String ext) {
             this.ext = ext;
+        }
+
+        public String getLargeThumbnailUrl() {
+            return largeThumbnailUrl;
+        }
+
+        public File setLargeThumbnailUrl(String largeThumbnailUrl) {
+            this.largeThumbnailUrl = largeThumbnailUrl;
+            return this;
+        }
+
+        public String getMediumThumbnailUrl() {
+            return mediumThumbnailUrl;
+        }
+
+        public File setMediumThumbnailUrl(String mediumThumbnailUrl) {
+            this.mediumThumbnailUrl = mediumThumbnailUrl;
+            return this;
+        }
+
+        public String getSmallThumbnailUrl() {
+            return smallThumbnailUrl;
+        }
+
+        public File setSmallThumbnailUrl(String smallThumbnailUrl) {
+            this.smallThumbnailUrl = smallThumbnailUrl;
+            return this;
+        }
+
+        public String getThumbnailUrl() {
+            return thumbnailUrl;
+        }
+
+        public File setThumbnailUrl(String thumbnailUrl) {
+            this.thumbnailUrl = thumbnailUrl;
+            return this;
         }
     }
 

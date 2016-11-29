@@ -45,7 +45,7 @@ public class StarredMessageProfileBinder {
 
         } else {
             if (isBot) {
-                Uri uri = Uri.parse(ImageUtil.getLargeProfileUrl(writer.getPhotoUrl()));
+                Uri uri = Uri.parse(writer.getPhotoUrl());
                 ImageLoader.newInstance()
                         .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
                         .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)

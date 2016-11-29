@@ -220,7 +220,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 String fileType = content.icon;
                 String fileUrl = content.fileUrl;
                 String thumbnailUrl =
-                        ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                        ImageUtil.getThumbnailUrl(content);
                 ImageUtil.setResourceIconOrLoadImageForComment(
                         ivFileImage, vFileIconBorder,
                         fileUrl, thumbnailUrl,

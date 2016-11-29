@@ -292,7 +292,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
                         String fileType = content.icon;
                         String fileUrl = content.fileUrl;
                         String thumbnailUrl =
-                                ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                                ImageUtil.getThumbnailUrl(content);
                         ImageUtil.setResourceIconOrLoadImageForComment(
                                 ivMessageCommonFile, vFileIconBorder,
                                 fileUrl, thumbnailUrl,
@@ -311,7 +311,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
                     String fileType = content.icon;
                     String fileUrl = content.fileUrl;
                     String thumbnailUrl =
-                            ImageUtil.getThumbnailUrl(content.extraInfo, ImageUtil.Thumbnails.SMALL);
+                            ImageUtil.getThumbnailUrl(content);
                     ImageUtil.setResourceIconOrLoadImageForComment(
                             ivMessageCommonFile, vFileIconBorder,
                             fileUrl, thumbnailUrl,
@@ -320,9 +320,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
                     MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
                     if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {
                         ivMessageCommonFile.setOnClickListener(v -> {
-                            String imageUrl =
-                                    ImageUtil.getThumbnailUrlOrOriginal(
-                                            content, ImageUtil.Thumbnails.ORIGINAL);
+                            String imageUrl = ImageUtil.getOriginalUrl(content);
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl));
                             context.startActivity(intent);
                         });

@@ -55,7 +55,6 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
@@ -204,7 +203,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
 
         Member member = TeamInfoLoader.getInstance().getMember(memberId);
-        final String profileImageUrlLarge = member.getPhotoUrl();
+        final String profileImageUrl = member.getPhotoUrl();
 
         hasChangedProfileImage = profileLoader.hasChangedProfileImage(member);
 
@@ -214,7 +213,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             profileLoader.setBlurBackgroundColor(vProfileImageLargeOverlay);
         }
 
-        initLargeImageSize(profileImageUrlLarge);
+        initLargeImageSize(profileImageUrl);
 
         boolean isDisableUser = !profileLoader.isEnabled(member);
         vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
@@ -223,7 +222,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         profileLoader.setDescription(tvProfileDescription, member);
         profileLoader.setProfileInfo(vgProfileTeamInfo, tvProfileDivision, tvProfilePosition, member);
         profileLoader.loadSmallThumb(ivProfileImageSmall, member);
-        profileLoader.loadFullThumb(ivProfileImageFull, profileImageUrlLarge);
+        profileLoader.loadFullThumb(ivProfileImageFull, profileImageUrl);
 
         ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
             ivProfileImageFull.setScale(1.0f, true);
@@ -356,7 +355,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                 .transformation(new BlurTransformation(getApplicationContext(), 10))
-                .uri(Uri.parse(ImageUtil.getLargeProfileUrl(profileImageUrlLarge)))
+                .uri(Uri.parse(profileImageUrlLarge))
                 .into(ivProfileImageLarge);
     }
 

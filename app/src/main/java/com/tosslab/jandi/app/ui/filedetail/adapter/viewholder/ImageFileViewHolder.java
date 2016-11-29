@@ -56,8 +56,7 @@ public class ImageFileViewHolder extends FileViewHolder {
         final ResMessages.FileContent content = fileMessage.content;
 
         boolean hasImageUrl = ImageUtil.hasImageUrl(content);
-        final String originalUrl =
-                ImageUtil.getThumbnailUrlOrOriginal(content, ImageUtil.Thumbnails.ORIGINAL);
+        final String originalUrl = ImageUtil.getOriginalUrl(content);
 
         if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.ext)) {
             ivFileThumb.setVisibility(View.GONE);

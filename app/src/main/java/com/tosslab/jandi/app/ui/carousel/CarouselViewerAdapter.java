@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.photo.PhotoViewFragment;
-import com.tosslab.jandi.app.ui.photo.PhotoViewFragment_;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,23 +43,21 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
         if (weakHashMap.containsKey(fileLinkId)) {
             fragment = weakHashMap.get(fileLinkId);
         } else {
+            int mode;
             if (getCount() == 1) {
-                fragment = PhotoViewFragment_.builder()
-                        .imageType(fileInfo.getFileType())
-                        .originalUrl(fileInfo.getFileOriginalUrl())
-                        .thumbUrl(fileInfo.getFileThumbUrl())
-                        .extensions(fileInfo.getExt())
-                        .mode(PhotoViewFragment.EXTRA_MODE_SINGLE)
-                        .build();
+                mode = PhotoViewFragment.EXTRA_MODE_SINGLE;
+
             } else {
-                fragment = PhotoViewFragment_.builder()
-                        .imageType(fileInfo.getFileType())
-                        .originalUrl(fileInfo.getFileOriginalUrl())
-                        .thumbUrl(fileInfo.getFileThumbUrl())
-                        .extensions(fileInfo.getExt())
-                        .mode(PhotoViewFragment.EXTRA_MODE_CAROUSEL)
-                        .build();
+                mode = PhotoViewFragment.EXTRA_MODE_CAROUSEL;
             }
+
+            fragment = PhotoViewFragment.create(fileInfo.getFileThumbUrl(),
+                    fileInfo.getFileOriginalUrl(),
+                    fileInfo.getFileType(),
+                    fileInfo.getExt(),
+                    fileInfo.getSize(),
+                    mode);
+
             weakHashMap.put(fileLinkId, fragment);
 
         }
