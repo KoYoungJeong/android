@@ -282,16 +282,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     public void moveRoom(long teamId, long roomId) {
 
         Completable.fromAction(() -> {
-        })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    if (getActivity() == null) {
-                        return;
-                    }
-                    UploadNotificationActivity.startActivity(getActivity(), teamId, roomId);
+            if (getActivity() == null) {
+                return;
+            }
+            UploadNotificationActivity.startActivity(getActivity(), teamId, roomId);
 
-                    getActivity().finish();
-                });
+            getActivity().finish();
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     @Override

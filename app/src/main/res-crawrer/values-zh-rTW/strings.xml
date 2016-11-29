@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">"JANDI"</string>
+	<string name="commcon_search_result_sharedin">"分享在"</string>
 	<string name="comment">"留言"</string>
 	<string name="common_accthome_createteam">"建立新的團隊"</string>
 	<string name="common_accthome_createteamguide">"尚未加入任何團隊\n點擊以下的「建立新的團隊」\n開始體驗 JANDI 的高效率團隊通訊。"</string>
@@ -80,7 +81,7 @@
 	<string name="err_team_creation_failed">"電子郵件無法送出"</string>
 	<string name="err_unshare">"檔案無法取消分享"</string>
 	<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"团队未完成建立"</string>
 	<string name="file_detail_nopreview">"此檔案無法預覽"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
@@ -540,6 +541,7 @@
 	<string name="jandi_search_no_topic_room">"無相關資料"</string>
 	<string name="jandi_search_result_count">"總共 <b>%s</b> 筆搜尋結果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>與 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
+	<string name="jandi_search_roomsearch">"搜尋對話"</string>
 	<string name="jandi_select_character">"選擇人物"</string>
 	<string name="jandi_select_direct_messages">"選擇直接傳訊"</string>
 	<string name="jandi_select_gallery">"選擇照片"</string>

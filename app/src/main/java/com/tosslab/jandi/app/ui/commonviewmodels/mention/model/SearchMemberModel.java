@@ -64,6 +64,7 @@ public class SearchMemberModel {
                 .flatMap(topicId -> Observable.from(teamInfoLoader.getTopic(topicId).getMembers()))
                 .filter(it -> it != myId)
                 .distinct()
+                .filter(memberId -> TeamInfoLoader.getInstance().isUser(memberId))
                 .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
                 .filter(it -> !TextUtils.isEmpty(it.getName()))
                 .map(entity -> new SearchedItemVO()

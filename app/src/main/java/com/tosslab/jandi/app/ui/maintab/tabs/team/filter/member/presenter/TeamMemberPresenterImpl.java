@@ -51,6 +51,8 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
     private ToggleCollector toggledIds;
 
+    private boolean isFirstQuery = true;
+
     @Inject
     public TeamMemberPresenterImpl(View view,
                                    TeamMemberModel teamMemberModel,
@@ -119,13 +121,16 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         teamMemberDataModel.addAll(users);
                         view.dismissEmptyView();
                     } else {
-                        if(selectMode){
+                        if (isFirstQuery && selectMode) {
                             view.showToastNotAnyInvitationMembers();
-                        }else {
+                        } else {
                             view.showEmptyView(filterSubject.getValue());
                         }
                     }
                     view.refreshDataView();
+                    if (isFirstQuery) {
+                        isFirstQuery = false;
+                    }
                 }, Throwable::printStackTrace);
 
     }

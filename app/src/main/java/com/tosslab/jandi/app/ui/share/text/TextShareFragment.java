@@ -18,12 +18,12 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
-import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -32,6 +32,9 @@ import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.text.dagger.DaggerTextShareComponent;
 import com.tosslab.jandi.app.ui.share.text.dagger.TextShareModule;
 import com.tosslab.jandi.app.ui.share.text.presenter.TextSharePresenter;
+import com.tosslab.jandi.app.ui.intro.IntroActivity;
+import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
+import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -53,6 +56,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -277,21 +281,15 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int roomType) {
-        if (getActivity() == null) {
-            return;
-        }
 
-        startActivity(Henson.with(getActivity())
-                .gotoMainTabActivity()
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        MessageListV2Activity_.intent(getActivity())
-                .teamId(teamId)
-                .roomId(roomId)
-                .entityId(entityId)
-                .entityType(roomType)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+        Completable.fromAction(() -> {
+            if (getActivity() == null) {
+                return;
+            }
+            UploadNotificationActivity.startActivity(getActivity(), teamId, entityId);
+            getActivity().finish();
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     @Override
