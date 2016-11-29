@@ -115,7 +115,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.settings.push.SettingPushActivity_"
+            android:name=".ui.settings.push.SettingPushActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_setting_push"
             android:screenOrientation="portrait" />

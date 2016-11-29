@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
@@ -24,7 +23,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
-import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -141,10 +140,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     private void movePushSettingActivity() {
         SettingsActivity.startActivity(getActivity());
-        SettingPushActivity_
-                .intent(JandiApplication.getContext())
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .start();
+        startActivity(new Intent(getActivity(), SettingPushActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     public void setStarredButtonText(boolean isStarred) {

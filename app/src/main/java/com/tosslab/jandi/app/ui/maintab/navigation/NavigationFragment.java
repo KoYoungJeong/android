@@ -52,7 +52,7 @@ import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity;
-import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;
@@ -352,9 +352,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     private void moveToSetUpNotification() {
-        SettingPushActivity_
-                .intent(getActivity())
-                .start();
+        startActivity(new Intent(getActivity(), SettingPushActivity.class));
     }
 
     @SuppressLint("CommitPrefEdits")
