@@ -26,7 +26,7 @@
 
     <CheckBox
         android:id="@+id/tv_view_settings_body_check_checkbox"
-        style="@style/JandiSettings.Body.Check"
+        android:theme="@style/Jandi.Default.CheckBox"
         android:background="@null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

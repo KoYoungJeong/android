@@ -94,8 +94,8 @@
                 android:layout_alignLeft="@+id/vg_entity_listitem_name"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@+id/vg_entity_listitem_name"
-                android:maxLines="1"
                 android:layout_marginTop="7dp"
+                android:maxLines="1"
                 android:singleLine="true"
                 android:text="So Good"
                 android:textColor="@color/jandi_text_light"
@@ -156,9 +156,10 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="9dp"
                 android:layout_marginRight="9dp"
-                android:focusableInTouchMode="false"
+                android:clickable="false"
                 android:focusable="false"
-                android:clickable="false" />
+                android:focusableInTouchMode="false"
+                android:theme="@style/Jandi.Default.CheckBox" />
 
         </LinearLayout>
     </LinearLayout>
