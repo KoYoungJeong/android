@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 
 import java.sql.SQLException;
@@ -44,9 +45,16 @@ public class FolderRepository extends RealmRepository {
     public boolean addFolder(long teamId, Folder folder) {
         return execute((realm) -> {
 
+            InitialInfo initialInfo = realm.where(InitialInfo.class)
+                    .equalTo("teamId", teamId)
+                    .findFirst();
+
             folder.set_id(teamId + "_" + folder.getId());
             folder.setTeamId(teamId);
-            realm.executeTransaction(realm1 -> realm.insertOrUpdate(folder));
+
+            realm.executeTransaction(realm1 -> {
+                initialInfo.getFolders().add(folder);
+            });
             return true;
         });
     }
