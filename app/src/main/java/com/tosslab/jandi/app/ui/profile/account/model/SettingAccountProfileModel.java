@@ -39,7 +39,8 @@ public class SettingAccountProfileModel {
     }
 
     public String getName() {
-        return AccountRepository.getRepository().getAccountInfo().getName();
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+        return accountInfo != null ? accountInfo.getName() : "";
     }
 
     public String getPrimaryEmail() {

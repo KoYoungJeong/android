@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.model;
 
+import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.androidannotations.annotations.EBean;
@@ -49,8 +50,14 @@ public class FileUploadModel {
     }
 
     public boolean isUploadLimited() {
-        boolean isLimited = TeamInfoLoader.getInstance().getTeamPlan().isExceedFile();
-        return isLimited;
+        TeamPlan teamPlan = TeamInfoLoader.getInstance().getTeamPlan();
+        if (teamPlan != null) {
+
+            boolean isLimited = teamPlan.isExceedFile();
+            return isLimited;
+        } else {
+            return true;
+        }
 
     }
 }

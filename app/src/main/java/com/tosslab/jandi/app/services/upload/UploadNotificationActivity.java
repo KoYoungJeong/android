@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.services.upload;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +38,9 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
         intent.putExtra(EXTRA_ENTITY_ID, entityId);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
+        if (context instanceof Activity) {
+            ((Activity) context).overridePendingTransition(0, 0);
+        }
     }
 
     public static Intent getIntent(Context context, long teamId, long entityId) {
@@ -71,6 +75,15 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
 
         Observable
                 .defer(() -> Observable.just(jandiInterfaceModel.setupSelectedTeam(teamId)))
+                .doOnNext(success -> {
+                    try {
+                        if (success && TeamInfoLoader.getInstance().getTeamId() != teamId) {
+                            jandiInterfaceModel.refreshTeamInfo();
+                        }
+                    } catch (Exception e) {
+                        jandiInterfaceModel.refreshTeamInfo();
+                    }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(success -> {
@@ -113,6 +126,7 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
                 .isFromPush(false)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
                 .start();
+        overridePendingTransition(0, 0);
 
         finish();
 
@@ -120,6 +134,7 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
 
     private void moveToIntro() {
         IntroActivity.startActivity(UploadNotificationActivity.this, false);
+        overridePendingTransition(0, 0);
         finish();
     }
 

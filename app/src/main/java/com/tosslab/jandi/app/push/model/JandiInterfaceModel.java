@@ -88,14 +88,14 @@ public class JandiInterfaceModel {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             MessageRepository.getRepository().deleteAllLink();
 
-            return getEntityInfo();
+            return refreshTeamInfo();
 
         } else {
             return true;
         }
     }
 
-    boolean getEntityInfo() {
+    public boolean refreshTeamInfo() {
         try {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
@@ -125,12 +125,12 @@ public class JandiInterfaceModel {
         try {
             TeamInfoLoader.getInstance().getMyId();
         } catch (Exception e) {
-            getEntityInfo();
+            refreshTeamInfo();
         }
 
 
         if (!isKnowRoomType(roomType)) {
-            getEntityInfo();
+            refreshTeamInfo();
 
             if (hasEntity(roomId)) {
                 if (!TeamInfoLoader.getInstance().isUser(roomId)) {
@@ -141,15 +141,14 @@ public class JandiInterfaceModel {
             } else {
                 entityId = -1;
             }
-        }
-
+        } else
 
         if (!isChatType(roomType)) {
             // Room Type 은 RoomId = EntityId
             if (hasEntity(roomId)) {
                 entityId = roomId;
             } else {
-                getEntityInfo();
+                refreshTeamInfo();
                 if (hasEntity(roomId)) {
                     entityId = roomId;
                 } else {
@@ -160,7 +159,7 @@ public class JandiInterfaceModel {
             long chatMemberId = getChatMemberId(roomId);
 
             if (!hasEntity(chatMemberId)) {
-                getEntityInfo();
+                refreshTeamInfo();
             }
             entityId = chatMemberId;
         }

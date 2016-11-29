@@ -1236,7 +1236,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         ReqSendMessageV3 reqSendMessageV3 = null;
         if (!TextUtils.isEmpty(message)) {
             reqSendMessageV3 =
-                    (!isInDirectMessage() && mentionControlViewModel.hasMentionMember())
+                    (!isInDirectMessage()
+                            && mentionControlViewModel != null
+                            && mentionControlViewModel.hasMentionMember())
                             ? new ReqSendMessageV3(message, mentions)
                             : new ReqSendMessageV3(message, new ArrayList<>());
         }
