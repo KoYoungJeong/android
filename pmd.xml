@@ -9,6 +9,10 @@
 
     <!-- It's external library source -->
     <exclude-pattern>.*/PagerSlidingTabStrip.java</exclude-pattern>
+    <exclude-pattern>.*/Simple.*Listener.java</exclude-pattern>
+    <exclude-pattern>.*/StringCompareUtil.java</exclude-pattern>
+    <exclude-pattern>.*/Base.*ViewHolder.java</exclude-pattern>
+    <exclude-pattern>.*/AbstractExpandableItemAdapter.java</exclude-pattern>
 
     <rule ref="rulesets/java/basic.xml">
         <exclude name="AvoidUsingHardCodedIP" />
