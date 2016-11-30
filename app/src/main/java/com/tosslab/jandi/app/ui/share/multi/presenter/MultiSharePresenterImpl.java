@@ -117,7 +117,6 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         }
                     }
                     return fileShareData;
-
                 })
                 .observeOn(Schedulers.computation())
                 .doOnNext(shareData -> comments.add(""))
@@ -128,19 +127,15 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     shareAdapterDataModel.addAll(shareDatas);
                 }, t -> view.moveIntro(), () -> {
                     view.dismissProgress();
-                    ShareData item = shareAdapterDataModel.getShareData(0);
+                    FileShareData item = (FileShareData) shareAdapterDataModel.getShareData(0);
                     if (item == null) {
                         return;
                     }
-                    String fileName = getFileName(item.getData());
+                    String fileName = item.getFileName();
                     view.setFileTitle(fileName);
                     view.updateFiles(shareAdapterDataModel.size());
                 });
 
-    }
-
-    private String getFileName(String data) {
-        return new File(data).getName();
     }
 
     @Override
@@ -153,7 +148,6 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void startShare() {
-
         if (shareTarget.getTeamId() <= 0 || shareTarget.getRoomId() <= 0) {
             view.showSelectRoomToast();
             return;
@@ -166,7 +160,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 map -> {
                     Observable.range(0, shareAdapterDataModel.size())
                             .subscribe(idx -> {
-                                ShareData item = shareAdapterDataModel.getShareData(idx);
+                                FileShareData item = (FileShareData) shareAdapterDataModel.getShareData(idx);
                                 if (item == null) {
                                     return;
                                 }
@@ -174,7 +168,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                                 List<MentionObject> mentions = mentionInfoObject.getMentions();
                                 String message = mentionInfoObject.getMessage();
                                 Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
-                                FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
+                                FileUploadDTO object = new FileUploadDTO(item.getData(), item.getFileName(), shareTarget.getRoomId(), stringListPair.first);
                                 object.setTeamId(shareTarget.getTeamId());
                                 object.setMentions(stringListPair.second);
                                 FileUploadManager.getInstance().add(object);
@@ -187,11 +181,11 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void onFilePageChanged(int position, String comment) {
-        ShareData item = shareAdapterDataModel.getShareData(position);
+        FileShareData item = (FileShareData) shareAdapterDataModel.getShareData(position);
         if (item == null) {
             return;
         }
-        String fileName = getFileName(item.getData());
+        String fileName = item.getFileName();
         comments.set(lastPageIndex, comment);
         view.setCommentText(comments.get(position));
         view.setFileTitle(fileName);
@@ -208,4 +202,17 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
             comments.set(lastPageIndex, comment);
         }
     }
+
+    @Override
+    public void changeFileName(int position, String fileName) {
+        FileShareData fileShareData = (FileShareData) shareAdapterDataModel.getShareData(position);
+        fileShareData.setFileName(fileName);
+    }
+
+    @Override
+    public String getFileName(int position) {
+        FileShareData fileShareData = (FileShareData) shareAdapterDataModel.getShareData(position);
+        return fileShareData.getFileName();
+    }
+
 }

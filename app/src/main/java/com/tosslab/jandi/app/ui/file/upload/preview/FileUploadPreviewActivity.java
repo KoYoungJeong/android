@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.file.upload.preview;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -8,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Spannable;
@@ -310,6 +310,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         String filename = fileUploadPresenter.getFileName(vpFilePreview.getCurrentItem());
         String extension = getFileExtension(filename);
         String filenameWithoutExtension = filename.replaceAll(extension, "");
+        input.setHint(getString(R.string.jandi_name));
         input.setText(filenameWithoutExtension);
         input.setSelection(filenameWithoutExtension.length());
 
@@ -332,7 +333,18 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().trim().length() <= 0 || TextUtils.equals(filenameWithoutExtension, s)) {
+                String name = s.toString();
+                if (name.trim().length() <= 0
+                        || TextUtils.equals(filenameWithoutExtension, s)
+                        || name.contains("\\")
+                        || name.contains("/")
+                        || name.contains(":")
+                        || name.contains("*")
+                        || name.contains("?")
+                        || name.contains("\"")
+                        || name.contains("<")
+                        || name.contains(">")
+                        || name.contains("|")) {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 } else {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);

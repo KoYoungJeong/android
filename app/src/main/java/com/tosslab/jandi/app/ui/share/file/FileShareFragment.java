@@ -10,15 +10,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -50,6 +57,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -209,7 +217,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Override
     public void bindImage(File file) {
         final String fileName = file.getName();
-        tvTitle.setText(fileName);
+        setFileName(file.getName());
         if (FileExtensionsUtil.getExtensions(fileName) == FileExtensionsUtil.Extensions.IMAGE) {
             vgFileIcon.setVisibility(View.GONE);
             ivSharePhoto.setVisibility(View.VISIBLE);
@@ -421,4 +429,83 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
         }
     }
+
+    @OnClick(R.id.tv_file_rename_button)
+    void onClickFileRename() {
+        showRenameTitleDialog();
+    }
+
+    private void showRenameTitleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+
+        RelativeLayout vgInputEditText = (RelativeLayout) LayoutInflater
+                .from(getActivity()).inflate(R.layout.dialog_fragment_input_text, null);
+
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_dialog_input_text);
+        input.setHint(getString(R.string.jandi_name));
+        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.common_fileupload_rename_description);
+        String filename = tvTitle.getText().toString();
+        String extension = getFileExtension(filename);
+        String filenameWithoutExtension = filename.replaceAll(extension, "");
+        input.setText(filenameWithoutExtension);
+        input.setSelection(filenameWithoutExtension.length());
+
+        builder.setView(vgInputEditText)
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    String renamedFileName = input.getText().toString() + extension;
+                    setFileName(renamedFileName);
+                    tvTitle.requestFocus();
+                })
+                .setNegativeButton(getString(R.string.jandi_cancel), null);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        input.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String name = s.toString();
+                if (name.trim().length() <= 0
+                        || TextUtils.equals(filenameWithoutExtension, s)
+                        || name.contains("\\")
+                        || name.contains("/")
+                        || name.contains(":")
+                        || name.contains("*")
+                        || name.contains("?")
+                        || name.contains("\"")
+                        || name.contains("<")
+                        || name.contains(">")
+                        || name.contains("|")) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+    }
+
+    public void setFileName(String fileName) {
+        String extension = getFileExtension(fileName);
+        int lastIndexOf = fileName.lastIndexOf(extension) + 1;
+        final SpannableStringBuilder filenameSp = new SpannableStringBuilder(fileName);
+
+        filenameSp.setSpan(new ForegroundColorSpan(0xff333333),
+                lastIndexOf, lastIndexOf + extension.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tvTitle.setText(filenameSp);
+    }
+
+    private String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i);
+        }
+        return extension;
+    }
+
 }
