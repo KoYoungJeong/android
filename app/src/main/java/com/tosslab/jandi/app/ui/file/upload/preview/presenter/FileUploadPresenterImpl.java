@@ -141,4 +141,15 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
         view.setComment(fileUploadVO.getComment());
         view.setEntityInfo(fileUploadModel.getEntityString(fileUploadVO.getEntity()));
     }
+
+    @Override
+    public String getFileName(int position) {
+        return fileUploadVOs.get(position).getFileName();
+    }
+
+    @Override
+    public void changeFileName(int position, String fileName) {
+        fileUploadVOs.get(position).setFileName(fileName);
+    }
+
 }

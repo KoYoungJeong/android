@@ -29,6 +29,10 @@ public interface FileUploadPresenter {
 
     void onMultiFileUpload(MentionControlViewModel mentionControlViewModel);
 
+    String getFileName(int currentItem);
+
+    void changeFileName(int position, String fileName);
+
     interface View {
 
         void initViewPager(List<String> realFilePathList);

@@ -21,6 +21,8 @@
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_createteam_welcome">"Welcome!"</string>
 	<string name="common_creatteam_done">"Done"</string>
+	<string name="common_fileupload_rename">"Rename"</string>
+	<string name="common_fileupload_rename_description">"Rename"</string>
 	<string name="common_hamburger_invited">"Invited"</string>
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>

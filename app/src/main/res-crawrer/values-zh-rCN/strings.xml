@@ -21,6 +21,8 @@
 	<string name="common_createteam_toaccthome">"前往帐户首页"</string>
 	<string name="common_createteam_welcome">"欢迎！"</string>
 	<string name="common_creatteam_done">"确认"</string>
+	<string name="common_fileupload_rename">"更改"</string>
+	<string name="common_fileupload_rename_description">"重新命名"</string>
 	<string name="common_hamburger_invited">"邀请"</string>
 	<string name="common_hamburger_manageacct">"JANDI 账户设置"</string>
 	<string name="common_hamburger_teamadmin">"团队管理员"</string>
