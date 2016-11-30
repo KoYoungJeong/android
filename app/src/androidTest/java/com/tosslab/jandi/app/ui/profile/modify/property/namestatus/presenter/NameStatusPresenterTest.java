@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.dagger.NameSt
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -71,6 +72,7 @@ public class NameStatusPresenterTest {
         assertThat(presenter.subscription.isUnsubscribed()).isTrue();
     }
 
+    @Ignore
     @Test
     public void onTextChange() throws Exception {
 
