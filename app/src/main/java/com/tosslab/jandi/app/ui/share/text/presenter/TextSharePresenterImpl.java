@@ -1,33 +1,39 @@
-package com.tosslab.jandi.app.ui.share.presenter.text;
+package com.tosslab.jandi.app.ui.share.text.presenter;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.util.List;
 
+import javax.inject.Inject;
 
-@EBean
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+
 public class TextSharePresenterImpl implements TextSharePresenter {
 
-    @Bean
     ShareModel shareModel;
-    long roomId;
+    View view;
+
+    long roomId = -1;
     long teamId;
-    long entityId;
+    long entityId = -1;
     TeamInfoLoader teamInfoLoader;
-    private View view;
+
+    @Inject
+    public TextSharePresenterImpl(ShareModel shareModel, View view) {
+        this.shareModel = shareModel;
+        this.view = view;
+    }
 
     @Override
     public void initViews() {
@@ -40,24 +46,24 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     }
 
     @Override
-    @Background
     public void initEntityData(long teamId) {
         view.showProgressBar();
         this.teamId = teamId;
 
-        teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
-        shareModel.refreshPollList(teamId);
+        Completable.fromAction(() -> {
+            teamInfoLoader = shareModel.getTeamInfoLoader(teamId);
+            shareModel.refreshPollList(teamId);
+            roomId = -1;
+            entityId = -1;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    String teamName = teamInfoLoader.getTeamName();
+                    view.setTeamName(teamName);
+                    view.setRoomName("");
+                    view.dismissProgressBar();
+                }, Throwable::printStackTrace);
 
-        String teamName = teamInfoLoader.getTeamName();
-        this.roomId = teamInfoLoader.getDefaultTopicId();
-        this.entityId = teamInfoLoader.getDefaultTopicId();
-        String roomName = teamInfoLoader.getName(roomId);
-        int roomType = JandiConstants.TYPE_PUBLIC_TOPIC;
-
-        view.setTeamName(teamName);
-        view.setRoomName(roomName);
-        view.setMentionInfo(teamId, roomId, roomType);
-        view.dismissProgressBar();
 
     }
 
@@ -82,14 +88,12 @@ public class TextSharePresenterImpl implements TextSharePresenter {
             this.roomId = roomId;
             this.entityId = roomId;
         }
-        view.setTeamName(teamInfoLoader.getTeamName());
-        view.setRoomName(teamInfoLoader.getName(roomId));
-        view.setMentionInfo(teamId, roomId, roomType);
-    }
+        Completable.fromAction(() -> {
 
-    @Override
-    public void setView(View view) {
-        this.view = view;
+            view.setTeamName(teamInfoLoader.getTeamName());
+            view.setRoomName(teamInfoLoader.getName(roomId));
+            view.setMentionInfo(teamId, roomId, roomType);
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     @Override
@@ -98,22 +102,31 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     }
 
     @Override
-    @Background
     public void sendMessage(String messageText, List<MentionObject> mentions) {
+
+        if (teamId <= 0 || roomId <= 0) {
+            view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_title_cdp_to_be_shared));
+            return;
+        }
+
         view.showProgressBar();
         int roomType = getRoomType(roomId);
-        try {
+        Completable.fromCallable(() -> {
             shareModel.sendMessage(teamId, roomId, messageText, mentions);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
-            view.finishOnUiThread();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
-        } finally {
-            view.dismissProgressBar();
-            setupSelectedTeam(teamId);
-            view.moveEntity(teamId, roomId, entityId, roomType);
-        }
+            return true;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    view.dismissProgressBar();
+                    view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
+                    setupSelectedTeam(teamId);
+                    view.moveEntity(teamId, roomId, entityId, roomType);
+                    view.finishOnUiThread();
+                }, t -> {
+                    t.printStackTrace();
+                    view.dismissProgressBar();
+                    view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+                });
     }
 
     private boolean setupSelectedTeam(long teamId) {

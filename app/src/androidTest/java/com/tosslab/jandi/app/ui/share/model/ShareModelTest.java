@@ -2,8 +2,8 @@ package com.tosslab.jandi.app.ui.share.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -19,6 +19,9 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -30,7 +33,8 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class ShareModelTest {
 
-    private ShareModel shareModel;
+    @Inject
+    ShareModel shareModel;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -44,7 +48,7 @@ public class ShareModelTest {
 
     @Before
     public void setUp() throws Exception {
-        shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
+        // TODO
     }
 
     @Test
@@ -102,5 +106,10 @@ public class ShareModelTest {
     public void testGetShareSelectModel() throws Exception {
         TeamInfoLoader shareSelectModel = shareModel.getTeamInfoLoader(AccountRepository.getRepository().getSelectedTeamId());
         assertThat(shareSelectModel.getDefaultTopicId(), is(equalTo(TeamInfoLoader.getInstance().getDefaultTopicId())));
+    }
+
+    @Component(modules = ApiClientModule.class)
+    public interface TestComponent {
+        void inject(ShareModelTest test);
     }
 }

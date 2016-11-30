@@ -383,7 +383,7 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name=".ui.share.MainShareActivity_"
+            android:name=".ui.share.MainShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

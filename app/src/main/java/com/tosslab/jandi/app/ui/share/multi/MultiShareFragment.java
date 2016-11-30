@@ -9,6 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -31,6 +33,7 @@ import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -125,6 +128,18 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
         multiSharePresenter.initShareTarget();
         multiSharePresenter.initShareData(uris);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (menu != null) {
+            MenuItem item = menu.findItem(R.id.action_share);
+            if (item != null) {
+                item.setEnabled(tvRoomName.length() > 0);
+            }
+        }
     }
 
     @Override
@@ -229,6 +244,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setRoomName(String roomName) {
         tvRoomName.setText(roomName);
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -236,6 +252,11 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         if (mentionControlViewModel != null) {
             mentionControlViewModel.reset();
         }
+
+        if (roomId <= 0) {
+            return;
+        }
+
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(),
                 etComment,
                 teamId,
@@ -247,7 +268,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setCommentText(String comment) {
         etComment.setText(comment);
-        mentionControlViewModel.setUpMention(comment);
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.setUpMention(comment);
+        }
     }
 
     @Override
@@ -289,6 +312,11 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     }
 
     @Override
+    public void showSelectRoomToast() {
+        ColoredToast.showError(R.string.jandi_title_cdp_to_be_shared);
+    }
+
+    @Override
     public void startShare() {
         multiSharePresenter.updateComment(vpShare.getCurrentItem(), etComment.getText().toString());
         multiSharePresenter.startShare();
@@ -302,8 +330,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     public void onEvent(ShareSelectRoomEvent event) {
         long roomId = event.getRoomId();
-        int roomType = event.getRoomType();
-        multiSharePresenter.onSelectRoom(roomId, roomType);
+        multiSharePresenter.onSelectRoom(roomId);
 
     }
 

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
@@ -14,7 +13,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
-import com.tosslab.jandi.app.ui.share.model.ShareModel_;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareTarget;
@@ -31,7 +29,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 import rx.schedulers.Schedulers;
@@ -46,11 +43,13 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     private int lastPageIndex = 0;
 
     @Inject
-    public MultiSharePresenterImpl(View view, ShareAdapterDataModel shareAdapterDataModel) {
+    public MultiSharePresenterImpl(View view,
+                                   ShareModel shareModel,
+                                   ShareAdapterDataModel shareAdapterDataModel) {
         this.view = view;
+        this.shareModel = shareModel;
         this.shareAdapterDataModel = shareAdapterDataModel;
         shareTarget = new ShareTarget();
-        this.shareModel = ShareModel_.getInstance_(JandiApplication.getContext());
         comments = new ArrayList<>();
 
     }
@@ -78,13 +77,11 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shareSelectModel -> {
-                    shareTarget.setRoomId(shareSelectModel.getDefaultTopicId());
-                    shareTarget.setEntityId(shareSelectModel.getDefaultTopicId());
-                    shareTarget.setRoomType(JandiConstants.TYPE_PUBLIC_TOPIC);
-                    String roomName = shareSelectModel.getName(shareTarget.getRoomId());
+                    shareTarget.setRoomId(-1);
+                    shareTarget.setEntityId(-1);
                     String teamName = shareSelectModel.getTeamName();
                     view.setTeamName(teamName);
-                    view.setRoomName(roomName);
+                    view.setRoomName("");
                     view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());
                 }, t -> {
                     t.printStackTrace();
@@ -96,20 +93,16 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void initShareData(List<String> uris) {
         view.showProgress();
-        Observable.create(new Observable.OnSubscribe<FileShareData>() {
-            @Override
-            public void call(Subscriber<? super FileShareData> subscriber) {
-                for (String uri : uris) {
-                    Uri paredUri = Uri.parse(uri);
-                    String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
-                    if (!TextUtils.isEmpty(path)) {
-                        subscriber.onNext(new FileShareData(path));
-                    }
+        Observable.create((Observable.OnSubscribe<FileShareData>) subscriber -> {
+            for (String uri : uris) {
+                Uri paredUri = Uri.parse(uri);
+                String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
+                if (!TextUtils.isEmpty(path)) {
+                    subscriber.onNext(new FileShareData(path));
                 }
-                subscriber.onCompleted();
             }
-        })
-                .subscribeOn(Schedulers.io())
+            subscriber.onCompleted();
+        }).subscribeOn(Schedulers.io())
                 .map(fileShareData -> {
                     String path = fileShareData.getData();
                     if (path.startsWith("http")) {
@@ -151,10 +144,8 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     }
 
     @Override
-    public void onSelectRoom(long roomId, int roomType) {
+    public void onSelectRoom(long roomId) {
         shareTarget.setRoomId(roomId);
-        shareTarget.setEntityId(roomId);
-        shareTarget.setRoomType(roomType);
         String entityName = teamInfoLoader.getName(roomId);
         view.setRoomName(entityName);
         view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());
@@ -162,46 +153,36 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
 
     @Override
     public void startShare() {
-        if (shareTarget.getRoomType() == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            Observable.range(0, shareAdapterDataModel.size())
-                    .subscribe(idx -> {
-                        ShareData item = shareAdapterDataModel.getShareData(idx);
-                        if (item == null) {
-                            return;
-                        }
-                        FileUploadDTO object =
-                                new FileUploadDTO(item.getData(), MultiSharePresenterImpl.this.getFileName(item.getData()), shareTarget.getRoomId(), comments.get(idx));
-                        object.setTeamId(shareTarget.getTeamId());
-                        FileUploadManager.getInstance().add(object);
-                        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
-                    }, t -> {
-                    });
-        } else {
-            SearchMemberModel model = new SearchMemberModel();
-            model.refreshSelectableMembers(shareTarget.getTeamId(),
-                    Arrays.asList(shareTarget.getRoomId()),
-                    MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
-                    map -> {
-                        Observable.range(0, shareAdapterDataModel.size())
-                                .subscribe(idx -> {
-                                    ShareData item = shareAdapterDataModel.getShareData(idx);
-                                    if (item == null) {
-                                        return;
-                                    }
-                                    ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
-                                    List<MentionObject> mentions = mentionInfoObject.getMentions();
-                                    String message = mentionInfoObject.getMessage();
-                                    Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
-                                    FileUploadDTO object = new FileUploadDTO(item.getData(), MultiSharePresenterImpl.this.getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
-                                    object.setTeamId(shareTarget.getTeamId());
-                                    object.setMentions(stringListPair.second);
-                                    FileUploadManager.getInstance().add(object);
-                                }, t -> {
-                                });
 
-                        view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
-                    });
+        if (shareTarget.getTeamId() <= 0 || shareTarget.getRoomId() <= 0) {
+            view.showSelectRoomToast();
+            return;
         }
+
+        SearchMemberModel model = new SearchMemberModel();
+        model.refreshSelectableMembers(shareTarget.getTeamId(),
+                Arrays.asList(shareTarget.getRoomId()),
+                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
+                map -> {
+                    Observable.range(0, shareAdapterDataModel.size())
+                            .subscribe(idx -> {
+                                ShareData item = shareAdapterDataModel.getShareData(idx);
+                                if (item == null) {
+                                    return;
+                                }
+                                ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
+                                List<MentionObject> mentions = mentionInfoObject.getMentions();
+                                String message = mentionInfoObject.getMessage();
+                                Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
+                                FileUploadDTO object = new FileUploadDTO(item.getData(), getFileName(item.getData()), shareTarget.getRoomId(), stringListPair.first);
+                                object.setTeamId(shareTarget.getTeamId());
+                                object.setMentions(stringListPair.second);
+                                FileUploadManager.getInstance().add(object);
+                            }, t -> {
+                            });
+
+                    view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                });
     }
 
     @Override

@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
@@ -22,35 +25,40 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
+import com.tosslab.jandi.app.ui.share.file.FileShareFragment;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.ui.share.multi.MultiShareFragment;
+import com.tosslab.jandi.app.ui.share.text.TextShareFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsMenu;
-
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 13..
- */
-@EActivity(R.layout.activity_main_share)
-@OptionsMenu(R.menu.share_menu)
 public class MainShareActivity extends BaseAppCompatActivity {
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final String FRAGMENT_TAG = "share";
 
-    @Bean
     MainShareModel mainShareModel;
 
     private Share share;
 
-    @AfterViews
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_share);
+        mainShareModel = new MainShareModel();
+        initViews();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+        return true;
+    }
+
     void initViews() {
         setupActionbar();
         Intent intent = getIntent();
@@ -155,9 +163,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
             return false;
         }
 
-        TextShareFragment fragment = TextShareFragment_.builder()
-                .subject(subject)
-                .text(text.toString()).build();
+        TextShareFragment fragment = TextShareFragment.create(this, subject, text.toString());
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.vg_share_container, fragment, FRAGMENT_TAG)
@@ -172,9 +178,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
             return false;
         }
 
-        FileShareFragment fragment = FileShareFragment_.builder()
-                .uriString(uri.toString())
-                .build();
+        FileShareFragment fragment = FileShareFragment.create(this, uri.toString());
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.vg_share_container, fragment, FRAGMENT_TAG)

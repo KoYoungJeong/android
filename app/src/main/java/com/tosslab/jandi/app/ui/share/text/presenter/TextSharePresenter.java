@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.share.presenter.text;
+package com.tosslab.jandi.app.ui.share.text.presenter;
 
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
@@ -11,8 +11,6 @@ public interface TextSharePresenter {
 
     void setEntity(long roomId, int roomType);
 
-    void setView(View view);
-
     long getTeamId();
 
     void sendMessage(String messageText, List<MentionObject> mentions);
@@ -22,8 +20,6 @@ public interface TextSharePresenter {
         void showFailToast(String message);
 
         void finishOnUiThread();
-
-        void moveIntro();
 
         void setTeamName(String teamName);
 

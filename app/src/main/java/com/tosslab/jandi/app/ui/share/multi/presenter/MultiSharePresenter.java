@@ -12,7 +12,7 @@ public interface MultiSharePresenter {
 
     void initShareData(List<String> uris);
 
-    void onSelectRoom(long roomId, int roomType);
+    void onSelectRoom(long roomId);
 
     void startShare();
 
@@ -36,7 +36,6 @@ public interface MultiSharePresenter {
 
         void setMentionInfo(long teamId, long roomId);
 
-
         void setCommentText(String comment);
 
         void setFileTitle(String fileName);
@@ -46,5 +45,7 @@ public interface MultiSharePresenter {
         void showProgress();
 
         void dismissProgress();
+
+        void showSelectRoomToast();
     }
 }
