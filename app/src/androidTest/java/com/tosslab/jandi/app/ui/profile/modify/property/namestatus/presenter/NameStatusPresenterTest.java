@@ -145,7 +145,7 @@ public class NameStatusPresenterTest {
         await().until(() -> o[0] != null);
 
         String user = o[0].toString();
-        assertThat(user).isEqualTo(TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).getName());
+        assertThat(user).isEqualTo(TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).getStatusMessage());
 
     }
 
