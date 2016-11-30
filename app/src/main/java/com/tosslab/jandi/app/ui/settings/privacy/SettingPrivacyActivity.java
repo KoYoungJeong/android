@@ -1,9 +1,13 @@
 package com.tosslab.jandi.app.ui.settings.privacy;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,38 +20,38 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.ViewById;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-/**
- * Created by tonyjs on 15. 10. 13..
- */
-@EActivity(R.layout.activity_setting_privacy)
 public class SettingPrivacyActivity extends BaseAppCompatActivity {
 
     public static final int REQUEST_SET_PASSCODE = 1;
 
-    @ViewById(R.id.switch_setting_privacy_passcode)
+    @Bind(R.id.switch_setting_privacy_passcode)
     SwitchCompat switchPassCode;
 
-    @ViewById(R.id.vg_setting_privacy_passcode_modify)
+    @Bind(R.id.vg_setting_privacy_passcode_modify)
     ViewGroup vgModifyPassCode;
-    @ViewById(R.id.v_setting_privacy_divider_for_passcode_modify)
+    @Bind(R.id.v_setting_privacy_divider_for_passcode_modify)
     View vModifyPassCodeDivider;
 
-    @ViewById(R.id.vg_setting_privacy_fingerprint)
+    @Bind(R.id.vg_setting_privacy_fingerprint)
     ViewGroup vgUseFingerPrint;
-    @ViewById(R.id.switch_setting_privacy_fingerprint)
+    @Bind(R.id.switch_setting_privacy_fingerprint)
     SwitchCompat switchFingerPrint;
 
-    @ViewById(R.id.tv_setting_privacy_passcode_detail)
+    @Bind(R.id.tv_setting_privacy_passcode_detail)
     TextView tvPassCodeDetail;
 
-    @AfterViews
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting_privacy);
+        ButterKnife.bind(this);
+        initViews();
+    }
+
     void initViews() {
         initToolbar();
 
@@ -66,13 +70,16 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         actionBar.setTitle(R.string.jandi_privacy_protection);
     }
 
-    @OptionsItem(android.R.id.home)
     @Override
-    public void finish() {
-        super.finish();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
-    @Click(R.id.vg_setting_privacy_passcode)
+    @OnClick(R.id.vg_setting_privacy_passcode)
     void setPassCode() {
         boolean checked = !switchPassCode.isChecked();
         if (checked) {
@@ -88,12 +95,16 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PasscodeLock, AnalyticsValue.Action.Passcode, label);
     }
 
-    @OnActivityResult(REQUEST_SET_PASSCODE)
-    void handleResultIfSetPassCode(int resultCode) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode != RESULT_OK) {
             return;
         }
-        initPassCodeSwitch();
+        if (requestCode == REQUEST_SET_PASSCODE) {
+            initPassCodeSwitch();
+
+        }
     }
 
     void initPassCodeSwitch() {
@@ -108,7 +119,7 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
         switchFingerPrint.setChecked(JandiPreference.isUseFingerprint());
     }
 
-    @Click(R.id.vg_setting_privacy_fingerprint)
+    @OnClick(R.id.vg_setting_privacy_fingerprint)
     void setUseFingerprint() {
         boolean futureChecked = !switchFingerPrint.isChecked();
         switchFingerPrint.setChecked(futureChecked);
@@ -119,7 +130,7 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
                         AnalyticsValue.Label.On : AnalyticsValue.Label.Off);
     }
 
-    @Click(R.id.vg_setting_privacy_passcode_modify)
+    @OnClick(R.id.vg_setting_privacy_passcode_modify)
     void startModifyPassCodeActivity() {
         PassCodeActivity_.intent(this)
                 .mode(PassCodeActivity.MODE_TO_MODIFY_PASSCODE)

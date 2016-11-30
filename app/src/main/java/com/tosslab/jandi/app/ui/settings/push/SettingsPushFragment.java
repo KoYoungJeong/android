@@ -28,8 +28,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
-import org.androidannotations.annotations.EFragment;
-
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -42,7 +40,6 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-@EFragment(R.layout.fragment_settings_push)
 public class SettingsPushFragment extends Fragment {
 
     @Bind(R.id.vg_settings_push_notification)
@@ -310,7 +307,7 @@ public class SettingsPushFragment extends Fragment {
                         switch (which) {
                             case 0:
                                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting,
-                                    AnalyticsValue.Action.PreviewMsgContents, AnalyticsValue.Label.All);
+                                        AnalyticsValue.Action.PreviewMsgContents, AnalyticsValue.Label.All);
                                 break;
                             case 1:
                                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.NotificationSetting,

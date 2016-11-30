@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.web.presenter;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.webkit.CookieManager;
@@ -18,22 +16,14 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.SystemService;
-
 import java.net.URISyntaxException;
 
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-/**
- * Created by tee on 16. 1. 13..
- */
 
-@EBean
 public class InternalWebPresenter {
-
-    @SystemService
-    ClipboardManager clipboardManager;
 
     private View view;
 
@@ -53,11 +43,6 @@ public class InternalWebPresenter {
         StringBuffer buffer = new StringBuffer();
         buffer.append(title).append("\n").append(url);
         return buffer.toString();
-    }
-
-    public void copyToClipboard(String contentString) {
-        final ClipData clipData = ClipData.newPlainText("", contentString);
-        clipboardManager.setPrimaryClip(clipData);
     }
 
 
@@ -81,22 +66,28 @@ public class InternalWebPresenter {
         return url;
     }
 
-    @Background
     public void sendMessage(Activity activity, String title, String Url, ShareSelectRoomEvent event) {
         Context context = JandiApplication.getContext();
         view.showProgressWheel();
-        long entityId = event.getRoomId();
-        try {
+        Completable.fromCallable(() -> {
+
+            long entityId = event.getRoomId();
             String message = createMessage(title, Url);
             sendMessageToRoom(entityId, message);
-            view.showSuccessToast(context, context.getString(R.string.jandi_share_succeed,
-                    context.getString(R.string.jandi_message_hint)));
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            view.showErrorToast(context, context.getString(R.string.err_network));
-        } finally {
-            view.dismissProgressWheel();
-        }
+            return true;
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    view.dismissProgressWheel();
+
+                    view.showSuccessToast(context, context.getString(R.string.jandi_share_succeed,
+                            context.getString(R.string.jandi_message_hint)));
+                }, t -> {
+                    t.printStackTrace();
+                    view.dismissProgressWheel();
+                    view.showErrorToast(context, context.getString(R.string.err_network));
+
+                });
     }
 
     public boolean shouldOverrideUrlLoading(WebView view, String url) {

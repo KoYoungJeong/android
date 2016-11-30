@@ -8,8 +8,8 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 
 import com.tosslab.jandi.app.BuildConfig;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 /**
  * Created by tonyjs on 15. 8. 3..
@@ -37,10 +37,11 @@ public class ApplicationUtil {
         try {
             context.startActivity(intent);
         } catch (Exception e) {
-            InternalWebActivity_.intent(context)
-                    .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(Henson.with(context)
+                    .gotoInternalWebActivity()
                     .url(url)
-                    .start();
+                    .build()
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
     }
 

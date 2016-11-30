@@ -75,19 +75,6 @@ public class AccountRepository extends LockExecutorTemplate {
         });
     }
 
-    public int deleteAccountInfo() {
-        return execute(() -> {
-            try {
-                Dao<ResAccountInfo, String> dao = getHelper().getDao(ResAccountInfo.class);
-                return dao.deleteBuilder().delete();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return 0;
-            }
-
-        });
-    }
-
     public List<ResAccountInfo.UserTeam> getAccountTeams() {
         return execute(() -> {
             try {
@@ -230,6 +217,27 @@ public class AccountRepository extends LockExecutorTemplate {
                 getHelper().getDao(ResAccountInfo.class)
                         .deleteBuilder()
                         .delete();
+
+                getHelper().getDao(ResAccountInfo.UserDevice.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(ResAccountInfo.UserTeam.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(ResAccountInfo.UserEmail.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(ResAccountInfo.ThumbnailInfo.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(SelectedTeam.class)
+                        .deleteBuilder()
+                        .delete();
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }

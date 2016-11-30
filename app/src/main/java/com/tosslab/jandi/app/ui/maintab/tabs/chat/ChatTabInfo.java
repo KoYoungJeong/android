@@ -39,9 +39,7 @@ public class ChatTabInfo implements TabInfo {
 
     @Override
     public Fragment getFragment() {
-        return MainChatListFragment_
-                .builder()
-                .selectedEntity(selectedEntity)
-                .build();
+        return MainChatListFragment.create(selectedEntity);
+
     }
 }

@@ -2,14 +2,20 @@ package com.tosslab.jandi.app.ui.maintab.tabs.chat;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -28,8 +34,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.chat.dagger.DaggerMainChatListComponent;
+import com.tosslab.jandi.app.ui.maintab.tabs.chat.dagger.MainChatListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
@@ -43,46 +50,73 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-@EFragment(R.layout.fragment_main_chat_list)
 public class MainChatListFragment extends Fragment
         implements MainChatListPresenter.View, ListScroller, FloatingActionBarDetector {
 
-    @Bean(MainChatListPresenterImpl.class)
+    @Inject
     MainChatListPresenter mainChatListPresenter;
 
-    @FragmentArg
+    @InjectExtra
     long selectedEntity;
 
-    @ViewById(R.id.lv_main_chat_list)
+    @Bind(R.id.lv_main_chat_list)
     RecyclerView lvChat;
 
-    @ViewById(R.id.layout_main_chat_list_empty)
+    @Bind(R.id.layout_main_chat_list_empty)
     View emptyView;
 
     MainChatListAdapter mainChatListAdapter;
     private boolean foreground;
 
-    @AfterInject
-    void initObject() {
-        mainChatListAdapter = new MainChatListAdapter(getActivity());
-        mainChatListPresenter.setView(this);
+    public static MainChatListFragment create(long selectedEntity) {
+        Bundle bundle = new Bundle();
+        bundle.putLong("selectedEntity", selectedEntity);
+        MainChatListFragment frag = new MainChatListFragment();
+        frag.setArguments(bundle);
+        return frag;
+
     }
 
-    @AfterViews
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_main_chat_list, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            Dart.inject(this, arguments);
+        }
+
+        DaggerMainChatListComponent.builder()
+                .mainChatListModule(new MainChatListModule(this))
+                .build()
+                .inject(this);
+
+        initObject();
+        initViews();
+    }
+
+    void initObject() {
+        mainChatListAdapter = new MainChatListAdapter(getActivity());
+
+    }
+
     void initViews() {
         setHasOptionsMenu(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -133,7 +167,6 @@ public class MainChatListFragment extends Fragment
         super.onDestroy();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void refreshListView() {
         mainChatListAdapter.notifyDataSetChanged();
@@ -149,7 +182,6 @@ public class MainChatListFragment extends Fragment
         return mainChatListAdapter.getChatItems();
     }
 
-    @UiThread
     @Override
     public void setChatItems(List<ChatItem> chatItems) {
         mainChatListAdapter.setChatItem(chatItems);
@@ -161,7 +193,6 @@ public class MainChatListFragment extends Fragment
         return mainChatListAdapter.getItem(position);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setSelectedItem(long selectedEntityId) {
         mainChatListAdapter.setSelectedEntity(selectedEntityId);
@@ -180,7 +211,6 @@ public class MainChatListFragment extends Fragment
     }
 
 
-    @UiThread
     @Override
     public void scrollToPosition(int selectedEntityPosition) {
         if (selectedEntityPosition > 0) {
@@ -188,14 +218,12 @@ public class MainChatListFragment extends Fragment
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void startSelectedItemAnimation() {
         mainChatListAdapter.startAnimation();
         mainChatListAdapter.notifyDataSetChanged();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setStarred(long entityId, boolean isStarred) {
         int position = mainChatListAdapter.findPosition(entityId);
@@ -205,13 +233,11 @@ public class MainChatListFragment extends Fragment
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showEmptyLayout() {
         emptyView.setVisibility(View.VISIBLE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void hideEmptyLayout() {
         emptyView.setVisibility(View.GONE);
@@ -299,7 +325,15 @@ public class MainChatListFragment extends Fragment
         }
     }
 
-    @OptionsItem(R.id.action_main_search)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_main_search) {
+            onSearchOptionSelect();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));
 
@@ -330,7 +364,7 @@ public class MainChatListFragment extends Fragment
                 .show(getFragmentManager(), "dialog");
     }
 
-    @Click(R.id.btn_chat_list_no_messages)
+    @OnClick(R.id.btn_chat_list_no_messages)
     void chooseUser() {
         if (getActivity() != null && !getActivity().isFinishing()) {
             startActivity(Henson.with(getActivity())
