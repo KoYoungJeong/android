@@ -284,11 +284,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     }
 
     @Override
-    public void setFileTitle(String fileName) {
-        tvTitle.setText(fileName);
-    }
-
-    @Override
     public void moveRoom(long teamId, long roomId) {
 
         Completable.fromAction(() -> {
@@ -341,7 +336,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     public void onEvent(ShareSelectRoomEvent event) {
         long roomId = event.getRoomId();
         multiSharePresenter.onSelectRoom(roomId);
-
     }
 
     public void onEvent(SelectedMemberInfoForMentionEvent event) {

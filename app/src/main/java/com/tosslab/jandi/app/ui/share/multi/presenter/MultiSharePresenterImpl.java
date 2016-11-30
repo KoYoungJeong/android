@@ -132,7 +132,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         return;
                     }
                     String fileName = item.getFileName();
-                    view.setFileTitle(fileName);
+                    view.setFileName(fileName);
                     view.updateFiles(shareAdapterDataModel.size());
                 });
 
@@ -188,7 +188,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
         String fileName = item.getFileName();
         comments.set(lastPageIndex, comment);
         view.setCommentText(comments.get(position));
-        view.setFileTitle(fileName);
+        view.setFileName(fileName);
         view.setUpScrollButton(position, shareAdapterDataModel.size());
         lastPageIndex = position;
 
