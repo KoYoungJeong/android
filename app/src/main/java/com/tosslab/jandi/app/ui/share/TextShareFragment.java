@@ -9,17 +9,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
-import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenter;
 import com.tosslab.jandi.app.ui.share.presenter.text.TextSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
@@ -257,26 +256,15 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @UiThread
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int roomType) {
-        if (getActivity() == null) {
-            return;
-        }
 
-        Completable.fromAction(() ->
-                startActivity(Henson.with(getActivity())
-                        .gotoMainTabActivity()
-                        .build()
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)))
-                .delay(100, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    MessageListV2Activity_.intent(getActivity())
-                            .teamId(teamId)
-                            .roomId(roomId)
-                            .entityId(entityId)
-                            .entityType(roomType)
-                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .start();
-                });
+        Completable.fromAction(() -> {
+            if (getActivity() == null) {
+                return;
+            }
+            UploadNotificationActivity.startActivity(getActivity(), teamId, entityId);
+            getActivity().finish();
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     @Override

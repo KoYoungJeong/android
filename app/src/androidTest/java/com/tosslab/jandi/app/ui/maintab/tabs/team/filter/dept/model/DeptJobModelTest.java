@@ -37,10 +37,10 @@ public class DeptJobModelTest {
 
         subscriber.awaitTerminalEvent();
 
-        subscriber.assertValueCount(1);
+        subscriber.assertValueCount(4);
         List<DeptJob> onNextEvents = subscriber.getOnNextEvents();
         assertThat(onNextEvents).hasSize(4)
-                .extracting(DeptJob::getName)
+                .extracting(it -> it.getName().toString())
                 .contains("abc", "bac", "cba", "aaa");
 
         for (DeptJob charSequence : onNextEvents) {

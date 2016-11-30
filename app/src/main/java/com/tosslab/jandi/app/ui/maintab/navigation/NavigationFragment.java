@@ -437,7 +437,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
         startActivity(Henson.with(getActivity())
                 .gotoMainTabActivity()
-                .isLoadInitialInfo(true)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 

@@ -691,7 +691,9 @@ public class MessageListV2Presenter {
     }
 
     private int getEventMessageCount() {
-
+        if (adapterModel == null) {
+            return 0;
+        }
         int[] arrayForCounting = new int[1];
 
         int count = adapterModel.getCount();

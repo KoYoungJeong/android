@@ -82,13 +82,13 @@ public class TeamMemberModelTest {
     public void getFilteredUser_default() throws Exception {
         {
             TestSubscriber<TeamMemberItem> subscriber = new TestSubscriber<>();
+            // 봇 제외한 모든 유저
             teamMemberModel.getFilteredUser("", false, -1)
                     .subscribe(subscriber);
 
             subscriber.awaitTerminalEvent();
 
             assertThat(subscriber.getValueCount()).isGreaterThanOrEqualTo(getEnabledUserCount());
-            assertThat(subscriber.getValueCount() > getUserSize()).isEqualTo(getUserSize() > getEnabledUserCount());
         }
 
         {
@@ -261,6 +261,7 @@ public class TeamMemberModelTest {
         List<User> userList = TeamInfoLoader.getInstance().getUserList();
         return Observable.from(userList)
                 .filter(User::isEnabled)
+                .filter((user) -> !user.isBot())
                 .count()
                 .toBlocking()
                 .firstOrDefault(0);
