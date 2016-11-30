@@ -176,6 +176,13 @@ android {
     }
 }
 
+project.gradle.taskGraph.whenReady {
+    connectedDevDebugAndroidTest {
+        ignoreFailures = true
+    }
+}
+
+
 
 apt {
     arguments {
