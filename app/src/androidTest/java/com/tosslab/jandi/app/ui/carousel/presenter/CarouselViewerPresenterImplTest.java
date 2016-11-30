@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
@@ -90,7 +91,9 @@ public class CarouselViewerPresenterImplTest {
 
     private long getFirstFileId() throws RetrofitException {
         ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
-        return new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords().get(0).getMessageId();    }
+        List<ResSearch.SearchRecord> records = new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords();
+        return records.get(records.size() - 1).getMessageId();
+    }
 
     @Test
     public void testOnInitImageFiles() throws Exception {
