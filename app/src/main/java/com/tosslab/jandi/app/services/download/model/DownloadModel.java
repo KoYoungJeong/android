@@ -72,26 +72,27 @@ public class DownloadModel {
     private static File getDuplicatedFile(File file) {
         String fileNameWithExt = file.getName();
 
-        String[] split = fileNameWithExt.split("\\.");
         File dir = file.getParentFile();
-        if (split.length <= 0) {
+
+        String fileExtension = getFileExtension(fileNameWithExt);
+
+        if (TextUtils.isEmpty(fileExtension)) {
             return getDuplicatedFileWithoutExtensions(dir, fileNameWithExt);
         }
 
-        StringBuilder sb = new StringBuilder();
-        int untilFileNameLength = split.length - 1;
-        for (int i = 0; i < untilFileNameLength; i++) {
-            sb.append(split[i]);
-            if (i < untilFileNameLength - 1) {
-                sb.append("\\.");
-            }
-        }
-
-        String fileName = sb.toString();
-        String fileExtensions = split[untilFileNameLength];
+        String fileName = fileNameWithExt.replace("." + fileExtension, "");
         String newFileNameFormat = "%s(%d).%s";
 
-        return getDuplicatedFile(dir, fileName, fileExtensions, newFileNameFormat);
+        return getDuplicatedFile(dir, fileName, fileExtension, newFileNameFormat);
+    }
+
+    private static String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+        return extension;
     }
 
     private static File getDuplicatedFile(File dir,
