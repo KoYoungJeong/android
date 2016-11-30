@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -330,6 +331,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
         input.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -409,11 +411,11 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     @Override
     public void setFileName(String fileName) {
         String extension = getFileExtension(fileName);
-        int lastIndexOf = fileName.lastIndexOf(extension) + 1;
+        int lastIndexOf = fileName.lastIndexOf(extension);
         final SpannableStringBuilder filenameSp = new SpannableStringBuilder(fileName);
 
         filenameSp.setSpan(new ForegroundColorSpan(0xff333333),
-                lastIndexOf, lastIndexOf + extension.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                lastIndexOf, lastIndexOf + extension.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         tvFileTitle.setText(filenameSp);
     }
