@@ -6,7 +6,7 @@ apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply from: 'valid.gradle'       // Gradle Propertie Valid Check
 apply from: 'scripts/resources/strings/string-resource-crawler.gradle'
 apply from: 'scripts/resources/images/image-resource-crawler.gradle'
-apply from: 'apk-name-changer.gradle'
+apply from: 'apk-copy.gradle'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply from: 'ci-tasks.gradle'
