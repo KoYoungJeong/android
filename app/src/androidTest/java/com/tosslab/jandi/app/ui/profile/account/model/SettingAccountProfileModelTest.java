@@ -64,7 +64,7 @@ public class SettingAccountProfileModelTest {
         boolean assertResult = false;
         for (ResAccountInfo.UserEmail email : emails) {
             if (email.isPrimary()) {
-                if (email.equals(primaryEmail)) {
+                if (email.getId().equals(primaryEmail)) {
                     assertResult = true;
                 }
             }

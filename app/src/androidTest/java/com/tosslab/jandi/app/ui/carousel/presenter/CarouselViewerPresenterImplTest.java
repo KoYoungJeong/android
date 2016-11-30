@@ -23,8 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
@@ -132,12 +130,9 @@ public class CarouselViewerPresenterImplTest {
     @Test
     public void testOnAfterImageFiles() throws Exception {
         final boolean[] finish = {false};
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                finish[0] = true;
-                return invocationOnMock;
-            }
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
         }).when(mockView).addFileInfos(anyList());
 
         presenter.setIsLast(false);
