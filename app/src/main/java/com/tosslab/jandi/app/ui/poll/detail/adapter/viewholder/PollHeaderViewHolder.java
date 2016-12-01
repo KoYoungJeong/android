@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder;
 
-import android.util.Pair;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResPollDetail;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -61,7 +60,12 @@ public class PollHeaderViewHolder extends BaseViewHolder<Poll> {
         String createdAt = DateTransformator.getTimeString(poll.getCreatedAt());
         tvCreatedDate.setText(createdAt);
 
-        btnStar.setSelected(poll.isStarred());
+        if (!TextUtils.equals("deleted", poll.getStatus())) {
+            btnStar.setVisibility(View.VISIBLE);
+            btnStar.setSelected(poll.isStarred());
+        } else {
+            btnStar.setVisibility(View.GONE);
+        }
 
         if (onPollStarClickListener != null) {
             btnStar.setOnClickListener(v -> onPollStarClickListener.onPollStar(poll));
