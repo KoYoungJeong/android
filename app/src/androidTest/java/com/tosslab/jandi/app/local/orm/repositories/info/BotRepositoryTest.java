@@ -2,12 +2,19 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Bot;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.realm.Realm;
+import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,10 +22,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class BotRepositoryTest {
 
+    private static long teamId;
+    private static InitialInfo initializeInfo;
+
+    @BeforeClass
+    public static void setUpClass() throws RetrofitException {
+        BaseInitUtil.initData();
+        teamId = TeamInfoLoader.getInstance().getTeamId();
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+    }
 
     @Before
     public void setUp() throws Exception {
         Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
+        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        TeamInfoLoader.getInstance().refresh();
     }
 
     @Test
@@ -32,7 +50,6 @@ public class BotRepositoryTest {
         Bot bot = new Bot();
         bot.setName("bot");
         bot.setId(System.currentTimeMillis());
-        bot.setTeamId(1);
         bot.setStatus("enabled");
         bot.setPhotoUrl("http");
         bot.setType("bot");

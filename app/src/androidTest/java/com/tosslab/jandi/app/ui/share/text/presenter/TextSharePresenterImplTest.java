@@ -107,7 +107,7 @@ public class TextSharePresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).moveEntity(anyLong(), anyLong(), anyInt(), anyInt());
+        }).when(mockView).moveEntity(anyLong(), anyLong(), anyLong(), anyInt());
 
         TextSharePresenterImpl impl = (TextSharePresenterImpl) this.textSharePresenter;
 
@@ -122,6 +122,6 @@ public class TextSharePresenterImplTest {
         verify(mockView).finishOnUiThread();
         verify(mockView).moveEntity(eq(impl.teamId),
                 eq(impl.roomId),
-                eq(JandiConstants.TYPE_PUBLIC_TOPIC), anyInt());
+                eq(imple.entityId), anyInt());
     }
 }

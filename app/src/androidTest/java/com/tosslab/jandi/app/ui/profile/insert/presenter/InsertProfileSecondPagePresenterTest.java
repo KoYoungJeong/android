@@ -100,13 +100,13 @@ public class InsertProfileSecondPagePresenterTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).dismissProgressWheel();
+        }).when(mockView).finish();
 
         presenter.uploadExtraInfo("dummy", "dummy", "dummy", "dummy");
 
         await().until(() -> finish[0]);
 
-        verify(mockView).updateProfileSucceed();
+        verify(mockView).dismissProgressWheel();
     }
 
     @Component(modules = InsertProfileSecondPageModule.class)
