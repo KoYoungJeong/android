@@ -85,10 +85,14 @@ public class SocketEventHistoryUpdator {
 
         socketConnectedLastTime -= TIME_OF_PRE_EVENT;
 
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        SocketEventRepository.getInstance().deleteBeforeTime(teamId, socketConnectedLastTime);
+
 
         checkEventHistory(socketConnectedLastTime, restarterPost)
                 .filter(it -> messageEventActorMapper.containsKey(it.getClass()))
-                .doOnNext(it -> SocketEventRepository.getInstance().addEvent(it))
+                .filter(it -> SocketEventRepository.getInstance().hasEvent(it))
+                .filter(it -> SocketEventRepository.getInstance().addEvent(it))
                 .toSortedList((lhs, rhs) -> ((Long) (lhs.getTs() - rhs.getTs())).intValue())
                 .filter(it -> !it.isEmpty())
                 .doOnNext(its -> {
