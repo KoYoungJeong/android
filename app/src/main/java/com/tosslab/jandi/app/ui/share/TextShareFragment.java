@@ -253,7 +253,7 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @UiThread
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int roomType) {
 

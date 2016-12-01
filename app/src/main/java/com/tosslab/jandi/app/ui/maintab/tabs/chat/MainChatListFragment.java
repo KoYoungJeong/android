@@ -113,10 +113,16 @@ public class MainChatListFragment extends Fragment
     public void onResume() {
         super.onResume();
         foreground = true;
-
         mainChatListAdapter.startAnimation();
         mainChatListPresenter.onReloadChatList();
+    }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageTab);
+        }
     }
 
     @Override

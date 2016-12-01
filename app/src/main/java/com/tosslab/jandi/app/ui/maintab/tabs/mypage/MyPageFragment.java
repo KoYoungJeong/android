@@ -67,6 +67,7 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
         viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
@@ -120,21 +121,18 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
             }
         });
 
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        tabLayout.addTab(tabLayout.newTab()
-                .setCustomView(inflater.inflate(R.layout.tab_mypage_mention, tabLayout, false)));
-        tabLayout.addTab(tabLayout.newTab()
-                .setCustomView(inflater.inflate(R.layout.tab_mypage_star, tabLayout, false)));
-
-        View pollTab = inflater.inflate(R.layout.tab_mypage_poll, tabLayout, false);
-        tvPollBadge = (TextView) pollTab.findViewById(R.id.tv_badge);
-        tabLayout.addTab(tabLayout.newTab()
-                .setCustomView(pollTab));
-
         viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfMyPage());
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MypageTab);
         }
     }
 
@@ -184,7 +182,6 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
     @Override
     public void onResume() {
         super.onResume();
-
         presenter.onInitializePollBadge();
     }
 

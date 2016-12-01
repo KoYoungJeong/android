@@ -94,6 +94,13 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TeamTab);
+        }
+    }
 
     @Override
     public void onPause() {

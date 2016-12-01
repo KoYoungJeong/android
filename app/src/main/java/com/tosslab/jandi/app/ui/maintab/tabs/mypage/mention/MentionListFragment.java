@@ -170,6 +170,14 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         });
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+
+        }
+    }
+
     /**
      * 멘션목록을 더 불러올 떄 보여지는 프로그레스바의 VISIBLE 처리를
      * animation 으로 하기 위함.
