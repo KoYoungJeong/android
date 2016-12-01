@@ -86,8 +86,6 @@
                 android:paddingRight="8dp"
                 android:paddingTop="7dp">
 
-                <include layout="@layout/layout_integration_bot_sub_menu" />
-
             </LinearLayout>
         </RelativeLayout>
 
