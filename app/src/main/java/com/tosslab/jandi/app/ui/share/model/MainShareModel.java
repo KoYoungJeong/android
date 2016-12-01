@@ -9,14 +9,8 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 13..
- */
-@EBean
 public class MainShareModel {
 
     public String getShareSubject(Intent intent) {

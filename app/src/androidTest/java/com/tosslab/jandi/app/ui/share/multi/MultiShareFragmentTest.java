@@ -157,7 +157,7 @@ public class MultiShareFragmentTest {
     @Test
     public void testSetFileTitle() throws Throwable {
         String text = "title";
-        rule.runOnUiThread(() -> fragment.setFileTitle(text));
+        rule.runOnUiThread(() -> fragment.setFileName(text));
 
         assertThat(fragment.tvTitle.getText(), is(equalTo(text)));
     }

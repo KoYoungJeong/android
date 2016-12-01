@@ -23,11 +23,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
-
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -37,13 +32,8 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 28..
- */
-@EBean
 public class OpenAction implements Action {
 
-    @RootContext
     Activity activity;
 
     ProgressWheel progressWheel;
@@ -54,7 +44,11 @@ public class OpenAction implements Action {
     @Inject
     Lazy<DeviceApi> deviceApi;
 
-    @AfterInject
+    public OpenAction(Activity activity) {
+        this.activity = activity;
+        initObject();
+    }
+
     void initObject() {
         progressWheel = new ProgressWheel(activity);
         DaggerApiClientComponent
@@ -133,8 +127,9 @@ public class OpenAction implements Action {
                     }
                 })
                 .doOnNext(resAccountInfo -> {
-                    AccountUtil.removeDuplicatedTeams(resAccountInfo);
+                    AccountRepository.getRepository().clearAccountData();
                     AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
+                    AccountUtil.removeDuplicatedTeams(resAccountInfo);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::successAccessToken,
@@ -159,7 +154,6 @@ public class OpenAction implements Action {
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showProgress() {
 
         if (progressWheel != null && !progressWheel.isShowing()) {
@@ -167,7 +161,6 @@ public class OpenAction implements Action {
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissProgress() {
 
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -176,12 +169,10 @@ public class OpenAction implements Action {
 
     }
 
-    @UiThread
     void failAccessToken() {
         ColoredToast.showWarning(activity.getString(R.string.jandi_error_web_token));
     }
 
-    @UiThread
     void successAccessToken(ResAccountInfo accountInfo) {
         ColoredToast.show(activity.getString(R.string.jandi_success_web_token));
     }

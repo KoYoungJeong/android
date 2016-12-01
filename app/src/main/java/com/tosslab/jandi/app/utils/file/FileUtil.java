@@ -61,11 +61,24 @@ public class FileUtil {
     public static String getDownloadFileName(String fileName, String ext) {
         String downloadFileName;
         if (!hasFileExt(fileName) && !TextUtils.isEmpty(ext)) {
-            downloadFileName = fileName + "." + ext;
+            downloadFileName = convertAvailableFileName(fileName) + "." + ext;
         } else {
-            downloadFileName = fileName;
+            downloadFileName = convertAvailableFileName(fileName);
         }
         return downloadFileName;
+    }
+
+    public static String convertAvailableFileName(String fileName) {
+        return fileName
+                .replace("\\", "_")
+                .replace("/", "_")
+                .replace(":", "_")
+                .replace("*", "_")
+                .replace("?", "_")
+                .replace("\"", "_")
+                .replace("<", "_")
+                .replace(">", "_")
+                .replace("|", "_");
     }
 
     private static boolean hasFileExt(String fileName) {

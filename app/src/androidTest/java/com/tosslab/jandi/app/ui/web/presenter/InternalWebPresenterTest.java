@@ -5,7 +5,7 @@ import android.support.test.rule.ActivityTestRule;
 
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.ui.web.InternalWebActivity;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 public class InternalWebPresenterTest {
 
     @Rule
-    public ActivityTestRule<InternalWebActivity_> rule = new ActivityTestRule<>(InternalWebActivity_.class, false, false);
+    public ActivityTestRule<InternalWebActivity> rule = new ActivityTestRule<>(InternalWebActivity.class, false, false);
 
     public InternalWebPresenter internalWebPresenter;
     public InternalWebPresenter.View mockView;

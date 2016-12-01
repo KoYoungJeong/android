@@ -56,7 +56,6 @@ public class FileUploadApi {
     }
 
     public interface Api {
-
         @POST("inner-api/file")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         @Multipart
@@ -67,6 +66,6 @@ public class FileUploadApi {
                                      @Part MultipartBody.Part comment,
                                      @Part MultipartBody.Part mentions,
                                      @Part MultipartBody.Part file);
-
     }
+
 }

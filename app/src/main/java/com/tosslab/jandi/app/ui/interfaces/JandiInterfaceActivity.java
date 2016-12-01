@@ -8,23 +8,18 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.interfaces.actions.Action;
 import com.tosslab.jandi.app.ui.interfaces.actions.ActionFactory;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EActivity;
-
 /**
- * Created by Steve SeongUg Jung on 14. 12. 18..<br/>
  * It's for {tosslabjandi://xxx?yyy=zzz} Intent
  */
-@EActivity
 public class JandiInterfaceActivity extends BaseAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
+        initView();
     }
 
-    @AfterInject
     void initView() {
         // renew parse push infomation before getting access
         boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;

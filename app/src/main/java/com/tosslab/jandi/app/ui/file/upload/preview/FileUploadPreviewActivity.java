@@ -7,18 +7,26 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
@@ -36,6 +44,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -188,7 +197,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
-
         SearchedItemVO searchedItemVO = new SearchedItemVO();
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());
@@ -270,10 +278,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             @Override
             public void onPageSelected(int position) {
                 fileUploadPresenter.onPagerSelect(position);
-
                 setVisibleScrollButton(position);
                 setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
-
             }
 
             @Override
@@ -290,6 +296,71 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         fileUploadPresenter.onPagerSelect(0);
         setVisibleScrollButton(0);
         setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
+    }
+
+    public void showRenameTitleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+
+        RelativeLayout vgInputEditText = (RelativeLayout) LayoutInflater
+                .from(this).inflate(R.layout.dialog_fragment_input_text, null);
+
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_dialog_input_text);
+        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.common_fileupload_rename_description);
+        String filename = fileUploadPresenter.getFileName(vpFilePreview.getCurrentItem());
+        String extension = getFileExtension(filename);
+        String filenameWithoutExtension = filename.replaceAll(extension, "");
+        input.setHint(getString(R.string.jandi_name));
+        input.setText(filenameWithoutExtension);
+        input.setSelection(filenameWithoutExtension.length());
+
+        builder.setView(vgInputEditText)
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    String renamedFileName = input.getText().toString() + extension;
+                    fileUploadPresenter.changeFileName(
+                            vpFilePreview.getCurrentItem(), renamedFileName);
+                    setFileName(renamedFileName);
+                    tvFileTitle.requestFocus();
+                })
+                .setNegativeButton(getString(R.string.jandi_cancel), null);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
+        input.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String name = s.toString();
+                if (name.trim().length() <= 0
+                        || TextUtils.equals(filenameWithoutExtension, s)
+                        || name.contains("\\")
+                        || name.contains("/")
+                        || name.contains(":")
+                        || name.contains("*")
+                        || name.contains("?")
+                        || name.contains("\"")
+                        || name.contains("<")
+                        || name.contains(">")
+                        || name.contains("|")) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+    }
+
+    private String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i);
+        }
+        return extension;
     }
 
     private void setVisibleScrollButton(int position) {
@@ -331,28 +402,36 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         }
     }
 
+    @Click(R.id.tv_file_rename_button)
+    void onClickFileRename() {
+        showRenameTitleDialog();
+    }
+
     @Override
     public void setFileName(String fileName) {
-        tvFileTitle.setText(fileName);
+        String extension = getFileExtension(fileName);
+        int lastIndexOf = fileName.lastIndexOf(extension);
+        final SpannableStringBuilder filenameSp = new SpannableStringBuilder(fileName);
+
+        filenameSp.setSpan(new ForegroundColorSpan(0xff333333),
+                lastIndexOf, lastIndexOf + extension.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tvFileTitle.setText(filenameSp);
     }
 
     @Override
     public void setComment(String comment) {
-
         if (mentionControlViewModel != null && !TextUtils.isEmpty(comment)) {
             mentionControlViewModel.setUpMention(comment);
         } else {
             etComment.setText(comment);
             etComment.setSelection(etComment.getText().length());
         }
-
     }
 
     @Override
     public void setEntityInfo(String entity) {
-
         tvEntity.setText(entity);
-
     }
 
     @Override
@@ -403,4 +482,5 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             layoutPricingPlanWarning.setVisibility(View.GONE);
         }
     }
+
 }
