@@ -95,8 +95,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
                     view.setTeamName(this.teamName);
                     view.setRoomName("");
                 });
-
-
     }
 
     @Override
@@ -118,7 +116,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
         }
 
         Completable.fromAction(() -> {
-
             view.setTeamName(this.teamName);
             view.setRoomName(this.roomName);
             view.setMentionInfo(this.teamId, this.roomId, this.roomType);
@@ -136,7 +133,6 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_title_cdp_to_be_shared));
             return;
         }
-
 
         Completable.fromCallable(() -> {
             shareModel.uploadFile(imageFile,

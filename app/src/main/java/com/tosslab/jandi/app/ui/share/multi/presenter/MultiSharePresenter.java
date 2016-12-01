@@ -20,6 +20,10 @@ public interface MultiSharePresenter {
 
     void updateComment(int currentItem, String comment);
 
+    void changeFileName(int position, String fileName);
+
+    String getFileName(int position);
+
     interface View {
 
         void setUpScrollButton(int position, int count);
@@ -38,8 +42,6 @@ public interface MultiSharePresenter {
 
         void setCommentText(String comment);
 
-        void setFileTitle(String fileName);
-
         void moveRoom(long teamId, long roomId);
 
         void showProgress();
@@ -47,5 +49,7 @@ public interface MultiSharePresenter {
         void dismissProgress();
 
         void showSelectRoomToast();
+
+        void setFileName(String fileName);
     }
 }

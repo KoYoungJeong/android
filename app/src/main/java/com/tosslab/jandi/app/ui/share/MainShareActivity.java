@@ -96,8 +96,6 @@ public class MainShareActivity extends BaseAppCompatActivity {
                                     REQ_STORAGE_PERMISSION))
                     .check();
         }
-
-
     }
 
     @Override

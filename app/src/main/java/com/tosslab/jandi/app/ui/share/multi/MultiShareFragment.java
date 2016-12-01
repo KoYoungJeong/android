@@ -7,14 +7,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -37,6 +45,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,6 +93,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     TextView tvRoomName;
     @Bind(R.id.et_multi_share_comment)
     EditText etComment;
+
     @Inject
     ShareAdapterDataView shareAdapterDataView;
 
@@ -274,11 +284,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     }
 
     @Override
-    public void setFileTitle(String fileName) {
-        tvTitle.setText(fileName);
-    }
-
-    @Override
     public void moveRoom(long teamId, long roomId) {
 
         Completable.fromAction(() -> {
@@ -331,7 +336,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     public void onEvent(ShareSelectRoomEvent event) {
         long roomId = event.getRoomId();
         multiSharePresenter.onSelectRoom(roomId);
-
     }
 
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
@@ -342,6 +346,88 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             searchedItemVO.setType(event.getType());
             mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
         }
+    }
+
+    @OnClick(R.id.tv_file_rename_button)
+    void onClickFileRename() {
+        showRenameTitleDialog();
+    }
+
+    private void showRenameTitleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+
+        RelativeLayout vgInputEditText = (RelativeLayout) LayoutInflater
+                .from(getActivity()).inflate(R.layout.dialog_fragment_input_text, null);
+
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_dialog_input_text);
+        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.common_fileupload_rename_description);
+        String filename = multiSharePresenter.getFileName(vpShare.getCurrentItem());
+        String extension = getFileExtension(filename);
+        String filenameWithoutExtension = filename.replaceAll(extension, "");
+        input.setText(filenameWithoutExtension);
+        input.setHint(getString(R.string.jandi_name));
+        input.setSelection(filenameWithoutExtension.length());
+
+        builder.setView(vgInputEditText)
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    String renamedFileName = input.getText().toString() + extension;
+                    multiSharePresenter.changeFileName(
+                            vpShare.getCurrentItem(), renamedFileName);
+                    setFileName(renamedFileName);
+                    tvTitle.requestFocus();
+                })
+                .setNegativeButton(getString(R.string.jandi_cancel), null);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
+        input.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String name = s.toString();
+                if (name.trim().length() <= 0
+                        || TextUtils.equals(filenameWithoutExtension, s)
+                        || name.contains("\\")
+                        || name.contains("/")
+                        || name.contains(":")
+                        || name.contains("*")
+                        || name.contains("?")
+                        || name.contains("\"")
+                        || name.contains("<")
+                        || name.contains(">")
+                        || name.contains("|")) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setFileName(String fileName) {
+        String extension = getFileExtension(fileName);
+        int lastIndexOf = fileName.lastIndexOf(extension);
+        final SpannableStringBuilder filenameSp = new SpannableStringBuilder(fileName);
+
+        filenameSp.setSpan(new ForegroundColorSpan(0xff333333),
+                lastIndexOf, lastIndexOf + extension.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tvTitle.setText(filenameSp);
+    }
+
+    private String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i);
+        }
+        return extension;
     }
 
 }

@@ -98,7 +98,7 @@ public class MultiSharePresenterImplTest {
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).setFileTitle(anyString());
+        }).when(mockView).setFileName(anyString());
 
         int limit = 2;
         List<String> imagePathList = getImagePathList(limit);
@@ -111,7 +111,7 @@ public class MultiSharePresenterImplTest {
 
         await().timeout(1, TimeUnit.MINUTES).until(() -> finish[0]);
 
-        verify(mockView).setFileTitle(anyString());
+        verify(mockView).setFileName(anyString());
         verify(mockView).updateFiles(eq(2));
         verify(mockDataModel).clear();
         verify(mockDataModel).addAll(any());
@@ -131,7 +131,7 @@ public class MultiSharePresenterImplTest {
         ((MultiSharePresenterImpl) multiSharePresenter).comments.add("");
         when(mockDataModel.getShareData(0)).thenReturn(new FileShareData(filePath));
         multiSharePresenter.onFilePageChanged(0, "ads");
-        verify(mockView).setFileTitle(eq("hello.txt"));
+        verify(mockView).setFileName(eq("hello.txt"));
         verify(mockView).setCommentText(eq("ads"));
     }
 

@@ -165,8 +165,10 @@ public class ImageFilePath {
                 String fileName = cursor.getString(0);
                 String mimeType = cursor.getString(1);
                 String fileExt;
-                if (!TextUtils.isEmpty(mimeType)
-                        && !TextUtils.equals("null", mimeType)) {
+                String tempFileExt = getFileExtension(fileName);
+                if (tempFileExt.length() == 3 || tempFileExt.length() == 4) {
+                    fileExt = "";
+                } else if ((!TextUtils.isEmpty(mimeType) && !TextUtils.equals("null", mimeType))) {
                     String extensionFromMimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
                     if (!TextUtils.isEmpty(extensionFromMimeType)
                             && fileName.toLowerCase().lastIndexOf(extensionFromMimeType) <= 0) {
@@ -179,7 +181,6 @@ public class ImageFilePath {
                 }
                 return fileName + fileExt;
             }
-
         } catch (Exception e) {
             return "";
         } finally {
@@ -187,8 +188,16 @@ public class ImageFilePath {
                 cursor.close();
             }
         }
-
         return "";
+    }
+
+    private static String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+        return extension;
     }
 
     private static String copyFile(Context context, Uri uri) {

@@ -32,7 +32,7 @@ public class CarouselViewerModel {
         return new CarouselFileInfo.Builder()
                 .entityId(entityId)
                 .fileMessageId(fileMessage.id)
-                .fileName(fileMessage.content.name)
+                .fileName(fileMessage.content.title)
                 .fileType(fileMessage.content.type)
                 .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
                 .fileThumbUrl(ImageUtil.getThumbnailUrl(fileMessage.content.extraInfo, ImageUtil.Thumbnails.THUMB))
