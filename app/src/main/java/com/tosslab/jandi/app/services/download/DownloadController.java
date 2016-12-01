@@ -19,22 +19,21 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 public class DownloadController {
     public static final String TAG = DownloadService.TAG;
 
     View view;
 
-    private Call<ResponseBody> downloadTask;
+    private FileDownloadApi fileDownloadApi;
 
     public DownloadController() {
+        fileDownloadApi = new FileDownloadApi();
     }
 
     public DownloadController(View view) {
+        this();
         this.view = view;
     }
 
@@ -45,22 +44,17 @@ public class DownloadController {
     public void onHandleIntent(Intent intent, boolean isRedeliveried) {
 
         if (isRedeliveried) {
-
             List<DownloadInfo> downloadInfosInProgress = DownloadRepository.getInstance().getDownloadInfosInProgress();
 
             if (!(downloadInfosInProgress.isEmpty())) {
-
                 Observable.from(downloadInfosInProgress)
                         .map(DownloadInfo::getNotificationId)
                         .subscribe(notificationId -> {
                             view.cancelNotification(notificationId);
                             DownloadModel.deleteDownloadInfo(notificationId);
                         });
-
                 view.showErrorToast(R.string.err_download);
             }
-
-
             return;
         }
 
@@ -103,74 +97,70 @@ public class DownloadController {
 
         DownloadModel.upsertDownloadInfo(notificationId, downloadFileInfo.getFileName(), 0);
 
-
         NotificationCompat.Builder progressNotificationBuilder
                 = view.getProgressNotificationBuilder(notificationId, downloadFileInfo.getFileName());
 
         try {
-            File file = downloadFileAndGet(downloadTargetFile,
-                    downloadUrl,
-                    callback -> callback.distinctUntilChanged()
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(it -> {
-                                view.notifyProgress(it, 100, notificationId, progressNotificationBuilder);
-                            }, t -> {
-                            }));
+            view.prepareProgress(notificationId, progressNotificationBuilder);
 
+            File downloadedFile
+                    = fileDownloadApi.downloadImmediatly(downloadUrl,
+                    downloadTargetFile.getAbsolutePath()
+                    , callback -> callback
+                            .onBackpressureBuffer()
+                            .distinctUntilChanged()
+                            .subscribe(it -> view.notifyProgress(it, 100, notificationId, progressNotificationBuilder),
+                                    t -> t.printStackTrace(),
+                                    () -> {
+                                        DownloadController.this.registDownloadInfo(downloadFileInfo, downloadTargetFile);
+                                        DownloadModel.addToGalleryIfFileIsImage(downloadTargetFile, downloadFileInfo.getFileType());
+                                        Intent openFileViewerIntent = DownloadController.this.getFileViewerIntent(downloadTargetFile, downloadFileInfo.getFileType());
+                                        view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
+                                        SprinklrFileDownload.sendLog(downloadFileInfo.getFileId());
+                                        DownloadModel.deleteDownloadInfo(notificationId);
+                                        DownloadController.this.clear();
+                                    }));
 
-            String name = file.getName();
-            String description = file.getAbsolutePath();
-            String fileType = downloadFileInfo.getFileType();
-            long length = file.length();
-
-            addDownloadManager(name, description, fileType, file.getAbsolutePath(), length);
-
-            DownloadModel.addToGalleryIfFileIsImage(file, downloadFileInfo.getFileType());
-
-            Intent openFileViewerIntent = getFileViewerIntent(file, downloadFileInfo.getFileType());
-            view.notifyComplete(downloadFileInfo.getFileName(), notificationId, openFileViewerIntent);
-
-            SprinklrFileDownload.sendLog(downloadFileInfo.getFileId());
+            if (downloadedFile == null) {
+                cancelDownload(notificationId);
+            }
         } catch (Exception e) {
             DownloadModel.logDownloadException(e);
-            view.cancelNotification(notificationId);
-
             if (!(e.getCause() instanceof CancellationException)) {
                 view.showErrorToast(R.string.err_download);
             }
-            SprinklrFileDownload.sendFailLog(-1);
-
+            cancelDownload(notificationId);
+            return;
         }
+    }
 
+    private void cancelDownload(int notificationId) {
+        view.cancelNotification(notificationId);
+        SprinklrFileDownload.sendFailLog(-1);
         DownloadModel.deleteDownloadInfo(notificationId);
-
         clear();
     }
 
-    private void addDownloadManager(String name, String description,
-                                    String fileType, String filePath, long length) {
+    // 특정 단말기(Ex. SAMSUNG)의 다운로드 기록에 보여지기 위한 코드
+    private void registDownloadInfo(DownloadFileInfo downloadFileInfo, File downloadTargetFile) {
+        String name = downloadTargetFile.getName();
+        String description = downloadTargetFile.getAbsolutePath();
+        String fileType = downloadFileInfo.getFileType();
+        long length = downloadTargetFile.length();
         DownloadManager downloadManager =
                 (DownloadManager) JandiApplication.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
         downloadManager.addCompletedDownload(name, description,
-                true, fileType, filePath, length, false);
-    }
-
-    File downloadFileAndGet(File downloadTargetFile, String downloadUrl,
-                            com.tosslab.jandi.app.network.file.body.ProgressCallback callback) {
-        // Ion File download task - 인터넷이 끊긴 상황에서 cancel 하기 위해 field 로 활용
-        downloadTask = new FileDownloadApi().download(downloadUrl, downloadTargetFile.getAbsolutePath(), callback);
-        return downloadTargetFile;
+                true, fileType, downloadTargetFile.getAbsolutePath(), length, false);
     }
 
     synchronized void cancelDownload() {
-
-        if (downloadTask != null && downloadTask.isExecuted()) {
-            downloadTask.cancel();
+        if (fileDownloadApi != null) {
+            fileDownloadApi.cancel();
         }
     }
 
     private void clear() {
-        downloadTask = null;
+        fileDownloadApi = null;
         view.unRegisterNetworkChangeReceiver();
         view.setLastNotificationTime(0);
     }
@@ -190,6 +180,8 @@ public class DownloadController {
 
         NotificationCompat.Builder getProgressNotificationBuilder(int notificationId, String fileName);
 
+        void prepareProgress(int notificationId, NotificationCompat.Builder progressNotificationBuilder);
+
         void notifyProgress(long downloaded, long total,
                             int notificationId, NotificationCompat.Builder progressNotificationBuilder);
 
@@ -202,6 +194,6 @@ public class DownloadController {
         void showToast(int resId);
 
         void showErrorToast(int resId);
-
     }
+
 }

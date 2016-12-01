@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 import com.tosslab.jandi.app.services.download.receiver.DownloadStopProxyBroadcastReceiver;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 15. 11. 17..
@@ -68,7 +69,6 @@ public class DownloadService extends IntentService implements DownloadController
         public void onReceive(Context context, Intent intent) {
             if (downloadController != null) {
                 downloadController.cancelDownload();
-
                 abortBroadcast();
             }
         }
@@ -118,6 +118,7 @@ public class DownloadService extends IntentService implements DownloadController
 
     @Override
     public void onDestroy() {
+        LogUtil.e("onDestroy");
         clear();
         super.onDestroy();
     }
@@ -187,12 +188,17 @@ public class DownloadService extends IntentService implements DownloadController
     public void notifyProgress(long downloaded, long total,
                                int notificationId, NotificationCompat.Builder progressNotificationBuilder) {
         int progress = (int) (downloaded * 100 / total);
-
         if (System.currentTimeMillis() - lastNotificationTime >= 1000) {
             progressNotificationBuilder.setProgress(100, progress, false);
             notificationManager.notify(notificationId, progressNotificationBuilder.build());
             lastNotificationTime = System.currentTimeMillis();
         }
+    }
+
+    @Override
+    public void prepareProgress(int notificationId, NotificationCompat.Builder progressNotificationBuilder) {
+        progressNotificationBuilder.setProgress(0, 0, false);
+        notificationManager.notify(notificationId, progressNotificationBuilder.build());
     }
 
     @Override

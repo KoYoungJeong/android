@@ -26,6 +26,8 @@ import rx.subjects.PublishSubject;
 
 public class FileDownloadApi {
 
+    public boolean flagCancel = false;
+
     public Call<ResponseBody> download(String url, String saveFile, ProgressCallback progressCallback) {
         String downloadUrl = getDownloadUrl(url);
         Api api = new Retrofit.Builder()
@@ -33,14 +35,27 @@ public class FileDownloadApi {
                 .baseUrl(downloadUrl)
                 .build().create(Api.class);
 
-
         Call<ResponseBody> download = api.download(downloadUrl);
         download.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Observable.just(response)
-                        .observeOn(Schedulers.io())
-                        .subscribe(it -> writeResponseBodyToDisk(it.body(), saveFile, progressCallback));
+                if (response.isSuccessful()) {
+                    Observable.just(response)
+                            .observeOn(Schedulers.io())
+                            .subscribe(it -> {
+                                boolean isSuccess =
+                                        writeResponseBodyToDisk(it.body(), saveFile, progressCallback);
+                                if (!isSuccess) {
+                                    if (progressCallback != null) {
+                                        progressCallback.callback(Observable.error(new Throwable(response.message())));
+                                    }
+                                }
+                            });
+                } else {
+                    if (progressCallback != null) {
+                        progressCallback.callback(Observable.error(new Throwable(response.message())));
+                    }
+                }
             }
 
             @Override
@@ -54,16 +69,21 @@ public class FileDownloadApi {
         return download;
     }
 
-    public File downloadImmediatly(String url, String saveFile, ProgressCallback progressCallback) throws IOException {
+    public File downloadImmediatly(String url, String saveFile, ProgressCallback progressCallback)
+            throws IOException {
         String downloadUrl = getDownloadUrl(url);
         Api api = new Retrofit.Builder()
                 .client(JandiApplication.getOkHttpClient())
                 .baseUrl(downloadUrl)
                 .build().create(Api.class);
-
-        ResponseBody body = api.download(downloadUrl).execute().body();
-        writeResponseBodyToDisk(body, saveFile, progressCallback);
-        return new File(saveFile);
+        Call<ResponseBody> download = api.download(downloadUrl);
+        ResponseBody body = download.execute().body();
+        boolean isSuccess = writeResponseBodyToDisk(body, saveFile, progressCallback);
+        if (!isSuccess) {
+            return null;
+        } else {
+            return new File(saveFile);
+        }
     }
 
     @NonNull
@@ -77,7 +97,11 @@ public class FileDownloadApi {
         return downloadUrl;
     }
 
-    private boolean writeResponseBodyToDisk(ResponseBody body, String targetFile, ProgressCallback progressCallback) {
+    public void cancel() {
+        flagCancel = true;
+    }
+
+    public boolean writeResponseBodyToDisk(ResponseBody body, String targetFile, ProgressCallback progressCallback) {
 
         if (body == null) {
             progressCallback.callback(Observable.error(new Exception("It cannot be download")));
@@ -85,54 +109,59 @@ public class FileDownloadApi {
         }
 
         PublishSubject<Integer> callback = PublishSubject.create();
+
         if (progressCallback != null) {
             progressCallback.callback(callback.onBackpressureBuffer());
         } else {
-            callback.subscribe(it -> {}, t -> {});
+            callback.subscribe(it -> {
+            }, t -> {
+            });
         }
 
+        File futureStudioIconFile = new File(targetFile);
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
         try {
-            File futureStudioIconFile = new File(targetFile);
+            byte[] fileReader = new byte[4096];
 
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
+            long fileSize = body.contentLength();
+            long fileSizeDownloaded = 0;
 
-            try {
-                byte[] fileReader = new byte[4096];
+            inputStream = body.byteStream();
+            outputStream = new FileOutputStream(futureStudioIconFile);
+            callback.onNext(0);
+            while (!flagCancel) {
+                int read = inputStream.read(fileReader);
 
-                long fileSize = body.contentLength();
-                long fileSizeDownloaded = 0;
-
-                inputStream = body.byteStream();
-                outputStream = new FileOutputStream(futureStudioIconFile);
-                callback.onNext(0);
-                while (true) {
-                    int read = inputStream.read(fileReader);
-
-                    if (read == -1) {
-                        break;
-                    }
-
-                    outputStream.write(fileReader, 0, read);
-
-                    fileSizeDownloaded += read;
-                    callback.onNext((int) ((fileSizeDownloaded * 100) / fileSize));
+                if (read == -1) {
+                    break;
                 }
 
-                outputStream.flush();
+                outputStream.write(fileReader, 0, read);
+
+                fileSizeDownloaded += read;
+
+                callback.onNext((int) ((fileSizeDownloaded * 100) / fileSize));
+            }
+
+            outputStream.flush();
+
+            if (inputStream != null) {
+                inputStream.close();
+            }
+
+            if (outputStream != null) {
+                outputStream.close();
+            }
+
+            if (!flagCancel) {
                 callback.onCompleted();
                 return true;
-            } catch (IOException e) {
-                callback.onError(e);
+            } else {
+                futureStudioIconFile.delete();
                 return false;
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-
-                if (outputStream != null) {
-                    outputStream.close();
-                }
             }
         } catch (IOException e) {
             callback.onError(e);
