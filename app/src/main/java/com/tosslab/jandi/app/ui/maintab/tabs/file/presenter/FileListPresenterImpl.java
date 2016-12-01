@@ -5,6 +5,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
@@ -39,6 +40,7 @@ public class FileListPresenterImpl implements FileListPresenter {
     private final BehaviorSubject<String> fileTypeSubject;
     private final BehaviorSubject<Date> endDateSubject;
     private final BehaviorSubject<String> keywordSubject;
+    private final BehaviorSubject<String> accessTypeSubject;
     private final CompositeSubscription compositeSubscription;
     private FileListPresenter.View view;
     private FileListModel fileListModel;
@@ -57,6 +59,7 @@ public class FileListPresenterImpl implements FileListPresenter {
         endDateSubject = BehaviorSubject.create(new Date());
         pageSubject = BehaviorSubject.create(1);
         keywordSubject = BehaviorSubject.create("");
+        accessTypeSubject = BehaviorSubject.create("accessible");
 
         compositeSubscription = new CompositeSubscription();
         compositeSubscription.add(
@@ -77,7 +80,8 @@ public class FileListPresenterImpl implements FileListPresenter {
                         endDateSubject.distinctUntilChanged(),
                         pageSubject.distinctUntilChanged(),
                         keywordSubject.distinctUntilChanged(),
-                        (entity, writerId, fileType, date, page, keyword) -> {
+                        accessTypeSubject.distinctUntilChanged(),
+                        (entity, writerId, fileType, date, page, keyword, accessType) -> {
                             return new ReqSearch.Builder()
                                     .setRoomId(entity)
                                     .setWriterId(writerId)
@@ -85,6 +89,7 @@ public class FileListPresenterImpl implements FileListPresenter {
                                     .setFileType(fileType)
                                     .setPage(page)
                                     .setCount(DEFAULT_COUNT)
+                                    .setAccessType(accessType)
                                     .setKeyword(keyword).build();
                         })
                         .throttleLast(100, TimeUnit.MILLISECONDS)
@@ -263,7 +268,20 @@ public class FileListPresenterImpl implements FileListPresenter {
     @Override
     public void onEntitySelection(long sharedEntityId, String searchText) {
         view.justRefresh();
-        entitySubject.onNext(sharedEntityId);
+        long entity;
+        String accessType;
+        if (sharedEntityId == CategorizingAsEntity.JOINED) {
+            entity = -1L;
+            accessType = "joined";
+        } else if (sharedEntityId == CategorizingAsEntity.ACCESSIBLE) {
+            entity = -1L;
+            accessType = "accessible";
+        } else {
+            entity = sharedEntityId;
+            accessType = "accessible";
+        }
+        entitySubject.onNext(entity);
+        accessTypeSubject.onNext(accessType);
         pageSubject.onNext(1);
         endDateSubject.onNext(new Date());
     }

@@ -21,18 +21,21 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
     private ImageView ivProfile;
     private TextView tvWriter;
 
-    private ImageView ivPollIcon;
     private TextView tvPollTitle;
     private TextView tvCreatedTime;
+
+    private View vSemiDivider;
+    private View vFullDivider;
 
     private StarredPollViewHolder(View itemView) {
         super(itemView);
         ivProfile = (ImageView) itemView.findViewById(R.id.iv_starred_poll_profile);
         tvWriter = (TextView) itemView.findViewById(R.id.tv_starred_poll_writer);
 
-        ivPollIcon = (ImageView) itemView.findViewById(R.id.iv_starred_poll_icon);
         tvPollTitle = (TextView) itemView.findViewById(R.id.tv_starred_poll_title);
         tvCreatedTime = (TextView) itemView.findViewById(R.id.tv_starred_poll_create_date);
+        vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
+        vFullDivider = itemView.findViewById(R.id.v_full_divider);
     }
 
     public static StarredPollViewHolder newInstance(ViewGroup parent) {
@@ -52,6 +55,14 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
 
         String date = DateTransformator.getTimeString(starredMessage.getMessage().createdAt);
         tvCreatedTime.setText(date);
+
+        if (starredMessage.hasSemiDivider()) {
+            vSemiDivider.setVisibility(View.VISIBLE);
+            vFullDivider.setVisibility(View.GONE);
+        } else {
+            vFullDivider.setVisibility(View.VISIBLE);
+            vSemiDivider.setVisibility(View.GONE);
+        }
     }
 
 }

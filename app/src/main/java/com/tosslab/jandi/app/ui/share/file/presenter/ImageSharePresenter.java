@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.share.presenter.image;
+package com.tosslab.jandi.app.ui.share.file.presenter;
 
 import android.app.ProgressDialog;
 
@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.List;
 
 public interface ImageSharePresenter {
-    void setView(ImageSharePresenterImpl.View view);
 
     void initView(String uriString);
 
@@ -51,6 +50,5 @@ public interface ImageSharePresenter {
 
         void dismissDialog(ProgressDialog uploadProgress);
 
-        void moveIntro();
     }
 }

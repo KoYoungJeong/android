@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.interfaces.actions;
 
-import android.content.Context;
+import android.app.Activity;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -9,21 +9,21 @@ import android.text.TextUtils;
  */
 public class ActionFactory {
 
-    public static Action getAction(Context context, Uri data) {
+    public static Action getAction(Activity activity, Uri data) {
 
         if (data == null) {
-            return UnknownAction.create(context);
+            return UnknownAction.create(activity);
         }
 
         if (isUnkownAction(data.getAuthority())) {
-            return UnknownAction.create(context);
+            return UnknownAction.create(activity);
         }
 
         if (TextUtils.equals(data.getAuthority().toLowerCase(), "open")) {
-            return OpenAction_.getInstance_(context);
+            return new OpenAction(activity);
         }
 
-        return UnknownAction.create(context);
+        return UnknownAction.create(activity);
     }
 
     private static boolean isUnkownAction(String path) {

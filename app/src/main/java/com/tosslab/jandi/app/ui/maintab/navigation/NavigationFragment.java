@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
+import com.tosslab.jandi.app.network.DomainUtil;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
@@ -51,8 +52,8 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
-import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity_;
-import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
+import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;
@@ -147,8 +148,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             notifyDataSetChanged();
             navigationPresenter.initBadgeCount();
         });
-
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
     }
 
     @Override
@@ -234,7 +233,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                         .subscribe(this::moveoToSetUpCallPreview);
 
                 AnalyticsUtil.sendEvent(
-                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.CallPreview);
+                        AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.TeamPhoneNumberSetting);
+
                 break;
             case R.id.nav_setting_orientation:
                 Completable.fromAction(this::closeNavigation)
@@ -303,8 +303,15 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.SignOut);
                 return true;
+            case R.id.nav_change_domain:
+                showChangeDomainDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChangeDomainDialog() {
+        DomainUtil.showDomainDialog(getActivity());
     }
 
     private void moveoToSetUpCallPreview() {
@@ -348,14 +355,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     private void moveToSetUpPasscode() {
-        SettingPrivacyActivity_.intent(getActivity())
-                .start();
+        startActivity(new Intent(getActivity(), SettingPrivacyActivity.class));
     }
 
     private void moveToSetUpNotification() {
-        SettingPushActivity_
-                .intent(getActivity())
-                .start();
+        startActivity(new Intent(getActivity(), SettingPushActivity.class));
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -523,7 +527,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                     .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                     .transformation(new BlurTransformation(ivProfile.getContext(), 50))
-                    .uri(Uri.parse(ImageUtil.getLargeProfileUrl(photoUrl)))
+                    .uri(Uri.parse(photoUrl))
                     .into(ivProfileLarge);
         } else {
             vProfileImageLargeOverlay.setBackgroundColor(defaultColor);

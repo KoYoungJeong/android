@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
@@ -71,7 +72,11 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .doOnNext(resStarMentioned -> {
                     List<StarredMessage> records = resStarMentioned.getRecords();
                     if (records != null && !(records.isEmpty())) {
-                        mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
+                        try {
+                            mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
+                        } catch (RetrofitException e) {
+                            e.printStackTrace();
+                        }
                     }
                 })
                 .map(resStarMentioned -> {
@@ -314,7 +319,15 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         if (item != null
                 && actuallLastMarkerId > 0
                 && item.getMessageId() > actuallLastMarkerId) {
-            mentionListModel.updateLastReadMessageId(item.getMessageId());
+            Completable.fromCallable(() -> {
+                mentionListModel.updateLastReadMessageId(item.getMessageId());
+                return true;
+            }).subscribeOn(Schedulers.newThread())
+                    .subscribe(() -> {
+                        InitialMentionInfoRepository.getInstance().clearUnreadCount();
+                        TeamInfoLoader.getInstance().refreshMention();
+                        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+                    }, Throwable::printStackTrace);
             actuallLastMarkerId = item.getMessageId();
         }
 

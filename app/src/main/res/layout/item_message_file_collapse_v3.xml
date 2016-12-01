@@ -22,10 +22,10 @@
 
         <ImageView
             android:id="@+id/iv_message_common_file"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter" />
 
         <View
             android:id="@+id/v_message_common_file_border"
@@ -35,7 +35,7 @@
             android:layout_alignLeft="@+id/iv_message_common_file"
             android:layout_alignRight="@+id/iv_message_common_file"
             android:layout_alignTop="@+id/iv_message_common_file"
-            android:background="@drawable/border_black_a_10"/>
+            android:background="@drawable/border_black_a_10" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                 android:text="jfile name asjhdk lajdlkjhsdlka jfdsafdsafd safdsfsdh flkjahsdf"
                 android:textColor="@color/dark_gray"
                 android:textSize="14sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_uploader_name"
@@ -71,7 +71,7 @@
                 android:text="steve.jung hellohello"
                 android:textColor="#333333"
                 android:textSize="11sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_file_info_divider"
@@ -83,7 +83,7 @@
                 android:layout_toRightOf="@+id/tv_uploader_name"
                 android:text="|"
                 android:textColor="#999999"
-                android:textSize="11sp"/>
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/tv_common_file_size"
@@ -93,7 +93,7 @@
                 android:layout_toRightOf="@+id/tv_file_info_divider"
                 android:text="file size"
                 android:textColor="#999999"
-                android:textSize="11sp"/>
+                android:textSize="11sp" />
 
         </RelativeLayout>
 
@@ -116,7 +116,7 @@
             android:layout_marginBottom="1dp"
             android:textColor="#ff00ace9"
             android:textSize="9dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_message_time"
@@ -126,7 +126,7 @@
             android:layout_marginTop="-2dp"
             android:text="오전 11:30"
             android:textColor="#ff999999"
-            android:textSize="10dp"/>
+            android:textSize="10dp" />
     </LinearLayout>
 
     <View
@@ -134,7 +134,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_below="@+id/vg_message_common_file"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/vg_message_last_read"

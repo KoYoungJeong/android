@@ -189,6 +189,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         isForeground = true;
     }
 
+
     @Override
     public void onPause() {
         isForeground = false;
@@ -766,6 +767,9 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         this.focused = isVisibleToUser;
+        if (isVisibleToUser) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FilesTab);
+        }
     }
 
 }

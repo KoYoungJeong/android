@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.share;
+package com.tosslab.jandi.app.ui.share.text;
 
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
@@ -48,12 +47,9 @@ public class TextShareFragmentTest {
 
     @Before
     public void setUp() throws Exception {
-        textShareFragment = TextShareFragment_.builder()
-                .text("text")
-                .subject("subject")
-                .build();
         rule.launchActivity(null);
         BaseAppCompatActivity activity = rule.getActivity();
+        textShareFragment = TextShareFragment.create(activity, "subject", "text");
         activity.getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, textShareFragment)
                 .commit();
@@ -69,17 +65,6 @@ public class TextShareFragmentTest {
         rule.runOnUiThread(textShareFragment::finishOnUiThread);
 
         assertThat(rule.getActivity().isFinishing(), is(true));
-    }
-
-    @Test
-    public void testMoveIntro() throws Throwable {
-        Intents.init();
-
-        rule.runOnUiThread(textShareFragment::moveIntro);
-        assertThat(rule.getActivity().isFinishing(), is(true));
-        Intents.intending(IntentMatchers.hasComponent(IntroActivity.class.getName()));
-
-        Intents.release();
     }
 
     @Test

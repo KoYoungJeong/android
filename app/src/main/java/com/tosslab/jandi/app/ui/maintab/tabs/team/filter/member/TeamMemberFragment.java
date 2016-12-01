@@ -118,9 +118,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         super.onActivityCreated(savedInstanceState);
 
         Dart.inject(this, getArguments());
-
-        setAnalyticsScreen();
-
+        
         TeamMemberAdapter adapter = new TeamMemberAdapter();
         adapter.setSelectedMode(selectMode && roomId > 0);
         teamMemberDataView = adapter;
@@ -153,6 +151,14 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            setAnalyticsScreen();
         }
     }
 
@@ -348,5 +354,6 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         ColoredToast.showError(R.string.warn_all_users_are_already_invited);
         getActivity().finish();
     }
+
 
 }

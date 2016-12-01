@@ -40,7 +40,7 @@ public class JandiSocketManager {
     }
 
     synchronized public boolean connect(EventListener disconnectListener) {
-        Emitter emitter = socketConnector.connect(JandiConstantsForFlavors.SOCKET_ROOT_URL, disconnectListener);
+        Emitter emitter = socketConnector.connect(JandiConstantsForFlavors.getSocketRootUrl(), disconnectListener);
         eventRegister.setEmitter(emitter);
         jsonSocketEmitter.setEmitter(emitter);
         return true;

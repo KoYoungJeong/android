@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.maintab.navigation.model.NavigationModel;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -166,7 +167,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .map((team1) -> team1.getUnread())
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
-                   BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
                 }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
                 });
@@ -274,9 +275,18 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     public void onInitializePresetNavigationItems() {
         Observable.just(navigationModel.getNavigationMenus())
                 .doOnNext(menuBuilder -> {
-                    MenuItem item = menuBuilder.findItem(R.id.nav_setting_orientation);
-                    if (item != null) {
-                        item.setVisible(!(navigationModel.isPhoneMode()));
+                    MenuItem itemOrientation = menuBuilder.findItem(R.id.nav_setting_orientation);
+                    if (itemOrientation != null) {
+                        itemOrientation.setVisible(!(navigationModel.isPhoneMode()));
+                    }
+                    MenuItem itemCallPreview = menuBuilder.findItem(R.id.nav_setting_call_preview);
+                    if (itemCallPreview != null) {
+                        itemCallPreview.setVisible(DeviceUtil.isCallableDevice());
+                    }
+
+                    MenuItem domainItem = menuBuilder.findItem(R.id.nav_change_domain);
+                    if (domainItem != null) {
+                        domainItem.setVisible(AccountRepository.getRepository().hasTeamInfo(279));
                     }
                 })
                 .map(navigationDataModel::getNavigationRows)

@@ -64,7 +64,7 @@ public class StickerManager {
         if (isLocalSticker(groupId)) {
             stickerAssetPath = getStickerAssetPath(groupId, stickerId);
         } else {
-            stickerAssetPath = JandiConstantsForFlavors.SERVICE_FILE_URL +
+            stickerAssetPath = JandiConstantsForFlavors.getServiceFileUrl() +
                     "files-sticker/" + groupId + "/" + stickerId + "?size=420";
         }
 

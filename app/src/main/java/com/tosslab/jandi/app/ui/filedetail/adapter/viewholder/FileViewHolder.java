@@ -57,6 +57,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
     private TextView tvDeletedDate;
     private LinkedEllipsizeTextView tvSharedTopics;
 
+
     protected FileViewHolder(View itemView) {
         super(itemView);
         context = itemView.getContext();

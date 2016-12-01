@@ -53,7 +53,14 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
+        if (getItem(position) instanceof StarredMessage) {
+            final StarredMessage starredMessage = getItem(position);
+            if (getItemCount() - 1 != position) {
+                starredMessage.setHasSemiDivider(true);
+            } else {
+                starredMessage.setHasSemiDivider(false);
+            }
+        }
 
         if (onItemClickListener != null
                 && getItem(position) instanceof StarredMessage) {
@@ -67,6 +74,8 @@ public class StarredListAdapter extends MultiItemRecyclerAdapter
             holder.itemView.setOnLongClickListener(v ->
                     onItemLongClickListener.onItemLongClick(starredMessage.getMessage().id));
         }
+
+        super.onBindViewHolder(holder, position);
 
         loadMoreIfNeed(position);
     }

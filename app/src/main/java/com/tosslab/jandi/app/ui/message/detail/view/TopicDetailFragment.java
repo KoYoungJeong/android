@@ -42,7 +42,7 @@ import com.tosslab.jandi.app.ui.message.detail.dagger.TopicDetailModule;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
-import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity_;
+import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -435,9 +435,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     private void movePushSettingActivity() {
         Intent mainSettingIntent = new Intent(getActivity(), SettingsActivity.class);
-        Intent pushSettingIntent = SettingPushActivity_
-                .intent(TopicDetailFragment.this)
-                .get();
+        Intent pushSettingIntent = new Intent(getActivity(), SettingPushActivity.class);
         getActivity().startActivities(new Intent[]{mainSettingIntent, pushSettingIntent});
     }
 

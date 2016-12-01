@@ -12,13 +12,17 @@ public interface MultiSharePresenter {
 
     void initShareData(List<String> uris);
 
-    void onSelectRoom(long roomId, int roomType);
+    void onSelectRoom(long roomId);
 
     void startShare();
 
     void onFilePageChanged(int position, String comment);
 
     void updateComment(int currentItem, String comment);
+
+    void changeFileName(int position, String fileName);
+
+    String getFileName(int position);
 
     interface View {
 
@@ -36,15 +40,16 @@ public interface MultiSharePresenter {
 
         void setMentionInfo(long teamId, long roomId);
 
-
         void setCommentText(String comment);
-
-        void setFileTitle(String fileName);
 
         void moveRoom(long teamId, long roomId);
 
         void showProgress();
 
         void dismissProgress();
+
+        void showSelectRoomToast();
+
+        void setFileName(String fileName);
     }
 }

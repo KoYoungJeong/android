@@ -316,6 +316,10 @@
     <color name="rgb_eeeeee">#FFEEEEEE</color>
     <color name="rgb_fffad1">#FFFFFAD1</color>
     <color name="rgb_ececec">#FFECECEC</color>
+    <color name="rgb_999999">#FF999999</color>
+    <color name="rgb_f1f1f1">#FFf1f1f1</color>
+    <color name="rgb_a7a7a7">#FFa7a7a7</color>
+    <color name="rgb_e9e9e9">#FFe9e9e9</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>

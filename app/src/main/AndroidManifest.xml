@@ -115,7 +115,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.settings.push.SettingPushActivity_"
+            android:name=".ui.settings.push.SettingPushActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_setting_push"
             android:screenOrientation="portrait" />
@@ -123,10 +123,10 @@
         <activity
             android:name=".ui.settings.call.CallSettingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="멤버 연락처 블라블라" />
+            android:label="@string/common_calleridnotifier_settings" />
 
         <activity
-            android:name=".ui.settings.privacy.SettingPrivacyActivity_"
+            android:name=".ui.settings.privacy.SettingPrivacyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
@@ -159,12 +159,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="fullUser"
             android:theme="@style/JandiTheme.CarouselViewer" />
-
-        <activity
-            android:name=".ui.photo.PhotoViewActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.ActionBarOverlay" />
 
         <activity
             android:name=".ui.term.TermActivity"
@@ -237,7 +231,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.web.InternalWebActivity_"
+            android:name=".ui.web.InternalWebActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -363,7 +357,7 @@
 
 
         <activity
-            android:name=".ui.interfaces.JandiInterfaceActivity_"
+            android:name=".ui.interfaces.JandiInterfaceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -383,7 +377,7 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name=".ui.share.MainShareActivity_"
+            android:name=".ui.share.MainShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -460,7 +454,7 @@
         </activity>
 
         <activity
-            android:name=".ui.filedetail.views.FileSharedEntityChooseActivity_"
+            android:name=".ui.filedetail.views.FileSharedEntityChooseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_title_cdp_to_be_unshared"
             android:screenOrientation="portrait">

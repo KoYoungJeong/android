@@ -1,21 +1,37 @@
-package com.tosslab.jandi.app.ui.share;
+package com.tosslab.jandi.app.ui.share.file;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
@@ -26,10 +42,12 @@ import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
-import com.tosslab.jandi.app.ui.intro.IntroActivity;
+import com.tosslab.jandi.app.ui.share.MainShareActivity;
+import com.tosslab.jandi.app.ui.share.file.dagger.DaggerFileShareComponent;
+import com.tosslab.jandi.app.ui.share.file.dagger.FileShareModule;
+import com.tosslab.jandi.app.ui.share.file.presenter.ImageSharePresenter;
+import com.tosslab.jandi.app.ui.share.file.presenter.ImageSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
-import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenter;
-import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenterImpl;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -40,15 +58,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
+import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,60 +66,55 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * Created by Steve SeongUg Jung on 15. 2. 13..
- */
-@EFragment(R.layout.fragment_share_image)
 public class FileShareFragment extends Fragment implements ImageSharePresenterImpl.View, MainShareActivity.Share {
 
-    @FragmentArg
-    String uriString;
+    @InjectExtra
+    String uri;
 
-    @FragmentArg
-    String subject;
-
-    @FragmentArg
-    String text;
-
-    @ViewById(R.id.iv_share_photo)
+    @Bind(R.id.iv_share_photo)
     ImageView ivSharePhoto;
 
-    @ViewById(R.id.tv_share_image_title)
+    @Bind(R.id.tv_share_image_title)
     TextView tvTitle;
 
-    @ViewById(R.id.et_share_comment)
+    @Bind(R.id.et_share_comment)
     EditText etComment;
 
-    @ViewById(R.id.tv_room_name)
+    @Bind(R.id.tv_room_name)
     TextView tvRoomName;
 
-    @ViewById(R.id.vg_file_icon)
-    LinearLayout vgFileIcon;
+    @Bind(R.id.vg_file_icon)
+    RelativeLayout vgFileIcon;
 
-    @ViewById(R.id.vg_share_content)
+    @Bind(R.id.vg_share_content)
     ViewGroup vgShareContent;
 
-    @ViewById(R.id.iv_share_file_icon)
+    @Bind(R.id.iv_share_file_icon)
     ImageView ivShareFileIcon;
 
-    @ViewById(R.id.tv_team_name)
+    @Bind(R.id.tv_team_name)
     TextView tvTeamName;
 
-    @ViewById(R.id.tv_share_file_type)
+    @Bind(R.id.tv_share_file_type)
     TextView tvShareFileType;
 
-    @ViewById(R.id.vg_viwer)
+    @Bind(R.id.vg_viwer)
     LinearLayout vgViewer;
 
-    @ViewById(R.id.vg_share_root)
+    @Bind(R.id.vg_share_root)
     ScrollView vgRoot;
 
-    @Bean(ImageSharePresenterImpl.class)
+    @Inject
     ImageSharePresenter imageSharePresenter;
 
     MentionControlViewModel mentionControlViewModel;
@@ -118,18 +123,57 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     ProgressWheel progressWheel;
 
-    @AfterInject
-    void initObject() {
-        imageSharePresenter.setView(this);
+    public static FileShareFragment create(Context context, String uri) {
+        Bundle bundle = new Bundle();
+        bundle.putString("uri", uri);
+        return (FileShareFragment) Fragment.instantiate(context, FileShareFragment.class.getName(), bundle);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_share_image, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            Dart.inject(this, arguments);
+        }
+        DaggerFileShareComponent.builder()
+                .fileShareModule(new FileShareModule(this))
+                .build()
+                .inject(this);
+        initProgressWheel();
+        initViews();
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         initProgressWheel();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (menu != null) {
+            MenuItem item = menu.findItem(R.id.action_share);
+            if (item != null) {
+                item.setEnabled(tvRoomName.length() > 0);
+            }
+        }
     }
 
     private void initProgressWheel() {
         progressWheel = new ProgressWheel(getActivity());
     }
 
-    @AfterViews
     void initViews() {
 
         TextCutter.with(etComment)
@@ -140,7 +184,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
         setOnScrollMode();
 
-        imageSharePresenter.initView(uriString);
+        imageSharePresenter.initView(uri);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(getString(R.string.jandi_share_to_jandi) + " (1/1)");
@@ -171,16 +215,14 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void bindImage(File file) {
         final String fileName = file.getName();
-        tvTitle.setText(fileName);
+        setFileName(file.getName());
         if (FileExtensionsUtil.getExtensions(fileName) == FileExtensionsUtil.Extensions.IMAGE) {
             vgFileIcon.setVisibility(View.GONE);
             ivSharePhoto.setVisibility(View.VISIBLE);
             vgShareContent.setBackgroundResource(R.drawable.upload_bg);
-            vgViewer.setBackgroundResource(R.drawable.upload_bg);
 
             ImageLoader.newInstance()
                     .fragment(this)
@@ -196,22 +238,21 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
             ivShareFileIcon.setImageResource(resId);
+            vgFileIcon.setBackgroundColor(FileExtensionsUtil.getFileDetailBackground(
+                    FileExtensionsUtil.getExtensions(fileName)));
         }
     }
 
-    @UiThread
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread
     @Override
     public void dismissProgressBar() {
         if (progressWheel != null && !progressWheel.isShowing()) {
@@ -219,7 +260,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         }
     }
 
-    @UiThread
     @Override
     public void showProgressBar() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -245,7 +285,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         }
     }
 
-
     @Override
     public void onPause() {
         if (mentionControlViewModel != null) {
@@ -260,7 +299,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         EventBus.getDefault().unregister(this);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnUiThread() {
         FragmentActivity activity = getActivity();
@@ -273,7 +311,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         return tvTitle.getText().toString();
     }
 
-    @UiThread
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int entityType) {
 
@@ -289,15 +326,14 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setTeamName(String name) {
         tvTeamName.setText(name);
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setRoomName(String name) {
         tvRoomName.setText(name);
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -320,7 +356,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         imageSharePresenter.uploadFile(imageFile, getTitleText(), messageText, uploadProgress, mentions);
     }
 
-    @Click(R.id.vg_team)
+    @OnClick(R.id.vg_team)
     void clickSelectTeam() {
         LogUtil.e("team");
         startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
@@ -328,7 +364,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }
 
-    @Click(R.id.vg_room)
+    @OnClick(R.id.vg_room)
     void clickSelectRoom() {
         LogUtil.e("room");
         ShareSelectRoomActivity_
@@ -338,7 +374,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
 
-    @Click(R.id.et_share_comment)
+    @OnClick(R.id.et_share_comment)
     void clickComment() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TapComment);
     }
@@ -366,7 +402,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         etComment.setText(comment);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setMentionInfo(long teamId, long roomId, int roomType) {
 
@@ -378,7 +413,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         mentionControlViewModel = MentionControlViewModel.newInstance(getActivity(), etComment, teamId, Arrays.asList(roomId), getMentionType());
     }
 
-    @UiThread
     @Override
     public void dismissDialog(ProgressDialog uploadProgress) {
         if (getActivity() == null || getActivity().isFinishing()) {
@@ -389,15 +423,6 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void moveIntro() {
-        IntroActivity.startActivity(getActivity(), false);
-
-        finishOnUiThread();
-    }
-
-
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
         if (mentionControlViewModel != null) {
             SearchedItemVO searchedItemVO = new SearchedItemVO();
@@ -406,6 +431,87 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
             searchedItemVO.setType(event.getType());
             mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
         }
+    }
+
+    @OnClick(R.id.tv_file_rename_button)
+    void onClickFileRename() {
+        showRenameTitleDialog();
+    }
+
+    private void showRenameTitleDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+
+        RelativeLayout vgInputEditText = (RelativeLayout) LayoutInflater
+                .from(getActivity()).inflate(R.layout.dialog_fragment_input_text, null);
+
+        EditText input = (EditText) vgInputEditText.findViewById(R.id.et_dialog_input_text);
+        input.setHint(getString(R.string.jandi_name));
+        ((TextView) vgInputEditText.findViewById(R.id.tv_popup_title)).setText(R.string.common_fileupload_rename_description);
+        String filename = tvTitle.getText().toString();
+        String extension = getFileExtension(filename);
+        String filenameWithoutExtension = filename.replaceAll(extension, "");
+        input.setText(filenameWithoutExtension);
+        input.setSelection(filenameWithoutExtension.length());
+
+        builder.setView(vgInputEditText)
+                .setPositiveButton(getString(R.string.jandi_confirm), (dialog, which) -> {
+                    String renamedFileName = input.getText().toString() + extension;
+                    setFileName(renamedFileName);
+                    tvTitle.requestFocus();
+                })
+                .setNegativeButton(getString(R.string.jandi_cancel), null);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(100)});
+        input.addTextChangedListener(new SimpleTextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                String name = s.toString();
+                if (name.trim().length() <= 0
+                        || TextUtils.equals(filenameWithoutExtension, s)
+                        || name.contains("\\")
+                        || name.contains("/")
+                        || name.contains(":")
+                        || name.contains("*")
+                        || name.contains("?")
+                        || name.contains("\"")
+                        || name.contains("<")
+                        || name.contains(">")
+                        || name.contains("|")) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+        });
+    }
+
+    public void setFileName(String fileName) {
+        String extension = getFileExtension(fileName);
+        int lastIndexOf = fileName.lastIndexOf(extension);
+        final SpannableStringBuilder filenameSp = new SpannableStringBuilder(fileName);
+
+        filenameSp.setSpan(new ForegroundColorSpan(0xff333333),
+                lastIndexOf, lastIndexOf + extension.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        tvTitle.setText(filenameSp);
+    }
+
+    private String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i);
+        }
+        return extension;
     }
 
 }

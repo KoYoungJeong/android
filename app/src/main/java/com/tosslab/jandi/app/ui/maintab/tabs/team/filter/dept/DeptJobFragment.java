@@ -118,8 +118,6 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
 
         Dart.inject(this, getArguments());
 
-        setAnalyticsScreen();
-
         DeptJobAdapter adapter = new DeptJobAdapter(selectMode);
         lvMember.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -300,6 +298,14 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
     public void onSearchModeChange(boolean isInSearchMode) {
         this.isInSearchMode = isInSearchMode;
         setAnalyticsScreen();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            setAnalyticsScreen();
+        }
     }
 
     public void onEvent(TeamJoinEvent event) {

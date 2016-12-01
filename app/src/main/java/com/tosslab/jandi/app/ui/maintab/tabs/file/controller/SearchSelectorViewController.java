@@ -229,9 +229,14 @@ public class SearchSelectorViewController {
 
         RoomSelector roomSelector = new RoomSelectorImpl(allTopics, users);
         roomSelector.setOnRoomSelectListener(item -> {
-            long sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+            long sharedEntityId;
             AnalyticsValue.Label label;
-            if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
+            if (item.getType() == JandiConstants.Entity.TYPE_JOINED_ROOM) {
+                sharedEntityId = CategorizingAsEntity.JOINED;
+                currentEntityNameText = context.getString(R.string.jandi_joined_room);
+                label = AnalyticsValue.Label.JoinedRoom;
+            } else if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
+                sharedEntityId = CategorizingAsEntity.ACCESSIBLE;
                 // 첫번째는 "Everywhere"인 더미 entity
                 currentEntityNameText = context.getString(R.string.jandi_search_category_everywhere);
                 label = AnalyticsValue.Label.AllRoom;

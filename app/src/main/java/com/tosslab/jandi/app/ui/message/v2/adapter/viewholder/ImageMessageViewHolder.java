@@ -154,7 +154,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         if (TextUtils.equals(fileMessage.status, "archived")) {
             tvFileName.setText(R.string.jandi_deleted_file);
             setImageViewSizeToDefault();
-            ImageLoader.loadFromResources(ivFileImage, R.drawable.file_icon_deleted);
+            ImageLoader.loadFromResources(ivFileImage, R.drawable.file_icon_deleted_135);
             return;
         }
 
@@ -172,7 +172,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             setImageViewSizeToDefault();
             String serverUrl = fileContent.serverUrl;
             String icon = fileContent.icon;
-            int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon);
+            int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, icon, SourceTypeUtil.TYPE_C);
             ivFileImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivFileImage, mimeTypeIconImage);
             tvFileSize.setVisibility(View.INVISIBLE);
@@ -190,7 +190,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
             final ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
             String remoteFilePath =
-                    ImageUtil.getThumbnailUrl(extraInfo, ImageUtil.Thumbnails.LARGE);
+                    ImageUtil.getThumbnailUrl(fileContent);
 
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 

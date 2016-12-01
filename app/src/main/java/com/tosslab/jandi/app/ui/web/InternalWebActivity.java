@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.web;
 
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,9 +10,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -19,6 +23,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -31,51 +37,55 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.progresswheel.ProgressWheelUtil;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-@EActivity(R.layout.activity_internal_web)
-@OptionsMenu(R.menu.internal_web)
 public class InternalWebActivity extends BaseAppCompatActivity implements InternalWebPresenter.View {
 
     public static final int REQ_PAGE_ERROR = 0x00;
-    @Extra
+    @InjectExtra
     String url;
-    @Extra
+    @Nullable
+    @InjectExtra
     boolean hideActionBar;
-    @Extra
+    @Nullable
+    @InjectExtra
     boolean helpSite;
-    @ViewById(R.id.web_internal_web)
+    @Bind(R.id.web_internal_web)
     WebView webView;
-    @ViewById(R.id.loading_internal_web)
+    @Bind(R.id.loading_internal_web)
     WebLoadingBar webLoadingBar;
     ProgressWheelUtil progressWheelUtil;
-    @Bean
+
     InternalWebPresenter internalWebPresenter;
     private String webTitle = null;
-
-    @AfterInject
-    void initObject() {
-        progressWheelUtil = ProgressWheelUtil.makeInstance();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_internal_web);
+        Dart.inject(this);
+        ButterKnife.bind(this);
+
+        initObject();
+        initView();
+
         EventBus.getDefault().register(this);
     }
 
-    @AfterViews
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.internal_web, menu);
+        return true;
+    }
+
+    void initObject() {
+        progressWheelUtil = ProgressWheelUtil.makeInstance();
+        internalWebPresenter = new InternalWebPresenter();
+    }
+
     void initView() {
         setUpActionBar();
         internalWebPresenter.setView(this);
@@ -125,7 +135,28 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         }
     }
 
-    @OptionsItem(R.id.action_share_to_topic)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share_to_topic:
+                onShareToTopicOptionSelect();
+                break;
+            case R.id.action_copy_link:
+                onCopyLinkOptionSelect();
+                break;
+            case R.id.action_open_to_browser:
+                onOpenBrowserOptionSelect();
+                break;
+            case R.id.action_share_to_app:
+                onShareToAppOptionSelect();
+                break;
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onShareToTopicOptionSelect() {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
         ShareSelectRoomActivity_
@@ -134,13 +165,13 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
                 .start();
     }
 
-    @OptionsItem(R.id.action_copy_link)
     public void onCopyLinkOptionSelect() {
         String message = internalWebPresenter.createMessage(webTitle, url);
-        internalWebPresenter.copyToClipboard(message);
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        final ClipData clipData = ClipData.newPlainText("", message);
+        clipboardManager.setPrimaryClip(clipData);
     }
 
-    @OptionsItem(R.id.action_open_to_browser)
     public void onOpenBrowserOptionSelect() {
         String newUrl;
         if (!webView.getUrl().startsWith("http://") && !webView.getUrl().startsWith("https://")) {
@@ -163,7 +194,6 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         }
     }
 
-    @OptionsItem(R.id.action_share_to_app)
     public void onShareToAppOptionSelect() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -174,11 +204,6 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionSelect() {
-        finish();
     }
 
     @Override
@@ -192,13 +217,11 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         return false;
     }
 
-    @UiThread
     @Override
     public void showSuccessToast(Context context, String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread
     @Override
     public void showErrorToast(Context context, String message) {
         ColoredToast.showError(message);
@@ -240,7 +263,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         }
     }
 
-    public void onEvent(ShareSelectRoomEvent event) {
+    public void onEventMainThread(ShareSelectRoomEvent event) {
         internalWebPresenter.sendMessage(this, webTitle, url, event);
     }
 
@@ -255,13 +278,11 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         progressWheelUtil.showProgressWheel(this);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         progressWheelUtil.dismissProgressWheel(this);
@@ -325,8 +346,14 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         };
     }
 
-    @OnActivityResult(REQ_PAGE_ERROR)
-    public void PageErrorResult(int resultCode) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_PAGE_ERROR) {
+            onPageErrorResult(resultCode);
+        }
+    }
+
+    public void onPageErrorResult(int resultCode) {
         switch (resultCode) {
             case PageNotFoundActivity.RES_FINISH:
                 finish();

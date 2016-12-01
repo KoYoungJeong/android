@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -1531,6 +1532,7 @@ public class JandiSocketServiceModel {
             if (poll != null && poll.getId() > 0 && poll.isMine()) {
                 upsertPollVotedStatus(poll);
                 poll = getPollFromDatabase(poll.getId());
+                poll.setIsMine(true);
                 InitialPollInfoRepository.getInstance().decreaseVotableCount();
             }
 
@@ -1585,11 +1587,13 @@ public class JandiSocketServiceModel {
 
             Mention mention = InitialMentionInfoRepository.getInstance().getMention();
             mention.setId(event.getTeamId());
-            long lastMentionedMessageId = event == null
-                    ? -1 : event.getData().getLastMentionedMessageId();
+            long lastMentionedMessageId = event.getData().getLastMentionedMessageId();
             mention.setLastMentionedMessageId(lastMentionedMessageId);
+            mention.setUnreadCount(0);
             InitialMentionInfoRepository.getInstance().upsertMention(mention);
             TeamInfoLoader.getInstance().refreshMention();
+
+            postEvent(new RefreshMentionBadgeCountEvent());
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
         } catch (Exception e) {

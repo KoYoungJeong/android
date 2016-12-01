@@ -18,7 +18,7 @@
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/jandi_detail_page_profile_margin_right"
-            android:src="@drawable/profile_img"/>
+            android:src="@drawable/profile_img" />
 
         <TextView
             android:id="@+id/tv_file_detail_user_name"
@@ -32,7 +32,7 @@
             android:text="Diane"
             android:textColor="@color/jandi_text"
             android:textSize="14dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_file_detail_create_date"
@@ -42,7 +42,7 @@
             android:layout_toRightOf="@id/iv_file_detail_user_profile"
             android:text="01/14/2016, 08:59 pm"
             android:textColor="@color/jand_detail_page_date"
-            android:textSize="12dp"/>
+            android:textSize="12dp" />
 
         <View
             android:id="@+id/v_file_detail_file_info_divider"
@@ -56,7 +56,7 @@
             android:layout_marginRight="7dp"
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/tv_file_detail_create_date"
-            android:background="@color/jandi_file_search_item_divider"/>
+            android:background="@color/jandi_file_search_item_divider" />
 
         <TextView
             android:id="@+id/tv_file_detail_file_info"
@@ -66,7 +66,7 @@
             android:layout_toRightOf="@id/v_file_detail_file_info_divider"
             android:text="1.14 MB, gif"
             android:textColor="@color/jand_detail_page_date"
-            android:textSize="12dp"/>
+            android:textSize="12dp" />
 
         <View
             android:id="@+id/v_file_detail_user_name_disable_indicator"
@@ -76,7 +76,7 @@
             android:layout_alignLeft="@+id/tv_file_detail_user_name"
             android:layout_alignTop="@+id/tv_file_detail_user_name"
             android:background="@drawable/line_gray"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <View
             android:id="@+id/v_file_detail_user_profile_disable_indicator"
@@ -88,7 +88,7 @@
             android:layout_alignTop="@+id/iv_file_detail_user_profile"
             android:layout_toLeftOf="@+id/btn_file_detail_star"
             android:background="@color/nav_drawer_text"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <View
             android:id="@+id/btn_file_detail_star"
@@ -99,7 +99,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="11dp"
             android:background="@drawable/jandi_selector_starred"
-            android:clickable="true"/>
+            android:clickable="true" />
     </RelativeLayout>
 
     <!-- 이미지나 파일 타입 출력 -->
@@ -111,7 +111,7 @@
         <FrameLayout
             android:id="@+id/vg_file_detail_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:id="@+id/vg_file_detail_deleted"
@@ -124,10 +124,10 @@
             android:visibility="gone">
 
             <ImageView
-                android:scaleType="fitCenter"
                 android:layout_width="50dp"
                 android:layout_height="60dp"
-                android:src="@drawable/file_icon_deleted"/>
+                android:scaleType="fitCenter"
+                android:src="@drawable/file_icon_deleted" />
 
             <TextView
                 android:id="@+id/tv_file_detail_deleted_date"
@@ -135,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textColor="@color/jandi_text_medium"
-                android:textSize="12sp"/>
+                android:textSize="14dp" />
 
         </LinearLayout>
     </RelativeLayout>
@@ -155,6 +155,6 @@
             android:id="@+id/tv_file_detail_shared_topics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

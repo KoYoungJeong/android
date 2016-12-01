@@ -1,11 +1,12 @@
-package com.tosslab.jandi.app.ui.share.presenter.text;
+package com.tosslab.jandi.app.ui.share.text.presenter;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.share.text.dagger.TextShareModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,6 +16,9 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -30,7 +34,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class TextSharePresenterImplTest {
 
-    private TextSharePresenterImpl textSharePresenter;
+    @Inject
+    TextSharePresenter textSharePresenter;
     private TextSharePresenter.View mockView;
 
     @BeforeClass
@@ -45,10 +50,13 @@ public class TextSharePresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        textSharePresenter = TextSharePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(TextSharePresenter.View.class);
-        textSharePresenter.setView(mockView);
-        textSharePresenter.teamInfoLoader = TeamInfoLoader.getInstance();
+        DaggerTextSharePresenterImplTest_TestComponent.builder()
+                .textShareModule(new TextShareModule(mockView))
+                .build()
+                .inject(this);
+
+        ((TextSharePresenterImpl) textSharePresenter).teamInfoLoader = TeamInfoLoader.getInstance();
     }
 
     @Test
@@ -76,7 +84,7 @@ public class TextSharePresenterImplTest {
         User entity = Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .takeFirst(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
                 .toBlocking().first();
-        textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
+        ((TextSharePresenterImpl) textSharePresenter).teamId = TeamInfoLoader.getInstance().getTeamId();
 
         textSharePresenter.setEntity(entity.getId(), JandiConstants.TYPE_DIRECT_MESSAGE);
 
@@ -96,17 +104,25 @@ public class TextSharePresenterImplTest {
             return invocationOnMock;
         }).when(mockView).moveEntity(anyLong(), anyLong(), anyLong(), anyInt());
 
-        textSharePresenter.teamId = TeamInfoLoader.getInstance().getTeamId();
-        textSharePresenter.roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
-        textSharePresenter.sendMessage("hello", new ArrayList<>());
+        TextSharePresenterImpl impl = (TextSharePresenterImpl) this.textSharePresenter;
+
+        impl.teamId = TeamInfoLoader.getInstance().getTeamId();
+        impl.roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
+        impl.sendMessage("hello", new ArrayList<>());
 
         await().until(() -> finish[0]);
 
         verify(mockView).showProgressBar();
         verify(mockView).showSuccessToast(anyString());
         verify(mockView).finishOnUiThread();
-        verify(mockView).moveEntity(eq(textSharePresenter.teamId),
-                eq(textSharePresenter.roomId),
-                eq(textSharePresenter.entityId), anyInt());
+        verify(mockView).moveEntity(eq(impl.teamId),
+                eq(impl.roomId),
+                eq(impl.entityId), anyInt());
+                eq(impl.entityId), anyInt());
+    }
+
+    @Component(modules = {TextShareModule.class, ApiClientModule.class})
+    public interface TestComponent {
+        void inject(TextSharePresenterImplTest test);
     }
 }

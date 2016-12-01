@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
+import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -153,6 +154,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private MainTabPagerAdapter tabPagerAdapter;
     private int navigationDirection;
     private InvitationDialogExecutor invitationDialogExecutor;
+
+    private boolean swiping = true;
+    private boolean isFirstLoadActivity = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -311,25 +315,27 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         drawerLayout.addDrawerListener(toggle);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
 
-            private boolean swiping = false;
-
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                swiping = true;
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 if (swiping) {
+                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
                     AnalyticsUtil.sendEvent(
                             AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerSwipe);
-                    swiping = false;
+                } else {
+                    AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.HamburgerMenu);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
                 }
+                swiping = true;
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.Close);
+                sendAnalyticsCurrentScreen();
             }
 
             @Override
@@ -351,7 +357,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
-        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() -1 , 1));
+        viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() - 1, 1));
         setPosition();
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -377,7 +383,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 JandiPreference.setLastSelectedTab(position);
 
                 if (position == MypageTabInfo.INDEX) {
-                    mainTabPresenter.onInitMyPageBadge(false);
+                    mainTabPresenter.onInitMyPageBadge(true);
                     Fragment fragment = getFragment(position);
                     if (fragment != null && fragment instanceof TabFocusListener) {
                         ((TabFocusListener) fragment).onFocus();
@@ -458,14 +464,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @OnClick(R.id.btn_main_tab_menu)
     @Override
     public void openNavigation() {
+        swiping = false;
         drawerLayout.openDrawer(navigationDirection);
-
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.HamburgerIcon);
     }
 
     @Override
     public void closeNavigation() {
         drawerLayout.closeDrawer(navigationDirection);
+        sendAnalyticsCurrentScreen();
     }
 
     public void onEventMainThread(NavigationBadgeEvent event) {
@@ -497,19 +503,23 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     public void onEventMainThread(SocketPollEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() == MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
+    }
+
+    public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(RefreshPollBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(viewPager.getCurrentItem() != MypageTabInfo.INDEX);
+        mainTabPresenter.onInitMyPageBadge(true);
     }
 
     public void onEventMainThread(TeamInfoChangeEvent event) {
@@ -551,12 +561,30 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     public void onResume() {
         super.onResume();
 
+        if (isFirstLoadActivity) {
+            isFirstLoadActivity = false;
+        } else {
+            sendAnalyticsCurrentScreen();
+        }
+
         if (NetworkCheckUtil.isConnected()) {
             offlineLayer.dismissOfflineView();
         } else {
             offlineLayer.showOfflineView();
         }
 
+    }
+
+    private void sendAnalyticsCurrentScreen() {
+        if (viewPager.getCurrentItem() == TopicTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicsTab);
+        } else if (viewPager.getCurrentItem() == ChatTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageTab);
+        } else if (viewPager.getCurrentItem() == TeamTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TeamTab);
+        } else if (viewPager.getCurrentItem() == MypageTabInfo.INDEX) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MypageTab);
+        }
     }
 
     @Override

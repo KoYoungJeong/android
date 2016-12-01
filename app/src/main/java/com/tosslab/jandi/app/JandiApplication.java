@@ -265,6 +265,7 @@ public class JandiApplication extends MultiDexApplication {
         sprinkler.setActive(true);
     }
 
+
     public enum TrackerName {
         APP_TRACKER,
         GLOBAL_TRACKER,

@@ -55,7 +55,6 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
-import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
@@ -398,10 +397,12 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         }
 
         long[] sharedEntities = getSharedEntitiesArray(carouselFileInfo.getSharedEntities());
-        FileSharedEntityChooseActivity_.intent(this)
-                .fileId(carouselFileInfo.getFileMessageId())
-                .sharedEntities(sharedEntities)
-                .startForResult(FileDetailActivity.REQUEST_CODE_UNSHARE);
+        startActivityForResult(Henson.with(this)
+                        .gotoFileSharedEntityChooseActivity()
+                        .fileId(carouselFileInfo.getFileMessageId())
+                        .sharedEntities(sharedEntities)
+                        .build(),
+                FileDetailActivity.REQUEST_CODE_UNSHARE);
 
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_UnShare);
     }
@@ -475,7 +476,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
     private String getExternalLink(String externalCode) {
-        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL)
+        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.getServiceBaseUrl())
                 .append("file/")
                 .append(externalCode);
         return link.toString();

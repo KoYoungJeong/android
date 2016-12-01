@@ -31,6 +31,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -71,7 +72,6 @@ import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
-import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -872,11 +872,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
 
         long[] sharedEntitiesArray = getSharedEntitiesArray(fileMessage);
-        FileSharedEntityChooseActivity_.intent(this)
-                .fileId(fileId)
-                .mode(FileSharedEntityChooseActivity.MODE_PICK)
-                .sharedEntities(sharedEntitiesArray)
-                .startForResult(REQUEST_CODE_PICK);
+        startActivityForResult(Henson.with(this)
+                        .gotoFileSharedEntityChooseActivity()
+                        .fileId(fileId)
+                        .mode(FileSharedEntityChooseActivity.MODE_PICK)
+                        .sharedEntities(sharedEntitiesArray)
+                        .build(),
+                REQUEST_CODE_PICK);
     }
 
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
@@ -1144,10 +1146,12 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         long[] sharedEntitiesArray = getSharedEntitiesArray(fileMessage);
 
-        FileSharedEntityChooseActivity_.intent(this)
-                .fileId(fileId)
-                .sharedEntities(sharedEntitiesArray)
-                .startForResult(REQUEST_CODE_UNSHARE);
+        startActivityForResult(Henson.with(this)
+                        .gotoFileSharedEntityChooseActivity()
+                        .fileId(fileId)
+                        .sharedEntities(sharedEntitiesArray)
+                        .build(),
+                REQUEST_CODE_UNSHARE);
 
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_UnShare);
     }
@@ -1211,7 +1215,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return "";
         }
 
-        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL)
+        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.getServiceBaseUrl())
                 .append("file/")
                 .append(fileMessage.content.externalCode);
         return link.toString();

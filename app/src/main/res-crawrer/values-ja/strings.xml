@@ -21,6 +21,8 @@
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
 	<string name="common_createteam_welcome">"ようこそ！"</string>
 	<string name="common_creatteam_done">"確認"</string>
+	<string name="common_fileupload_rename">"変更"</string>
+	<string name="common_fileupload_rename_description">"名称変更"</string>
 	<string name="common_hamburger_invited">"招待状"</string>
 	<string name="common_hamburger_manageacct">"JANDIアカウント設定"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>

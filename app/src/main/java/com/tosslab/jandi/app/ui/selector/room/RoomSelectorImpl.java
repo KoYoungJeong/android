@@ -217,7 +217,12 @@ public class RoomSelectorImpl implements RoomSelector {
 
         // File Search에서 모든 대화방을 표시하는 더미 데이터가 필요
         if (isIncludeAllMember) {
+
             ExpandRoomData dummyData = new ExpandRoomData();
+            dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);
+            topicDatas.add(dummyData);
+
+            dummyData = new ExpandRoomData();
             dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
             topicDatas.add(dummyData);
         }

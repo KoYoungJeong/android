@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.selector.room.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -108,10 +109,13 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
 
-        if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
+        if (item.getType() == JandiConstants.Entity.TYPE_JOINED_ROOM) {
+            ivIcon.setVisibility(View.GONE);
+            roomholder.tvName.setText(R.string.jandi_joined_room);
+            roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.BOLD));
+        } else if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
             if (from == FROM_ROOM_SELECTOR) {
-                ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ImageLoader.loadFromResources(ivIcon, R.drawable.icon_search_all_rooms);
+                ivIcon.setVisibility(View.GONE);
                 roomholder.tvName.setText(R.string.jandi_search_category_everywhere);
             } else {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -120,7 +124,9 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 roomholder.tvName.setText(R.string.jandi_search_category_everyone);
             }
 
+            roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.BOLD));
         } else if (item.isUser()) {
+            roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.NORMAL));
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
             boolean jandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
 
@@ -146,6 +152,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             roomholder.tvName.setText(name);
         } else if (item.isPublicTopic()) {
+            roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.NORMAL));
             int resId = R.drawable.topiclist_icon_topic_fav;
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic;
@@ -156,6 +163,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             roomholder.tvName.setText(item.getName());
         } else {
+            roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.NORMAL));
             int resId = R.drawable.topiclist_icon_topic_private_fav;
             if (!item.isStarred()) {
                 resId = R.drawable.topiclist_icon_topic_private;

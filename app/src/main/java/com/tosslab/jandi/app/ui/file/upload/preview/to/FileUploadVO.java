@@ -9,7 +9,7 @@ public class FileUploadVO implements Serializable {
     public static final long serialVersionUID = -20150827;
 
     private final String filePath;
-    private final String fileName;
+    private String fileName;
     private long entity;
     private String comment;
 
@@ -26,6 +26,10 @@ public class FileUploadVO implements Serializable {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public void setFileName(String name) {
+        this.fileName = name;
     }
 
     public long getEntity() {

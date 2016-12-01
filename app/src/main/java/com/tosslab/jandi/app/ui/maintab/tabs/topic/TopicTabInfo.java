@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.views.TabView;
 
 /**

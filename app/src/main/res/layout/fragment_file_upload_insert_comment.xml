@@ -7,15 +7,15 @@
     <ImageView
         android:id="@+id/iv_file_upload_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <!-- 액션바(56dp), 파일 제목, 엔티티, 댓글 영역(186dp)을 제외한 나머지 영역 -->
     <FrameLayout
         android:id="@+id/vg_file_extensions"
-        android:layout_marginTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="186dp"
+        android:layout_marginTop="?android:attr/actionBarSize"
         android:visibility="gone">
 
         <LinearLayout
@@ -27,17 +27,16 @@
 
             <ImageView
                 android:id="@+id/iv_file_extensions"
-                android:layout_width="66dp"
-                android:layout_height="79dp" />
+                android:layout_width="65dp"
+                android:layout_height="65dp" />
 
             <TextView
                 android:id="@+id/tv_file_extenstions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:textColor="@color/jandi_text_light_gray"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="11dp"
+                android:textColor="@color/white"
+                android:textSize="20dp" />
 
         </LinearLayout>
 

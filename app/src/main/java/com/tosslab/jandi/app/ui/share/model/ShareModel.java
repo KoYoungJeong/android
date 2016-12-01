@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.file.FileUploadApi;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -24,9 +23,6 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,21 +34,22 @@ import dagger.Lazy;
 import retrofit2.Call;
 import rx.Observable;
 
-@EBean
 public class ShareModel {
 
-    @Inject
-    Lazy<RoomsApi> roomsApi;
-    @Inject
-    Lazy<TeamApi> teamApi;
-    @Inject
-    Lazy<StartApi> startApi;
-    @Inject
-    Lazy<PollApi> pollApi;
+    private Lazy<RoomsApi> roomsApi;
+    private Lazy<TeamApi> teamApi;
+    private Lazy<StartApi> startApi;
+    private Lazy<PollApi> pollApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    @Inject
+    public ShareModel(Lazy<RoomsApi> roomsApi,
+                      Lazy<TeamApi> teamApi,
+                      Lazy<StartApi> startApi,
+                      Lazy<PollApi> pollApi) {
+        this.roomsApi = roomsApi;
+        this.teamApi = teamApi;
+        this.startApi = startApi;
+        this.pollApi = pollApi;
     }
 
     public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) throws RetrofitException {

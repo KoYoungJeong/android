@@ -119,6 +119,8 @@ public class MainTopicListFragment extends Fragment
 
     private UpdatedTopicAdapter updatedTopicAdapter;
 
+    private boolean isFirstLoadFragment = true;
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -157,6 +159,14 @@ public class MainTopicListFragment extends Fragment
         }
 
         setFloatingActionMenu();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isFirstLoadFragment) {
+            isFirstLoadFragment = false;
+        }
     }
 
     private void initUpdatedTopicAdapter() {
@@ -325,13 +335,17 @@ public class MainTopicListFragment extends Fragment
         expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderCollapse(topicFolderData);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderCollapse);
+            if (!isFirstLoadFragment) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderCollapse);
+            }
         });
 
         expandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
             mainTopicListPresenter.onFolderExpand(topicFolderData);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderExpand);
+            if (!isFirstLoadFragment) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderExpand);
+            }
         });
 
         expandableTopicAdapter.setOnChildItemClickListener((view, adapter, groupPosition, childPosition)
@@ -747,6 +761,8 @@ public class MainTopicListFragment extends Fragment
             if (floatingActionMenu != null) {
                 floatingActionMenu.setVisibility(false);
             }
+        } else {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicsTab);
         }
     }
 
