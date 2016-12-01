@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
+import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
@@ -23,8 +24,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
@@ -92,7 +91,9 @@ public class CarouselViewerPresenterImplTest {
 
     private long getFirstFileId() throws RetrofitException {
         ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
-        return new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords().get(0).getMessageId();    }
+        List<ResSearch.SearchRecord> records = new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords();
+        return records.get(records.size() - 1).getMessageId();
+    }
 
     @Test
     public void testOnInitImageFiles() throws Exception {
@@ -132,12 +133,9 @@ public class CarouselViewerPresenterImplTest {
     @Test
     public void testOnAfterImageFiles() throws Exception {
         final boolean[] finish = {false};
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                finish[0] = true;
-                return invocationOnMock;
-            }
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
         }).when(mockView).addFileInfos(anyList());
 
         presenter.setIsLast(false);

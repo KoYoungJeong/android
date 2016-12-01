@@ -115,6 +115,7 @@ import javax.inject.Inject;
 import dagger.Component;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
+import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,7 +149,7 @@ public class JandiSocketServiceModelTest {
                 .inject(JandiSocketServiceModelTest.this);
         accept = false;
 
-        InitialInfoRepository.getInstance().clear();
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         TeamInfoLoader.getInstance().refresh();
 
@@ -323,6 +324,7 @@ public class JandiSocketServiceModelTest {
         try {
             SocketChatCreatedEvent socketChatCreatedEvent = JacksonMapper.getInstance().getObjectMapper().readValue(content, SocketChatCreatedEvent.class);
             socketChatCreatedEvent.setTeamId(teamId);
+            socketChatCreatedEvent.getData().getChat().setTeamId(teamId);
             return socketChatCreatedEvent;
         } catch (IOException e) {
             return null;
@@ -800,6 +802,7 @@ public class JandiSocketServiceModelTest {
         event.setData(new SocketTeamJoinEvent.Data());
         Human member = new Human();
         member.setId(1);
+        event.getData().setTeamId(teamId);
         event.getData().setMember(member);
 
         model.onTeamJoin(event);

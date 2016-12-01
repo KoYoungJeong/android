@@ -343,6 +343,7 @@
         <item name="android:theme">@style/FloatingEditTextTheme</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingTop">0dp</item>
         <item name="android:layout_marginRight">16dp</item>
     </style>
 
