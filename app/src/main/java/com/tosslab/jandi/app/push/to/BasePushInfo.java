@@ -1,11 +1,14 @@
 package com.tosslab.jandi.app.push.to;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -37,6 +40,9 @@ public class BasePushInfo {
     private boolean deviceSubscribe; // 디바이스의 푸쉬 알림 구독 여부
     @JsonProperty("device_push_preview")
     private int devicePushPreview; // 푸쉬 메시지 미리볼지 여부
+    @JsonProperty("sent_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS")
+    private Date sentAt;
 
     public int getBadgeCount() {
         return badgeCount;
@@ -100,5 +106,14 @@ public class BasePushInfo {
 
     public void setDevicePushPreview(int devicePushPreview) {
         this.devicePushPreview = devicePushPreview;
+    }
+
+    public Date getSentAt() {
+        return sentAt;
+    }
+
+    public BasePushInfo setSentAt(Date sentAt) {
+        this.sentAt = sentAt;
+        return this;
     }
 }

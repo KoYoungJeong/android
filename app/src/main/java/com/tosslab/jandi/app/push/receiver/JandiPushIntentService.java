@@ -19,9 +19,11 @@ import com.tosslab.jandi.app.push.to.MarkerPushInfo;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -68,8 +70,13 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        if (basePushInfo instanceof MarkerPushInfo) {
+        Date sentAt = basePushInfo.getSentAt();
+        if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
+            JandiPreference.setPushLastSentAt(sentAt.getTime());
             BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+        }
+
+        if (basePushInfo instanceof MarkerPushInfo) {
 
             if (basePushInfo.getBadgeCount() == 0) {
                 PushHandler.getInstance().removeNotificationAll();
@@ -97,7 +104,6 @@ public class JandiPushIntentService extends IntentService {
         // 타 플랫폼이 active 이고 현재 플랫폼이 inactive 인 경우이거나
         // 해당 토픽 푸시 설정이 off 인 경우
         if (isShowingEntity || !userWantsNotification || !isRingIng) {
-            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
             postEvent(roomId, messagePushInfo.getRoomType());
             return;
         }
