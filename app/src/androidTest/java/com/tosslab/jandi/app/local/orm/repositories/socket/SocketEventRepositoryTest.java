@@ -13,12 +13,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @org.junit.runner.RunWith(android.support.test.runner.AndroidJUnit4.class)
 public class SocketEventRepositoryTest {
-
     private Dao<SocketEvent, String> dao;
 
     @Before
@@ -26,6 +26,27 @@ public class SocketEventRepositoryTest {
         OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
         dao = helper.getDao(SocketEvent.class);
         dao.deleteBuilder().delete();
+    }
+
+    @Test
+    public void deleteBeforeTime() throws Exception {
+        SocketEventRepository.getInstance().addEvent(createMockEventHistory(1));
+        SocketEventRepository.getInstance().addEvent(createMockEventHistory(2));
+        SocketEventRepository.getInstance().addEvent(createMockEventHistory(3));
+
+        assertThat(SocketEventRepository.getInstance().deleteBeforeTime(1, 3)).isTrue();
+        assertThat(SocketEventRepository.getInstance().hasEvent(createMockEventHistory(1))).isFalse();
+        assertThat(SocketEventRepository.getInstance().hasEvent(createMockEventHistory(2))).isFalse();
+        assertThat(SocketEventRepository.getInstance().hasEvent(createMockEventHistory(3))).isTrue();
+    }
+
+    protected EventHistoryInfo createMockEventHistory(long time) {
+        EventHistoryInfo event = mock(EventHistoryInfo.class);
+        doReturn(1L).when(event).getTeamId();
+        doReturn("event").when(event).getEvent();
+        doReturn(String.valueOf(time)).when(event).getUnique();
+        doReturn(time).when(event).getTs();
+        return event;
     }
 
     @Test
