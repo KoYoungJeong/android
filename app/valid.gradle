@@ -2,14 +2,25 @@ def checkValidProperties() {
 
 
     println "================================================================================"
+    println "================================================================================"
     println "Properties Valid Checking.........."
 
-    if (!project.hasProperty("inhouse_version")) {
-        println "set up to gradle.propeties -> \"inhouse_version\""
+    def properties = ["inhouse_version", "report_coverage", "dev_min_sdk"]
+    println "Custom Properties : $properties"
 
-        println "Properties Valid Check Fail"
-        println ("need properties [\"inhouse_version\"]");
-        project.setProperty("inhouse_version", 1)
+    if (!project.hasProperty("inhouse_version")) {
+        println "set up to gradle.propeties --> inhouse_version = 1 (default)"
+        project.ext.inhouse_version = 1
+    }
+
+    if (!project.hasProperty("report_coverage")) {
+        println "set up to gradle.propeties --> report_coverage = false (default)"
+        project.ext.report_coverage = false
+    }
+
+    if (!project.hasProperty("dev_min_sdk")) {
+        println "set up to gradle.propeties --> dev_min_sdk = 19 (default)"
+        project.ext.dev_min_sdk = 19
     }
 
 
@@ -20,3 +31,4 @@ def checkValidProperties() {
 }
 
 checkValidProperties()
+
