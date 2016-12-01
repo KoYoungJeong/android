@@ -48,7 +48,7 @@ public class ActionFactoryTest {
                 Uri parse = Uri.parse("tosslabjandi://open");
                 Action action = ActionFactory.getAction(rule.getActivity(), parse);
                 assertThat(action, is(notNullValue()));
-                assertThat(action.getClass(), is(equalTo(OpenAction_.class)));
+                assertThat(action.getClass(), is(equalTo(OpenAction.class)));
             });
         }
     }

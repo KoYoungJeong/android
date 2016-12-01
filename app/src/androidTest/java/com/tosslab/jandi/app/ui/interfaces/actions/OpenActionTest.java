@@ -42,10 +42,15 @@ public class OpenActionTest {
     public IntentsTestRule<BaseAppCompatActivity> rule = new IntentsTestRule<>(BaseAppCompatActivity.class);
     private OpenAction action;
 
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        BaseInitUtil.releaseDatabase();
+    }
+
     @Before
     public void setUp() throws Throwable {
         BaseInitUtil.clear();
-        rule.runOnUiThread(() -> action = OpenAction_.getInstance_(rule.getActivity()));
+        rule.runOnUiThread(() -> action = new OpenAction(rule.getActivity()));
         action.progressWheel = mock(ProgressWheel.class);
         when(action.progressWheel.isShowing()).thenReturn(true, true, true, true);
 
@@ -56,11 +61,6 @@ public class OpenActionTest {
 
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        BaseInitUtil.releaseDatabase();
     }
 
     private boolean[] getFinished() {
@@ -76,7 +76,7 @@ public class OpenActionTest {
     @Test
     public void testRemoveSpecialChar() throws Exception {
         String origin = "akljdfhlkajshdflk";
-        String replace = action.removeSpecialChar(origin+ "_)(*&^%$#@!~`[]{}';:\"/.,<>?_=+\\|");
+        String replace = action.removeSpecialChar(origin + "_)(*&^%$#@!~`[]{}';:\"/.,<>?_=+\\|");
 
         Assertions.assertThat(replace)
                 .isNotNull()

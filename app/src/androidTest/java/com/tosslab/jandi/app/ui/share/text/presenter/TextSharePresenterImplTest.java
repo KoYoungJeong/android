@@ -38,11 +38,6 @@ public class TextSharePresenterImplTest {
     TextSharePresenter textSharePresenter;
     private TextSharePresenter.View mockView;
 
-    @Component(modules = {TextShareModule.class, ApiClientModule.class})
-    public interface TestComponent {
-        void inject(TextSharePresenterImplTest test);
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
@@ -122,6 +117,11 @@ public class TextSharePresenterImplTest {
         verify(mockView).finishOnUiThread();
         verify(mockView).moveEntity(eq(impl.teamId),
                 eq(impl.roomId),
-                eq(imple.entityId), anyInt());
+                eq(impl.entityId), anyInt());
+    }
+
+    @Component(modules = {TextShareModule.class, ApiClientModule.class})
+    public interface TestComponent {
+        void inject(TextSharePresenterImplTest test);
     }
 }
