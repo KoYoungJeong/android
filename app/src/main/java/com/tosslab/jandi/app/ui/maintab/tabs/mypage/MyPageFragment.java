@@ -85,6 +85,12 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
                         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.PollTab);
                         break;
                 }
+
+                Fragment fragment = getFragment(tab.getPosition());
+
+                if (fragment != null && fragment instanceof TabFocusListener) {
+                    ((TabFocusListener) fragment).onFocus();
+                }
             }
 
             @Override
