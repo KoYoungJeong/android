@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -160,7 +161,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             boolean loadIcon = true;
             if (TextUtils.equals(link.message.status, "archived")) {
                 tvFileName.setText(R.string.jandi_deleted_file);
-                ivFileImage.setImageResource(R.drawable.file_icon_deleted);
+                ivFileImage.setImageResource(R.drawable.file_icon_deleted_135);
 
                 tvFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
                 tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text_light));
@@ -192,6 +193,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 tvFileName.setTextColor(resources.getColor(R.color.dark_gray));
                 tvFileName.setText(fileMessage.content.title);
                 String name = TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId);
+                tvFileUploaderName.setVisibility(View.VISIBLE);
                 tvFileUploaderName.setText(name);
                 ResMessages.FileContent fileContent = ((ResMessages.FileMessage) link.message).content;
                 String fileSize = FileUtil.formatFileSize(fileContent.size);
@@ -200,7 +202,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(
-                                fileMessage.content.serverUrl, fileMessage.content.icon);
+                                fileMessage.content.serverUrl, fileMessage.content.icon, SourceTypeUtil.TYPE_C);
                 ivFileImage.setImageResource(mimeTypeIconImage);
                 tvCommonFileSize.setVisibility(View.VISIBLE);
                 if (fileContent.size > 0) {

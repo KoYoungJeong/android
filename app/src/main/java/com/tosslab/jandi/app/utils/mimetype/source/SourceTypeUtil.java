@@ -13,83 +13,164 @@ import java.util.Map;
  */
 public class SourceTypeUtil {
 
-    public static Map<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>> resourceMapper;
+    // file_icon_###_192
+    public static int TYPE_A = 0x01;
+    // file_icon_###_135
+    public static int TYPE_C = 0x02;
+
+    public static Map<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>> resourceMapperForTypeA;
+    public static Map<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>> resourceMapperForTypeC;
 
     static {
-        resourceMapper = new HashMap<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>>();
+        resourceMapperForTypeA = new HashMap<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>>();
 
         HashMap<MimeTypeUtil.SourceType, Source> value;
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_audio);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_audio_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_audio_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Audio, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_audio_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_audio_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_audio_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Audio, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_img);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_img_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_img_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Image, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_img_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_img_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_img_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Image, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_video);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_video_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_video_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Video, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_video_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_video_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_video_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Video, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_pdf);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_pdf_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_pdf_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Pdf, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_pdf_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_pdf_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_pdf_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Pdf, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_hwp);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_hwp_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_hwp_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Hwp, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_hwp_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_hwp_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_hwp_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Hwp, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_txt);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_txt_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_txt_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Document, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_text_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_text_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_text_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Document, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_exel);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_exel_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_exel_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.SpreadSheet, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_excel_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_excel_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_excel_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.SpreadSheet, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_ppt);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_ppt_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_ppt_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Presentation, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_ppt_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_ppt_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_ppt_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Presentation, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_zip);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_zip_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_zip_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Zip, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_zip_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_zip_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_zip_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Zip, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_etc);
-        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_etc_dropbox);
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_etc_google);
-        resourceMapper.put(MimeTypeUtil.FilterType.Etc, value);
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_etc_192);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_etc_dropbox_192);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_etc_google_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Etc, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_set_docs);
-        resourceMapper.put(MimeTypeUtil.FilterType.GoogleDocument, value);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_docs_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.GoogleDocument, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_set_pr);
-        resourceMapper.put(MimeTypeUtil.FilterType.GooglePresentation, value);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_ppt_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.GooglePresentation, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
-        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_set_ss);
-        resourceMapper.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, value);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_spreadsheet_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, value);
+
+        resourceMapperForTypeC = new HashMap<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>>();
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_audio_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_audio_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_audio_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Audio, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_img_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_img_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_img_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Image, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_video_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_video_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_video_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Video, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_pdf_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_pdf_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_pdf_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Pdf, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_hwp_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_hwp_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_hwp_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Hwp, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_text_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_text_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_text_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Document, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_excel_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_excel_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_excel_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.SpreadSheet, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_ppt_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_ppt_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_ppt_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Presentation, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_zip_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_zip_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_zip_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Zip, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_etc_135);
+        value.put(MimeTypeUtil.SourceType.Dropbox, () -> R.drawable.file_icon_etc_dropbox_135);
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_etc_google_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Etc, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_docs_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.GoogleDocument, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_ppt_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.GooglePresentation, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_spreadsheet_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, value);
+
 
     }
 
@@ -110,7 +191,15 @@ public class SourceTypeUtil {
     }
 
 
-    public static int getFileIcon(MimeTypeUtil.FilterType mimeType, MimeTypeUtil.SourceType sourceType) {
+    public static int getFileIcon(MimeTypeUtil.FilterType mimeType, MimeTypeUtil.SourceType sourceType, int type) {
+
+        Map<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>> resourceMapper = resourceMapperForTypeA;
+
+        if (type == TYPE_A) {
+            resourceMapper = resourceMapperForTypeA;
+        } else if (type == TYPE_C) {
+            resourceMapper = resourceMapperForTypeC;
+        }
 
         if (resourceMapper.containsKey(mimeType)) {
             Map<MimeTypeUtil.SourceType, Source> sourceTypeSourceMap = resourceMapper.get(mimeType);

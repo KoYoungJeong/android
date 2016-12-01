@@ -47,6 +47,10 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     TextView tvTopicName;
     @Bind(R.id.iv_mention_message_content_icon)
     ImageView ivContentIcon;
+    @Bind(R.id.tv_mention_message_content_name)
+    TextView tvContentName;
+    @Bind(R.id.tv_divide_bar)
+    TextView tvDivideBar;
 
     private int topMarginForIvProfile;
 
@@ -73,21 +77,25 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     private void bindContent(MentionMessage mentionMessage) {
         if ("comment".equals(mentionMessage.getContentType())) {
             tvTopicName.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-            tvTopicName.setText(mentionMessage.getFeedbackTitle());
+//            tvTopicName.setText(mentionMessage.getRoomName());
+            tvTopicName.setVisibility(View.GONE);
             if ("poll".equals(mentionMessage.getFeedbackType())) {
                 ivContentIcon.setImageResource(R.drawable.icon_message_poll);
+                tvContentName.setText(mentionMessage.getFeedbackTitle());
             } else {
                 ivContentIcon.setImageResource(R.drawable.icon_message_file);
+                tvContentName.setText(mentionMessage.getFeedbackTitle());
             }
+            tvContentName.setVisibility(View.VISIBLE);
             ivContentIcon.setVisibility(View.VISIBLE);
-        } else if ("file".equals(mentionMessage.getContentType())) {
-            tvTopicName.setText(mentionMessage.getContentTitle());
-            tvTopicName.setEllipsize(TextUtils.TruncateAt.END);
-            ivContentIcon.setVisibility(View.GONE);
+            tvDivideBar.setVisibility(View.GONE);
         } else {
+            tvTopicName.setVisibility(View.VISIBLE);
             tvTopicName.setText(mentionMessage.getRoomName());
             tvTopicName.setEllipsize(TextUtils.TruncateAt.END);
             ivContentIcon.setVisibility(View.GONE);
+            tvDivideBar.setVisibility(View.GONE);
+            tvContentName.setVisibility(View.GONE);
         }
 
         SpannableStringBuilder ssb = new SpannableStringBuilder(mentionMessage.getContentBody());
@@ -96,8 +104,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         MentionAnalysisInfo mentionAnalysisInfo =
                 MentionAnalysisInfo.newBuilder(myId, mentionMessage.getMentions())
                         .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
-                        .forMeBackgroundColor(Color.parseColor("#FF01A4E7"))
-                        .forMeTextColor(Color.WHITE)
+                        .forMeBackgroundColor(Color.parseColor("#FFCFF1FF"))
+                        .forMeTextColor(Color.parseColor("#FF333333"))
                         .build();
 
         SpannableLookUp.text(ssb)
@@ -161,4 +169,5 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
                     .into(ivProfile);
         }
     }
+
 }

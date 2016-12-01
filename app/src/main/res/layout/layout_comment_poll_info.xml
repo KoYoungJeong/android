@@ -15,7 +15,7 @@
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
         android:clickable="false"
-        android:src="@drawable/comment_profile"/>
+        android:src="@drawable/comment_profile" />
 
     <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
         android:id="@+id/vg_message_poll"
@@ -27,30 +27,30 @@
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:paddingBottom="8dp"
-        android:paddingLeft="8dp"
+        android:paddingLeft="6.5dp"
         android:paddingRight="9dp"
         android:paddingTop="8dp"
         app:boundWidth="59dp">
 
         <ImageView
             android:id="@+id/v_message_poll_icon"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:padding="3dp"
-            android:src="@drawable/poll_normal"/>
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:paddingTop="3dp"
+            android:src="@drawable/poll_normal" />
 
         <TextView
             android:id="@+id/tv_message_poll_subject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="6.5dp"
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/jandi_text"
             android:textSize="14sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_message_poll_creator"
@@ -61,7 +61,7 @@
             android:layout_marginTop="5dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:textColor="@color/jandi_text"
-            android:textSize="11sp"/>
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/tv_message_poll_due_date"
@@ -73,7 +73,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:textColor="@color/jandi_text_light"
-            android:textSize="10sp"/>
+            android:textSize="10sp" />
 
         <TextView
             android:id="@+id/tv_message_poll_deleted"
@@ -86,7 +86,7 @@
             android:textColor="@color/jandi_text_light"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
 

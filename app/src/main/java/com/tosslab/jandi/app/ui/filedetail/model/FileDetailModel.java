@@ -131,9 +131,6 @@ public class FileDetailModel {
     public List<Long> getSharedTopicIds(ResMessages.OriginalMessage fileDetail) {
         List<Long> sharedTopicIds = new ArrayList<>();
 
-        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-
-
         ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
         Observable.from(fileMessage.shareEntities)
                 .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)

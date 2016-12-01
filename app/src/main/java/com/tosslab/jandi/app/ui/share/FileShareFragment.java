@@ -89,7 +89,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     TextView tvRoomName;
 
     @ViewById(R.id.vg_file_icon)
-    LinearLayout vgFileIcon;
+    ViewGroup vgFileIcon;
 
     @ViewById(R.id.vg_share_content)
     ViewGroup vgShareContent;
@@ -196,6 +196,8 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
 
             int resId = FileExtensionsUtil.getFileTypeBigImageResource(fileName);
             ivShareFileIcon.setImageResource(resId);
+            vgFileIcon.setBackgroundColor(FileExtensionsUtil.getFileDetailBackground(
+                    FileExtensionsUtil.getExtensions(fileName)));
         }
     }
 

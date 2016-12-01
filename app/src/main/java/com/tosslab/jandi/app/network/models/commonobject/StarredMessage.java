@@ -19,6 +19,7 @@ public class StarredMessage {
     private long starredId;
     private Room room;
     private Message message;
+    private boolean hasSemiDivider = false;
 
     public long getTeamId() {
         return teamId;
@@ -66,6 +67,14 @@ public class StarredMessage {
 
     public void setStarredId(long starredId) {
         this.starredId = starredId;
+    }
+
+    public boolean hasSemiDivider() {
+        return hasSemiDivider;
+    }
+
+    public void setHasSemiDivider(boolean hasSemiDivider) {
+        this.hasSemiDivider = hasSemiDivider;
     }
 
     @Override

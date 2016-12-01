@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 public class NormalFileViewHolder extends FileViewHolder {
     private View vContent;
     private ImageView ivFileThumb;
+    private ViewGroup vgBackground;
     private OnFileClickListener onFileClickListener;
 
     private NormalFileViewHolder(View itemView, OnFileClickListener onFileClickListener) {
@@ -35,6 +36,7 @@ public class NormalFileViewHolder extends FileViewHolder {
         vContent = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_file_detail_file_content, parent, true);
         ivFileThumb = (ImageView) vContent.findViewById(R.id.iv_file_detail_thumb);
+        vgBackground = (ViewGroup) vContent.findViewById(R.id.vg_background);
     }
 
     @Override
@@ -49,9 +51,11 @@ public class NormalFileViewHolder extends FileViewHolder {
 
 
         if (isDeleted(fileMessage.status)) {
-            ivFileThumb.setImageResource(R.drawable.file_icon_delete_198);
+            ivFileThumb.setImageResource(R.drawable.file_detail_deleted);
+            vgBackground.setBackgroundColor(0xffa7a7a7);
         } else {
             ivFileThumb.setImageResource(getResource(placeholderType));
+            vgBackground.setBackgroundColor(getFileDetailBackground(placeholderType));
         }
 
         String fileUrl = ImageUtil.getImageFileUrl(content.fileUrl);
@@ -72,40 +76,81 @@ public class NormalFileViewHolder extends FileViewHolder {
         switch (placeholderType) {
             default:
             case Etc:
-                imageResourceId = R.drawable.file_icon_etc_198;
+                imageResourceId = R.drawable.file_detail_etc;
                 break;
             case Dropbox:
-                imageResourceId = R.drawable.file_icon_dropbox_198;
+                imageResourceId = R.drawable.file_detail_dropbox;
                 break;
             case Google:
-                imageResourceId = R.drawable.file_icon_google_198;
+                imageResourceId = R.drawable.file_detail_googledocs;
                 break;
             case Audio:
-                imageResourceId = R.drawable.file_icon_audio_198;
+                imageResourceId = R.drawable.file_detail_audio;
                 break;
             case Video:
-                imageResourceId = R.drawable.file_icon_video_198;
+                imageResourceId = R.drawable.file_detail_video;
                 break;
             case SpreadSheet:
-                imageResourceId = R.drawable.file_icon_exel_198;
+                imageResourceId = R.drawable.file_detail_excel;
                 break;
             case Presentation:
-                imageResourceId = R.drawable.file_icon_ppt_198;
+                imageResourceId = R.drawable.file_detail_ppt;
                 break;
             case Pdf:
-                imageResourceId = R.drawable.file_icon_pdf_198;
+                imageResourceId = R.drawable.file_detail_pdf;
                 break;
             case Hwp:
-                imageResourceId = R.drawable.file_icon_hwp_198;
+                imageResourceId = R.drawable.file_detail_hwp;
                 break;
             case Document:
-                imageResourceId = R.drawable.file_icon_txt_198;
+                imageResourceId = R.drawable.file_detail_text;
                 break;
             case ZIP:
-                imageResourceId = R.drawable.file_icon_zip_198;
+                imageResourceId = R.drawable.file_detail_zip;
                 break;
         }
         return imageResourceId;
+    }
+
+    private int getFileDetailBackground(MimeTypeUtil.PlaceholderType placeholderType) {
+        int color;
+        switch (placeholderType) {
+            default:
+            case Etc:
+                color = 0xffa7a7a7;
+                break;
+            case Dropbox:
+                color = 0xff2086fa;
+                break;
+            case Google:
+                color = 0xff404040;
+                break;
+            case Audio:
+                color = 0xffff992c;
+                break;
+            case Video:
+                color = 0xff8267c1;
+                break;
+            case SpreadSheet:
+                color = 0xff109d57;
+                break;
+            case Presentation:
+                color = 0xffed6e3c;
+                break;
+            case Pdf:
+                color = 0xffef5050;
+                break;
+            case Hwp:
+                color = 0xff07adad;
+                break;
+            case Document:
+                color = 0xff426bb7;
+                break;
+            case ZIP:
+                color = 0xff828282;
+                break;
+        }
+        return color;
     }
 
     public interface OnFileClickListener {
