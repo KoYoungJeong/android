@@ -475,7 +475,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
     private String getExternalLink(String externalCode) {
-        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL)
+        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.getServiceBaseUrl())
                 .append("file/")
                 .append(externalCode);
         return link.toString();

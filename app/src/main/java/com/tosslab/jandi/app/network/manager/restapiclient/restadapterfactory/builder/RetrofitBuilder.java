@@ -24,14 +24,14 @@ public class RetrofitBuilder {
 
     synchronized public static RetrofitBuilder getInstance() {
         if (retrofitBuilder == null) {
-            retrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.SERVICE_INNER_API_URL);
+            retrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.getServiceInnerApiUrl());
         }
         return retrofitBuilder;
     }
 
     synchronized public static RetrofitBuilder getInstanceOfFileUpload() {
         if (fileUploadRetrofitBuilder == null) {
-            fileUploadRetrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.SERVICE_FILE_UPLOAD_URL);
+            fileUploadRetrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.getServiceFileUploadUrl());
         }
         return fileUploadRetrofitBuilder;
     }
@@ -55,6 +55,11 @@ public class RetrofitBuilder {
         retofitBuilder.client(okHttpClient);
 
         return retofitBuilder.build();
+    }
+
+    synchronized public static void reset() {
+        retrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.getServiceInnerApiUrl());
+        fileUploadRetrofitBuilder = new RetrofitBuilder(JandiConstantsForFlavors.getServiceFileUploadUrl());
     }
 
     synchronized public <CLIENT> CLIENT create(Class<CLIENT> clazz) {

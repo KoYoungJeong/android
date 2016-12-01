@@ -373,4 +373,17 @@ public class AccountRepository extends LockExecutorTemplate {
         });
 
     }
+
+    public boolean hasTeamInfo(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<ResAccountInfo.UserTeam, Long> dao = getDao(ResAccountInfo.UserTeam.class);
+                return dao.queryBuilder().where().eq("teamId", teamId).countOf() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        });
+    }
 }

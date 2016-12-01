@@ -1211,7 +1211,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             return "";
         }
 
-        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.SERVICE_BASE_URL)
+        StringBuffer link = new StringBuffer(JandiConstantsForFlavors.getServiceBaseUrl())
                 .append("file/")
                 .append(fileMessage.content.externalCode);
         return link.toString();
