@@ -17,17 +17,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
-import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.model.ScrollViewHelper;
 import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenter;
 import com.tosslab.jandi.app.ui.share.presenter.image.ImageSharePresenterImpl;
@@ -277,27 +276,16 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @UiThread
     @Override
     public void moveEntity(long teamId, long roomId, long entityId, int entityType) {
-        if (getActivity() == null) {
-            return;
-        }
 
         Completable.fromAction(() -> {
-            startActivity(Henson.with(getActivity())
-                    .gotoMainTabActivity()
-                    .build()
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        }).delay(100, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    MessageListV2Activity_.intent(getActivity())
-                            .teamId(teamId)
-                            .roomId(roomId)
-                            .entityId(entityId)
-                            .entityType(entityType)
-                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .start();
-                });
+            if (getActivity() == null) {
+                return;
+            }
+            UploadNotificationActivity.startActivity(getActivity(), teamId, entityId);
 
+            getActivity().finish();
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     @Override
@@ -382,7 +370,7 @@ public class FileShareFragment extends Fragment implements ImageSharePresenterIm
     @Override
     public void setMentionInfo(long teamId, long roomId, int roomType) {
 
-        if (mentionControlViewModel != null) {
+        if (mentionControlViewModel != null || getActivity() == null) {
             mentionControlViewModel.reset();
             mentionControlViewModel = null;
         }

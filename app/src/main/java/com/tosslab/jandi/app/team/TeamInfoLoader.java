@@ -339,7 +339,7 @@ public class TeamInfoLoader {
 
     private Observable<Chat> getChatObservable() {
         return execute(() -> {
-            if (initialInfo.getChats() == null) {
+            if (initialInfo == null || initialInfo.getChats() == null) {
                 return Observable.empty();
             }
             return Observable.from(initialInfo.getChats());
@@ -347,7 +347,7 @@ public class TeamInfoLoader {
     }
 
     public long getMyId() {
-        return execute(() -> me.getId());
+        return execute(() -> me != null ? me.getId() : -1);
     }
 
     public boolean isAnnouncementOpened(long topicId) {

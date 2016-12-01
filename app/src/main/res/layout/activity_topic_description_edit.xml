@@ -25,6 +25,7 @@
         android:lineSpacingExtra="12dp"
         android:maxLength="300"
         android:paddingBottom="16dp"
+        android:paddingTop="0dp"
         android:textColor="@color/text_color_setting_check_title"
         android:textColorHint="@color/jandi_message_search_item_topic_txt_color_sub" />
 

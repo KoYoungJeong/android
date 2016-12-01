@@ -40,7 +40,7 @@ public class FolderRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        FolderRepository.getInstance().deleteFolder(getFolder().getId());
+        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         TeamInfoLoader.getInstance().refresh();
 
@@ -148,7 +148,6 @@ public class FolderRepositoryTest {
 
     @Test
     public void testRemoveTopic() throws Exception {
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         FolderRepository.getInstance().addFolder(teamId, getFolder());
         FolderRepository.getInstance().addTopic(getFolder().getId(), 1);
         FolderRepository.getInstance().addTopic(getFolder().getId(), 2);
