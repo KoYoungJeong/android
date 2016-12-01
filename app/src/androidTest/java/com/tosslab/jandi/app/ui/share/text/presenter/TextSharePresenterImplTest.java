@@ -118,7 +118,6 @@ public class TextSharePresenterImplTest {
         verify(mockView).moveEntity(eq(impl.teamId),
                 eq(impl.roomId),
                 eq(impl.entityId), anyInt());
-                eq(impl.entityId), anyInt());
     }
 
     @Component(modules = {TextShareModule.class, ApiClientModule.class})
