@@ -136,6 +136,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
             FileUploadPreviewActivity_.intent(ImageAlbumActivity.this)
                     .realFilePathList(new ArrayList<String>(selectedPicturesPathList))
                     .selectedEntityIdToBeShared(entityId)
+                    .from(FileUploadPreviewActivity.FROM_SELECT_IMAGE)
                     .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         } else {
             ColoredToast.showError(getString(R.string.err_file_upload_failed));

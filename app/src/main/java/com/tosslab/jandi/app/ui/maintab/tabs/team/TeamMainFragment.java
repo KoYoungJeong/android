@@ -169,15 +169,25 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
                     startActivity(Henson.with(activity)
                             .gotoCallSettingActivity()
                             .build());
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.Whoscall_MoveToSetting);
                 });
             }
+
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.Whoscall_DontShowAgain, AnalyticsValue.Label.On);
+                } else {
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.Whoscall_DontShowAgain, AnalyticsValue.Label.Off);
+                }
+            });
 
             builder.setOnDismissListener(dialog -> {
                 if (checkBox.isChecked()) {
                     JandiPreference.setShowCallPermissionPopup();
                 }
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.Whoscall_Close);
             }).create().show();
-            
+
         }
     }
 }

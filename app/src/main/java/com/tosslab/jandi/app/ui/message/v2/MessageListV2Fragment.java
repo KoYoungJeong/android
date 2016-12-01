@@ -1153,6 +1153,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 .singleUpload(true)
                 .realFilePathList(new ArrayList<>(filePaths))
                 .selectedEntityIdToBeShared(entityId)
+                .from(FileUploadPreviewActivity.FROM_TAKE_PHOTO)
                 .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
     }
 
@@ -1163,6 +1164,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePaths))
                     .selectedEntityIdToBeShared(entityId)
+                    .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
                     .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         }
     }

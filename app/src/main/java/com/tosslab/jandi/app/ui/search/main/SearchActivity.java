@@ -606,11 +606,16 @@ public class SearchActivity extends BaseAppCompatActivity
     public void setPricingLimitView(Boolean isLimited) {
         if (isLimited) {
             layoutPricingPlanWarning.setVisibility(View.VISIBLE);
-            PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
-                    .addViewRemoveButton(() -> {
-                        layoutPricingPlanWarning.setVisibility(View.GONE);
-                    })
-                    .bind(PricingPlanWarningViewController.TYPE_MSG_SEARCH);
+            PricingPlanWarningViewController pricingPlanWarningViewController =
+                    PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
+                            .addViewRemoveButton(() -> {
+                                layoutPricingPlanWarning.setVisibility(View.GONE);
+                            });
+            if (isOnlyMessageMode) {
+                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_MSG_MESSAGE_SEARCH);
+            } else {
+                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_MSG_UNIV_SEARCH);
+            }
         } else {
             layoutPricingPlanWarning.setVisibility(View.GONE);
         }

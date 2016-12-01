@@ -53,7 +53,7 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MentionListFragment extends Fragment implements MentionListView, ListScroller,TabFocusListener {
+public class MentionListFragment extends Fragment implements MentionListView, ListScroller, TabFocusListener {
 
     @Inject
     MentionListPresenter presenter;
@@ -152,6 +152,8 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByMentionedMessage(
                     mention);
             newFragment.show(getChildFragmentManager(), "dioalog");
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionLongTap);
+
         });
 
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -194,6 +196,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     public void onEvent(MessageStarredEvent event) {
         if (isResumed()) {
             presenter.onStarred(event.getMessageId());
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionLongTap_Star);
         }
     }
 
@@ -205,6 +208,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             }).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
                 ColoredToast.show(R.string.jandi_copied_to_clipboard);
             });
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MypageTab, AnalyticsValue.Action.MentionLongTap_Copy);
         }
     }
 
