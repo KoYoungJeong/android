@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.share.file.FileShareFragment;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.ui.share.multi.MultiShareFragment;
 import com.tosslab.jandi.app.ui.share.text.TextShareFragment;
@@ -33,6 +32,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MainShareActivity extends BaseAppCompatActivity {
@@ -134,7 +134,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
         } else if (intentType == IntentType.File) {
 
-            attached = attachFileShareFragment(intent);
+            attached = attachSingleShareFragment(intent);
 
         }
 
@@ -170,18 +170,16 @@ public class MainShareActivity extends BaseAppCompatActivity {
         return true;
     }
 
-    private boolean attachFileShareFragment(Intent intent) {
+    private boolean attachSingleShareFragment(Intent intent) {
         Uri uri = mainShareModel.getShareFile(intent);
         if (uri == null) {
             return false;
         }
 
-        FileShareFragment fragment = FileShareFragment.create(this, uri.toString());
-
+        MultiShareFragment fragment = MultiShareFragment.create(Arrays.asList(uri));
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.vg_share_container, fragment, FRAGMENT_TAG)
                 .commit();
-
         return true;
     }
 
