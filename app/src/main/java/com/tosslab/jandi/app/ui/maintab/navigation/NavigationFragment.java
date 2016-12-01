@@ -527,7 +527,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                     .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                     .transformation(new BlurTransformation(ivProfile.getContext(), 50))
-                    .uri(Uri.parse(ImageUtil.getLargeProfileUrl(photoUrl)))
+                    .uri(Uri.parse(photoUrl))
                     .into(ivProfileLarge);
         } else {
             vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
