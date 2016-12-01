@@ -129,6 +129,16 @@ public class InviteByEmailActivity extends BaseAppCompatActivity implements Invi
     }
 
     @Override
+    public void showKickedMemberFailDialog() {
+        new AlertDialog.Builder(InviteByEmailActivity.this)
+                .setTitle(R.string.team_invite_email_disabledmember_title)
+                .setMessage(R.string.team_invite_email_disabledmember_desc)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
+    }
+
+    @Override
     public void showInviteAgainDialog(String email) {
         new AlertDialog.Builder(InviteByEmailActivity.this)
                 .setMessage(R.string.jandi_invite_to_dummy_account_again)

@@ -18,6 +18,8 @@ public interface InviteByEmailView {
 
     void showInviteFailToast();
 
+    void showKickedMemberFailDialog();
+
     void showInviteAgainDialog(String email);
 
     void showAlreadyInTeamToast(String teamName);
