@@ -127,9 +127,20 @@ public class ImageFilePath {
         }
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
             // Return the remote address
             if (isGoogleOldPhotosUri(uri)) {
                 return uri.getLastPathSegment();
+            } else if (isGoogleNewPhotosUri(uri)) {
+                String fileName = getFileName(context, uri);
+                if (!TextUtils.isEmpty(fileName)) {
+                    return copyFile(context, uri, fileName);
+                }
+            } else if (isPicasaPhotoUri(uri)) {
+                String fileName = getFileName(context, uri);
+                if (!TextUtils.isEmpty(fileName)) {
+                    return copyFile(context, uri, fileName);
+                }
             }
 
             String path = getDataColumn(context, uri, null, null);
@@ -137,14 +148,9 @@ public class ImageFilePath {
             if (!TextUtils.isEmpty(path)) {
                 return path;
             } else {
-                String fileName = getFileNameFromFileInfo(context, uri);
+                String fileName = getFileName(context, uri);
                 if (!TextUtils.isEmpty(fileName)) {
                     return copyFile(context, uri, fileName);
-                } else {
-                    fileName = getFileNameFromUri(uri);
-                    if (uri != null && !TextUtils.isEmpty(fileName)) {
-                        return copyFile(context, uri, fileName);
-                    }
                 }
             }
         }
@@ -153,15 +159,6 @@ public class ImageFilePath {
             return uri.getPath();
         }
         return null;
-    }
-
-    private static String getFileNameFromUri(Uri uri) {
-        String fileName = "";
-        int i = uri.toString().lastIndexOf('/');
-        if (i > 0) {
-            fileName = uri.toString().substring(i + 1);
-        }
-        return fileName;
     }
 
     private static String copyFile(Context context, Uri uri, String fileInfo) {
@@ -212,7 +209,9 @@ public class ImageFilePath {
         return filePath;
     }
 
-    private static String getFileNameFromFileInfo(Context context, Uri uri) {
+    private static String getFileName(Context context, Uri uri) {
+
+        String result = "";
 
         Cursor cursor = null;
         String displayNameCol = OpenableColumns.DISPLAY_NAME;
@@ -239,16 +238,31 @@ public class ImageFilePath {
                 } else {
                     fileExt = "";
                 }
-                return fileName + fileExt;
+                result = fileName + fileExt;
             }
         } catch (Exception e) {
-            return "";
+            e.printStackTrace();
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
-        return "";
+
+        if (!TextUtils.isEmpty(result)) {
+            return result;
+        } else {
+            return getFileNameFromUri(uri);
+        }
+
+    }
+
+    private static String getFileNameFromUri(Uri uri) {
+        String fileName = "";
+        int i = uri.toString().lastIndexOf('/');
+        if (i > 0) {
+            fileName = uri.toString().substring(i + 1);
+        }
+        return fileName;
     }
 
     private static String getFileExtension(String fileName) {
@@ -260,53 +274,11 @@ public class ImageFilePath {
         return extension;
     }
 
-//    private static String copyFile(Context context, Uri uri) {
-//        String filePath;
-//        InputStream inputStream = null;
-//        BufferedOutputStream outStream = null;
-//        try {
-//            inputStream = context.getContentResolver().openInputStream(uri);
-//
-//            filePath = FileUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
-//                    .getWebImageName();
-//            outStream = new BufferedOutputStream(new FileOutputStream
-//                    (filePath));
-//
-//            byte[] buf = new byte[2048];
-//            int len;
-//            while ((len = inputStream.read(buf)) > 0) {
-//                outStream.write(buf, 0, len);
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            filePath = "";
-//        } finally {
-//            try {
-//                if (inputStream != null) {
-//                    inputStream.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                if (outStream != null) {
-//                    outStream.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return filePath;
-//    }
-//
-//    private static boolean isPicasaPhotoUri(Uri uri) {
-//
-//        return uri != null
-//                && !TextUtils.isEmpty(uri.getAuthority())
-//                && uri.getAuthority().contains("android.gallery3d");
-//    }
+    private static boolean isPicasaPhotoUri(Uri uri) {
+        return uri != null
+                && !TextUtils.isEmpty(uri.getAuthority())
+                && uri.getAuthority().contains("android.gallery3d");
+    }
 
     /**
      * Get the value of the data column for this Uri. This is useful for
