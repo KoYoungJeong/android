@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Mention;
+import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
@@ -1210,18 +1211,22 @@ public class JandiSocketServiceModel {
             Topic topic = event.getData().getTopic();
 
             RealmList<Marker> markers = new RealmList<>();
+            RealmList<RealmLong> memberIds = new RealmList<>();
+
             for (Long memberId : topic.getMembers()) {
                 Marker marker = new Marker();
                 marker.setRoomId(topic.getId());
                 marker.setMemberId(memberId);
                 marker.setReadLinkId(-1);
                 markers.add(marker);
+                memberIds.add(new RealmLong(memberId));
             }
             if (topic.getCreatorId() == TeamInfoLoader.getInstance().getMyId()) {
                 topic.setSubscribe(true);
                 topic.setIsJoined(true);
             }
             topic.setMarkers(markers);
+            topic.setMemberIds(memberIds);
             TopicRepository.getInstance().addTopic(topic);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
