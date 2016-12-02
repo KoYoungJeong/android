@@ -127,122 +127,44 @@ public class ImageFilePath {
         }
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
-
             // Return the remote address
             if (isGoogleOldPhotosUri(uri)) {
                 return uri.getLastPathSegment();
-            } else if (isPicasaPhotoUri(uri)) {
-                return copyFile(context, uri);
             }
-            String fileName = getGoogleFileInfo(context, uri);
-            if (!TextUtils.isEmpty(fileName)) {
-                // Standard FileProvide Resolver
-                // Ref : https://developer.android.com/intl/ko/training/secure-file-sharing/retrieve-info.html
-                return copyFileFromGoogleImage(context, uri, fileName);
+
+            String path = getDataColumn(context, uri, null, null);
+
+            if (!TextUtils.isEmpty(path)) {
+                return path;
             } else {
-                return getDataColumn(context, uri, null, null);
+                String fileName = getFileNameFromFileInfo(context, uri);
+                if (!TextUtils.isEmpty(fileName)) {
+                    return copyFile(context, uri, fileName);
+                } else {
+                    fileName = getFileNameFromUri(uri);
+                    if (uri != null && !TextUtils.isEmpty(fileName)) {
+                        return copyFile(context, uri, fileName);
+                    }
+                }
             }
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
-
         return null;
     }
 
-
-    private static String getGoogleFileInfo(Context context, Uri uri) {
-
-        Cursor cursor = null;
-        String displayNameCol = OpenableColumns.DISPLAY_NAME;
-        String mimeTypeCol = "mime_type";
-        String[] projection = {displayNameCol, mimeTypeCol};
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                String fileName = cursor.getString(0);
-                String mimeType = cursor.getString(1);
-                String fileExt;
-                String tempFileExt = getFileExtension(fileName);
-                if (tempFileExt.length() == 3 || tempFileExt.length() == 4) {
-                    fileExt = "";
-                } else if ((!TextUtils.isEmpty(mimeType) && !TextUtils.equals("null", mimeType))) {
-                    String extensionFromMimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-                    if (!TextUtils.isEmpty(extensionFromMimeType)
-                            && fileName.toLowerCase().lastIndexOf(extensionFromMimeType) <= 0) {
-                        fileExt = "." + extensionFromMimeType;
-                    } else {
-                        fileExt = "";
-                    }
-                } else {
-                    fileExt = "";
-                }
-                return fileName + fileExt;
-            }
-        } catch (Exception e) {
-            return "";
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return "";
-    }
-
-    private static String getFileExtension(String fileName) {
-        String extension = "";
-        int i = fileName.lastIndexOf('.');
+    private static String getFileNameFromUri(Uri uri) {
+        String fileName = "";
+        int i = uri.toString().lastIndexOf('/');
         if (i > 0) {
-            extension = fileName.substring(i + 1);
+            fileName = uri.toString().substring(i + 1);
         }
-        return extension;
+        return fileName;
     }
 
-    private static String copyFile(Context context, Uri uri) {
-
-        String filePath;
-        InputStream inputStream = null;
-        BufferedOutputStream outStream = null;
-        try {
-            inputStream = context.getContentResolver().openInputStream(uri);
-
-            filePath = FileUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
-                    .getWebImageName();
-            outStream = new BufferedOutputStream(new FileOutputStream
-                    (filePath));
-
-            byte[] buf = new byte[2048];
-            int len;
-            while ((len = inputStream.read(buf)) > 0) {
-                outStream.write(buf, 0, len);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            filePath = "";
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (outStream != null) {
-                    outStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return filePath;
-    }
-
-    private static String copyFileFromGoogleImage(Context context, Uri uri, String fileInfo) {
+    private static String copyFile(Context context, Uri uri, String fileInfo) {
 
         String fileName = fileInfo;
 
@@ -290,13 +212,101 @@ public class ImageFilePath {
         return filePath;
     }
 
-    private static boolean isPicasaPhotoUri(Uri uri) {
+    private static String getFileNameFromFileInfo(Context context, Uri uri) {
 
-        return uri != null
-                && !TextUtils.isEmpty(uri.getAuthority())
-                && (uri.getAuthority().startsWith("com.android.gallery3d")
-                || uri.getAuthority().startsWith("com.google.android.gallery3d"));
+        Cursor cursor = null;
+        String displayNameCol = OpenableColumns.DISPLAY_NAME;
+        String mimeTypeCol = "mime_type";
+        String[] projection = {displayNameCol, mimeTypeCol};
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                String fileName = cursor.getString(0);
+                String mimeType = cursor.getString(1);
+                String fileExt;
+                String tempFileExt = getFileExtension(fileName);
+                if (tempFileExt.length() == 3 || tempFileExt.length() == 4) {
+                    fileExt = "";
+                } else if ((!TextUtils.isEmpty(mimeType) && !TextUtils.equals("null", mimeType))) {
+                    String extensionFromMimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                    if (!TextUtils.isEmpty(extensionFromMimeType)
+                            && fileName.toLowerCase().lastIndexOf(extensionFromMimeType) <= 0) {
+                        fileExt = "." + extensionFromMimeType;
+                    } else {
+                        fileExt = "";
+                    }
+                } else {
+                    fileExt = "";
+                }
+                return fileName + fileExt;
+            }
+        } catch (Exception e) {
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return "";
     }
+
+    private static String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i + 1);
+        }
+        return extension;
+    }
+
+//    private static String copyFile(Context context, Uri uri) {
+//        String filePath;
+//        InputStream inputStream = null;
+//        BufferedOutputStream outStream = null;
+//        try {
+//            inputStream = context.getContentResolver().openInputStream(uri);
+//
+//            filePath = FileUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
+//                    .getWebImageName();
+//            outStream = new BufferedOutputStream(new FileOutputStream
+//                    (filePath));
+//
+//            byte[] buf = new byte[2048];
+//            int len;
+//            while ((len = inputStream.read(buf)) > 0) {
+//                outStream.write(buf, 0, len);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            filePath = "";
+//        } finally {
+//            try {
+//                if (inputStream != null) {
+//                    inputStream.close();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            try {
+//                if (outStream != null) {
+//                    outStream.close();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return filePath;
+//    }
+//
+//    private static boolean isPicasaPhotoUri(Uri uri) {
+//
+//        return uri != null
+//                && !TextUtils.isEmpty(uri.getAuthority())
+//                && uri.getAuthority().contains("android.gallery3d");
+//    }
 
     /**
      * Get the value of the data column for this Uri. This is useful for
@@ -363,5 +373,14 @@ public class ImageFilePath {
     private static boolean isGoogleOldPhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is New Google Photos.
+     */
+    public static boolean isGoogleNewPhotosUri(Uri uri) {
+        return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
+    }
+
 
 }
