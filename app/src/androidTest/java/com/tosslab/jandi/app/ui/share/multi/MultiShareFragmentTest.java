@@ -159,7 +159,7 @@ public class MultiShareFragmentTest {
         String text = "title";
         rule.runOnUiThread(() -> fragment.setFileName(text));
 
-        assertThat(fragment.tvTitle.getText(), is(equalTo(text)));
+        assertThat(fragment.tvTitle.getText().toString(), is(equalTo(text)));
     }
 
     private List<String> getImagePathList(int limit) {

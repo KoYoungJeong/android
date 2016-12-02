@@ -85,12 +85,12 @@ public class CarouselViewerPresenterImplTest {
     }
 
     private long getLatestFileId() throws RetrofitException {
-        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
+        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("image").setPage(1).setKeyword("").setCount(2);
         return new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords().get(0).getMessageId();
     }
 
     private long getFirstFileId() throws RetrofitException {
-        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
+        ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("image").setPage(1).setKeyword("").setCount(2);
         List<ResSearch.SearchRecord> records = new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords();
         return records.get(records.size() - 1).getMessageId();
     }
