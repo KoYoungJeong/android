@@ -83,7 +83,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
             return;
         }
 
-        if (intentType == IntentType.Text) {
+        if (intentType == IntentType.Text && intent.getParcelableExtra(Intent.EXTRA_STREAM) == null) {
             setUpFragment(intent, intentType);
         } else {
             Permissions.getChecker()
@@ -124,7 +124,7 @@ public class MainShareActivity extends BaseAppCompatActivity {
         }
 
         boolean attached = false;
-        if (intentType == IntentType.Text) {
+        if (intentType == IntentType.Text && intent.getParcelableExtra(Intent.EXTRA_STREAM) == null) {
 
             attached = attachTextShareFragment(intent);
 
@@ -132,7 +132,8 @@ public class MainShareActivity extends BaseAppCompatActivity {
 
             attached = attachMultiShareFragment(intent);
 
-        } else if (intentType == IntentType.File) {
+        } else if (intentType == IntentType.File ||
+                (intentType == IntentType.Text && intent.getParcelableExtra(Intent.EXTRA_STREAM) != null)) {
 
             attached = attachSingleShareFragment(intent);
 
