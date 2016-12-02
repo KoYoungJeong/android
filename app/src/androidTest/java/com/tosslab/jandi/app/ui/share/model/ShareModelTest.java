@@ -48,7 +48,7 @@ public class ShareModelTest {
 
     @Before
     public void setUp() throws Exception {
-        // TODO
+        DaggerShareModelTest_TestComponent.builder().build().inject(this);
     }
 
     @Test

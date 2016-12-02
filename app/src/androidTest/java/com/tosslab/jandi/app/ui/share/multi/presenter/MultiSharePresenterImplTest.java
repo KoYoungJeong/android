@@ -9,6 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
@@ -23,6 +24,8 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import dagger.Component;
 import setup.BaseInitUtil;
@@ -42,9 +45,12 @@ import static org.mockito.Mockito.when;
 public class MultiSharePresenterImplTest {
 
 
-    private ShareAdapterDataModel mockDataModel;
-    private MultiSharePresenter.View mockView;
-    private MultiSharePresenter multiSharePresenter;
+    @Inject
+    ShareAdapterDataModel mockDataModel;
+    @Inject
+    MultiSharePresenter.View mockView;
+    @Inject
+    MultiSharePresenter multiSharePresenter;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -59,10 +65,12 @@ public class MultiSharePresenterImplTest {
     @Before
     public void setUp() throws Exception {
 
-        mockDataModel = mock(ShareAdapterDataModel.class);
-        mockView = mock(MultiSharePresenter.View.class);
-//        multiSharePresenter = new MultiSharePresenterImpl(mockView, mockDataModel, shareModel);
-//        ((MultiSharePresenterImpl) multiSharePresenter).teamInfoLoader = ShareModel_.getInstance_(JandiApplication.getContext()).getTeamInfoLoader(TeamInfoLoader.getInstance().getTeamId());
+
+        DaggerMultiSharePresenterImplTest_TestComponent.builder().multiShareModule(new MultiShareModule(mock(MultiSharePresenter.View.class), mock(ShareFragmentPageAdapter.class)))
+                .build().inject(this);
+
+        ((MultiSharePresenterImpl) multiSharePresenter).teamInfoLoader = TeamInfoLoader.getInstance();
+
     }
 
     @Test
@@ -75,13 +83,12 @@ public class MultiSharePresenterImplTest {
     @Test
     public void testOnSelectTeam() throws Exception {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
 
         final boolean[] finish = {false};
         doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
-        }).when(mockView).setMentionInfo(eq(teamId), eq(defaultTopicId));
+        }).when(mockView).setMentionInfo(anyLong(), anyLong());
 
         multiSharePresenter.onSelectTeam(teamId);
 
@@ -89,7 +96,7 @@ public class MultiSharePresenterImplTest {
 
         verify(mockView).setTeamName(anyString());
         verify(mockView).setRoomName(anyString());
-        verify(mockView).setMentionInfo(eq(teamId), eq(defaultTopicId));
+        verify(mockView).setMentionInfo(eq(teamId), eq(-1L));
     }
 
     @Test

@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import javax.inject.Inject;
 
@@ -30,12 +30,10 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(AndroidJUnit4.class)
 public class NameStatusPresenterTest {
 
-    @Mock
     NameStatusPresenter.View mockView;
 
     @Inject
@@ -50,10 +48,7 @@ public class NameStatusPresenterTest {
     @Before
     public void setUp() throws Exception {
 
-        try {
-            initMocks(this);
-        } catch (Exception e) {
-        }
+        mockView = Mockito.mock(NameStatusPresenter.View.class);
 
         DaggerNameStatusPresenterTest_TestComponent.builder()
                 .nameStatusModule(new NameStatusModule(mockView))

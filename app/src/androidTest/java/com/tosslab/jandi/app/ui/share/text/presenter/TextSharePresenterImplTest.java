@@ -61,32 +61,36 @@ public class TextSharePresenterImplTest {
 
     @Test
     public void testInitEntityData() throws Exception {
-        {
-            final boolean[] finish = {false};
-            doAnswer(invocationOnMock -> {
-                finish[0] = true;
-                return invocationOnMock;
-            }).when(mockView).setMentionInfo(anyInt(), anyInt(), anyInt());
-            textSharePresenter.initViews();
+        final boolean[] finish = {false};
+        doAnswer(invocationOnMock -> {
+            finish[0] = true;
+            return invocationOnMock;
+        }).when(mockView).dismissProgressBar();
+        textSharePresenter.initViews();
 
-            await().until(() -> finish[0]);
+        await().until(() -> finish[0]);
 
-            verify(mockView).setRoomName(eq(TeamInfoLoader.getInstance().getName(TeamInfoLoader.getInstance().getDefaultTopicId())));
-            verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));
-            verify(mockView).setMentionInfo(eq(TeamInfoLoader.getInstance().getTeamId()),
-                    eq(TeamInfoLoader.getInstance().getDefaultTopicId()),
-                    eq(JandiConstants.TYPE_PUBLIC_TOPIC));
-        }
+        verify(mockView).setRoomName(eq(""));
+        verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));
     }
 
     @Test
     public void testSetEntity() throws Exception {
+
+        final boolean[] finish = {false};
+        doAnswer(mock -> {
+           finish[0] = true;
+            return mock;
+        }).when(mockView).setMentionInfo(anyLong(), anyLong(), anyInt());
+
         User entity = Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .takeFirst(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
                 .toBlocking().first();
         ((TextSharePresenterImpl) textSharePresenter).teamId = TeamInfoLoader.getInstance().getTeamId();
 
         textSharePresenter.setEntity(entity.getId(), JandiConstants.TYPE_DIRECT_MESSAGE);
+
+        await().until(() -> finish[0]);
 
         verify(mockView).setRoomName(eq(entity.getName()));
         verify(mockView).setTeamName(eq(TeamInfoLoader.getInstance().getTeamName()));

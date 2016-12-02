@@ -236,7 +236,7 @@ public class CarouselViewerModelTest {
             assertThat(carouselFileInfo.getExt(), is(equalTo(fileMessage.content.ext)));
             assertThat(carouselFileInfo.getEntityId(), is(equalTo(roomId)));
             assertThat(carouselFileInfo.getFileMessageId(), is(equalTo(fileMessage.id)));
-            assertThat(carouselFileInfo.getFileName(), is(equalTo(fileMessage.content.name)));
+            assertThat(carouselFileInfo.getFileName(), is(equalTo(fileMessage.content.title)));
             assertThat(carouselFileInfo.getFileLinkUrl(), is(equalTo(fileMessage.content.fileUrl)));
             assertThat(carouselFileInfo.getFileType(), is(equalTo(fileMessage.content.type)));
             assertThat(carouselFileInfo.getFileWriterName(), is(equalTo(TeamInfoLoader.getInstance().getMemberName(fileMessage.writerId))));
