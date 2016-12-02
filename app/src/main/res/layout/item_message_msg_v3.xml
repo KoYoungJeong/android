@@ -106,9 +106,7 @@
         android:layout_marginLeft="47dp"
         android:layout_marginRight="59dp"
         android:layout_marginTop="6dp"
-        android:visibility="gone">
-
-    </RelativeLayout>
+        android:visibility="gone" />
 
     <View
         android:id="@+id/v_margin"

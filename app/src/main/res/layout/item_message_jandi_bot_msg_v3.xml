@@ -126,17 +126,10 @@
         android:id="@+id/vg_linkpreview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/vg_message_content"
-        android:layout_below="@+id/vg_message_content"
         android:layout_marginLeft="47dp"
         android:layout_marginRight="59dp"
         android:layout_marginTop="6dp"
-        android:background="@color/white">
-
-        <include layout="@layout/item_message_layout_linkpreview_v2" />
-
-    </RelativeLayout>
-
+        android:background="@color/white" />
 
     <View
         android:id="@+id/v_margin"

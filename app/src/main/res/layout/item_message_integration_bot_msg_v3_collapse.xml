@@ -89,31 +89,29 @@
             </LinearLayout>
         </RelativeLayout>
 
-
-        <RelativeLayout
-            android:id="@+id/vg_linkpreview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
-
-            <include layout="@layout/item_message_layout_linkpreview_v2" />
-        </RelativeLayout>
-
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/vg_linkpreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vg_message_connect_info_wrapper"
+        android:layout_marginLeft="47dp"
+        android:layout_marginRight="59dp"
+        android:layout_marginTop="6dp" />
 
     <View
         android:id="@+id/v_margin"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:layout_below="@+id/vg_message_connect_info_wrapper"
+        android:layout_below="@+id/vg_linkpreview"
         android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/vg_message_last_read"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/vg_message_connect_info_wrapper"
+        android:layout_below="@+id/vg_linkpreview"
         android:visibility="gone" />
 </RelativeLayout>
 
