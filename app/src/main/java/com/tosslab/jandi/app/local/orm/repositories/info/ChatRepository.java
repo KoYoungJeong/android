@@ -155,6 +155,19 @@ public class ChatRepository extends RealmRepository {
         });
     }
 
+    public int getUnreadCount(long roomId) {
+        return execute((realm) -> {
+            Chat chat =
+                    realm.where(Chat.class)
+                            .equalTo("id", roomId)
+                            .findFirst();
+            if (chat != null) {
+                return chat.getUnreadCount();
+            }
+            return -1;
+        });
+    }
+
     public boolean deleteChat(long chatId) {
         return execute((realm) -> {
 
