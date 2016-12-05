@@ -73,7 +73,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.computation())
                 .map(String::toLowerCase)
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
@@ -293,7 +293,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     public void inviteToggle() {
         view.showPrgoress();
         teamMemberModel.deferInvite(toggledIds, roomId)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());

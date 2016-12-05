@@ -29,6 +29,7 @@ public class AccountRepository extends LockExecutorTemplate {
 
     public boolean upsertAccountAllInfo(ResAccountInfo accountInfo) {
         return execute(() -> {
+            clearAccountData();
             try {
                 Dao<ResAccountInfo, String> accountInfoDao = getHelper().getDao(ResAccountInfo.class);
 
@@ -230,6 +231,27 @@ public class AccountRepository extends LockExecutorTemplate {
                 getHelper().getDao(ResAccountInfo.class)
                         .deleteBuilder()
                         .delete();
+
+                getHelper().getDao(ResAccountInfo.UserDevice.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(ResAccountInfo.UserTeam.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(ResAccountInfo.UserEmail.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(ResAccountInfo.ThumbnailInfo.class)
+                        .deleteBuilder()
+                        .delete();
+
+                getHelper().getDao(SelectedTeam.class)
+                        .deleteBuilder()
+                        .delete();
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }

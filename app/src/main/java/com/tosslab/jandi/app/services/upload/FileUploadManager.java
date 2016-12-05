@@ -90,7 +90,7 @@ public class FileUploadManager {
     private void initSubscription(Context context) {
         subscription = objectPublishSubject
                 .onBackpressureBuffer()
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
                 .subscribe(fileUploadDTO -> {
 
                     notificationBuilder.setProgress(100, 0, false)

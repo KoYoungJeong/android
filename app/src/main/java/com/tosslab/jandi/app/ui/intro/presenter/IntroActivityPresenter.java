@@ -160,7 +160,7 @@ public class IntroActivityPresenter {
         // 팀 정보가 있는 경우
         hasTeamObservable.filter(it -> it)
                 .doOnNext(it -> PushUtil.registPush())
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.computation())
                 // 서비스 실행상태 확인 하고 넘김
                 .map(it -> JandiSocketService.isServiceRunning(JandiApplication.getContext()))
                 .doOnNext(it -> {

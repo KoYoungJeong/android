@@ -103,7 +103,7 @@ public class FileListPresenterImpl implements FileListPresenter {
                                 view.justRefresh();
                             }
                         })
-                        .observeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.computation())
                         .map(it -> {
                             try {
                                 ResSearch results = fileListModel.getResults(it);
@@ -341,7 +341,7 @@ public class FileListPresenterImpl implements FileListPresenter {
     public void getImageDetail(long fileId) {
         view.showProgress();
         Observable.just(fileId)
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.io())
                 .map(it -> {
                     try {
                         return ((ResMessages.FileMessage) fileListModel.getImageFile(fileId));

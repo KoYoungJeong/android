@@ -70,7 +70,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
 
         subscription.add(searchObservable.filter(it -> type == DeptJobFragment.EXTRA_TYPE_DEPT)
                 .map(String::toLowerCase)
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.computation())
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
                         .filter(user -> {
@@ -118,7 +118,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
 
         subscription.add(searchObservable.filter(it -> type == DeptJobFragment.EXTRA_TYPE_JOB)
                 .map(String::toLowerCase)
-                .observeOn(Schedulers.newThread())
+                .observeOn(Schedulers.computation())
                 .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
                         .filter(User::isEnabled)
                         .filter(user -> {

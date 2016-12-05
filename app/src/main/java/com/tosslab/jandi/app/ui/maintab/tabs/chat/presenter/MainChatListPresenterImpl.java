@@ -45,7 +45,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                     List<DirectMessageRoom> savedChatList = mainChatListModel.getSavedChatList();
                     return mainChatListModel.convertChatItems(savedChatList);
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(chatItems -> {
                     if (chatItems.isEmpty()) {
