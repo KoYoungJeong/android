@@ -17,7 +17,9 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
@@ -578,4 +580,23 @@ public class MessageListModel {
     public void deletePollMessage(long teamId, long pollId) throws RetrofitException {
         pollApi.get().deletePoll(teamId, pollId);
     }
+
+    public void initBadge(long roomId, long lastLinkId) {
+        if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+            TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
+            TopicRepository.getInstance().updateUnreadCount(roomId, 0);
+        } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
+            ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
+            ChatRepository.getInstance().updateUnreadCount(roomId, 0);
+        }
+    }
+
+    public int getBadgeCount(long roomId) {
+        if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+            return TopicRepository.getInstance().getUnreadCount(roomId);
+        } else {
+            return ChatRepository.getInstance().getUnreadCount(roomId);
+        }
+    }
+
 }
