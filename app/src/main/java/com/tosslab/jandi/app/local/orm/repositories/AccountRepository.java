@@ -29,8 +29,8 @@ public class AccountRepository extends LockExecutorTemplate {
 
     public boolean upsertAccountAllInfo(ResAccountInfo accountInfo) {
         return execute(() -> {
-            clearAccountData();
             try {
+                deleteAccountAllInfo();
                 Dao<ResAccountInfo, String> accountInfoDao = getHelper().getDao(ResAccountInfo.class);
 
                 Dao.CreateOrUpdateStatus status = accountInfoDao.createOrUpdate(accountInfo);
@@ -41,6 +41,28 @@ public class AccountRepository extends LockExecutorTemplate {
             return false;
 
         });
+    }
+
+    protected void deleteAccountAllInfo() throws SQLException {
+        getHelper().getDao(ResAccountInfo.class)
+                .deleteBuilder()
+                .delete();
+
+        getHelper().getDao(ResAccountInfo.UserDevice.class)
+                .deleteBuilder()
+                .delete();
+
+        getHelper().getDao(ResAccountInfo.UserTeam.class)
+                .deleteBuilder()
+                .delete();
+
+        getHelper().getDao(ResAccountInfo.UserEmail.class)
+                .deleteBuilder()
+                .delete();
+
+        getHelper().getDao(ResAccountInfo.ThumbnailInfo.class)
+                .deleteBuilder()
+                .delete();
     }
 
     public ResAccountInfo.UserTeam getTeamInfo(long teamId) {
@@ -215,25 +237,7 @@ public class AccountRepository extends LockExecutorTemplate {
     public void clearAccountData() {
         execute(() -> {
             try {
-                getHelper().getDao(ResAccountInfo.class)
-                        .deleteBuilder()
-                        .delete();
-
-                getHelper().getDao(ResAccountInfo.UserDevice.class)
-                        .deleteBuilder()
-                        .delete();
-
-                getHelper().getDao(ResAccountInfo.UserTeam.class)
-                        .deleteBuilder()
-                        .delete();
-
-                getHelper().getDao(ResAccountInfo.UserEmail.class)
-                        .deleteBuilder()
-                        .delete();
-
-                getHelper().getDao(ResAccountInfo.ThumbnailInfo.class)
-                        .deleteBuilder()
-                        .delete();
+                deleteAccountAllInfo();
 
                 getHelper().getDao(SelectedTeam.class)
                         .deleteBuilder()
