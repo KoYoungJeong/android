@@ -12,6 +12,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="13dp"
+        android:theme="@style/Jandi.Default.CheckBox"
         android:layout_marginRight="13dp"
         android:button="@drawable/checkbox_selector" />
 
