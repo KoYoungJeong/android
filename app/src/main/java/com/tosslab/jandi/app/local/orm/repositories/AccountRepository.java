@@ -29,6 +29,7 @@ public class AccountRepository extends LockExecutorTemplate {
 
     public boolean upsertAccountAllInfo(ResAccountInfo accountInfo) {
         return execute(() -> {
+            clearAccountData();
             try {
                 Dao<ResAccountInfo, String> accountInfoDao = getHelper().getDao(ResAccountInfo.class);
 

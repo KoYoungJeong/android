@@ -182,7 +182,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
         navigationView.showProgressWheel();
         navigationModel.getUpdateEntityInfoObservable(teamId)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     navigationView.dismissProgressWheel();

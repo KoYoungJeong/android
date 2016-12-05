@@ -221,7 +221,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 return Completable.never();
             }
 
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.computation())
                 .subscribe(() -> {
                     try {
                         FirebaseInstanceId.getInstance().deleteInstanceId();

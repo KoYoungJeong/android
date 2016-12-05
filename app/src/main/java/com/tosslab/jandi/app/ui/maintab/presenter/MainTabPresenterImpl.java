@@ -62,7 +62,7 @@ public class MainTabPresenterImpl implements MainTabPresenter {
         }
 
         mainTabModel.getConfigInfoObservable()
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(configInfo -> {
                     int currentAppVersionCode = mainTabModel.getCurrentAppVersionCode();
@@ -87,7 +87,7 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     @Override
     public void refreshInitialInfo() {
         mainTabModel.getRefreshEntityInfoObservable()
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .subscribe();
     }
 

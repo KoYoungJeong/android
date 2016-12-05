@@ -163,10 +163,13 @@ public class TeamInfoLoader {
     }
 
     public void refreshMention() {
-        execute(() -> {
-            Mention newMention = InitialMentionInfoRepository.getInstance().getMention();
-            initialInfo.setMention(this.mention = newMention);
-        });
+        if (initialInfo != null) {
+            execute(() -> {
+                Mention newMention = InitialMentionInfoRepository.getInstance().getMention();
+                this.mention = newMention;
+                initialInfo.setMention(mention);
+            });
+        }
     }
 
     private void setUpPollBadge() {

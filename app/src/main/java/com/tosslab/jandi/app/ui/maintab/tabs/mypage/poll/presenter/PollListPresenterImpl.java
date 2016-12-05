@@ -53,7 +53,7 @@ public class PollListPresenterImpl implements PollListPresenter {
 
         pollListView.showProgress();
         pollListModel.getPollListObservable(PollListModel.DEFAULT_REQUEST_ITEM_COUNT)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .doOnNext(resPollList -> {
                     if (resPollList != null) {
                         int votableCount = resPollList.getVotableCount();
@@ -109,7 +109,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     resPollList.setPollList(polls);
                     return resPollList;
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(resPollList -> {
                     pollListView.dismissProgress();
@@ -142,7 +142,7 @@ public class PollListPresenterImpl implements PollListPresenter {
         int count = PollListModel.DEFAULT_REQUEST_ITEM_COUNT;
         String finishedAt = ISO8601Utils.format(lastItemFinishedAt);
         pollListModel.getPollListObservable(count, finishedAt)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(resPollList -> {
                     if (resPollList == null) {
@@ -237,7 +237,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                 .filter(Poll::isMine)
                 .map(it -> pollListDataModel.getIndexById(it.getId()))
                 .filter(it -> it >= 0)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(index -> {
                     pollListDataModel.setPoll(index, poll);

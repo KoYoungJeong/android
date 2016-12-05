@@ -295,7 +295,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         Completable.fromCallable(() -> {
             mentionListModel.registerStarred(messageId);
             return Completable.complete();
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mentionListView::successStarredMessage, t -> {
                     boolean success = false;

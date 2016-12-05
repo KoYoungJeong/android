@@ -44,9 +44,12 @@ public class SettingAccountProfileModel {
     }
 
     public String getPrimaryEmail() {
-        String primaryEmail = AccountRepository.getRepository().getAccountEmails().get(0).getId();
-        List<ResAccountInfo.UserEmail> emails = AccountRepository.getRepository().getAccountEmails();
-        for (ResAccountInfo.UserEmail email : emails) {
+        List<ResAccountInfo.UserEmail> accountEmails = AccountRepository.getRepository().getAccountEmails();
+        if (accountEmails == null || accountEmails.isEmpty()) {
+            return "";
+        }
+        String primaryEmail = accountEmails.get(0).getId();
+        for (ResAccountInfo.UserEmail email : accountEmails) {
             if (email.isPrimary()) {
                 primaryEmail = email.getId();
             }

@@ -15,9 +15,10 @@ public class RealmRepository {
     }
 
     protected <T> T execute(Executor<T> executor) {
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = null;
         try {
             lock.lock();
+            realm = Realm.getDefaultInstance();
             return executor.execute(realm);
         } finally {
             if (realm != null && !realm.isClosed()) {

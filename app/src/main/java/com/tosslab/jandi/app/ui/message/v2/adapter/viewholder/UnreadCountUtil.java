@@ -37,7 +37,7 @@ public class UnreadCountUtil {
                     } else {
                         return roomMarkerCount;
                     }
-                });
+                }).onErrorReturn(throwable -> 0L);
 
     }
 }
