@@ -303,7 +303,7 @@ public class FileDetailModel {
         }
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileContent.serverUrl);
         boolean fileFromGoogleOrDropbox = MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType);
-        return !fileFromGoogleOrDropbox && fileContent.type.startsWith("image");
+        return !fileFromGoogleOrDropbox && (fileContent.type.startsWith("image") && !fileContent.type.contains("dwg"));
     }
 
     public boolean isMyFile(long writerId) {
