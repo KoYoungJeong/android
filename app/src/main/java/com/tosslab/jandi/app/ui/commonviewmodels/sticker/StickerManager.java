@@ -33,6 +33,7 @@ public class StickerManager {
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DINGO);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_MALLOW_DOG);
         localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_BANILA);
+        localStickerGroupIds.add(StickerRepository.DEFAULT_GROUP_ID_DEAN);
     }
 
     public static StickerManager getInstance() {
@@ -124,6 +125,8 @@ public class StickerManager {
             group = "mallow";
         } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_BANILA) {
             group = "banila";
+        } else if (groupId == StickerRepository.DEFAULT_GROUP_ID_DEAN) {
+            group = "dean";
         } else {
             group = "";
         }

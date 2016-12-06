@@ -32,17 +32,17 @@ import java.util.Locale;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_BANILA = 1;
-    public static final int STICKER_GROUP_MALLOW = 2;
-    public static final int STICKER_GROUP_DINGO = 3;
-    public static final int STICKER_GROUP_DAY = 4;
-    public static final int STICKER_GROUP_MOZZI = 5;
+    public static final int STICKER_GROUP_DEAN = 1;
+    public static final int STICKER_GROUP_BANILA = 2;
+    public static final int STICKER_GROUP_MALLOW = 3;
+    public static final int STICKER_GROUP_DINGO = 4;
+    public static final int STICKER_GROUP_DAY = 5;
+    public static final int STICKER_GROUP_MOZZI = 6;
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
     public static final int TYPE_FILE_DETAIL = 13;
     public static final int TYPE_POLL_DETAIL = 14;
-
     @RootContext
     Context context;
 
@@ -103,6 +103,7 @@ public class StickerViewModel {
             case STICKER_GROUP_RECENT:
                 stickers = stickerRepository.getRecentStickers();
                 break;
+
             case STICKER_GROUP_DINGO:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DINGO);
                 break;
@@ -122,6 +123,9 @@ public class StickerViewModel {
                 break;
             case STICKER_GROUP_BANILA:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_BANILA);
+                break;
+            case STICKER_GROUP_DEAN:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DEAN);
                 break;
             default:
                 stickers = new ArrayList<>();
@@ -207,6 +211,9 @@ public class StickerViewModel {
         } else {
             String group;
             switch (groupIdx) {
+                case STICKER_GROUP_DEAN:
+                    group = "(Dean)";
+                    break;
                 case STICKER_GROUP_BANILA:
                     group = "(Dingo2)";
                     break;
@@ -222,6 +229,7 @@ public class StickerViewModel {
                 case STICKER_GROUP_MOZZI:
                     group = "(Mozzi)";
                     break;
+
                 default:
                     group = "";
             }
