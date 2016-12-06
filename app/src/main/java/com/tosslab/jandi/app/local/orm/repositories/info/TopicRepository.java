@@ -212,6 +212,18 @@ public class TopicRepository extends RealmRepository {
         });
     }
 
+    public int getUnreadCount(long topicId) {
+        return execute((realm) -> {
+            Topic topic = realm.where(Topic.class)
+                    .equalTo("id", topicId)
+                    .findFirst();
+            if (topic != null) {
+                return topic.getUnreadCount();
+            }
+            return -1;
+        });
+    }
+
     public boolean incrementUnreadCount(long topicId) {
         return execute((realm) -> {
 

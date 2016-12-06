@@ -157,15 +157,20 @@ public class MessageListV2Presenter {
                     int position = adapterModel.getCount() - adapterModel.getDummyMessageCount() - 1;
                     return adapterModel.getItem(position);
                 })
-                .filter(item -> item.id > messageListModel.getLastReadLinkId(room.getRoomId()))
                 .subscribe(item -> {
-                    try {
-                        long lastLinkId = item.id;
-                        messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
-                        messageListModel.updateLastLinkId(item.id);
-                        view.refreshMessages();
-                    } catch (RetrofitException e) {
-                        e.printStackTrace();
+                    long lastLinkId = item.id;
+                    if ( lastLinkId > messageListModel.getLastReadLinkId(room.getRoomId())) {
+                        try {
+                            messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
+                            messageListModel.updateLastLinkId(item.id);
+                            view.refreshMessages();
+                        } catch (RetrofitException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        if (messageListModel.getBadgeCount(room.getRoomId()) != 0) {
+                            messageListModel.initBadge(getRoomId(), lastLinkId);
+                        }
                     }
                 }, Throwable::printStackTrace);
     }
