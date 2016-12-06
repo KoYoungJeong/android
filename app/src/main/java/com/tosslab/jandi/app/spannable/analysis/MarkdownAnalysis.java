@@ -22,10 +22,10 @@ public class MarkdownAnalysis implements RuleAnalysis {
 
     static {
         sPattern = Pattern.compile(
-                "(( \\~{2}[^ ])([^~\n]+)\\~{2})" +
-                        "|((\\*{3})([^*\n]+)\\*{3})" +
-                        "|((\\*{2})([^*\n]+)\\*{2})" +
-                        "|((\\*)([^*\n]+)\\*)");
+                "((\\~{2})([^~ \n]+)\\~{2})" +
+                        "|((\\*{3})([^* \n]+)\\*{3})" +
+                        "|((\\*{2})([^* \n]+)\\*{2})" +
+                        "|((\\*)([^* \n]+)\\*)");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MarkdownAnalysis implements RuleAnalysis {
         BOLD_ITALIC(3, 4, 4, 0, 0, Typeface.BOLD | Typeface.ITALIC),
         ITALIC(1, 10, 10, 0, 0, Typeface.ITALIC),
         BOLD(2, 7, 7, 0, 0, Typeface.BOLD),
-        STRIKE(2, 1, 1, 1, 0, STRIKE_THROUGH);
+        STRIKE(2, 1, 1, 0, 0, STRIKE_THROUGH);
 
         private final int typeFace;
         int needCharacterLength, startIndex, endIndex, beforeWhiteSpaces, afterWhiteSpaces;
