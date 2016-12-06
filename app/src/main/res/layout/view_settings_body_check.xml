@@ -26,10 +26,11 @@
 
     <CheckBox
         android:id="@+id/tv_view_settings_body_check_checkbox"
+        android:theme="@style/Jandi.Default.CheckBox"
         style="@style/JandiSettings.Body.Check"
+        android:background="@null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@null"
         android:duplicateParentState="true" />
 
 </merge>
