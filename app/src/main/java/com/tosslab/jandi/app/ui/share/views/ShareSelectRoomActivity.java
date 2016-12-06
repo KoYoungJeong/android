@@ -15,10 +15,13 @@ import android.view.View;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicFolder;
@@ -118,7 +121,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
             if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
                 InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-
+                refreshRankIfNeed(teamId);
             }
             teamInfoLoader = TeamInfoLoader.getInstance(teamId);
             getTopics();
@@ -128,6 +131,17 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
             showError(errorMessage);
             hideProgress();
             finish();
+        }
+    }
+
+    private void refreshRankIfNeed(long teamId) {
+        if (!RankRepository.getInstance().hasRanks(teamId)) {
+            try {
+                Ranks ranks = new TeamApi(RetrofitBuilder.getInstance()).getRanks(teamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
         }
     }
 

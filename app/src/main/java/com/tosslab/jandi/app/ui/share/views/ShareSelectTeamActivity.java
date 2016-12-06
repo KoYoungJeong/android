@@ -14,9 +14,12 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareTeamsAdapter;
 import com.tosslab.jandi.app.ui.share.views.dagger.DaggerShareSelectRoomComponent;
@@ -43,6 +46,8 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
 
     @Inject
     Lazy<StartApi> startApi;
+    @Inject
+    Lazy<TeamApi> teamApi;
     ShareTeamsAdapter adapter;
 
     ProgressWheel progressWheel;
@@ -133,6 +138,17 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
         })
                 .doOnNext(initialInfo -> {
                     InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+                })
+                .doOnNext(initialInfo -> {
+                    if (!RankRepository.getInstance().hasRanks(teamId)) {
+                        try {
+                            Ranks ranks = teamApi.get().getRanks(teamId);
+                            RankRepository.getInstance().addRanks(ranks.getRanks());
+                        } catch (RetrofitException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

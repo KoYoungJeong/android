@@ -77,6 +77,7 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                 long teamId = newTeam.getInviteTeam().getTeamId();
                 teamInsertInfoModel.updateEntityInfo(teamId);
                 teamInsertInfoModel.updateTeamInfo(teamId);
+                teamInsertInfoModel.updateRank(teamId);
                 SprinklrCreateTeam.sendLog(teamId);
                 subscriber.onNext(new Object());
             } catch (RetrofitException e) {

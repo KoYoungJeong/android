@@ -19,6 +19,7 @@ public class Human extends RealmObject {
     private String accountId;
     private Profile profile;
     private String status;
+    private long rankId;
     private boolean isStarred;
 
     public long getId() {
@@ -101,4 +102,12 @@ public class Human extends RealmObject {
         isStarred = starred;
     }
 
+    public long getRankId() {
+        return rankId;
+    }
+
+    public Human setRankId(long rankId) {
+        this.rankId = rankId;
+        return this;
+    }
 }

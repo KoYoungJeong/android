@@ -5,14 +5,17 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -31,16 +34,19 @@ public class IntroActivityModel {
     Lazy<StartApi> startApi;
     Lazy<ConfigApi> configApi;
     Lazy<EventsApi> eventApi;
+    private final Lazy<TeamApi> teamApi;
 
     @Inject
     public IntroActivityModel(Lazy<AccountApi> accountApi,
                               Lazy<StartApi> startApi,
                               Lazy<ConfigApi> configApi,
-                              Lazy<EventsApi> eventApi) {
+                              Lazy<EventsApi> eventApi,
+                              Lazy<TeamApi> teamApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.configApi = configApi;
         this.eventApi = eventApi;
+        this.teamApi = teamApi;
     }
 
     public boolean isNetworkConnected() {
@@ -117,7 +123,16 @@ public class IntroActivityModel {
         return MessageRepository.getRepository().deleteAllLink();
     }
 
-    public long getSelectedTeam() {
-        return TeamInfoLoader.getInstance().getTeamId();
+    public void refreshRankIfNeeds() {
+
+        long selectedTeam = TeamInfoLoader.getInstance().getTeamId();
+        if (!RankRepository.getInstance().hasRanks(selectedTeam)) {
+            try {
+                Ranks ranks = teamApi.get().getRanks(selectedTeam);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

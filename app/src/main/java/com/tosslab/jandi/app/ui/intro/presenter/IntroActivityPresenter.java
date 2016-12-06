@@ -178,6 +178,8 @@ public class IntroActivityPresenter {
                             // LeftSideMenu 가 없는 경우 대비
                             model.refreshEntityInfo();
                         }
+
+                        model.refreshRankIfNeeds();
                     }
                     if (!it) {
                         view.startSocketService();

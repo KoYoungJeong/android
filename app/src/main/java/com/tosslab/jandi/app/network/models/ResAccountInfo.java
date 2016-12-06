@@ -19,6 +19,7 @@ import java.util.Collection;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAccountInfo {
 
+    @JsonProperty("uuid")
     @DatabaseField(id = true)
     private String id;
     @DatabaseField
@@ -285,6 +286,8 @@ public class ResAccountInfo {
         private int unread;
         @DatabaseField
         private String status;
+        @DatabaseField
+        private long rankId;
 
         @DatabaseField
         private int order;
@@ -371,6 +374,15 @@ public class ResAccountInfo {
         public void setOrder(int order) {
             this.order = order;
         }
+
+        public long getRankId() {
+            return rankId;
+        }
+
+        public UserTeam setRankId(long rankId) {
+            this.rankId = rankId;
+            return this;
+        }
     }
 
     @DatabaseTable(tableName = "account_emails")
@@ -382,8 +394,10 @@ public class ResAccountInfo {
         ResAccountInfo accountInfo;
         @DatabaseField(id = true)
         private String id;
+        @JsonProperty("isPrimary")
         @DatabaseField
         private boolean primary;
+        @Deprecated
         @DatabaseField
         private String confirmedAt;
         @DatabaseField
@@ -413,10 +427,12 @@ public class ResAccountInfo {
             this.primary = primary;
         }
 
+        @Deprecated
         public String getConfirmedAt() {
             return confirmedAt;
         }
 
+        @Deprecated
         public void setConfirmedAt(String confirmedAt) {
             this.confirmedAt = confirmedAt;
         }

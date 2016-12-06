@@ -15,6 +15,7 @@ public class TeamPlan extends RealmObject {
     private long teamId;
     private String pricing;
     private long fileSize;
+    private long messageCount;
     private boolean isExceedFile;
     private boolean isExceedMessage;
     private Date updatedAt;
@@ -65,5 +66,14 @@ public class TeamPlan extends RealmObject {
 
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
+    }
+
+    public long getMessageCount() {
+        return messageCount;
+    }
+
+    public TeamPlan setMessageCount(long messageCount) {
+        this.messageCount = messageCount;
+        return this;
     }
 }

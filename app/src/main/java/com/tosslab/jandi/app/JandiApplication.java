@@ -15,6 +15,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.tosslab.jandi.app.local.orm.RealmManager;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -45,7 +46,6 @@ import java.util.logging.LogManager;
 import io.fabric.sdk.android.Fabric;
 import io.intercom.android.sdk.Intercom;
 import io.intercom.android.sdk.logger.IntercomLogger;
-import io.realm.Realm;
 import okhttp3.OkHttpClient;
 
 /**
@@ -88,7 +88,6 @@ public class JandiApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-        StethoInitializer.init(this);
         FirebaseAnalytics.getInstance(this);
 
         addLogConfigIfDebug();
@@ -98,7 +97,9 @@ public class JandiApplication extends MultiDexApplication {
 
         initIntercom();
 
-        Realm.init(this);
+        RealmManager.init(this);
+
+        StethoInitializer.init(this);
 
         // Set AndroidAnnotations Background pool
         BackgroundExecutor.setExecutor(

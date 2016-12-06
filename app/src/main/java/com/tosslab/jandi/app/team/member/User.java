@@ -3,12 +3,21 @@ package com.tosslab.jandi.app.team.member;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.team.rank.Rank;
+import com.tosslab.jandi.app.team.authority.Level;
 
 public class User implements Member {
     private final Human human;
+    private final Rank rank;
 
     public User(Human human) {
         this.human = human;
+        rank = null;
+    }
+
+    public User(Human human, Rank rank) {
+        this.human = human;
+        this.rank = rank;
     }
 
     @Override
@@ -79,5 +88,13 @@ public class User implements Member {
 
     public boolean isProfileUpdated() {
         return human.getProfile() != null ? human.getProfile().isUpdated() : false;
+    }
+
+    public Level getLevel() {
+        if (rank != null) {
+            return Level.valueOf(rank.getLevel());
+        } else {
+            return Level.Member;
+        }
     }
 }

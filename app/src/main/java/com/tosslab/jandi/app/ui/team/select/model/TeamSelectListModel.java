@@ -4,15 +4,18 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 
@@ -32,14 +35,17 @@ public class TeamSelectListModel {
     private Lazy<InvitationApi> invitationApi;
     private Lazy<AccountApi> accountApi;
     private Lazy<StartApi> startApi;
+    private Lazy<TeamApi> teamApi;
 
     @Inject
     public TeamSelectListModel(Lazy<InvitationApi> invitationApi,
                                Lazy<AccountApi> accountApi,
-                               Lazy<StartApi> startApi) {
+                               Lazy<StartApi> startApi,
+                               Lazy<TeamApi> teamApi) {
         this.invitationApi = invitationApi;
         this.accountApi = accountApi;
         this.startApi = startApi;
+        this.teamApi = teamApi;
     }
 
     public void refreshAccountInfo() {
@@ -145,4 +151,15 @@ public class TeamSelectListModel {
         return primaryEmail;
     }
 
+    public void refreshRankIfNeed(long teamId) {
+        if (!RankRepository.getInstance().hasRanks(teamId)) {
+            try {
+                Ranks ranks = teamApi.get().getRanks(teamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 }

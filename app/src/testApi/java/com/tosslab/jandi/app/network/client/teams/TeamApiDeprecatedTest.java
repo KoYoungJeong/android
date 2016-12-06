@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TeamApiDeprecatedTest {
-
     private TeamApi.Api api;
 
     @org.junit.BeforeClass
@@ -45,6 +44,11 @@ public class TeamApiDeprecatedTest {
     @Test
     public void cancelInviteTeam() throws Exception {
         assertThat(ValidationUtil.isDeprecated(api.cancelInviteTeam(1, 1).execute())).isFalse();
+    }
+
+    @Test
+    public void getRanks() throws Exception {
+        assertThat(ValidationUtil.isDeprecated(api.getRanks(1).execute())).isFalse();
     }
 
 

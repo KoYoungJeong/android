@@ -1,0 +1,67 @@
+package com.tosslab.jandi.app.local.orm;
+
+
+import android.content.Context;
+
+import com.tosslab.jandi.app.local.orm.upgrade.RealmUpgradeChecker;
+import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.network.models.start.TeamPlan;
+import com.tosslab.jandi.app.network.models.team.rank.Rank;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import io.realm.FieldAttribute;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
+import io.realm.RealmSchema;
+import rx.Observable;
+
+public class RealmManager {
+    private static int REALM_VERSION_MEMBER_AUTHORITY = 2;
+
+    public static void init(Context context) {
+        Realm.init(context);
+        Realm.setDefaultConfiguration(realmConfiguration());
+    }
+
+    private static RealmConfiguration realmConfiguration() {
+        return new RealmConfiguration.Builder()
+                .schemaVersion(REALM_VERSION_MEMBER_AUTHORITY)
+                .migration(migration())
+                .build();
+    }
+
+    private static RealmMigration migration() {
+        return (realm, oldVersion, newVersion) -> {
+            if (oldVersion < newVersion) {
+                RealmSchema schema = realm.getSchema();
+                List<RealmUpgradeChecker> upgradeCheckers = Arrays.asList(
+                        RealmUpgradeChecker.create(() -> 2L, () -> {
+                            schema.get(TeamPlan.class.getSimpleName())
+                                    .addField("messageCount", long.class);
+
+                            schema.get(Human.class.getSimpleName())
+                                    .addField("rankId", long.class);
+
+                            schema.create(Rank.class.getSimpleName())
+                                    .addField("id", long.class, FieldAttribute.PRIMARY_KEY)
+                                    .addField("name", String.class)
+                                    .addField("level", int.class)
+                                    .addField("teamId", long.class)
+                                    .addField("updatedAt", Date.class)
+                                    .addField("createdAt", Date.class)
+                                    .addField("status", String.class);
+
+                        })
+                );
+
+                Observable.from(upgradeCheckers)
+                        .subscribe(upgradeChecker -> upgradeChecker.run(oldVersion), Throwable::printStackTrace);
+
+            }
+        };
+    }
+}

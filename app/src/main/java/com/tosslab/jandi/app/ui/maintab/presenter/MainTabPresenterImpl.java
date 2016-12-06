@@ -85,13 +85,6 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     }
 
     @Override
-    public void refreshInitialInfo() {
-        mainTabModel.getRefreshEntityInfoObservable()
-                .subscribeOn(Schedulers.io())
-                .subscribe();
-    }
-
-    @Override
     public void onCheckIfNotProfileSetUp() {
         mainTabModel.getMeObservable()
                 .filter(me -> !me.isProfileUpdated())

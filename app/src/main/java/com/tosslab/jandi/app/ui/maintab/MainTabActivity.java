@@ -48,6 +48,8 @@ import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.keep.KeepAliveService;
 import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
@@ -205,6 +207,10 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         KeepExecutedService.start(this);
         KeepAliveService.start(this);
         initFirebaseUserProperties();
+
+        for (User user : TeamInfoLoader.getInstance().getUserList()) {
+            System.out.println(user.getName() + " : " + user.getLevel().name());
+        }
     }
 
     private void initFirebaseUserProperties() {

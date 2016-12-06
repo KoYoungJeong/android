@@ -87,6 +87,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
         })
                 .doOnNext(initialInfo -> {
                     model.updateEntityInfo(initialInfo);
+                    model.refreshRankIfNeed(teamId);
                     TeamInfoLoader.getInstance().refresh();
                     JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
                     SprinklrLaunchTeam.sendLog(teamId);

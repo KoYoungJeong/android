@@ -7,9 +7,11 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
@@ -17,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.Room;
@@ -38,15 +41,17 @@ public class JandiInterfaceModel {
     private Lazy<StartApi> startApi;
     private Lazy<EventsApi> eventApi;
     private Lazy<PollApi> pollApi;
+    private Lazy<TeamApi> teamApi;
 
     @Inject
     public JandiInterfaceModel(Lazy<AccountApi> accountApi,
                                Lazy<StartApi> startApi, Lazy<EventsApi> eventApi,
-                               Lazy<PollApi> pollApi) {
+                               Lazy<PollApi> pollApi, Lazy<TeamApi> teamApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.eventApi = eventApi;
         this.pollApi = pollApi;
+        this.teamApi = teamApi;
     }
 
     public void refreshAccountInfo() throws RetrofitException {
@@ -100,6 +105,7 @@ public class JandiInterfaceModel {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+            refreshRankInfo(selectedTeamId);
             TeamInfoLoader.getInstance().refresh();
             refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
@@ -110,6 +116,17 @@ public class JandiInterfaceModel {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void refreshRankInfo(long selectedTeamId) {
+        if (!RankRepository.getInstance().hasRanks(selectedTeamId)) {
+            try {
+                Ranks ranks = teamApi.get().getRanks(selectedTeamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
         }
     }
 

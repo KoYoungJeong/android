@@ -16,15 +16,18 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
@@ -61,13 +64,15 @@ public class SocketEventHistoryUpdator {
     private static final int TIME_OF_PRE_EVENT = 1000 * 60 * 10;
     private final Lazy<EventsApi> eventsApi;
     private final Lazy<StartApi> startApi;
+    private Lazy<TeamApi> teamApi;
     private Map<Class<? extends EventHistoryInfo>, JandiSocketServiceModel.Command> messageEventActorMapper;
 
     @Inject
     public SocketEventHistoryUpdator(Lazy<EventsApi> eventsApi,
-                                     Lazy<StartApi> startApi) {
+                                     Lazy<StartApi> startApi, Lazy<TeamApi> teamApi) {
         this.eventsApi = eventsApi;
         this.startApi = startApi;
+        this.teamApi = teamApi;
         messageEventActorMapper = new HashMap<>();
     }
 
@@ -148,6 +153,7 @@ public class SocketEventHistoryUpdator {
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                 InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                refreshRankIfNeed(teamId);
                 TeamInfoLoader.getInstance().refresh();
                 JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 EventBus.getDefault().post(new RetrieveTopicListEvent());
@@ -177,6 +183,18 @@ public class SocketEventHistoryUpdator {
                 .doOnNext(it -> LogUtil.d(TAG, "Sorted start : " + new Date().toString()))
                 .concatMap(resEventHistory -> Observable.from(resEventHistory.getRecords()))
                 .filter(SocketEventVersionModel::validVersion);
+    }
+
+    private void refreshRankIfNeed(long teamId) {
+        if (!RankRepository.getInstance().hasRanks(teamId)) {
+            try {
+                Ranks ranks = teamApi.get().getRanks(teamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private void deleteCompledtedMessages(List<EventHistoryInfo> messageCreateEvents, EventPost eventPost) {

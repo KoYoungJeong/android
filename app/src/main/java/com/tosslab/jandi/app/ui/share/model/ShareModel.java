@@ -97,10 +97,6 @@ public class ShareModel {
         return InitialInfoRepository.getInstance().hasInitialInfo(teamId);
     }
 
-    public InitialInfo getInitialInfo(long teamId) throws RetrofitException {
-        return startApi.get().getInitializeInfo(teamId);
-    }
-
     public boolean updateInitialInfo(InitialInfo initialInfo) {
         return InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
     }

@@ -13,10 +13,12 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -24,11 +26,11 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -36,6 +38,8 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
@@ -50,15 +54,18 @@ public class NavigationModel {
     private final Lazy<StartApi> startApi;
     private final Lazy<InvitationApi> invitationApi;
     private final Lazy<LoginApi> loginApi;
+    private Lazy<TeamApi> teamApi;
 
+    @Inject
     public NavigationModel(Lazy<AccountApi> accountApi,
                            Lazy<StartApi> startApi,
                            Lazy<InvitationApi> invitationApi,
-                           Lazy<LoginApi> loginApi) {
+                           Lazy<LoginApi> loginApi, Lazy<TeamApi> teamApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.invitationApi = invitationApi;
         this.loginApi = loginApi;
+        this.teamApi = teamApi;
     }
 
     public User getMe() {
@@ -121,6 +128,9 @@ public class NavigationModel {
                     JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                     MessageRepository.getRepository().deleteAllLink();
                 }
+
+                refreshRankIfNeed(teamId);
+
                 TeamInfoLoader.getInstance().refresh();
                 subscriber.onNext(new Object());
             } catch (Exception error) {
@@ -128,6 +138,17 @@ public class NavigationModel {
             }
             subscriber.onCompleted();
         });
+    }
+
+    protected void refreshRankIfNeed(long teamId) {
+        if (!RankRepository.getInstance().hasRanks(teamId)) {
+            try {
+                Ranks ranks = teamApi.get().getRanks(teamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Observable<ResAccountInfo.UserTeam> getSelectedTeamObservable() {

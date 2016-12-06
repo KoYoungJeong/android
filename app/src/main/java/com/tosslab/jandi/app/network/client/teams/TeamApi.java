@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 
 import java.util.List;
 
@@ -43,6 +44,10 @@ public class TeamApi extends ApiTemplate<TeamApi.Api> {
         return call(() -> getApi().cancelInviteTeam(teamId, memberId));
     }
 
+    public Ranks getRanks(long teamId) throws RetrofitException {
+        return call(() -> getApi().getRanks(teamId));
+    }
+
 
     interface Api {
 
@@ -62,6 +67,11 @@ public class TeamApi extends ApiTemplate<TeamApi.Api> {
         @GET("teams/{teamId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResTeamDetailInfo.InviteTeam> getTeamInfo(@Path("teamId") long teamId);
+
+        @GET("teams/{teamId}/ranks")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<Ranks> getRanks(@Path("teamId") long teamId);
+
 
     }
 }

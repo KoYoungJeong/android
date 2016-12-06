@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -14,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -100,5 +102,16 @@ public class InsertTeamInfoModel {
         InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
         JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
         MessageRepository.getRepository().deleteAllLink();
+    }
+
+    public void updateRank(long teamId) {
+        if (!RankRepository.getInstance().hasRanks(teamId)) {
+            try {
+                Ranks ranks = teamApi.get().getRanks(teamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            } catch (RetrofitException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

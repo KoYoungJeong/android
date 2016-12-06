@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.member.WebhookBot;
@@ -52,6 +54,7 @@ public class TeamInfoLoader {
     private List<Member> members;
     private Map<Long, User> users;
     private Map<Long, WebhookBot> bots;
+    private Map<Long, Rank> ranks;
 
     private User me;
     private Team team;
@@ -71,6 +74,7 @@ public class TeamInfoLoader {
         members = new ArrayList<>();
         users = new HashMap<>();
         bots = new HashMap<>();
+        ranks = new HashMap<>();
 
         refresh();
     }
@@ -85,6 +89,7 @@ public class TeamInfoLoader {
         members = new ArrayList<>();
         users = new HashMap<>();
         bots = new HashMap<>();
+        ranks = new HashMap<>();
 
         refresh(teamId);
     }
@@ -132,6 +137,7 @@ public class TeamInfoLoader {
         if (initialInfo != null) {
             setUpTeam();
             setUpRooms();
+            setUpRanks();
             setUpMembers();
             setUpMe();
             setUpTopicFolders();
@@ -144,6 +150,7 @@ public class TeamInfoLoader {
             chatRooms.clear();
             topicRooms.clear();
             members.clear();
+            ranks.clear();
             users.clear();
             bots.clear();
             jandiBot = null;
@@ -152,6 +159,12 @@ public class TeamInfoLoader {
             pollBadge = 0;
             teamPlan = null;
         }
+    }
+
+    private void setUpRanks() {
+        Observable.from(RankRepository.getInstance().getRanks(team.getId()))
+                .collect(() -> ranks, (maps, rank) -> maps.put(rank.getId(), rank))
+                .subscribe();
     }
 
     private void setUpMention() {
@@ -188,7 +201,7 @@ public class TeamInfoLoader {
         } else {
             getUserObservable()
                     .takeFirst(human -> human.getId() == myId)
-                    .map(User::new)
+                    .map((human1) -> new User(human1, ranks.get(human1.getRankId())))
                     .subscribe(it -> {
                         this.me = it;
                     });
@@ -222,7 +235,7 @@ public class TeamInfoLoader {
         jandiBot = null;
 
         getUserObservable()
-                .map(User::new)
+                .map((human) -> new User(human, ranks.get(human.getRankId())))
                 .subscribe(user -> {
                     members.add(user);
                     users.put(user.getId(), user);

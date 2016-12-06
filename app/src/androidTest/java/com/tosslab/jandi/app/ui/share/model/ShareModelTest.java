@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.share.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -81,12 +82,6 @@ public class ShareModelTest {
     }
 
     @Test
-    public void testGetLeftSideMenu() throws Exception {
-        InitialInfo leftSideMenu = shareModel.getInitialInfo(TeamInfoLoader.getInstance().getTeamId());
-        assertThat(leftSideMenu, is(notNullValue()));
-    }
-
-    @Test
     public void testUpdateLeftSideMenu() throws Exception {
         long teamId = Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> userTeam.getTeamId() != AccountRepository.getRepository().getSelectedTeamId())
@@ -95,8 +90,8 @@ public class ShareModelTest {
                 .toBlocking().first();
 
         if (teamId > 0) {
-            InitialInfo leftSideMenu = shareModel.getInitialInfo(teamId);
-            boolean success = shareModel.updateInitialInfo(leftSideMenu);
+            InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
+            boolean success = shareModel.updateInitialInfo(initialInfo);
 
             assertThat(success, is(true));
         }
