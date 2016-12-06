@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.manager.okhttp;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.DomainUtil;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.LoggingAppender;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.StethoAppender;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -38,9 +39,17 @@ public class OkHttpClientFactory {
                 });
 
         try {
-            okhttpClientBuilder.sslSocketFactory(createSslSocketFactory());
-            okhttpClientBuilder.readTimeout(60, TimeUnit.SECONDS);
-            okhttpClientBuilder.writeTimeout(60, TimeUnit.SECONDS);
+            okhttpClientBuilder.sslSocketFactory(createSslSocketFactory())
+                    .hostnameVerifier((hostname, session) -> {
+                        for (String domain : DomainUtil.DOMAINS) {
+                            if (hostname.contains(domain)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    })
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS);
         } catch (KeyManagementException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
