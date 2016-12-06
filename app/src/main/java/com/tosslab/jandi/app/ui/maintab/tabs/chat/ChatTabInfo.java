@@ -34,7 +34,7 @@ public class ChatTabInfo implements TabInfo {
     @Override
     public String getTitle() {
         return JandiApplication.getContext()
-                .getResources().getString(R.string.jandi_tab_chat);
+                .getResources().getString(R.string.jandi_one_to_one);
     }
 
     @Override
