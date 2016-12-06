@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.viewmodel;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
@@ -54,8 +55,10 @@ public class AnnouncementViewModel {
     ViewGroup vgAnnouncementAction;
     @ViewById(R.id.iv_announcement_user)
     ImageView ivAnnouncementUser;
-    @ViewById(R.id.tv_announcement_info)
-    TextView tvAnnouncementInfo;
+    @ViewById(R.id.tv_announcement_user_name)
+    TextView tvAnnouncementUserName;
+    @ViewById(R.id.tv_announcement_date)
+    TextView tvAnnouncementDate;
     @ViewById(R.id.sv_announcement_message)
     ScrollView svAnnouncementMessage;
     @ViewById(R.id.tv_announcement_message)
@@ -117,6 +120,17 @@ public class AnnouncementViewModel {
         if (human != null) {
             name = human.getName();
             profileUrl = human.getPhotoUrl();
+            if (TextUtils.equals(human.getStatus(), "disabled")) {
+                tvAnnouncementUserName.setPaintFlags(
+                        tvAnnouncementUserName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                ivAnnouncementUser.setColorFilter(0x85ffffff);
+            } else {
+                if ((tvAnnouncementUserName.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
+                    tvAnnouncementUserName.setPaintFlags(
+                            tvAnnouncementUserName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+                ivAnnouncementUser.clearColorFilter();
+            }
         } else if (bot != null) {
             isBot = true;
             name = bot.getName();
@@ -162,8 +176,8 @@ public class AnnouncementViewModel {
         });
 
         String date = DateTransformator.getTimeString(writtenAt);
-        String announcementInfo = String.format("%s %s", name, date);
-        tvAnnouncementInfo.setText(announcementInfo);
+        tvAnnouncementDate.setText(date);
+        tvAnnouncementUserName.setText(name);
 
         SpannableStringBuilder messageStringBuilder = SpannableLookUp.text(content)
                 .hyperLink(false)
