@@ -8,10 +8,16 @@ import io.realm.Realm;
 
 public class RealmRepository {
 
-    private Lock lock;
+    private static Lock lock;
 
     protected RealmRepository() {
-        lock = new ReentrantLock();
+        initLock();
+    }
+
+    synchronized private static void initLock() {
+        if (lock == null) {
+            lock = new ReentrantLock();
+        }
     }
 
     protected <T> T execute(Executor<T> executor) {
