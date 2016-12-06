@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
+import com.tosslab.jandi.app.network.DomainUtil;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -47,6 +48,14 @@ public class JandiSocketConnector implements SocketConnector {
                 options.timeout = 1000 * 10;
                 options.rememberUpgrade = true;
                 options.transports = new String[]{WebSocket.NAME};
+                options.hostnameVerifier = (hostname, session) -> {
+                    for (String domain : DomainUtil.DOMAINS) {
+                        if (hostname.contains(domain)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
                 try {
                     options.sslContext = getSSLContext();
                 } catch (Exception e) {
