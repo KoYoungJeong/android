@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/iv_file_detail_thumb"
         android:layout_width="match_parent"
-        android:layout_height="306dp"/>
+        android:layout_height="306dp" />
 
     <LinearLayout
         android:id="@+id/vg_file_detail_tap_to_view"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/jandi_image_too_big"
             android:textColor="@color/jandi_text_medium"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,13 +34,13 @@
             android:layout_marginTop="5dp"
             android:text="@string/jandi_tab_to_view_original"
             android:textColor="@color/jandi_text_medium"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
 
         <View
             android:layout_width="27dp"
             android:layout_height="27dp"
             android:layout_marginTop="11dp"
-            android:background="@drawable/file_icon_download_image"/>
+            android:background="@drawable/file_icon_download_image" />
 
     </LinearLayout>
 
@@ -48,74 +48,98 @@
         android:id="@+id/vg_file_detail_progress"
         android:layout_width="match_parent"
         android:layout_height="306dp"
-        android:background="@color/jandi_file_detail_tab_to_view_bg"
-        android:visibility="gone">
+        android:background="@color/jandi_black_b2"
+        android:visibility="visible">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical">
 
-            <FrameLayout
+
+            <com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar
+                android:id="@+id/progress_file_detail"
                 android:layout_width="58dp"
                 android:layout_height="58dp"
-                android:layout_gravity="center">
+                android:layout_centerHorizontal="true" />
 
-                <com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar
-                    android:id="@+id/progress_file_detail"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/tv_file_detail_percentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/progress_file_detail"
+                android:layout_alignTop="@+id/progress_file_detail"
+                android:gravity="center"
+                android:text="0%"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
 
-                <TextView
-                    android:id="@+id/tv_file_detail_percentage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="0%"
-                    android:textColor="@color/jandi_text_medium"
-                    android:textSize="14dp"/>
-            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/progress_file_detail"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:text="Downloading..."
-                android:textColor="@color/jandi_text_medium"
-                android:textSize="14dp"/>
+                android:textColor="@color/white"
+                android:textSize="14dp" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </FrameLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/vg_file_detail_no_image"
         android:layout_width="match_parent"
         android:layout_height="169dp"
         android:background="@color/jandi_file_detail_tab_to_view_bg"
+        android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone">
 
-        <LinearLayout
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/file_icon_etc_198" />
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:layout_marginTop="8dp"
+            android:text="No Image available" />
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:scaleType="fitCenter"
-                android:src="@drawable/file_icon_etc_198"/>
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="No Image available"/>
+    <LinearLayout
+        android:id="@+id/vg_photoview_play"
+        android:layout_width="match_parent"
+        android:layout_height="306dp"
+        android:layout_centerInParent="true"
+        android:background="@color/jandi_black_b2"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/btn_photoview_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:src="@drawable/file_icon_download_gif" />
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/tv_photoview_play_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="21sp" />
+
+
+    </LinearLayout>
+
 
 </RelativeLayout>
