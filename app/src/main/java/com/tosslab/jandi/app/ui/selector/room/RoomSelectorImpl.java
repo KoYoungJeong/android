@@ -303,7 +303,12 @@ public class RoomSelectorImpl implements RoomSelector {
         List<ExpandRoomData> roomDatas = new ArrayList<>();
 
         if (isIncludeAllMember) {
+
             ExpandRoomData dummyData = new ExpandRoomData();
+            dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);
+            roomDatas.add(dummyData);
+
+            dummyData = new ExpandRoomData();
             dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
             roomDatas.add(dummyData);
         }
