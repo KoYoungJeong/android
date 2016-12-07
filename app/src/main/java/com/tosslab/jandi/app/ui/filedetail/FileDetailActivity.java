@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
@@ -1069,13 +1070,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void startExportedFileViewerActivity(File file, String mimeType) {
+    public void startExportedFileViewerActivity(File file) {
         Intent target = new Intent(Intent.ACTION_SEND);
         Uri parse = Uri.parse(file.getAbsolutePath());
-        target.setDataAndType(parse, mimeType);
-        Bundle extras = new Bundle();
-        extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
-        target.putExtras(extras);
+        String mimeType = getFileType(file);
+        if (mimeType != null) {
+            target.setDataAndType(parse, mimeType);
+            Bundle extras = new Bundle();
+            extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
+            target.putExtras(extras);
+        }
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
             startActivity(chooser);
@@ -1087,18 +1091,33 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void startDownloadedFileViewerActivity(File file, String mimeType) {
+    public void startDownloadedFileViewerActivity(File file) {
         try {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), mimeType);
-            startActivity(intent);
-            showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
+            String mimeType = getFileType(file);
+            if (mimeType != null) {
+                intent.setDataAndType(Uri.fromFile(file), mimeType);
+                startActivity(intent);
+                showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
+            }
         } catch (ActivityNotFoundException e) {
             showToast(getString(R.string.err_unsupported_file_type, file), true);
         } catch (SecurityException e) {
             showToast(getString(R.string.err_unsupported_file_type, file), true);
         }
+    }
+
+    private String getFileType(File file) {
+        String fileName = file.getName();
+        int idx = fileName.lastIndexOf(".");
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        if (idx >= 0) {
+            return mimeTypeMap.getMimeTypeFromExtension(
+                    fileName.substring(idx + 1, fileName.length()).toLowerCase());
+        }
+        return null;
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

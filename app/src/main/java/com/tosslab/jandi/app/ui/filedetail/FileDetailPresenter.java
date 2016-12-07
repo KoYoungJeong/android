@@ -336,7 +336,6 @@ public class FileDetailPresenter {
 
         String downloadFilePath = fileDetailModel.getDownloadFilePath(fileMessage.content.title);
         String downloadUrl = fileDetailModel.getDownloadUrl(fileMessage.content.fileUrl);
-        final String mimeType = fileMessage.content.type;
 
         currentDownloadingFile = fileDetailModel.downloadFile(downloadUrl, downloadFilePath,
                 callback -> callback.distinctUntilChanged()
@@ -358,10 +357,11 @@ public class FileDetailPresenter {
                                 currentDownloadingFile = null;
                                 return;
                             }
+                            File file = new File(fileDetailModel.getDownloadFilePath(fileMessage.content.title));
                             if (type == FileDetailPresenter.FileManageType.EXPORT) {
-                                view.startExportedFileViewerActivity(new File(fileDetailModel.getDownloadFilePath(fileMessage.content.title)), mimeType);
+                                view.startExportedFileViewerActivity(file);
                             } else if (type == FileDetailPresenter.FileManageType.OPEN) {
-                                view.startDownloadedFileViewerActivity(new File(fileDetailModel.getDownloadFilePath(fileMessage.content.title)), mimeType);
+                                view.startDownloadedFileViewerActivity(file);
                             }
                         }));
     }
@@ -670,9 +670,9 @@ public class FileDetailPresenter {
 
         void requestPermission(int requestCode, String... permissions);
 
-        void startExportedFileViewerActivity(File file, String mimeType);
+        void startExportedFileViewerActivity(File file);
 
-        void startDownloadedFileViewerActivity(File file, String mimeType);
+        void startDownloadedFileViewerActivity(File file);
 
         void moveToMessageListActivity(long entityId, int entityType, long roomId, boolean isStarred);
 
