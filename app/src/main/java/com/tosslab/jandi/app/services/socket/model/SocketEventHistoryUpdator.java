@@ -236,7 +236,7 @@ public class SocketEventHistoryUpdator {
             SocketLinkPreviewMessageEvent event = (SocketLinkPreviewMessageEvent) eventHistoryInfo;
             SocketLinkPreviewMessageEvent.Data data = event.getData();
             ResMessages.TextMessage textMessage = MessageRepository.getRepository().getTextMessage(data.getMessageId());
-            if (textMessage != null) {
+            if (textMessage != null && textMessage.linkPreview == null) {
                 textMessage.linkPreview = data.getLinkPreview();
                 MessageRepository.getRepository().upsertTextMessage(textMessage);
                 postEvent(new LinkPreviewUpdateEvent(data.getMessageId()), eventPost);
@@ -252,9 +252,11 @@ public class SocketEventHistoryUpdator {
 
             ResMessages.TextMessage textMessage =
                     MessageRepository.getRepository().getTextMessage(messageId);
-            textMessage.linkPreview = linkPreview;
-            MessageRepository.getRepository().upsertTextMessage(textMessage);
-            postEvent(new LinkPreviewUpdateEvent(data.getMessageId()), eventPost);
+            if (textMessage != null) {
+                textMessage.linkPreview = linkPreview;
+                MessageRepository.getRepository().upsertTextMessage(textMessage);
+                postEvent(new LinkPreviewUpdateEvent(data.getMessageId()), eventPost);
+            }
         } else if (eventHistoryInfo instanceof SocketMessageStarredEvent) {
             SocketMessageStarredEvent event = (SocketMessageStarredEvent) eventHistoryInfo;
             MessageRepository.getRepository().updateStarred(event.getStarredInfo()

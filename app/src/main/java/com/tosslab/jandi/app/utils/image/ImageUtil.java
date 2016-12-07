@@ -51,7 +51,7 @@ public class ImageUtil {
     }
 
     public static String getThumbnailUrl(ResMessages.FileContent fileContent) {
-        if (fileContent == null) {
+        if (fileContent == null || fileContent.extraInfo == null) {
             return null;
         }
 

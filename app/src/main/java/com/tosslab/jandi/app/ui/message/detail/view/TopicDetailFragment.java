@@ -212,7 +212,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
-        if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+        if (!TeamInfoLoader.getInstance().isTopic(entityId)) {
             return;
         }
         topicDetailPresenter.onInit(entityId);
