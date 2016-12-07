@@ -113,8 +113,8 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private void setUpActionBar() {
