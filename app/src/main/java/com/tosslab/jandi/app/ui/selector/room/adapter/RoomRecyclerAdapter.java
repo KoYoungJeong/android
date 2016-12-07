@@ -109,13 +109,16 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
 
+        int iconVisible = View.VISIBLE;
         if (item.getType() == JandiConstants.Entity.TYPE_JOINED_ROOM) {
-            ivIcon.setVisibility(View.GONE);
+            iconVisible = View.GONE;
+            ivIcon.setVisibility(iconVisible);
             roomholder.tvName.setText(R.string.jandi_joined_room);
             roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.BOLD));
         } else if (item.getType() == JandiConstants.Entity.TYPE_EVERYWHERE) {
             if (from == FROM_ROOM_SELECTOR) {
-                ivIcon.setVisibility(View.GONE);
+                iconVisible = View.GONE;
+                ivIcon.setVisibility(iconVisible);
                 roomholder.tvName.setText(R.string.jandi_search_category_everywhere);
             } else {
                 ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -173,6 +176,10 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ImageLoader.loadFromResources(ivIcon, resId);
 
             roomholder.tvName.setText(item.getName());
+        }
+
+        if (ivIcon.getVisibility() != iconVisible) {
+            ivIcon.setVisibility(iconVisible);
         }
 
         holder.itemView.setOnClickListener(v -> {
