@@ -370,7 +370,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showKickDialog(String userName, String userProfileUrl, long memberId) {
+    public void showDialogKick(String userName, String userProfileUrl, long memberId) {
         KickDialogFragment dialogFragment = KickDialogFragment_.builder()
                 .profileUrl(userProfileUrl)
                 .userName(userName)
@@ -465,6 +465,19 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             setResult(Activity.RESULT_OK, intent);
         }
         finish();
+    }
+
+    @Override
+    public void showDialogGuestKick(long memberId) {
+        new AlertDialog.Builder(MembersListActivity.this)
+                .setTitle(R.string.topic_remove_associatewithonetopic_title)
+                .setMessage(R.string.topic_remove_associatewithonetopic_desc)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.topic_remove_associatewithonetopic_remove, (dialog, which) -> {
+                    membersListPresenter.onKickUser(entityId, memberId);
+                })
+                .create()
+                .show();
     }
 
 }

@@ -109,6 +109,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_cancelinvite">"Would you like to cancel in invite?"</string>
 	<string name="invite_email_error_partially">"Some invitations have not been sent. Please try again after checking the result."</string>
 	<string name="invite_email_error_unknown">"There has been an unknown error. Please try again later."</string>
+	<string name="invite_email_failedtryagain">"Failed to send the email. Try again."</string>
 	<string name="invite_email_placeholder">"Enter email address"</string>
 	<string name="invite_email_sending">"Sending invitation..."</string>
 	<string name="invite_email_sendinvitation_disable">"Send Invitation"</string>

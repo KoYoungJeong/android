@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
@@ -259,7 +260,12 @@ public class MembersListPresenterImpl implements MembersListPresenter {
             return;
         }
 
-        view.showKickDialog(item.getName(), item.getPhotoUrl(), item.getEntityId());
+        if (TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel() != Level.Guest) {
+            view.showDialogKick(item.getName(), item.getPhotoUrl(), item.getEntityId());
+        } else {
+            view.showDialogGuestKick(item.getEntityId());
+        }
+
     }
 
     @Background

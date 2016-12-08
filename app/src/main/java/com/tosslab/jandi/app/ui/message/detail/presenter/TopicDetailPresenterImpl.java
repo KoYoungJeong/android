@@ -154,7 +154,18 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         if (topicDetailModel.isOwner(entityId)
                 && !(topicDetailModel.isStandAlone(entityId))) {
             String topicName = topicDetailModel.getTopicName(entityId);
-            view.showNeedToAssignTopicOwnerDialog(topicName);
+            Observable.just(TeamInfoLoader.getInstance().getTopic(entityId))
+                    .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                    .takeFirst(it -> TeamInfoLoader.getInstance().getUser(it).getLevel() == Level.Guest)
+                    .defaultIfEmpty(-1L)
+                    .subscribe(memberId -> {
+                        if(memberId < 0){
+                            view.showDialogNeedToAssignTopicOwner(topicName);
+                        } else {
+                            view.showDialogNeedToAssignMember();
+                        }
+                    });
+
         } else {
             if (leaveViewModel.canLeaveRoom(entityId)) {
                 leaveViewModel.leave(entityId);
@@ -170,7 +181,18 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             return;
         }
 
-        view.showTopicDeleteDialog();
+        Observable.just(TeamInfoLoader.getInstance().getTopic(entityId))
+                .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                .takeFirst(it -> TeamInfoLoader.getInstance().getUser(it).getLevel() == Level.Guest)
+                .defaultIfEmpty(-1L)
+                .subscribe(memberId -> {
+                    if (memberId < 0) {
+                        view.showTopicDeleteDialogOnlyMember();
+                    } else {
+                        view.showTopicDeleteAtLeastGuest();
+                    }
+                }, Throwable::printStackTrace);
+
     }
 
     @Override
@@ -358,6 +380,15 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         }
 
         updateTopicPushSubscribe(teamId, entityId, checked, !onGlobalPush);
+    }
+
+    @Override
+    public void onInviteMember(long entityId) {
+        if (TeamInfoLoader.getInstance().isDefaultTopic(entityId)) {
+            view.showDilaogInviteToDefaultTopic();
+        } else {
+            view.moveToInvite();
+        }
     }
 
 }

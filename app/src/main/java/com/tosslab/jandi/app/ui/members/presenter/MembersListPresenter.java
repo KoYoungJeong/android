@@ -59,7 +59,7 @@ public interface MembersListPresenter {
 
         void refreshMemberList();
 
-        void showKickDialog(String userName, String userProfileUrl, long memberId);
+        void showDialogKick(String userName, String userProfileUrl, long memberId);
 
         void showKickSuccessToast();
 
@@ -76,6 +76,8 @@ public interface MembersListPresenter {
         void showAssignTopicOwnerFailToast();
 
         void setResultAndFinish(long memberId);
+
+        void showDialogGuestKick(long memberId);
     }
 
 }

@@ -107,6 +107,7 @@
 	<string name="invite_email_cancelinvite">"你要取消此邀請嗎？"</string>
 	<string name="invite_email_error_partially">"部分邀請無法順利寄送。請確認後再試"</string>
 	<string name="invite_email_error_unknown">"出現未知的錯誤，請稍等"</string>
+	<string name="invite_email_failedtryagain">"郵件寄送失敗，再試一次"</string>
 	<string name="invite_email_placeholder">"輸入電子郵箱"</string>
 	<string name="invite_email_sending">"邀請寄送中..."</string>
 	<string name="invite_email_sendinvitation_disable">"寄送邀請"</string>

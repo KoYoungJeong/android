@@ -304,13 +304,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @OnClick(R.id.vg_topic_detail_invite)
     void onTopicInviteClick() {
 
-        startActivity(Henson.with(getActivity())
-                .gotoTeamMemberSearchActivity()
-                .isSelectMode(true)
-                .room_id(entityId)
-                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC)
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        topicDetailPresenter.onInviteMember(entityId);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.InviteTeamMembers);
     }
@@ -386,6 +380,50 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void setTopicInviteEnabled(boolean enabled) {
         vgInvite.setEnabled(enabled);
+    }
+
+    @Override
+    public void showDilaogInviteToDefaultTopic() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.topic_default_invite_error_title)
+                .setMessage(R.string.topic_default_invite_error_desc)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void moveToInvite() {
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .room_id(entityId)
+                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+    }
+
+    @Override
+    public void showTopicDeleteAtLeastGuest() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.topic_delete_associatejoined_title)
+                .setMessage(R.string.topic_delete_associatejoined_desc)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_topic_delete, (dialog, which) -> {
+                    topicDetailPresenter.deleteTopic(getActivity(), entityId);
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void showDialogNeedToAssignMember() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.topic_leave_associateintopic_title)
+                .setMessage(R.string.topic_leave_associateintopic_desc)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
     }
 
     @Override
@@ -488,7 +526,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void showTopicDeleteDialog() {
+    public void showTopicDeleteDialogOnlyMember() {
         DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -523,7 +561,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void showNeedToAssignTopicOwnerDialog(String topicName) {
+    public void showDialogNeedToAssignTopicOwner(String topicName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(topicName);

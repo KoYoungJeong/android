@@ -114,6 +114,7 @@
 	<string name="invite_email_error_unknown">"알 수 없는 에러에 의해 
 발송이 실패하였습니다. 
 잠시 후 다시 시도해 주세요."</string>
+	<string name="invite_email_failedtryagain">"메일 발송을 실패했습니다. 다시 시도해주세요."</string>
 	<string name="invite_email_placeholder">"이메일을 입력해주세요."</string>
 	<string name="invite_email_sending">"이메일 발송 중..."</string>
 	<string name="invite_email_sendinvitation_disable">"초대 메일 보내기"</string>

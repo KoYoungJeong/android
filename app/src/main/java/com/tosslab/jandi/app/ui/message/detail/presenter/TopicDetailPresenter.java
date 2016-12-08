@@ -31,6 +31,8 @@ public interface TopicDetailPresenter {
 
     void onPushClick(long teamId, long entityId, boolean checked);
 
+    void onInviteMember(long entityId);
+
     interface View {
 
         void leaveTopic();
@@ -47,7 +49,7 @@ public interface TopicDetailPresenter {
 
         void showFailToast(String message);
 
-        void showTopicDeleteDialog();
+        void showTopicDeleteDialogOnlyMember();
 
         void setTopicPushSwitch(boolean isPushOn);
 
@@ -57,7 +59,7 @@ public interface TopicDetailPresenter {
 
         void showTopicNameChangeDialog(long entityId, String entityName, int entityType);
 
-        void showNeedToAssignTopicOwnerDialog(String topicName);
+        void showDialogNeedToAssignTopicOwner(String topicName);
 
         void moveTopicDescriptionEdit();
 
@@ -71,5 +73,13 @@ public interface TopicDetailPresenter {
         void showGlobalPushSetupDialog();
 
         void setTopicInviteEnabled(boolean enabled);
+
+        void showDilaogInviteToDefaultTopic();
+
+        void moveToInvite();
+
+        void showTopicDeleteAtLeastGuest();
+
+        void showDialogNeedToAssignMember();
     }
 }
