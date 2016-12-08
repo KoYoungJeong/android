@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.member.WebhookBot;
@@ -364,6 +365,10 @@ public class TeamInfoLoader {
 
     public long getMyId() {
         return execute(() -> me != null ? me.getId() : -1);
+    }
+
+    public Level getMyLevel() {
+        return execute(() -> me != null ? me.getLevel() : Level.Member);
     }
 
     public boolean isAnnouncementOpened(long topicId) {
