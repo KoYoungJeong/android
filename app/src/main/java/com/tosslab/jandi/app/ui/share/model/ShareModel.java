@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -49,6 +50,8 @@ public class ShareModel {
     Lazy<StartApi> startApi;
     @Inject
     Lazy<PollApi> pollApi;
+    @Inject
+    Lazy<ChatApi> chatApi;
 
     @AfterInject
     void initObject() {
@@ -131,5 +134,9 @@ public class ShareModel {
         } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
+    }
+
+    public long createChat(long teamId, long entityId) throws RetrofitException {
+        return chatApi.get().createChat(teamId, entityId).id;
     }
 }

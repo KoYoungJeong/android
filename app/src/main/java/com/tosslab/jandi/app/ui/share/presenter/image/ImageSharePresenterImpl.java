@@ -104,7 +104,7 @@ public class ImageSharePresenterImpl implements ImageSharePresenter {
     @Background
     public void setEntityData(long roomId, String roomName, int roomType) {
         if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            this.roomId = TeamInfoLoader.getInstance().getChatId(roomId);
+            this.roomId = teamInfoLoader.getChatId(roomId);
             this.entityId = roomId;
         } else {
             this.roomId = roomId;

@@ -76,7 +76,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Override
     public void setEntity(long roomId, int roomType) {
         if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            this.roomId = TeamInfoLoader.getInstance().getChatId(roomId);
+            this.roomId = teamInfoLoader.getChatId(roomId);
             this.entityId = roomId;
         } else {
             this.roomId = roomId;
@@ -103,6 +103,10 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         view.showProgressBar();
         int roomType = getRoomType(roomId);
         try {
+            if (roomId == -1 && entityId > 0) {
+                // chat 미생성으로 간주
+                roomId = shareModel.createChat(teamId, entityId);
+            }
             shareModel.sendMessage(teamId, roomId, messageText, mentions);
             view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_share_succeed, messageText));
             view.finishOnUiThread();
