@@ -8,6 +8,10 @@
 	<string name="common_accthome_jandiacct">"JANDI account"</string>
 	<string name="common_accthome_joinedteamlist">"Joined team list"</string>
 	<string name="common_accthome_loggedin">"logged in"</string>
+	<string name="common_authority_change_alert">"Your member authority has been changed. Please relaunch the application."</string>
+	<string name="common_authority_change_relaunch">"Relaunch"</string>
+	<string name="common_authority_notauthorised">"You do not have access to this feature. 
+Please contact your administrator for more information."</string>
 	<string name="common_calleridnotifier_authorizecalllog">"Allow calls"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"Draw over other apps"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"Turning on this feature will move you to the ’Draw over other apps’ settings."</string>
@@ -27,12 +31,16 @@
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_hamburger_teamlist">"Team List"</string>
+	<string name="common_launch_fail">"Failed to load initial data.
+Please restart the app."</string>
 	<string name="common_pricingplan_fileupload">"Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_pricingplan_livesupport">"Live Support"</string>
 	<string name="common_pricingplan_moreinfo">"More details"</string>
 	<string name="common_pricingplan_msgsearch">"Your team has exceeded the search limit. Searching may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_profilemodal_jandi_botstatus">"Hello. I'm JANDI"</string>
 	<string name="common_settings_lostpasscodedesc">"Please delete and reinstall the app to reset your passcode"</string>
+	<string name="common_sharetojandi_choose_room">"Choose a room"</string>
+	<string name="common_sharetojandi_choose_team">"Choose a team"</string>
 	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
@@ -87,6 +95,36 @@
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_detail_nopreview">"This file can't be previewed."</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
+	<string name="invite_associate_desc">"Select the topic and the email address of the Associate you want to invite."</string>
+	<string name="invite_associate_email_desc">"You can invite Associates to JANDI by entering their email address."</string>
+	<string name="invite_associate_invitoronlyindefault_desc">"Associates can be invited to any other topic you are in, except for the default topic. Please join  an additional topic and try again. "</string>
+	<string name="invite_associate_invitoronlyindefault_title">"
+Currently, there is no topic where you could invite members to. "</string>
+	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in."</string>
+	<string name="invite_associate_selecttopic_placeholder">"Select a topic"</string>
+	<string name="invite_associate_selecttopic_title">"Select the topic you want to invite to"</string>
+	<string name="invite_email_alreadyinteam">"This email address is already in use."</string>
+	<string name="invite_email_alreadyinvited">"This email address has already been invited to the team."</string>
+	<string name="invite_email_blocked">"This email address had been blocked from the team."</string>
+	<string name="invite_email_cancelinvite">"Would you like to cancel in invite?"</string>
+	<string name="invite_email_error_partially">"Some invitations have not been sent. Please try again after checking the result."</string>
+	<string name="invite_email_error_unknown">"There has been an unknown error. Please try again later."</string>
+	<string name="invite_email_placeholder">"Enter email address"</string>
+	<string name="invite_email_sending">"Sending invitation..."</string>
+	<string name="invite_email_sendinvitation_disable">"Send Invitation"</string>
+	<string name="invite_email_sendinvitation_withcounts">"Send invitation to {n} people. "</string>
+	<string name="invite_email_success">"All intivations has been sent. "</string>
+	<string name="invite_email_title">"Enter email address"</string>
+	<string name="invite_email_valid">"This is a valid email address."</string>
+	<string name="invite_member_copyurl">"Copy invitation URL"</string>
+	<string name="invite_member_email_desc">"You can invite Members to JANDI by entering their email address."</string>
+	<string name="invite_member_option_associate_desc">"This member can only access certain topics. "</string>
+	<string name="invite_member_option_associate_title">"Invite Associate"</string>
+	<string name="invite_member_option_desc">"Select the status of a new member. "</string>
+	<string name="invite_member_option_member_desc">"This member can access all topics. "</string>
+	<string name="invite_member_option_member_title">"Invite Member"</string>
+	<string name="invite_member_option_title">"Invite"</string>
+	<string name="invite_member_select_options">"Select how you want to send your invite."</string>
 	<string name="jadi_account_home">"Account Home"</string>
 	<string name="jandi_1_1_message">"1:1 Message"</string>
 	<string name="jandi_1_on_1_support">"Live Support"</string>
@@ -540,7 +578,7 @@
 	<string name="jandi_search_history">"Recent Searches"</string>
 	<string name="jandi_search_ing">"<![CDATA[Searching <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"Searching…"</string>
-	<string name="jandi_search_member_name_or_division">"Search members by name or division."</string>
+	<string name="jandi_search_member_name_or_division">"Member name or division."</string>
 	<string name="jandi_search_no_topic_room">"No matching room for the keyword."</string>
 	<string name="jandi_search_result_count">"You have <b>%s</b> message search result(s)."</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%2$d</font></b> matches for <b><font color=#404040>%1$s</font></b>]]>"</string>
@@ -678,7 +716,7 @@
 	<string name="jandi_topic_inside_alone">"You are alone in this topic. Can't transfer topic admin permission."</string>
 	<string name="jandi_topic_invitation">"Invite"</string>
 	<string name="jandi_topic_leave">"Leave"</string>
-	<string name="jandi_topic_message_search">"Search rooms and messages"</string>
+	<string name="jandi_topic_message_search">"Search rooms & messages"</string>
 	<string name="jandi_topic_no_member_1">"You are all alone in this topic."</string>
 	<string name="jandi_topic_no_member_2">"Tap the button below to invite other members to the conversation."</string>
 	<string name="jandi_topic_notification">"Notifications"</string>
@@ -760,7 +798,18 @@
 	<string name="title_file_detail">"Description"</string>
 	<string name="title_file_upload">"Upload File"</string>
 	<string name="today">"Today"</string>
+	<string name="topic_default_invite_error_desc">"Some members will not be able to join this topic due to limited access."</string>
+	<string name="topic_default_invite_error_title">"All members with access to this topic have already joined."</string>
+	<string name="topic_delete_associatejoined_desc">"If an Associate is joining this topic only, the Associate will be blocked from the team as soon as you delete this topic. Would you like to proceed?"</string>
+	<string name="topic_delete_associatejoined_title">"If you delete this topic, some Associates may be blocked from the team. "</string>
+	<string name="topic_leave_associateintopic_desc">"If you want to leave the topic, please transfer your topic Admin authority to another Member. "</string>
+	<string name="topic_leave_associateintopic_title">"You are the topic Admin."</string>
+	<string name="topic_memberautojoin_button">"Auto invite Members"</string>
+	<string name="topic_memberautojoin_desc">"Invite all new Members to this topic."</string>
 	<string name="topic_polls_deletedpoll">"Deleted Poll"</string>
+	<string name="topic_remove_associatewithonetopic_desc">"This Associate has joined this topic only. Removing this Associate from the topic will delete this person from the team as well. Would you like to proceed and remove?"</string>
+	<string name="topic_remove_associatewithonetopic_remove">"Remove"</string>
+	<string name="topic_remove_associatewithonetopic_title">"Removing this Associate from the topic will delete this person from the team."</string>
 	<string name="topic_room_deletetopicconfirm">"This topic has been deleted"</string>
 	<string name="topic_room_selectallmembers">"Select All"</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
