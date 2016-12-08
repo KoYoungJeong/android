@@ -61,13 +61,15 @@ public interface TopicDetailPresenter {
 
         void moveTopicDescriptionEdit();
 
-        void setLeaveVisible(boolean owner, boolean defaultTopic);
+        void setLeaveVisible(boolean owner, boolean defaultTopic, boolean show);
 
-        void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic);
+        void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic, boolean enabled);
 
         void setAssignTopicOwnerVisible(boolean owner);
 
         void moveToAssignTopicOwner();
         void showGlobalPushSetupDialog();
+
+        void setTopicInviteEnabled(boolean enabled);
     }
 }

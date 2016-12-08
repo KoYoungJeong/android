@@ -359,30 +359,37 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void setLeaveVisible(boolean owner, boolean defaultTopic) {
-        if (defaultTopic) {
-            vgLeave.setVisibility(View.GONE);
-            vgDelete.setVisibility(View.GONE);
-            vgDefaultMessage.setVisibility(View.VISIBLE);
-            viewDividerDelete.setVisibility(View.GONE);
-
-        } else {
-            vgLeave.setVisibility(View.VISIBLE);
-            if (owner) {
-                viewDividerDelete.setVisibility(View.VISIBLE);
-                vgDelete.setVisibility(View.VISIBLE);
-            } else {
-                viewDividerDelete.setVisibility(View.GONE);
+    public void setLeaveVisible(boolean owner, boolean defaultTopic, boolean show) {
+        if (show) {
+            if (defaultTopic) {
+                vgLeave.setVisibility(View.GONE);
                 vgDelete.setVisibility(View.GONE);
+                vgDefaultMessage.setVisibility(View.VISIBLE);
+                viewDividerDelete.setVisibility(View.GONE);
+
+            } else {
+                vgLeave.setVisibility(View.VISIBLE);
+                if (owner) {
+                    viewDividerDelete.setVisibility(View.VISIBLE);
+                    vgDelete.setVisibility(View.VISIBLE);
+                } else {
+                    viewDividerDelete.setVisibility(View.GONE);
+                    vgDelete.setVisibility(View.GONE);
+                }
+                vgDefaultMessage.setVisibility(View.GONE);
             }
-            vgDefaultMessage.setVisibility(View.GONE);
-
-
+        } else {
+            vgLeave.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic) {
+    public void setTopicInviteEnabled(boolean enabled) {
+        vgInvite.setEnabled(enabled);
+    }
+
+    @Override
+    public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic, boolean enabled) {
         if (privateTopic) {
             vgAutoJoinText.setEnabled(false);
             switchAutoJoin.setChecked(false);
@@ -407,6 +414,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             tvAutoJoinStatus.setVisibility(View.VISIBLE);
         }
         tvAutoJoinStatus.setText(autoJoin ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
+
+        vgAutoJoinText.setEnabled(enabled);
     }
 
     @Override
