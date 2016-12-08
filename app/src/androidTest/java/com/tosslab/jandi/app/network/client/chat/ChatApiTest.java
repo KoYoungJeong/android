@@ -2,9 +2,13 @@ package com.tosslab.jandi.app.network.client.chat;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Chat;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 
 import org.junit.Before;
@@ -21,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class ChatApiTest {
-
     private ChatApi chatApi;
 
     @BeforeClass
@@ -41,5 +44,26 @@ public class ChatApiTest {
         Long targetUserId = Observable.from(rooms.get(0).getMembers()).takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId()).toBlocking().firstOrDefault(-1L);
         ResCommon resCommon = chatApi.deleteChat(TeamInfoLoader.getInstance().getMyId(), targetUserId);
         assertThat(resCommon).isNotNull();
+    }
+
+    @Test
+    public void createChat() throws Exception {
+        User jandiBot = TeamInfoLoader.getInstance().getJandiBot();
+
+        ResCommon chat = chatApi.createChat(TeamInfoLoader.getInstance().getTeamId(), jandiBot.getId());
+
+        long chatId = TeamInfoLoader.getInstance().getChatId(jandiBot.getId());
+        if (chatId > 0) {
+            assertThat(chat.id).isEqualTo(chatId);
+        } else {
+            InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+            assertThat(initializeInfo.getChats())
+                    .extracting(Chat::getId)
+                    .contains(chat.id);
+
+            assertThat(initializeInfo.getChats())
+                    .extracting(Chat::getCompanionId)
+                    .contains(jandiBot.getId());
+        }
     }
 }

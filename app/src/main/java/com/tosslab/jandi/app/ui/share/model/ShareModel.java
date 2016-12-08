@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -40,16 +41,19 @@ public class ShareModel {
     private Lazy<TeamApi> teamApi;
     private Lazy<StartApi> startApi;
     private Lazy<PollApi> pollApi;
+    private Lazy<ChatApi> chatApi;
 
     @Inject
     public ShareModel(Lazy<RoomsApi> roomsApi,
                       Lazy<TeamApi> teamApi,
                       Lazy<StartApi> startApi,
-                      Lazy<PollApi> pollApi) {
+                      Lazy<PollApi> pollApi,
+                      Lazy<ChatApi> chatApi) {
         this.roomsApi = roomsApi;
         this.teamApi = teamApi;
         this.startApi = startApi;
         this.pollApi = pollApi;
+        this.chatApi = chatApi;
     }
 
     public ResTeamDetailInfo.InviteTeam getTeamInfoById(long teamId) throws RetrofitException {
@@ -128,5 +132,9 @@ public class ShareModel {
         } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
+    }
+
+    public long createChat(long teamId, long entityId) throws RetrofitException {
+        return chatApi.get().createChat(teamId, entityId).id;
     }
 }
