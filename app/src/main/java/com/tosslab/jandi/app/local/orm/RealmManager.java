@@ -1,12 +1,17 @@
 package com.tosslab.jandi.app.local.orm;
 
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Process;
+import android.text.TextUtils;
 
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.local.orm.upgrade.RealmUpgradeChecker;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -23,8 +28,29 @@ public class RealmManager {
     private static int REALM_VERSION_MEMBER_AUTHORITY = 2;
 
     public static void init(Context context) {
-        Realm.init(context);
-        Realm.setDefaultConfiguration(realmConfiguration());
+        ActivityManager activityManager =
+                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo processInfo : activityManager.getRunningAppProcesses()) {
+            if (Process.myPid() == processInfo.pid) {
+                if (TextUtils.equals(processInfo.processName, BuildConfig.APPLICATION_ID)) {
+                    if (JandiPreference.getRealmInitiateStamp() < 244) {
+                        // 2.5.1.6 이전 버전 사용자, 설치 후 처음 사용자를 대상으로 realm 데이터 초기화
+                        Realm.init(context);
+                        Realm realm = Realm.getDefaultInstance();
+                        RealmConfiguration configuration = realm.getConfiguration();
+                        realm.close();
+                        Realm.deleteRealm(configuration);
+
+                        JandiPreference.setRealmInitiateStamp();
+                    }
+
+                    // proccess 선언이 되어 있지 않은 것에 한해서 동작하도록 함
+                    Realm.init(context);
+                    Realm.setDefaultConfiguration(realmConfiguration());
+                }
+                break;
+            }
+        }
     }
 
     private static RealmConfiguration realmConfiguration() {

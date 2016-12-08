@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
@@ -48,8 +46,6 @@ import java.util.logging.LogManager;
 import io.fabric.sdk.android.Fabric;
 import io.intercom.android.sdk.Intercom;
 import io.intercom.android.sdk.logger.IntercomLogger;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import okhttp3.OkHttpClient;
 
 /**
@@ -100,29 +96,6 @@ public class JandiApplication extends MultiDexApplication {
         FacebookSdk.sdkInitialize(this);
 
         initIntercom();
-
-        ActivityManager activityManager =
-                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningAppProcessInfo processInfo : activityManager.getRunningAppProcesses()) {
-            if (Process.myPid() == processInfo.pid) {
-                if (TextUtils.equals(processInfo.processName, BuildConfig.APPLICATION_ID)) {
-                    if (JandiPreference.getRealmInitiateStamp() < 244) {
-                        // 2.5.1.6 이전 버전 사용자, 설치 후 처음 사용자를 대상으로 realm 데이터 초기화
-                        Realm.init(this);
-                        Realm realm = Realm.getDefaultInstance();
-                        RealmConfiguration configuration = realm.getConfiguration();
-                        realm.close();
-                        Realm.deleteRealm(configuration);
-
-                        JandiPreference.setRealmInitiateStamp();
-                    }
-
-                    // proccess 선언이 되어 있지 않은 것에 한해서 동작하도록 함
-                    Realm.init(this);
-                }
-                break;
-            }
-        }
 
         RealmManager.init(this);
 
