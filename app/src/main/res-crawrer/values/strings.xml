@@ -716,7 +716,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_topic_inside_alone">"You are alone in this topic. Can't transfer topic admin permission."</string>
 	<string name="jandi_topic_invitation">"Invite"</string>
 	<string name="jandi_topic_leave">"Leave"</string>
-	<string name="jandi_topic_message_search">"Search rooms & messages"</string>
+	<string name="jandi_topic_message_search">"<![CDATA[Search rooms & messages]]>"</string>
 	<string name="jandi_topic_no_member_1">"You are all alone in this topic."</string>
 	<string name="jandi_topic_no_member_2">"Tap the button below to invite other members to the conversation."</string>
 	<string name="jandi_topic_notification">"Notifications"</string>
