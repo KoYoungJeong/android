@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.share.multi.domain;
 
-import java.io.File;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 
 public class FileShareData implements ShareData {
     private String filePath;
@@ -11,8 +11,10 @@ public class FileShareData implements ShareData {
         this.fileName = getFileNameByPath(filePath);
     }
 
-    public String getFileNameByPath(String data) {
-        return new File(data).getName();
+    public String getFileNameByPath(String filePath) {
+        int lastIndexOf = filePath.lastIndexOf("/");
+        String originName = filePath.substring(lastIndexOf + 1);
+        return FileUtil.convertAvailableFileName(originName);
     }
 
     @Override
