@@ -85,7 +85,7 @@ public class SearchSelectorViewController {
     private void setSpinnerByWhere() {
         tvFileListWhere.setText(
                 (currentEntityNameText == null || currentEntityNameText.equals(""))
-                        ? JandiApplication.getContext().getString(R.string.jandi_search_category_everywhere)
+                        ? JandiApplication.getContext().getString(R.string.jandi_joined_room)
                         : currentEntityNameText
         );
     }

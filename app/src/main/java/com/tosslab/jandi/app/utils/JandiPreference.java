@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
 
 /**
@@ -62,6 +63,8 @@ public class JandiPreference {
 
     private static final String PREF_CALL_PREVIEW_Y = "call_preview_coordinate_y";
     private static final String PREF_CALL_PERMISSION_POPUP = "call_preview_permission_popup";
+
+    private static final String PREF_REALM_INITIATE = "realm_initiate";
 
     private static final String PREF_PUSH_LAST_SENT_AT = "push_last_sent_at";
 
@@ -457,6 +460,14 @@ public class JandiPreference {
     }
     public static void setShowCallPermissionPopup() {
         getSharedPreferences().edit().putBoolean(PREF_CALL_PERMISSION_POPUP, false).commit();
+    }
+
+    public static long getRealmInitiateStamp() {
+        return getSharedPreferences().getLong(PREF_REALM_INITIATE, 243); // 2.5.1.6 을 기준값으로 설정
+    }
+
+    public static void setRealmInitiateStamp() {
+        getSharedPreferences().edit().putLong(PREF_REALM_INITIATE, BuildConfig.VERSION_CODE).commit();
     }
 
     public static void setPushLastSentAt(long time) {
