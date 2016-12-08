@@ -118,7 +118,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
         setStarredButtonText(TeamInfoLoader.getInstance().isStarred(roomId));
 
-        Level level = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).getLevel();
+        Level level = TeamInfoLoader.getInstance().getMyLevel();
         if (entityMenuDialogModel.isDefaultTopic(entityId) || level == Level.Guest) {
             btnLeave.setVisibility(View.GONE);
         } else {
