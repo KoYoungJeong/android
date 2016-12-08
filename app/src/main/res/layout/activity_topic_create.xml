@@ -121,14 +121,14 @@
                         android:layout_marginLeft="0dp"
                         android:layout_marginRight="0dp"
                         android:duplicateParentState="true"
-                        android:text="@string/jandi_auto_join_title_wild" />
+                        android:text="@string/topic_memberautojoin_button" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:duplicateParentState="true"
-                        android:text="@string/jandi_auto_join_explain"
+                        android:text="@string/topic_memberautojoin_desc"
                         android:textColor="@color/text_color_setting_check_summary"
                         android:textSize="@dimen/jandi_text_size_medium" />
                 </LinearLayout>
