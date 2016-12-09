@@ -33,13 +33,10 @@ public class RealmManager {
         for (ActivityManager.RunningAppProcessInfo processInfo : activityManager.getRunningAppProcesses()) {
             if (Process.myPid() == processInfo.pid) {
                 if (TextUtils.equals(processInfo.processName, BuildConfig.APPLICATION_ID)) {
-                    if (JandiPreference.getRealmInitiateStamp() < 244) {
+                    if (JandiPreference.getRealmInitiateStamp() < 246) {
                         // 2.5.1.6 이전 버전 사용자, 설치 후 처음 사용자를 대상으로 realm 데이터 초기화
                         Realm.init(context);
-                        Realm realm = Realm.getDefaultInstance();
-                        RealmConfiguration configuration = realm.getConfiguration();
-                        realm.close();
-                        Realm.deleteRealm(configuration);
+                        Realm.deleteRealm(new RealmConfiguration.Builder().build());
 
                         JandiPreference.setRealmInitiateStamp();
                     }
