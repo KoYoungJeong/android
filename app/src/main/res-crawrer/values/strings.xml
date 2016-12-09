@@ -25,8 +25,11 @@ Please contact your administrator for more information."</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_createteam_welcome">"Welcome!"</string>
 	<string name="common_creatteam_done">"Done"</string>
+	<string name="common_fileupload_filename">"File Name"</string>
 	<string name="common_fileupload_rename">"Rename"</string>
 	<string name="common_fileupload_rename_description">"Rename"</string>
+	<string name="common_fileupload_teamname_placeholder">"Select a team"</string>
+	<string name="common_fileupload_topicname_placeholder">"Select a topic"</string>
 	<string name="common_hamburger_invited">"Invited"</string>
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
@@ -109,6 +112,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_cancelinvite">"Would you like to cancel in invite?"</string>
 	<string name="invite_email_error_partially">"Some invitations have not been sent. Please try again after checking the result."</string>
 	<string name="invite_email_error_unknown">"There has been an unknown error. Please try again later."</string>
+	<string name="invite_email_failedtryagain">"Failed to send the email. Try again."</string>
 	<string name="invite_email_placeholder">"Enter email address"</string>
 	<string name="invite_email_sending">"Sending invitation..."</string>
 	<string name="invite_email_sendinvitation_disable">"Send Invitation"</string>
