@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -21,6 +23,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
+    @Inject
     public RoomsApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

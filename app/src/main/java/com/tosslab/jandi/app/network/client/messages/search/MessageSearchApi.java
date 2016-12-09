@@ -6,6 +6,8 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -13,6 +15,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class MessageSearchApi extends ApiTemplate<MessageSearchApi.Api> {
+    @Inject
     public MessageSearchApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

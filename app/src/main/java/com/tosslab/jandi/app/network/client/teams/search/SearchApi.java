@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -20,6 +22,7 @@ import retrofit2.http.QueryMap;
  */
 public class SearchApi extends ApiTemplate<SearchApi.Api> {
 
+    @Inject
     public SearchApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

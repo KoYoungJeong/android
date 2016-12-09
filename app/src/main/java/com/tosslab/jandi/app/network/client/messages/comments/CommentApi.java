@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -16,6 +18,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class CommentApi extends ApiTemplate<CommentApi.Api> {
+    @Inject
     public CommentApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

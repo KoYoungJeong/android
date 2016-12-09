@@ -35,7 +35,6 @@ import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
-import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerTopicDetailComponent;
 import com.tosslab.jandi.app.ui.message.detail.dagger.TopicDetailModule;
@@ -251,11 +250,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @OnClick(R.id.vg_topic_detail_member_count)
     void onTopicParticipantsClick() {
-        MembersListActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
+        startActivity(Henson.with(getActivity())
+                .gotoMembersListActivity()
                 .entityId(entityId)
-                .start();
+                .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
+                .build().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Participants);
     }
@@ -509,10 +508,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Override
     public void moveToAssignTopicOwner() {
-        MembersListActivity_.intent(this)
+
+        startActivity(Henson.with(getActivity())
+                .gotoMembersListActivity()
                 .entityId(entityId)
                 .type(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
-                .startForResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER);
+                .build());
     }
 
     @Override

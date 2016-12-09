@@ -11,6 +11,8 @@ import com.tosslab.jandi.app.network.models.start.Human;
 import java.io.File;
 import java.net.URLConnection;
 
+import javax.inject.Inject;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -24,6 +26,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
+    @Inject
     public ProfileApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

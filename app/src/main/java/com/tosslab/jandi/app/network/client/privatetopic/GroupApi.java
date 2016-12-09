@@ -12,6 +12,8 @@ import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -22,6 +24,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class GroupApi extends ApiTemplate<GroupApi.Api> {
+    @Inject
     public GroupApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -23,6 +25,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
+    @Inject
     public ChannelApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

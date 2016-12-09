@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.network.models.ReqTargetToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -17,6 +19,7 @@ import retrofit2.http.POST;
 
 public class LoginApi extends ApiTemplate<LoginApi.Api> {
 
+    @Inject
     public LoginApi(RetrofitBuilder retrofitBuilder) {
         super(LoginApi.Api.class, retrofitBuilder);
     }

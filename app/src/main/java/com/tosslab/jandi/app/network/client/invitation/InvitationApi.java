@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -18,6 +20,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class InvitationApi extends ApiTemplate<InvitationApi.Api> {
+    @Inject
     public InvitationApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

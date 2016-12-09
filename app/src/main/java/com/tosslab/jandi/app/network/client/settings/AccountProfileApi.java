@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -15,6 +17,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 
 public class AccountProfileApi extends ApiTemplate<AccountProfileApi.Api> {
+    @Inject
     public AccountProfileApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

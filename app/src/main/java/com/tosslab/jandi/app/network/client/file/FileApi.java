@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -22,6 +24,7 @@ import retrofit2.http.Query;
 
 public class FileApi extends ApiTemplate<FileApi.Api> {
 
+    @Inject
     public FileApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

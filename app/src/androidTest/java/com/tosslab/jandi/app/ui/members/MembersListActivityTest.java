@@ -7,8 +7,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
-import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
-import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl_;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,9 +25,8 @@ import static junit.framework.Assert.fail;
 public class MembersListActivityTest {
 
     @Rule
-    public ActivityTestRule<MembersListActivity_> rule = new ActivityTestRule<>(MembersListActivity_.class, false, false);
+    public ActivityTestRule<MembersListActivity> rule = new ActivityTestRule<>(MembersListActivity.class, false, false);
     private MembersListActivity activity;
-    private MembersListPresenter membersListPresenter;
 
     @Before
     public void setUp() throws Exception {
@@ -41,8 +38,6 @@ public class MembersListActivityTest {
         rule.launchActivity(i);
         activity = rule.getActivity();
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-        membersListPresenter = MembersListPresenterImpl_.getInstance_(activity);
-        membersListPresenter.setView(activity);
     }
 
     @After
