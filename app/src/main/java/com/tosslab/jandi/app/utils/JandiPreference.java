@@ -461,7 +461,7 @@ public class JandiPreference {
     }
 
     public static long getRealmInitiateStamp() {
-        return getSharedPreferences().getLong(PREF_REALM_INITIATE, 243); // 2.5.1.6 을 기준값으로 설정
+        return getSharedPreferences().getLong(PREF_REALM_INITIATE, 245); // 2.5.1.8 을 기준값으로 설정
     }
 
     public static void setRealmInitiateStamp() {
