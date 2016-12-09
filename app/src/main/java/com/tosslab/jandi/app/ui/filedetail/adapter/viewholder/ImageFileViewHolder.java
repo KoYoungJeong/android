@@ -86,8 +86,9 @@ public class ImageFileViewHolder extends FileViewHolder {
         boolean hasImageUrl = ImageUtil.hasImageUrl(content);
         final String originalUrl = ImageUtil.getOriginalUrl(content);
 
-        if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.ext)) {
+        if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.type)) {
             ivFileThumb.setVisibility(View.GONE);
+            vgProgress.setVisibility(View.GONE);
             ivFileThumb.setOnClickListener(null);
             vUnavailableIndicator.setVisibility(View.VISIBLE);
             return;
