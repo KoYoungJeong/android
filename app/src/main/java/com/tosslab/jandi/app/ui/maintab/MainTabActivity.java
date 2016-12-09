@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.services.keep.KeepAliveService;
 import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
@@ -383,7 +384,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 boolean withoutShadow = position == MypageTabInfo.INDEX || position == TeamTabInfo.INDEX;
                 vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
 
-                boolean isFABController = position == TopicTabInfo.INDEX || position == ChatTabInfo.INDEX;
+                boolean isFABController = position == TopicTabInfo.INDEX ||
+                        (position == ChatTabInfo.INDEX &&
+                                TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);
 
                 JandiPreference.setLastSelectedTab(position);
