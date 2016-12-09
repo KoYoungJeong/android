@@ -178,7 +178,7 @@ public class PhotoViewFragment extends Fragment {
             return true;
         });
 
-        boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(extensions);
+        boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(imageType);
         if (!shouldSupportImageExtensions
                 || (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl))) {
             LogUtil.e(TAG, "Url is empty.");

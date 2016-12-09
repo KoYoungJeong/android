@@ -196,7 +196,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
             // 유효한 확장자가 아닌 경우, Local File Path 도 없고 Thumbnail Path 도 없는 경우
             boolean shouldSupportImageExtensions =
-                    FileExtensionsUtil.shouldSupportImageExtensions(fileContent.ext);
+                    FileExtensionsUtil.shouldSupportImageExtensions(fileContent.type);
             Resources resources = vgFileImageWrapper.getResources();
             final int bigSizeImageBackgroundColor = resources
                     .getColor(R.color.jandi_messages_big_size_image_view_bg);
