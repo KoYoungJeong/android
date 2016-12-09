@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui.members.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.members.dagger.MemberListModule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +16,9 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import setup.BaseInitUtil;
 
 import static junit.framework.Assert.assertEquals;
@@ -22,7 +26,8 @@ import static junit.framework.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class MembersListPresenterImplTest {
 
-    private MembersListPresenterImpl presenter;
+    @Inject
+    MembersListPresenterImpl presenter;
     private MembersListPresenterImpl.View mockView;
     private long topicId;
 
@@ -33,9 +38,11 @@ public class MembersListPresenterImplTest {
 
         topicId = BaseInitUtil.tempTopicId;
 
-        presenter = MembersListPresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = Mockito.mock(MembersListPresenter.View.class);
-        presenter.setView(mockView);
+        DaggerMembersListPresenterImplTest_TestComponent.builder()
+                .memberListModule(new MemberListModule(mockView))
+                .build()
+                .inject(this);
     }
 
     @After
@@ -116,6 +123,11 @@ public class MembersListPresenterImplTest {
         assertEquals(resultList.size(), 2);
         assertEquals(resultList.get(0), chatChooseItem1);
 
+    }
+
+    @Component(modules = {ApiClientModule.class, MemberListModule.class})
+    public interface TestComponent {
+        void inject(MembersListPresenterImplTest test);
     }
 
 }

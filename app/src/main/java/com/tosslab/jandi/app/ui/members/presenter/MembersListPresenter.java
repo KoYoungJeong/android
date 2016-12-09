@@ -10,11 +10,7 @@ import java.util.List;
 
 public interface MembersListPresenter {
 
-    void setView(View view);
-
-    void onEventBusRegister();
-
-    void onEventBusUnregister();
+    void onInit();
 
     void onSearch(CharSequence text);
 
@@ -47,8 +43,6 @@ public interface MembersListPresenter {
 
         void moveDirectMessageActivity(long teamId, long userId);
 
-        String getSearchText();
-
         void showInviteSucceed(int memberSize);
 
         void showInviteFailed(String errMessage);
@@ -59,7 +53,7 @@ public interface MembersListPresenter {
 
         void refreshMemberList();
 
-        void showKickDialog(String userName, String userProfileUrl, long memberId);
+        void showDialogKick(String userName, String userProfileUrl, long memberId);
 
         void showKickSuccessToast();
 
@@ -76,6 +70,12 @@ public interface MembersListPresenter {
         void showAssignTopicOwnerFailToast();
 
         void setResultAndFinish(long memberId);
+
+        void showDialogGuestKick(long memberId);
+
+        void moveToProfile(long userId);
+
+        void inviteMember(long entityId);
     }
 
 }

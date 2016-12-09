@@ -12,6 +12,8 @@ import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.ResRegistFolderItem;
 import com.tosslab.jandi.app.network.models.ResUpdateFolder;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -21,6 +23,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class FolderApi extends ApiTemplate<FolderApi.Api> {
+    @Inject
     public FolderApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

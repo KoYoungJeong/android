@@ -9,12 +9,15 @@ import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public class StickerApi extends ApiTemplate<StickerApi.Api> {
+    @Inject
     public StickerApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

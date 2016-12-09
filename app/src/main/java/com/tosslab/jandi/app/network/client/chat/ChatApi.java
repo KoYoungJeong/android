@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -17,6 +19,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public class ChatApi extends ApiTemplate<ChatApi.Api> {
+    @Inject
     public ChatApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

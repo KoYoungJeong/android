@@ -17,6 +17,8 @@ import com.tosslab.jandi.app.network.models.ResStarredMessage;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -29,6 +31,7 @@ import retrofit2.http.Query;
 
 public class MessageApi extends ApiTemplate<MessageApi.Api> {
 
+    @Inject
     public MessageApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

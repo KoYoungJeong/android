@@ -3,30 +3,42 @@ package com.tosslab.jandi.app.ui.members;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
 import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
-import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -34,27 +46,17 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.SupposeUiThread;
-import org.androidannotations.annotations.TextChange;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
+import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * Created by tee on 15. 6. 3..
- */
-
-@EActivity(R.layout.activity_topic_member)
 public class MembersListActivity extends BaseAppCompatActivity implements MembersListPresenter.View {
 
     public static final int TYPE_MEMBERS_LIST_TEAM = 1;
@@ -62,36 +64,51 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     public static final int TYPE_ASSIGN_TOPIC_OWNER = 4;
     public static final String KEY_MEMBER_ID = "memberId";
 
-    @Extra
+    @InjectExtra
     long entityId;
 
-    @Extra
+    @InjectExtra
     int type;
 
-    @Bean(MembersListPresenterImpl.class)
     MembersListPresenter membersListPresenter;
 
-    @ViewById(R.id.list_topic_member)
+    @Bind(R.id.list_topic_member)
     RecyclerView memberListView;
 
-    @ViewById(R.id.vg_topic_member_search_bar)
+    @Bind(R.id.vg_topic_member_search_bar)
     View vgSearchbar;
 
-    @ViewById(R.id.et_topic_member_search)
+    @Bind(R.id.et_topic_member_search)
     TextView tvSearch;
 
-    @ViewById(R.id.vg_team_member_empty)
+    @Bind(R.id.vg_team_member_empty)
     View vEmptyTeamMember;
 
-    @Bean
     InvitationDialogExecutor invitationDialogExecutor;
+    InvitationViewModel invitationViewModel;
 
     private ProgressWheel mProgressWheel;
 
     private ModdableMemberListAdapter topicModdableMemberListAdapter;
 
-    @AfterInject
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_topic_member);
+        Dart.inject(this);
+        ButterKnife.bind(this);
+
+        initObject();
+        initViews();
+        membersListPresenter.onInit();
+
+
+    }
+
     void initObject() {
+        invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
+        invitationViewModel = InvitationViewModel_.getInstance_(this);
+
         int ownerType = (type == TYPE_MEMBERS_LIST_TOPIC || type == TYPE_ASSIGN_TOPIC_OWNER)
                 ? ModdableMemberListAdapter.OWNER_TYPE_TOPIC : ModdableMemberListAdapter.OWNER_TYPE_TEAM;
         topicModdableMemberListAdapter = new ModdableMemberListAdapter(ownerType);
@@ -99,8 +116,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             topicModdableMemberListAdapter.setOnMemberClickListener(item ->
                     membersListPresenter.onMemberClickForAssignOwner(entityId, item));
         }
-
-        membersListPresenter.setView(this);
     }
 
     private AnalyticsValue.Screen getScreen() {
@@ -113,7 +128,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
-    @AfterViews
     void initViews() {
         vEmptyTeamMember.setVisibility(View.GONE);
 
@@ -153,13 +167,13 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     }
 
-    @TextChange(R.id.et_topic_member_search)
+    @OnTextChanged(R.id.et_topic_member_search)
     void onSearchTextChange(CharSequence text) {
         membersListPresenter.onSearch(text);
     }
 
 
-    @Click(R.id.et_topic_member_search)
+    @OnClick(R.id.et_topic_member_search)
     void onSearchInputClick() {
         AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.SearchInputField);
     }
@@ -168,14 +182,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     protected void onDestroy() {
         super.onDestroy();
         membersListPresenter.onDestroy();
-    }
-
-    private int getActionbarHeight() {
-        TypedValue typedValue = new TypedValue();
-        getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
-
-        return TypedValue.complexToDimensionPixelOffset(
-                typedValue.data, getResources().getDisplayMetrics());
     }
 
     void setupActionbar() {
@@ -210,6 +216,40 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_invitation:
+                onInviteOptionSelect();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    void onHomeOptionSelect() {
+        finish();
+    }
+
+    void onInviteOptionSelect() {
+        if (type == TYPE_MEMBERS_LIST_TEAM) {
+            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
+            invitationDialogExecutor.execute();
+        } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
+            membersListPresenter.inviteMemberToTopic(entityId);
+        }
+    }
+
+    @OnClick(value = {
+            R.id.img_chat_choose_member_empty,
+            R.id.btn_chat_choose_member_empty})
+    void onMemberJoinClick() {
+        onInviteOptionSelect();
+    }
+
+    @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
     }
@@ -217,21 +257,39 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     protected void onResume() {
         super.onResume();
-        membersListPresenter.onEventBusRegister();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
+        EventBus.getDefault().unregister(this);
         super.onPause();
-        membersListPresenter.onEventBusUnregister();
     }
 
-    @SupposeUiThread
+    public void onEventMainThread(final RequestMoveDirectMessageEvent event) {
+
+        moveDirectMessageActivity(TeamInfoLoader.getInstance().getTeamId(), event.userId);
+    }
+
+    public void onEventMainThread(ShowProfileEvent event) {
+
+        Completable.fromAction(() -> {
+            moveToProfile(event.userId);
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
+    }
+
+    public void onEvent(TeamJoinEvent event) {
+        membersListPresenter.onSearch(tvSearch.getText().toString());
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        membersListPresenter.onSearch(tvSearch.getText().toString());
+    }
+
     void initProgressWheel() {
         mProgressWheel = new ProgressWheel(MembersListActivity.this);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         dismissProgressWheel();
@@ -245,7 +303,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         if (mProgressWheel != null && mProgressWheel.isShowing()) {
@@ -253,29 +310,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionSelect() {
-        finish();
-    }
-
-    @OptionsItem(R.id.action_invitation)
-    void onInviteOptionSelect() {
-        if (type == TYPE_MEMBERS_LIST_TEAM) {
-            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
-            invitationDialogExecutor.execute();
-        } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
-            membersListPresenter.inviteMemberToTopic(entityId);
-        }
-    }
-
-    @Click(value = {
-            R.id.img_chat_choose_member_empty,
-            R.id.btn_chat_choose_member_empty})
-    void onMemberJoinClick() {
-        onInviteOptionSelect();
-    }
-
-    @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
         final List<Long> selectedUserIds = topicModdableMemberListAdapter.getSelectedUserIds();
@@ -319,7 +353,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         return type;
     }
 
-    @UiThread
     @Override
     public void moveDirectMessageActivity(long teamId, long userId) {
         MessageListV2Activity_.intent(MembersListActivity.this)
@@ -333,12 +366,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     @Override
-    public String getSearchText() {
-        return tvSearch.getText().toString();
-    }
-
-    @Override
-    @UiThread
     public void showInviteSucceed(int memberSize) {
         String rawString = getString(R.string.jandi_message_invite_entity);
         String formatString = String.format(rawString, memberSize);
@@ -346,12 +373,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     @Override
-    @UiThread
     public void showInviteFailed(String errMessage) {
         ColoredToast.showError(errMessage);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setKickMode(boolean owner) {
         topicModdableMemberListAdapter.setKickMode(owner);
@@ -368,9 +393,8 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showKickDialog(String userName, String userProfileUrl, long memberId) {
+    public void showDialogKick(String userName, String userProfileUrl, long memberId) {
         KickDialogFragment dialogFragment = KickDialogFragment_.builder()
                 .profileUrl(userProfileUrl)
                 .userName(userName)
@@ -384,7 +408,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         dialogFragment.show(getSupportFragmentManager(), "dialog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void removeUser(long userEntityId) {
         for (int idx = 0, size = topicModdableMemberListAdapter.getCount(); idx < size; idx++) {
@@ -396,42 +419,36 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void refreshMemberList() {
         membersListPresenter.onSearch(tvSearch.getText());
     }
 
-    @UiThread
     @Override
     public void showKickSuccessToast() {
         ColoredToast.show(getString(R.string.jandi_success_kick_user_from_topic));
     }
 
-    @UiThread
     @Override
     public void showKickFailToast() {
         ColoredToast.show(getString(R.string.jandi_err_unexpected));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAlreadyTopicOwnerToast() {
         ColoredToast.showError(getString(R.string.jandi_alert_already_topic_owenr));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showNeedToAssignTopicOwnerDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MembersListActivity.this,
-                R.style.JandiTheme_AlertDialog_FixWidth_300);
-        builder.setTitle(R.string.jandi_topic_owner_title);
-        builder.setMessage(R.string.jandi_guide_to_assign_topic_owner);
-        builder.setPositiveButton(R.string.jandi_confirm, null);
-        builder.create().show();
+        new AlertDialog.Builder(MembersListActivity.this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.jandi_topic_owner_title)
+                .setMessage(R.string.jandi_guide_to_assign_topic_owner)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create().show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, long memberId) {
         AssignTopicOwnerDialog assignDialog = AssignTopicOwnerDialog_.builder()
@@ -444,19 +461,16 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         assignDialog.show(getSupportFragmentManager(), "assign_dialog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAssignTopicOwnerSuccessToast() {
         ColoredToast.show(getString(R.string.jandi_complete_assign_topic_owner));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAssignTopicOwnerFailToast() {
         ColoredToast.showError(getString(R.string.jandi_err_unexpected));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setResultAndFinish(long memberId) {
         if (memberId > 0) {
@@ -465,6 +479,35 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             setResult(Activity.RESULT_OK, intent);
         }
         finish();
+    }
+
+    @Override
+    public void showDialogGuestKick(long memberId) {
+        new AlertDialog.Builder(MembersListActivity.this)
+                .setTitle(R.string.topic_remove_associatewithonetopic_title)
+                .setMessage(R.string.topic_remove_associatewithonetopic_desc)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.topic_remove_associatewithonetopic_remove, (dialog, which) -> {
+                    membersListPresenter.onKickUser(entityId, memberId);
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void moveToProfile(long userId) {
+        MemberProfileActivity_.intent(this)
+                .memberId(userId)
+                .from(getType() == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC ?
+                        MemberProfileActivity.EXTRA_FROM_PARTICIPANT : MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
+                .start();
+
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.ViewProfile);
+    }
+
+    @Override
+    public void inviteMember(long entityId) {
+        invitationViewModel.inviteMembersToEntity(this, entityId);
     }
 
 }

@@ -204,7 +204,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:duplicateParentState="true"
-                        android:text="@string/jandi_auto_join_title"
+                        android:text="@string/topic_memberautojoin_button"
                         android:textColor="@color/text_color_setting_check_title"
                         android:textSize="@dimen/jandi_text_size_large" />
 
@@ -213,7 +213,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:duplicateParentState="true"
-                        android:text="@string/jandi_auto_join_explain"
+                        android:text="@string/topic_memberautojoin_desc"
                         android:textColor="@color/text_color_setting_check_summary"
                         android:textSize="@dimen/jandi_text_size_medium" />
                 </LinearLayout>

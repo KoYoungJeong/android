@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.members.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -16,6 +16,9 @@ import org.junit.runner.RunWith;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
@@ -31,7 +34,8 @@ import static org.junit.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class MembersModelTest {
 
-    private MembersModel membersModel;
+    @Inject
+    MembersModel membersModel;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -45,7 +49,12 @@ public class MembersModelTest {
 
     @Before
     public void setUp() throws Exception {
-        membersModel = MembersModel_.getInstance_(JandiApplication.getContext());
+        DaggerMembersModelTest_TestComponent.builder().build().inject(this);
+    }
+
+    @Component(modules = ApiClientModule.class)
+    interface TestComponent{
+        void inject(MembersModelTest test);
     }
 
     @Test

@@ -35,7 +35,6 @@ import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
-import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerTopicDetailComponent;
 import com.tosslab.jandi.app.ui.message.detail.dagger.TopicDetailModule;
@@ -251,11 +250,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @OnClick(R.id.vg_topic_detail_member_count)
     void onTopicParticipantsClick() {
-        MembersListActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
+        startActivity(Henson.with(getActivity())
+                .gotoMembersListActivity()
                 .entityId(entityId)
-                .start();
+                .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
+                .build().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Participants);
     }
@@ -304,13 +303,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @OnClick(R.id.vg_topic_detail_invite)
     void onTopicInviteClick() {
 
-        startActivity(Henson.with(getActivity())
-                .gotoTeamMemberSearchActivity()
-                .isSelectMode(true)
-                .room_id(entityId)
-                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC)
-                .build()
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        topicDetailPresenter.onInviteMember(entityId);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.InviteTeamMembers);
     }
@@ -359,30 +352,81 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void setLeaveVisible(boolean owner, boolean defaultTopic) {
-        if (defaultTopic) {
-            vgLeave.setVisibility(View.GONE);
-            vgDelete.setVisibility(View.GONE);
-            vgDefaultMessage.setVisibility(View.VISIBLE);
-            viewDividerDelete.setVisibility(View.GONE);
-
-        } else {
-            vgLeave.setVisibility(View.VISIBLE);
-            if (owner) {
-                viewDividerDelete.setVisibility(View.VISIBLE);
-                vgDelete.setVisibility(View.VISIBLE);
-            } else {
-                viewDividerDelete.setVisibility(View.GONE);
+    public void setLeaveVisible(boolean owner, boolean defaultTopic, boolean show) {
+        if (show) {
+            if (defaultTopic) {
+                vgLeave.setVisibility(View.GONE);
                 vgDelete.setVisibility(View.GONE);
+                vgDefaultMessage.setVisibility(View.VISIBLE);
+                viewDividerDelete.setVisibility(View.GONE);
+
+            } else {
+                vgLeave.setVisibility(View.VISIBLE);
+                if (owner) {
+                    viewDividerDelete.setVisibility(View.VISIBLE);
+                    vgDelete.setVisibility(View.VISIBLE);
+                } else {
+                    viewDividerDelete.setVisibility(View.GONE);
+                    vgDelete.setVisibility(View.GONE);
+                }
+                vgDefaultMessage.setVisibility(View.GONE);
             }
-            vgDefaultMessage.setVisibility(View.GONE);
-
-
+        } else {
+            vgLeave.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic) {
+    public void setTopicInviteEnabled(boolean enabled) {
+        vgInvite.setEnabled(enabled);
+    }
+
+    @Override
+    public void showDilaogInviteToDefaultTopic() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.topic_default_invite_error_title)
+                .setMessage(R.string.topic_default_invite_error_desc)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void moveToInvite() {
+        startActivity(Henson.with(getActivity())
+                .gotoTeamMemberSearchActivity()
+                .isSelectMode(true)
+                .room_id(entityId)
+                .from(TeamMemberSearchActivity.EXTRA_FROM_INVITE_TOPIC)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
+    }
+
+    @Override
+    public void showTopicDeleteAtLeastGuest() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.topic_delete_associatejoined_title)
+                .setMessage(R.string.topic_delete_associatejoined_desc)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_topic_delete, (dialog, which) -> {
+                    topicDetailPresenter.deleteTopic(getActivity(), entityId);
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void showDialogNeedToAssignMember() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.topic_leave_associateintopic_title)
+                .setMessage(R.string.topic_leave_associateintopic_desc)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic, boolean enabled) {
         if (privateTopic) {
             vgAutoJoinText.setEnabled(false);
             switchAutoJoin.setChecked(false);
@@ -407,6 +451,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             tvAutoJoinStatus.setVisibility(View.VISIBLE);
         }
         tvAutoJoinStatus.setText(autoJoin ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
+
+        vgAutoJoinText.setEnabled(enabled);
     }
 
     @Override
@@ -462,10 +508,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Override
     public void moveToAssignTopicOwner() {
-        MembersListActivity_.intent(this)
+
+        startActivity(Henson.with(getActivity())
+                .gotoMembersListActivity()
                 .entityId(entityId)
                 .type(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER)
-                .startForResult(MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER);
+                .build());
     }
 
     @Override
@@ -479,7 +527,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void showTopicDeleteDialog() {
+    public void showTopicDeleteDialogOnlyMember() {
         DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -514,7 +562,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void showNeedToAssignTopicOwnerDialog(String topicName) {
+    public void showDialogNeedToAssignTopicOwner(String topicName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 R.style.JandiTheme_AlertDialog_FixWidth_300);
         builder.setTitle(topicName);

@@ -7,12 +7,15 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.PUT;
 
 public class PlatformApi extends ApiTemplate<PlatformApi.Api> {
+    @Inject
     public PlatformApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

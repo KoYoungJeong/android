@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
@@ -15,6 +17,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class ChannelMessageApi extends ApiTemplate<ChannelMessageApi.Api> {
+    @Inject
     public ChannelMessageApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

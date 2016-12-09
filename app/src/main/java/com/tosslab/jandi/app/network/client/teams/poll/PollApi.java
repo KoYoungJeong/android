@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.network.models.ResPollLink;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResPollParticipants;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -31,6 +33,7 @@ import retrofit2.http.Query;
  */
 public class PollApi extends ApiTemplate<PollApi.Api> {
 
+    @Inject
     public PollApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

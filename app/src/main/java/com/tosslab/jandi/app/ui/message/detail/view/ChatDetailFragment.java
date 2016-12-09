@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.dagger.DaggerChatDetailComponent;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
@@ -66,6 +67,9 @@ public class ChatDetailFragment extends Fragment {
     @Bind(R.id.vg_chat_detail_starred)
     View vgStarred;
 
+    @Bind(R.id.vg_chat_detail_leave)
+    View vgLeave;
+
     public static Fragment createFragment(Context context, long entityId) {
         Bundle bundle = new Bundle();
         bundle.putLong(EXTRA_ENTITY_ID, entityId);
@@ -106,8 +110,17 @@ public class ChatDetailFragment extends Fragment {
         setUpActionbar();
         boolean isStarred = TeamInfoLoader.getInstance().isStarredUser(entityId);
         setStarred(isStarred);
+        setLeave();
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.MessageDescription);
 
+    }
+
+    private void setLeave() {
+        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+            vgLeave.setVisibility(View.VISIBLE);
+        } else {
+            vgLeave.setVisibility(View.GONE);
+        }
     }
 
     private void setUpActionbar() {

@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -17,6 +19,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class AnnounceApi extends ApiTemplate<AnnounceApi.Api> {
+    @Inject
     public AnnounceApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

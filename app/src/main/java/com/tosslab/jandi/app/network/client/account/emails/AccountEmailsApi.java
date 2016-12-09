@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -15,6 +17,7 @@ import retrofit2.http.POST;
 
 public class AccountEmailsApi extends ApiTemplate<AccountEmailsApi.Api> {
 
+    @Inject
     public AccountEmailsApi(RetrofitBuilder retrofitBuilder) {
         super(AccountEmailsApi.Api.class, retrofitBuilder);
     }

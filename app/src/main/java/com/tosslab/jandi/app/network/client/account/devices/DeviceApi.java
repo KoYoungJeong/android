@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -18,6 +20,7 @@ import retrofit2.http.Path;
 
 public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
 
+    @Inject
     public DeviceApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

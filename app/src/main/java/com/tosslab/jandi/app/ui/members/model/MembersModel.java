@@ -1,18 +1,16 @@
 package com.tosslab.jandi.app.ui.members.model;
 
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
+import com.tosslab.jandi.app.network.client.member.MemberApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
+import com.tosslab.jandi.app.network.models.member.MemberInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,15 +26,16 @@ import rx.functions.Func0;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 
-@EBean
 public class MembersModel {
-    @Inject
-    Lazy<RoomsApi> roomsApi;
+    private Lazy<RoomsApi> roomsApi;
+    private Lazy<MemberApi> memberApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    @Inject
+    public MembersModel(Lazy<RoomsApi> roomsApi, Lazy<MemberApi> memberApi) {
+        this.roomsApi = roomsApi;
+        this.memberApi = memberApi;
     }
+
 
     public List<ChatChooseItem> getTopicMembers(long entityId) {
 
@@ -122,4 +121,7 @@ public class MembersModel {
         roomsApi.get().assignToTopicOwner(teamId, entityId, new ReqOwner(memberId));
     }
 
+    public MemberInfo getMemberInfo(long teamId, long entityId) throws RetrofitException {
+        return memberApi.get().getMemberInfo(teamId, entityId);
+    }
 }

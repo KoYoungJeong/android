@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -17,6 +19,7 @@ import retrofit2.http.POST;
 
 public class SignUpApi extends ApiTemplate<SignUpApi.Api> {
 
+    @Inject
     public SignUpApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }

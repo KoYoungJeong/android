@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.HTTP;
@@ -16,6 +18,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class StarredEntityApi extends ApiTemplate<StarredEntityApi.Api> {
+    @Inject
     public StarredEntityApi(RetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
