@@ -82,9 +82,6 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-/**
- * Created by tee on 15. 8. 26..
- */
 @EFragment(R.layout.fragment_joined_topic_list)
 public class MainTopicListFragment extends Fragment
         implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
@@ -158,7 +155,7 @@ public class MainTopicListFragment extends Fragment
             }
         }
 
-        setFloatingActionMenu();
+        mainTopicListPresenter.checkFloatingActionMenu();
     }
 
     @Override
@@ -186,7 +183,8 @@ public class MainTopicListFragment extends Fragment
         });
     }
 
-    private void setFloatingActionMenu() {
+    @Override
+    public void setFloatingActionMenu(boolean showTopicMenus) {
         floatingActionMenu.addItem(R.drawable.btn_fab_item_folder_setting,
                 getResources().getString(R.string.jandi_setting_folder), () -> {
                     if (floatingActionMenu.isOpened()) {
@@ -206,24 +204,26 @@ public class MainTopicListFragment extends Fragment
                     AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
                             AnalyticsValue.Action.TapPlusButton_CreateNewFolder);
                 });
-        floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
-                getResources().getString(R.string.jandi_browse_other_topics), () -> {
-                    if (floatingActionMenu.isOpened()) {
-                        floatingActionMenu.close();
-                    }
-                    onEvent(new JoinableTopicCallEvent());
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
-                            AnalyticsValue.Action.TapPlusButton_BrowseOtherTopics);
-                });
-        floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
-                getResources().getString(R.string.jandi_create_topic), () -> {
-                    if (floatingActionMenu.isOpened()) {
-                        floatingActionMenu.close();
-                    }
-                    launchCreateTopicActivity();
-                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
-                            AnalyticsValue.Action.TapPlusButton_CreateNewTopic);
-                });
+        if (showTopicMenus) {
+            floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
+                    getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                        if (floatingActionMenu.isOpened()) {
+                            floatingActionMenu.close();
+                        }
+                        onEvent(new JoinableTopicCallEvent());
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                                AnalyticsValue.Action.TapPlusButton_BrowseOtherTopics);
+                    });
+            floatingActionMenu.addItem(R.drawable.btn_fab_item_create_topic,
+                    getResources().getString(R.string.jandi_create_topic), () -> {
+                        if (floatingActionMenu.isOpened()) {
+                            floatingActionMenu.close();
+                        }
+                        launchCreateTopicActivity();
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab,
+                                AnalyticsValue.Action.TapPlusButton_CreateNewTopic);
+                    });
+        }
 
     }
 

@@ -110,7 +110,6 @@
 結果を確認してからもう一度お試しください。"</string>
 	<string name="invite_email_error_unknown">"送信中にエラーが発生しました。
 しばらくしてからもう一度お試しください。"</string>
-	<string name="invite_email_failedtryagain">"送信に失敗しました。再度試してください。"</string>
 	<string name="invite_email_placeholder">"メールを入力してください。"</string>
 	<string name="invite_email_sending">"メール送信中…"</string>
 	<string name="invite_email_sendinvitation_disable">"招待メール送信"</string>

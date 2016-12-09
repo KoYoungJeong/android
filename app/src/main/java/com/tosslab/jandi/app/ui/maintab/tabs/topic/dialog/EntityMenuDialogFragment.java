@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.ui.settings.main.SettingsActivity;
@@ -117,7 +118,8 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
         setStarredButtonText(TeamInfoLoader.getInstance().isStarred(roomId));
 
-        if (entityMenuDialogModel.isDefaultTopic(entityId)) {
+        Level level = TeamInfoLoader.getInstance().getMyLevel();
+        if (entityMenuDialogModel.isDefaultTopic(entityId) || level == Level.Guest) {
             btnLeave.setVisibility(View.GONE);
         } else {
             btnLeave.setVisibility(View.VISIBLE);

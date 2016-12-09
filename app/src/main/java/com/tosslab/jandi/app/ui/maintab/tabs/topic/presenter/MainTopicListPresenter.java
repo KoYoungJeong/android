@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
@@ -268,7 +269,13 @@ public class MainTopicListPresenter {
         }
     }
 
+    public void checkFloatingActionMenu() {
+        view.setFloatingActionMenu(TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
+    }
+
     public interface View {
+        void setFloatingActionMenu(boolean showTopicMenus);
+
         void changeTopicSort(boolean currentFolder, boolean changeToFolder);
 
         void setUpdatedItems(List<Topic> topics);
