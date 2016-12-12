@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.filter.room.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by tonyjs on 2016. 7. 29..
@@ -25,7 +27,20 @@ public class RoomFilterModel {
     }
 
     public List<User> getUserList() {
-        return TeamInfoLoader.getInstance().getUserList();
+
+        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+            return TeamInfoLoader.getInstance().getUserList();
+        } else {
+            return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                    .distinct()
+                    .filter(memberId -> TeamInfoLoader.getInstance().isUser(memberId))
+                    .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                    .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
+                    .toBlocking().firstOrDefault(new ArrayList<>());
+        }
+
     }
 
     public List<User> getSearchedDirectMessages(String query, List<User> initializedDirectMessages) {

@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.search.main.object.SearchOneToOneRoomData;
@@ -31,11 +32,11 @@ import rx.Observable;
  */
 public class SearchModel {
 
-    @Inject
-    Lazy<SearchApi> searchApi;
+    private final Lazy<SearchApi> searchApi;
 
     @Inject
-    public SearchModel() {
+    public SearchModel(Lazy<SearchApi> searchApi) {
+        this.searchApi = searchApi;
     }
 
     public ResSearch searchMessages(ReqSearch reqSearch) throws RetrofitException {
@@ -46,6 +47,7 @@ public class SearchModel {
     public List<SearchTopicRoomData> getSearchedTopics(String keyword, boolean isShowUnjoinedTopic) {
         List<SearchTopicRoomData> topics = new ArrayList<>();
         List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
         Observable.from(topicList)
                 .map(topicRoom -> new SearchTopicRoomData.Builder()
                         .setTopicId(topicRoom.getId())
@@ -58,8 +60,8 @@ public class SearchModel {
                         .setKeyword(keyword)
                         .build())
                 .filter(topic -> {
-                    if (!isShowUnjoinedTopic) {
-                        return topic.isJoined() == true;
+                    if (!isShowUnjoinedTopic || guest) {
+                        return topic.isJoined();
                     } else {
                         return true;
                     }
@@ -178,4 +180,11 @@ public class SearchModel {
 
     }
 
+    public boolean isShowAllRoom() {
+        return TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
+    }
+
+    public boolean isGuest() {
+        return TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
+    }
 }

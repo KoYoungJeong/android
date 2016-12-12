@@ -48,13 +48,8 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     private final PublishSubject<String> searchKeywordSubject;
 
-    @Inject
     SearchModel searchModel;
-
-    @Inject
     SearchPresenter.View view;
-
-    @Inject
     SearchAdapterDataModel searchAdapterDataModel;
 
     private boolean hasMoreSearchResult = false;
@@ -67,7 +62,15 @@ public class SearchPresenterImpl implements SearchPresenter {
     private boolean isOnlyMessageMode = false;
 
     @Inject
-    public SearchPresenterImpl() {
+    public SearchPresenterImpl(SearchModel searchModel,
+                               SearchPresenter.View view,
+                               SearchAdapterDataModel searchAdapterDataModel) {
+        this.searchModel = searchModel;
+        this.view = view;
+        this.searchAdapterDataModel = searchAdapterDataModel;
+
+        searchAdapterDataModel.setGuest(searchModel.isGuest());
+
         writerSubject = BehaviorSubject.create(-1l);
         roomSubject = BehaviorSubject.create(-1l);
         accessTypeSubject = BehaviorSubject.create("");
@@ -277,6 +280,7 @@ public class SearchPresenterImpl implements SearchPresenter {
         }
     }
 
+    @Override
     public void sendSearchQuery(String keyword, boolean isOnlyMessage) {
         isOnlyMessageMode = isOnlyMessage;
         keywordSubject.onNext(keyword);
@@ -487,6 +491,12 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribe(isLimited -> {
                     view.setPricingLimitView(isLimited);
                 });
+    }
+
+    @Override
+    public void onRoomSelect() {
+        boolean showAllRoom = searchModel.isShowAllRoom();
+        view.showChooseRoomDialog(showAllRoom);
     }
 
     public enum MoreState {

@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by tee on 16. 6. 29..
@@ -218,9 +220,25 @@ public class SearchSelectorViewController {
                 .filter(TopicRoom::isJoined)
                 .subscribe(allTopics::add);
         List<Member> users = new ArrayList<>();
-        Observable.from(teamInfoLoader.getUserList())
+        List<User> userList;
+        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+            userList = teamInfoLoader.getUserList();
+        } else {
+            userList = Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                    .distinct()
+                    .filter(it -> TeamInfoLoader.getInstance().isUser(it))
+                    .filter(it -> !TeamInfoLoader.getInstance().isJandiBot(it))
+                    .filter(it -> TeamInfoLoader.getInstance().getMyId() != it)
+                    .map(it -> TeamInfoLoader.getInstance().getUser(it))
+                    .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
+                    .toBlocking().firstOrDefault(new ArrayList<>());
+        }
+        Observable.from(userList)
                 .filter(User::isEnabled)
                 .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
+                .filter(user -> TeamInfoLoader.getInstance().getMyId() != user.getId())
                 .collect(() -> users, List::add)
                 .subscribe();
         if (teamInfoLoader.hasJandiBot()) {

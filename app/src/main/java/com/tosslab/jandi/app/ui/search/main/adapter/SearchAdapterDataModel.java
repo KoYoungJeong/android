@@ -31,4 +31,6 @@ public interface SearchAdapterDataModel {
     boolean isHistoryMode();
 
     void setLoading(boolean loading);
+
+    void setGuest(boolean guest);
 }

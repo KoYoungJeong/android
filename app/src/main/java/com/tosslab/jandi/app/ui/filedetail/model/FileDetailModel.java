@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -337,17 +338,34 @@ public class FileDetailModel {
 
     public List<Member> getMembers() {
         List<Member> members = new ArrayList<>();
-        List<User> first = Observable.from(TeamInfoLoader.getInstance().getUserList())
-                .filter(User::isEnabled)
-                .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
-                .filter(user -> TeamInfoLoader.getInstance().getMyId() != user.getId())
-                .toSortedList((formattedEntity, formattedEntity2) -> {
-                    return StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName());
-                })
-                .toBlocking().firstOrDefault(new ArrayList<>());
+        User jandiBot = TeamInfoLoader.getInstance().getJandiBot();
 
-        members.add(TeamInfoLoader.getInstance().getJandiBot());
-        members.addAll(first);
+        List<User> users;
+        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+            users = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                    .filter(User::isEnabled)
+                    .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
+                    .filter(user -> TeamInfoLoader.getInstance().getMyId() != user.getId())
+                    .toSortedList((formattedEntity, formattedEntity2) ->
+                            StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
+                    .toBlocking().firstOrDefault(new ArrayList<>());
+        } else {
+            users = Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                    .distinct()
+                    .filter(it -> TeamInfoLoader.getInstance().isUser(it))
+                    .filter(it -> !TeamInfoLoader.getInstance().isJandiBot(it))
+                    .filter(it -> TeamInfoLoader.getInstance().getMyId() != it)
+                    .map(it -> TeamInfoLoader.getInstance().getUser(it))
+                    .toSortedList((formattedEntity, formattedEntity2) ->
+                            StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
+                    .toBlocking().firstOrDefault(new ArrayList<>());
+
+        }
+
+        members.add(jandiBot);
+        members.addAll(users);
         return members;
     }
 

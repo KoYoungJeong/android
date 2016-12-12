@@ -3,7 +3,9 @@ package com.tosslab.jandi.app.ui.search.filter.member.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
@@ -19,7 +21,19 @@ public class MemberSearchModel {
     public static List<User> getEnabledTeamMember() {
         List<User> members = new ArrayList<>();
 
-        members.addAll(TeamInfoLoader.getInstance().getUserList());
+        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+            members.addAll(TeamInfoLoader.getInstance().getUserList());
+        } else {
+            Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                    .distinct()
+                    .filter(memberId -> TeamInfoLoader.getInstance().isUser(memberId))
+                    .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                    .collect(() -> members, List::add)
+                    .subscribe();
+        }
+
 
         Observable.from(members)
                 .filter(User::isEnabled)
@@ -35,15 +49,7 @@ public class MemberSearchModel {
     }
 
     public Observable<List<User>> getEnabledMembersObservable() {
-        return Observable.<List<User>>create(subscriber -> {
-            try {
-                List<User> enabledTeamMember = getEnabledTeamMember();
-                subscriber.onNext(enabledTeamMember);
-            } catch (Exception e) {
-                subscriber.onError(e);
-            }
-            subscriber.onCompleted();
-        });
+        return Observable.defer(() -> Observable.just(getEnabledTeamMember()));
     }
 
     public List<User> getSearchedMembers(final String query,

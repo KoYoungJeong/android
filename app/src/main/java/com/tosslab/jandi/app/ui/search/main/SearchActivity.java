@@ -299,7 +299,7 @@ public class SearchActivity extends BaseAppCompatActivity
                     AnalyticsValue.Action.ChooseMemberFilter);
         });
 
-        searchAdapterViewModel.setOnClickRoomSelectionButtonListener(() -> showChooseRoomDialog());
+        searchAdapterViewModel.setOnClickRoomSelectionButtonListener(() -> searchPresenter.onRoomSelect());
         LinearLayoutManager layoutManager = (LinearLayoutManager) lvSearchResult.getLayoutManager();
 
         searchAdapterViewModel.setOnClickOneToOneRoomListener(memberId -> {
@@ -514,19 +514,25 @@ public class SearchActivity extends BaseAppCompatActivity
         deleteConfirmDialog.show();
     }
 
-    public void showChooseRoomDialog() {
+    @Override
+    public void showChooseRoomDialog(boolean showAllRoom) {
         if (chooseRoomDialog == null) {
             View view = LayoutInflater.from(this).inflate((R.layout.fragment_choose_room_popup), null);
             TextView tvAllRoomButton = (TextView) view.findViewById(R.id.tv_all_room_button);
             TextView tvJoinedRoomButton = (TextView) view.findViewById(R.id.tv_joined_room_button);
             TextView tvChooseRoomButton = (TextView) view.findViewById(R.id.tv_choose_room_Button);
-            tvAllRoomButton.setOnClickListener(v -> {
-                selectedRoomId = -1l;
-                searchPresenter.onAccessTypeChanged("accessible");
-                chooseRoomDialog.dismiss();
-                AnalyticsUtil.sendEvent(screenMode,
-                        AnalyticsValue.Action.ChooseRoomFilter, AnalyticsValue.Label.AllRoom);
-            });
+            if (showAllRoom) {
+                tvAllRoomButton.setVisibility(View.VISIBLE);
+                tvAllRoomButton.setOnClickListener(v -> {
+                    selectedRoomId = -1l;
+                    searchPresenter.onAccessTypeChanged("accessible");
+                    chooseRoomDialog.dismiss();
+                    AnalyticsUtil.sendEvent(screenMode,
+                            AnalyticsValue.Action.ChooseRoomFilter, AnalyticsValue.Label.AllRoom);
+                });
+            } else {
+                tvAllRoomButton.setVisibility(View.GONE);
+            }
             tvJoinedRoomButton.setOnClickListener(v -> {
                 selectedRoomId = -1l;
                 searchPresenter.onAccessTypeChanged("joined");

@@ -44,6 +44,8 @@ public interface SearchPresenter {
 
     void onInitPricingInfo();
 
+    void onRoomSelect();
+
     interface View {
 
         void refreshSearchedAll();
@@ -71,5 +73,7 @@ public interface SearchPresenter {
         void setSearchHints(List<String> keywords);
 
         void setPricingLimitView(Boolean isLimited);
+
+        void showChooseRoomDialog(boolean showAllRoom);
     }
 }

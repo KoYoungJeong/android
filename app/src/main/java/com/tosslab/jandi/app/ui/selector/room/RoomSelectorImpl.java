@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -218,9 +219,12 @@ public class RoomSelectorImpl implements RoomSelector {
         // File Search에서 모든 대화방을 표시하는 더미 데이터가 필요
         if (isIncludeAllMember) {
 
-            ExpandRoomData dummyData = new ExpandRoomData();
-            dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
-            topicDatas.add(dummyData);
+            ExpandRoomData dummyData;
+            if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+                dummyData = new ExpandRoomData();
+                dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
+                topicDatas.add(dummyData);
+            }
 
             dummyData = new ExpandRoomData();
             dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);
@@ -304,9 +308,12 @@ public class RoomSelectorImpl implements RoomSelector {
 
         if (isIncludeAllMember) {
 
-            ExpandRoomData dummyData = new ExpandRoomData();
-            dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
-            roomDatas.add(dummyData);
+            ExpandRoomData dummyData;
+            if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+                dummyData = new ExpandRoomData();
+                dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
+                roomDatas.add(dummyData);
+            }
 
             dummyData = new ExpandRoomData();
             dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);

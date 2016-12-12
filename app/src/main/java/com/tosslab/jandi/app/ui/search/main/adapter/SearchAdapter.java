@@ -59,6 +59,7 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     private MessageItemViewHolder.OnClickMessageListener onClickMessageListener;
     private MessageHeaderViewHolder.OnClickRoomSelectionButtonListener onClickRoomSelectionButtonListener;
     private MessageHeaderViewHolder.OnClickMemberSelectionButtonListener onClickMemberSelectionButtonListener;
+    private boolean guest;
 
     @Override
     public void setSearchTopicRoomDatas(List<SearchTopicRoomData> searchTopicRoomDatas) {
@@ -163,8 +164,10 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
 
     private void makeRoomDatas() {
         SearchData headerData = new SearchData();
-        headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
-        datas.add(headerData);
+        if (!guest) {
+            headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
+            datas.add(headerData);
+        }
 
         if (searchTopicRoomDatas.size() == 0 && searchOneToOneRoomDatas.size() == 0) {
             SearchData data = new SearchData();
@@ -483,6 +486,12 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     @Override
     public void setLoading(boolean loading) {
         isLoading = loading;
+    }
+
+    @Override
+    public void setGuest(boolean guest) {
+
+        this.guest = guest;
     }
 
 }
