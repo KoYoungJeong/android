@@ -17,7 +17,9 @@ import com.tosslab.jandi.app.events.entities.ShowMoreSharedEntitiesEvent;
 import com.tosslab.jandi.app.events.files.FileStarredStateChangeEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.filedetail.widget.LinkedEllipsizeTextView;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -185,11 +187,33 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         ssb.append("  ");
         int firstLength = ssb.length();
 
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
+        long myId = TeamInfoLoader.getInstance().getMyId();
+
         Observable.from(shareEntities)
                 .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
                 .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
-                .filter(id -> TeamInfoLoader.getInstance().isTopic(id)
-                        || TeamInfoLoader.getInstance().isUser(id))
+                .filter(id -> {
+                    if (guest) {
+                        if (TeamInfoLoader.getInstance().isTopic(id)) {
+                            // 해당 토픽이 내가 참여 중인지 확인함
+                            return TeamInfoLoader.getInstance().getTopic(id).isJoined();
+                        } else if (TeamInfoLoader.getInstance().isUser(id)) {
+                            // 내가 참여한 토픽에 참여한 멤버인지 확인함
+                            return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                                    .filter(TopicRoom::isJoined)
+                                    .map(TopicRoom::getMembers)
+                                    .takeFirst(longs -> longs.contains(id))
+                                    .map(it -> true)
+                                    .toBlocking().firstOrDefault(false);
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return TeamInfoLoader.getInstance().isTopic(id)
+                                || TeamInfoLoader.getInstance().isUser(id);
+                    }
+                })
                 .doOnNext(id -> {
                     if (ssb.length() > firstLength) {
                         ssb.append(", ");
