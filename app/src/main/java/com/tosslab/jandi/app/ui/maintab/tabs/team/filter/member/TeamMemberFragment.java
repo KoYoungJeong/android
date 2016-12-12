@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearch
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -237,11 +238,15 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void moveProfile(long userId) {
-        startActivity(Henson.with(getActivity())
-                .gotoMemberProfileActivity()
-                .memberId(userId)
-                .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
-                .build());
+        if (AccessLevelUtil.hasAccessLevel(userId)) {
+            startActivity(Henson.with(getActivity())
+                    .gotoMemberProfileActivity()
+                    .memberId(userId)
+                    .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
+                    .build());
+        } else {
+            AccessLevelUtil.showDialogUnabledAccessLevel(getActivity());
+        }
         AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
     }
 

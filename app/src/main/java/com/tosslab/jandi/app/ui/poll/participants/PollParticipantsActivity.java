@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.ui.poll.participants.adapter.PollParticipantsAdapte
 import com.tosslab.jandi.app.ui.poll.participants.component.DaggerPollParticipantsComponent;
 import com.tosslab.jandi.app.ui.poll.participants.module.PollParticipantsModule;
 import com.tosslab.jandi.app.ui.poll.participants.presenter.PollParticipantsPresenter;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -136,10 +137,16 @@ public class PollParticipantsActivity extends AppCompatActivity
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.PollParticipant, AnalyticsValue.Action.ViewMember);
             }
-            startActivity(Henson.with(PollParticipantsActivity.this)
-                    .gotoMemberProfileActivity()
-                    .memberId(member.getId())
-                    .build());
+
+            if (AccessLevelUtil.hasAccessLevel(member.getId())) {
+
+                startActivity(Henson.with(PollParticipantsActivity.this)
+                        .gotoMemberProfileActivity()
+                        .memberId(member.getId())
+                        .build());
+            } else {
+                AccessLevelUtil.showDialogUnabledAccessLevel(this);
+            }
         });
     }
 

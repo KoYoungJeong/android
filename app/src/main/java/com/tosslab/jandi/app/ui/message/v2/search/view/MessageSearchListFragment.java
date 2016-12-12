@@ -71,6 +71,7 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -608,12 +609,16 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             return;
         }
 
-        startActivity(Henson.with(getActivity())
-                .gotoMemberProfileActivity()
-                .memberId(event.userId)
-                .from(getScreen(entityId) == AnalyticsValue.Screen.Message ?
-                        MemberProfileActivity.EXTRA_FROM_MESSAGE : MemberProfileActivity.EXTRA_FROM_TOPIC_CHAT)
-                .build());
+        if (AccessLevelUtil.hasAccessLevel(event.userId)) {
+            startActivity(Henson.with(getActivity())
+                    .gotoMemberProfileActivity()
+                    .memberId(event.userId)
+                    .from(getScreen(entityId) == AnalyticsValue.Screen.Message ?
+                            MemberProfileActivity.EXTRA_FROM_MESSAGE : MemberProfileActivity.EXTRA_FROM_TOPIC_CHAT)
+                    .build());
+        } else {
+            AccessLevelUtil.showDialogUnabledAccessLevel(getActivity());
+        }
 
         if (event.from != null) {
 

@@ -44,6 +44,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
@@ -250,11 +251,15 @@ public class MainChatListFragment extends Fragment
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            startActivity(Henson.with(getActivity())
-                    .gotoMemberProfileActivity()
-                    .memberId(event.userId)
-                    .from(MemberProfileActivity.EXTRA_FROM_MAIN_CHAT)
-                    .build());
+            if(AccessLevelUtil.hasAccessLevel(event.userId)) {
+                startActivity(Henson.with(getActivity())
+                        .gotoMemberProfileActivity()
+                        .memberId(event.userId)
+                        .from(MemberProfileActivity.EXTRA_FROM_MAIN_CHAT)
+                        .build());
+            } else {
+                AccessLevelUtil.showDialogUnabledAccessLevel(getActivity());
+            }
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsUtil.getProfileAction(event.userId, event.from));
         }
     }

@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
@@ -149,11 +150,15 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
     }
 
     public void onEventMainThread(ShowProfileEvent event) {
-        startActivity(Henson.with(getActivity())
-                .gotoMemberProfileActivity()
-                .memberId(event.userId)
-                .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
-                .build());
+        if (AccessLevelUtil.hasAccessLevel(event.userId)) {
+            startActivity(Henson.with(getActivity())
+                    .gotoMemberProfileActivity()
+                    .memberId(event.userId)
+                    .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
+                    .build());
+        } else {
+            AccessLevelUtil.showDialogUnabledAccessLevel(getActivity());
+        }
 
         AnalyticsValue.Action action = AnalyticsUtil.getProfileAction(event.userId, event.from);
 

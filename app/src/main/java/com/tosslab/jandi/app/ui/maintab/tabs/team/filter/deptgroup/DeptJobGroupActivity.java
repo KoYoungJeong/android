@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemb
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -171,11 +172,15 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
             setResult(RESULT_OK, intent);
             finish();
         } else {
-            startActivity(Henson.with(this)
-                    .gotoMemberProfileActivity()
-                    .memberId(userId)
-                    .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
-                    .build());
+            if (AccessLevelUtil.hasAccessLevel(userId)) {
+                startActivity(Henson.with(this)
+                        .gotoMemberProfileActivity()
+                        .memberId(userId)
+                        .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
+                        .build());
+            } else {
+                AccessLevelUtil.showDialogUnabledAccessLevel(this);
+            }
         }
         if (screen == AnalyticsValue.Screen.SelectTeamMember_Department ||
                 screen == AnalyticsValue.Screen.SelectTeamMember_JobTitle) {

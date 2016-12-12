@@ -63,6 +63,7 @@ import com.tosslab.jandi.app.ui.poll.detail.component.DaggerPollDetailComponent;
 import com.tosslab.jandi.app.ui.poll.detail.module.PollDetailModule;
 import com.tosslab.jandi.app.ui.poll.detail.presenter.PollDetailPresenter;
 import com.tosslab.jandi.app.ui.poll.participants.PollParticipantsActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -390,10 +391,15 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     public void onEventMainThread(ShowProfileEvent event) {
         long userEntityId = event.userId;
 
-        startActivity(Henson.with(this)
-                .gotoMemberProfileActivity()
-                .memberId(userEntityId)
-                .build());
+        if (AccessLevelUtil.hasAccessLevel(userEntityId)) {
+
+            startActivity(Henson.with(this)
+                    .gotoMemberProfileActivity()
+                    .memberId(userEntityId)
+                    .build());
+        } else {
+            AccessLevelUtil.showDialogUnabledAccessLevel(this);
+        }
 
         AnalyticsValue.Action action = event.isFromComment
                 ? AnalyticsValue.Action.ViewProfile_FromComment : AnalyticsValue.Action.ViewVoteCreator;
