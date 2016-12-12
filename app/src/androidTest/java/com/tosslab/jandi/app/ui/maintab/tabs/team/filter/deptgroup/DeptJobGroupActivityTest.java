@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.presenter.DeptJobGroupPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataView;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -74,7 +74,7 @@ public class DeptJobGroupActivityTest {
     public void pickUser_profile() throws Throwable {
         rule.runOnUiThread(() -> activity.pickUser(TeamInfoLoader.getInstance().getJandiBot().getId()));
 
-        intending(hasComponent(MemberProfileActivity_.class.getName()));
+        intending(hasComponent(MemberProfileActivity.class.getName()));
         intending(hasExtra("memberId", TeamInfoLoader.getInstance().getJandiBot().getId()));
     }
 

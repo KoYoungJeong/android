@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -15,7 +16,6 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenterImpl;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -91,10 +91,11 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
     }
 
     public void onEventMainThread(ShowProfileEvent event) {
-        MemberProfileActivity_.intent(DisabledEntityChooseActivity.this)
+        startActivity(Henson.with(this)
+                .gotoMemberProfileActivity()
                 .memberId(event.userId)
                 .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
-                .start();
+                .build());
 
         AnalyticsValue.Action action = AnalyticsUtil.getProfileAction(event.userId, event.from);
 

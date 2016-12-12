@@ -245,7 +245,7 @@
         </activity>
 
         <activity
-            android:name=".ui.profile.member.MemberProfileActivity_"
+            android:name=".ui.profile.member.MemberProfileActivity"
             android:screenOrientation="fullUser"
             android:theme="@style/Jandi.NoTitle" />
 

@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.member.User;
@@ -22,7 +23,6 @@ import com.tosslab.jandi.app.ui.poll.participants.adapter.PollParticipantsAdapte
 import com.tosslab.jandi.app.ui.poll.participants.component.DaggerPollParticipantsComponent;
 import com.tosslab.jandi.app.ui.poll.participants.module.PollParticipantsModule;
 import com.tosslab.jandi.app.ui.poll.participants.presenter.PollParticipantsPresenter;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -136,9 +136,10 @@ public class PollParticipantsActivity extends AppCompatActivity
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.PollParticipant, AnalyticsValue.Action.ViewMember);
             }
-            MemberProfileActivity_.intent(PollParticipantsActivity.this)
+            startActivity(Henson.with(PollParticipantsActivity.this)
+                    .gotoMemberProfileActivity()
                     .memberId(member.getId())
-                    .start();
+                    .build());
         });
     }
 

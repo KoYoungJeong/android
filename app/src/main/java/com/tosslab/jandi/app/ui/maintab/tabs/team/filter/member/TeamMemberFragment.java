@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
@@ -41,7 +42,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearch
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -237,10 +237,11 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void moveProfile(long userId) {
-        MemberProfileActivity_.intent(TeamMemberFragment.this)
+        startActivity(Henson.with(getActivity())
+                .gotoMemberProfileActivity()
                 .memberId(userId)
                 .from(MemberProfileActivity.EXTRA_FROM_TEAM_MEMBER)
-                .start();
+                .build());
         AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
     }
 

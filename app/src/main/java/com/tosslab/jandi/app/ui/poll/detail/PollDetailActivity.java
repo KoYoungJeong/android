@@ -23,6 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
@@ -62,7 +63,6 @@ import com.tosslab.jandi.app.ui.poll.detail.component.DaggerPollDetailComponent;
 import com.tosslab.jandi.app.ui.poll.detail.module.PollDetailModule;
 import com.tosslab.jandi.app.ui.poll.detail.presenter.PollDetailPresenter;
 import com.tosslab.jandi.app.ui.poll.participants.PollParticipantsActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -387,12 +387,13 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         sendAnalyticsEvent(AnalyticsValue.Action.CommentLongTap_Delete);
     }
 
-    public void onEvent(ShowProfileEvent event) {
+    public void onEventMainThread(ShowProfileEvent event) {
         long userEntityId = event.userId;
 
-        MemberProfileActivity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoMemberProfileActivity()
                 .memberId(userEntityId)
-                .start();
+                .build());
 
         AnalyticsValue.Action action = event.isFromComment
                 ? AnalyticsValue.Action.ViewProfile_FromComment : AnalyticsValue.Action.ViewVoteCreator;

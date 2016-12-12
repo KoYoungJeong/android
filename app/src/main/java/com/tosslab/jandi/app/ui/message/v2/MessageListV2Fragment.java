@@ -137,7 +137,6 @@ import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.poll.create.PollCreateActivity;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -1504,12 +1503,13 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
 
-        MemberProfileActivity_.intent(getActivity())
+        startActivity(Henson.with(getActivity())
+                .gotoMemberProfileActivity()
                 .memberId(event.userId)
                 .from(isInDirectMessage()
                         ? MemberProfileActivity.EXTRA_FROM_TOPIC_CHAT
                         : MemberProfileActivity.EXTRA_FROM_MESSAGE)
-                .start();
+                .build());
 
         if (event.from != null) {
             sendAnalyticsEvent(AnalyticsUtil.getProfileAction(event.userId, event.from));

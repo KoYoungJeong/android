@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -25,19 +26,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -58,30 +62,21 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OnActivityResult;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import dagger.Lazy;
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import uk.co.senab.photoview.PhotoView;
 
-/**
- * Created by tonyjs on 15. 9. 8..
- */
-@EActivity(R.layout.activity_member_profile)
 public class MemberProfileActivity extends BaseAppCompatActivity {
     public static final String TAG = MemberProfileActivity.class.getSimpleName();
 
@@ -94,54 +89,55 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     private static final String KEY_FULL_SIZE_IMAGE_SHOWING = "full_size_image_showing";
     private static final int REQ_CALL_PERMISSION = 102;
 
-    @Extra
+    @InjectExtra
     long memberId;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     int from;
 
-    @Bean
     EntityClientManager entityClientManager;
 
-    @ViewById(R.id.vg_swipe_exit_layout)
+    @Bind(R.id.vg_swipe_exit_layout)
     SwipeExitLayout swipeExitLayout;
-    @ViewById(R.id.v_member_profile_img_large_overlay)
+    @Bind(R.id.v_member_profile_img_large_overlay)
     View vProfileImageLargeOverlay;
 
-    @ViewById(R.id.tv_member_profile_description)
+    @Bind(R.id.tv_member_profile_description)
     TextView tvProfileDescription;
-    @ViewById(R.id.tv_member_profile_name)
+    @Bind(R.id.tv_member_profile_name)
     TextView tvProfileName;
-    @ViewById(R.id.tv_member_profile_division)
+    @Bind(R.id.tv_member_profile_division)
     TextView tvProfileDivision;
-    @ViewById(R.id.tv_member_profile_position)
+    @Bind(R.id.tv_member_profile_position)
     TextView tvProfilePosition;
-    @ViewById(R.id.tv_member_profile_phone)
+    @Bind(R.id.tv_member_profile_phone)
     TextView tvProfilePhone;
-    @ViewById(R.id.tv_member_profile_email)
+    @Bind(R.id.tv_member_profile_email)
     TextView tvProfileEmail;
+    @Bind(R.id.tv_member_profile_team_level)
+    TextView tvTeamLevel;
 
-    @ViewById(R.id.vg_member_profile_img_large)
+    @Bind(R.id.vg_member_profile_img_large)
     ViewGroup vgProfileImageLarge;
-    @ViewById(R.id.vg_member_profile_detail)
+    @Bind(R.id.vg_member_profile_detail)
     ViewGroup vgProfileTeamDetail;
-    @ViewById(R.id.vg_member_profile_team_info)
-    ViewGroup vgProfileTeamInfo;
-    @ViewById(R.id.vg_member_profile_bottoms)
+    @Nullable
+    @Bind(R.id.vg_member_profile_bottoms)
     ViewGroup vgProfileTeamBottoms;
-    @ViewById(R.id.vg_member_profile_buttons)
+    @Bind(R.id.vg_member_profile_buttons)
     ViewGroup vgProfileTeamButtons;
 
-    @ViewById(R.id.v_member_profile_disable)
+    @Bind(R.id.v_member_profile_disable)
     View vDisableIcon;
-    @ViewById(R.id.btn_member_profile_star)
+    @Bind(R.id.btn_member_profile_star)
     View btnProfileStar;
 
-    @ViewById(R.id.iv_member_profile_img_full)
+    @Bind(R.id.iv_member_profile_img_full)
     PhotoView ivProfileImageFull;
-    @ViewById(R.id.iv_member_profile_img_large)
+    @Bind(R.id.iv_member_profile_img_large)
     ImageView ivProfileImageLarge;
-    @ViewById(R.id.iv_member_profile_img_small)
+    @Bind(R.id.iv_member_profile_img_small)
     ImageView ivProfileImageSmall;
 
     ProfileLoader profileLoader;
@@ -149,16 +145,23 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     Lazy<TeamApi> teamApi;
     @Inject
     Lazy<InvitationApi> invitationApi;
+
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
     private ProgressWheel progressWheel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_member_profile);
+
+        Dart.inject(this);
+        ButterKnife.bind(this);
 
         DaggerMemberProfileComponent.create().inject(this);
+        entityClientManager = EntityClientManager_.getInstance_(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -170,6 +173,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             isFullSizeImageShowing = savedInstanceState.getBoolean(KEY_FULL_SIZE_IMAGE_SHOWING);
         }
         setNeedUnLockPassCode(false);
+
+        initObject();
+        initViews();
     }
 
     @Override
@@ -178,7 +184,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         outState.putBoolean(KEY_FULL_SIZE_IMAGE_SHOWING, ivProfileImageFull.isShown());
     }
 
-    @AfterInject
     void initObject() {
         boolean isBot = TeamInfoLoader.getInstance().isJandiBot(memberId);
         if (!isBot) {
@@ -192,8 +197,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
     }
 
-    @OnActivityResult(ModifyProfileActivity.REQUEST_CODE)
-    @AfterViews
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ModifyProfileActivity.REQUEST_CODE) {
+            initViews();
+        }
+    }
+
     void initViews() {
 
         if (TeamInfoLoader.getInstance().isBot(memberId)) {
@@ -218,9 +229,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         boolean isDisableUser = !profileLoader.isEnabled(member);
         vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
 
+        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel);
         profileLoader.setName(tvProfileName, member);
         profileLoader.setDescription(tvProfileDescription, member);
-        profileLoader.setProfileInfo(vgProfileTeamInfo, tvProfileDivision, tvProfilePosition, member);
+        profileLoader.setProfileInfo(tvProfileDivision, tvProfilePosition, member);
         profileLoader.loadSmallThumb(ivProfileImageSmall, member);
         profileLoader.loadFullThumb(ivProfileImageFull, profileImageUrl);
 
@@ -268,7 +280,18 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         profileLoader.setStarButton(btnProfileStar, member);
 
-        addButtons(member);
+        boolean guest = false;
+        if (member instanceof User) {
+            guest = ((User) member).getLevel() == Level.Guest;
+        }
+
+        if (!guest) {
+            addButtons(member);
+        } else {
+            tvProfilePhone.setVisibility(View.INVISIBLE);
+            tvProfileEmail.setVisibility(View.INVISIBLE);
+            vgProfileTeamButtons.setVisibility(View.INVISIBLE);
+        }
 
         AnalyticsUtil.sendScreenName(getScreen());
     }
@@ -330,7 +353,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         vgProfileTeamDetail.post(() -> {
             int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
             int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
-            if (isLandscape()) {
+            if (isLandscape() && vgProfileTeamBottoms != null) {
                 vgProfileTeamDetailHeight = vgProfileTeamBottoms.getMeasuredHeight();
             }
             int ivProfileImageLargeHeight = screenHeight - vgProfileTeamDetailHeight;
@@ -359,7 +382,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .into(ivProfileImageLarge);
     }
 
-    @Click(R.id.iv_member_profile_img_small)
+    @OnClick(R.id.iv_member_profile_img_small)
     void showFullImage(View v) {
         if (!hasChangedProfileImage || TeamInfoLoader.getInstance().isJandiBot(memberId)) {
             return;
@@ -404,7 +427,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .alpha(1.0f);
     }
 
-    @Click(R.id.btn_member_profile_close)
+    @OnClick(R.id.btn_member_profile_close)
     @Override
     public void onBackPressed() {
         if (ivProfileImageFull.isShown()) {
@@ -421,7 +444,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         overridePendingTransition(0, R.anim.alpha_on_exit);
     }
 
-    @Click(R.id.btn_member_profile_star)
+    @OnClick(R.id.btn_member_profile_star)
     public void star(View v) {
         if (!v.isEnabled()) {
             return;
@@ -437,21 +460,19 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
     }
 
-    @Background
     void postStar(boolean star) {
-        try {
+
+        Completable.fromCallable(() -> {
             if (star) {
                 entityClientManager.enableFavorite(memberId);
             } else {
                 entityClientManager.disableFavorite(memberId);
             }
-
             HumanRepository.getInstance().updateStarred(memberId, star);
             TeamInfoLoader.getInstance().refresh();
+            return true;
+        }).subscribeOn(Schedulers.io()).subscribe(() -> {}, Throwable::printStackTrace);
 
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
     }
 
     private void addButtons(Member member) {
@@ -546,38 +567,39 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
     }
 
-    @Background
     void requestRejectUser() {
         if (!TeamInfoLoader.getInstance().isUser(memberId)) {
             return;
         }
+
         String userEmail = TeamInfoLoader.getInstance().getUser(memberId).getEmail();
         long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
-        try {
+        Completable.fromCallable(() -> {
             teamApi.get().cancelInviteTeam(teamId, memberId);
-            showSuccessToRejectEmail(userEmail);
-            finishOnUiThread();
-        } catch (RetrofitException retrofitError) {
-            showNetworkErrorToast();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    showSuccessToRejectEmail(userEmail);
+                    finishOnUiThread();
+                }, t -> {
+                    showNetworkErrorToast();
+                });
+
     }
 
-    @UiThread
     void finishOnUiThread() {
         finish();
     }
 
-    @UiThread
     void showNetworkErrorToast() {
         ColoredToast.showError(R.string.err_network);
     }
 
-    @UiThread
     void showSuccessToRejectEmail(String userEmail) {
         ColoredToast.show(getString(R.string.jandi_success_to_cancel_invitation, userEmail));
     }
 
-    @Background
     void requestReInvite() {
 
         if (TeamInfoLoader.getInstance().isJandiBot(memberId)) {
@@ -585,29 +607,31 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
 
         showProgress();
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        List<String> invites = Arrays.asList(TeamInfoLoader.getInstance().getUser(memberId).getEmail());
-        try {
+        Completable.fromCallable(() -> {
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            List<String> invites = Arrays.asList(TeamInfoLoader.getInstance().getUser(memberId).getEmail());
             teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
-            showSuccessReinvite();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            showNetworkErrorToast();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    dismissProgress();
+                    showSuccessReinvite();
+                }, t -> {
+                    dismissProgress();
+                    showNetworkErrorToast();
+                });
 
-        dismissProgress();
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissProgress() {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showProgress() {
         if (progressWheel == null) {
             progressWheel = new ProgressWheel(MemberProfileActivity.this);
@@ -618,7 +642,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
     }
 
-    @UiThread
     void showSuccessReinvite() {
         new AlertDialog.Builder(MemberProfileActivity.this)
                 .setMessage(R.string.jandi_another_invitation_sent)
@@ -627,7 +650,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .show();
     }
 
-    @Click(R.id.tv_member_profile_phone)
+    @OnClick(R.id.tv_member_profile_phone)
     void onPhoneNumberClick() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.TapPhoneNumber);
         new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)
@@ -764,7 +787,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
-    @Click(R.id.tv_member_profile_email)
+    @OnClick(R.id.tv_member_profile_email)
     void onEmailClick() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.TapEmailAddress);
         new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)

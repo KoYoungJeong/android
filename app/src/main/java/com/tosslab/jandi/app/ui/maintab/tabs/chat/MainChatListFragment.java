@@ -43,7 +43,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragme
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -251,10 +250,11 @@ public class MainChatListFragment extends Fragment
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            MemberProfileActivity_.intent(getActivity())
+            startActivity(Henson.with(getActivity())
+                    .gotoMemberProfileActivity()
                     .memberId(event.userId)
                     .from(MemberProfileActivity.EXTRA_FROM_MAIN_CHAT)
-                    .start();
+                    .build());
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsUtil.getProfileAction(event.userId, event.from));
         }
     }

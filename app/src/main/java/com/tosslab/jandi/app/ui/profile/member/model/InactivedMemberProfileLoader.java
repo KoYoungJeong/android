@@ -1,15 +1,16 @@
 package com.tosslab.jandi.app.ui.profile.member.model;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -35,8 +36,9 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
-        vgProfileTeamInfo.setVisibility(View.GONE);
+    public void setProfileInfo(TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
+        tvProfileDivision.setVisibility(View.GONE);
+        tvProfilePosition.setVisibility(View.GONE);
     }
 
     @Override
@@ -71,6 +73,33 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
         int defaultColor = context.getResources().getColor(R.color.jandi_message_search_item_topic_txt_color);
         vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+    }
+
+    @Override
+    public void setLevel(Level level, TextView tvTeamLevel) {
+        Resources resources = tvTeamLevel.getResources();
+        switch (level) {
+            case Guest:
+                tvTeamLevel.setBackgroundResource(R.drawable.bg_user_level_team_guest);
+                tvTeamLevel.setTextColor(resources.getColor(R.color.jandi_text_level_team_guest));
+                tvTeamLevel.setText("GUEST");
+                break;
+            case Owner:
+                tvTeamLevel.setBackgroundResource(R.drawable.bg_user_level_team_owner);
+                tvTeamLevel.setTextColor(resources.getColor(R.color.jandi_text_level_team_owner));
+                tvTeamLevel.setText("OWNER");
+                break;
+            case Admin:
+                tvTeamLevel.setBackgroundResource(R.drawable.bg_user_level_team_admin);
+                tvTeamLevel.setTextColor(resources.getColor(R.color.jandi_text_level_team_admin));
+                tvTeamLevel.setText("ADMIN");
+                break;
+            case Member:
+                tvTeamLevel.setBackgroundResource(R.drawable.bg_user_level_team_member);
+                tvTeamLevel.setTextColor(resources.getColor(R.color.jandi_text_level_team_member));
+                tvTeamLevel.setText("MEMBER");
+                break;
+        }
     }
 
     private boolean isMe(long memberId) {

@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -70,7 +71,6 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -603,16 +603,17 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
 
-    public void onEvent(ShowProfileEvent event) {
+    public void onEventMainThread(ShowProfileEvent event) {
         if (!isForeground) {
             return;
         }
 
-        MemberProfileActivity_.intent(getActivity())
+        startActivity(Henson.with(getActivity())
+                .gotoMemberProfileActivity()
                 .memberId(event.userId)
                 .from(getScreen(entityId) == AnalyticsValue.Screen.Message ?
                         MemberProfileActivity.EXTRA_FROM_MESSAGE : MemberProfileActivity.EXTRA_FROM_TOPIC_CHAT)
-                .start();
+                .build());
 
         if (event.from != null) {
 

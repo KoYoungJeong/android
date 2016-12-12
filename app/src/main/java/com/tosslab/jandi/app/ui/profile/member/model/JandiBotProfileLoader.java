@@ -3,13 +3,13 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 
 import uk.co.senab.photoview.PhotoView;
@@ -32,7 +32,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setProfileInfo(ViewGroup vgProfileTeamInfo, TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
+    public void setProfileInfo(TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
         tvProfileDivision.setText(R.string.jandi_bot_role);
         tvProfileDivision.setMaxLines(3);
 
@@ -70,6 +70,11 @@ public class JandiBotProfileLoader implements ProfileLoader {
     public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
         int defaultColor = context.getResources().getColor(R.color.jandi_primary_color);
         vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+    }
+
+    @Override
+    public void setLevel(Level level, TextView tvTeamLevel) {
+        tvTeamLevel.setVisibility(View.INVISIBLE);
     }
 
     private boolean isLandscape() {

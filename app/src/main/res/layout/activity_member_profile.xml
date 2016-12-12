@@ -75,29 +75,38 @@
                 android:background="@android:color/white"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="230dp"
                     android:orientation="vertical">
 
-                    <FrameLayout
-                        android:id="@+id/btn_member_profile_star"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:layout_gravity="right">
+                    <TextView
+                        android:id="@+id/tv_member_profile_team_level"
+                        android:layout_width="wrap_content"
+                        android:layout_height="17dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toLeftOf="@+id/btn_member_profile_star"
+                        android:background="@drawable/bg_user_level_team_admin"
+                        android:gravity="center"
+                        android:textSize="@dimen/jandi_text_size_11sp" />
 
-                        <View
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/jandi_member_profile_star_selector" />
-                    </FrameLayout>
+                    <ImageView
+                        android:id="@+id/btn_member_profile_star"
+                        android:layout_width="40dp"
+                        android:layout_height="46dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="center"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:src="@drawable/jandi_member_profile_star_selector" />
+
 
                     <TextView
                         android:id="@+id/tv_member_profile_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/btn_member_profile_star"
                         android:layout_marginBottom="17dp"
                         android:layout_marginLeft="35dp"
                         android:layout_marginRight="35dp"
@@ -109,48 +118,48 @@
                         android:textSize="20dp"
                         android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:id="@+id/vg_member_profile_team_info"
+                    <TextView
+                        android:id="@+id/tv_member_profile_division"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:orientation="vertical">
+                        android:layout_below="@+id/tv_member_profile_name"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:textColor="@color/jandi_text_light"
+                        android:textSize="13sp" />
 
-                        <TextView
-                            android:id="@+id/tv_member_profile_division"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="35dp"
-                            android:layout_marginRight="35dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:maxLines="2"
-                            android:textColor="@color/jandi_text_light"
-                            android:textSize="13sp" />
+                    <TextView
+                        android:id="@+id/tv_member_profile_position"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/tv_member_profile_division"
+                        android:layout_marginLeft="35dp"
+                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="5dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:textColor="@color/jandi_text_light"
+                        android:textSize="13sp" />
 
-                        <TextView
-                            android:id="@+id/tv_member_profile_position"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="35dp"
-                            android:layout_marginRight="35dp"
-                            android:layout_marginTop="5dp"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            android:maxLines="2"
-                            android:textColor="@color/jandi_text_light"
-                            android:textSize="13sp" />
-                    </LinearLayout>
+                    <android.support.v4.widget.Space
+                        android:id="@+id/sp_member_profile_seperator"
+                        android:layout_width="1dp"
+                        android:layout_height="15dp"
+                        android:layout_below="@+id/tv_member_profile_position" />
 
                     <TextView
                         android:id="@+id/tv_member_profile_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="23dp"
+                        android:layout_below="@+id/sp_member_profile_seperator"
+                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
                         android:layout_marginBottom="4dp"
-                        android:layout_marginTop="3dp"
                         android:background="@drawable/bg_profile_info"
-                        android:gravity="center"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="13sp" />
 
@@ -158,13 +167,15 @@
                         android:id="@+id/tv_member_profile_email"
                         android:layout_width="wrap_content"
                         android:layout_height="23dp"
+                        android:layout_below="@+id/tv_member_profile_phone"
+                        android:layout_centerHorizontal="true"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_profile_info"
                         android:gravity="center"
                         android:textColor="@color/jandi_text_light"
                         android:textSize="13sp" />
 
-                </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:id="@+id/vg_member_profile_buttons"

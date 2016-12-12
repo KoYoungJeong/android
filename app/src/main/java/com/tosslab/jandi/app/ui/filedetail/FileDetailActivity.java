@@ -77,7 +77,6 @@ import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
-import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -773,10 +772,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         long userEntityId = event.userId;
 
-        MemberProfileActivity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoMemberProfileActivity()
                 .memberId(userEntityId)
                 .from(MemberProfileActivity.EXTRA_FROM_FILE_DETAIL)
-                .start();
+                .build());
 
         AnalyticsValue.Action action = event.isFromComment
                 ? AnalyticsValue.Action.ViewProfile_FromComment : AnalyticsValue.Action.ViewProfile;
