@@ -58,18 +58,15 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/v_navigation_owner_badge"
+                android:id="@+id/tv_navigation_owner_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="17dp"
                 android:layout_marginLeft="8dp"
-                android:background="@drawable/bg_owner_badge"
                 android:gravity="center"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
-                android:text="@string/common_hamburger_teamadmin"
-                android:textColor="@android:color/white"
-                android:textSize="11dp"
-                android:visibility="gone" />
+                android:textSize="@dimen/jandi_text_size_11sp"
+                android:visibility="visible" />
 
         </com.tosslab.jandi.app.views.FixedLinearLayout>
 

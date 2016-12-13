@@ -100,8 +100,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     TextView tvName;
     @Bind(R.id.tv_navigation_profile_email)
     TextView tvEmail;
-    @Bind(R.id.v_navigation_owner_badge)
-    View vOwnerBadge;
+    @Bind(R.id.tv_navigation_owner_badge)
+    TextView tvOwnerBadge;
 
     @Bind(R.id.lv_navigation)
     RecyclerView lvNavigation;
@@ -543,7 +543,37 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                     AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.EditProfile);
         });
         tvName.setText(user.getName());
-        vOwnerBadge.setVisibility(user.isTeamOwner() ? View.VISIBLE : View.GONE);
+
+        int textColor;
+        int textBg;
+        String levelName;
+        switch (user.getLevel()) {
+            case Guest:
+                textColor = resources.getColor(R.color.jandi_text_level_team_guest);
+                textBg = R.drawable.bg_user_level_team_guest;
+                levelName = "GUEST";
+                break;
+            case Owner:
+                textColor = resources.getColor(R.color.jandi_text_level_team_owner);
+                textBg = R.drawable.bg_user_level_team_owner;
+                levelName = "OWNER";
+                break;
+            case Admin:
+                textColor = resources.getColor(R.color.jandi_text_level_team_admin);
+                textBg = R.drawable.bg_user_level_team_admin;
+                levelName = "ADMIN";
+                break;
+            default:
+            case Member:
+                textColor = resources.getColor(R.color.jandi_text_level_team_member);
+                textBg = R.drawable.bg_user_level_team_member;
+                levelName = "MEMBER";
+                break;
+        }
+        tvOwnerBadge.setText(levelName);
+        tvOwnerBadge.setTextColor(textColor);
+        tvOwnerBadge.setBackgroundResource(textBg);
+
         tvEmail.setText(user.getEmail());
         easterEggForLog(tvEmail);
     }
