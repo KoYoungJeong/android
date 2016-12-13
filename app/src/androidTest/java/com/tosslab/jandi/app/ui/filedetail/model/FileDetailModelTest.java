@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -21,6 +21,9 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import setup.BaseInitUtil;
 
 import static com.jayway.awaitility.Awaitility.await;
@@ -36,7 +39,8 @@ import static org.hamcrest.core.IsNull.nullValue;
 @RunWith(AndroidJUnit4.class)
 public class FileDetailModelTest {
 
-    private FileDetailModel fileDetailModel;
+    @Inject
+    FileDetailModel fileDetailModel;
     private ResSearch.SearchRecord fileMessage;
 
     @BeforeClass
@@ -51,7 +55,8 @@ public class FileDetailModelTest {
 
     @Before
     public void setUp() throws Exception {
-        fileDetailModel = FileDetailModel_.getInstance_(JandiApplication.getContext());
+        DaggerFileDetailModelTest_TestComponent.builder()
+                .build().inject(this);
         fileMessage = getFileMessage();
     }
 
@@ -136,6 +141,11 @@ public class FileDetailModelTest {
             assertThat(downloadUrl, is(equalTo(fileUrl)));
         }
 
+    }
+
+    @Component(modules = {ApiClientModule.class})
+    public interface TestComponent {
+        void inject(FileDetailModelTest test);
     }
 
 }

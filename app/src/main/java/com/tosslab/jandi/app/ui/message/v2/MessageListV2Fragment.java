@@ -116,7 +116,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -1081,11 +1080,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             } else {
                 sendAnalyticsEvent(AnalyticsValue.Action.FileView_ByComment);
 
-                FileDetailActivity_.intent(this)
+                startActivityForResult(Henson.with(getActivity())
+                        .gotoFileDetailActivity()
                         .roomId(room.getRoomId())
                         .selectMessageId(link.messageId)
                         .fileId(link.message.feedbackId)
-                        .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                        .build(), JandiConstants.TYPE_FILE_DETAIL_REFRESH);
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
             }
         } else {
@@ -1107,11 +1107,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                             .build();
                     startActivityForResult(intent, JandiConstants.TYPE_FILE_DETAIL_REFRESH);
                 } else {
-                    FileDetailActivity_.intent(this)
+                    startActivityForResult(Henson.with(getActivity())
+                            .gotoFileDetailActivity()
                             .roomId(room.getRoomId())
                             .selectMessageId(link.messageId)
                             .fileId(link.messageId)
-                            .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                            .build(), JandiConstants.TYPE_FILE_DETAIL_REFRESH);
                 }
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 

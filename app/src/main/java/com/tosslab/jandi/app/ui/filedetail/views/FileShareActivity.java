@@ -16,12 +16,13 @@ import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
-import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,12 +37,8 @@ public class FileShareActivity extends BaseAppCompatActivity {
     @Bind(R.id.view_container)
     View container;
 
+    @Inject
     FileDetailModel fileDetailModel;
-
-    void initViews() {
-        setupActionbar();
-        showList();
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,8 +47,16 @@ public class FileShareActivity extends BaseAppCompatActivity {
 
         ButterKnife.bind(this);
         Dart.inject(this);
+        DaggerFileShareComponent.builder()
+                .build()
+                .inject(this);
+
         initViews();
-        fileDetailModel = FileDetailModel_.getInstance_(this);
+    }
+
+    void initViews() {
+        setupActionbar();
+        showList();
     }
 
     void setupActionbar() {

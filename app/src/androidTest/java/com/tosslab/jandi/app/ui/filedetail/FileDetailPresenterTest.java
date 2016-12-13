@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.app.ProgressDialog;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.filedetail.dagger.FileDetailModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,6 +26,9 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Component;
 import rx.Observable;
 import setup.BaseInitUtil;
 
@@ -40,7 +44,9 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class FileDetailPresenterTest {
 
-    private FileDetailPresenter fileDetailPresenter;
+
+    @Inject
+    FileDetailPresenter fileDetailPresenter;
     private FileDetailPresenter.View mockView;
     private ResMessages.FileMessage fileMessage;
 
@@ -57,15 +63,15 @@ public class FileDetailPresenterTest {
     @Before
     public void setUp() throws Exception {
 
-
-        fileDetailPresenter = FileDetailPresenter_.getInstance_(JandiApplication.getContext());
         mockView = mock(FileDetailPresenter.View.class);
-        fileDetailPresenter.setView(mockView);
+
+        DaggerFileDetailPresenterTest_TestComponent.builder()
+                .fileDetailModule(new FileDetailModule(mockView))
+                .build().inject(this);
 
         fileMessage = getFileMessage();
         MessageRepository.getRepository().upsertFileMessage(fileMessage);
     }
-
 
     @Test
     public void testOnExportFile() throws Exception {
@@ -165,6 +171,11 @@ public class FileDetailPresenterTest {
             }
         }
         return null;
+    }
+
+    @Component(modules = {FileDetailModule.class, ApiClientModule.class})
+    public interface TestComponent {
+        void inject(FileDetailPresenterTest test);
     }
 
 }

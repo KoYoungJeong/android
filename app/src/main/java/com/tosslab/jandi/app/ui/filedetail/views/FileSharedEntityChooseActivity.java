@@ -20,12 +20,13 @@ import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
-import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,6 +57,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
     @Bind(R.id.layout_search_bar)
     Toolbar toolbar;
 
+    @Inject
     FileDetailModel fileDetailModel;
 
     @Override
@@ -64,7 +66,9 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
         setContentView(R.layout.activity_file_unshare_entity_choose);
         ButterKnife.bind(this);
         Dart.inject(this);
-        fileDetailModel = FileDetailModel_.getInstance_(this);
+        DaggerFileShareComponent.builder()
+                .build()
+                .inject(this);
         initViews();
     }
 

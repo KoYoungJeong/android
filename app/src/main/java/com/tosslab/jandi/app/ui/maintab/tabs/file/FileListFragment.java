@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -52,7 +53,6 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
@@ -307,10 +307,10 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         if (file.getIcon().startsWith("image")) {
             fileListPresenter.getImageDetail(file.getId());
         } else {
-            FileDetailActivity_
-                    .intent(this)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileDetailActivity()
                     .fileId(file.getId())
-                    .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                    .build(), JandiConstants.TYPE_FILE_DETAIL_REFRESH);
             getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         }
     }

@@ -51,7 +51,6 @@ import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.carousel.module.CarouselViewerModule;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
@@ -710,12 +709,13 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         long fileId = getCarouselFileInfo() != null
                 ? getCarouselFileInfo().getFileMessageId()
                 : -1;
-        FileDetailActivity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoFileDetailActivity()
                 .fromCarousel(true)
                 .roomId(mode == CAROUSEL_MODE ? roomId : -1)
                 .fileId(fileId)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
     @Override

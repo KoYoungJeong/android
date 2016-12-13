@@ -1,18 +1,19 @@
 package com.tosslab.jandi.app.ui.filedetail.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.file.FileDownloadApi;
 import com.tosslab.jandi.app.network.file.body.ProgressCallback;
@@ -36,11 +37,6 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,30 +49,26 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import rx.Observable;
 
-@EBean
 public class FileDetailModel {
     public static final String TAG = FileDetailModel.class.getSimpleName();
 
-    @RootContext
-    Context context;
 
-    @Bean
     MessageManipulator messageManipulator;
 
-    @Bean
     EntityClientManager entityClientManager;
 
-    @Inject
     Lazy<StickerApi> stickerApi;
-    @Inject
     Lazy<MessageApi> messageApi;
-
-    @Inject
     Lazy<FileApi> fileApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    @Inject
+    public FileDetailModel(Lazy<StickerApi> stickerApi, Lazy<MessageApi> messageApi, Lazy<FileApi> fileApi) {
+        this.stickerApi = stickerApi;
+        this.messageApi = messageApi;
+        this.fileApi = fileApi;
+
+        messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
+        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
     }
 
     public boolean isNetworkConneted() {

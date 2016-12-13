@@ -59,7 +59,6 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
@@ -947,12 +946,12 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public void moveFileDetailActivity(Fragment fragment, long messageId, long roomId, long selectedMessageId) {
-        FileDetailActivity_
-                .intent(fragment)
+        startActivityForResult(Henson.with(getActivity())
+                .gotoFileDetailActivity()
                 .fileId(messageId)
                 .roomId(roomId)
                 .selectMessageId(selectedMessageId)
-                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                .build(), JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
     }

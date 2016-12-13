@@ -96,7 +96,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.filedetail.FileDetailActivity_"
+            android:name=".ui.filedetail.FileDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_file_detail"
             android:screenOrientation="portrait"
@@ -190,7 +190,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.members.MembersListActivity_"
+            android:name=".ui.members.MembersListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
             android:screenOrientation="portrait" />
@@ -449,7 +449,7 @@
         </activity>
 
         <activity
-            android:name=".ui.filedetail.views.FileShareActivity_"
+            android:name=".ui.filedetail.views.FileShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_title_cdp_to_be_shared"
             android:screenOrientation="portrait">

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
@@ -26,7 +27,6 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.view.MentionListDataView;
@@ -280,10 +280,11 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void moveToFileDetailActivity(long fileId, long messageId) {
-        FileDetailActivity_.intent(this)
+        startActivity(Henson.with(getActivity())
+                .gotoFileDetailActivity()
                 .fileId(fileId)
                 .selectMessageId(messageId)
-                .start();
+                .build());
     }
 
     @Override

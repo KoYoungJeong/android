@@ -10,9 +10,6 @@ import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenterImpl;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
-import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
-
-import javax.inject.Singleton;
 
 import dagger.Lazy;
 import dagger.Module;
@@ -28,11 +25,6 @@ public class CarouselViewerModule {
 
     public CarouselViewerModule(CarouselViewerPresenter.View carouselView) {
         this.carouselView = carouselView;
-    }
-
-    @Provides
-    public FileDetailModel providesFileDetailModel() {
-        return FileDetailModel_.getInstance_(JandiApplication.getContext());
     }
 
     @Provides

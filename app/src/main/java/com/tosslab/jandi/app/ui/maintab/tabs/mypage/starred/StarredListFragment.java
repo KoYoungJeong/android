@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
@@ -21,7 +22,6 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
-import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.StarredListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.view.StarredListDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.component.DaggerStarredListComponent;
@@ -234,10 +234,11 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void moveToFileDetail(long fileMessageId, long selectMessageId) {
-        FileDetailActivity_.intent(this)
+        startActivityForResult(Henson.with(getActivity())
+                .gotoFileDetailActivity()
                 .fileId(fileMessageId)
                 .selectMessageId(selectMessageId)
-                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+                .build(), JandiConstants.TYPE_FILE_DETAIL_REFRESH);
     }
 
     @Override
