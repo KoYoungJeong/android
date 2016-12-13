@@ -160,7 +160,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(entityId -> {
-                    if (entityId > 0) {
+                    if (entityId > 0 && jandiInterfaceModel.hasRank()) {
                         moveMessageListActivity(roomId, entityId);
                     } else {
                         // entity 정보가 없으면 인트로로 이동하도록 지정

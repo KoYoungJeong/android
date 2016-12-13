@@ -88,7 +88,7 @@ public class JandiInterfaceModel {
 
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
-        if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
+        if (selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId) {
 
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             MessageRepository.getRepository().deleteAllLink();
@@ -96,6 +96,7 @@ public class JandiInterfaceModel {
             return refreshTeamInfo();
 
         } else {
+            refreshRankInfoIfNeed(selectedTeamInfo.getTeamId());
             return true;
         }
     }
@@ -105,7 +106,7 @@ public class JandiInterfaceModel {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-            refreshRankInfo(selectedTeamId);
+            refreshRankInfoIfNeed(selectedTeamId);
             TeamInfoLoader.getInstance().refresh();
             refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
@@ -119,7 +120,7 @@ public class JandiInterfaceModel {
         }
     }
 
-    private void refreshRankInfo(long selectedTeamId) {
+    private void refreshRankInfoIfNeed(long selectedTeamId) {
         if (!RankRepository.getInstance().hasRanks(selectedTeamId)) {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeamId);
@@ -251,5 +252,9 @@ public class JandiInterfaceModel {
         } catch (RetrofitException retrofitError) {
             retrofitError.printStackTrace();
         }
+    }
+
+    public boolean hasRank() {
+        return RankRepository.getInstance().hasRanks(TeamInfoLoader.getInstance().getTeamId());
     }
 }

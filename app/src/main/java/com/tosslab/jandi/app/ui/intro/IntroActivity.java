@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
@@ -224,6 +225,17 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Override
     public void startSocketService() {
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+    }
+
+    @Override
+    public void showDialogNoRank() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.common_launch_fail)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    finish();
+                })
+                .create()
+                .show();
     }
 
 }

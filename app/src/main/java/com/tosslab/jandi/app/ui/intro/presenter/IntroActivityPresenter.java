@@ -191,7 +191,11 @@ public class IntroActivityPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    view.moveToMainActivity(!it);
+                    if (model.hasRank()) {
+                        view.moveToMainActivity(!it);
+                    } else {
+                        view.showDialogNoRank();
+                    }
                 }, t -> {
                 });
 
@@ -218,6 +222,7 @@ public class IntroActivityPresenter {
 
         void startSocketService();
 
+        void showDialogNoRank();
     }
 
 }

@@ -123,16 +123,25 @@ public class IntroActivityModel {
         return MessageRepository.getRepository().deleteAllLink();
     }
 
-    public void refreshRankIfNeeds() {
+    public boolean refreshRankIfNeeds() {
 
         long selectedTeam = TeamInfoLoader.getInstance().getTeamId();
         if (!RankRepository.getInstance().hasRanks(selectedTeam)) {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeam);
                 RankRepository.getInstance().addRanks(ranks.getRanks());
+                return true;
             } catch (RetrofitException e) {
                 e.printStackTrace();
+                return false;
             }
+
+        } else {
+            return true;
         }
+    }
+
+    public boolean hasRank() {
+        return RankRepository.getInstance().hasRanks(TeamInfoLoader.getInstance().getTeamId());
     }
 }
