@@ -15,7 +15,9 @@ import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
@@ -99,17 +101,37 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
     public void showList() {
         long myId = fileDetailModel.getMyId();
 
-        List<EntitySimpleListAdapter.SimpleEntity> sharedEntities = new ArrayList<>();
+        List<EntitySimpleListAdapter.SimpleEntity> simpleEntities = new ArrayList<>();
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
 
         Observable.create((Subscriber<? super Long> subscriber) -> {
-            for (long sharedEntity : FileSharedEntityChooseActivity.this.sharedEntities) {
-                subscriber.onNext(sharedEntity);
+            if (sharedEntities != null) {
+                for (long sharedEntity : sharedEntities) {
+                    subscriber.onNext(sharedEntity);
+                }
             }
             subscriber.onCompleted();
         }).distinct()
                 .filter(integerWrapper -> integerWrapper != myId)
-                .filter(entityId -> TeamInfoLoader.getInstance().isTopic(entityId)
-                        || TeamInfoLoader.getInstance().isUser(entityId))
+                .filter(entityId -> {
+                    if (!guest) {
+                        return TeamInfoLoader.getInstance().isTopic(entityId)
+                                || TeamInfoLoader.getInstance().isUser(entityId);
+                    }
+
+                    if (TeamInfoLoader.getInstance().isTopic(entityId)) {
+                        return TeamInfoLoader.getInstance().getTopic(entityId).isJoined();
+                    } else if (TeamInfoLoader.getInstance().isUser(entityId)) {
+                        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                                .filter(TopicRoom::isJoined)
+                                .map(TopicRoom::getMembers)
+                                .takeFirst(its -> its.contains(entityId))
+                                .map(its -> true)
+                                .defaultIfEmpty(false)
+                                .toBlocking().firstOrDefault(false);
+                    }
+                    return false;
+                })
                 .map(entityId -> {
 
                     EntitySimpleListAdapter.SimpleEntity simpleEntity = new EntitySimpleListAdapter.SimpleEntity();
@@ -129,16 +151,16 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
                     return simpleEntity;
                 })
                 .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
-                .collect(() -> sharedEntities, List::addAll)
+                .collect(() -> simpleEntities, List::addAll)
                 .subscribe(it -> {}, Throwable::printStackTrace);
 
-        if (!sharedEntities.isEmpty()) {
+        if (!simpleEntities.isEmpty()) {
 
-            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
+            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, simpleEntities);
             lvSharedEntities.setAdapter(adapter);
             lvSharedEntities.setOnItemClickListener((adapterView, view, i, l) -> {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra(KEY_ENTITY_ID, sharedEntities.get(i).getId());
+                returnIntent.putExtra(KEY_ENTITY_ID, simpleEntities.get(i).getId());
                 setResult(RESULT_OK, returnIntent);
                 finish();
             });
