@@ -53,7 +53,6 @@ import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
-import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -383,9 +382,10 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             return;
         }
 
-        FileShareActivity_.intent(this)
+        startActivityForResult(Henson.with(this)
+                .gotoFileShareActivity()
                 .fileId(carouselFileInfo.getFileMessageId())
-                .startForResult(FileDetailActivity.REQUEST_CODE_SHARE);
+                .build(), FileDetailActivity.REQUEST_CODE_SHARE);
 
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Share);
     }

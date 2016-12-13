@@ -2,50 +2,56 @@ package com.tosslab.jandi.app.ui.filedetail.views;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
+import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelector;
 import com.tosslab.jandi.app.ui.selector.room.RoomSelectorImpl;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
-/**
- * Created by tee on 15. 9. 30..
- */
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-@EActivity(R.layout.activity_file_share_entity_choose)
 public class FileShareActivity extends BaseAppCompatActivity {
     public static final String KEY_ENTITY_ID = "entity_id";
 
-    @Extra
+    @InjectExtra
     long fileId;
-    @Bean
-    FileDetailModel fileDetailModel;
-    @ViewById(R.id.layout_search_bar)
+    @Bind(R.id.layout_search_bar)
     Toolbar toolbar;
-    @ViewById(R.id.view_container)
+    @Bind(R.id.view_container)
     View container;
 
-    @AfterViews
+    FileDetailModel fileDetailModel;
+
     void initViews() {
         setupActionbar();
         showList();
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_file_share_entity_choose);
+
+        ButterKnife.bind(this);
+        Dart.inject(this);
+        initViews();
+        fileDetailModel = FileDetailModel_.getInstance_(this);
     }
 
     void setupActionbar() {
@@ -90,9 +96,8 @@ public class FileShareActivity extends BaseAppCompatActivity {
         }
     }
 
-    @UiThread
     public void showErrorToast(String message) {
-        ColoredToast.showError( message);
+        ColoredToast.showError(message);
     }
 
 }

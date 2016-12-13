@@ -70,7 +70,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
-import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity_;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -1136,9 +1135,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @OptionsItem(R.id.action_file_detail_share)
     void share() {
-        FileShareActivity_.intent(this)
+        startActivityForResult(Henson.with(this)
+                .gotoFileShareActivity()
                 .fileId(fileId)
-                .startForResult(REQUEST_CODE_SHARE);
+                .build(), REQUEST_CODE_SHARE);
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Share);
     }
 
