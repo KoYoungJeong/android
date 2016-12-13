@@ -27,8 +27,6 @@
 	<string name="common_fileupload_filename">"文件名称"</string>
 	<string name="common_fileupload_rename">"更改"</string>
 	<string name="common_fileupload_rename_description">"重新命名"</string>
-	<string name="common_fileupload_teamname_placeholder">""</string>
-	<string name="common_fileupload_topicname_placeholder">"选择一个议题"</string>
 	<string name="common_hamburger_invited">"邀请"</string>
 	<string name="common_hamburger_manageacct">"JANDI 账户设置"</string>
 	<string name="common_hamburger_teamadmin">"团队管理员"</string>
@@ -97,6 +95,9 @@
 	<string name="fail_to_create_team">"團隊未完成建立"</string>
 	<string name="file_detail_nopreview">"此文件无法预览"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
+	<string name="invite_account_alreadyinteam">""</string>
+	<string name="invite_account_alreadyinvited">""</string>
+	<string name="invite_account_blocked">""</string>
 	<string name="invite_associate_desc">"选择"</string>
 	<string name="invite_associate_email_desc">"输入准成员的电子邮箱，以便邀请加入特定议题"</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"除了预设议题外，准成员仅能被加入你目前所在的议题。请确认后再试"</string>
@@ -114,7 +115,7 @@
 	<string name="invite_email_placeholder">"输入电子邮箱"</string>
 	<string name="invite_email_sending">"邀请寄送中..."</string>
 	<string name="invite_email_sendinvitation_disable">"寄送邀请"</string>
-	<string name="invite_email_sendinvitation_withcounts">"寄送邀请给 {n} 位"</string>
+	<string name="invite_email_sendinvitation_withcounts">"寄送邀请给 %s 位"</string>
 	<string name="invite_email_success">"所有邀请已成功寄送"</string>
 	<string name="invite_email_title">"输入电子邮箱"</string>
 	<string name="invite_email_valid">"此为有效的电子邮箱"</string>

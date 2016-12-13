@@ -88,6 +88,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMemberRankUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUpdatedEvent;
@@ -127,6 +128,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
+import com.tosslab.jandi.app.ui.restart.RankResetActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -1604,6 +1606,30 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onMemberRankUpdated(Object object) {
+        try {
+            SocketMemberRankUpdatedEvent event = SocketModelExtractor.getObject(object, SocketMemberRankUpdatedEvent.class);
+            saveEvent(event);
+
+            SocketMemberRankUpdatedEvent.Data data = event.getData();
+            List<Long> memberIds = data.getMemberIds();
+            if (memberIds.contains(TeamInfoLoader.getInstance().getMyId())) {
+                Intent intent = new Intent(JandiApplication.getContext(), RankResetActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                JandiApplication.getContext().startActivity(intent);
+            } else {
+                long rankId = data.getRankId();
+                for (Long memberId : memberIds) {
+                    HumanRepository.getInstance().updateRank(memberId, rankId);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public interface Command {

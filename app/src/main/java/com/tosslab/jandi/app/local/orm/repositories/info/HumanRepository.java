@@ -128,4 +128,23 @@ public class HumanRepository extends RealmRepository {
             }
         });
     }
+
+    public boolean updateRank(long userId, long rankId) {
+        return execute(realm -> {
+
+            Human human = realm.where(Human.class)
+                    .equalTo("id", userId)
+                    .findFirst();
+
+            if (human != null) {
+                realm.executeTransaction(realm1 -> {
+                    human.setRankId(rankId);
+                });
+
+                return true;
+            }
+
+            return false;
+        });
+    }
 }

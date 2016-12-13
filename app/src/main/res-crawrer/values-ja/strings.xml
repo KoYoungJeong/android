@@ -28,8 +28,6 @@
 	<string name="common_fileupload_filename">"ファイル名"</string>
 	<string name="common_fileupload_rename">"変更"</string>
 	<string name="common_fileupload_rename_description">"名称変更"</string>
-	<string name="common_fileupload_teamname_placeholder">""</string>
-	<string name="common_fileupload_topicname_placeholder">"トピックを選択してください。"</string>
 	<string name="common_hamburger_invited">"招待状"</string>
 	<string name="common_hamburger_manageacct">"JANDIアカウント設定"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
@@ -98,6 +96,9 @@
 	<string name="fail_to_create_team">"チームが作成できませんでした"</string>
 	<string name="file_detail_nopreview">"プレビュー表示できないファイル形式です。"</string>
 	<string name="file_upload_comment">"コメント(任意)"</string>
+	<string name="invite_account_alreadyinteam">""</string>
+	<string name="invite_account_alreadyinvited">""</string>
+	<string name="invite_account_blocked">""</string>
 	<string name="invite_associate_desc">"招待するトピックとメールを選択してください。"</string>
 	<string name="invite_associate_email_desc">"メールを入力して準メンバーをJANDIに招待できます。"</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"準メンバーはデフォルトトピック、また招待者が参加していないトピックには招待できません。他のトピックに参加してからもう一度お試しください。"</string>
@@ -117,7 +118,7 @@
 	<string name="invite_email_placeholder">"メールを入力してください。"</string>
 	<string name="invite_email_sending">"メール送信中…"</string>
 	<string name="invite_email_sendinvitation_disable">"招待メール送信"</string>
-	<string name="invite_email_sendinvitation_withcounts">"{n}名に招待メールを送信"</string>
+	<string name="invite_email_sendinvitation_withcounts">"%s名に招待メールを送信"</string>
 	<string name="invite_email_success">"招待メールを全部送信しました。"</string>
 	<string name="invite_email_title">"メール入力"</string>
 	<string name="invite_email_valid">"有効なメールアドレスです。"</string>

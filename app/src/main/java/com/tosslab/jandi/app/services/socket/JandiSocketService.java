@@ -284,6 +284,8 @@ public class JandiSocketService extends Service {
         eventHashMap.put("member_unstarred", memberUnstarredListener);
         EventListener memberUpdatedListener = objects -> jandiSocketServiceModel.onMemberUpdated(objects[0]);
         eventHashMap.put("member_updated", memberUpdatedListener);
+        EventListener memberRankUpdateListener = objects -> jandiSocketServiceModel.onMemberRankUpdated(objects[0]);
+        eventHashMap.put("member_rank_updated", memberRankUpdateListener);
 
         EventListener fileCreatedListener = objects -> jandiSocketServiceModel.onFileCreated(objects[0]);
         eventHashMap.put("file_created", fileCreatedListener);

@@ -28,8 +28,6 @@ Please contact your administrator for more information."</string>
 	<string name="common_fileupload_filename">"File Name"</string>
 	<string name="common_fileupload_rename">"Rename"</string>
 	<string name="common_fileupload_rename_description">"Rename"</string>
-	<string name="common_fileupload_teamname_placeholder">"Select a team"</string>
-	<string name="common_fileupload_topicname_placeholder">"Select a topic"</string>
 	<string name="common_hamburger_invited">"Invited"</string>
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
@@ -98,6 +96,9 @@ Please restart the app."</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_detail_nopreview">"This file can't be previewed."</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
+	<string name="invite_account_alreadyinteam">""</string>
+	<string name="invite_account_alreadyinvited">""</string>
+	<string name="invite_account_blocked">""</string>
 	<string name="invite_associate_desc">"Select the topic and the email address of the Associate you want to invite."</string>
 	<string name="invite_associate_email_desc">"You can invite Associates to JANDI by entering their email address."</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"Associates can be invited to any other topic you are in, except for the default topic. Please join  an additional topic and try again. "</string>
@@ -116,7 +117,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_placeholder">"Enter email address"</string>
 	<string name="invite_email_sending">"Sending invitation..."</string>
 	<string name="invite_email_sendinvitation_disable">"Send Invitation"</string>
-	<string name="invite_email_sendinvitation_withcounts">"Send invitation to {n} people. "</string>
+	<string name="invite_email_sendinvitation_withcounts">"Send invitation to %s people. "</string>
 	<string name="invite_email_success">"All intivations has been sent. "</string>
 	<string name="invite_email_title">"Enter email address"</string>
 	<string name="invite_email_valid">"This is a valid email address."</string>

@@ -212,6 +212,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         for (User user : TeamInfoLoader.getInstance().getUserList()) {
             System.out.println(user.getName() + " : " + user.getLevel().name());
         }
+
     }
 
     private void initFirebaseUserProperties() {
