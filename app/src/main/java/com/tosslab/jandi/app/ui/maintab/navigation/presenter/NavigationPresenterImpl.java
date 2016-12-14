@@ -102,6 +102,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .doOnNext(teams -> Collections.sort(teams,
                                 (team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1))
                         .doOnNext(this::initBadgeCount)
+                        .observeOn(AndroidSchedulers.mainThread())
                         .map(navigationDataModel::getTeamRows)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
