@@ -10,8 +10,12 @@
 	<string name="common_accthome_loggedin">"logged in"</string>
 	<string name="common_authority_change_alert">"Your member authority has been changed. Please relaunch the application."</string>
 	<string name="common_authority_change_relaunch">"Relaunch"</string>
-	<string name="common_authority_notauthorised">"You do not have access to this feature. 
-Please contact your administrator for more information."</string>
+	<string name="common_authority_notauthorised_body">"Please contact your administrator for more information."</string>
+	<string name="common_authority_notauthorised_title">"You do not have access to this feature. "</string>
+	<string name="common_authority_title_associate">"Associate"</string>
+	<string name="common_authority_title_manager">"Manager"</string>
+	<string name="common_authority_title_member">"Member"</string>
+	<string name="common_authority_title_owner">"Owner"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"Allow calls"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"Draw over other apps"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"Turning on this feature will move you to the ’Draw over other apps’ settings."</string>
@@ -20,6 +24,8 @@ Please contact your administrator for more information."</string>
 	<string name="common_calleridnotifier_guide1">"A JANDI member's mobile number and name will appear in caller ID without being saved in your contact list prior."</string>
 	<string name="common_calleridnotifier_guide2">"To enable this feature, you must turn on the following menu."</string>
 	<string name="common_calleridnotifier_settings">"View Members’ Contacts"</string>
+	<string name="common_calleridnotifier_status_allow">"Allow"</string>
+	<string name="common_calleridnotifier_status_allowed">"Allowed"</string>
 	<string name="common_calleridnotifier_suggestmodal">"Try 'View Members' Contacts'"</string>
 	<string name="common_calleridnotifier_tosettings">" Move to Settings"</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
@@ -92,13 +98,13 @@ Please restart the app."</string>
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"?"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_detail_nopreview">"This file can't be previewed."</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
-	<string name="invite_account_alreadyinteam">""</string>
-	<string name="invite_account_alreadyinvited">""</string>
-	<string name="invite_account_blocked">""</string>
+	<string name="invite_account_alreadyinteam">"This account is already in the team."</string>
+	<string name="invite_account_alreadyinvited">"This account has already been invited to the team."</string>
+	<string name="invite_account_blocked">"This account is blocked from the team."</string>
 	<string name="invite_associate_desc">"Select the topic and the email address of the Associate you want to invite."</string>
 	<string name="invite_associate_email_desc">"You can invite Associates to JANDI by entering their email address."</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"Associates can be invited to any other topic you are in, except for the default topic. Please join  an additional topic and try again. "</string>
@@ -107,7 +113,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in."</string>
 	<string name="invite_associate_selecttopic_placeholder">"Select a topic"</string>
 	<string name="invite_associate_selecttopic_title">"Select the topic you want to invite to"</string>
-	<string name="invite_email_alreadyinteam">"This email address is already in use."</string>
+	<string name="invite_email_alreadyinteam">"This email address is already in the team."</string>
 	<string name="invite_email_alreadyinvited">"This email address has already been invited to the team."</string>
 	<string name="invite_email_blocked">"This email address had been blocked from the team."</string>
 	<string name="invite_email_cancelinvite">"Would you like to cancel in invite?"</string>

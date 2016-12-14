@@ -11,8 +11,12 @@
 	<string name="common_authority_change_alert">"멤버 권한이 변경되었습니다. 
 앱 재시동이 필요합니다."</string>
 	<string name="common_authority_change_relaunch">"재시동"</string>
-	<string name="common_authority_notauthorised">"해당 기능에 접근 권한이 없습니다. 
-자세한 내용은 관리자에게 문의하세요."</string>
+	<string name="common_authority_notauthorised_body">"자세한 내용은 관리자에게 문의하세요."</string>
+	<string name="common_authority_notauthorised_title">"해당 기능에 접근 권한이 없습니다. "</string>
+	<string name="common_authority_title_associate">"준회원"</string>
+	<string name="common_authority_title_manager">"관리자"</string>
+	<string name="common_authority_title_member">"정회원"</string>
+	<string name="common_authority_title_owner">"소유자"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"통화권한 설정"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"다른 앱 위에 그리기 권한 설정"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"위 권한 선택 시 해당 권한 설정 화면으로 이동합니다."</string>
@@ -21,6 +25,8 @@
 	<string name="common_calleridnotifier_guide1">"내폰에서 저장되지 않은 팀 멤버에게서 전화 수신 시 멤버의 연락처를 확인하실 수 있습니다."</string>
 	<string name="common_calleridnotifier_guide2">"기능을 사용 하시려면 하위 두개의 권한이 모두 필요합니다."</string>
 	<string name="common_calleridnotifier_settings">"멤버 연락처 보기 설정"</string>
+	<string name="common_calleridnotifier_status_allow">"설정하기"</string>
+	<string name="common_calleridnotifier_status_allowed">"설정됨"</string>
 	<string name="common_calleridnotifier_suggestmodal">"멤버 연락처 보기 기능을 사용해 보세요"</string>
 	<string name="common_calleridnotifier_tosettings">"설정으로 이동"</string>
 	<string name="common_createteam_toaccthome">"잔디 메인으로 가기"</string>
@@ -93,7 +99,7 @@
 	<string name="err_team_creation_failed">"메일 전송에 실패했습니다"</string>
 	<string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
 	<string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"님을 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_detail_nopreview">"미리보기 할 수 없는 형식의 파일입니다."</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>

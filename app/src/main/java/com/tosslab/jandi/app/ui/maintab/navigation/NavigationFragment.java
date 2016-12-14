@@ -57,6 +57,7 @@ import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -101,7 +102,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     @Bind(R.id.tv_navigation_profile_email)
     TextView tvEmail;
     @Bind(R.id.tv_navigation_owner_badge)
-    TextView tvOwnerBadge;
+    TextView tvLevelBadge;
 
     @Bind(R.id.lv_navigation)
     RecyclerView lvNavigation;
@@ -544,35 +545,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         });
         tvName.setText(user.getName());
 
-        int textColor;
-        int textBg;
-        String levelName;
-        switch (user.getLevel()) {
-            case Guest:
-                textColor = resources.getColor(R.color.jandi_text_level_team_guest);
-                textBg = R.drawable.bg_user_level_team_guest;
-                levelName = "GUEST";
-                break;
-            case Owner:
-                textColor = resources.getColor(R.color.jandi_text_level_team_owner);
-                textBg = R.drawable.bg_user_level_team_owner;
-                levelName = "OWNER";
-                break;
-            case Admin:
-                textColor = resources.getColor(R.color.jandi_text_level_team_admin);
-                textBg = R.drawable.bg_user_level_team_admin;
-                levelName = "ADMIN";
-                break;
-            default:
-            case Member:
-                textColor = resources.getColor(R.color.jandi_text_level_team_member);
-                textBg = R.drawable.bg_user_level_team_member;
-                levelName = "MEMBER";
-                break;
-        }
-        tvOwnerBadge.setText(levelName);
-        tvOwnerBadge.setTextColor(textColor);
-        tvOwnerBadge.setBackgroundResource(textBg);
+        AccessLevelUtil.setTextOfLevel(user.getLevel(), tvLevelBadge);
 
         tvEmail.setText(user.getEmail());
         easterEggForLog(tvEmail);
