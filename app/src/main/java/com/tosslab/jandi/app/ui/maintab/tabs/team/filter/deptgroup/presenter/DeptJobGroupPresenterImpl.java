@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -16,6 +17,7 @@ import com.tosslab.jandi.app.utils.StringCompareUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,7 +49,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
     @Override
     public void onCreate() {
 
-        Observable.from(TeamInfoLoader.getInstance().getUserList())
+        Observable.from(getUserList())
                 .filter(User::isEnabled)
                 .filter(user -> {
                     if (!selectMode && roomId < 0) {
@@ -87,6 +89,23 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                     teamMemberDataModel.addAll(users);
                     view.refreshDataView();
                 }, Throwable::printStackTrace);
+    }
+
+    private List<User> getUserList() {
+        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+            List<User> userList = new ArrayList<>();
+
+            Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(topic -> topic.isJoined())
+                    .concatMap(topic -> Observable.from(topic.getMembers()))
+                    .distinct()
+                    .subscribe(memberId -> {
+                        userList.add(TeamInfoLoader.getInstance().getUser(memberId));
+                    });
+            return userList;
+        } else {
+            return TeamInfoLoader.getInstance().getUserList();
+        }
     }
 
     private Func1<? super User, Boolean> filterKeyword(int type, String keyword) {
