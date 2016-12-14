@@ -4,7 +4,6 @@ import android.graphics.Paint;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,16 +177,12 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         String department = item.getDepartment();
         if (TextUtils.isEmpty(department)) {
             tvUserDepartment.setVisibility(View.GONE);
-            vgAuthorityBadge.setGravity(Gravity.CENTER_VERTICAL);
-            vgAuthorityBadge.setPadding(0, 0, 0, 0);
         } else {
             tvUserDepartment.setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
             tvUserDepartment.setText(department);
-            vgAuthorityBadge.setGravity(Gravity.NO_GRAVITY);
-            vgAuthorityBadge.setPadding(0, teamOwnerPaddingTop, 0, 0);
         }
 
         String jobTitle = item.getJobTitle();
