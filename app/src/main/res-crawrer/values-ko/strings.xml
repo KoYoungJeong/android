@@ -8,6 +8,17 @@
 	<string name="common_accthome_jandiacct">"잔디계정"</string>
 	<string name="common_accthome_joinedteamlist">"가입한 팀 리스트"</string>
 	<string name="common_accthome_loggedin">"로그인됨"</string>
+	<string name="common_authority_change_alert">"멤버 권한이 변경되었습니다. 
+앱 재시동이 필요합니다.
+"</string>
+	<string name="common_authority_change_relaunch">"재시동
+"</string>
+	<string name="common_authority_notauthorised_body">"자세한 내용은 관리자에게 문의하세요."</string>
+	<string name="common_authority_notauthorised_title">"해당 기능에 접근 권한이 없습니다. "</string>
+	<string name="common_authority_title_associate">"준회원"</string>
+	<string name="common_authority_title_manager">"관리자"</string>
+	<string name="common_authority_title_member">"정회원"</string>
+	<string name="common_authority_title_owner">"소유자"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"통화권한 설정"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"다른 앱 위에 그리기 권한 설정"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"위 권한 선택 시 해당 권한 설정 화면으로 이동합니다."</string>
@@ -16,23 +27,30 @@
 	<string name="common_calleridnotifier_guide1">"내폰에서 저장되지 않은 팀 멤버에게서 전화 수신 시 멤버의 연락처를 확인하실 수 있습니다."</string>
 	<string name="common_calleridnotifier_guide2">"기능을 사용 하시려면 하위 두개의 권한이 모두 필요합니다."</string>
 	<string name="common_calleridnotifier_settings">"멤버 연락처 보기 설정"</string>
+	<string name="common_calleridnotifier_status_allow">"설정하기"</string>
+	<string name="common_calleridnotifier_status_allowed">"설정됨"</string>
 	<string name="common_calleridnotifier_suggestmodal">"멤버 연락처 보기 기능을 사용해 보세요"</string>
 	<string name="common_calleridnotifier_tosettings">"설정으로 이동"</string>
 	<string name="common_createteam_toaccthome">"잔디 메인으로 가기"</string>
 	<string name="common_createteam_welcome">"안녕하세요!"</string>
 	<string name="common_creatteam_done">"완료"</string>
+	<string name="common_fileupload_filename">"파일 이름"</string>
 	<string name="common_fileupload_rename">"변경"</string>
 	<string name="common_fileupload_rename_description">"파일 이름 변경"</string>
 	<string name="common_hamburger_invited">"초대 됨"</string>
 	<string name="common_hamburger_manageacct">"잔디 계정 관리"</string>
 	<string name="common_hamburger_teamadmin">"팀 관리자"</string>
 	<string name="common_hamburger_teamlist">"팀 리스트"</string>
+	<string name="common_launch_fail">"초기 정보를 불러오지 못했습니다. 
+앱을 다시 실행하여 주세요."</string>
 	<string name="common_pricingplan_fileupload">"현재 팀에서 무료 사용량을 초과하여 언제든 업로드가 제한될 수  \n 있습니다. 지금 STANDARD 플랜으로 전환하시고  \n 더욱 더 쾌적하게 협업하세요."</string>
 	<string name="common_pricingplan_livesupport">"1:1 문의하기"</string>
 	<string name="common_pricingplan_moreinfo">"자세히 알아보기"</string>
 	<string name="common_pricingplan_msgsearch">"현재 팀에서 무료 사용량을 초과하여 언제든 검색이 제한될 수 \n 있습니다. 지금 STANDARD 플랜으로 전환하시고 \n 더욱 더 쾌적하게 협업하세요."</string>
 	<string name="common_profilemodal_jandi_botstatus">"안녕하세요? JANDI입니다. "</string>
 	<string name="common_settings_lostpasscodedesc">"비밀번호를 잊은 경우 재설치 해주세요."</string>
+	<string name="common_sharetojandi_choose_room">"대화방 선택"</string>
+	<string name="common_sharetojandi_choose_team">"팀 선택"</string>
 	<string name="common_sharetojandi_errormsg">"예상치 못한 문제가 발생했습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="common_signup_codeverification">"위 이메일로 인증번호를 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
@@ -83,10 +101,50 @@
 	<string name="err_team_creation_failed">"메일 전송에 실패했습니다"</string>
 	<string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
 	<string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
-	<string name="exclamation_mark">"!"</string>
+	<string name="exclamation_mark">"님을 토픽 관리자로 지정하시겠습니까?"</string>
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_detail_nopreview">"미리보기 할 수 없는 형식의 파일입니다."</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
+	<string name="invite_account_alreadyinteam">"이미 팀에 참여 중인 계정입니다.
+"</string>
+	<string name="invite_account_alreadyinvited">"이미 팀에 초대 중인 계정입니다.
+"</string>
+	<string name="invite_account_blocked">"팀에서 차단된 계정입니다."</string>
+	<string name="invite_associate_desc">"초대하려는 토픽과 이메일을 선택해주세요."</string>
+	<string name="invite_associate_email_desc">"이메일을 통해 다른 준회원을 잔디로 초대할 수 있습니다."</string>
+	<string name="invite_associate_invitoronlyindefault_desc">"준회원은 Default 토픽 이외에 초대자가 참여 중인 토픽에만 초대하실 수 있습니다.
+일반 토픽에 참여 후 다시 시도해 주세요."</string>
+	<string name="invite_associate_invitoronlyindefault_title">"초대하실 수 있는 토픽이 없습니다."</string>
+	<string name="invite_associate_selecttopic_desc">"초대자가 참여 중인 토픽으로만 초대하실 수 있습니다."</string>
+	<string name="invite_associate_selecttopic_placeholder">"토픽을 선택해주세요."</string>
+	<string name="invite_associate_selecttopic_title">"초대하려는 토픽을 선택"</string>
+	<string name="invite_email_alreadyinteam">"이미 팀에 참여 중인 이메일입니다."</string>
+	<string name="invite_email_alreadyinvited">"이미 팀에 초대 중인 이메일입니다."</string>
+	<string name="invite_email_blocked">"팀에서 차단된 이메일입니다."</string>
+	<string name="invite_email_cancelinvite">"초대를 취소하시겠습니까?"</string>
+	<string name="invite_email_error_partially">"일부 메일 발송을 실패하였습니다. 
+결과 확인 후 다시 시도해 주세요."</string>
+	<string name="invite_email_error_unknown">"알 수 없는 에러에 의해 
+발송이 실패하였습니다. 
+잠시 후 다시 시도해 주세요."</string>
+	<string name="invite_email_failedtryagain">"메일 발송을 실패했습니다. 다시 시도해주세요."</string>
+	<string name="invite_email_placeholder">"이메일을 입력해주세요."</string>
+	<string name="invite_email_sending">"이메일 발송 중..."</string>
+	<string name="invite_email_sendinvitation_disable">"초대 메일 보내기"</string>
+	<string name="invite_email_sendinvitation_withcounts">"%s명에게 초대 메일 보내기"</string>
+	<string name="invite_email_success">"초대 메일을 모두 발송하였습니다."</string>
+	<string name="invite_email_title">"이메일 입력"</string>
+	<string name="invite_email_valid">"초대 가능한 이메일입니다."</string>
+	<string name="invite_member_copyurl">"초대 URL 복사하기"</string>
+	<string name="invite_member_email_desc">"이메일을 통해 다른 정회원을 잔디로 초대할 수 있습니다."</string>
+	<string name="invite_member_option_associate_desc">"
+지정된 토픽에만 접근할 수 있는 멤버입니다."</string>
+	<string name="invite_member_option_associate_title">"준회원 초대"</string>
+	<string name="invite_member_option_desc">"새로운 멤버의 권한을 선택해 주세요."</string>
+	<string name="invite_member_option_member_desc">"모든 토픽에 접근이 가능한 멤버입니다."</string>
+	<string name="invite_member_option_member_title">"정회원 초대"</string>
+	<string name="invite_member_option_title">"멤버 초대"</string>
+	<string name="invite_member_select_options">"초대 방법을 선택해주세요."</string>
 	<string name="jadi_account_home">"잔디 메인"</string>
 	<string name="jandi_1_1_message">"1:1 메시지"</string>
 	<string name="jandi_1_on_1_support">"1:1 문의하기"</string>
@@ -281,7 +339,7 @@
 	<string name="jandi_file_category_spreadsheet">"엑셀 파일"</string>
 	<string name="jandi_file_category_video">"동영상"</string>
 	<string name="jandi_file_category_zip">"압축 파일"</string>
-	<string name="jandi_file_delete">"파일 삭제"</string>
+	<string name="jandi_file_delete">"Com"</string>
 	<string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
 	<string name="jandi_file_deleted_with_date">"%s에 삭제되었습니다."</string>
 	<string name="jandi_file_downloaded_into">"%s 에 저장되었습니다."</string>
@@ -354,9 +412,9 @@
 	<string name="jandi_invite_copy_link">"주소 복사하기"</string>
 	<string name="jandi_invite_disabled">"멤버 초대 기능이 관리자에 의해 비활성화 되었습니다. 자세한 내용은 팀 관리자 %1$s에게 문의하세요."</string>
 	<string name="jandi_invite_email">"이메일로 초대"</string>
-	<string name="jandi_invite_facebook_messenger">"페이스북 메신저로 보내기"</string>
-	<string name="jandi_invite_kakao">"카카오톡으로 보내기"</string>
-	<string name="jandi_invite_line">"라인으로 보내기"</string>
+	<string name="jandi_invite_facebook_messenger">"페이스북 메신저"</string>
+	<string name="jandi_invite_kakao">"카카오톡"</string>
+	<string name="jandi_invite_line">"라인"</string>
 	<string name="jandi_invite_many_people_explain">"100명 이상의 멤버를 초대하시나요?저희에게 직접 연락 부탁드립니다: support@tosslab.com"</string>
 	<string name="jandi_invite_member">"토픽에 멤버 초대하기"</string>
 	<string name="jandi_invite_member_count">"%d명 초대하기"</string>
@@ -368,7 +426,7 @@
   초대메일을 다시 보낼까요?"</string>
 	<string name="jandi_invite_to_team">"팀으로 초대하기"</string>
 	<string name="jandi_invite_to_team_for_member">"멤버 초대하기"</string>
-	<string name="jandi_invite_wechat">"위챗으로 보내기"</string>
+	<string name="jandi_invite_wechat">"위챗"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
 	<string name="jandi_is_topic_required">"공개 여부*"</string>
@@ -769,7 +827,29 @@
 	<string name="title_file_detail">"파일 상세 정보"</string>
 	<string name="title_file_upload">"파일 업로드"</string>
 	<string name="today">"오늘"</string>
+	<string name="topic_default_invite_error_desc">"권한에 따라 일부 멤버는 
+해당 토픽에 참여가 불가합니다."</string>
+	<string name="topic_default_invite_error_title">"이 토픽에는 참여 가능한 
+모든 멤버들이 참여 중 입니다."</string>
+	<string name="topic_delete_associatejoined_desc">"이 토픽에만 참여 중인 준회원이 존재한 경우,
+ 토픽 삭제 시 팀에서도 자동 차단이 됩니다. 
+그래도 이 토픽을 삭제하시겠습니까?"</string>
+	<string name="topic_delete_associatejoined_title">"토픽을 삭제하면 활동 중인 
+준회원이 팀에서 차단될 수 있습니다."</string>
+	<string name="topic_leave_associateintopic_desc">"토픽에서 나가시려면 정회원인 
+멤버에게 토픽 관리자를 이관 후 
+나가실 수 있습니다."</string>
+	<string name="topic_leave_associateintopic_title">"회원님은 이 토픽의 관리자입니다."</string>
+	<string name="topic_memberautojoin_button">"정회원 자동 초대"</string>
+	<string name="topic_memberautojoin_desc">"새로 팀에 참여하는 모든 정회원을 이 토픽에 자동으로 초대합니다."</string>
 	<string name="topic_polls_deletedpoll">"삭제된 투표"</string>
+	<string name="topic_remove_associatewithonetopic_desc">"이 토픽에만 참여 중인 준회원입니다.
+ 토픽에서 내보낼 시 해당 준회원은 팀에서도 
+자동 차단이 됩니다. 그래도 이 토픽에서 
+내보내시겠습니까?"</string>
+	<string name="topic_remove_associatewithonetopic_remove">"내보내기"</string>
+	<string name="topic_remove_associatewithonetopic_title">"해당 준회원을 토픽에서 내보내면 
+팀에서도 차단됩니다."</string>
 	<string name="topic_room_deletetopicconfirm">"해당 토픽이 삭제되었습니다."</string>
 	<string name="topic_room_selectallmembers">"전체 선택"</string>
 	<string name="topic_topicchat_mentionall">"@all (모든 토픽 멤버)"</string>
