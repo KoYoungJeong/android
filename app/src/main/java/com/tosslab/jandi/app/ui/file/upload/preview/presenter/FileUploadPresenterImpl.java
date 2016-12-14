@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -126,7 +127,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
             fileUploadVOs.add(new FileUploadVO.Builder()
                     .entity(selectedEntityIdToBeShared)
                     .filePath(filePath)
-                    .fileName(fileUploadModel.getFileName(filePath))
+                    .fileName(FileUtil.convertAvailableFileName(fileUploadModel.getFileName(filePath)))
                     .createFileUploadInfo());
         }
 

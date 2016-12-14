@@ -59,7 +59,7 @@ public class FileListPresenterImpl implements FileListPresenter {
         endDateSubject = BehaviorSubject.create(new Date());
         pageSubject = BehaviorSubject.create(1);
         keywordSubject = BehaviorSubject.create("");
-        accessTypeSubject = BehaviorSubject.create("accessible");
+        accessTypeSubject = BehaviorSubject.create("joined");
 
         compositeSubscription = new CompositeSubscription();
         compositeSubscription.add(
