@@ -87,42 +87,40 @@ public class InvitationDialogFragment extends DialogFragment {
         final AnalyticsValue.Screen screen = getScreen(from);
 
         builder.setTitle(R.string.jandi_invite_to_team)
-                .setItems(R.array.types_invitations, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        int eventType = 0;
-                        AnalyticsValue.Action action = null;
-                        switch (which) {
-                            case 0:     // from email
-                                eventType = TYPE_INVITATION_EMAIL;
-                                action = AnalyticsValue.Action.InviteMember_Email;
-                                break;
-                            case 1:     // from kakao
-                                eventType = TYPE_INVITATION_KAKAO;
-                                action = AnalyticsValue.Action.InviteMember_KakaoTalk;
-                                break;
-                            case 2:     // from LINE
-                                eventType = TYPE_INVITATION_LINE;
-                                action = AnalyticsValue.Action.InviteMember_Line;
-                                break;
-                            case 3:     // from WeChat
-                                eventType = TYPE_INVITATION_WECHAT;
-                                action = AnalyticsValue.Action.InviteMember_WeChat;
-                                break;
-                            case 4:     // from Facebook Messenger
-                                eventType = TYPE_INVITATION_FACEBOOK_MESSENGER;
-                                action = AnalyticsValue.Action.InviteMember_FBMessenger;
-                                break;
-                            case 5:     // from Copy Link
-                                eventType = TYPE_INVITATION_COPY_LINK;
-                                action = AnalyticsValue.Action.InviteMember_CopyLink;
-                                break;
+                .setItems(R.array.types_invitations, (dialog, which) -> {
+                    int eventType = 0;
+                    AnalyticsValue.Action action = null;
+                    switch (which) {
+                        case 0:     // from email
+                            eventType = TYPE_INVITATION_EMAIL;
+                            action = AnalyticsValue.Action.InviteMember_Email;
+                            break;
+                        case 1:     // from kakao
+                            eventType = TYPE_INVITATION_KAKAO;
+                            action = AnalyticsValue.Action.InviteMember_KakaoTalk;
+                            break;
+                        case 2:     // from LINE
+                            eventType = TYPE_INVITATION_LINE;
+                            action = AnalyticsValue.Action.InviteMember_Line;
+                            break;
+                        case 3:     // from WeChat
+                            eventType = TYPE_INVITATION_WECHAT;
+                            action = AnalyticsValue.Action.InviteMember_WeChat;
+                            break;
+                        case 4:     // from Facebook Messenger
+                            eventType = TYPE_INVITATION_FACEBOOK_MESSENGER;
+                            action = AnalyticsValue.Action.InviteMember_FBMessenger;
+                            break;
+                        case 5:     // from Copy Link
+                            eventType = TYPE_INVITATION_COPY_LINK;
+                            action = AnalyticsValue.Action.InviteMember_CopyLink;
+                            break;
 
-                        }
-                        startInvitation(eventType);
-                        dismiss();
-                        if (action != null) {
-                            AnalyticsUtil.sendEvent(screen, action);
-                        }
+                    }
+                    startInvitation(eventType);
+                    dismiss();
+                    if (action != null) {
+                        AnalyticsUtil.sendEvent(screen, action);
                     }
                 })
                 .setNegativeButton(R.string.jandi_cancel,

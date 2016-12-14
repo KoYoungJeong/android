@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -52,6 +53,10 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     public static final String KEY_FILTERED_MEMBER_ID = "memberId";
 
+    public static final String KEY_IS_ONLY_SHOW_TOPIC_ROOM = "isOnlyTopicMode";
+
+    public static final String KEY_IS_SHOW_DEFAULT_TOPIC = "isShowDefaultTopic";
+
     @Inject
     InputMethodManager inputMethodManager;
 
@@ -76,12 +81,19 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     @Bind(R.id.btn_room_filter_dm)
     View btnRoomTypeDirectMessage;
 
+    @Bind(R.id.vg_room_filter_room_type)
+    ViewGroup vgRoomFilterRoomType;
+
     private ProgressWheel progressWheel;
 
     private MenuItem menuDeleteQuery;
     private MenuItem menuVoiceInput;
 
     private RoomFilterPresenter.RoomType roomType;
+
+    private boolean isOnlyShowTopicRoom;
+
+    private boolean isShowDefaultTopic = true;
 
     public static void startForResultWithDirectMessageId(Activity activity, long selectedRoomId, int requestCode) {
         Intent intent = new Intent(activity, RoomFilterActivity.class);
@@ -97,6 +109,15 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         activity.startActivityForResult(intent, requestCode);
     }
 
+    public static void startForResultForInvitation(Activity activity, int requestCode) {
+        Intent intent = new Intent(activity, RoomFilterActivity.class);
+        intent.putExtra(KEY_IS_TOPIC, false);
+        intent.putExtra(KEY_SELECTED_ROOM_ID, -1);
+        intent.putExtra(KEY_IS_ONLY_SHOW_TOPIC_ROOM, true);
+        intent.putExtra(KEY_IS_SHOW_DEFAULT_TOPIC, false);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         overridePendingTransition(R.anim.slide_in_bottom_with_alpha, 0);
@@ -108,6 +129,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         injectComponent(roomFilterAdapter);
 
         ButterKnife.bind(this);
+
+        initFilter();
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SelectRoom);
 
@@ -122,6 +145,15 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         initSelectedRoomId();
     }
 
+    private void initFilter() {
+        isOnlyShowTopicRoom = getIntent().getBooleanExtra(KEY_IS_ONLY_SHOW_TOPIC_ROOM, false);
+        if (isOnlyShowTopicRoom) {
+            vgRoomFilterRoomType.setVisibility(View.GONE);
+        } else {
+            vgRoomFilterRoomType.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void initSelectedRoomId() {
         boolean isTopic = getIntent().getBooleanExtra(KEY_IS_TOPIC, false);
         long selectedRoomId = getIntent().getLongExtra(KEY_SELECTED_ROOM_ID, -1L);
@@ -129,9 +161,12 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     }
 
     private void initRooms() {
-        btnRoomTypeTopic.setSelected(true);
+        isShowDefaultTopic = getIntent().getBooleanExtra(KEY_IS_SHOW_DEFAULT_TOPIC, true);
+        roomFilterPresenter.setShowDefaultTopic(isShowDefaultTopic);
         roomType = RoomFilterPresenter.RoomType.Topic;
-
+        if (!isOnlyShowTopicRoom) {
+            btnRoomTypeTopic.setSelected(true);
+        }
         roomFilterPresenter.onInitializeRooms(roomType);
     }
 

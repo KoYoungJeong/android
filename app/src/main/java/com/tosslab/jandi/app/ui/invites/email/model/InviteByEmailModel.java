@@ -39,7 +39,8 @@ public class InviteByEmailModel {
                 long teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
                 ReqInvitationMembers reqInvitationMembers =
-                        new ReqInvitationMembers(teamId, Arrays.asList(email), LanguageUtil.getLanguage());
+                        new ReqInvitationMembers(teamId, Arrays.asList(email), LanguageUtil.getLanguage()
+                                , 0, 0);
 
                 teamApi.get().inviteToTeam(teamId, reqInvitationMembers);
                 subscriber.onNext(email);

@@ -24,6 +24,43 @@ public class RoomFilterModel {
         return TeamInfoLoader.getInstance().getTopicFolders();
     }
 
+    public List<TopicFolder> getTopicRoomsWithFolderExceptDefaultTopic() {
+
+        //Deep Copy가 필요함 안그러면 TeamInfoLoader의 정보가 바뀜
+        List<TopicFolder> sourceTopicFolders =
+                TeamInfoLoader.getInstance().getTopicFolders();
+
+        ArrayList<TopicFolder> destTopicFolders = new ArrayList<>();
+
+        Observable.from(sourceTopicFolders)
+                .filter(topicFolder ->
+                        !(topicFolder.getRooms().size() == 1
+                                && topicFolder.getRooms().get(0).isDefaultTopic()))
+                .subscribe(topicFolder -> {
+                    try {
+                        destTopicFolders.add((TopicFolder) topicFolder.clone());
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        Observable.from(destTopicFolders)
+                .subscribe(topicFolder -> {
+                    List<TopicRoom> sourceTopicRooms = topicFolder.getRooms();
+                    List<TopicRoom> destTopicRooms = new ArrayList<>();
+                    for (int i = 0; i < sourceTopicRooms.size(); i++) {
+                        if (!sourceTopicRooms.get(i).isDefaultTopic()) {
+                            destTopicRooms.add(sourceTopicRooms.get(i));
+                        }
+                    }
+                    topicFolder.setRooms(destTopicRooms);
+
+                });
+
+        return destTopicFolders;
+
+    }
+
     public List<User> getUserList() {
         return TeamInfoLoader.getInstance().getUserList();
     }
@@ -53,12 +90,13 @@ public class RoomFilterModel {
                     }
                 })
                 .collect(() -> searchedDirectMessages, List::addAll)
-                .subscribe(it -> {}, Throwable::printStackTrace);
+                .subscribe(it -> {
+                }, Throwable::printStackTrace);
 
         return searchedDirectMessages;
     }
 
-    public List<TopicRoom> getSearchedTopics(String query) {
+    public List<TopicRoom> getSearchedTopics(String query, boolean isShowDefaultTopic) {
         List<TopicRoom> topicRooms = TeamInfoLoader.getInstance().getTopicList();
         if (topicRooms == null || topicRooms.isEmpty()) {
             return new ArrayList<>();
@@ -68,16 +106,24 @@ public class RoomFilterModel {
 
         Observable.from(topicRooms)
                 .filter(TopicRoom::isJoined)
+                .filter(topic -> {
+                    if (isShowDefaultTopic) {
+                        return true;
+                    } else {
+                        return !topic.isDefaultTopic();
+                    }
+                })
                 .filter(topic -> TextUtils.isEmpty(query)
                         || topic.getName().toLowerCase().contains(query.toLowerCase()))
                 .toSortedList((lhs, rhs) -> StringCompareUtil.compare(lhs.getName(), rhs.getName()))
                 .collect(() -> searchedTopics, List::addAll)
-                .subscribe(it -> {}, Throwable::printStackTrace);
+                .subscribe(it -> {
+                }, Throwable::printStackTrace);
 
         return searchedTopics;
     }
 
-    public List<TopicRoom> getUnfoldedTopics(List<TopicFolder> topicFolders) {
+    public List<TopicRoom> getUnfoldedTopics(List<TopicFolder> topicFolders, boolean isShowDefaultTopic) {
 
         List<TopicRoom> unFoldedTopics = new ArrayList<>();
 
@@ -88,8 +134,15 @@ public class RoomFilterModel {
                 .defaultIfEmpty(new ArrayList<>(0))
                 .concatMap(ids ->
                         Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                                .filter(topicRoom ->
-                                        topicRoom.isJoined() && !(ids.contains(topicRoom.getId()))))
+                                .filter(topicRoom -> {
+                                            if (isShowDefaultTopic) {
+                                                return true;
+                                            } else {
+                                                return !topicRoom.isDefaultTopic();
+                                            }
+                                        }
+                                )
+                                .filter(topicRoom -> topicRoom.isJoined() && !(ids.contains(topicRoom.getId()))))
                 .sorted((lhs, rhs) -> {
                     if (lhs.isStarred() && rhs.isStarred()) {
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
@@ -102,7 +155,7 @@ public class RoomFilterModel {
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     }
                 })
-                .collect(() -> unFoldedTopics, List::add)
+                .collect(() -> unFoldedTopics, (topicRooms, object) -> topicRooms.add(object))
                 .subscribe();
 
         return unFoldedTopics;

@@ -589,7 +589,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         List<String> invites = Arrays.asList(TeamInfoLoader.getInstance().getUser(memberId).getEmail());
         try {
-            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
+            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(), 0, 0));
             showSuccessReinvite();
         } catch (RetrofitException e) {
             e.printStackTrace();
