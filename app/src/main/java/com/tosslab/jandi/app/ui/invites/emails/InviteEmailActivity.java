@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -84,6 +85,8 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     private int mode = EXTRA_INVITE_MEMBER_MODE;
     private ProgressWheelForInvitation progressWheel;
 
+    private boolean sendEmailButtonStateConfirm = false;
+
 
     public static void startActivityForMember(Context context) {
         Intent intent = new Intent(context, InviteEmailActivity.class);
@@ -120,13 +123,13 @@ public class InviteEmailActivity extends BaseAppCompatActivity
         if (mode == EXTRA_INVITE_MEMBER_MODE) {
             vgSelectTopic.setVisibility(View.GONE);
             tvEmailInputDescription.setText(
-                    JandiApplication.getContext().getString(R.string.invite_member_email_desc));
+                    getString(R.string.invite_member_email_desc));
             getSupportActionBar().setTitle(
                     JandiApplication.getContext().getString(R.string.invite_member_option_member_title));
         } else {
             vgSelectTopic.setVisibility(View.VISIBLE);
             tvEmailInputDescription.setText(
-                    JandiApplication.getContext().getString(R.string.invite_associate_email_desc));
+                    getString(R.string.invite_associate_email_desc));
             getSupportActionBar().setTitle(
                     JandiApplication.getContext().getString(R.string.invite_member_option_associate_title));
         }
@@ -209,7 +212,11 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                if (vgEmailList.getChildCount() > 0) {
+                    showCancelDialog();
+                } else {
+                    finish();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -218,12 +225,12 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     @Override
     public void enableAddButton(boolean isEnable) {
         if (isEnable) {
-            tvAddEmailButton.setBackground(JandiApplication.getContext()
-                    .getResources().getDrawable(R.drawable.bg_round_rect_2pt_00ace9));
+            tvAddEmailButton.setBackground(
+                    getResources().getDrawable(R.drawable.bg_round_rect_2pt_00ace9));
             tvAddEmailButton.setClickable(true);
         } else {
-            tvAddEmailButton.setBackground(JandiApplication.getContext()
-                    .getResources().getDrawable(R.drawable.bg_round_rect_2pt_999999));
+            tvAddEmailButton.setBackground(
+                    getResources().getDrawable(R.drawable.bg_round_rect_2pt_999999));
             tvAddEmailButton.setClickable(false);
         }
     }
@@ -231,6 +238,7 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     @SuppressLint("StringFormatInvalid")
     @Override
     public void changeContentInvitationButton(int cnt) {
+        sendEmailButtonStateConfirm = false;
         if (cnt > 0) {
             tvSendInvitationEmailButton.setText(
                     getString(R.string.invite_email_sendinvitation_withcounts, cnt + ""));
@@ -246,8 +254,21 @@ public class InviteEmailActivity extends BaseAppCompatActivity
         }
     }
 
+    @Override
+    public void changeInvitationButtonIfPatiallyFailed() {
+        sendEmailButtonStateConfirm = true;
+        tvSendInvitationEmailButton.setText(
+                getString(R.string.jandi_confirm));
+        tvSendInvitationEmailButton.setBackgroundColor(0xff00ace9);
+    }
+
     @OnClick(R.id.tv_send_invitation_email_button)
     public void onClickSendInvitationEmails() {
+        if (sendEmailButtonStateConfirm) {
+            finish();
+            return;
+        }
+
         if (mode == EXTRA_INVITE_MEMBER_MODE) {
             inviteEmailPresenter.startInvitation();
         } else if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
@@ -257,19 +278,13 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
     @Override
     public void setErrorInputSelectedEmail() {
-        etInputEmail.setHint(JandiApplication.getContext()
-                .getString(R.string.invite_email_placeholder));
+        etInputEmail.setHint(getString(R.string.invite_email_placeholder));
         etInputEmail.setHintTextColor(0xfff15544);
     }
 
     @Override
     public void setErrorSelectedTopic() {
         tvTopicTitle.setTextColor(0xfff15544);
-    }
-
-    @Override
-    public void finished() {
-        finish();
     }
 
     @Override
@@ -290,6 +305,52 @@ public class InviteEmailActivity extends BaseAppCompatActivity
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
+    }
+
+    @Override
+    public void showUnkownFailedDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(getString(R.string.invite_email_error_unknown))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
+                        })
+                .create().show();
+    }
+
+    @Override
+    public void showPartiallyFailedDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(getString(R.string.invite_email_error_partially))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
+                        })
+                .create().show();
+    }
+
+    @Override
+    public void showSuccessDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(getString(R.string.invite_email_success))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
+                            finish();
+                        })
+                .create().show();
+    }
+
+    private void showCancelDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(getString(R.string.invite_email_cancelinvite))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
+                            finish();
+                        }).setNegativeButton(getResources().getString(R.string.jandi_cancel),
+                (dialog, id) -> {
+                }).create().show();
     }
 
 }

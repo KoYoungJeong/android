@@ -176,12 +176,13 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
                     break;
                 case UNDEFINE:
                     if (!teamOwner) {
-                        showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
+                        showErrorToast(JandiApplication.getContext()
+                                .getString(R.string.err_entity_invite));
                     }
                     break;
                 case DISABLE:
                     if (!teamOwner) {
-                        showTextDialog(JandiApplication.getContext().getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                        showErrorInviteDisabledDialog();
                     }
                     break;
             }
@@ -206,8 +207,12 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
 
             view.findViewById(R.id.vg_invite_associate)
                     .setOnClickListener(v -> {
-                        InviteEmailActivity.startActivityForAssociate(getActivity());
-                        invitationDialog.dismiss();
+                        if (hasNonDefaultTopic()) {
+                            InviteEmailActivity.startActivityForAssociate(getActivity());
+                            invitationDialog.dismiss();
+                        } else {
+                            showErrorNotAvailableInviteTopicDialog();
+                        }
                     });
 
             view.findViewById(R.id.vg_invite_member)
@@ -286,6 +291,16 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
         }
     }
 
+    private boolean hasNonDefaultTopic() {
+        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(topic -> topic.isJoined())
+                .filter(topic -> !topic.isDefaultTopic())
+                .count()
+                .map(cnt -> cnt > 0)
+                .toBlocking()
+                .firstOrDefault(false);
+    }
+
     private String getOwnerName() {
         List<User> users = TeamInfoLoader.getInstance().getUserList();
         return Observable.from(users)
@@ -299,9 +314,10 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
         ColoredToast.showError(message);
     }
 
-    private void showTextDialog(String alertText) {
+    private void showErrorInviteDisabledDialog() {
         new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setMessage(alertText)
+                .setMessage(JandiApplication.getContext()
+                        .getString(R.string.jandi_invite_disabled, getOwnerName()))
                 .setCancelable(false)
                 .setPositiveButton(getActivity().getResources().getString(R.string.jandi_confirm),
                         (dialog, id) -> {
@@ -309,6 +325,19 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
                                     AnalyticsValue.Screen.TeamTab,
                                     AnalyticsValue.Action.InviteMember_InviteDisabled);
                             dialog.dismiss();
+                        })
+                .create().show();
+    }
+
+    private void showErrorNotAvailableInviteTopicDialog() {
+        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(JandiApplication.getContext()
+                        .getString(R.string.invite_associate_invitoronlyindefault_title))
+                .setMessage(JandiApplication.getContext()
+                        .getString(R.string.invite_associate_invitoronlyindefault_desc))
+                .setCancelable(false)
+                .setPositiveButton(getActivity().getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
                         })
                 .create().show();
     }

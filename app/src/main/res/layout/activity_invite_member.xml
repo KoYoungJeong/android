@@ -76,7 +76,7 @@
                 android:layout_marginTop="15dp"
                 android:color="@color/rgb_999999"
                 android:gravity="center"
-                android:text="카카오톡"
+                android:text="@string/jandi_invite_kakao"
                 android:textSize="14dp" />
 
         </LinearLayout>
@@ -99,7 +99,7 @@
                 android:layout_marginTop="15dp"
                 android:color="@color/rgb_999999"
                 android:gravity="center"
-                android:text="라인"
+                android:text="@string/jandi_invite_line"
                 android:textSize="14dp" />
 
         </LinearLayout>
@@ -135,7 +135,7 @@
                 android:layout_marginTop="15dp"
                 android:color="@color/rgb_999999"
                 android:gravity="center"
-                android:text="페이스북 메신저"
+                android:text="@string/jandi_invite_facebook_messenger"
                 android:textSize="14dp" />
 
         </LinearLayout>
@@ -158,7 +158,7 @@
                 android:layout_marginTop="15dp"
                 android:color="@color/rgb_999999"
                 android:gravity="center"
-                android:text="위챗"
+                android:text="@string/jandi_invite_wechat"
                 android:textSize="14dp" />
 
         </LinearLayout>
@@ -184,7 +184,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:paddingTop="16dp"
-            android:text="초대 URL"
+            android:text="@string/invite_member_copyurl_title"
             android:textColor="@color/rgb_333333"
             android:textSize="16dp" />
 

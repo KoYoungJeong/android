@@ -15,4 +15,5 @@ public interface InviteEmailListAdapterDataModel {
     void removeAllItems();
 
     List<InviteEmailVO> getItems();
+
 }

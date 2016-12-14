@@ -25,7 +25,7 @@ public class InviteEmailVO {
         this.status = status;
     }
 
-    public static enum Status {
-        AVAILABLE, JOINED, DUMMY, BLOCKED
+    public enum Status {
+        AVAILABLE, JOINED, DUMMY, BLOCKED, ACCOUNT_JOIN, ACCOUNT_DUMMY, ACCOUNT_BLOCKED
     }
 }

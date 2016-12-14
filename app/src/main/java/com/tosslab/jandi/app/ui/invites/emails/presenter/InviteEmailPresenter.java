@@ -27,10 +27,16 @@ public interface InviteEmailPresenter {
 
         void setErrorSelectedTopic();
 
-        void finished();
-
         void showProgressWheel();
 
         void dismissProgressWheel();
+
+        void showUnkownFailedDialog();
+
+        void showPartiallyFailedDialog();
+
+        void showSuccessDialog();
+
+        void changeInvitationButtonIfPatiallyFailed();
     }
 }

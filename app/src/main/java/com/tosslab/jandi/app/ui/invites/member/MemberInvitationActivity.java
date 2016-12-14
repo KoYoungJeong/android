@@ -152,6 +152,4 @@ public class MemberInvitationActivity extends BaseAppCompatActivity {
                 .create().show();
     }
 
-
-
 }

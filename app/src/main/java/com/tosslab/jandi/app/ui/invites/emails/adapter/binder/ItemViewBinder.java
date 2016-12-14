@@ -71,6 +71,24 @@ public class ItemViewBinder {
             tvStatusMessage.setTextColor(0xfff15544);
             tvStatusMessage.setText(JandiApplication.getContext()
                     .getText(R.string.invite_email_blocked));
+        } else if (item.getStatus() == InviteEmailVO.Status.ACCOUNT_JOIN) {
+            vStatusDot.setImageDrawable(JandiApplication.getContext()
+                    .getResources().getDrawable(R.drawable.email_validation_red));
+            tvStatusMessage.setTextColor(0xfff15544);
+            tvStatusMessage.setText(JandiApplication.getContext()
+                    .getText(R.string.invite_account_alreadyinteam));
+        } else if (item.getStatus() == InviteEmailVO.Status.ACCOUNT_DUMMY) {
+            vStatusDot.setImageDrawable(JandiApplication.getContext()
+                    .getResources().getDrawable(R.drawable.email_validation_red));
+            tvStatusMessage.setTextColor(0xfff15544);
+            tvStatusMessage.setText(JandiApplication.getContext()
+                    .getText(R.string.invite_account_alreadyinvited));
+        } else if (item.getStatus() == InviteEmailVO.Status.ACCOUNT_BLOCKED) {
+            vStatusDot.setImageDrawable(JandiApplication.getContext()
+                    .getResources().getDrawable(R.drawable.email_validation_red));
+            tvStatusMessage.setTextColor(0xfff15544);
+            tvStatusMessage.setText(JandiApplication.getContext()
+                    .getText(R.string.invite_account_blocked));
         }
 
         tvEmail.setText(item.getEmail());

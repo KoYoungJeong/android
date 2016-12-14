@@ -123,10 +123,15 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(resInvitations -> {
                             view.dismissProgressWheel();
-                            view.finished();
+                            if (checkSuccessSendingEmails(resInvitations)) {
+                                view.showSuccessDialog();
+                            } else {
+                                view.changeInvitationButtonIfPatiallyFailed();
+                                view.showPartiallyFailedDialog();
+                            }
                         }, t -> {
                             view.dismissProgressWheel();
-                            view.finished();
+                            view.showUnkownFailedDialog();
                         });
             }
         } else {
@@ -146,13 +151,52 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(resInvitations -> {
                         view.dismissProgressWheel();
-                        view.finished();
+                        if (checkSuccessSendingEmails(resInvitations)) {
+                            view.showSuccessDialog();
+                        } else {
+                            view.changeInvitationButtonIfPatiallyFailed();
+                            view.showPartiallyFailedDialog();
+                        }
                     }, t -> {
                         view.dismissProgressWheel();
-                        view.finished();
+                        view.showUnkownFailedDialog();
                     });
         } else {
             view.setErrorInputSelectedEmail();
         }
     }
+
+    private boolean checkSuccessSendingEmails(List<ResInvitationMembers> resInvitations) {
+        boolean[] isSuccess = new boolean[1];
+        isSuccess[0] = true;
+        Observable.from(resInvitations)
+                .subscribe(resInvitation -> {
+                    if (!resInvitation.isSuccess()) {
+                        if (isSuccess[0]) {
+                            isSuccess[0] = false;
+                            adapterDataModel.removeAllItems();
+                        }
+                        InviteEmailVO item = new InviteEmailVO();
+                        item.setEmail(resInvitation.getEmail());
+                        item.setStatus(getStatusByCode(resInvitation.getCode()));
+                        adapterDataModel.addItem(item);
+                    }
+                });
+        return isSuccess[0];
+    }
+
+    private InviteEmailVO.Status getStatusByCode(int code) {
+        // 차단된 멤버 초대
+        if (code == 40301) {
+            return InviteEmailVO.Status.ACCOUNT_BLOCKED;
+        }// 이미 팀 멤버
+        else if (code == 40304) {
+            return InviteEmailVO.Status.ACCOUNT_JOIN;
+        }// 이미 초대 중인 이메일 or 이전 초대와 다른 Level로 초대
+        else if (code == 40306 || code == 40023) {
+            return InviteEmailVO.Status.ACCOUNT_DUMMY;
+        }
+        return InviteEmailVO.Status.ACCOUNT_JOIN;
+    }
+
 }

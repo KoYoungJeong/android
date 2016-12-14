@@ -11,50 +11,50 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResInvitationMembers {
 
-    private String account;
     private String email;
     @JsonProperty("success")
     private boolean isSuccess;
+    private int code;
     private String msg;
 
     public String getEmail() {
         return email;
     }
 
-    public boolean isSuccess() {
-        return isSuccess;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isSuccess() {
+        return isSuccess;
     }
 
     public void setSuccess(boolean isSuccess) {
         this.isSuccess = isSuccess;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     @Override
     public String toString() {
         return "ResInvitationMembers{" +
-                "account='" + account + '\'' +
                 ", email='" + email + '\'' +
                 ", isSuccess=" + isSuccess +
+                ", code=" + code +
                 ", msg='" + msg + '\'' +
                 '}';
     }
