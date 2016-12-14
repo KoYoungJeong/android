@@ -55,10 +55,10 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     TextView tvUserDepartment;
     @Bind(R.id.tv_job_title)
     TextView tvUserJobTitle;
-    @Bind(R.id.tv_owner_badge)
-    TextView tvOwnerBadge;
-    @Bind(R.id.vg_owner_badge)
-    LinearLayout vgOwnerBadge;
+    @Bind(R.id.tv_authority_badge)
+    TextView tvAuthorityBadge;
+    @Bind(R.id.vg_authority_badge)
+    LinearLayout vgAuthorityBadge;
     @Bind(R.id.vg_user_kick)
     ViewGroup vgUserKick;
     @Bind(R.id.iv_user_kick)
@@ -81,7 +81,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         super(itemView);
         ButterKnife.bind(this, itemView);
 
-        teamOwnerPaddingTop = vgOwnerBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
+        teamOwnerPaddingTop = vgAuthorityBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
     }
 
     public static MemberViewHolder createForUser(ViewGroup parent) {
@@ -178,16 +178,16 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         String department = item.getDepartment();
         if (TextUtils.isEmpty(department)) {
             tvUserDepartment.setVisibility(View.GONE);
-            vgOwnerBadge.setGravity(Gravity.CENTER_VERTICAL);
-            vgOwnerBadge.setPadding(0, 0, 0, 0);
+            vgAuthorityBadge.setGravity(Gravity.CENTER_VERTICAL);
+            vgAuthorityBadge.setPadding(0, 0, 0, 0);
         } else {
             tvUserDepartment.setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
             tvUserDepartment.setText(department);
-            vgOwnerBadge.setGravity(Gravity.NO_GRAVITY);
-            vgOwnerBadge.setPadding(0, teamOwnerPaddingTop, 0, 0);
+            vgAuthorityBadge.setGravity(Gravity.NO_GRAVITY);
+            vgAuthorityBadge.setPadding(0, teamOwnerPaddingTop, 0, 0);
         }
 
         String jobTitle = item.getJobTitle();
@@ -257,19 +257,19 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             vgUserSelected.setVisibility(View.GONE);
         }
 
-        Resources resources = tvOwnerBadge.getResources();
+        Resources resources = tvAuthorityBadge.getResources();
 
-        tvOwnerBadge.setText(isTeamMemberList
+        tvAuthorityBadge.setText(isTeamMemberList
                 ? resources.getString(R.string.jandi_team_owner)
                 : resources.getString(R.string.jandi_topic_owner));
 
-        tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
+        tvAuthorityBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
 
         if (item.isOwner()) {
-            Paint ownerBadgePaint = tvOwnerBadge.getPaint();
+            Paint ownerBadgePaint = tvAuthorityBadge.getPaint();
             int ownerPadding = (int) UiUtils.getPixelFromDp(14);
             int ownerMargin = (int) UiUtils.getPixelFromDp(16);
-            int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvOwnerBadge.getText().toString()) + ownerPadding;
+            int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvAuthorityBadge.getText().toString()) + ownerPadding;
 
             contentLP.width = contentLP.width - ownerBadgeWidth;
 
