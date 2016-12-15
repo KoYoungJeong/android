@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,12 +17,11 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.start.Announcement;
-import com.tosslab.jandi.app.network.models.start.Bot;
-import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -109,18 +107,17 @@ public class AnnouncementViewModel {
         Date writtenAt = announcement.getWrittenAt();
         String content = announcement.getContent();
 
-        Human human = HumanRepository.getInstance().getHuman(writerId);
-        Bot bot = BotRepository.getInstance().getBot(writerId);
 
         boolean isBot = false;
         boolean isJandiBot = false;
         String name;
         String profileUrl;
 
-        if (human != null) {
-            name = human.getName();
-            profileUrl = human.getPhotoUrl();
-            if (TextUtils.equals(human.getStatus(), "disabled")) {
+        if (TeamInfoLoader.getInstance().isUser(writerId)) {
+            User user = TeamInfoLoader.getInstance().getUser(writerId);
+            name = user.getName();
+            profileUrl = user.getPhotoUrl();
+            if (!user.isEnabled()) {
                 tvAnnouncementUserName.setPaintFlags(
                         tvAnnouncementUserName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 ivAnnouncementUser.setColorFilter(0x85ffffff);
@@ -131,13 +128,14 @@ public class AnnouncementViewModel {
                 }
                 ivAnnouncementUser.clearColorFilter();
             }
-        } else if (bot != null) {
+
+            isJandiBot = user.isBot();
+
+        } else if (TeamInfoLoader.getInstance().isBot(writerId)) {
             isBot = true;
+            WebhookBot bot = TeamInfoLoader.getInstance().getBot(writerId);
             name = bot.getName();
             profileUrl = bot.getPhotoUrl();
-            if (TextUtils.equals(bot.getType(), "jandi_bot")) {
-                isJandiBot = true;
-            }
         } else {
             vgAnnouncement.setVisibility(View.GONE);
             return;
@@ -146,22 +144,22 @@ public class AnnouncementViewModel {
         vgAnnouncement.setVisibility(View.VISIBLE);
 
         if (isBot) {
+            ImageLoader.newInstance()
+                    .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
+                    .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
+                    .transformation(new JandiProfileTransform(ivAnnouncementUser.getContext(),
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
+                            TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
+                            Color.TRANSPARENT))
+                    .uri(Uri.parse(profileUrl))
+                    .into(ivAnnouncementUser);
+        } else {
             if (isJandiBot) {
                 ivAnnouncementUser.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                 ImageLoader.loadFromResources(ivAnnouncementUser, R.drawable.logotype_80);
             } else {
-                ImageLoader.newInstance()
-                        .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
-                        .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                        .transformation(new JandiProfileTransform(ivAnnouncementUser.getContext(),
-                                TransformConfig.DEFAULT_CIRCLE_BORDER_WIDTH,
-                                TransformConfig.DEFAULT_CIRCLE_BORDER_COLOR,
-                                Color.TRANSPARENT))
-                        .uri(Uri.parse(profileUrl))
-                        .into(ivAnnouncementUser);
+                ImageUtil.loadProfileImage(ivAnnouncementUser, profileUrl, R.drawable.profile_img);
             }
-        } else {
-            ImageUtil.loadProfileImage(ivAnnouncementUser, profileUrl, R.drawable.profile_img);
         }
 
         final boolean finalIsBot = isBot;
