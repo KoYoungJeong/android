@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -70,15 +71,17 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
     @Override
     public void onCreate() {
         filterSubject = BehaviorSubject.create("");
+
         filterSubscription = filterSubject
                 .throttleLast(100, TimeUnit.MILLISECONDS)
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.computation())
                 .map(String::toLowerCase)
-                .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .concatMap(it -> Observable.from(getUserList())
                         .filter(User::isEnabled)
                         .filter(user -> user.getName().toLowerCase().contains(it))
                         .filter(user -> {
+
                             if (!selectMode && roomId < 0) {
                                 // bot 아닌 것만 통과
                                 return !user.isBot();
@@ -107,10 +110,10 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                             // 1인 pick 모드
                             return Observable.just(TextUtils.isEmpty(it) && selectMode && roomId < 0)
                                     .filter(pickmode -> pickmode)
-                                    .flatMap(ttt -> Observable.from(TeamInfoLoader.getInstance().getUserList()))
-                                    .map(User::isEnabled) // enabled 상태 받음
-                                    .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
-                                    .map(disabld -> new TeamDisabledMemberItem(null, it));
+                                    .flatMap(ttt -> Observable.from(getUserList())
+                                            .map(User::isEnabled) // enabled 상태 받음
+                                            .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
+                                            .map(disabld -> new TeamDisabledMemberItem(null, it)));
                         }))
                         .compose(sort())
                         .compose(textToSpan(it)))
@@ -133,6 +136,23 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                     }
                 }, Throwable::printStackTrace);
 
+    }
+
+    private List<User> getUserList() {
+        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+            List<User> userList = new ArrayList<>();
+
+            Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(topic -> topic.isJoined())
+                    .concatMap(topic -> Observable.from(topic.getMembers()))
+                    .distinct()
+                    .subscribe(memberId -> {
+                        userList.add(TeamInfoLoader.getInstance().getUser(memberId));
+                    });
+            return userList;
+        } else {
+            return TeamInfoLoader.getInstance().getUserList();
+        }
     }
 
     private Observable.Transformer<? super List<TeamMemberItem>, ? extends List<TeamMemberItem>> textToSpan(String it) {

@@ -7,10 +7,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
@@ -44,6 +46,9 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
     @Bind(R.id.label_team_info_member_count)
     ProfileLabelView labelTeamMemberCount;
 
+    @Bind(R.id.btn_team_info_invite)
+    TextView BtnTeaminfoInvite;
+
     public static void start(Context context) {
         Intent starter = new Intent(context, TeamInfoActivity.class);
         context.startActivity(starter);
@@ -63,7 +68,13 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
         setUpTeamAdmin();
         setUpMemberCount();
         setUpAppVersion();
+        setUpAuthority();
+    }
 
+    private void setUpAuthority() {
+        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+            BtnTeaminfoInvite.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -42,7 +42,7 @@
         android:id="@+id/label_team_info_admin"
         style="@style/JandiMemberProfile.Profile"
         android:layout_below="@+id/label_team_info_url"
-        app:textTitle="@string/jandi_team_admin" />
+        app:textTitle="@string/common_authority_title_owner" />
 
     <View
         android:layout_width="match_parent"

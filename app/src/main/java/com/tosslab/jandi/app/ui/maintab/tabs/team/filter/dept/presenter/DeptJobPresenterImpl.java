@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.search.MemberRecentKeywordRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
@@ -15,6 +16,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.domain.DeptJob;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.model.DeptJobModel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -71,7 +73,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
         subscription.add(searchObservable.filter(it -> type == DeptJobFragment.EXTRA_TYPE_DEPT)
                 .map(String::toLowerCase)
                 .observeOn(Schedulers.computation())
-                .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .concatMap(it -> Observable.from(getUserList())
                         .filter(User::isEnabled)
                         .filter(user -> {
                             if (!isSelectMode && roomId < 0) {
@@ -119,7 +121,7 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
         subscription.add(searchObservable.filter(it -> type == DeptJobFragment.EXTRA_TYPE_JOB)
                 .map(String::toLowerCase)
                 .observeOn(Schedulers.computation())
-                .concatMap(it -> Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .concatMap(it -> Observable.from(getUserList())
                         .filter(User::isEnabled)
                         .filter(user -> {
                             if (!isSelectMode && roomId < 0) {
@@ -164,6 +166,23 @@ public class DeptJobPresenterImpl implements DeptJobPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::addDatas, Throwable::printStackTrace));
 
+    }
+
+    private List<User> getUserList() {
+        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+            List<User> userList = new ArrayList<>();
+
+            Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(topic -> topic.isJoined())
+                    .concatMap(topic -> Observable.from(topic.getMembers()))
+                    .distinct()
+                    .subscribe(memberId -> {
+                        userList.add(TeamInfoLoader.getInstance().getUser(memberId));
+                    });
+            return userList;
+        } else {
+            return TeamInfoLoader.getInstance().getUserList();
+        }
     }
 
 
