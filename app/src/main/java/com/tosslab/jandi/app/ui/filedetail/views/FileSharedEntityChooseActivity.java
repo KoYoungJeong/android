@@ -106,7 +106,7 @@ public class FileSharedEntityChooseActivity extends BaseAppCompatActivity {
         long myId = fileDetailModel.getMyId();
 
         List<EntitySimpleListAdapter.SimpleEntity> simpleEntities = new ArrayList<>();
-        boolean guest = TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
 
         Observable.create((Subscriber<? super Long> subscriber) -> {
             if (sharedEntities != null) {

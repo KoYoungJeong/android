@@ -132,9 +132,9 @@ public class ExpandableTopicAdapter
 
     @Override
     public int getChildItemViewType(int groupPosition, int childPosition) {
-        long childId = getChildId(groupPosition, childPosition);
+        TopicItemData topic = getTopicItemData(groupPosition, childPosition);
         // 더미인 경우에만 처리하도록 함
-        if (childId <= 0 && groupPosition == getGroupCount() - 1 &&
+        if (topic.getEntityId() <= 0 && groupPosition == getGroupCount() - 1 &&
                 childPosition == getChildCount(groupPosition) - 1) {
             return TYPE_FOR_JOIN_TOPIC_BUTTON;
         }

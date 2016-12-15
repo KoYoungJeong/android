@@ -66,7 +66,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (position < getItemCount() - 1) {
             return 0;
         } else {
-            return TYPE_JOIN_TOPIC;
+            if (getItem(position).getEntityId() > 0) {
+                return 0;
+            } else {
+                return TYPE_JOIN_TOPIC;
+            }
         }
     }
 

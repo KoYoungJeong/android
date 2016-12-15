@@ -187,8 +187,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
         ssb.append("  ");
         int firstLength = ssb.length();
 
-        boolean guest = TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
-        long myId = TeamInfoLoader.getInstance().getMyId();
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
 
         Observable.from(shareEntities)
                 .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
@@ -215,9 +214,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
                     }
                 })
                 .doOnNext(id -> {
-                    if (ssb.length() > firstLength) {
-                        ssb.append(", ");
-                    }
+
                 })
                 .subscribe(id -> {
                     int entityType;

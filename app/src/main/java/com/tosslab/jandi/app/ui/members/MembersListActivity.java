@@ -30,6 +30,8 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
 import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
+import com.tosslab.jandi.app.ui.members.dagger.DaggerMemberListComponent;
+import com.tosslab.jandi.app.ui.members.dagger.MemberListModule;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
@@ -48,6 +50,8 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -71,6 +75,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @InjectExtra
     int type;
 
+    @Inject
     MembersListPresenter membersListPresenter;
 
     @Bind(R.id.list_topic_member)
@@ -107,6 +112,8 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     void initObject() {
+        DaggerMemberListComponent.builder().memberListModule(new MemberListModule(this))
+                .build().inject(this);
         invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
         invitationViewModel = InvitationViewModel_.getInstance_(this);
 

@@ -373,6 +373,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             }
         } else {
             vgLeave.setVisibility(View.GONE);
+            viewDividerDelete.setVisibility(View.GONE);
         }
     }
 
