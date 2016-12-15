@@ -13,8 +13,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -77,9 +76,7 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
 
     @OnClick(R.id.btn_team_info_invite)
     void inviteMember() {
-        InvitationDialogExecutor inviteExecutor = InvitationDialogExecutor_.getInstance_(TeamInfoActivity.this);
-        inviteExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_TEAM);
-        inviteExecutor.execute();
+        InviteDialogExecutor.getInstance().executeInvite(this);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamInformation, AnalyticsValue.Action.InviteMember);
     }
 

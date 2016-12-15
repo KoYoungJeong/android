@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
 import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
-import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -51,8 +50,7 @@ import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.component.DaggerMainTabComponent;
 import com.tosslab.jandi.app.ui.maintab.module.MainTabModule;
 import com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment;
@@ -155,7 +153,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private TabView tabMyPage;
     private MainTabPagerAdapter tabPagerAdapter;
     private int navigationDirection;
-    private InvitationDialogExecutor invitationDialogExecutor;
 
     private boolean swiping = true;
     private boolean isFirstLoadActivity = true;
@@ -270,11 +267,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(v -> {
             dialog.dismiss();
 
-            if (invitationDialogExecutor == null) {
-                invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
-            }
-            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
-            invitationDialogExecutor.execute();
+            InviteDialogExecutor.getInstance().executeInvite(this);
 
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteTeamMember, AnalyticsValue.Action.SendInvitations);
         });
@@ -533,15 +526,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         if (selectedTeamInfo != null) {
             tvTitle.setText(selectedTeamInfo.getName());
         }
-    }
-
-    public void onEventMainThread(RequestInviteMemberEvent event) {
-        int from = event.getFrom() > 0 ? event.getFrom() : InvitationDialogExecutor.FROM_MAIN_INVITE;
-        if (invitationDialogExecutor == null) {
-            invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
-        }
-        invitationDialogExecutor.setFrom(from);
-        invitationDialogExecutor.execute();
     }
 
     @OnClick(R.id.vg_main_offline)

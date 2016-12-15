@@ -44,8 +44,8 @@ import de.greenrobot.event.EventBus;
 
 public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter.View {
 
-    private static final int REQ_DISABLED_MEMBERS = 901;
     public static final String EXTRA_ENTITY_ID = "entity_id";
+    private static final int REQ_DISABLED_MEMBERS = 901;
     @Bind(R.id.lv_chat_choose)
     RecyclerView lvChatChoose;
 
@@ -194,7 +194,7 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
 
     @OnClick(R.id.btn_chat_choose_member_empty)
     public void invitationDialogExecution() {
-        presenter.invite();
+        presenter.invite(getContext());
 
     }
 

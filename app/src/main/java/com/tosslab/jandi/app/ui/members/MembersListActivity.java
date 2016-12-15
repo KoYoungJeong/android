@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
@@ -82,9 +82,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @ViewById(R.id.vg_team_member_empty)
     View vEmptyTeamMember;
-
-    @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
 
     private ProgressWheel mProgressWheel;
 
@@ -261,8 +258,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @OptionsItem(R.id.action_invitation)
     void onInviteOptionSelect() {
         if (type == TYPE_MEMBERS_LIST_TEAM) {
-            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
-            invitationDialogExecutor.execute();
+            InviteDialogExecutor.getInstance().executeInvite(this);
         } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.inviteMemberToTopic(entityId);
         }

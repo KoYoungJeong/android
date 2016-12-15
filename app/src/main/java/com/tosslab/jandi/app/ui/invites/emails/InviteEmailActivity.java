@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -166,6 +168,21 @@ public class InviteEmailActivity extends BaseAppCompatActivity
                 }
                 inviteEmailPresenter.setStatusByEmailValid(s.toString());
             }
+        });
+
+        etInputEmail.setOnEditorActionListener((view, actionId, event) -> {
+            int result = actionId & EditorInfo.IME_MASK_ACTION;
+            switch (result) {
+                case EditorInfo.IME_ACTION_DONE:
+                case EditorInfo.IME_ACTION_NEXT:
+                    if (tvAddEmailButton.isClickable()) {
+                        onClickAddEmailButton();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(etInputEmail.getWindowToken(), 0);
+                    }
+                    break;
+            }
+            return false;
         });
 
     }

@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialogModel;
@@ -47,8 +46,6 @@ public interface ApiClientComponent {
     void inject(MembersModel membersModel);
 
     void inject(MainTopicModel mainTopicModel);
-
-    void inject(InvitationDialogExecutor invitationDialogExecutor);
 
     void inject(AnnouncementModel announcementModel);
 

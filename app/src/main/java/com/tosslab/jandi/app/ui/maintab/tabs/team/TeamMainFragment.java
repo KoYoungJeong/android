@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team;
 
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,17 +18,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import com.tosslab.jandi.app.Henson;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.invites.email.InviteByEmailActivity;
-import com.tosslab.jandi.app.ui.invites.emails.InviteEmailActivity;
-import com.tosslab.jandi.app.ui.invites.member.MemberInvitationActivity;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
@@ -39,12 +31,9 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Completable;
-import rx.Observable;
 import rx.schedulers.Schedulers;
 
 public class TeamMainFragment extends Fragment implements TabFocusListener {
@@ -54,8 +43,6 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
 
     @Bind(R.id.viewpager_team_main)
     ViewPager viewPager;
-
-    private AlertDialog invitationDialog = null;
 
     @Nullable
     @Override
@@ -133,8 +120,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_team_add:
-//                EventBus.getDefault().post(new RequestInviteMemberEvent(InvitationDialogExecutor.FROM_MAIN_TEAM));
-                executeInvite();
+                InviteDialogExecutor.getInstance().executeInvite(getContext());
                 break;
             case R.id.menu_team_info:
                 TeamInfoActivity.start(getActivity());
@@ -151,88 +137,6 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private AvailableState availableState(String invitationStatus, String invitationUrl) {
-        if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
-            return AvailableState.UNDEFINE;
-        }
-        if (TextUtils.isEmpty(invitationStatus) || TextUtils.equals(invitationStatus, "disabled")) {
-            return AvailableState.DISABLE;
-        }
-        return AvailableState.AVAIL;
-    }
-
-    public void executeInvite() {
-        try {
-            TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-            boolean teamOwner = teamInfoLoader.getUser(teamInfoLoader.getMyId()).isTeamOwner();
-            String invitationStatus = teamInfoLoader.getInvitationStatus();
-            String invitationUrl = teamInfoLoader.getInvitationUrl();
-            AvailableState availableState = availableState(invitationStatus, invitationUrl);
-            switch (availableState) {
-                case AVAIL:
-                    showInvitationDialog();
-                    break;
-                case UNDEFINE:
-                    if (!teamOwner) {
-                        showErrorToast(JandiApplication.getContext()
-                                .getString(R.string.err_entity_invite));
-                    }
-                    break;
-                case DISABLE:
-                    if (!teamOwner) {
-                        showErrorInviteDisabledDialog();
-                    }
-                    break;
-            }
-
-            if (teamOwner && availableState != AvailableState.AVAIL) {
-                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
-                Intent intent = new Intent(getActivity(), InviteByEmailActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
-        }
-    }
-
-    public void showInvitationDialog() {
-        if (invitationDialog == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300);
-
-            android.view.View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_invitation_user, null);
-
-            view.findViewById(R.id.vg_invite_associate)
-                    .setOnClickListener(v -> {
-                        if (hasNonDefaultTopic()) {
-                            InviteEmailActivity.startActivityForAssociate(getActivity());
-                            invitationDialog.dismiss();
-                        } else {
-                            showErrorNotAvailableInviteTopicDialog();
-                        }
-                    });
-
-            view.findViewById(R.id.vg_invite_member)
-                    .setOnClickListener(v -> {
-                        Intent intent = new Intent(getActivity(), MemberInvitationActivity.class);
-                        startActivity(intent);
-                        invitationDialog.dismiss();
-                    });
-
-            invitationDialog = builder
-                    .setTitle(JandiApplication.getContext().getString(R.string.invite_member_option_title))
-                    .setView(view)
-                    .setNegativeButton(this.getResources().getString(R.string.jandi_cancel),
-                            (dialog, id) -> dialog.dismiss())
-                    .create();
-        }
-
-        if (!invitationDialog.isShowing()) {
-            invitationDialog.show();
-        }
     }
 
     @Override
@@ -290,60 +194,4 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
 
         }
     }
-
-    private boolean hasNonDefaultTopic() {
-        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                .filter(topic -> topic.isJoined())
-                .filter(topic -> !topic.isDefaultTopic())
-                .count()
-                .map(cnt -> cnt > 0)
-                .toBlocking()
-                .firstOrDefault(false);
-    }
-
-    private String getOwnerName() {
-        List<User> users = TeamInfoLoader.getInstance().getUserList();
-        return Observable.from(users)
-                .filter(User::isTeamOwner)
-                .map(User::getName)
-                .toBlocking()
-                .firstOrDefault("");
-    }
-
-    private void showErrorToast(String message) {
-        ColoredToast.showError(message);
-    }
-
-    private void showErrorInviteDisabledDialog() {
-        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setMessage(JandiApplication.getContext()
-                        .getString(R.string.jandi_invite_disabled, getOwnerName()))
-                .setCancelable(false)
-                .setPositiveButton(getActivity().getResources().getString(R.string.jandi_confirm),
-                        (dialog, id) -> {
-                            AnalyticsUtil.sendEvent(
-                                    AnalyticsValue.Screen.TeamTab,
-                                    AnalyticsValue.Action.InviteMember_InviteDisabled);
-                            dialog.dismiss();
-                        })
-                .create().show();
-    }
-
-    private void showErrorNotAvailableInviteTopicDialog() {
-        new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(JandiApplication.getContext()
-                        .getString(R.string.invite_associate_invitoronlyindefault_title))
-                .setMessage(JandiApplication.getContext()
-                        .getString(R.string.invite_associate_invitoronlyindefault_desc))
-                .setCancelable(false)
-                .setPositiveButton(getActivity().getResources().getString(R.string.jandi_confirm),
-                        (dialog, id) -> {
-                        })
-                .create().show();
-    }
-
-    private enum AvailableState {
-        AVAIL, UNDEFINE, DISABLE
-    }
-
 }
