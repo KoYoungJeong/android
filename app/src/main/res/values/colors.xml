@@ -65,6 +65,11 @@
     <color name="jandi_text_selector">#FF121212</color>
     <color name="jandi_text_popup_input">#FFBBBBBB</color>
 
+    <color name="jandi_text_level_team_owner">@color/rgb_0075b9</color>
+    <color name="jandi_text_level_team_admin">@color/rgb_535dc4</color>
+    <color name="jandi_text_level_team_member">@color/rgb_d5932f</color>
+    <color name="jandi_text_level_team_guest">@color/rgb_7fa827</color>
+
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>
 
