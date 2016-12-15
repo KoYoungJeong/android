@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -216,11 +217,7 @@ public class MainTopicListPresenter {
     public void onRefreshUpdatedTopicList() {
         List<Topic> topicList = new ArrayList<>();
         mainTopicModel.getUpdatedTopicList()
-                .concatWith(
-                        Observable.just(
-                                Arrays.asList(new Topic.Builder()
-                                        .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
-                                        .build())))
+                .compose(addUnjoinedTopicForUpdated())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(topicList::addAll, t -> {
                 }, () -> {
@@ -232,24 +229,34 @@ public class MainTopicListPresenter {
 
     }
 
+    public void initUpdatedTopicList() {
+        List<Topic> topicList = new ArrayList<>();
+        mainTopicModel.getUpdatedTopicList()
+                .compose(addUnjoinedTopicForUpdated())
+                .subscribe(topicList::addAll, t -> {
+                }, () -> view.setUpdatedItems(topicList));
+
+    }
+
+    @NonNull
+    private Observable.Transformer<List<Topic>, List<Topic>> addUnjoinedTopicForUpdated() {
+        return listObservable -> listObservable.concatWith(
+                Observable.defer(() -> {
+                    if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+                        return Observable.just(Arrays.asList(new Topic.Builder()
+                                .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
+                                .build()));
+                    } else {
+                        return Observable.empty();
+                    }
+                }));
+    }
+
     private int getUnreadCountFromUpdatedList(Observable<Topic> topicList) {
         final int[] value = {0};
         topicList.filter(topic -> topic.getUnreadCount() > 0)
                 .subscribe(topic -> value[0] += topic.getUnreadCount());
         return value[0];
-    }
-
-    public void initUpdatedTopicList() {
-        List<Topic> topicList = new ArrayList<>();
-        mainTopicModel.getUpdatedTopicList()
-                .concatWith(
-                        Observable.just(
-                                Arrays.asList(new Topic.Builder()
-                                        .name(JandiApplication.getContext().getString(R.string.jandi_entity_unjoined_topic))
-                                        .build())))
-                .subscribe(topicList::addAll, t -> {
-                }, () -> view.setUpdatedItems(topicList));
-
     }
 
     public void onInitViewList() {

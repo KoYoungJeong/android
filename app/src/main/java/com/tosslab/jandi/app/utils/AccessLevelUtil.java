@@ -16,14 +16,16 @@ import rx.Observable;
 public class AccessLevelUtil {
 
     public static boolean hasAccessLevel(long targetId) {
-
-        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                .filter(TopicRoom::isJoined)
-                .takeFirst(topicRoom -> topicRoom.getMembers().contains(targetId))
-                .map(topicRoom -> true)
-                .defaultIfEmpty(false)
-                .toBlocking().firstOrDefault(false);
-
+        if (TeamInfoLoader.getInstance().isJandiBot(targetId)) {
+            return true;
+        } else {
+            return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .takeFirst(topicRoom -> topicRoom.getMembers().contains(targetId))
+                    .map(topicRoom -> true)
+                    .defaultIfEmpty(false)
+                    .toBlocking().firstOrDefault(false);
+        }
     }
 
 

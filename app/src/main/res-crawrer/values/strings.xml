@@ -128,6 +128,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_title">"Enter email address"</string>
 	<string name="invite_email_valid">"This is a valid email address."</string>
 	<string name="invite_member_copyurl">"Copy invitation URL"</string>
+	<string name="invite_member_copyurl_title">"Invitation URL"</string>
 	<string name="invite_member_email_desc">"You can invite Members to JANDI by entering their email address."</string>
 	<string name="invite_member_option_associate_desc">"This member can only access certain topics. "</string>
 	<string name="invite_member_option_associate_title">"Invite Associate"</string>

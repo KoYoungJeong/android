@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -211,8 +212,19 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
     void getDirectMessages() {
         showProgress();
 
+        boolean guest = teamInfoLoader.getMyLevel() == Level.Guest;
         List<ExpandRoomData> userRoomDatas =
-                Observable.from(teamInfoLoader.getUserList())
+                Observable.defer(() -> {
+                    if (!guest) {
+                        return Observable.from(teamInfoLoader.getUserList());
+                    } else {
+                        return Observable.from(teamInfoLoader.getTopicList())
+                                .filter(TopicRoom::isJoined)
+                                .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                                .distinct()
+                                .map(memberId -> teamInfoLoader.getUser(memberId));
+                    }
+                })
                         .filter(User::isEnabled)
                         .filter(user -> user.getId() != teamInfoLoader.getMyId())
                         .map(user -> {

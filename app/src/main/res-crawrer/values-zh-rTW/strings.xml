@@ -12,10 +12,10 @@
 	<string name="common_authority_change_relaunch">"重新啟動"</string>
 	<string name="common_authority_notauthorised_body">"請聯繫管理員請求協助"</string>
 	<string name="common_authority_notauthorised_title">"目前沒有進入的權限，"</string>
-	<string name="common_authority_title_associate">""</string>
-	<string name="common_authority_title_manager">""</string>
-	<string name="common_authority_title_member">""</string>
-	<string name="common_authority_title_owner">""</string>
+	<string name="common_authority_title_associate">"準成員"</string>
+	<string name="common_authority_title_manager">"管理員"</string>
+	<string name="common_authority_title_member">"正成員"</string>
+	<string name="common_authority_title_owner">"所有者"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"允許通話權限"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"在其他應用程式之上顯示內容"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"點擊開啟此功能，前往詳細設定"</string>
@@ -24,8 +24,8 @@
 	<string name="common_calleridnotifier_guide1">"即使手機通訊錄沒有成員聯繫資訊，成員撥打電話給你時，依然可以快速瀏覽對方簡介資訊"</string>
 	<string name="common_calleridnotifier_guide2">"欲有此功能，請先完成以下設定"</string>
 	<string name="common_calleridnotifier_settings">"成員通話設定"</string>
-	<string name="common_calleridnotifier_status_allow">""</string>
-	<string name="common_calleridnotifier_status_allowed">""</string>
+	<string name="common_calleridnotifier_status_allow">"允許"</string>
+	<string name="common_calleridnotifier_status_allowed">"已允許"</string>
 	<string name="common_calleridnotifier_suggestmodal">"試試成員通話設定"</string>
 	<string name="common_calleridnotifier_tosettings">"前往設定"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
@@ -127,6 +127,7 @@
 	<string name="invite_email_title">"輸入電子郵箱"</string>
 	<string name="invite_email_valid">"此為有效的電子郵箱"</string>
 	<string name="invite_member_copyurl">"複製邀請連結"</string>
+	<string name="invite_member_copyurl_title">"邀請連結"</string>
 	<string name="invite_member_email_desc">"輸入欲邀請成員的電子郵箱"</string>
 	<string name="invite_member_option_associate_desc">"只能參與特定議題"</string>
 	<string name="invite_member_option_associate_title">"加入準成員"</string>

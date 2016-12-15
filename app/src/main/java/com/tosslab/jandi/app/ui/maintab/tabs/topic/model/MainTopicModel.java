@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
@@ -199,7 +200,9 @@ public class MainTopicModel {
                 .subscribe(noFolderTopicItemDatas::add);
 
         // Topic join button을 위한 더미 인스턴스 추가
-        noFolderTopicItemDatas.add(TopicItemData.getDummyInstance());
+        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+            noFolderTopicItemDatas.add(TopicItemData.getDummyInstance());
+        }
         datas.add(new Pair<>(fakeFolder, noFolderTopicItemDatas));
         return new TopicFolderListDataProvider(datas);
     }

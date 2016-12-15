@@ -12,10 +12,10 @@
 	<string name="common_authority_change_relaunch">"再起動"</string>
 	<string name="common_authority_notauthorised_body">"詳細は管理者に問い合わせください。"</string>
 	<string name="common_authority_notauthorised_title">"機能にアクセス権がありません。"</string>
-	<string name="common_authority_title_associate">""</string>
-	<string name="common_authority_title_manager">""</string>
-	<string name="common_authority_title_member">""</string>
-	<string name="common_authority_title_owner">""</string>
+	<string name="common_authority_title_associate">"準メンバー"</string>
+	<string name="common_authority_title_manager">"副管理人"</string>
+	<string name="common_authority_title_member">"正メンバー"</string>
+	<string name="common_authority_title_owner">"管理人"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"発信許可設定"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"他のアプリの上に重ねて表示"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"この機能を「on」すると権限設定画面に移動します。"</string>
@@ -24,8 +24,8 @@
 	<string name="common_calleridnotifier_guide1">"JANDIメンバーからの電話着信時、連絡先に保存されずメンバーの名前と電話番号が確認できます。"</string>
 	<string name="common_calleridnotifier_guide2">"機能を利用するには下の二つの権限が必要です。"</string>
 	<string name="common_calleridnotifier_settings">"メンバー連絡先確認の設定"</string>
-	<string name="common_calleridnotifier_status_allow">""</string>
-	<string name="common_calleridnotifier_status_allowed">""</string>
+	<string name="common_calleridnotifier_status_allow">"設定する"</string>
+	<string name="common_calleridnotifier_status_allowed">"設定済み"</string>
 	<string name="common_calleridnotifier_suggestmodal">"メンバー連絡先確認機能をお試しください"</string>
 	<string name="common_calleridnotifier_tosettings">"設定に移動"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
@@ -129,6 +129,7 @@
 	<string name="invite_email_title">"メール入力"</string>
 	<string name="invite_email_valid">"有効なメールアドレスです。"</string>
 	<string name="invite_member_copyurl">"招待URLコピー"</string>
+	<string name="invite_member_copyurl_title">"招待URL"</string>
 	<string name="invite_member_email_desc">"メールで正メンバーをJANDIに招待できます。"</string>
 	<string name="invite_member_option_associate_desc">"指定されたトピックのみアクセスできるメンバーです。"</string>
 	<string name="invite_member_option_associate_title">"準メンバー招待"</string>

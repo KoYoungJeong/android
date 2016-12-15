@@ -280,10 +280,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         profileLoader.setStarButton(btnProfileStar, member);
 
-        boolean guest = false;
-        if (member instanceof User) {
-            guest = ((User) member).getLevel() == Level.Guest;
-        }
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
 
         if (!guest) {
             addButtons(member);
