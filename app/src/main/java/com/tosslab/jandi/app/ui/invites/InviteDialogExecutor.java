@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
-import com.tosslab.jandi.app.ui.invites.email.InviteByEmailActivity;
 import com.tosslab.jandi.app.ui.invites.emails.InviteEmailActivity;
 import com.tosslab.jandi.app.ui.invites.member.MemberInvitationActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -62,26 +61,23 @@ public class InviteDialogExecutor {
             AvailableState availableState = availableState(invitationStatus, invitationUrl);
             switch (availableState) {
                 case AVAIL:
-                    showInvitationDialog(context);
+                    showInvitationDialog(context, false);
                     break;
                 case UNDEFINE:
                     if (!teamOwner) {
                         showErrorToast(JandiApplication.getContext()
                                 .getString(R.string.err_entity_invite));
+                    } else {
+                        showInvitationDialog(context, true);
                     }
                     break;
                 case DISABLE:
                     if (!teamOwner) {
                         showErrorInviteDisabledDialog(context);
+                    } else {
+                        showInvitationDialog(context, true);
                     }
                     break;
-            }
-
-            if (teamOwner && availableState != AvailableState.AVAIL) {
-                ColoredToast.showGray(R.string.jandi_invitation_for_admin);
-                Intent intent = new Intent(context, InviteByEmailActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                context.startActivity(intent);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,7 +85,7 @@ public class InviteDialogExecutor {
         }
     }
 
-    public void showInvitationDialog(Context context) {
+    public void showInvitationDialog(Context context, boolean isNotAvailButTeamOwner) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_300);
 
         android.view.View view = LayoutInflater.from(context).inflate(R.layout.dialog_invitation_user, null);
@@ -113,8 +109,13 @@ public class InviteDialogExecutor {
 
         view.findViewById(R.id.vg_invite_member)
                 .setOnClickListener(v -> {
-                    Intent intent = new Intent(context, MemberInvitationActivity.class);
-                    context.startActivity(intent);
+                    if (isNotAvailButTeamOwner) {
+                        ColoredToast.showGray(R.string.jandi_invitation_for_admin);
+                        InviteEmailActivity.startActivityForMember(context);
+                    } else {
+                        Intent intent = new Intent(context, MemberInvitationActivity.class);
+                        context.startActivity(intent);
+                    }
                     invitationDialog.dismiss();
                 });
 
