@@ -25,11 +25,11 @@ import android.webkit.WebViewClient;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.web.presenter.InternalWebPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -159,10 +159,10 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     public void onShareToTopicOptionSelect() {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        ShareSelectRoomActivity_
-                .intent(this)
+        startActivity(Henson                .with(this)
+                .gotoShareSelectRoomActivity()
                 .teamId(teamId)
-                .start();
+                .build());
     }
 
     public void onCopyLinkOptionSelect() {

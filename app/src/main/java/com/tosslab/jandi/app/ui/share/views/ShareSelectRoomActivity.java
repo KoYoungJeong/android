@@ -5,6 +5,8 @@ package com.tosslab.jandi.app.ui.share.views;
  */
 
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
@@ -34,49 +38,54 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
-@EActivity(R.layout.layout_room_selector)
 public class ShareSelectRoomActivity extends BaseAppCompatActivity implements ShareRoomsAdapter.OnItemClickListener {
 
-    @Extra
+    @InjectExtra
     long teamId;
 
     TeamInfoLoader teamInfoLoader;
 
-    @ViewById(R.id.tv_room_selector_topic)
+    @Bind(R.id.tv_room_selector_topic)
     View topicView;
-    @ViewById(R.id.tv_room_selector_direct_message)
+    @Bind(R.id.tv_room_selector_direct_message)
     View dmView;
-    @ViewById(R.id.rv_room_selector)
+    @Bind(R.id.rv_room_selector)
     RecyclerView lvRoomSelect;
 
     ShareRoomsAdapter adapter;
 
     ProgressWheel progressWheel;
 
-    @AfterInject
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_room_selector);
+        Dart.inject(this);
+        ButterKnife.bind(this);
+
+        initObject();
+        initViews();
+    }
+
     void initObject() {
         adapter = new ShareRoomsAdapter(this);
         adapter.setOnItemClickListener(this);
     }
 
-    @AfterViews
     void initViews() {
         setupActionbar();
         lvRoomSelect.setLayoutManager(new LinearLayoutManager(this));
@@ -114,25 +123,25 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         return super.onOptionsItemSelected(item);
     }
 
-    @Background(serial = "share_background")
     void initFormattedEntities() {
         showProgress();
-        try {
-
+        Completable.fromCallable(() -> {
             if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
                 InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
                 InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
                 refreshRankIfNeed(teamId);
             }
             teamInfoLoader = TeamInfoLoader.getInstance(teamId);
-            getTopics();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            String errorMessage = getApplicationContext().getResources().getString(R.string.err_network);
-            showError(errorMessage);
-            hideProgress();
-            finish();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::getTopics, t -> {
+                    t.printStackTrace();
+                    String errorMessage = getApplicationContext().getResources().getString(R.string.err_network);
+                    showError(errorMessage);
+                    hideProgress();
+                    finish();
+                });
     }
 
     private void refreshRankIfNeed(long teamId) {
@@ -146,15 +155,17 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         }
     }
 
-    @Background(serial = "share_background")
     void getTopics() {
-        List<TopicFolder> topicFolders = teamInfoLoader.getTopicFolders();
+        Observable.defer(() -> {
+            List<TopicFolder> topicFolders = teamInfoLoader.getTopicFolders();
+            List<ExpandRoomData> topicDatas = getExpandRoomDatas(topicFolders, teamInfoLoader);
+            return Observable.just(topicDatas);
+        }).subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(this::hideProgress)
+                .subscribe(this::showTopics, Throwable::printStackTrace);
 
-        List<ExpandRoomData> topicDatas = getExpandRoomDatas(topicFolders, teamInfoLoader);
 
-        showTopics(topicDatas);
-
-        hideProgress();
     }
 
     private List<ExpandRoomData> getExpandRoomDatas(List<TopicFolder> topicFolders,
@@ -208,66 +219,58 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         return expandRoomDatas;
     }
 
-    @Background
     void getDirectMessages() {
         showProgress();
 
         boolean guest = teamInfoLoader.getMyLevel() == Level.Guest;
-        List<ExpandRoomData> userRoomDatas =
-                Observable.defer(() -> {
-                    if (!guest) {
-                        return Observable.from(teamInfoLoader.getUserList());
-                    } else {
-                        return Observable.from(teamInfoLoader.getTopicList())
-                                .filter(TopicRoom::isJoined)
-                                .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
-                                .distinct()
-                                .map(memberId -> teamInfoLoader.getUser(memberId));
-                    }
+        Observable.defer(() -> {
+            if (!guest) {
+                return Observable.from(teamInfoLoader.getUserList());
+            } else {
+                return Observable.from(teamInfoLoader.getTopicList())
+                        .filter(TopicRoom::isJoined)
+                        .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                        .distinct()
+                        .map(memberId -> teamInfoLoader.getUser(memberId));
+            }
+        })
+                .filter(User::isEnabled)
+                .filter(user -> user.getId() != teamInfoLoader.getMyId())
+                .map(user -> {
+                    ExpandRoomData expandRoomData = new ExpandRoomData();
+                    expandRoomData.setEntityId(user.getId());
+                    expandRoomData.setIsUser(true);
+                    expandRoomData.setName(user.getName());
+                    expandRoomData.setProfileUrl(user.getPhotoUrl());
+                    return expandRoomData;
                 })
-                        .filter(User::isEnabled)
-                        .filter(user -> user.getId() != teamInfoLoader.getMyId())
-                        .map(user -> {
-                            ExpandRoomData expandRoomData = new ExpandRoomData();
-                            expandRoomData.setEntityId(user.getId());
-                            expandRoomData.setIsUser(true);
-                            expandRoomData.setName(user.getName());
-                            expandRoomData.setProfileUrl(user.getPhotoUrl());
-                            return expandRoomData;
-                        })
-                        .toSortedList((lhs, rhs) -> {
-                            if (TeamInfoLoader.getInstance().isJandiBot(lhs.getEntityId())) {
-                                return -1;
-                            } else if (TeamInfoLoader.getInstance().isJandiBot(rhs.getEntityId())) {
-                                return 1;
-                            }
-                            String lhsName = lhs.getName();
-                            String rhsName = rhs.getName();
+                .toSortedList((lhs, rhs) -> {
+                    if (TeamInfoLoader.getInstance().isJandiBot(lhs.getEntityId())) {
+                        return -1;
+                    } else if (TeamInfoLoader.getInstance().isJandiBot(rhs.getEntityId())) {
+                        return 1;
+                    }
+                    String lhsName = lhs.getName();
+                    String rhsName = rhs.getName();
 
-                            return StringCompareUtil.compare(lhsName, rhsName);
-                        })
-//                        .collect((Func0<ArrayList<ExpandRoomData>>) ArrayList::new, ArrayList::addToggledUser)
-                        .toBlocking()
-                        .firstOrDefault(new ArrayList<>());
-
-        showDirectMessages(userRoomDatas);
-
-        hideProgress();
+                    return StringCompareUtil.compare(lhsName, rhsName);
+                })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(this::hideProgress)
+                .subscribe(this::showDirectMessages);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showTopics(List<ExpandRoomData> topics) {
         adapter.addAll(topics);
         adapter.notifyDataSetChanged();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showDirectMessages(List<ExpandRoomData> dms) {
         adapter.addAll(dms);
         adapter.notifyDataSetChanged();
     }
 
-    @UiThread
     void showProgress() {
         if (progressWheel == null || progressWheel.isShowing()) {
             return;
@@ -275,7 +278,6 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         progressWheel.show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void hideProgress() {
         if (progressWheel == null || !progressWheel.isShowing()) {
             return;
@@ -283,15 +285,8 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
         progressWheel.dismiss();
     }
 
-    @UiThread
     void showError(String message) {
         ColoredToast.showError(message);
-    }
-
-    @UiThread
-    @Override
-    public void finish() {
-        super.finish();
     }
 
     private void setSelectType(int type, View[] selectableViews) {
