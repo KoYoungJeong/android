@@ -26,6 +26,7 @@ import setup.BaseInitUtil;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -103,7 +104,7 @@ public class ChatsChooseFragmentTest {
     @Test
     public void testInvitationDialogExecution() throws Exception {
         fragment.invitationDialogExecution();
-        verify(fragment.presenter).invite();
+        verify(fragment.presenter).invite(any());
     }
 
 }

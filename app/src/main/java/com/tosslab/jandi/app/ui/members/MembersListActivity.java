@@ -36,8 +36,6 @@ import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
-import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
-import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
@@ -110,8 +108,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     void initObject() {
         DaggerMemberListComponent.builder().memberListModule(new MemberListModule(this))
                 .build().inject(this);
-        invitationDialogExecutor = InvitationDialogExecutor_.getInstance_(this);
-        invitationViewModel = InvitationViewModel_.getInstance_(this);
 
         int ownerType = (type == TYPE_MEMBERS_LIST_TOPIC || type == TYPE_ASSIGN_TOPIC_OWNER)
                 ? ModdableMemberListAdapter.OWNER_TYPE_TOPIC : ModdableMemberListAdapter.OWNER_TYPE_TEAM;
@@ -239,8 +235,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     void onInviteOptionSelect() {
         if (type == TYPE_MEMBERS_LIST_TEAM) {
-            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_MEMBER);
-            invitationDialogExecutor.execute();
+            InviteDialogExecutor.getInstance().executeInvite(this);
         } else if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.inviteMemberToTopic(entityId);
         }
@@ -314,7 +309,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
-    @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
         final List<Long> selectedUserIds = topicModdableMemberListAdapter.getSelectedUserIds();
@@ -517,7 +511,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Override
     public void inviteMember(long entityId) {
-        invitationViewModel.inviteMembersToEntity(this, entityId);
+        InviteDialogExecutor.getInstance().executeInvite(this);
     }
 
 }

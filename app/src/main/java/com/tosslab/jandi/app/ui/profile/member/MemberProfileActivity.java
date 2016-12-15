@@ -608,7 +608,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         Completable.fromCallable(() -> {
             long teamId = TeamInfoLoader.getInstance().getTeamId();
             List<String> invites = Arrays.asList(TeamInfoLoader.getInstance().getUser(memberId).getEmail());
-            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage()));
+            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(), 0, 0));
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
