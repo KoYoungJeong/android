@@ -219,11 +219,11 @@ public class RoomSelectorImpl implements RoomSelector {
         if (isIncludeAllMember) {
 
             ExpandRoomData dummyData = new ExpandRoomData();
-            dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);
+            dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
             topicDatas.add(dummyData);
 
             dummyData = new ExpandRoomData();
-            dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
+            dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);
             topicDatas.add(dummyData);
         }
 
@@ -303,8 +303,13 @@ public class RoomSelectorImpl implements RoomSelector {
         List<ExpandRoomData> roomDatas = new ArrayList<>();
 
         if (isIncludeAllMember) {
+
             ExpandRoomData dummyData = new ExpandRoomData();
             dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
+            roomDatas.add(dummyData);
+
+            dummyData = new ExpandRoomData();
+            dummyData.setType(JandiConstants.Entity.TYPE_JOINED_ROOM);
             roomDatas.add(dummyData);
         }
 

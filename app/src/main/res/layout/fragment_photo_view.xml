@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/black"
     android:layout_height="match_parent">
 
     <uk.co.senab.photoview.PhotoView
@@ -12,41 +11,46 @@
 
     <RelativeLayout
         android:id="@+id/vg_photoview_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/jandi_black_b2"
         android:orientation="vertical">
 
 
-        <com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar
-            android:id="@+id/progress_photoview"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:id="@+id/tv_photoview_percentage"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/progress_photoview"
-            android:layout_alignLeft="@+id/progress_photoview"
-            android:layout_alignRight="@+id/progress_photoview"
-            android:layout_alignTop="@+id/progress_photoview"
-            android:gravity="center"
-            android:text="0%"
-            android:textColor="@color/white"
-            android:textSize="@dimen/jandi_text_size_21sp" />
+            android:layout_centerInParent="true">
 
+            <com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar
+                android:id="@+id/progress_photoview"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:layout_centerHorizontal="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/progress_photoview"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="Downloading..."
-            android:textColor="@color/white"
-            android:textSize="@dimen/jandi_text_size_21sp" />
+            <TextView
+                android:id="@+id/tv_photoview_percentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/progress_photoview"
+                android:layout_alignLeft="@+id/progress_photoview"
+                android:layout_alignRight="@+id/progress_photoview"
+                android:layout_alignTop="@+id/progress_photoview"
+                android:gravity="center"
+                android:text="0%"
+                android:textColor="@color/white"
+                android:textSize="@dimen/jandi_text_size_21sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/progress_photoview"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:text="Downloading..."
+                android:textColor="@color/white"
+                android:textSize="@dimen/jandi_text_size_21sp" />
+        </RelativeLayout>
 
     </RelativeLayout>
 

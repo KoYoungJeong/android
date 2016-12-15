@@ -20,6 +20,7 @@ import com.bumptech.glide.request.target.Target;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.GifReadyEvent;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.photo.widget.CircleProgressBar;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -34,6 +35,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -133,8 +135,25 @@ public class PhotoViewFragment extends Fragment {
             Dart.inject(this, arguments);
         }
         initView();
+        EventBus.getDefault().register(this);
     }
 
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
+    }
+
+    public void onEvent(GifReadyEvent event) {
+        if (imageType.toLowerCase().contains("gif")
+                && size > MB_1
+                && TextUtils.equals(event.getOriginalUrl(), originalUrl)) {
+            Completable.fromAction(() -> {
+                vgPlayGif.setVisibility(View.GONE);
+                loadImage(Uri.parse(originalUrl));
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
+        }
+    }
 
     void initView() {
         setupProgress();
@@ -159,7 +178,7 @@ public class PhotoViewFragment extends Fragment {
             return true;
         });
 
-        boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(extensions);
+        boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(imageType);
         if (!shouldSupportImageExtensions
                 || (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl))) {
             LogUtil.e(TAG, "Url is empty.");
@@ -256,8 +275,8 @@ public class PhotoViewFragment extends Fragment {
 
     @OnClick(R.id.btn_photoview_play)
     void onPlayGifClick() {
-        vgPlayGif.setVisibility(View.GONE);
         loadImage(Uri.parse(originalUrl));
+        vgPlayGif.setVisibility(View.GONE);
 
     }
 
@@ -303,6 +322,7 @@ public class PhotoViewFragment extends Fragment {
     public void loadImage(Uri uri) {
         ImageLoader.newInstance()
                 .uri(uri)
+                .placeHolder(photoView.getDrawable())
                 .fragment(this)
                 .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                     @Override
