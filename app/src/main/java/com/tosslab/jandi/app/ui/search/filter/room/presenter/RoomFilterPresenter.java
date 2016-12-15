@@ -23,6 +23,8 @@ public interface RoomFilterPresenter {
 
     void onInitializeSelectedRoomId(boolean isTopic, long selectedRoomId);
 
+    void setShowDefaultTopic(boolean showDefaultTopic);
+
     enum RoomType {
         Topic, DirectMessage
     }

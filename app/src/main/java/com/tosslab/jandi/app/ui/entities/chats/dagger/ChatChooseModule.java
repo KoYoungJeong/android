@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataView
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenterImpl;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 
 import dagger.Module;
@@ -36,7 +35,6 @@ public class ChatChooseModule {
     ChatChoosePresenter providesChatChoosePresenter(InsertTeamInfoModel insertTeamInfoModel) {
         return new ChatChoosePresenterImpl(new ChatChooseModel(),
                 insertTeamInfoModel,
-                InvitationDialogExecutor_.getInstance_(JandiApplication.getContext()),
                 view,
                 chatChooseAdapter);
     }
@@ -47,4 +45,5 @@ public class ChatChooseModule {
                 .getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
     }
+
 }

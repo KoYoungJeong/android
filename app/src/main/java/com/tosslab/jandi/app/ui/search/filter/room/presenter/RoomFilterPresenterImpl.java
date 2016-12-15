@@ -42,6 +42,8 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
     private PublishSubject<String> searchTopicQueue;
     private Subscription searchTopicQueueSubscription;
 
+    private boolean isShowDefaultTopic = true;
+
     @Inject
     public RoomFilterPresenterImpl(RoomFilterModel roomFilterModel,
                                    RoomFilterDataModel roomFilterDataModel,
@@ -52,6 +54,11 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
 
         initTopicSearchQueue();
         initUserSearchQueue();
+    }
+
+    @Override
+    public void setShowDefaultTopic(boolean showDefaultTopic) {
+        isShowDefaultTopic = showDefaultTopic;
     }
 
     @Override
@@ -68,7 +75,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                                 rows.addAll(roomFilterDataModel.getTopicWithFolderRows(initializedFolders));
                                 rows.addAll(roomFilterDataModel.getTopicRows(initializedRooms));
                             } else {
-                                List<TopicRoom> searchedTopics = roomFilterModel.getSearchedTopics(query);
+                                List<TopicRoom> searchedTopics = roomFilterModel.getSearchedTopics(query, isShowDefaultTopic);
                                 rows.addAll(roomFilterDataModel.getTopicRows(searchedTopics));
                             }
                             return Pair.create(query, rows);
@@ -183,7 +190,15 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
     private void initTopicRoomsFromTeamInfo(@Nullable Action0 onCompleteAction) {
         roomFilterView.showProgress();
 
-        Observable.from(roomFilterModel.getTopicRoomsWithFolder())
+        List<TopicFolder> topicFolderList;
+
+        if (!isShowDefaultTopic) {
+            topicFolderList = roomFilterModel.getTopicRoomsWithFolderExceptDefaultTopic();
+        } else {
+            topicFolderList = roomFilterModel.getTopicRoomsWithFolder();
+        }
+
+        Observable.from(topicFolderList)
                 .toSortedList(((folder, folder2) -> folder.getSeq() - folder2.getSeq()))
                 .onErrorReturn(throwable -> {
                     LogUtil.e(Log.getStackTraceString(throwable));
@@ -192,7 +207,8 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                 .defaultIfEmpty(new ArrayList<>(0))
                 .doOnNext(roomFilterDataModel::setFolders)
                 .map(topicFolders -> {
-                    List<TopicRoom> unFoldedTopics = roomFilterModel.getUnfoldedTopics(topicFolders);
+                    List<TopicRoom> unFoldedTopics =
+                            roomFilterModel.getUnfoldedTopics(topicFolders, isShowDefaultTopic);
                     roomFilterDataModel.setTopicRooms(unFoldedTopics);
                     return Pair.create(topicFolders, unFoldedTopics);
                 })
@@ -210,7 +226,6 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {
                     roomFilterView.hideProgress();
-
                     roomFilterDataModel.clearAllRows();
                     roomFilterDataModel.addRows(rows);
                     roomFilterView.notifyDataSetChanged();
@@ -384,9 +399,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
         if (isTopic) {
             roomFilterDataModel.setSelectedTopicRoomId(selectedRoomId);
             roomFilterView.notifyDataSetChanged();
-
         } else {
-
             Observable.just(selectedRoomId)
                     .map(roomFilterModel::getUserIdFromRoomId)
                     .subscribeOn(Schedulers.computation())

@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.ui.entities.chats.presenter;
 
+import android.content.Context;
+
 public interface ChatChoosePresenter {
 
     void initMembers();
 
     void onSearch(String text);
 
-    void invite();
+    void invite(Context context);
 
     void onMoveChatMessage(long entityId);
 

@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataModel;
 import com.tosslab.jandi.app.ui.entities.chats.dagger.ChatChooseModule;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -84,12 +83,6 @@ public class ChatChoosePresenterImplTest {
 
     @Test
     public void testInvite() throws Exception {
-        ((ChatChoosePresenterImpl) presenter).invitationDialogExecutor = mock(InvitationDialogExecutor.class);
-
-        presenter.invite();
-
-        verify(((ChatChoosePresenterImpl) presenter).invitationDialogExecutor).execute();
-        verify(((ChatChoosePresenterImpl) presenter).invitationDialogExecutor).setFrom(eq(InvitationDialogExecutor.FROM_CHAT_CHOOSE));
     }
 
     @Test

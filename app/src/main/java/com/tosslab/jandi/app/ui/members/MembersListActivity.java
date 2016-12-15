@@ -27,8 +27,7 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.dagger.DaggerMemberListComponent;
 import com.tosslab.jandi.app.ui.members.dagger.MemberListModule;
@@ -89,9 +88,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Bind(R.id.vg_team_member_empty)
     View vEmptyTeamMember;
-
-    InvitationDialogExecutor invitationDialogExecutor;
-    InvitationViewModel invitationViewModel;
 
     private ProgressWheel mProgressWheel;
 
@@ -318,6 +314,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         }
     }
 
+    @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> members) {
         final List<Long> selectedUserIds = topicModdableMemberListAdapter.getSelectedUserIds();

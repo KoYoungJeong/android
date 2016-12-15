@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.entities.chats.presenter;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -9,7 +10,7 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.EmptyChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 
 import java.util.ArrayList;
@@ -25,15 +26,16 @@ import rx.subjects.PublishSubject;
 public class ChatChoosePresenterImpl implements ChatChoosePresenter {
     ChatChooseModel chatChooseModel;
     InsertTeamInfoModel insertTeamInfoModel;
-    InvitationDialogExecutor invitationDialogExecutor;
     View view;
     private ChatChooseAdapterDataModel chatChooseAdapterDataModel;
     private PublishSubject<String> publishSubject;
 
-    public ChatChoosePresenterImpl(ChatChooseModel chatChooseModel, InsertTeamInfoModel teamDomainInfoModel, InvitationDialogExecutor invitationDialogExecutor, View view, ChatChooseAdapterDataModel chatChooseAdapterDataModel) {
+    public ChatChoosePresenterImpl(ChatChooseModel chatChooseModel,
+                                   InsertTeamInfoModel teamDomainInfoModel,
+                                   View view,
+                                   ChatChooseAdapterDataModel chatChooseAdapterDataModel) {
         this.chatChooseModel = chatChooseModel;
         this.insertTeamInfoModel = teamDomainInfoModel;
-        this.invitationDialogExecutor = invitationDialogExecutor;
         this.view = view;
         this.chatChooseAdapterDataModel = chatChooseAdapterDataModel;
         initObject();
@@ -88,9 +90,8 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
     }
 
     @Override
-    public void invite() {
-        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_CHAT_CHOOSE);
-        invitationDialogExecutor.execute();
+    public void invite(Context context) {
+        InviteDialogExecutor.getInstance().executeInvite(context);
     }
 
     @Override
@@ -115,4 +116,5 @@ public class ChatChoosePresenterImpl implements ChatChoosePresenter {
             onMoveChatMessage(chatChooseItem.getEntityId());
         }
     }
+
 }

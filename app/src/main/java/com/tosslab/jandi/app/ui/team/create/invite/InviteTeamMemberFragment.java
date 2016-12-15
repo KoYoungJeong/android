@@ -9,8 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor_;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -28,10 +27,7 @@ public class InviteTeamMemberFragment extends Fragment {
 
     @OnClick(R.id.tv_invite_button)
     public void onClickInvite() {
-        InvitationDialogExecutor invitationDialogExecutor =
-                InvitationDialogExecutor_.getInstance_(getActivity());
-        invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_MAIN_POPUP);
-        invitationDialogExecutor.execute();
+        InviteDialogExecutor.getInstance().executeInvite(getContext());
     }
 
     @OnClick(R.id.iv_browse_team)

@@ -116,7 +116,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
@@ -225,9 +225,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Bean
     MessageListV2Presenter messageListPresenter;
-
-    @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
 
     @Bean
     StickerViewModel stickerViewModel;
@@ -1906,8 +1903,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         View view = LayoutInflater.from(getActivity().getBaseContext())
                 .inflate(R.layout.view_team_member_empty, vgEmptyLayout, true);
         View.OnClickListener onClickListener = v -> {
-            invitationDialogExecutor.setFrom(InvitationDialogExecutor.FROM_TOPIC_CHAT);
-            invitationDialogExecutor.execute();
+            InviteDialogExecutor.getInstance().executeInvite(getContext());
         };
         view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
         view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);

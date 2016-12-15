@@ -20,7 +20,9 @@ import android.widget.CheckBox;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
-import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
+import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
@@ -116,14 +118,16 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
         super.onPrepareOptionsMenu(menu);
         menu.clear();
         getActivity().getMenuInflater().inflate(R.menu.team_main, menu);
+        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+            menu.removeItem(R.id.menu_team_add);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_team_add:
-                EventBus.getDefault().post(new RequestInviteMemberEvent(InvitationDialogExecutor.FROM_MAIN_TEAM));
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
+                InviteDialogExecutor.getInstance().executeInvite(getContext());
                 break;
             case R.id.menu_team_info:
                 TeamInfoActivity.start(getActivity());

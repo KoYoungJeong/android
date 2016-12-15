@@ -121,4 +121,9 @@ public class TopicRoom implements Room {
     public boolean isAutoJoin() {
         return topic.isAutoJoin();
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

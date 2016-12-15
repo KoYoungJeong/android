@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder;
 
-import android.content.res.Resources;
 import android.graphics.Paint;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +15,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -55,10 +54,10 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     TextView tvUserDepartment;
     @Bind(R.id.tv_job_title)
     TextView tvUserJobTitle;
-    @Bind(R.id.tv_owner_badge)
-    TextView tvOwnerBadge;
-    @Bind(R.id.vg_owner_badge)
-    LinearLayout vgOwnerBadge;
+    @Bind(R.id.tv_authority_badge)
+    TextView tvAuthorityBadge;
+    @Bind(R.id.vg_authority_badge)
+    LinearLayout vgAuthorityBadge;
     @Bind(R.id.vg_user_kick)
     ViewGroup vgUserKick;
     @Bind(R.id.iv_user_kick)
@@ -81,7 +80,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         super(itemView);
         ButterKnife.bind(this, itemView);
 
-        teamOwnerPaddingTop = vgOwnerBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
+        teamOwnerPaddingTop = vgAuthorityBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
     }
 
     public static MemberViewHolder createForUser(ViewGroup parent) {
@@ -178,16 +177,12 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         String department = item.getDepartment();
         if (TextUtils.isEmpty(department)) {
             tvUserDepartment.setVisibility(View.GONE);
-            vgOwnerBadge.setGravity(Gravity.CENTER_VERTICAL);
-            vgOwnerBadge.setPadding(0, 0, 0, 0);
         } else {
             tvUserDepartment.setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
             tvUserDepartment.setText(department);
-            vgOwnerBadge.setGravity(Gravity.NO_GRAVITY);
-            vgOwnerBadge.setPadding(0, teamOwnerPaddingTop, 0, 0);
         }
 
         String jobTitle = item.getJobTitle();
@@ -257,25 +252,55 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             vgUserSelected.setVisibility(View.GONE);
         }
 
-        Resources resources = tvOwnerBadge.getResources();
-
-        tvOwnerBadge.setText(isTeamMemberList
-                ? resources.getString(R.string.jandi_team_owner)
-                : resources.getString(R.string.jandi_topic_owner));
-
-        tvOwnerBadge.setVisibility(item.isOwner() ? View.VISIBLE : View.GONE);
-
-        if (item.isOwner()) {
-            Paint ownerBadgePaint = tvOwnerBadge.getPaint();
-            int ownerPadding = (int) UiUtils.getPixelFromDp(14);
-            int ownerMargin = (int) UiUtils.getPixelFromDp(16);
-            int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvOwnerBadge.getText().toString()) + ownerPadding;
-
-            contentLP.width = contentLP.width - ownerBadgeWidth;
-
-            if (!(isKickMode || isSelectMode)) {
-                contentLP.width = contentLP.width - ownerMargin;
+        if (!isTeamMemberList && item.isOwner()) {
+            tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
+                    .getDrawable(R.drawable.bg_user_level_team_admin));
+            tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
+                    .getColor(R.color.jandi_text_level_team_admin));
+            tvAuthorityBadge.setText(JandiApplication.getContext()
+                    .getString(R.string.jandi_topic_owner));
+        } else {
+            Level level = TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel();
+            if (level == Level.Admin) {
+                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
+                        .getDrawable(R.drawable.bg_user_level_team_admin));
+                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
+                        .getColor(R.color.jandi_text_level_team_admin));
+                tvAuthorityBadge.setText(JandiApplication.getContext()
+                        .getString(R.string.common_authority_title_manager));
+            } else if (level == Level.Owner) {
+                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
+                        .getDrawable(R.drawable.bg_user_level_team_owner));
+                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
+                        .getColor(R.color.jandi_text_level_team_owner));
+                tvAuthorityBadge.setText(JandiApplication.getContext()
+                        .getString(R.string.common_authority_title_owner));
+            } else if (level == Level.Member) {
+                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
+                        .getDrawable(R.drawable.bg_user_level_team_member));
+                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
+                        .getColor(R.color.jandi_text_level_team_member));
+                tvAuthorityBadge.setText(JandiApplication.getContext()
+                        .getString(R.string.common_authority_title_member));
+            } else if (level == Level.Guest) {
+                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
+                        .getDrawable(R.drawable.bg_user_level_team_guest));
+                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
+                        .getColor(R.color.jandi_text_level_team_guest));
+                tvAuthorityBadge.setText(JandiApplication.getContext()
+                        .getString(R.string.common_authority_title_associate));
             }
+        }
+
+        Paint ownerBadgePaint = tvAuthorityBadge.getPaint();
+        int ownerPadding = (int) UiUtils.getPixelFromDp(14);
+        int ownerMargin = (int) UiUtils.getPixelFromDp(16);
+        int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvAuthorityBadge.getText().toString()) + ownerPadding;
+
+        contentLP.width = contentLP.width - ownerBadgeWidth;
+
+        if (!(isKickMode || isSelectMode)) {
+            contentLP.width = contentLP.width - ownerMargin;
         }
 
         vgContent.setLayoutParams(contentLP);

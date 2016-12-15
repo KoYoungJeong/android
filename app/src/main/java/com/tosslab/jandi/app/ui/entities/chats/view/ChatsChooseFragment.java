@@ -200,7 +200,7 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
 
     @OnClick(R.id.btn_chat_choose_member_empty)
     public void invitationDialogExecution() {
-        presenter.invite();
+        presenter.invite(getContext());
 
     }
 

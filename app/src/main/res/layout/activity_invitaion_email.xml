@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/vg_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/rgb_f5f5f5">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="visible"
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:title="준회원 초대" />
+
+    <ScrollView
+        android:id="@+id/v_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tv_send_invitation_email_button"
+        android:layout_below="@id/layout_search_bar">
+
+        <LinearLayout
+            android:id="@+id/vg_main_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/vg_select_topic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+
+                    android:text="@string/invite_associate_desc"
+                    android:textColor="@color/rgb_999999"
+                    android:textSize="14dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/rgb_e5e5e5" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@string/invite_associate_selecttopic_title"
+                        android:textColor="@color/rgb_999999"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:singleLine="true"
+                        android:text="@string/invite_associate_selecttopic_desc"
+                        android:textColor="@color/rgb_666666"
+                        android:textSize="13dp" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@id/vg_select_topic"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_topic_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="38dp"
+                        android:layout_toLeftOf="@+id/iv_topic_select_arrow"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:text="@string/invite_associate_selecttopic_placeholder"
+                        android:textColor="@color/rgb_333333"
+                        android:textSize="16dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_topic_select_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:src="@drawable/icon_arrow_right" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@color/rgb_e5e5e5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/invite_email_title"
+                    android:textColor="@color/rgb_999999"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:id="@+id/tv_email_input_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:singleLine="true"
+                    android:text="@string/invite_associate_email_desc"
+                    android:textColor="@color/rgb_666666"
+                    android:textSize="13dp" />
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="16dp">
+
+                <EditText
+                    android:id="@+id/et_input_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="16dp"
+                    android:layout_toLeftOf="@+id/tv_add_email_button"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_vertical"
+                    android:hint="@string/invite_email_placeholder"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:textColor="@color/rgb_333333"
+                    android:textColorHint="@color/rgb_333333"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_add_email_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/bg_round_rect_2pt_999999"
+                    android:clickable="false"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/jandi_add"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@color/white" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/rgb_e5e5e5" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:background="@color/rgb_f5f5f5" />
+
+            <LinearLayout
+                android:id="@+id/vg_email_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/tv_send_invitation_email_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/rgb_99def6"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/invite_email_sendinvitation_disable"
+        android:textColor="@color/white"
+        android:textSize="16dp" />
+
+
+</RelativeLayout>
