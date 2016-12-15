@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.InsertTeamInfoFragment;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrCreateTeam;
@@ -76,8 +77,9 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                 ResTeamDetailInfo newTeam = teamInsertInfoModel.createNewTeam(teamName, teamDomain);
                 long teamId = newTeam.getInviteTeam().getTeamId();
                 teamInsertInfoModel.updateEntityInfo(teamId);
-                teamInsertInfoModel.updateTeamInfo(teamId);
                 teamInsertInfoModel.updateRank(teamId);
+                teamInsertInfoModel.updateTeamInfo(teamId);
+                TeamInfoLoader.getInstance().refresh();
                 SprinklrCreateTeam.sendLog(teamId);
                 subscriber.onNext(new Object());
             } catch (RetrofitException e) {
