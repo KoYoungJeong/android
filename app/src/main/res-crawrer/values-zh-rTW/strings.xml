@@ -50,6 +50,7 @@
 	<string name="common_sharetojandi_choose_team">"選擇您的團隊"</string>
 	<string name="common_sharetojandi_errormsg">"發生錯誤！請重試一次"</string>
 	<string name="common_signup_codeverification">"驗證碼已寄送到以上的電子郵箱，\n請輸入驗證碼完成認證"</string>
+	<string name="common_signup_invalid_emaildomain">""</string>
 	<string name="err_delete_file">"檔案無法刪除"</string>
 	<string name="err_download">"檔案無法下載"</string>
 	<string name="err_email_exists">"這電子郵件已被註冊"</string>
