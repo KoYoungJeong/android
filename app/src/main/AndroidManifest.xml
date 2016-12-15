@@ -426,7 +426,7 @@
         </activity>
 
         <activity
-            android:name=".ui.share.views.ShareSelectRoomActivity_"
+            android:name=".ui.share.views.ShareSelectRoomActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_share_to_jandi"
             android:screenOrientation="portrait">
