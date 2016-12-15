@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -253,43 +254,12 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         }
 
         if (!isTeamMemberList && item.isOwner()) {
-            tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
-                    .getDrawable(R.drawable.bg_user_level_team_admin));
-            tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
-                    .getColor(R.color.jandi_text_level_team_admin));
+            AccessLevelUtil.setTextOfLevel(Level.Admin, tvAuthorityBadge);
             tvAuthorityBadge.setText(JandiApplication.getContext()
                     .getString(R.string.jandi_topic_owner));
         } else {
             Level level = TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel();
-            if (level == Level.Admin) {
-                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
-                        .getDrawable(R.drawable.bg_user_level_team_admin));
-                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
-                        .getColor(R.color.jandi_text_level_team_admin));
-                tvAuthorityBadge.setText(JandiApplication.getContext()
-                        .getString(R.string.common_authority_title_manager));
-            } else if (level == Level.Owner) {
-                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
-                        .getDrawable(R.drawable.bg_user_level_team_owner));
-                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
-                        .getColor(R.color.jandi_text_level_team_owner));
-                tvAuthorityBadge.setText(JandiApplication.getContext()
-                        .getString(R.string.common_authority_title_owner));
-            } else if (level == Level.Member) {
-                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
-                        .getDrawable(R.drawable.bg_user_level_team_member));
-                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
-                        .getColor(R.color.jandi_text_level_team_member));
-                tvAuthorityBadge.setText(JandiApplication.getContext()
-                        .getString(R.string.common_authority_title_member));
-            } else if (level == Level.Guest) {
-                tvAuthorityBadge.setBackground(JandiApplication.getContext().getResources()
-                        .getDrawable(R.drawable.bg_user_level_team_guest));
-                tvAuthorityBadge.setTextColor(JandiApplication.getContext().getResources()
-                        .getColor(R.color.jandi_text_level_team_guest));
-                tvAuthorityBadge.setText(JandiApplication.getContext()
-                        .getString(R.string.common_authority_title_associate));
-            }
+            AccessLevelUtil.setTextOfLevel(level, tvAuthorityBadge);
         }
 
         Paint ownerBadgePaint = tvAuthorityBadge.getPaint();
