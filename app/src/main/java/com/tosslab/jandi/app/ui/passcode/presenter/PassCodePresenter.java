@@ -6,21 +6,16 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.passcode.model.PassCodeModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import javax.inject.Inject;
 
-/**
- * Created by tonyjs on 15. 10. 13..
- */
-@EBean
 public class PassCodePresenter {
 
-    @Bean
     PassCodeModel model;
-
     View view;
 
-    public void setView(View view) {
+    @Inject
+    public PassCodePresenter(View view, PassCodeModel model) {
+        this.model = model;
         this.view = view;
     }
 

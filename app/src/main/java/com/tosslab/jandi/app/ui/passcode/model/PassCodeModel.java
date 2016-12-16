@@ -7,20 +7,19 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tonyjs on 15. 10. 13..
- */
-@EBean
+import javax.inject.Inject;
+
 public class PassCodeModel {
     public static final int MAX_PASSCODE_LENGTH = 4;
 
     private List<Integer> passCodeList = new ArrayList<>();
     private String previousPassCode;
+
+    @Inject
+    public PassCodeModel() { }
 
     public boolean putPassCode(int passCode) {
         if (getPassCodeLength() >= MAX_PASSCODE_LENGTH) {

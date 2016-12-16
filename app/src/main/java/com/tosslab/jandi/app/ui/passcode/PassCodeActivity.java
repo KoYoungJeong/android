@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +15,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.passcode.adapter.PassCodeAdapter;
+import com.tosslab.jandi.app.ui.passcode.dagger.DaggerPassCodeComponent;
+import com.tosslab.jandi.app.ui.passcode.dagger.PassCodeModule;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintAuthDialogFragment;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintAuthDialogFragment_;
 import com.tosslab.jandi.app.ui.passcode.presenter.PassCodePresenter;
@@ -26,21 +31,13 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.decoration.GridRecyclerViewDivider;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.ViewsById;
-
 import java.util.List;
 
-/**
- * Created by tonyjs on 15. 10. 7..
- */
-@EActivity(R.layout.activity_passcode)
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class PassCodeActivity extends BaseAppCompatActivity
         implements PassCodePresenter.View, OnUnLockSuccessListener {
     public static final String KEY_CALLING_COMPONENT_NAME = "calling_component_name";
@@ -49,16 +46,16 @@ public class PassCodeActivity extends BaseAppCompatActivity
     public static final int MODE_TO_SAVE_PASSCODE = 1;
     public static final int MODE_TO_UNLOCK = 2;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     int mode = MODE_TO_UNLOCK;
 
-    @SystemService
     Vibrator vibrator;
 
-    @Bean
+    @Inject
     PassCodePresenter presenter;
 
-    @ViewsById(value = {
+    @Bind(value = {
             R.id.v_passcode_checker_1,
             R.id.v_passcode_checker_2,
             R.id.v_passcode_checker_3,
@@ -66,15 +63,15 @@ public class PassCodeActivity extends BaseAppCompatActivity
     })
     List<View> passCodeChecker;
 
-    @ViewById(R.id.vg_passcode_checker)
+    @Bind(R.id.vg_passcode_checker)
     View vgPassCodeChecker;
 
-    @ViewById(R.id.tv_passcode_title)
+    @Bind(R.id.tv_passcode_title)
     TextView tvTitle;
-    @ViewById(R.id.tv_passcode_subtitle)
+    @Bind(R.id.tv_passcode_subtitle)
     TextView tvSubTitle;
 
-    @ViewById(R.id.gv_passcode)
+    @Bind(R.id.gv_passcode)
     RecyclerView gvPassCode;
     private PassCodeAdapter adapter;
 
@@ -85,7 +82,15 @@ public class PassCodeActivity extends BaseAppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_passcode);
         setNeedUnLockPassCode(false);
+        ButterKnife.bind(this);
+        Dart.inject(this);
+        DaggerPassCodeComponent.builder()
+                .passCodeModule(new PassCodeModule(this))
+                .build()
+                .inject(this);
+        initViews();
     }
 
     @Override
@@ -114,8 +119,8 @@ public class PassCodeActivity extends BaseAppCompatActivity
 
     }
 
-    @AfterViews
     void initViews() {
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         final boolean isPassCodeSettingMode = (mode == MODE_TO_MODIFY_PASSCODE)
                 || (mode == MODE_TO_SAVE_PASSCODE);
 
@@ -153,8 +158,6 @@ public class PassCodeActivity extends BaseAppCompatActivity
             }
         });
 
-        presenter.setView(this);
-
         if (!isPassCodeSettingMode) {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InputPasscode);
         }
@@ -189,7 +192,6 @@ public class PassCodeActivity extends BaseAppCompatActivity
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE, delay = 100)
     @Override
     public void clearPassCodeCheckerWithDelay() {
         clearPassCodeChecker();

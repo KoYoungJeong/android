@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
-import com.tosslab.jandi.app.ui.passcode.PassCodeActivity_;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -83,9 +83,10 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
     void setPassCode() {
         boolean checked = !switchPassCode.isChecked();
         if (checked) {
-            PassCodeActivity_.intent(this)
+            startActivityForResult(Henson.with(this)
+                    .gotoPassCodeActivity()
                     .mode(PassCodeActivity.MODE_TO_SAVE_PASSCODE)
-                    .startForResult(REQUEST_SET_PASSCODE);
+                    .build(), REQUEST_SET_PASSCODE);
         } else {
             JandiPreference.removePassCode(getApplicationContext());
             initPassCodeSwitch();
@@ -132,9 +133,10 @@ public class SettingPrivacyActivity extends BaseAppCompatActivity {
 
     @OnClick(R.id.vg_setting_privacy_passcode_modify)
     void startModifyPassCodeActivity() {
-        PassCodeActivity_.intent(this)
+        startActivityForResult(Henson.with(this)
+                .gotoPassCodeActivity()
                 .mode(PassCodeActivity.MODE_TO_MODIFY_PASSCODE)
-                .startForResult(REQUEST_SET_PASSCODE);
+                .build(), REQUEST_SET_PASSCODE);
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.PasscodeLock, AnalyticsValue.Action.ChangePasscode);
     }

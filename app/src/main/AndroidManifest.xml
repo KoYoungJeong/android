@@ -471,7 +471,7 @@
         </activity>
 
         <activity
-            android:name=".ui.passcode.PassCodeActivity_"
+            android:name=".ui.passcode.PassCodeActivity"
             android:screenOrientation="fullUser" />
 
         <activity android:name=".ui.web.PageNotFoundActivity" />

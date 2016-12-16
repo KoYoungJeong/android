@@ -6,14 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
-import com.tosslab.jandi.app.ui.passcode.PassCodeActivity_;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-/**
- * Created by tonyjs on 15. 10. 12..
- */
 public class UnLockPassCodeManager {
 
     public static final String TAG = UnLockPassCodeManager.class.getSimpleName();
@@ -44,9 +41,10 @@ public class UnLockPassCodeManager {
             LogUtil.d(TAG, "!hasUnLocked");
         }
 
-        Intent intent = PassCodeActivity_.intent(activity)
+        Intent intent = Henson.with(activity)
+                .gotoPassCodeActivity()
                 .mode(PassCodeActivity.MODE_TO_UNLOCK)
-                .get();
+                .build();
 
         activity.overridePendingTransition(0, 0);
         activity.startActivity(intent);
@@ -68,8 +66,8 @@ public class UnLockPassCodeManager {
 
         ComponentName componentName = intent.getComponent();
 
-        intent.setClass(context, PassCodeActivity_.class);
-        intent.putExtra(PassCodeActivity_.MODE_EXTRA, PassCodeActivity.MODE_TO_UNLOCK);
+        intent.setClass(context, PassCodeActivity.class);
+        intent.putExtra("mode", PassCodeActivity.MODE_TO_UNLOCK);
         if (context instanceof Activity) {
             intent.putExtra(PassCodeActivity.KEY_CALLING_COMPONENT_NAME, componentName);
 
