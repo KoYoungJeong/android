@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 16. 2. 24..
@@ -22,7 +24,7 @@ public class PassCodeModelTest {
 
     @Before
     public void setUp() throws Exception {
-        model = PassCodeModel_.getInstance_(JandiApplication.getContext());
+        model = new PassCodeModel();
     }
 
     @Test

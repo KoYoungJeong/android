@@ -4,13 +4,13 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.passcode.PassCodeActivity;
+import com.tosslab.jandi.app.ui.passcode.model.PassCodeModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMost;
@@ -28,9 +28,8 @@ public class PassCodePresenterTest {
 
     @Before
     public void setUp() throws Exception {
-        presenter = PassCodePresenter_.getInstance_(JandiApplication.getContext());
         view = mock(PassCodePresenter.View.class);
-        presenter.setView(view);
+        presenter = new PassCodePresenter(view, new PassCodeModel());
     }
 
     @Test
