@@ -2,9 +2,10 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.model;
 
 import android.support.v4.util.Pair;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.TopicFolder;
@@ -14,10 +15,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,19 +30,16 @@ import dagger.Lazy;
 import rx.Observable;
 import rx.functions.Func0;
 
-@EBean
 public class MainTopicModel {
 
-    @Bean
     EntityClientManager entityClientManager;
 
-    @Inject
     Lazy<FolderApi> folderApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create()
-                .inject(this);
+    @Inject
+    public MainTopicModel(Lazy<FolderApi> folderApi) {
+        this.folderApi = folderApi;
+        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
     }
 
     // 폴더 정보 가져오기

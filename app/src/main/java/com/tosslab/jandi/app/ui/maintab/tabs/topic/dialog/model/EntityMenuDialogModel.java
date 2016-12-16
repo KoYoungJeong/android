@@ -5,9 +5,9 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -17,34 +17,26 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import javax.inject.Inject;
 
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.schedulers.Schedulers;
 
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 7..
- */
-@EBean
 public class EntityMenuDialogModel {
 
-    @Bean
     EntityClientManager entityClientManager;
 
-    @Inject
     Lazy<ChatApi> chatApi;
-    @Inject
     Lazy<RoomsApi> roomsApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    @Inject
+    public EntityMenuDialogModel(Lazy<ChatApi> chatApi, Lazy<RoomsApi> roomsApi) {
+        this.chatApi = chatApi;
+        this.roomsApi = roomsApi;
+        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
     }
 
     public void requestStarred(long entityId) throws RetrofitException {
@@ -71,21 +63,20 @@ public class EntityMenuDialogModel {
         return TeamInfoLoader.getInstance().isDefaultTopic(entityId);
     }
 
-    @Background
     public void updateNotificationOnOff(long entityId, boolean isTopicPushOn) {
         if (!NetworkCheckUtil.isConnected()) {
             EventBus.getDefault().post(new SocketTopicPushEvent());
         } else {
 
-            final long teamId = TeamInfoLoader.getInstance().getTeamId();
-            try {
+            Completable.fromCallable(() -> {
+                long teamId = TeamInfoLoader.getInstance().getTeamId();
                 updatePushStatus(teamId, entityId, isTopicPushOn);
                 TopicRepository.getInstance().updatePushSubscribe(entityId, isTopicPushOn);
                 TeamInfoLoader.getInstance().refresh();
+                return true;
+            }).subscribeOn(Schedulers.io())
+                    .subscribe(() -> {}, Throwable::printStackTrace);
 
-            } catch (RetrofitException e) {
-                e.printStackTrace();
-            }
         }
 
 

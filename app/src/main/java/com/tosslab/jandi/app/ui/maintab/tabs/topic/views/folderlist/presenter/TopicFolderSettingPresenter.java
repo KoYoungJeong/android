@@ -113,7 +113,6 @@ public class TopicFolderSettingPresenter {
     public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long originFolderId, long topicId) {
         TopicFolderMainAdapter topicFolderAdapter = (TopicFolderMainAdapter) adapter;
         Folder item = topicFolderAdapter.getItem(position);
-        view.setCurrentTopicFolderName(item.getName());
         switch (type) {
             case TopicFolderSettingAdapter.TYPE_FOLDER_LIST:
                 long newfolderId = item.getId();
@@ -186,8 +185,6 @@ public class TopicFolderSettingPresenter {
     }
 
     public interface View {
-        void setCurrentTopicFolderName(String name);
-
         void showFolderList(List<Folder> folders, boolean hasFolder);
 
         void showCreateNewFolderDialog(boolean fromActionBar);

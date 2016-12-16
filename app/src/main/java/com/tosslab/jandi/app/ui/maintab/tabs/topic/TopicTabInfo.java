@@ -39,9 +39,7 @@ public class TopicTabInfo implements TabInfo {
 
     @Override
     public Fragment getFragment() {
-        return MainTopicListFragment_.builder()
-                .selectedEntity(selectedEntity)
-                .build();
+        return MainTopicListFragment.create(selectedEntity);
     }
 
 }

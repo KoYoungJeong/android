@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,14 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.Room;
@@ -30,28 +30,24 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 7..
- */
-@EFragment
 public class EntityMenuDialogFragment extends DialogFragment {
 
-    @FragmentArg
+    @InjectExtra
     long entityId;
 
-    @FragmentArg
+    @InjectExtra
     long roomId;
 
-    @FragmentArg
+    @InjectExtra
     long folderId;
 
     TextView btnStarred;
@@ -64,16 +60,36 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     TextView btnNotification;
 
-    @Bean
+    @Inject
     EntityMenuDialogModel entityMenuDialogModel;
 
-    @Bean
-    EntityClientManager entityClientManager;
     private ProgressWheel progressWheel;
+
+    public static EntityMenuDialogFragment create(long entityId, long roomId, long folderId) {
+        EntityMenuDialogFragment frag = new EntityMenuDialogFragment();
+        Bundle args = new Bundle();
+        args.putLong("entityId", entityId);
+        args.putLong("roomId", roomId);
+        args.putLong("folderId", folderId);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    public static EntityMenuDialogFragment create(long entityId, long roomId) {
+        EntityMenuDialogFragment frag = new EntityMenuDialogFragment();
+        Bundle args = new Bundle();
+        args.putLong("entityId", entityId);
+        args.putLong("roomId", roomId);
+        args.putLong("folderId", 0);
+        frag.setArguments(args);
+        return frag;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Dart.inject(this, getArguments());
+        DaggerEntityMenuDialogFragment_Component.builder().build().inject(this);
         initView();
     }
 
@@ -128,7 +144,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         progressWheel = new ProgressWheel(getActivity());
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showGlobalPushSetupDialog() {
         new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(R.string.jandi_explain_global_push_off)
@@ -181,11 +196,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
         requestStarred();
     }
 
-    @Background
     void requestStarred() {
-        boolean starred = TeamInfoLoader.getInstance().isStarred(roomId);
 
-        try {
+        Observable.fromCallable(() -> {
+            boolean starred = TeamInfoLoader.getInstance().isStarred(roomId);
             if (starred) {
                 entityMenuDialogModel.requestUnstarred(entityId);
             } else {
@@ -198,53 +212,39 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 TopicRepository.getInstance().updateStarred(roomId, !starred);
             }
             TeamInfoLoader.getInstance().refresh();
-
-            dismissProgressWheel();
-
-            if (!starred) {
-                showToast(getString(R.string.jandi_message_starred));
-            } else {
-                showToast(getString(R.string.jandi_message_no_starred));
-            }
-
             EventBus.getDefault().post(new RetrieveTopicListEvent());
-
-            dismiss();
-
             starred = TeamInfoLoader.getInstance().isStarred(roomId);
             AnalyticsValue.Screen category = roomId !=
                     entityId ? AnalyticsValue.Screen.MessageTab : AnalyticsValue.Screen.TopicsTab;
             AnalyticsValue.Action action = AnalyticsValue.Action.TopicSubMenu_Star;
             AnalyticsValue.Label label = starred ? AnalyticsValue.Label.Star : AnalyticsValue.Label.Unstar;
             AnalyticsUtil.sendEvent(category, action, label);
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            dismissProgressWheel();
-            dismiss();
-        } catch (Exception e) {
-            e.printStackTrace();
-            dismissProgressWheel();
-            dismiss();
-        }
+            return !starred;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(() -> {
+                    dismissProgressWheel();
+                    dismiss();
+                })
+                .subscribe(starred -> {
+                    if (starred) {
+                        showToast(getString(R.string.jandi_message_starred));
+                    } else {
+                        showToast(getString(R.string.jandi_message_no_starred));
+                    }
+                }, Throwable::printStackTrace);
+
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void dismiss() {
-        super.dismiss();
-    }
 
-    @UiThread
     void showToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread
     void showErrorToast(String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void onLeaveClick() {
         long myId = TeamInfoLoader.getInstance().getMyId();
         int memberCount = TeamInfoLoader.getInstance().getTopicMemberCount(entityId);
@@ -264,7 +264,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void onLeaveEntity(String userName, boolean isPublicTopic, boolean isUser, boolean isBot) {
         if (isPublicTopic || isUser || isBot) {
             showProgressWheel();
@@ -289,19 +288,15 @@ public class EntityMenuDialogFragment extends DialogFragment {
         builder.setTitle(entityName)
                 .setMessage(R.string.jandi_message_leave_private_topic)
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_action_leave, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        showProgressWheel();
-                        leaveEntity(entityId, false, false);
-                    }
+                .setPositiveButton(R.string.jandi_action_leave, (dialog, which) -> {
+                    showProgressWheel();
+                    leaveEntity(entityId, false, false);
                 }).create().show();
     }
 
-    @Background
     void leaveEntity(long entityId, boolean publicTopic, boolean isUser) {
-        try {
 
+        Completable.fromCallable(() -> {
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
@@ -314,34 +309,27 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 ChatRepository.getInstance().updateChatOpened(roomId, false);
             }
             TeamInfoLoader.getInstance().refresh();
-
+            EventBus.getDefault().post(new RetrieveTopicListEvent());
             if (TeamInfoLoader.getInstance().isUser(entityId)) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             } else {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(() -> {
+                    dismissProgressWheel();
+                    dismiss();
+                })
+                .subscribe(() -> {
+                }, t -> {
+                    showErrorToast(getString(R.string.err_entity_leave));
+                    t.printStackTrace();
 
-            dismissProgressWheel();
-
-            EventBus.getDefault().post(new RetrieveTopicListEvent());
-
-            dismiss();
-        } catch (RetrofitException e) {
-            showErrorToast(getString(R.string.err_entity_leave));
-            e.printStackTrace();
-
-            dismissProgressWheel();
-            dismiss();
-        } catch (Exception e) {
-            showErrorToast(getString(R.string.err_entity_leave));
-            e.printStackTrace();
-
-            dismissProgressWheel();
-            dismiss();
-        }
+                });
     }
 
-    @UiThread
     void showProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
@@ -352,7 +340,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
     }
 
-    @UiThread
     void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
@@ -368,5 +355,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
         dismiss();
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu_Move);
+    }
+
+    @dagger.Component(modules = ApiClientModule.class)
+    interface Component {
+        void inject(EntityMenuDialogFragment fragment);
     }
 }

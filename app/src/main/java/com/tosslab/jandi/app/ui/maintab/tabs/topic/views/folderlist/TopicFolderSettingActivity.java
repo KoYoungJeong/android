@@ -80,14 +80,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     @ViewById(R.id.ll_folder_list)
     LinearLayout vgFolderList;
 
-    private String currentItemFolderName = "";
     private TopicFolderMainAdapter adapter;
     private AlertDialog alertDialog;
-
-    @Override
-    public void setCurrentTopicFolderName(String currentItemFolderName) {
-        this.currentItemFolderName = currentItemFolderName;
-    }
 
     @AfterInject
     void initObject() {

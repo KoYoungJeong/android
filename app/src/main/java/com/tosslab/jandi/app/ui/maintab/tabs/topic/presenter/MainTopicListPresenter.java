@@ -24,20 +24,20 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataPro
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel_;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import io.realm.RealmList;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -46,34 +46,49 @@ import rx.schedulers.Schedulers;
  * Created by tee on 15. 8. 26..
  */
 
-@EBean
 public class MainTopicListPresenter {
 
-    @Bean(MainTopicModel.class)
+    @Inject
     MainTopicModel mainTopicModel;
-
-    @Bean
-    TopicFolderSettingModel topicFolderChooseModel;
-
     View view;
+
+    TopicFolderSettingModel topicFolderChooseModel;
 
     private List<TopicFolder> topicFolders;
     private List<TopicRoom> topicFolderItems;
 
-    public void setView(View view) {
+    @Inject
+    public MainTopicListPresenter(MainTopicModel mainTopicModel, View view) {
+        this.mainTopicModel = mainTopicModel;
         this.view = view;
+        topicFolderChooseModel = TopicFolderSettingModel_.getInstance_(JandiApplication.getContext());
     }
 
     public void onLoadList() {
-        topicFolders = mainTopicModel.getTopicFolders();
-        topicFolderItems = mainTopicModel.getJoinedTopics();
-        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        Observable.fromCallable(() -> {
+            topicFolders = mainTopicModel.getTopicFolders();
+            topicFolderItems = mainTopicModel.getJoinedTopics();
+
+            return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(dataProvider -> {
+                    view.showList(dataProvider);
+                }, Throwable::printStackTrace);
     }
 
     public void refreshList() {
-        topicFolders = mainTopicModel.getTopicFolders();
-        topicFolderItems = mainTopicModel.getJoinedTopics();
-        view.refreshList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+        Observable.fromCallable(() -> {
+            topicFolders = mainTopicModel.getTopicFolders();
+            topicFolderItems = mainTopicModel.getJoinedTopics();
+            return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(dataProvider -> {
+                    view.refreshList(dataProvider);
+                }, Throwable::printStackTrace);
     }
 
     public void onUpdatedTopicClick(Topic item) {
@@ -194,9 +209,10 @@ public class MainTopicListPresenter {
         return folderExpands;
     }
 
-    @Background
+
     public void createNewFolder(String title) {
-        try {
+        Completable.fromCallable(() -> {
+
             ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
             Folder folder1 = new Folder();
             folder1.setRoomIds(new RealmList<>());
@@ -206,12 +222,18 @@ public class MainTopicListPresenter {
             folder1.setSeq(folder.getSeq());
             FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder1);
             TeamInfoLoader.getInstance().refresh();
-            refreshList();
-        } catch (RetrofitException e) {
-            if (e.getResponseCode() == 40008) {
-                view.showAlreadyHasFolderToast();
-            }
-        }
+            return true;
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    refreshList();
+                }, t -> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getResponseCode() == 40008) {
+                            view.showAlreadyHasFolderToast();
+                        }
+                    }
+                });
     }
 
     public void onRefreshUpdatedTopicList() {
@@ -295,15 +317,7 @@ public class MainTopicListPresenter {
 
         void notifyDatasetChangedForFolder();
 
-        void notifyDatasetChangedForUpdated();
-
         void showEntityMenuDialog(long entityId, long folderId);
-
-        void showProgressWheel();
-
-        void dismissProgressWheel();
-
-        void updateGroupBadgeCount();
 
         void setSelectedItem(long selectedEntity);
 

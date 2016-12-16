@@ -39,7 +39,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.chat.dagger.MainChatListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
@@ -368,10 +368,7 @@ public class MainChatListFragment extends Fragment
     }
 
     void onEntityLongItemClick(ChatItem chatItem) {
-        EntityMenuDialogFragment_.builder()
-                .entityId(chatItem.getEntityId())
-                .roomId(chatItem.getRoomId())
-                .build()
+        EntityMenuDialogFragment.create(chatItem.getEntityId(), chatItem.getRoomId())
                 .show(getFragmentManager(), "dialog");
     }
 

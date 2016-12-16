@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
@@ -20,37 +22,40 @@ import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.UiThread;
-
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
-/**
- * Created by tee on 15. 9. 8..
- */
-@EFragment
 public class TopicFolderDialogFragment extends DialogFragment {
 
-    @FragmentArg
+    @InjectExtra
     long folderId;
-    @FragmentArg
+    @InjectExtra
     String folderName;
-    @FragmentArg
+    @InjectExtra
     int seq;
 
     TextView tvFolderTitle;
 
-    @Bean
     TopicFolderSettingModel topicFolderDialogModel;
+
+    public static TopicFolderDialogFragment create(long folderId, String folderName, int seq) {
+        Bundle args = new Bundle();
+        args.putLong("folderId", folderId);
+        args.putString("folderName", folderName);
+        args.putInt("seq", seq);
+        TopicFolderDialogFragment frag = new TopicFolderDialogFragment();
+        frag.setArguments(args);
+        return frag;
+    }
 
     @NonNull
     @Override
@@ -77,6 +82,9 @@ public class TopicFolderDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Dart.inject(this, getArguments());
+        topicFolderDialogModel = TopicFolderSettingModel_.getInstance_(getActivity());
         initView();
     }
 
@@ -143,47 +151,49 @@ public class TopicFolderDialogFragment extends DialogFragment {
         builder.show();
     }
 
-    @Background
     public void deleteTopicFolder(long folderId) {
-        try {
+        Completable.fromCallable(() -> {
             topicFolderDialogModel.deleteTopicFolder(folderId);
             FolderRepository.getInstance().deleteFolder(folderId);
             TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new TopicFolderRefreshEvent());
-            showDeleteFolderToast();
-            dismiss();
-        } catch (RetrofitException retrofitError) {
-            retrofitError.printStackTrace();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    showDeleteFolderToast();
+                    dismiss();
+                }, Throwable::printStackTrace);
     }
 
-    @Background
     public void renameFolder(long folderId, String name, int seq) {
-        try {
+        Completable.fromCallable(() -> {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
             FolderRepository.getInstance().updateFolderName(folderId, name);
             TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new TopicFolderRefreshEvent());
-            showRenameFolderToast();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            if (e.getResponseCode() == 40008) {
-                showFailedRenameFolderToast();
-            }
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::showRenameFolderToast, t -> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        e.printStackTrace();
+                        if (e.getResponseCode() == 40008) {
+                            showFailedRenameFolderToast();
+                        }
+                    }
+                });
     }
 
-    @UiThread
     public void showRenameFolderToast() {
         ColoredToast.show(JandiApplication.getContext().getString(R.string.jandi_folder_renamed));
     }
 
-    @UiThread
     public void showFailedRenameFolderToast() {
         ColoredToast.showWarning(JandiApplication.getContext().getString(R.string.jandi_folder_alread_has_name));
     }
 
-    @UiThread
     public void showDeleteFolderToast() {
         ColoredToast.show(JandiApplication.getContext().getString(R.string.jandi_folder_removed));
     }
