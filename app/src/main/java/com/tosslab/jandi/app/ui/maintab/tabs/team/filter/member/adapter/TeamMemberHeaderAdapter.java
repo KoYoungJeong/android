@@ -39,7 +39,7 @@ public class TeamMemberHeaderAdapter implements StickyHeadersAdapter<TeamMemberH
             headerViewHolder.itemView.setVisibility(View.VISIBLE);
 
             if (item.getChatChooseItem().isStarred()) {
-                headerViewHolder.tvTitle.setText(R.string.jandi_action_starred);
+                headerViewHolder.tvTitle.setText(R.string.jandi_starred_star);
             } else {
                 headerViewHolder.tvTitle.setText(item.getFirstCharacter());
             }
