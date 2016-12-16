@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -39,7 +40,6 @@ import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
 import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectRoomActivity_;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -211,10 +211,10 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void callRoomSelector(long teamId) {
-        ShareSelectRoomActivity_
-                .intent(this)
+        startActivity(Henson.with(getActivity())
+                .gotoShareSelectRoomActivity()
                 .teamId(teamId)
-                .start();
+                .build());
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
 
