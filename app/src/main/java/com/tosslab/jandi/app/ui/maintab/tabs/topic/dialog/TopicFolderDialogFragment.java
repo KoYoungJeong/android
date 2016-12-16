@@ -19,14 +19,16 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel_;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Completable;
@@ -45,6 +47,7 @@ public class TopicFolderDialogFragment extends DialogFragment {
 
     TextView tvFolderTitle;
 
+    @Inject
     TopicFolderSettingModel topicFolderDialogModel;
 
     public static TopicFolderDialogFragment create(long folderId, String folderName, int seq) {
@@ -84,7 +87,9 @@ public class TopicFolderDialogFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
 
         Dart.inject(this, getArguments());
-        topicFolderDialogModel = TopicFolderSettingModel_.getInstance_(getActivity());
+        DaggerTopicFolderDialogFragment_Component.builder()
+                .build()
+                .inject(this);
         initView();
     }
 
@@ -198,4 +203,8 @@ public class TopicFolderDialogFragment extends DialogFragment {
         ColoredToast.show(JandiApplication.getContext().getString(R.string.jandi_folder_removed));
     }
 
+    @dagger.Component(modules = ApiClientModule.class)
+    interface Component {
+        void inject(TopicFolderDialogFragment fragment);
+    }
 }

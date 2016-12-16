@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataPro
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel_;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -48,34 +47,25 @@ import rx.schedulers.Schedulers;
 
 public class MainTopicListPresenter {
 
-    @Inject
     MainTopicModel mainTopicModel;
     View view;
-
     TopicFolderSettingModel topicFolderChooseModel;
 
     private List<TopicFolder> topicFolders;
     private List<TopicRoom> topicFolderItems;
 
     @Inject
-    public MainTopicListPresenter(MainTopicModel mainTopicModel, View view) {
-        this.mainTopicModel = mainTopicModel;
+    public MainTopicListPresenter(View view, MainTopicModel mainTopicModel,
+                                  TopicFolderSettingModel topicFolderChooseModel) {
         this.view = view;
-        topicFolderChooseModel = TopicFolderSettingModel_.getInstance_(JandiApplication.getContext());
+        this.mainTopicModel = mainTopicModel;
+        this.topicFolderChooseModel = topicFolderChooseModel;
     }
 
     public void onLoadList() {
-        Observable.fromCallable(() -> {
-            topicFolders = mainTopicModel.getTopicFolders();
-            topicFolderItems = mainTopicModel.getJoinedTopics();
-
-            return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
-        })
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(dataProvider -> {
-                    view.showList(dataProvider);
-                }, Throwable::printStackTrace);
+        topicFolders = mainTopicModel.getTopicFolders();
+        topicFolderItems = mainTopicModel.getJoinedTopics();
+        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
     }
 
     public void refreshList() {

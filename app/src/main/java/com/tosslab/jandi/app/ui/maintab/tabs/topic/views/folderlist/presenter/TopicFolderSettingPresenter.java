@@ -10,59 +10,57 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter.TopicFolderMainAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import io.realm.RealmList;
+import rx.Completable;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
+import rx.schedulers.Schedulers;
 
 
-/**
- * Created by tee on 15. 8. 31..
- */
-
-@EBean
 public class TopicFolderSettingPresenter {
 
-    @Bean
-    TopicFolderSettingModel topicFolderChooseModel;
-
-    @Bean
-    com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel topicFolderSettingModel;
-
     View view;
+    TopicFolderSettingModel topicFolderSettingModel;
 
-    public void setView(View view) {
+    @Inject
+    public TopicFolderSettingPresenter(View view,
+                                       TopicFolderSettingModel topicFolderSettingModel) {
         this.view = view;
+        this.topicFolderSettingModel = topicFolderSettingModel;
     }
 
-    @Background
     public void onRefreshFolders() {
-        boolean hasFolder = false;
-        List<Folder> folders = FolderRepository.getInstance().getFolders(TeamInfoLoader.getInstance().getTeamId());
 
-        // 리턴하는 folder의 length=0이더라도 폴더가 1개이고 속해져있는 폴더인 케이스를 식별해야 한다.
-        if (folders.size() > 0) {
-            hasFolder = true;
-        }
+        Observable.fromCallable(() -> TeamInfoLoader.getInstance().getTopicFolders())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(Observable::from)
+                .collect((Func0<ArrayList<TopicFolder>>) ArrayList::new, List::add)
+                .subscribe(topicFolders -> {
+                    // 리턴하는 folder의 length=0이더라도 폴더가 1개이고 속해져있는 폴더인 케이스를 식별해야 한다.
+                    view.showFolderList(topicFolders, topicFolders.size() > 0);
+                });
 
-        view.showFolderList(folders, hasFolder);
     }
 
-    @Background
     public void onCreateFolers(String title, long folderId) {
-        try {
-            ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
+        Completable.fromCallable(() -> {
+            ResCreateFolder folder = topicFolderSettingModel.createFolder(title);
             Folder folder1 = new Folder();
             folder1.setRoomIds(new RealmList<>());
             folder1.setOpened(false);
@@ -71,48 +69,59 @@ public class TopicFolderSettingPresenter {
             folder1.setSeq(folder.getSeq());
             FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder1);
             TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicFolderRefreshEvent());
-        } catch (RetrofitException e) {
-            view.showAlreadyHasFolderToast();
-            e.printStackTrace();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
+                }, t -> {
+                    t.printStackTrace();
+                    view.showAlreadyHasFolderToast();
+                });
     }
 
-    @Background
     public void onDeleteItemFromFolder(long folderId, long topicId, String name) {
-        try {
-            topicFolderChooseModel.deleteItemFromFolder(folderId, topicId);
+        Completable.fromCallable(() -> {
+            topicFolderSettingModel.deleteItemFromFolder(folderId, topicId);
             FolderRepository.getInstance().removeTopic(folderId, topicId);
             TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicFolderRefreshEvent());
-            view.showRemoveFromFolderToast(name);
-            view.finishAcitivty();
-        } catch (RetrofitException retrofitError) {
-            retrofitError.printStackTrace();
-            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
+                    view.showRemoveFromFolderToast(name);
+                    view.finishAcitivty();
+
+                }, t -> {
+                    t.printStackTrace();
+                    view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+                });
     }
 
-    @Background
     public void onAddTopicIntoFolder(long folderId, long topicId, String name) {
-        try {
-            topicFolderChooseModel.addTopicIntoFolder(folderId, topicId);
+        Completable.fromCallable(() -> {
+            topicFolderSettingModel.addTopicIntoFolder(folderId, topicId);
             long teamId = TeamInfoLoader.getInstance().getTeamId();
             FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(topicId));
             FolderRepository.getInstance().addTopic(folderId, topicId);
             TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicFolderRefreshEvent());
-            view.showMoveToFolderToast(name);
-            view.finishAcitivty();
-        } catch (RetrofitException retrofitError) {
-            retrofitError.printStackTrace();
-            view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
+                    view.showMoveToFolderToast(name);
+                    view.finishAcitivty();
+                }, t -> {
+                    t.printStackTrace();
+                    view.showErrorToast(JandiApplication.getContext().getString(R.string.jandi_err_unexpected));
+                });
     }
 
     public void onItemClick(RecyclerView.Adapter adapter, int position, int type, long originFolderId, long topicId) {
         TopicFolderMainAdapter topicFolderAdapter = (TopicFolderMainAdapter) adapter;
-        Folder item = topicFolderAdapter.getItem(position);
+        TopicFolder item = topicFolderAdapter.getItem(position);
         switch (type) {
             case TopicFolderSettingAdapter.TYPE_FOLDER_LIST:
                 long newfolderId = item.getId();
@@ -124,7 +133,7 @@ public class TopicFolderSettingPresenter {
                 }
                 break;
             case TopicFolderSettingAdapter.TYPE_REMOVE_FROM_FOLDER:
-                Folder itemById = topicFolderAdapter.getItemById(originFolderId);
+                TopicFolder itemById = topicFolderAdapter.getItemById(originFolderId);
                 String folderName;
                 if (itemById == null) {
                     folderName = "";
@@ -141,51 +150,60 @@ public class TopicFolderSettingPresenter {
     }
 
     // 순서 및 이름 변경
-    @Background
     public void modifyNameFolder(long folderId, String name, int seq) {
-        try {
+        Completable.fromCallable(() -> {
             topicFolderSettingModel.renameFolder(folderId, name, seq);
             FolderRepository.getInstance().updateFolderName(folderId, name);
             TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicFolderRefreshEvent());
-            view.showFolderRenamedToast();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            if (e.getResponseCode() == 40008) {
-                view.showAlreadyHasFolderToast();
-            }
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
+                    view.showFolderRenamedToast();
+
+                }, t -> {
+                    t.printStackTrace();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getResponseCode() == 40008) {
+                            view.showAlreadyHasFolderToast();
+                        }
+                    }
+                });
     }
 
     // 순서 및 이름 변경
-    @Background
     public void modifySeqFolder(long folderId, int seq) {
-        try {
+        Completable.fromCallable(() -> {
             topicFolderSettingModel.modifySeqFolder(folderId, seq);
             FolderRepository.getInstance().updateFolderSeq(TeamInfoLoader.getInstance().getTeamId(), folderId, seq);
             TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicFolderRefreshEvent());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
+                }, Throwable::printStackTrace);
     }
 
-    @Background
     public void removeFolder(long folderId) {
-        try {
+        Completable.fromCallable(() -> {
             topicFolderSettingModel.deleteTopicFolder(folderId);
             FolderRepository.getInstance().deleteFolder(folderId);
             TeamInfoLoader.getInstance().refresh();
-            EventBus.getDefault().post(new TopicFolderRefreshEvent());
-            onRefreshFolders();
-            view.showDeleteFolderToast();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
+                    onRefreshFolders();
+                    view.showDeleteFolderToast();
+                }, Throwable::printStackTrace);
     }
 
     public interface View {
-        void showFolderList(List<Folder> folders, boolean hasFolder);
+        void showFolderList(List<TopicFolder> folders, boolean hasFolder);
 
         void showCreateNewFolderDialog(boolean fromActionBar);
 

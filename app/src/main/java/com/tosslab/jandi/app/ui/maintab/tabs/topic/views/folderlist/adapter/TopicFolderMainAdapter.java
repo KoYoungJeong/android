@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemWithTypeCLickListener;
 
 import java.util.ArrayList;
@@ -23,10 +23,10 @@ public abstract class TopicFolderMainAdapter extends RecyclerView.Adapter<Recycl
     public static final int TYPE_MAKE_NEW_FOLDER = 2;
     public static final int TYPE_FOLDER_LIST = 0;
     protected OnRecyclerItemWithTypeCLickListener onRecyclerItemClickListener;
-    List<Folder> folders = null;
+    List<TopicFolder> folders = null;
     long folderId = -1;
 
-    public List<Folder> getFolders() {
+    public List<TopicFolder> getFolders() {
         if (folders != null) {
             return folders;
         }
@@ -37,7 +37,7 @@ public abstract class TopicFolderMainAdapter extends RecyclerView.Adapter<Recycl
         getFolders().clear();
     }
 
-    public void addAll(List<Folder> folders) {
+    public void addAll(List<TopicFolder> folders) {
         this.folders = folders;
         addDummyFolders();
     }
@@ -71,7 +71,7 @@ public abstract class TopicFolderMainAdapter extends RecyclerView.Adapter<Recycl
         return getFolders().size();
     }
 
-    public Folder getItem(int position) {
+    public TopicFolder getItem(int position) {
         return folders.get(position);
     }
 
@@ -83,10 +83,10 @@ public abstract class TopicFolderMainAdapter extends RecyclerView.Adapter<Recycl
         this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
 
-    public Folder getItemById(long folderId) {
+    public TopicFolder getItemById(long folderId) {
         int count = getItemCount();
         for (int idx = 0; idx < count; idx++) {
-            Folder item = getItem(idx);
+            TopicFolder item = getItem(idx);
             if (item.getId() == folderId) {
                 return item;
             }

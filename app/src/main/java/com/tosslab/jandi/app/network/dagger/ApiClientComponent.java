@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialogModel;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
@@ -45,10 +44,6 @@ public interface ApiClientComponent {
     void inject(MembersModel membersModel);
 
     void inject(AnnouncementModel announcementModel);
-
-    void inject(TopicFolderSettingModel topicFolderSettingModel);
-
-    void inject(com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel topicFolderSettingModel);
 
     void inject(FileUploadModel fileUploadModel);
 }

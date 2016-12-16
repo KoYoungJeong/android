@@ -49,12 +49,19 @@ public class FolderRepository extends RealmRepository {
                     .equalTo("teamId", teamId)
                     .findFirst();
 
-            folder.set_id(teamId + "_" + folder.getId());
-            folder.setTeamId(teamId);
+            if (initialInfo != null) {
+                String _id = teamId + "_" + folder.getId();
+                if (realm.where(Folder.class)
+                        .equalTo("_id", _id)
+                        .count() <= 0) {
+                    folder.set_id(_id);
+                    folder.setTeamId(teamId);
 
-            realm.executeTransaction(realm1 -> {
-                initialInfo.getFolders().add(folder);
-            });
+                    realm.executeTransaction(realm1 -> {
+                        initialInfo.getFolders().add(folder);
+                    });
+                }
+            }
             return true;
         });
     }

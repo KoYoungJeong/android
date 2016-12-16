@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter;
 
 import android.support.v7.widget.RecyclerView;
 
-import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.team.room.TopicFolder;
 
 import java.util.Collections;
 
@@ -17,7 +17,7 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
 
     @Override
     protected void addDummyFolders() {
-        folders.add(new Folder());
+        folders.add(new TopicFolder(null, null));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
         super.onBindViewHolder(holder, position);
         if (holder.getItemViewType() == TYPE_FOLDER_LIST) {
             FolderAdapterViewHolder viewHolder = (FolderAdapterViewHolder) holder;
-            Folder resFolder = getItem(position);
+            TopicFolder resFolder = getItem(position);
             viewHolder.btRemoveFolder.setOnClickListener(v -> {
                 onRemoveFolderListener.onRemove(resFolder.getId());
             });
@@ -43,9 +43,9 @@ public class TopicFolderSettingAdapter extends TopicFolderMainAdapter {
         } else if (holder.getItemViewType() == TYPE_MAKE_NEW_FOLDER) {
             holder.itemView.setOnClickListener(view -> {
                 if (onRecyclerItemClickListener != null) {
-                    onRecyclerItemClickListener.onItemClick(holder.itemView, TopicFolderSettingAdapter.this,
+                    onRecyclerItemClickListener.onItemClick(holder.itemView,
+                            TopicFolderSettingAdapter.this,
                             position, holder.getItemViewType());
-//                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.FolderManagement, AnalyticsValue.Action.CreateNewFolder);
                 }
             });
         }

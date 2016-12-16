@@ -53,7 +53,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataPro
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
@@ -261,11 +260,15 @@ public class MainTopicListFragment extends Fragment
                 .subscribe(i -> {
                     selectedEntity = -2;
                     setSelectedItem(selectedEntity);
-                    TopicFolderSettingActivity_.intent(getActivity())
-                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                            .extra("mode", TopicFolderSettingActivity.FOLDER_SETTING)
-                            .extra("folderId", -1)
-                            .start();
+                    startActivity(Henson.with(getActivity())
+                            .gotoTopicFolderSettingActivity()
+                            .folderId(-1)
+                            .mode(TopicFolderSettingActivity.FOLDER_SETTING)
+                            .topicId(0)
+                            .build()
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+                    );
                 });
     }
 
@@ -526,13 +529,14 @@ public class MainTopicListFragment extends Fragment
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.BrowseOtherTopics);
     }
 
-    public void onEvent(TopicFolderMoveCallEvent event) {
-        TopicFolderSettingActivity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    public void onEventMainThread(TopicFolderMoveCallEvent event) {
+        startActivity(Henson.with(getActivity())
+                .gotoTopicFolderSettingActivity()
                 .mode(TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
                 .topicId(event.getTopicId())
                 .folderId(event.getFolderId())
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

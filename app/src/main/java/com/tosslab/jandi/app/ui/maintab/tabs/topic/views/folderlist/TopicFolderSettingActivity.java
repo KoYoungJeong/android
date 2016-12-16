@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,38 +20,32 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
-import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter.DragnDropTouchHelper;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter.TopicFolderChooseAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter.TopicFolderMainAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.adapter.TopicFolderSettingAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.dagger.DaggerTopicFolderSettingComponent;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.dagger.TopicFolderSettingModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.presenter.TopicFolderSettingPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by tee on 15. 8. 30..
- */
-@EActivity(R.layout.activity_folder_choose)
-@OptionsMenu(R.menu.choose_folder_menu)
 public class TopicFolderSettingActivity extends BaseAppCompatActivity
         implements TopicFolderSettingPresenter.View,
         TopicFolderSettingAdapter.OnFolderSeqChangeLisener,
@@ -60,40 +55,56 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     public static final int ITEM_FOLDER_CHOOSE = 0x01;
     public static final int FOLDER_SETTING = 0x02;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     int mode = ITEM_FOLDER_CHOOSE;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     long topicId;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     long folderId;
-    @Bean
+
+    @Inject
     TopicFolderSettingPresenter topicFolderSettingPresentor;
 
-    @ViewById(R.id.tv_folder_title)
+    @Bind(R.id.tv_folder_title)
     TextView tvTitle;
-    @ViewById(R.id.rv_folder)
+    @Bind(R.id.rv_folder)
     RecyclerView lvTopicFolder;
-    @ViewById(R.id.ll_no_folder)
+    @Bind(R.id.ll_no_folder)
     LinearLayout vgNoFolder;
-    @ViewById(R.id.ll_folder_list)
+    @Bind(R.id.ll_folder_list)
     LinearLayout vgFolderList;
 
     private TopicFolderMainAdapter adapter;
     private AlertDialog alertDialog;
 
-    @AfterInject
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_folder_choose);
+        ButterKnife.bind(this);
+        Dart.inject(this);
+        DaggerTopicFolderSettingComponent.builder()
+                .topicFolderSettingModule(new TopicFolderSettingModule(this))
+                .build()
+                .inject(this);
+        initObject();
+        initView();
+        EventBus.getDefault().register(this);
+    }
+
     void initObject() {
         if (mode == ITEM_FOLDER_CHOOSE) {
             adapter = new TopicFolderChooseAdapter();
         } else {
             adapter = new TopicFolderSettingAdapter();
         }
-        topicFolderSettingPresentor.setView(this);
     }
 
-    @AfterViews
     void initView() {
         if (mode != ITEM_FOLDER_CHOOSE) {
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.FolderManagement);
@@ -135,9 +146,9 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.choose_folder_menu, menu);
+        return true;
     }
 
     @Override
@@ -150,9 +161,8 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         topicFolderSettingPresentor.onRefreshFolders();
     }
 
-    @UiThread
     @Override
-    public void showFolderList(List<Folder> folders, boolean hasFolder) {
+    public void showFolderList(List<TopicFolder> folders, boolean hasFolder) {
         if (hasFolder) {
             viewGroupSelect(true);
             adapter.clear();
@@ -207,7 +217,6 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCreateNewFolderDialog(boolean fromActionBar) {
         if (alertDialog == null) {
@@ -268,43 +277,36 @@ public class TopicFolderSettingActivity extends BaseAppCompatActivity
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishAcitivty() {
         this.finish();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showMoveToFolderToast(String folderName) {
         ColoredToast.show(getString(R.string.jandi_folder_has_been_move_to, folderName));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showRemoveFromFolderToast(String name) {
         ColoredToast.show(getString(R.string.jandi_folder_has_been_remove_from, name));
     }
 
-    @UiThread
     @Override
     public void showAlreadyHasFolderToast() {
         ColoredToast.showWarning(getString(R.string.jandi_folder_alread_has_name));
     }
 
     @Override
-    @UiThread
     public void showFolderRenamedToast() {
         ColoredToast.show(getString(R.string.jandi_folder_renamed));
     }
 
     @Override
-    @UiThread
     public void showDeleteFolderToast() {
         ColoredToast.show(getString(R.string.jandi_folder_removed));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showErrorToast(String message) {
         ColoredToast.showError(message);
