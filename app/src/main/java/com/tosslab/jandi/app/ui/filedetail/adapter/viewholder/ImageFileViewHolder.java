@@ -146,7 +146,13 @@ public class ImageFileViewHolder extends FileViewHolder {
         if (content.type.contains("gif")
                 && content.size > 0) {
             if (content.size < 1024 * 1024) {
-                loadingThumb(content);
+                ImageLoader.newInstance()
+                        .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
+                        .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                        .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
+                        .uri(Uri.parse(ImageUtil.getOriginalUrl(content)))
+                        .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+
             } else {
                 // progress 처리
                 Uri originalUri = Uri.parse(originalUrl);
