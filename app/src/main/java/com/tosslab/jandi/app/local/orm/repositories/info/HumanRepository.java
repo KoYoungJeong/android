@@ -87,12 +87,16 @@ public class HumanRepository extends RealmRepository {
         return execute((realm) -> {
 
             InitialInfo initialInfo = realm.where(InitialInfo.class).equalTo("teamId", teamId).findFirst();
-            realm.executeTransaction(realm1 -> {
-                member.setTeamId(teamId);
-                initialInfo.getMembers().add(member);
-            });
+            if (initialInfo != null) {
+                realm.executeTransaction(realm1 -> {
+                    member.setTeamId(teamId);
+                    initialInfo.getMembers().add(member);
+                });
+                return true;
+            } else {
+                return false;
+            }
 
-            return true;
         });
     }
 
