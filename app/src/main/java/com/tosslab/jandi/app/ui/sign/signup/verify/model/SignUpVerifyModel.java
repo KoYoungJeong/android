@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.main.SignUpApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
@@ -17,27 +16,18 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import javax.inject.Inject;
 
 import dagger.Lazy;
 
 
-/**
- * Created by tonyjs on 15. 5. 19..
- */
-@EBean
 public class SignUpVerifyModel {
 
-    @Inject
     Lazy<SignUpApi> signUpApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create()
-                .inject(this);
+    @Inject
+    public SignUpVerifyModel(Lazy<SignUpApi> signUpApi) {
+        this.signUpApi = signUpApi;
     }
 
     public boolean isValidVerificationCode(String verificationCode) {

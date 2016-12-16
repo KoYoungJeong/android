@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.sign.signup.verify;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -17,9 +19,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.sign.signup.verify.dagger.DaggerSignUpVerifyComponent;
+import com.tosslab.jandi.app.ui.sign.signup.verify.dagger.SignUpVerifyModule;
 import com.tosslab.jandi.app.ui.sign.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.sign.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -31,56 +37,44 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.LongClick;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.TextChange;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.ViewsById;
-
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-/**
- * Created by tonyjs on 15. 5. 19..
- */
-@EActivity(R.layout.activity_signup_verify)
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnLongClick;
+import butterknife.OnTextChanged;
+
 public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignUpVerifyView {
 
     private static final int MAX_VERIFY_CODE = 4;
 
-    @Extra("email")
+    @InjectExtra("email")
     String email;
 
-    @Bean
     SignUpVerifyPresenter presenter;
 
-    @ViewById(R.id.iv_signup_verify_code_cursor)
+    @Bind(R.id.iv_signup_verify_code_cursor)
     ImageView ivFakeCursor;
 
-    @ViewById(R.id.tv_resend_email)
+    @Bind(R.id.tv_resend_email)
     TextView tvResendEmail;
 
-    @ViewById(R.id.tv_email)
+    @Bind(R.id.tv_email)
     TextView tvEmail;
 
-    @ViewsById(value = {
+    @Bind(value = {
             R.id.tv_signup_verify_code_1,
             R.id.tv_signup_verify_code_2,
             R.id.tv_signup_verify_code_3,
             R.id.tv_signup_verify_code_4
     })
     List<TextView> tvVerifyCodes;
-    @ViewById(R.id.tv_signup_verify_explain)
+    @Bind(R.id.tv_signup_verify_explain)
     TextView tvExplain;
 
-    @ViewsById(value = {
+    @Bind(value = {
             R.id.iv_signup_verify_input_0,
             R.id.iv_signup_verify_input_1,
             R.id.iv_signup_verify_input_2,
@@ -94,7 +88,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     })
     List<View> ivInputCodes;
 
-    @SystemService
     InputMethodManager inputMethodManager;
     private ProgressWheel progressWheel;
     private Blink blink;
@@ -102,21 +95,28 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_signup_verify);
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
+        ButterKnife.bind(this);
+        Dart.inject(this);
+
+        DaggerSignUpVerifyComponent.builder()
+                .signUpVerifyModule(new SignUpVerifyModule(this))
+                .build()
+                .inject(this);
+        init();
     }
 
-    @AfterViews
     void init() {
         SprinklrScreenView.sendLog(ScreenViewProperty.CONFIRM_VERIFICATION_NUMBER);
-
+        inputMethodManager = ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE));
         setUpActionBar();
 
         String resendEmailText = getString(R.string.jandi_signup_resend_email);
         tvResendEmail.setText(Html.fromHtml(resendEmailText));
         tvEmail.setText(email);
 
-        presenter.setView(this);
         progressWheel = new ProgressWheel(this);
         progressWheel.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
@@ -146,7 +146,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         actionBar.setTitle(getString(R.string.jandi_signup_verify_title));
     }
 
-    @UiThread
     @Override
     public void showProgress() {
         if (progressWheel == null || progressWheel.isShowing()) {
@@ -155,7 +154,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         progressWheel.show();
     }
 
-    @UiThread
     @Override
     public void hideProgress() {
         if (progressWheel == null || !progressWheel.isShowing()) {
@@ -164,7 +162,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         progressWheel.dismiss();
     }
 
-    @UiThread
     @Override
     public void showInvalidVerificationCode(int count) {
         String invalidateText = getString(R.string.jandi_signup_invalidate_code, count);
@@ -193,7 +190,6 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
     }
 
-    @UiThread
     @Override
     public void showExpiredVerificationCode() {
         new AlertDialog.Builder(SignUpVerifyActivity.this,
@@ -207,14 +203,12 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
                 .show();
     }
 
-    @UiThread
     @Override
     public void changeExplainText() {
         tvExplain.setTextColor(getResources().getColor(R.color.account_home_help_dialog_text));
         tvExplain.setText(R.string.jandi_signup_verification_code);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void clearVerifyCode() {
         for (TextView tvVerifyCode : tvVerifyCodes) {
@@ -222,19 +216,16 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
     }
 
-    @UiThread
     @Override
     public void showToast(String msg) {
         ColoredToast.show(msg);
     }
 
-    @UiThread
     @Override
     public void showErrorToast(String msg) {
         ColoredToast.showError(msg);
     }
 
-    @UiThread
     @Override
     public void moveToSelectTeam() {
 
@@ -270,7 +261,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         return builder.toString();
     }
 
-    @Click(R.id.tv_resend_email)
+    @OnClick(R.id.tv_resend_email)
     void resendEmail() {
         final long permitEmailSendTermMillis = 15 * 1000;
         if (JandiPreference.getEmailAuthSendTime() + permitEmailSendTermMillis < System.currentTimeMillis()) {
@@ -283,7 +274,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
     }
 
-    @Click(value = {
+    @OnClick(value = {
             R.id.iv_signup_verify_input_0,
             R.id.iv_signup_verify_input_1,
             R.id.iv_signup_verify_input_2,
@@ -311,7 +302,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
     }
 
-    @TextChange(R.id.tv_signup_verify_code_1)
+    @OnTextChanged(R.id.tv_signup_verify_code_1)
     void onVerifyCodeTextInput(TextView tv) {
         int length = getVerifyCode().length();
         boolean enabled = length == MAX_VERIFY_CODE;
@@ -340,7 +331,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         blink.postAtTime(blink, SystemClock.uptimeMillis() + 500);
     }
 
-    @Click(R.id.iv_signup_verify_input_del)
+    @OnClick(R.id.iv_signup_verify_input_del)
     void onDelClick() {
         String lastWord = getVerifyCode();
         if (lastWord.length() > 0) {
@@ -348,7 +339,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
     }
 
-    @LongClick(R.id.iv_signup_verify_input_del)
+    @OnLongClick(R.id.iv_signup_verify_input_del)
     void onDelLongClick() {
         String lastWord = getVerifyCode();
         if (lastWord.length() > 0) {
@@ -356,9 +347,12 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
         }
     }
 
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionSelected() {
-        finish();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static class Blink extends Handler implements Runnable {

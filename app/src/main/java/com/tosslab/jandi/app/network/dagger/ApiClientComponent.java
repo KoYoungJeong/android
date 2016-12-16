@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
-import com.tosslab.jandi.app.ui.sign.signup.verify.model.SignUpVerifyModel;
 
 import dagger.Component;
 
@@ -22,8 +21,6 @@ public interface ApiClientComponent {
     void inject(MessageManipulator injector);
 
     void inject(EntityClientManager injector);
-
-    void inject(SignUpVerifyModel signUpVerifyModel);
 
     void inject(OpenAction openAction);
 
