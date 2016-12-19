@@ -617,7 +617,7 @@ public class JandiSocketServiceModel {
 
             if (TeamInfoLoader.getInstance().getMyId() == memberId) {
                 if (TeamInfoLoader.getInstance().isTopic(roomId)) {
-                    TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
+                    TopicRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
                     TopicRepository.getInstance().updateUnreadCount(roomId, 0);
                 } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
                     ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
@@ -1249,7 +1249,7 @@ public class JandiSocketServiceModel {
             if (TeamInfoLoader.getInstance().getMyId() == data.getMemberId()) {
                 TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), true);
                 TopicRepository.getInstance().updatePushSubscribe(data.getTopicId(), true);
-                TopicRepository.getInstance().updateReadId(data.getTopicId(), -1);
+                TopicRepository.getInstance().updateReadLinkId(data.getTopicId(), -1);
             }
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
