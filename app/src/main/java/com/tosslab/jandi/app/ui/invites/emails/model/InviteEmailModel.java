@@ -46,10 +46,10 @@ public class InviteEmailModel {
                 .first();
     }
 
-    public boolean isNotEnableUser(String email) {
+    public boolean isDisableMember(String email) {
         return Observable.from(TeamInfoLoader.getInstance().getUserList())
-                .filter(user1 -> !user1.isEnabled())
                 .filter(user -> TextUtils.equals(user.getEmail(), email))
+                .filter(user1 -> user1.isDisabled())
                 .map(entity -> true)
                 .firstOrDefault(false)
                 .toBlocking()

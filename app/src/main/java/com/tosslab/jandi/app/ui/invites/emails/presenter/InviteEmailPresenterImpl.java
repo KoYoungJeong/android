@@ -81,7 +81,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     private InviteEmailVO.Status getInviteEmailStatus(String email) {
         if (!TextUtils.isEmpty(email)) {
             if (!inviteEmailmodel.isInvitedEmail(email)) {
-                if (inviteEmailmodel.isNotEnableUser(email)) {
+                if (inviteEmailmodel.isDisableMember(email)) {
                     return InviteEmailVO.Status.BLOCKED;
                 } else {
                     return InviteEmailVO.Status.AVAILABLE;

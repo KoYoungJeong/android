@@ -54,6 +54,18 @@ public class User implements Member {
         return TextUtils.equals(human.getStatus(), "inactive");
     }
 
+    public boolean isRemoved() {
+        return TextUtils.equals(human.getStatus(), "removed");
+    }
+
+    public boolean isDeleted() {
+        return TextUtils.equals(human.getStatus(), "deleted");
+    }
+
+    public boolean isDisabled() {
+        return TextUtils.equals(human.getStatus(), "disabled");
+    }
+
     @Override
     public boolean isTeamOwner() {
         return TextUtils.equals(human.getRole(), "owner");
