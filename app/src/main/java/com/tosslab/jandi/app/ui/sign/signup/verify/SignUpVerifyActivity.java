@@ -40,6 +40,8 @@ import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -53,6 +55,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     @InjectExtra("email")
     String email;
 
+    @Inject
     SignUpVerifyPresenter presenter;
 
     @Bind(R.id.iv_signup_verify_code_cursor)
@@ -303,7 +306,7 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     }
 
     @OnTextChanged(R.id.tv_signup_verify_code_1)
-    void onVerifyCodeTextInput(TextView tv) {
+    void onVerifyCodeTextInput(CharSequence text) {
         int length = getVerifyCode().length();
         boolean enabled = length == MAX_VERIFY_CODE;
 
@@ -340,11 +343,12 @@ public class SignUpVerifyActivity extends BaseAppCompatActivity implements SignU
     }
 
     @OnLongClick(R.id.iv_signup_verify_input_del)
-    void onDelLongClick() {
+    boolean onDelLongClick() {
         String lastWord = getVerifyCode();
         if (lastWord.length() > 0) {
             clearVerifyCode();
         }
+        return true;
     }
 
     @Override

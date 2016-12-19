@@ -25,12 +25,12 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.sign.signup.dagger.DaggerSignUpComponent;
 import com.tosslab.jandi.app.ui.sign.signup.dagger.SignUpModule;
 import com.tosslab.jandi.app.ui.sign.signup.presenter.SignUpPresenter;
-import com.tosslab.jandi.app.ui.sign.signup.verify.SignUpVerifyActivity_;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -47,10 +47,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
-
-/**
- * Created by tee on 16. 5. 25..
- */
 
 public class SignUpActivity extends BaseAppCompatActivity implements SignUpPresenter.View {
 
@@ -312,10 +308,11 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     @Override
     public void startSignUpRequestVerifyActivity() {
         JandiPreference.setEmailAuthSendTime();
-        SignUpVerifyActivity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoSignUpVerifyActivity()
                 .email(etEmail.getText().toString())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
     @Override
