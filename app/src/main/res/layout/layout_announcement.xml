@@ -29,14 +29,27 @@
                 android:layout_height="32dp" />
 
             <TextView
-                android:id="@+id/tv_announcement_info"
-                android:layout_width="match_parent"
+                android:id="@+id/tv_announcement_user_name"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_toLeftOf="@+id/tv_announcement_date"
                 android:layout_toRightOf="@id/iv_announcement_user"
-                android:ellipsize="middle"
+                android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:textColor="@color/jandi_text_light"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tv_announcement_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="5dp"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="2016/07/29 오후 03:00"
                 android:textColor="@color/jandi_text_light"
                 android:textSize="11sp" />
 
@@ -44,7 +57,7 @@
                 android:id="@+id/sv_announcement_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tv_announcement_info"
+                android:layout_below="@id/tv_announcement_date"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="6dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
