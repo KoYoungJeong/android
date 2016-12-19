@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
+import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumFragment;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;

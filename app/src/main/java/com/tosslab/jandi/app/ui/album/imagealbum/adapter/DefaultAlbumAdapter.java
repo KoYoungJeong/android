@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
+import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumFragment;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 import com.tosslab.jandi.app.utils.UriUtil;

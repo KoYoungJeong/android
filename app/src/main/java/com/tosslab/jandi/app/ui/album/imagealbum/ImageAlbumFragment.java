@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.album.fragment;
+package com.tosslab.jandi.app.ui.album.imagealbum;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.album.imagealbum.adapter.DefaultAlbumAdapter;
 import com.tosslab.jandi.app.ui.album.imagealbum.adapter.ImagePictureAdapter;
 import com.tosslab.jandi.app.ui.album.imagealbum.presenter.ImageAlbumPresenter;

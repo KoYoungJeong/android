@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
-import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -34,9 +33,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 6. 12..
- */
 @EActivity(R.layout.activity_image_album)
 public class ImageAlbumActivity extends BaseAppCompatActivity {
 
