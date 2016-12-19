@@ -46,7 +46,7 @@
         -->
 
         <activity
-            android:name=".ui.sign.signup.verify.SignUpVerifyActivity_"
+            android:name=".ui.sign.signup.verify.SignUpVerifyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_signup_verify_title"
             android:screenOrientation="portrait"
