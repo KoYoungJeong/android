@@ -263,7 +263,7 @@ public class StickerViewModel {
         if (recentStickers != null && !recentStickers.isEmpty()) {
             return STICKER_GROUP_RECENT;
         }
-        return STICKER_GROUP_BANILA;
+        return STICKER_GROUP_DEAN;
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
