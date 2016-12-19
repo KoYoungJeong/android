@@ -17,7 +17,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
@@ -119,7 +121,17 @@ public class UserSelectorImpl implements UserSelector {
     protected Observable<List<ExpandRoomData>> getUsers() {
 
         long myId = TeamInfoLoader.getInstance().getMyId();
-        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+        return Observable.defer(() -> {
+            if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+                return Observable.from(TeamInfoLoader.getInstance().getUserList());
+            } else {
+                return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                        .filter(TopicRoom::isJoined)
+                        .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                        .distinct()
+                        .map(id -> TeamInfoLoader.getInstance().getUser(id));
+            }
+        })
                 .filter(User::isEnabled)
                 .filter(user -> !TeamInfoLoader.getInstance().isJandiBot(user.getId()))
                 .map((member) -> {
