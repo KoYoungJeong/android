@@ -4,10 +4,13 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.main.SignUpApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -24,10 +27,12 @@ import dagger.Lazy;
 public class SignUpVerifyModel {
 
     Lazy<SignUpApi> signUpApi;
+    Lazy<LoginApi> loginApi;
 
     @Inject
-    public SignUpVerifyModel(Lazy<SignUpApi> signUpApi) {
+    public SignUpVerifyModel(Lazy<SignUpApi> signUpApi, Lazy<LoginApi> loginApi) {
         this.signUpApi = signUpApi;
+        this.loginApi = loginApi;
     }
 
     public boolean isValidVerificationCode(String verificationCode) {
@@ -41,6 +46,7 @@ public class SignUpVerifyModel {
         ResAccountActivate resAccountActivate = null;
         try {
             resAccountActivate = signUpApi.get().activateAccount(accountActivate);
+            registDeviceInfoAndLoginHistory(resAccountActivate.getRefreshToken());
         } catch (RetrofitException e) {
             e.printStackTrace();
             throw new VerifyNetworkException(e);
@@ -65,7 +71,11 @@ public class SignUpVerifyModel {
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
         JandiPreference.setFirstLogin(JandiApplication.getContext());
+    }
 
+    public ResAccessToken registDeviceInfoAndLoginHistory(String refreshToken) throws RetrofitException {
+        ReqAccessToken reqAccessToken = ReqAccessToken.createRefreshReqToken(refreshToken);
+        return loginApi.get().getAccessToken(reqAccessToken);
     }
 
 }
