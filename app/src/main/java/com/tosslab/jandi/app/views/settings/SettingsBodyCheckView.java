@@ -41,7 +41,6 @@ public class SettingsBodyCheckView extends LinearLayout {
         tvTitle = ((TextView) findViewById(R.id.tv_view_settings_body_check_title));
         tvSummary = ((TextView) findViewById(R.id.tv_view_settings_body_check_summary));
         cbCheck = ((CheckBox) findViewById(R.id.tv_view_settings_body_check_checkbox));
-
     }
 
     public boolean isChecked() {
@@ -49,7 +48,7 @@ public class SettingsBodyCheckView extends LinearLayout {
     }
 
     public void setChecked(boolean checked) {
-        cbCheck.setChecked(checked);
+        setEnabled(checked);
     }
 
     private void initAttrs(Context context, AttributeSet attrs) {
