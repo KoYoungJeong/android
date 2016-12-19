@@ -332,7 +332,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
             } else if (link.message instanceof ResMessages.FileMessage) {
                 view.moveFileDetailActivity(fragment, link.messageId, roomId, link.messageId);
-                if (((ResMessages.FileMessage) link.message).content.type.startsWith("image")) {
+                String type = ((ResMessages.FileMessage) link.message).content.type;
+                if ((type.startsWith("image") && !type.contains("dwg"))) {
                     AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByPhoto);
                 } else {
                     AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.FileView_ByFile);

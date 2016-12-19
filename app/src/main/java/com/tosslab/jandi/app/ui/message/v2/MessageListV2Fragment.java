@@ -1093,7 +1093,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
             } else if (link.message instanceof ResMessages.FileMessage) {
                 ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
-                boolean isImageFile = fileMessage.content.type.startsWith("image");
+                boolean isImageFile = fileMessage.content.type.startsWith("image")
+                        && !fileMessage.content.type.contains("dwg");
                 sendAnalyticsEvent(isImageFile
                         ? AnalyticsValue.Action.FileView_ByPhoto
                         : AnalyticsValue.Action.FileView_ByFile);
