@@ -48,7 +48,7 @@ public class SettingsBodyCheckView extends LinearLayout {
     }
 
     public void setChecked(boolean checked) {
-        setEnabled(checked);
+        cbCheck.setChecked(checked);
     }
 
     private void initAttrs(Context context, AttributeSet attrs) {
