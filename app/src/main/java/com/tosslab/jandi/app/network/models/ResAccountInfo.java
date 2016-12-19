@@ -19,7 +19,7 @@ import java.util.Collection;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAccountInfo {
 
-    @JsonProperty("uuid")
+    @JsonProperty("objectId")
     @DatabaseField(id = true)
     private String id;
     @DatabaseField
