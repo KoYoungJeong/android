@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -14,7 +13,6 @@ import javax.inject.Inject;
 
 import rx.Completable;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -36,18 +34,7 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
 
     @Override
     public void requestProfile() {
-        Observable.create(new Observable.OnSubscribe<User>() {
-            @Override
-            public void call(Subscriber<? super User> subscriber) {
-                try {
-                    User me = modifyProfileModel.getSavedProfile();
-                    subscriber.onNext(me);
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
+        Observable.fromCallable(() -> modifyProfileModel.getSavedProfile()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(me -> view.displayProfileInfos(me))
                 .subscribe(o -> {

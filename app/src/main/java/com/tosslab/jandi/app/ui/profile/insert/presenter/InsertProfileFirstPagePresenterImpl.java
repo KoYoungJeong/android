@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -48,23 +47,8 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
     @Override
     public void requestProfile() {
         view.showProgressWheel();
-        Observable.create(new Observable.OnSubscribe<User>() {
-            @Override
-            public void call(Subscriber<? super User> subscriber) {
-                User me;
-                try {
-                    if (!NetworkCheckUtil.isConnected()) {
-                        me = model.getSavedProfile();
-                    } else {
-                        me = model.getProfile();
-                    }
-                    subscriber.onNext(me);
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
+        Observable.fromCallable(() -> model.getSavedProfile())
+                .subscribeOn(Schedulers.io())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(me -> {
