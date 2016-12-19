@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.StarredInfoChangeEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
@@ -159,7 +160,7 @@ public class MessageListV2Presenter {
                 })
                 .subscribe(item -> {
                     long lastLinkId = item.id;
-                    if ( lastLinkId > messageListModel.getLastReadLinkId(room.getRoomId())) {
+                    if (lastLinkId > messageListModel.getLastReadLinkId(room.getRoomId())) {
                         try {
                             messageListModel.upsertMyMarker(room.getRoomId(), lastLinkId);
                             messageListModel.updateLastLinkId(item.id);
@@ -169,7 +170,8 @@ public class MessageListV2Presenter {
                         }
                     } else {
                         if (messageListModel.getBadgeCount(room.getRoomId()) != 0) {
-                            messageListModel.initBadge(getRoomId(), lastLinkId);
+                            messageListModel.initBadge(room.getRoomId(), lastLinkId);
+                            EventBus.getDefault().post(new RoomMarkerEvent(room.getRoomId()));
                         }
                     }
                 }, Throwable::printStackTrace);
