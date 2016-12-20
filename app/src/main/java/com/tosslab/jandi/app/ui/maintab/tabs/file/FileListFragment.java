@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
@@ -747,6 +748,10 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             return;
         }
         fileListPresenter.onTopicDeleted(event.getTeamId());
+    }
+
+    public void onEvent(UnshareFileEvent event) {
+        fileListPresenter.onFileUnshared(event.getFileId(), event.getRoomId());
     }
 
     public void onEventMainThread(NetworkConnectEvent event) {
