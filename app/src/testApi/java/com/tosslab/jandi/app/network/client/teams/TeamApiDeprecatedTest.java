@@ -33,7 +33,7 @@ public class TeamApiDeprecatedTest {
 
     @Test
     public void inviteToTeam() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.inviteToTeam(1, new ReqInvitationMembers(1, new ArrayList<String>(), "asd")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.inviteToTeam(1, new ReqInvitationMembers(1, new ArrayList<>(), "asd",0, 1)).execute())).isFalse();
     }
 
     @Test
