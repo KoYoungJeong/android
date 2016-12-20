@@ -219,9 +219,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
             share.filter(it -> it <= 1)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(it -> {
-                        view.showProgressWheel();
-                    })
+                    .doOnNext(it -> view.showProgressWheel())
                     .observeOn(Schedulers.io())
                     .concatMap(it -> {
                         try {
@@ -230,6 +228,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                             return Observable.error(e);
                         }
                     }).observeOn(AndroidSchedulers.mainThread())
+                    .doOnUnsubscribe(() -> view.dismissProgressWheel())
                     .subscribe(memberInfo -> {
                         if (memberInfo.getJoinTopics().size() > 1) {
                             view.showDialogKick(item.getName(), item.getPhotoUrl(), item.getEntityId());
