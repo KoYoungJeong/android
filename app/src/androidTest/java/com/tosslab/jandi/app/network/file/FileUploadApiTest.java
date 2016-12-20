@@ -44,7 +44,7 @@ public class FileUploadApiTest {
         FileUploadApi api = new FileUploadApi();
 
         ResUploadedFile resFileUpload = api.uploadFile("test", TeamInfoLoader.getInstance().getDefaultTopicId(),
-                "744", TeamInfoLoader.getInstance().getTeamId(), "hahaha", new ArrayList<>(),
+                TeamInfoLoader.getInstance().getTeamId(), "hahaha", new ArrayList<>(),
                 new File(getImageList().get(0).getImagePath()), callback -> callback.subscribe(
                         integer -> progressed = true,
                         t -> {},

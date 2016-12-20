@@ -5,6 +5,9 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
@@ -153,30 +156,53 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
             return;
         }
 
-        SearchMemberModel model = new SearchMemberModel();
-        model.refreshSelectableMembers(shareTarget.getTeamId(),
-                Arrays.asList(shareTarget.getRoomId()),
-                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
-                map -> {
-                    Observable.range(0, shareAdapterDataModel.size())
-                            .subscribe(idx -> {
-                                FileShareData item = (FileShareData) shareAdapterDataModel.getShareData(idx);
-                                if (item == null) {
-                                    return;
-                                }
-                                ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
-                                List<MentionObject> mentions = mentionInfoObject.getMentions();
-                                String message = mentionInfoObject.getMessage();
-                                Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
-                                FileUploadDTO object = new FileUploadDTO(item.getData(), item.getFileName(), shareTarget.getRoomId(), stringListPair.first);
-                                object.setTeamId(shareTarget.getTeamId());
-                                object.setMentions(stringListPair.second);
-                                FileUploadManager.getInstance().add(object);
-                            }, t -> {
-                            });
+        Observable.just(shareTarget.getRoomId())
+                .map(roomId -> {
+                    if (teamInfoLoader.isTopic(roomId)) {
+                        return roomId;
+                    } else {
+                        long chatId = teamInfoLoader.getChatId(roomId);
+                        if (chatId <= 0) {
+                            try {
+                                return new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).id;
+                            } catch (RetrofitException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            return chatId;
+                        }
+                    }
+                    return -1L;
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(roomId -> {
+                    SearchMemberModel model = new SearchMemberModel();
+                    model.refreshSelectableMembers(shareTarget.getTeamId(),
+                            Arrays.asList(shareTarget.getRoomId()),
+                            MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
+                            map -> {
+                                Observable.range(0, shareAdapterDataModel.size())
+                                        .subscribe(idx -> {
+                                            FileShareData item = (FileShareData) shareAdapterDataModel.getShareData(idx);
+                                            if (item == null) {
+                                                return;
+                                            }
+                                            ResultMentionsVO mentionInfoObject = MentionControlViewModel.getMentionInfoObject(comments.get(idx), map);
+                                            List<MentionObject> mentions = mentionInfoObject.getMentions();
+                                            String message = mentionInfoObject.getMessage();
+                                            Pair<String, List<MentionObject>> stringListPair = new Pair<>(message, mentions);
+                                            FileUploadDTO object = new FileUploadDTO(item.getData(), item.getFileName(), roomId, stringListPair.first);
+                                            object.setTeamId(shareTarget.getTeamId());
+                                            object.setMentions(stringListPair.second);
+                                            FileUploadManager.getInstance().add(object);
+                                        }, t -> {
+                                        });
 
-                    view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                                view.moveRoom(shareTarget.getTeamId(), shareTarget.getRoomId());
+                            });
                 });
+
+
     }
 
     @Override

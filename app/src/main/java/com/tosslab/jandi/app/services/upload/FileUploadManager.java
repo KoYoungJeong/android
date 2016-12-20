@@ -11,8 +11,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
-import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
-import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.local.orm.domain.UploadedFileInfo;
 import com.tosslab.jandi.app.local.orm.repositories.UploadedFileInfoRepository;
 import com.tosslab.jandi.app.network.file.FileUploadApi;
@@ -75,15 +73,12 @@ public class FileUploadManager {
     }
 
     private static Call<ResUploadedFile> uploadFile(String realFilePath,
-                                                    boolean isPublicTopic,
                                                     String title, long teamId, long entityId,
                                                     String comment, List<MentionObject> mentions,
                                                     ProgressCallback progressCallback) {
         File uploadFile = new File(realFilePath);
-        String permissionCode = (isPublicTopic) ? "744" : "740";
-
         FileUploadApi fileUploadApi = new FileUploadApi();
-        return fileUploadApi.uploadFile(title, entityId, permissionCode, teamId, comment, mentions, uploadFile, progressCallback);
+        return fileUploadApi.uploadFile(title, entityId, teamId, comment, mentions, uploadFile, progressCallback);
 
     }
 
@@ -104,12 +99,9 @@ public class FileUploadManager {
                     final int[] progress = {0, 0};
                     fileUploadDTO.setUploadState(FileUploadDTO.UploadState.PROGRESS);
                     EventBus.getDefault().post(new FileUploadStartEvent(fileUploadDTO.getEntity()));
-                    FilePickerModel filePickerModel = FilePickerModel_.getInstance_(context);
-
-                    boolean isPublicTopic = filePickerModel.isPublicEntity(fileUploadDTO.getEntity());
 
                     Call<ResUploadedFile> request = uploadFile(fileUploadDTO.getFilePath(),
-                            isPublicTopic, fileUploadDTO.getFileName(),
+                            fileUploadDTO.getFileName(),
                             fileUploadDTO.getTeamId(),
                             fileUploadDTO.getEntity(),
                             fileUploadDTO.getComment(),

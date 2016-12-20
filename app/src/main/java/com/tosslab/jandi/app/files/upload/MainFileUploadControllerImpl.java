@@ -140,9 +140,8 @@ public class MainFileUploadControllerImpl implements FileUploadController {
 
     @Background
     void uploadFile(Context context, String title, long entityId, String realFilePath, String comment, ProgressDialog uploadProgress) {
-        boolean isPublicTopic = filePickerModel.isPublicEntity(entityId);
         try {
-            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, isPublicTopic, title, entityId, comment);
+            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, title, entityId, comment);
             LogUtil.e("Upload Success : " + result);
             showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
             SprinklrFileUpload.sendLog(entityId, result.getMessageId());

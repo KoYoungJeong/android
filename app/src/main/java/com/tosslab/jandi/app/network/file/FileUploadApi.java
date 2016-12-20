@@ -25,7 +25,6 @@ public class FileUploadApi {
 
     public Call<ResUploadedFile> uploadFile(String title,
                                             long shareEntity,
-                                            String permission,
                                             long teamId,
                                             String comment,
                                             List<MentionObject> mentions,
@@ -34,8 +33,7 @@ public class FileUploadApi {
         ProgressRequestBody fileBody = new ProgressRequestBody(file, progressCallback);
 
         MultipartBody.Part titlePart = MultipartBody.Part.createFormData("title", title);
-        MultipartBody.Part entityPart = MultipartBody.Part.createFormData("share", String.valueOf(shareEntity));
-        MultipartBody.Part permissionPart = MultipartBody.Part.createFormData("permission", permission);
+        MultipartBody.Part entityPart = MultipartBody.Part.createFormData("roomId", String.valueOf(shareEntity));
         MultipartBody.Part teamIdPart = MultipartBody.Part.createFormData("teamId", String.valueOf(teamId));
         MultipartBody.Part commentPart = null;
         MultipartBody.Part mentionsPart = null;
@@ -52,16 +50,15 @@ public class FileUploadApi {
         MultipartBody.Part userFilePart = MultipartBody.Part.createFormData("userFile", file.getName(), fileBody);
 
         return RetrofitBuilder.getInstanceOfFileUpload().create(Api.class)
-                .upload(titlePart, entityPart, permissionPart, teamIdPart, commentPart, mentionsPart, userFilePart);
+                .upload(titlePart, entityPart, teamIdPart, commentPart, mentionsPart, userFilePart);
     }
 
     public interface Api {
         @POST("inner-api/file")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         @Multipart
         Call<ResUploadedFile> upload(@Part MultipartBody.Part title,
                                      @Part MultipartBody.Part shareEntity,
-                                     @Part MultipartBody.Part permission,
                                      @Part MultipartBody.Part teamId,
                                      @Part MultipartBody.Part comment,
                                      @Part MultipartBody.Part mentions,

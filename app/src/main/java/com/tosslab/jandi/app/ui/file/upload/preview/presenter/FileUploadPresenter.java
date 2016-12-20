@@ -1,31 +1,21 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
-import android.app.Activity;
-
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface FileUploadPresenter {
 
     void setView(View view);
 
-    void onInitViewPager(long selectedEntityIdToBeShared, ArrayList<String> realFilePathList);
-
     void onPagerSelect(int position);
 
-    void onInitEntity(Activity activity, long selectedEntityIdToBeShared);
+    void onInitEntity(long selectedEntityIdToBeShared, List<String> realFilePathList);
 
     void onCommentTextChange(String text, int currentItemPosition);
 
     void onInitPricingInfo();
-
-    void onEntityUpdate(long entityId);
-
-    @Deprecated
-    void onSingleFileUpload();
 
     void onMultiFileUpload(MentionControlViewModel mentionControlViewModel);
 

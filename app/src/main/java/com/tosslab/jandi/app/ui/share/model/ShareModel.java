@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.share.model;
 
-import android.app.ProgressDialog;
 import android.net.Uri;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -12,11 +11,9 @@ import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.file.FileUploadApi;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.network.models.poll.Poll;
@@ -24,15 +21,12 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import retrofit2.Call;
 import rx.Observable;
 
 public class ShareModel {
@@ -70,27 +64,6 @@ public class ShareModel {
     public String getImagePath(String uriString) {
         Uri uri = Uri.parse(uriString);
         return ImageFilePath.getPath(JandiApplication.getContext(), uri);
-    }
-
-    public ResUploadedFile uploadFile(File imageFile, String titleText, String commentText,
-                                      long teamId, long entityId, ProgressDialog progressDialog,
-                                      boolean isPublicTopic, List<MentionObject> mentions) throws IOException {
-        File uploadFile = new File(imageFile.getAbsolutePath());
-        String permissionCode = (isPublicTopic) ? "744" : "740";
-
-        Call<ResUploadedFile> uploadCall = new FileUploadApi().uploadFile(titleText, entityId, permissionCode, teamId, commentText, mentions, uploadFile, callback -> callback
-                .distinctUntilChanged()
-                .subscribe(it -> {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.setMax(100);
-                        progressDialog.setProgress(it);
-                    }
-                }, t -> {
-                }));
-
-        progressDialog.setOnCancelListener(dialog -> uploadCall.cancel());
-        return uploadCall.execute().body();
-
     }
 
     public String getFilePath(String uriString) {

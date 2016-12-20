@@ -165,12 +165,11 @@ public class FilePickerModel {
         return TeamInfoLoader.getInstance().isPublicTopic(entityId);
     }
 
-    public ResUploadedFile uploadFile(ProgressDialog progressDialog, String realFilePath, boolean isPublicTopic, String title, long entityId, String comment) throws IOException {
+    public ResUploadedFile uploadFile(ProgressDialog progressDialog, String realFilePath, String title, long entityId, String comment) throws IOException {
 
         File uploadFile = new File(realFilePath);
-        String permissionCode = (isPublicTopic) ? "744" : "740";
 
-        return new FileUploadApi().uploadFile(title, entityId, permissionCode, TeamInfoLoader.getInstance().getTeamId(), comment, new ArrayList<>(), uploadFile, callback -> callback.distinctUntilChanged()
+        return new FileUploadApi().uploadFile(title, entityId, TeamInfoLoader.getInstance().getTeamId(), comment, new ArrayList<>(), uploadFile, callback -> callback.distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(progress -> {
                     if (progressDialog != null && progressDialog.isShowing()) {

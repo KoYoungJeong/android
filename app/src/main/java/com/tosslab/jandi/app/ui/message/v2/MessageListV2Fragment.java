@@ -660,7 +660,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initFileUploadStateViewModel() {
-        fileUploadStateViewModel.setEntityId(entityId);
+        fileUploadStateViewModel.setRoom(room);
     }
 
     private void initActionListeners() {

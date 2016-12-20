@@ -128,8 +128,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         setupActionbar();
 
         fileUploadPresenter.setView(this);
-        fileUploadPresenter.onInitEntity(FileUploadPreviewActivity.this, selectedEntityIdToBeShared);
-        fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
+        fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared, realFilePathList);
 
         scrollButtonPublishSubject = PublishSubject.create();
         subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
@@ -201,7 +200,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
-        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        }
     }
 
     public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
@@ -450,8 +451,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @Override
     public void setShareEntity(long entityId, boolean isUser) {
-        this.selectedEntityIdToBeShared = entityId;
-
         if (!isUser) {
             mentionControlViewModel = MentionControlViewModel.newInstance(FileUploadPreviewActivity.this,
                     etComment,

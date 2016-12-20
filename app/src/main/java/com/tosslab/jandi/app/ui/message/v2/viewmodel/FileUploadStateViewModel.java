@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -47,7 +48,7 @@ public class FileUploadStateViewModel {
     @RootContext
     Context context;
 
-    private long entityId;
+    private Room room;
 
     @AfterViews
     void initViews() {
@@ -63,7 +64,7 @@ public class FileUploadStateViewModel {
     }
 
     public void onEventMainThread(FileUploadStartEvent event) {
-        if (event.getEntity() != entityId) {
+        if (event.getEntity() != room.getRoomId()) {
             return;
         }
 
@@ -77,7 +78,7 @@ public class FileUploadStateViewModel {
 
     public void onEventMainThread(FileUploadProgressEvent event) {
 
-        if (event.getEntity() != entityId) {
+        if (event.getEntity() != room.getRoomId()) {
             return;
         }
 
@@ -95,7 +96,7 @@ public class FileUploadStateViewModel {
     public void onEventMainThread(FileUploadFinishEvent event) {
 
         FileUploadDTO fileUploadDTO = event.getFileUploadDTO();
-        if (fileUploadDTO.getEntity() != entityId) {
+        if (fileUploadDTO.getEntity() != room.getRoomId()) {
             return;
         }
 
@@ -116,14 +117,10 @@ public class FileUploadStateViewModel {
 
     }
 
-    public void setEntityId(long entityId) {
-        this.entityId = entityId;
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void initDownloadState() {
         FileUploadManager instance = FileUploadManager.getInstance();
-        List<FileUploadDTO> uploadInfos = instance.getUploadInfos(entityId);
+        List<FileUploadDTO> uploadInfos = instance.getUploadInfos(room.getRoomId());
 
         if (uploadInfos.size() <= 0) {
             vgContentWrapper.setVisibility(View.GONE);
@@ -134,6 +131,10 @@ public class FileUploadStateViewModel {
 
         rvUploadFile.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         rvUploadFile.setAdapter(new FileUploadInfoAdapter(context, uploadInfos));
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     private static class FileUploadInfoAdapter extends RecyclerView.Adapter<FileUploadViewHolder> {
