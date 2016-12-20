@@ -9,28 +9,24 @@ import com.tosslab.jandi.app.ui.passcode.fingerprint.model.FingerprintAuthModel;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.view.FingerprintAuthView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import javax.inject.Inject;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tonyjs on 16. 3. 25..
- */
-@EBean
 @TargetApi(Build.VERSION_CODES.M)
 public class FingerprintAuthPresenter extends FingerprintManager.AuthenticationCallback {
     private static final String TAG = FingerprintAuthPresenter.class.getSimpleName();
 
-    @Bean
     FingerprintAuthModel model;
 
     private FingerprintAuthView view;
     private boolean isCancelled;
 
-    public void setView(FingerprintAuthView view) {
+    @Inject
+    public FingerprintAuthPresenter(FingerprintAuthView view, FingerprintAuthModel model) {
         this.view = view;
+        this.model = model;
     }
 
     public void setCancelled(boolean isCancelled) {

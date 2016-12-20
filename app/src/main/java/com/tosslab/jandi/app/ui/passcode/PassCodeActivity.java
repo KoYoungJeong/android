@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.ui.passcode.adapter.PassCodeAdapter;
 import com.tosslab.jandi.app.ui.passcode.dagger.DaggerPassCodeComponent;
 import com.tosslab.jandi.app.ui.passcode.dagger.PassCodeModule;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintAuthDialogFragment;
-import com.tosslab.jandi.app.ui.passcode.fingerprint.FingerprintAuthDialogFragment_;
 import com.tosslab.jandi.app.ui.passcode.presenter.PassCodePresenter;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -239,7 +238,7 @@ public class PassCodeActivity extends BaseAppCompatActivity
         String tag = FingerprintAuthDialogFragment.class.getSimpleName();
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
         if (fragment == null) {
-            FingerprintAuthDialogFragment fragment1 = FingerprintAuthDialogFragment_.builder().build();
+            FingerprintAuthDialogFragment fragment1 = new FingerprintAuthDialogFragment();
             fragment1.show(getSupportFragmentManager(), tag);
             fragment1.setOnFingerPrintErrorListener(() -> {
                 vibrator.vibrate(500);

@@ -5,25 +5,23 @@ import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
-import org.androidannotations.annotations.EBean;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.inject.Inject;
 
 import rx.Observable;
 
-/**
- * Created by tonyjs on 16. 3. 25..
- */
-@EBean
 public class FingerprintAuthModel {
 
+    @Inject
+    public FingerprintAuthModel() { }
+
     public Observable<KeyStore> getKeyStoreObservable() {
-        return Observable.<KeyStore>create(subscriber -> {
+        return Observable.create(subscriber -> {
             try {
                 KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
                 subscriber.onNext(keyStore);
@@ -36,7 +34,7 @@ public class FingerprintAuthModel {
 
     @TargetApi(Build.VERSION_CODES.M)
     public Observable<SecretKey> getSecretKeyObservable(final KeyStore keyStore) {
-        return Observable.<SecretKey>create(subscriber -> {
+        return Observable.create(subscriber -> {
             try {
                 keyStore.load(null);
 
@@ -66,7 +64,7 @@ public class FingerprintAuthModel {
 
     @TargetApi(Build.VERSION_CODES.M)
     public Observable<Cipher> initCipherObservable(final SecretKey secretKey) {
-        return Observable.<Cipher>create(subscriber -> {
+        return Observable.create(subscriber -> {
             try {
                 Cipher cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
                         + KeyProperties.BLOCK_MODE_CBC + "/"
