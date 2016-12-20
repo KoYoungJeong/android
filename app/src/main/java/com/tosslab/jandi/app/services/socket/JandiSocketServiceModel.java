@@ -1284,11 +1284,15 @@ public class JandiSocketServiceModel {
                     marker.setRoomId(topic.getId());
                     marker.setMemberId(memberId);
                     marker.setReadLinkId(-1);
-
                     markers.add(marker);
                 }
             }
 
+            RealmList<RealmLong> ids = new RealmList<>();
+            for (Long memberId : topic.getMembers()) {
+                ids.add(new RealmLong(memberId));
+            }
+            topic.setMemberIds(ids);
 
             topic.setSubscribe(true);
             topic.setIsJoined(true);
@@ -1298,7 +1302,6 @@ public class JandiSocketServiceModel {
             TopicRepository.getInstance().addTopic(topic);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
