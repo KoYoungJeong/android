@@ -542,12 +542,14 @@
         <activity
             android:name=".ui.search.filter.member.MemberFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Transparent" />
 
         <activity
             android:name=".ui.search.filter.room.RoomFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Transparent" />
 
         <activity
             android:name=".ui.search.main.SearchActivity"
