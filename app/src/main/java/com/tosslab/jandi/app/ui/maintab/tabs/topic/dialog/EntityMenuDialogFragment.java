@@ -219,7 +219,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             AnalyticsValue.Action action = AnalyticsValue.Action.TopicSubMenu_Star;
             AnalyticsValue.Label label = starred ? AnalyticsValue.Label.Star : AnalyticsValue.Label.Unstar;
             AnalyticsUtil.sendEvent(category, action, label);
-            return !starred;
+            return starred;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(() -> {

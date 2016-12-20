@@ -4,6 +4,7 @@ package com.tosslab.jandi.app.utils;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -19,20 +20,26 @@ public class AccessLevelUtil {
         if (TeamInfoLoader.getInstance().isJandiBot(targetId)) {
             return true;
         } else {
-            return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                    .filter(TopicRoom::isJoined)
-                    .takeFirst(topicRoom -> topicRoom.getMembers().contains(targetId))
-                    .map(topicRoom -> true)
-                    .defaultIfEmpty(false)
-                    .toBlocking().firstOrDefault(false);
+            if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+                return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                        .filter(TopicRoom::isJoined)
+                        .takeFirst(topicRoom -> topicRoom.getMembers().contains(targetId))
+                        .map(topicRoom -> true)
+                        .defaultIfEmpty(false)
+                        .toBlocking().firstOrDefault(false);
+            } else {
+                return true;
+            }
         }
     }
 
 
     public static void showDialogUnabledAccessLevel(Activity activity) {
+        String title = activity.getString(R.string.common_authority_notauthorised_title);
+        String message = activity.getString(R.string.common_authority_notauthorised_body);
+
         new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(R.string.common_authority_notauthorised_title)
-                .setMessage(R.string.common_authority_notauthorised_body)
+                .setMessage(Html.fromHtml(String.format("<b>%s</b><br/><br/>%s", title, message)))
                 .setPositiveButton(R.string.jandi_confirm, null)
                 .create()
                 .show();

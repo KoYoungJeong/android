@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -482,9 +483,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Override
     public void showDialogGuestKick(long memberId) {
+        String title = getString(R.string.topic_remove_associatewithonetopic_title);
+        String message = getString(R.string.topic_remove_associatewithonetopic_desc);
         new AlertDialog.Builder(MembersListActivity.this)
-                .setTitle(R.string.topic_remove_associatewithonetopic_title)
-                .setMessage(R.string.topic_remove_associatewithonetopic_desc)
+                .setMessage(Html.fromHtml(String.format("<b>%s</b><br/><br/>%s", title, message)))
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.topic_remove_associatewithonetopic_remove, (dialog, which) -> {
                     membersListPresenter.onKickUser(entityId, memberId);
