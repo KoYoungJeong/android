@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.HTTP;
+import retrofit2.http.DELETE;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -24,8 +24,8 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public ResCommon deleteChat(long myMemberId, long entityId) throws RetrofitException {
-        return call(() -> getApi().deleteChat(myMemberId, entityId));
+    public ResCommon deleteChat(long teamId, long companionId) throws RetrofitException {
+        return call(() -> getApi().deleteChat(teamId, companionId));
     }
 
     public ResCommon createChat(long teamId, long memberId) throws RetrofitException {
@@ -35,10 +35,9 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
     }
 
     interface Api {
-
-        @HTTP(path = "members/{memberId}/chats/{entityId}", hasBody = true, method = "DELETE")
+        @DELETE("teams/{teamId}/chats/{companionId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<ResCommon> deleteChat(@Path("memberId") long myMemberId, @Path("entityId") long entityId);
+        Call<ResCommon> deleteChat(@Path("teamId") long teamId, @Path("companionId") long companionId);
 
         @POST("teams/{teamId}/chats")
         Call<ResCommon> createChat(@Path("teamId") long teamId, @Body Map<String, Long> map);

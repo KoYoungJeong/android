@@ -32,7 +32,6 @@ public class LeaveViewModel {
     @Inject
     public LeaveViewModel(Lazy<ChatApi> chatApi) {
         this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
-        ;
         this.chatApi = chatApi;
     }
 
@@ -80,8 +79,8 @@ public class LeaveViewModel {
                                 entityClientManager.leavePrivateGroup(entityid);
                             }
                         } else {
-                            long memberId = TeamInfoLoader.getInstance().getMyId();
-                            chatApi.get().deleteChat(memberId, entityid);
+                            long teamId = TeamInfoLoader.getInstance().getTeamId();
+                            chatApi.get().deleteChat(teamId, entityId);
                         }
                         SprinklrTopicLeave.sendLog(entityId);
                         return Observable.just(entityid);
