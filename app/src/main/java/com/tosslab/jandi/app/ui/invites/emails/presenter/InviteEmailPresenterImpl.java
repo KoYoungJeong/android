@@ -3,9 +3,11 @@ package com.tosslab.jandi.app.ui.invites.emails.presenter;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterDataModel;
 import com.tosslab.jandi.app.ui.invites.emails.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.emails.vo.InviteEmailVO;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationTeam;
 
 import java.util.List;
 
@@ -114,6 +116,9 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                 view.setErrorSelectedTopic();
             } else {
                 view.showProgressWheel();
+                long teamId = TeamInfoLoader.getInstance().getTeamId();
+                SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(),"associate");
+
                 Observable.defer(() -> {
                     List<ResInvitationMembers> invitationMembers =
                             inviteEmailmodel.sendInviteEmailForAssociate(
@@ -142,6 +147,10 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     @Override
     public void startInvitation() {
         if (invitationUserCnt > 0) {
+
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(),"member");
+
             view.showProgressWheel();
             Observable.defer(() -> {
                 List<ResInvitationMembers> invitationMembers =

@@ -2,9 +2,6 @@ package com.tosslab.jandi.app.utils.analytics.sprinkler;
 
 import com.tosslab.jandi.lib.sprinkler.io.domain.event.Event;
 
-/**
- * Created by tonyjs on 2016. 7. 26..
- */
 public class SprinklerEvents {
 
     public static final Event SignIn = Event.create(EventCategory.AccountRelatedEvent.name(),
@@ -34,6 +31,10 @@ public class SprinklerEvents {
     public static final Event CreateTeam = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e14",
             new String[]{PropertyKey.ResponseSuccess, PropertyKey.TeamId, PropertyKey.ErrorCode});
+
+    public static final Event InviteTeam = Event.create(EventCategory.AccountRelatedEvent.name(),
+            "e15",
+            new String[]{PropertyKey.MemberCount, PropertyKey.TeamId, PropertyKey.InvitationCategory});
 
     public static final Event ChangeAccountName = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e16",
