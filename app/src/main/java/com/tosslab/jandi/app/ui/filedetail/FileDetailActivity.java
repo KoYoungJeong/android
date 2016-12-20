@@ -333,10 +333,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 }
             });
 
-            ivMention.setVisibility(mentionControlViewModel.hasMentionMember() ? View.VISIBLE : View.GONE);
         } else {
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
+        ivMention.setVisibility(mentionControlViewModel.hasMentionMember() ? View.VISIBLE : View.GONE);
 
         removeClipboardListenerForMention();
         registerClipboardListenerForMention();
