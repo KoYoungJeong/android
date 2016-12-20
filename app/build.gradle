@@ -180,6 +180,9 @@ project.gradle.taskGraph.whenReady {
     connectedDevDebugAndroidTest {
         ignoreFailures = true
     }
+    testApiDebugUnitTest {
+        ignoreFailures = true
+    }
 }
 
 
