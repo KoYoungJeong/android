@@ -68,7 +68,7 @@ public class User implements Member {
 
     @Override
     public boolean isTeamOwner() {
-        return TextUtils.equals(human.getRole(), "owner");
+        return rank != null && rank.getLevel() == Level.Owner.getLevel();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class User implements Member {
     }
 
     public boolean isProfileUpdated() {
-        return human.getProfile() != null ? human.getProfile().isUpdated() : false;
+        return human.getProfile() != null && human.getProfile().isUpdated();
     }
 
     public Level getLevel() {

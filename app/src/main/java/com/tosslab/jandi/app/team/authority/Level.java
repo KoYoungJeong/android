@@ -23,4 +23,8 @@ public enum Level {
                 return Member;
         }
     }
+
+    public int getLevel() {
+        return level;
+    }
 }
