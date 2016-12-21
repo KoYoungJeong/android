@@ -357,7 +357,7 @@ public class MessageListV2Presenter {
                         view.dismissProgressView();
                         view.dismissOldLoadProgress();
 
-                        if (pair.first.getData().isFirstLoadOldMessage()) {
+                        if (pair.first.getData().isFirstLoadOldMessage() && adapterModel.getCount() == 0) {
                             view.showEmptyView(true);
                         }
 
@@ -399,7 +399,6 @@ public class MessageListV2Presenter {
                     } else {
                         adapterModel.setOldNoMoreLoading();
                     }
-                    // TODO 처음 Scroll 을 위한 변수 수정, AdapterModel.getCount == 0
                     view.setUpOldMessage(isFirstLoad);
 
                     currentMessageState.setIsFirstLoadOldMessage(false);
