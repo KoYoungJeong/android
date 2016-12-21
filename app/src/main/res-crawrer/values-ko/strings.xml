@@ -358,7 +358,7 @@
 	<string name="jandi_finished">"종료됨"</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?
-  (폴더를 삭제해도 해당 폴더내 토픽들은 사라지지 않습니다.)"</string>
+(폴더를 삭제해도 해당 폴더내 토픽들은 사라지지 않습니다.)"</string>
 	<string name="jandi_folder_choose">"이동할 폴더를 선택해주세요."</string>
 	<string name="jandi_folder_delete">"폴더 삭제"</string>
 	<string name="jandi_folder_has_been_move_to">"토픽을 %s 폴더로 이동했습니다."</string>

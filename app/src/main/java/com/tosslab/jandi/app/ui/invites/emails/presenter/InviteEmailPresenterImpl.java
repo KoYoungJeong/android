@@ -23,31 +23,49 @@ import rx.schedulers.Schedulers;
 
 public class InviteEmailPresenterImpl implements InviteEmailPresenter {
 
-    @Inject
     InviteEmailListAdapterDataModel adapterDataModel;
 
-    @Inject
     InviteEmailModel inviteEmailmodel;
 
-    @Inject
     InviteEmailPresenter.View view;
     private int invitationUserCnt = -1;
 
     @Inject
-    public InviteEmailPresenterImpl() {
+    public InviteEmailPresenterImpl(InviteEmailListAdapterDataModel adapterDataModel,
+                                    InviteEmailModel inviteEmailmodel,
+                                    View view) {
+        this.adapterDataModel = adapterDataModel;
+        this.inviteEmailmodel = inviteEmailmodel;
+        this.view = view;
     }
 
     @Override
     public void addEmail(String email) {
         if (inviteEmailmodel.isValidEmailFormat(email) && !isAlreadyInsertedEmail(email)) {
-            InviteEmailVO.Status status = getInviteEmailStatus(email);
-            if (status != null) {
-                InviteEmailVO item = new InviteEmailVO();
-                item.setEmail(email);
-                item.setStatus(status);
-                adapterDataModel.addItem(item);
-                onInvitedUsersChanged();
+            int availableCount = 0;
+            for (InviteEmailVO inviteEmailVO : adapterDataModel.getItems()) {
+                if (inviteEmailVO.getStatus() == InviteEmailVO.Status.AVAILABLE) {
+                    availableCount++;
+                }
+
+                if (availableCount >= 10) {
+                    break;
+                }
             }
+
+            if(availableCount < 10) {
+                InviteEmailVO.Status status = getInviteEmailStatus(email);
+                if (status != null) {
+                    InviteEmailVO item = new InviteEmailVO();
+                    item.setEmail(email);
+                    item.setStatus(status);
+                    adapterDataModel.addItem(item);
+                    onInvitedUsersChanged();
+                }
+            } else {
+                view.showToastOver10();
+            }
+
         }
     }
 

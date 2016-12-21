@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.ui.invites.emails.dagger.DaggerInviteEmailComponent
 import com.tosslab.jandi.app.ui.invites.emails.dagger.InviteEmailModule;
 import com.tosslab.jandi.app.ui.invites.emails.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheelForInvitation;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -277,6 +278,11 @@ public class InviteEmailActivity extends BaseAppCompatActivity
         tvSendInvitationEmailButton.setText(
                 getString(R.string.jandi_confirm));
         tvSendInvitationEmailButton.setBackgroundColor(0xff00ace9);
+    }
+
+    @Override
+    public void showToastOver10() {
+        ColoredToast.showWarning("1회에 10명까지 초대할 수 있습니다.블라블라");
     }
 
     @OnClick(R.id.tv_send_invitation_email_button)

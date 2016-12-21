@@ -50,7 +50,7 @@
 	<string name="common_sharetojandi_choose_team">"チームを選択してください"</string>
 	<string name="common_sharetojandi_errormsg">"予期しないエラーが発生しました。後でもう一度やり直してください。"</string>
 	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。\n認証コードを入力してください。"</string>
-	<string name="common_signup_invalid_emaildomain">""</string>
+	<string name="common_signup_invalid_emaildomain">"アドレスの形式が正しいことを確認してください。"</string>
 	<string name="err_delete_file">"ファイルが削除できませんでした"</string>
 	<string name="err_download">"ファイルがダウンロードできませんでした"</string>
 	<string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
@@ -356,7 +356,7 @@
 	<string name="jandi_finished">"終了"</string>
 	<string name="jandi_folder_alread_has_name">"その名前は既に使用されています"</string>
 	<string name="jandi_folder_ask_delete">"本当にこのフォルダを削除しますか？
-  (フォルダを削除してもフォルダ内のトピックは消えません。)"</string>
+(フォルダを削除してもフォルダ内のトピックは消えません。)"</string>
 	<string name="jandi_folder_choose">"フォルダを選択してください"</string>
 	<string name="jandi_folder_delete">"フォルダ削除"</string>
 	<string name="jandi_folder_has_been_move_to">"トピックを%sフォルダに移動しました"</string>
