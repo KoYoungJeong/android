@@ -54,17 +54,7 @@ public class UserSelectorImpl implements UserSelector {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         RoomRecyclerAdapter adapter = new RoomRecyclerAdapter(context, RoomRecyclerAdapter.FROM_USER_SELECTOR);
-        getUsers()
-                .concatWith(Observable.create(subscriber -> {
-                    if (hasDisabledMembers()) {
-                        subscriber.onNext(getDummyRoomData());
-                        getDisabledMembers()
-                                .subscribe(subscriber::onNext);
-                    }
-
-                    subscriber.onCompleted();
-                }))
-                .subscribe(adapter::addAll, Throwable::printStackTrace);
+        getUsers().subscribe(adapter::addAll, Throwable::printStackTrace);
 
         ExpandRoomData dummyData = new ExpandRoomData();
         dummyData.setType(JandiConstants.Entity.TYPE_EVERYWHERE);
@@ -121,15 +111,16 @@ public class UserSelectorImpl implements UserSelector {
     protected Observable<List<ExpandRoomData>> getUsers() {
 
         long myId = TeamInfoLoader.getInstance().getMyId();
+        boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
         return Observable.defer(() -> {
-            if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
-                return Observable.from(TeamInfoLoader.getInstance().getUserList());
-            } else {
+            if (guest) {
                 return Observable.from(TeamInfoLoader.getInstance().getTopicList())
                         .filter(TopicRoom::isJoined)
                         .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
                         .distinct()
                         .map(id -> TeamInfoLoader.getInstance().getUser(id));
+            } else {
+                return Observable.from(TeamInfoLoader.getInstance().getUserList());
             }
         })
                 .filter(User::isEnabled)
@@ -149,7 +140,13 @@ public class UserSelectorImpl implements UserSelector {
                     } else {
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
                     }
-                });
+                }).concatWith(Observable.defer(() -> {
+                    if (!guest && hasDisabledMembers()) {
+                        return Observable.concat(Observable.just(getDummyRoomData()), getDisabledMembers());
+                    } else {
+                        return Observable.empty();
+                    }
+                }));
 
     }
 
