@@ -36,8 +36,10 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
+import com.tosslab.jandi.app.network.client.member.MemberApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.member.MemberInfo;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -145,6 +147,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     Lazy<TeamApi> teamApi;
     @Inject
     Lazy<InvitationApi> invitationApi;
+
+    @Inject
+    Lazy<MemberApi> memberApi;
 
     private boolean isFullSizeImageShowing = false;
     private boolean hasChangedProfileImage = true;
@@ -607,8 +612,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         Completable.fromCallable(() -> {
             long teamId = TeamInfoLoader.getInstance().getTeamId();
-            List<String> invites = Arrays.asList(TeamInfoLoader.getInstance().getUser(memberId).getEmail());
-            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(), 0, 0));
+            User user = TeamInfoLoader.getInstance().getUser(memberId);
+            List<String> invites = Arrays.asList(user.getEmail());
+            int level = user.getLevel().getLevel();
+            long topicId = -1;
+            if (level == Level.Guest.getLevel()) {
+                MemberInfo memberInfo = memberApi.get().getMemberInfo(teamId, memberId);
+                topicId = memberInfo.getJoinTopics().get(0);
+            }
+            teamApi.get().inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(), level, topicId));
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
