@@ -33,7 +33,6 @@ import com.tosslab.jandi.app.ui.members.adapter.ModdableMemberListAdapter;
 import com.tosslab.jandi.app.ui.members.dagger.DaggerMemberListComponent;
 import com.tosslab.jandi.app.ui.members.dagger.MemberListModule;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
-import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment_;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
@@ -395,10 +394,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Override
     public void showDialogKick(String userName, String userProfileUrl, long memberId) {
-        KickDialogFragment dialogFragment = KickDialogFragment_.builder()
-                .profileUrl(userProfileUrl)
-                .userName(userName)
-                .build();
+        KickDialogFragment dialogFragment = KickDialogFragment.create(userName, userProfileUrl);
 
         dialogFragment.setOnKickConfirmClickListener((dialog, which) -> {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Participants, AnalyticsValue.Action.KickMember);
