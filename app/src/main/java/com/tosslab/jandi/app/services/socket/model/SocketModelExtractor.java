@@ -4,10 +4,8 @@ package com.tosslab.jandi.app.services.socket.model;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 
 public class SocketModelExtractor {
-
 
     public static <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz) throws Exception {
         return getObject(object, clazz, true, true);

@@ -16,6 +16,9 @@ import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
+import com.tosslab.jandi.app.events.team.TeamJoinEvent;
+import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -34,6 +37,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by tee on 2016. 9. 27..
@@ -88,6 +92,8 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
         teamSelectListPresenter.setUserEmailInfo();
         progressWheel = new ProgressWheel(this);
         setEditButton();
+        EventBus.getDefault().register(this);
+        JandiSocketService.startServiceIfNeed(this);
     }
 
     private void setEditButton() {
@@ -199,6 +205,12 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void showErrorToast(String message) {
         ColoredToast.showError(message);
     }
@@ -206,6 +218,18 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
     @Override
     public void showLoginEmail(String email) {
         tvLoginEmail.setText(email);
+    }
+
+    public void onEvent(TeamDeletedEvent event) {
+        teamSelectListPresenter.initTeamDatas(false, true);
+    }
+
+    public void onEvent(TeamLeaveEvent event) {
+        teamSelectListPresenter.initTeamDatas(false, true);
+    }
+
+    public void onEvent(TeamJoinEvent event) {
+        teamSelectListPresenter.initTeamDatas(false, true);
     }
 
 }
