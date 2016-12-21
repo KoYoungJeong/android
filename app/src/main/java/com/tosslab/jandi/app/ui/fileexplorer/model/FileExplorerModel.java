@@ -1,14 +1,10 @@
 package com.tosslab.jandi.app.ui.fileexplorer.model;
 
-import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.ui.fileexplorer.to.FileItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
-
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,17 +16,10 @@ import java.util.List;
 
 import rx.Observable;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 23..
- */
-@EBean
 public class FileExplorerModel {
 
     public static final String DEFAULT_STORAGE = "/storage";
     public static final String EMULATED_PATH_NAME = "emulated";
-
-    @RootContext
-    Context context;
 
     public File getFile(String path) {
 
