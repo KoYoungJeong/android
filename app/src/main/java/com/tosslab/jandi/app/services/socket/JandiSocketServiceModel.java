@@ -919,7 +919,8 @@ public class JandiSocketServiceModel {
 
     public void onTeamLeft(Object object) {
         try {
-            SocketTeamLeaveEvent event = SocketModelExtractor.getObject(object, SocketTeamLeaveEvent.class);
+
+            SocketTeamLeaveEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamLeaveEvent.class);
             saveEvent(event);
 
             SocketTeamLeaveEvent.Data data = event.getData();
