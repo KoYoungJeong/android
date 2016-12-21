@@ -41,7 +41,7 @@ public class ImageAlbumModelTest {
 
     @Before
     public void setUp() throws Exception {
-        imageAlbumModel = ImageAlbumModel_.getInstance_(JandiApplication.getContext());
+        imageAlbumModel = new ImageAlbumModel();
     }
 
 

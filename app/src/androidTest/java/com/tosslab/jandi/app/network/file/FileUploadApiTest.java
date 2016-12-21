@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.file;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel_;
+import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 
 import org.junit.Before;
@@ -35,8 +35,7 @@ public class FileUploadApiTest {
     }
 
     protected List<ImagePicture> getImageList() {
-        return ImageAlbumModel_.getInstance_(JandiApplication.getContext()).getAllPhotoList(
-                JandiApplication.getContext(), 0);
+        return new ImageAlbumModel().getAllPhotoList(JandiApplication.getContext(), 0);
     }
 
     @Test
