@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
-import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity_;
+import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -102,13 +102,13 @@ public class FilePickerModel {
     }
 
     public void openCharacterActivityForActivityResult(Activity activity, Uri fileUri) {
-        Intent intent = new Intent(activity, ProfileImageSelectorActivity_.class);
+        Intent intent = new Intent(activity, ProfileImageSelectorActivity.class);
         intent.putExtra("profile_image_file_uri", fileUri);
         activity.startActivityForResult(intent, ModifyProfileActivity.REQUEST_CHARACTER);
     }
 
     public void openCharacterActivityForActivityResult(Fragment fragment, Uri fileUri) {
-        Intent intent = new Intent(fragment.getContext(), ProfileImageSelectorActivity_.class);
+        Intent intent = new Intent(fragment.getContext(), ProfileImageSelectorActivity.class);
         intent.putExtra("profile_image_file_uri", fileUri);
         fragment.startActivityForResult(intent, ModifyProfileActivity.REQUEST_CHARACTER);
     }

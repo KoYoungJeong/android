@@ -477,7 +477,7 @@
         <activity android:name=".ui.web.PageNotFoundActivity" />
 
         <activity
-            android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
+            android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />

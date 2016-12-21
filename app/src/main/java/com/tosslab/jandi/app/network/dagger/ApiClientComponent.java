@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialog
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
 
 import dagger.Component;
 
@@ -35,8 +34,6 @@ public interface ApiClientComponent {
     void inject(MessageListModel messageListModel);
 
     void inject(FileDetailModel fileDetailModel);
-
-    void inject(ProfileImageSelectorModel profileImageSelectorModel);
 
     void inject(MembersModel membersModel);
 
