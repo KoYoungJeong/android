@@ -934,6 +934,9 @@ public class JandiSocketServiceModel {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(leaveEvent -> {
                             ResAccountInfo.UserTeam team = AccountRepository.getRepository().getSelectedTeamInfo();
+                            if (team == null) {
+                                return;
+                            }
                             String teamName = JandiApplication.getContext()
                                     .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
