@@ -13,8 +13,6 @@ public interface ImageAlbumPresenter {
 
     void onLoadMorePhotos(int bucketId, int imageId);
 
-    void setView(View view);
-
     void onSetupActionbar(int buckerId);
 
     void onSelectPicture(ImagePicture item, int position);

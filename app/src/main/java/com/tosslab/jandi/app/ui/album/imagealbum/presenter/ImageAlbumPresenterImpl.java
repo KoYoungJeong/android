@@ -2,66 +2,80 @@ package com.tosslab.jandi.app.ui.album.imagealbum.presenter;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.util.List;
 
-@EBean
+import javax.inject.Inject;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class ImageAlbumPresenterImpl implements ImageAlbumPresenter {
 
-    @RootContext
     Context context;
 
-    @Bean
     ImageAlbumModel imageAlbumModel;
-
     ImageAlbumPresenter.View view;
 
+    @Inject
+    public ImageAlbumPresenterImpl(View view, ImageAlbumModel imageAlbumModel) {
+        this.imageAlbumModel = imageAlbumModel;
+        this.view = view;
+        context = JandiApplication.getContext();
+    }
+
     @Override
-    @Background
     public void onLoadImageAlbum(int buckerId) {
         view.showProgress();
+
         if (imageAlbumModel.isFirstAlbumPage(buckerId)) {
-            List<ImageAlbum> defaultAlbumList = imageAlbumModel.getDefaultAlbumList(context);
-            ImageAlbum viewAllAlbum = imageAlbumModel.createViewAllAlbum(context);
-            defaultAlbumList.add(0, viewAllAlbum);
-            view.showDefaultAlbumList(defaultAlbumList);
+            Observable.fromCallable(() -> {
+                List<ImageAlbum> defaultAlbumList = imageAlbumModel.getDefaultAlbumList(context);
+                ImageAlbum viewAllAlbum = imageAlbumModel.createViewAllAlbum(context);
+                defaultAlbumList.add(0, viewAllAlbum);
+                return defaultAlbumList;
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnUnsubscribe(() -> view.hideProgress())
+                    .subscribe(defaultAlbumList -> view.showDefaultAlbumList(defaultAlbumList));
         } else if (imageAlbumModel.isAllAlbum(buckerId)) {
-            List<ImagePicture> photoList = imageAlbumModel.getAllPhotoList(context, 0);
-            view.showPhotoList(photoList);
+            Observable.fromCallable(() -> imageAlbumModel.getAllPhotoList(context, 0))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnUnsubscribe(() -> view.hideProgress())
+                    .subscribe(photoList -> {
+                        view.showPhotoList(photoList);
+                    });
         } else {
-            List<ImagePicture> photoList = imageAlbumModel.getPhotoList(context, buckerId, 0);
-            view.showPhotoList(photoList);
+            Observable.fromCallable(() -> imageAlbumModel.getPhotoList(context, buckerId, 0))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnUnsubscribe(() -> view.hideProgress())
+                    .subscribe(photoList -> view.showPhotoList(photoList));
+
         }
-        view.hideProgress();
+
     }
 
-    @Background
     @Override
     public void onLoadMorePhotos(int bucketId, int imageId) {
-        List<ImagePicture> photoList;
-        if (imageAlbumModel.isAllAlbum(bucketId)) {
-            photoList = imageAlbumModel.getAllPhotoList(context, imageId);
-        } else {
-            photoList = imageAlbumModel.getPhotoList(context, bucketId, imageId);
-        }
-        if (photoList != null && !photoList.isEmpty()) {
-            view.addPhotoList(photoList);
-        }
-    }
-
-    @Override
-    public void setView(ImageAlbumPresenter.View view) {
-        this.view = view;
+        Observable.fromCallable(() -> {
+            if (imageAlbumModel.isAllAlbum(bucketId)) {
+                return imageAlbumModel.getAllPhotoList(context, imageId);
+            } else {
+                return imageAlbumModel.getPhotoList(context, bucketId, imageId);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(photoList -> photoList != null && !photoList.isEmpty())
+                .subscribe(photoList -> view.addPhotoList(photoList));
     }
 
     @Override

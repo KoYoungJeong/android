@@ -97,9 +97,7 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
     private void initFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ImageAlbumFragment_.builder()
-                .mode(mode)
-                .build();
+        Fragment fragment = ImageAlbumFragment.create(mode);
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }

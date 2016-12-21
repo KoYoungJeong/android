@@ -12,15 +12,17 @@ import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@EBean
+import javax.inject.Inject;
+
 public class ImageAlbumModel {
 
     public static final int LIMIT = 60;
+
+    @Inject
+    public ImageAlbumModel() { }
 
     public List<ImageAlbum> getDefaultAlbumList(Context context) {
         // which image properties are we querying
