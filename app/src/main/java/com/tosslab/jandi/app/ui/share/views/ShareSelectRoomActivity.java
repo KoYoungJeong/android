@@ -231,6 +231,7 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                         .filter(TopicRoom::isJoined)
                         .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
                         .distinct()
+                        .filter(memberId -> teamInfoLoader.getChatId(memberId) > 0)
                         .map(memberId -> teamInfoLoader.getUser(memberId))
                         .concatWith(Observable.just(teamInfoLoader.getJandiBot()));
             }

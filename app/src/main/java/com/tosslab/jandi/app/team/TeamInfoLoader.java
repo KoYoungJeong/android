@@ -386,7 +386,8 @@ public class TeamInfoLoader {
     }
 
     public long getChatId(long userId) {
-        return execute(() -> getChatObservable().takeFirst(chat -> chat.getMembers().contains(userId))
+        return execute(() -> getChatObservable()
+                .takeFirst(chat -> chat.getCompanionId() == userId)
                 .map(Chat::getId)
                 .defaultIfEmpty(-1L)
                 .toBlocking()

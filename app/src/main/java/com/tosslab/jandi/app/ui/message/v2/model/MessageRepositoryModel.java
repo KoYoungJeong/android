@@ -24,8 +24,6 @@ public class MessageRepositoryModel {
     public static final int MAX_COUNT = 50;
     MessageManipulator messageManipulator;
 
-    private boolean isFirst = true;
-
     public MessageRepositoryModel() {
         messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
     }
@@ -39,7 +37,7 @@ public class MessageRepositoryModel {
         List<ResMessages.Link> oldMessages = MessageRepository.getRepository().getOldMessages(roomId, startLinkId, MAX_COUNT);
 
         if (oldMessages.isEmpty()) {
-            if (!isFirst) {
+            if (startLinkId > 0) {
                 try {
                     ResMessages messages = messageManipulator.getMessages(startLinkId, MAX_COUNT);
                     oldMessages = messages.records;
@@ -48,7 +46,9 @@ public class MessageRepositoryModel {
                 }
             } else {
                 try {
-                    oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId, MAX_COUNT).records;
+                    if (startLinkId < 0) {
+                        oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId, MAX_COUNT).records;
+                    }
                 } catch (RetrofitException e) {
                     e.printStackTrace();
                 }
@@ -95,7 +95,7 @@ public class MessageRepositoryModel {
             }
         }
 
-        if (isFirst) {
+        if (startLinkId > 0) {
             List<SendMessage> sendMessageOfRoom = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
             List<ResMessages.Link> dummyLinks = new ArrayList<>();
             for (SendMessage sendMessage : sendMessageOfRoom) {
@@ -114,10 +114,6 @@ public class MessageRepositoryModel {
                 dummyLinks.add(dummyMessageLink);
             }
             oldMessages.addAll(dummyLinks);
-        }
-
-        if (!oldMessages.isEmpty()) {
-            isFirst = false;
         }
 
         if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
