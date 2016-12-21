@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
-import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberHeaderAdapter;
@@ -119,7 +118,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         super.onActivityCreated(savedInstanceState);
 
         Dart.inject(this, getArguments());
-        
+
         TeamMemberAdapter adapter = new TeamMemberAdapter();
         adapter.setSelectedMode(selectMode && roomId > 0);
         teamMemberDataView = adapter;
@@ -187,8 +186,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void moveDisabledMembers() {
-        DisabledEntityChooseActivity_.intent(this)
-                .startForResult(REQ_DISABLED_MEMBER);
+
+        startActivityForResult(Henson.with(getActivity())
+                .gotoDisabledEntityChooseActivity()
+                .build(), REQ_DISABLED_MEMBER);
     }
 
     @Override

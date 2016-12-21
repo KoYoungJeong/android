@@ -4,7 +4,6 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertThat;
 public class DisabledEntityChooseActivityTest {
 
     @Rule
-    public ActivityTestRule<DisabledEntityChooseActivity_> rule = new ActivityTestRule<DisabledEntityChooseActivity_>(DisabledEntityChooseActivity_.class, false, false);
+    public ActivityTestRule<DisabledEntityChooseActivity> rule = new ActivityTestRule<DisabledEntityChooseActivity>(DisabledEntityChooseActivity.class, false, false);
     private DisabledEntityChooseActivity activity;
 
     @BeforeClass
@@ -47,7 +46,6 @@ public class DisabledEntityChooseActivityTest {
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
     }
-
 
 
     @Test
