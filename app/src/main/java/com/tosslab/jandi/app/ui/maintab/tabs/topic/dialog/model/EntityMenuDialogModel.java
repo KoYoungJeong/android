@@ -57,6 +57,7 @@ public class EntityMenuDialogModel {
 
     public ResCommon requestDeleteChat(long entityId) throws RetrofitException {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
+        
         return chatApi.get().deleteChat(teamId, entityId);
     }
 
