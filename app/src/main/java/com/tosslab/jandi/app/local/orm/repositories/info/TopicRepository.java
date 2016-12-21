@@ -88,8 +88,9 @@ public class TopicRepository extends RealmRepository {
             Topic topic = realm.where(Topic.class)
                     .equalTo("id", topicId)
                     .findFirst();
-            realm.executeTransaction(realm1 -> topic.deleteFromRealm());
-
+            if (topic != null) {
+                realm.executeTransaction(realm1 -> topic.deleteFromRealm());
+            }
             return true;
         });
     }

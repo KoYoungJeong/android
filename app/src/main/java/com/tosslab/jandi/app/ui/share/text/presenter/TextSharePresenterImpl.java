@@ -104,7 +104,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
     @Override
     public void sendMessage(String messageText, List<MentionObject> mentions) {
 
-        if (teamId <= 0 || roomId <= 0) {
+        if (teamId <= 0 || entityId <= 0) {
             view.showFailToast(JandiApplication.getContext().getString(R.string.jandi_title_cdp_to_be_shared));
             return;
         }

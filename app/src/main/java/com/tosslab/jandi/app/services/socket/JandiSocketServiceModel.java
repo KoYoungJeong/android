@@ -518,6 +518,12 @@ public class JandiSocketServiceModel {
                 }
             }
 
+            RealmList<RealmLong> memberIds = new RealmList<>();
+            for (Long memberId : chat.getMembers()) {
+                memberIds.add(new RealmLong(memberId));
+            }
+            chat.setMemberIds(memberIds);
+
             chat.setReadLinkId(-1);
             chat.setCompanionId(Observable.from(chat.getMembers())
                     .takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId())
@@ -1215,6 +1221,7 @@ public class JandiSocketServiceModel {
             RealmList<Marker> markers = new RealmList<>();
             RealmList<RealmLong> memberIds = new RealmList<>();
 
+            RealmList<RealmLong> ids = new RealmList<>();
             for (Long memberId : topic.getMembers()) {
                 Marker marker = new Marker();
                 marker.setRoomId(topic.getId());
@@ -1222,7 +1229,13 @@ public class JandiSocketServiceModel {
                 marker.setReadLinkId(-1);
                 markers.add(marker);
                 memberIds.add(new RealmLong(memberId));
+
+                ids.add(new RealmLong(memberId));
             }
+
+            topic.setMemberIds(ids);
+
+
             if (topic.getCreatorId() == TeamInfoLoader.getInstance().getMyId()) {
                 topic.setSubscribe(true);
                 topic.setIsJoined(true);
