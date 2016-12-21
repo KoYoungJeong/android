@@ -3,15 +3,12 @@ package com.tosslab.jandi.app.ui.message.model.menus;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
-import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity_;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 9..
- */
 public class TopicDetailCommand implements MenuCommand {
 
     private final Fragment fragment;
@@ -26,10 +23,11 @@ public class TopicDetailCommand implements MenuCommand {
 
     @Override
     public void execute(MenuItem menuItem) {
-        TopicDetailActivity_.intent(fragment)
+        fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                .gotoTopicDetailActivity()
                 .entityId(entityId)
                 .teamId(teamId)
-                .startForResult(TopicDetailActivity.REQUEST_DETAIL);
+                .build(), TopicDetailActivity.REQUEST_DETAIL);
 
         if (TeamInfoLoader.getInstance().isUser(entityId)) {
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.Message, AnalyticsValue.Action.Message_Decription);
