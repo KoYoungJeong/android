@@ -480,7 +480,7 @@
         </activity>
 
         <activity
-            android:name=".ui.album.imagecrop.ImageCropPickerActivity_"
+            android:name=".ui.album.imagecrop.ImageCropPickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>

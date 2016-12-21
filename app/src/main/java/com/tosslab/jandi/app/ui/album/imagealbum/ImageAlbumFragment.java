@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.ui.album.imagealbum.dagger.ImageAlbumFragModule;
 import com.tosslab.jandi.app.ui.album.imagealbum.presenter.ImageAlbumPresenter;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
-import com.tosslab.jandi.app.ui.album.imagecrop.ImageCropPickerActivity_;
+import com.tosslab.jandi.app.ui.album.imagecrop.ImageCropPickerActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.AnimationModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -214,7 +214,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         }
 
         try {
-            Intent cropIntent = new Intent(getContext(), ImageCropPickerActivity_.class);
+            Intent cropIntent = new Intent(getContext(), ImageCropPickerActivity.class);
             cropIntent.putExtra("input", Uri.fromFile(new File(imagePath)));
             cropIntent.putExtra("output", Uri.fromFile(File.createTempFile("temp_", ".jpg",
                     new File(FileUtil.getDownloadPath()))));
