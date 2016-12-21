@@ -55,8 +55,9 @@ public class EntityMenuDialogModel {
         }
     }
 
-    public ResCommon requestDeleteChat(long memberId, long entityId) throws RetrofitException {
-        return chatApi.get().deleteChat(memberId, entityId);
+    public ResCommon requestDeleteChat(long entityId) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        return chatApi.get().deleteChat(teamId, entityId);
     }
 
     public boolean isDefaultTopic(long entityId) {
@@ -75,7 +76,8 @@ public class EntityMenuDialogModel {
                 TeamInfoLoader.getInstance().refresh();
                 return true;
             }).subscribeOn(Schedulers.io())
-                    .subscribe(() -> {}, Throwable::printStackTrace);
+                    .subscribe(() -> {
+                    }, Throwable::printStackTrace);
 
         }
 

@@ -300,8 +300,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
-                long memberId = TeamInfoLoader.getInstance().getMyId();
-                entityMenuDialogModel.requestDeleteChat(memberId, entityId);
+                entityMenuDialogModel.requestDeleteChat(entityId);
             }
             if (!isUser) {
                 TopicRepository.getInstance().deleteTopic(entityId);
