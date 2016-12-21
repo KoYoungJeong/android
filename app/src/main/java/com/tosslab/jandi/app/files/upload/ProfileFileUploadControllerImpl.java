@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
@@ -16,7 +17,6 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
-import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -53,9 +53,10 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int requestCode, Activity activity) {
         switch (requestCode) {
             case ModifyProfileActivity.REQUEST_CROP:
-                ImageAlbumActivity_.intent(activity)
+                activity.startActivityForResult(Henson.with(activity)
+                        .gotoImageAlbumActivity()
                         .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
-                        .startForResult(requestCode);
+                        .build(), requestCode);
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 try {
@@ -85,9 +86,10 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int requestCode, Fragment fragment) {
         switch (requestCode) {
             case ModifyProfileActivity.REQUEST_CROP:
-                ImageAlbumActivity_.intent(fragment)
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoImageAlbumActivity()
                         .mode(ImageAlbumActivity.EXTRA_MODE_CROP_PICK)
-                        .startForResult(requestCode);
+                        .build(), requestCode);
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 try {

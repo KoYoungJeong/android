@@ -196,7 +196,7 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-            android:name=".ui.album.imagealbum.ImageAlbumActivity_"
+            android:name=".ui.album.imagealbum.ImageAlbumActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 

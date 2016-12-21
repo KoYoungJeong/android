@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
-import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileUpload;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -38,10 +38,10 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int type, Fragment fragment, long entityId) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_
-                        .intent(fragment)
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoImageAlbumActivity()
                         .entityId(entityId)
-                        .startForResult(TYPE_UPLOAD_GALLERY);
+                        .build(), TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
                 try {
@@ -65,7 +65,9 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int type, Activity activity) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_.intent(activity).startForResult(TYPE_UPLOAD_GALLERY);
+                activity.startActivityForResult(Henson.with(activity)
+                        .gotoImageAlbumActivity()
+                        .build(), TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
 
@@ -90,7 +92,9 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int type, Fragment fragment) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_.intent(fragment).startForResult(TYPE_UPLOAD_GALLERY);
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoImageAlbumActivity()
+                        .build(), TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
 
