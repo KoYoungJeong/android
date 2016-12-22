@@ -103,17 +103,22 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
 
                             return true;
                         })
-                        .map((user1) -> new TeamMemberItem(user1, it))
+                        .map(new Func1<User, TeamMemberItem>() {
+                            @Override
+                            public TeamMemberItem call(User user) {
+                                return new TeamMemberItem(user, it);
+                            }
+                        })
                         .concatWith(Observable.defer(() -> {
                             // 검색어 없을 때
                             // 선택 모드
                             // 1인 pick 모드
                             return Observable.just(TextUtils.isEmpty(it) && selectMode && roomId < 0)
                                     .filter(pickmode -> pickmode)
-                                    .flatMap(ttt -> Observable.from(getUserList())
-                                            .map(User::isEnabled) // enabled 상태 받음
-                                            .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
-                                            .map(disabld -> new TeamDisabledMemberItem(null, it)));
+                                    .flatMap(ttt -> Observable.from(getUserList()))
+                                    .map(User::isEnabled) // enabled 상태 받음
+                                    .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
+                                    .map(disabld -> new TeamDisabledMemberItem(null, it));
                         }))
                         .compose(sort())
                         .compose(textToSpan(it)))
