@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.ui.invites.emails.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheelForInvitation;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import javax.inject.Inject;
@@ -137,8 +138,9 @@ public class InviteEmailActivity extends BaseAppCompatActivity
                     JandiApplication.getContext().getString(R.string.invite_member_option_associate_title));
         }
 
+
         vgRoot.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            int heightDiff = vgRoot.getRootView().getHeight() - vgRoot.getHeight();
+            int heightDiff = vgRoot.getRootView().getHeight() - UiUtils.getSoftKeyHeight() - vgRoot.getHeight();
             if (heightDiff > 150) {
                 // keyboard is up
                 if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
