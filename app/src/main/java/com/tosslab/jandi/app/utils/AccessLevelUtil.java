@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.widget.TextView;
@@ -71,5 +72,34 @@ public class AccessLevelUtil {
                 break;
         }
 
+    }
+
+    public static void setTextOfLevelInNav(Level level, TextView textView) {
+        Resources resources = textView.getResources();
+        switch (level) {
+            case Guest:
+                textView.setBackgroundResource(R.drawable.bg_user_level_team_guest_nav);
+                textView.setTextColor(resources.getColor(R.color.jandi_text_level_team_guest_nav));
+                textView.setText(R.string.common_authority_title_associate);
+                break;
+            case Owner:
+                textView.setBackgroundResource(R.drawable.bg_user_level_team_owner_nav);
+                textView.setTextColor(resources.getColor(R.color.jandi_text_level_team_owner_nav));
+                textView.setText(R.string.common_authority_title_owner);
+                break;
+            case Admin:
+                textView.setBackgroundResource(R.drawable.bg_user_level_team_admin_nav);
+                textView.setTextColor(resources.getColor(R.color.jandi_text_level_team_admin_nav));
+                textView.setText(R.string.common_authority_title_manager);
+                break;
+            default:
+            case Member:
+                textView.setBackgroundResource(R.drawable.bg_user_level_team_member_nav);
+                textView.setTextColor(resources.getColor(R.color.jandi_text_level_team_member_nav));
+                textView.setText(R.string.common_authority_title_member);
+                break;
+        }
+
+        textView.setPaintFlags(textView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
     }
 }
