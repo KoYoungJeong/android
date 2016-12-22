@@ -19,6 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/jandi_member_profile_img_overlay" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/jandi_transparent_black_60p" />
     </FrameLayout>
 
     <FrameLayout
@@ -81,32 +86,36 @@
                     android:minHeight="230dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_member_profile_team_level"
+                    <LinearLayout
+                        android:id="@+id/vg_profile_star_and_level"
                         android:layout_width="wrap_content"
-                        android:layout_height="17dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_toLeftOf="@+id/btn_member_profile_star"
-                        android:background="@drawable/bg_user_level_team_admin"
-                        android:gravity="center"
-                        android:textSize="@dimen/jandi_text_size_11sp" />
-
-                    <ImageView
-                        android:id="@+id/btn_member_profile_star"
-                        android:layout_width="40dp"
                         android:layout_height="46dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_gravity="center"
-                        android:paddingTop="16dp"
-                        android:paddingBottom="16dp"
-                        android:src="@drawable/jandi_member_profile_star_selector" />
+                        android:layout_alignParentEnd="true"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_team_level"
+                            android:layout_width="wrap_content"
+                            android:layout_height="17dp"
+                            android:background="@drawable/bg_user_level_team_admin"
+                            android:textSize="@dimen/jandi_text_size_11sp" />
+
+                        <ImageView
+                            android:id="@+id/btn_member_profile_star"
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:paddingBottom="16dp"
+                            android:paddingTop="16dp"
+                            android:src="@drawable/jandi_member_profile_star_selector" />
+                    </LinearLayout>
 
 
                     <TextView
                         android:id="@+id/tv_member_profile_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/btn_member_profile_star"
+                        android:layout_below="@+id/vg_profile_star_and_level"
                         android:layout_marginBottom="17dp"
                         android:layout_marginLeft="35dp"
                         android:layout_marginRight="35dp"

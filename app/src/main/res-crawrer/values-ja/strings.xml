@@ -117,6 +117,7 @@
 	<string name="invite_email_alreadyinvited">"このメールアドレスはすでにチームに招待されました。"</string>
 	<string name="invite_email_blocked">"チームからブロックされたメールです。"</string>
 	<string name="invite_email_cancelinvite">"招待をキャンセルしますか？"</string>
+	<string name="invite_email_error_max10">""</string>
 	<string name="invite_email_error_partially">"いくつかのメールの送信に失敗しました。
 結果を確認してからもう一度お試しください。"</string>
 	<string name="invite_email_error_unknown">"送信中にエラーが発生しました。

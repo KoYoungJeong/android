@@ -46,6 +46,5 @@ public interface MainChatListPresenter {
 
         void hideEmptyLayout();
 
-        void showNewChatInEmptyView(boolean show);
     }
 }

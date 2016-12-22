@@ -117,6 +117,7 @@
 	<string name="invite_email_alreadyinvited">"此电子邮箱已被邀请至此团队"</string>
 	<string name="invite_email_blocked">"此电子邮箱已被此团队封锁"</string>
 	<string name="invite_email_cancelinvite">"你要取消此邀请吗？"</string>
+	<string name="invite_email_error_max10">""</string>
 	<string name="invite_email_error_partially">"部分邀请无法顺利寄送。请确认后再试"</string>
 	<string name="invite_email_error_unknown">"出现未知的错误，请稍等"</string>
 	<string name="invite_email_failedtryagain">"电邮寄送失败，再试一次"</string>

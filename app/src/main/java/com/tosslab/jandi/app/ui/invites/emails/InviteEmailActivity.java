@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -28,7 +27,6 @@ import com.tosslab.jandi.app.ui.invites.emails.dagger.DaggerInviteEmailComponent
 import com.tosslab.jandi.app.ui.invites.emails.dagger.InviteEmailModule;
 import com.tosslab.jandi.app.ui.invites.emails.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheelForInvitation;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
@@ -126,16 +124,12 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
         if (mode == EXTRA_INVITE_MEMBER_MODE) {
             vgSelectTopic.setVisibility(View.GONE);
-            tvEmailInputDescription.setText(
-                    getString(R.string.invite_member_email_desc));
-            getSupportActionBar().setTitle(
-                    JandiApplication.getContext().getString(R.string.invite_member_option_member_title));
+            tvEmailInputDescription.setText(getString(R.string.invite_member_email_desc));
+            getSupportActionBar().setTitle(getString(R.string.invite_member_option_member_title));
         } else {
             vgSelectTopic.setVisibility(View.VISIBLE);
-            tvEmailInputDescription.setText(
-                    getString(R.string.invite_associate_email_desc));
-            getSupportActionBar().setTitle(
-                    JandiApplication.getContext().getString(R.string.invite_member_option_associate_title));
+            tvEmailInputDescription.setText(getString(R.string.invite_associate_email_desc));
+            getSupportActionBar().setTitle(getString(R.string.invite_member_option_associate_title));
         }
 
 
@@ -283,8 +277,12 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void showToastOver10() {
-        ColoredToast.showWarning("1회에 10명까지 초대할 수 있습니다.블라블라");
+    public void showDialogOver10() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.invite_email_error_max10)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
     }
 
     @OnClick(R.id.tv_send_invitation_email_button)

@@ -20,7 +20,7 @@ public interface ProfileLoader {
 
     void loadFullThumb(PhotoView ivProfileImageFull, String uri);
 
-    void setStarButton(View btnProfileStar, Member member);
+    void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel);
 
     boolean isEnabled(Member member);
 

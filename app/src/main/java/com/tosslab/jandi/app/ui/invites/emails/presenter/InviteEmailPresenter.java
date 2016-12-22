@@ -39,6 +39,6 @@ public interface InviteEmailPresenter {
 
         void changeInvitationButtonIfPatiallyFailed();
 
-        void showToastOver10();
+        void showDialogOver10();
     }
 }

@@ -119,6 +119,7 @@
 	<string name="invite_email_alreadyinvited">"이미 팀에 초대 중인 이메일입니다."</string>
 	<string name="invite_email_blocked">"팀에서 차단된 이메일입니다."</string>
 	<string name="invite_email_cancelinvite">"초대를 취소하시겠습니까?"</string>
+	<string name="invite_email_error_max10">"한번에 최대 10명까지 초대하실 수 있습니다."</string>
 	<string name="invite_email_error_partially">"일부 메일 발송을 실패하였습니다. 
 결과 확인 후 다시 시도해 주세요."</string>
 	<string name="invite_email_error_unknown">"알 수 없는 에러에 의해 

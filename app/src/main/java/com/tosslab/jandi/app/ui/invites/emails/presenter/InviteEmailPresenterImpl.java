@@ -63,7 +63,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                     onInvitedUsersChanged();
                 }
             } else {
-                view.showToastOver10();
+                view.showDialogOver10();
             }
 
         }

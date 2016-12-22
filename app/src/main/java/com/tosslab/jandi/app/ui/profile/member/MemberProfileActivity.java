@@ -283,7 +283,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
         }
 
-        profileLoader.setStarButton(btnProfileStar, member);
+        profileLoader.setStarButton(btnProfileStar, member, tvTeamLevel);
 
         boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
 
