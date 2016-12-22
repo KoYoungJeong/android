@@ -11,8 +11,6 @@ import java.util.List;
  */
 public interface MainChatListPresenter {
 
-    void setView(View view);
-
     void initChatList(Context context, long selectedEntity);
 
     void onReloadChatList();
@@ -47,5 +45,7 @@ public interface MainChatListPresenter {
         void showEmptyLayout();
 
         void hideEmptyLayout();
+
+        void showNewChatInEmptyView(boolean show);
     }
 }

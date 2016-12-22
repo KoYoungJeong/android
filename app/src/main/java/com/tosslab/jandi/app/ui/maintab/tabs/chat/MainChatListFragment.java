@@ -74,6 +74,9 @@ public class MainChatListFragment extends Fragment
     @Bind(R.id.layout_main_chat_list_empty)
     View emptyView;
 
+    @Bind(R.id.btn_chat_list_no_messages)
+    View btnNewChat;
+
     MainChatListAdapter mainChatListAdapter;
     private boolean foreground;
 
@@ -249,9 +252,14 @@ public class MainChatListFragment extends Fragment
         emptyView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void showNewChatInEmptyView(boolean show) {
+        btnNewChat.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            if(AccessLevelUtil.hasAccessLevel(event.userId)) {
+            if (AccessLevelUtil.hasAccessLevel(event.userId)) {
                 startActivity(Henson.with(getActivity())
                         .gotoMemberProfileActivity()
                         .memberId(event.userId)

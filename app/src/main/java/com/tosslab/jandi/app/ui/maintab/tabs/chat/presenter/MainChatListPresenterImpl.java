@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
@@ -63,11 +64,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     }
 
     @Override
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    @Override
     public void initChatList(Context context, long selectedEntity) {
         long memberId = mainChatListModel.getMemberId();
         long teamId = mainChatListModel.getTeamId();
@@ -75,6 +71,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         if (memberId < 0 || teamId < 0) {
             return;
         }
+
+        view.showNewChatInEmptyView(TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
 
         if (!view.hasChatItems()) {
             Observable.defer(() -> Observable.just(mainChatListModel.getSavedChatList()))
