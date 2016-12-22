@@ -287,12 +287,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
 
-        if (!guest) {
-            addButtons(member);
-        } else {
+        if (guest) {
             tvProfilePhone.setVisibility(View.INVISIBLE);
             tvProfileEmail.setVisibility(View.INVISIBLE);
             vgProfileTeamButtons.setVisibility(View.INVISIBLE);
+        }
+
+        if (!guest || isMe()) {
+            addButtons(member);
         }
 
         AnalyticsUtil.sendScreenName(getScreen());
