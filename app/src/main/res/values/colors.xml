@@ -18,6 +18,7 @@
     <color name="jandi_transparent_white_40p">#66FFFFFF</color>
     <color name="jandi_transparent_white_30p">#4CFFFFFF</color>
     <color name="jandi_transparent_white_20p">#33FFFFFF</color>
+    <color name="jandi_transparent_black_40p">#66000000</color>
     <color name="jandi_transparent_black_50p">#7F000000</color>
     <color name="jandi_transparent_black_60p">#B2000000</color>
     <color name="jandi_transparent_black_70p">#99000000</color>

@@ -9,6 +9,7 @@
         android:id="@+id/iv_navigation_profile_large"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="@color/jandi_transparent_black_40p"
         android:scaleType="centerCrop" />
 
     <View
