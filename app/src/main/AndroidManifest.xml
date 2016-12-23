@@ -183,7 +183,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
+            android:name=".ui.file.upload.preview.FileUploadPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />

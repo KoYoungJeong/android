@@ -114,7 +114,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
@@ -189,9 +188,6 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tee on 16. 2. 16..
- */
 @OptionsMenu(R.menu.message_list_menu_basic)
 @EFragment(R.layout.fragment_message_list)
 public class MessageListV2Fragment extends Fragment implements MessageListV2Presenter.View,
@@ -1148,23 +1144,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             filePaths.add(filePath);
         }
 
-        FileUploadPreviewActivity_.intent(this)
+        startActivityForResult(Henson.with(getActivity())
+                .gotoFileUploadPreviewActivity()
                 .singleUpload(true)
                 .realFilePathList(new ArrayList<>(filePaths))
                 .selectedEntityIdToBeShared(entityId)
                 .from(FileUploadPreviewActivity.FROM_TAKE_PHOTO)
-                .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                .build(), FileUploadPreviewActivity.REQUEST_CODE);
     }
 
     private void showPreviewForUploadFiles(int requestCode, Intent intent) {
         List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths != null && filePaths.size() > 0) {
-            FileUploadPreviewActivity_.intent(this)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePaths))
                     .selectedEntityIdToBeShared(entityId)
                     .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 

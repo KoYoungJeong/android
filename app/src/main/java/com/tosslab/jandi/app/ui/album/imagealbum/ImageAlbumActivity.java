@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
@@ -25,7 +26,6 @@ import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.SelectPictures;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 import java.io.File;
@@ -151,11 +151,12 @@ public class ImageAlbumActivity extends BaseAppCompatActivity {
 
         if (!isOverFileSize(selectedPicturesPathList)) {
 
-            FileUploadPreviewActivity_.intent(ImageAlbumActivity.this)
+            startActivityForResult(Henson.with(this)
+                    .gotoFileUploadPreviewActivity()
                     .realFilePathList(new ArrayList<>(selectedPicturesPathList))
                     .selectedEntityIdToBeShared(entityId)
                     .from(FileUploadPreviewActivity.FROM_SELECT_IMAGE)
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .build(), (FileUploadPreviewActivity.REQUEST_CODE));
         } else {
             ColoredToast.showError(getString(R.string.err_file_upload_failed));
         }

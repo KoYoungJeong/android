@@ -53,7 +53,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
@@ -622,10 +621,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         }
         List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, intent);
         if (filePath != null && filePath.size() > 0) {
-            FileUploadPreviewActivity_.intent(this)
-                    .singleUpload(true)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
                     .realFilePathList(new ArrayList<>(filePath))
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .singleUpload(true)
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 
@@ -636,10 +636,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_EXPLORER, intent);
         if (filePath != null && filePath.size() > 0) {
-            FileUploadPreviewActivity_.intent(this)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePath))
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 
