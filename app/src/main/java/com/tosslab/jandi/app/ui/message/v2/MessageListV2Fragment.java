@@ -226,7 +226,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     UploadMenuViewModel uploadMenuViewModel;
     FileUploadController fileUploadController;
-    @Bean
+
     FileUploadStateViewModel fileUploadStateViewModel;
 
     AnnouncementViewModel announcementViewModel;
@@ -483,6 +483,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         Completable.fromAction(this::trackScreenView)
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
+
+        fileUploadStateViewModel = new FileUploadStateViewModel();
+        fileUploadStateViewModel.initView(getView());
 
         initPresenter();
 
