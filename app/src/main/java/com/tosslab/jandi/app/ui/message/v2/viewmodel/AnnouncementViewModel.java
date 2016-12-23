@@ -59,7 +59,7 @@ public class AnnouncementViewModel {
     TextView tvAnnouncementMessage;
     @Bind(R.id.btn_announcement_open)
     View btnAnnouncementOpen;
-    @Bind(R.id.btn_announcement_cose)
+    @Bind(R.id.btn_announcement_close)
     View btnAnnouncementClose;
 
     Context context;
