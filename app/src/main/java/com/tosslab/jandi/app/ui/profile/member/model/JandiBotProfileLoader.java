@@ -50,7 +50,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         btnProfileStar.setVisibility(View.VISIBLE);
         btnProfileStar.setEnabled(true);

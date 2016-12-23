@@ -63,11 +63,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     }
 
     @Override
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    @Override
     public void initChatList(Context context, long selectedEntity) {
         long memberId = mainChatListModel.getMemberId();
         long teamId = mainChatListModel.getTeamId();

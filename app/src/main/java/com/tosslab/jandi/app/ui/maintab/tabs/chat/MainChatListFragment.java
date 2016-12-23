@@ -56,7 +56,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 public class MainChatListFragment extends Fragment
@@ -251,7 +250,7 @@ public class MainChatListFragment extends Fragment
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            if(AccessLevelUtil.hasAccessLevel(event.userId)) {
+            if (AccessLevelUtil.hasAccessLevel(event.userId)) {
                 startActivity(Henson.with(getActivity())
                         .gotoMemberProfileActivity()
                         .memberId(event.userId)
@@ -372,7 +371,6 @@ public class MainChatListFragment extends Fragment
                 .show(getFragmentManager(), "dialog");
     }
 
-    @OnClick(R.id.btn_chat_list_no_messages)
     void chooseUser() {
         if (getActivity() != null && !getActivity().isFinishing()) {
             startActivity(Henson.with(getActivity())

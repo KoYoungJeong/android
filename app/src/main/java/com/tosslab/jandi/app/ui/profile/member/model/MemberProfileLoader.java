@@ -3,8 +3,11 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -74,11 +77,17 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         boolean isMe = isMe(member.getId());
-        btnProfileStar.setVisibility(isMe ? View.INVISIBLE : View.VISIBLE);
+        btnProfileStar.setVisibility(isMe ? View.GONE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);
+
+        if (btnProfileStar.getVisibility() == View.GONE) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tvTeamLevel.getLayoutParams();
+            DisplayMetrics displayMetrics = tvTeamLevel.getResources().getDisplayMetrics();
+            params.setMarginEnd((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics));
+        }
     }
 
     @Override

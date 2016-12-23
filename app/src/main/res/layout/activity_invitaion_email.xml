@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:visibility="visible"
         app:navigationIcon="@drawable/actionbar_icon_back"
-        app:title="준회원 초대" />
+        app:title="@string/invite_member_option_associate_title" />
 
     <ScrollView
         android:id="@+id/v_scroll"
@@ -40,7 +40,6 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-
                     android:text="@string/invite_associate_desc"
                     android:textColor="@color/rgb_999999"
                     android:textSize="14dp" />
@@ -82,14 +81,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="16dp">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tv_topic_title"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginRight="38dp"
+                        android:layout_marginEnd="38dp"
+                        android:layout_marginStart="16dp"
                         android:layout_toLeftOf="@+id/iv_topic_select_arrow"
                         android:gravity="center_vertical"
                         android:singleLine="true"
@@ -101,7 +100,7 @@
                         android:id="@+id/iv_topic_select_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="16dp"
@@ -112,8 +111,6 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:background="@color/rgb_e5e5e5" />
 
             </LinearLayout>
@@ -182,6 +179,7 @@
                     android:layout_marginRight="16dp"
                     android:background="@drawable/bg_round_rect_2pt_999999"
                     android:clickable="false"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:paddingBottom="4dp"
                     android:paddingLeft="6dp"
                     android:paddingRight="6dp"
@@ -224,6 +222,7 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@color/rgb_99def6"
+        android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center"
         android:singleLine="true"
         android:text="@string/invite_email_sendinvitation_disable"

@@ -50,7 +50,7 @@
 	<string name="common_sharetojandi_choose_team">"選擇您的團隊"</string>
 	<string name="common_sharetojandi_errormsg">"發生錯誤！請重試一次"</string>
 	<string name="common_signup_codeverification">"驗證碼已寄送到以上的電子郵箱，\n請輸入驗證碼完成認證"</string>
-	<string name="common_signup_invalid_emaildomain">""</string>
+	<string name="common_signup_invalid_emaildomain">"請確認電子郵箱網域是否正確"</string>
 	<string name="err_delete_file">"檔案無法刪除"</string>
 	<string name="err_download">"檔案無法下載"</string>
 	<string name="err_email_exists">"這電子郵件已被註冊"</string>
@@ -117,6 +117,7 @@
 	<string name="invite_email_alreadyinvited">"此電子郵箱已被邀請至此團隊"</string>
 	<string name="invite_email_blocked">"此電子郵箱已被此團隊封鎖"</string>
 	<string name="invite_email_cancelinvite">"你要取消此邀請嗎？"</string>
+	<string name="invite_email_error_max10">""</string>
 	<string name="invite_email_error_partially">"部分邀請無法順利寄送。請確認後再試"</string>
 	<string name="invite_email_error_unknown">"出現未知的錯誤，請稍等"</string>
 	<string name="invite_email_failedtryagain">"郵件寄送失敗，再試一次"</string>
@@ -352,7 +353,7 @@
 	<string name="jandi_finished">"已完成"</string>
 	<string name="jandi_folder_alread_has_name">"這名稱已被使用"</string>
 	<string name="jandi_folder_ask_delete">"你確定要刪除此資料夾？
-  即便刪除資料夾，議題仍舊保留"</string>
+即便刪除資料夾，議題仍舊保留"</string>
 	<string name="jandi_folder_choose">"選擇資料夾"</string>
 	<string name="jandi_folder_delete">"刪除資料夾"</string>
 	<string name="jandi_folder_has_been_move_to">"議題已被移至%s"</string>

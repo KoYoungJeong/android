@@ -545,7 +545,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         });
         tvName.setText(user.getName());
 
-        AccessLevelUtil.setTextOfLevel(user.getLevel(), tvLevelBadge);
+        AccessLevelUtil.setTextOfLevelInNav(user.getLevel(), tvLevelBadge);
 
         tvEmail.setText(user.getEmail());
         easterEggForLog(tvEmail);

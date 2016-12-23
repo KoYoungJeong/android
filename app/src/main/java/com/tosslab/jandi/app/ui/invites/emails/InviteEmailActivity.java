@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -29,6 +28,7 @@ import com.tosslab.jandi.app.ui.invites.emails.dagger.InviteEmailModule;
 import com.tosslab.jandi.app.ui.invites.emails.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.utils.ProgressWheelForInvitation;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import javax.inject.Inject;
@@ -124,20 +124,17 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
         if (mode == EXTRA_INVITE_MEMBER_MODE) {
             vgSelectTopic.setVisibility(View.GONE);
-            tvEmailInputDescription.setText(
-                    getString(R.string.invite_member_email_desc));
-            getSupportActionBar().setTitle(
-                    JandiApplication.getContext().getString(R.string.invite_member_option_member_title));
+            tvEmailInputDescription.setText(getString(R.string.invite_member_email_desc));
+            getSupportActionBar().setTitle(getString(R.string.invite_member_option_member_title));
         } else {
             vgSelectTopic.setVisibility(View.VISIBLE);
-            tvEmailInputDescription.setText(
-                    getString(R.string.invite_associate_email_desc));
-            getSupportActionBar().setTitle(
-                    JandiApplication.getContext().getString(R.string.invite_member_option_associate_title));
+            tvEmailInputDescription.setText(getString(R.string.invite_associate_email_desc));
+            getSupportActionBar().setTitle(getString(R.string.invite_member_option_associate_title));
         }
 
+
         vgRoot.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            int heightDiff = vgRoot.getRootView().getHeight() - vgRoot.getHeight();
+            int heightDiff = vgRoot.getRootView().getHeight() - UiUtils.getSoftKeyHeight() - vgRoot.getHeight();
             if (heightDiff > 150) {
                 // keyboard is up
                 if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
@@ -277,6 +274,15 @@ public class InviteEmailActivity extends BaseAppCompatActivity
         tvSendInvitationEmailButton.setText(
                 getString(R.string.jandi_confirm));
         tvSendInvitationEmailButton.setBackgroundColor(0xff00ace9);
+    }
+
+    @Override
+    public void showDialogOver10() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.invite_email_error_max10)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create()
+                .show();
     }
 
     @OnClick(R.id.tv_send_invitation_email_button)
