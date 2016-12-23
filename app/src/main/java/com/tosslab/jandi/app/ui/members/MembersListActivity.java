@@ -34,7 +34,6 @@ import com.tosslab.jandi.app.ui.members.dagger.DaggerMemberListComponent;
 import com.tosslab.jandi.app.ui.members.dagger.MemberListModule;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
-import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog_;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
@@ -447,10 +446,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Override
     public void showConfirmAssignTopicOwnerDialog(String userName, String userProfileUrl, long memberId) {
-        AssignTopicOwnerDialog assignDialog = AssignTopicOwnerDialog_.builder()
-                .profileUrl(userProfileUrl)
-                .userName(userName)
-                .build();
+        AssignTopicOwnerDialog assignDialog = AssignTopicOwnerDialog.create(userName, userProfileUrl);
         assignDialog.setConfirmListener((dialog, which) -> {
             membersListPresenter.onAssignToTopicOwner(entityId, memberId);
         });
