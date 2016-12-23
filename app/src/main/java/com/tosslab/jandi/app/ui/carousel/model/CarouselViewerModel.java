@@ -16,9 +16,6 @@ import java.util.List;
 import dagger.Lazy;
 import rx.Observable;
 
-/**
- * Created by Bill MinWook Heo on 15. 6. 23..
- */
 public class CarouselViewerModel {
 
     private final Lazy<FileApi> fileApi;
@@ -35,7 +32,7 @@ public class CarouselViewerModel {
                 .fileName(fileMessage.content.title)
                 .fileType(fileMessage.content.type)
                 .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
-                .fileThumbUrl(ImageUtil.getThumbnailUrl(fileMessage.content))
+                .fileThumbUrl(ImageUtil.getLargestThumbnail(fileMessage.content))
                 .fileOriginalUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
                 .ext(fileMessage.content.ext)
                 .size(fileMessage.content.size)
