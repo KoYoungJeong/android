@@ -222,8 +222,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Bean
     MessageListV2Presenter messageListPresenter;
 
-    @Bean
     StickerViewModel stickerViewModel;
+
     @Bean
     UploadMenuViewModel uploadMenuViewModel;
     @Bean(value = MainFileUploadControllerImpl.class)
@@ -606,6 +606,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initStickerViewModel() {
+        if (stickerViewModel == null) {
+            stickerViewModel = new StickerViewModel(getContext());
+        }
+
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
             if (oldSticker.getStickerGroupId() == groupId

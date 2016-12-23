@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionMemberListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.views.spannable.MentionMessageSpannable;
@@ -193,8 +192,7 @@ public class MentionControlViewModel {
 
         this.etMessage = (AutoCompleteTextView) editText;
 
-        searchMemberModel = SearchMemberModel_.getInstance_(activity);
-
+        searchMemberModel = new SearchMemberModel();
         refreshSelectableMembers(teamId, roomIds);
 
         List<SearchedItemVO> users = searchMemberModel.getUserSearchByName("");

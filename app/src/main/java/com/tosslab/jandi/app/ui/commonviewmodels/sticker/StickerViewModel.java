@@ -18,9 +18,6 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +25,7 @@ import java.util.Locale;
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
  */
-@EBean
+
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
@@ -43,7 +40,7 @@ public class StickerViewModel {
     public static final int TYPE_TOPIC = 12;
     public static final int TYPE_FILE_DETAIL = 13;
     public static final int TYPE_POLL_DETAIL = 14;
-    @RootContext
+
     Context context;
 
     // sticker view
@@ -61,6 +58,10 @@ public class StickerViewModel {
     private long lastClickedTime;
     private boolean isShow = false;
     private View vgStickers;
+
+    public StickerViewModel(Context context) {
+        this.context = context;
+    }
 
     public void showStickerPanel(ViewGroup root) {
         vgStickers = LayoutInflater.from(context).inflate(R.layout.layout_stickers_default, root, true);

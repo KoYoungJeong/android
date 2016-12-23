@@ -54,7 +54,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel_;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.PollDetailAdapter;
@@ -187,7 +186,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     private void initObjects(Bundle savedInstanceState) {
-        stickerViewModel = StickerViewModel_.getInstance_(getBaseContext());
+        stickerViewModel = new StickerViewModel(getBaseContext());
         clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 

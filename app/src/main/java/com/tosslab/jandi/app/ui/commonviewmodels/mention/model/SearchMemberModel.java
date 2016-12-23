@@ -21,7 +21,6 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.functions.Func2;
 
-@EBean
 public class SearchMemberModel {
 
 
