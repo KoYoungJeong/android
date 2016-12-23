@@ -23,8 +23,6 @@ import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.EBean;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,10 +30,6 @@ import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
 
-/**
- * Created by Steve SeongUg Jung on 15. 6. 12..
- */
-@EBean
 public class FilePickerModel {
 
     public static final long MAX_FILE_SIZE = 1024 * 1024 * 300;

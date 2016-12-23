@@ -1,24 +1,17 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 import de.greenrobot.event.EventBus;
 
-@EBean
 public class UploadMenuViewModel {
-
-    @RootContext
-    Context context;
 
     private View vgUploadMenuSelector;
     private View btnUploadImage;
@@ -33,11 +26,11 @@ public class UploadMenuViewModel {
 
     public void showUploadPanel(ViewGroup root) {
         vgUploadMenuSelector =
-                LayoutInflater.from(context).inflate(R.layout.layout_upload_menu, root, true);
+                LayoutInflater.from(root.getContext()).inflate(R.layout.layout_upload_menu, root, true);
         btnUploadImage = vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_choose_image);
-        btnShowCamera =  vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_show_camera);
-        btnUploadFile =  vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_choose_file);
-        btnCreatePoll =  vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_create_poll);
+        btnShowCamera = vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_show_camera);
+        btnUploadFile = vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_choose_file);
+        btnCreatePoll = vgUploadMenuSelector.findViewById(R.id.btn_upload_menu_create_poll);
 
         if (roomType == RoomType.DM) {
             btnCreatePoll.setVisibility(View.GONE);
@@ -85,12 +78,12 @@ public class UploadMenuViewModel {
         this.roomType = roomType;
     }
 
-    public interface OnClickUploadEventListener {
-        void onClick();
-    }
-
     public enum RoomType {
         DM, TOPIC
+    }
+
+    public interface OnClickUploadEventListener {
+        void onClick();
     }
 
 }

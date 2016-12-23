@@ -44,7 +44,7 @@ import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl_;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -177,7 +177,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                 .build()
                 .inject(this);
 
-        filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
+        filePickerViewModel = new MainFileUploadControllerImpl();
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }

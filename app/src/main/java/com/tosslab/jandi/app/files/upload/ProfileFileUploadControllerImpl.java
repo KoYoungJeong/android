@@ -8,12 +8,9 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 
 import com.tosslab.jandi.app.Henson;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
-import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
@@ -25,24 +22,25 @@ import com.tosslab.jandi.app.utils.file.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.UiThread;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-@EBean
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class ProfileFileUploadControllerImpl implements FileUploadController {
 
-    @Bean
     FilePickerModel filePickerModel;
 
     private File file;
     private ProgressWheel progressWheel;
+
+    public ProfileFileUploadControllerImpl() {
+        filePickerModel = new FilePickerModel();
+    }
 
     @Override
     public void selectFileSelector(int type, Fragment fragment, long entityId) {
@@ -62,8 +60,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
-                    FilePickerModel_.getInstance_(JandiApplication.getContext())
-                            .openCameraForActivityResult(activity, Uri.fromFile(file));
+                    new FilePickerModel().openCameraForActivityResult(activity, Uri.fromFile(file));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -72,8 +69,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
-                    FilePickerModel_.getInstance_(JandiApplication.getContext())
-                            .openCharacterActivityForActivityResult(activity, Uri.fromFile(file));
+                    new FilePickerModel().openCharacterActivityForActivityResult(activity, Uri.fromFile(file));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -95,8 +91,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
-                    FilePickerModel_.getInstance_(JandiApplication.getContext())
-                            .openCameraForActivityResult(fragment, Uri.fromFile(file));
+                    new FilePickerModel().openCameraForActivityResult(fragment, Uri.fromFile(file));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -105,8 +100,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
-                    FilePickerModel_.getInstance_(JandiApplication.getContext())
-                            .openCharacterActivityForActivityResult(fragment, Uri.fromFile(file));
+                    new FilePickerModel().openCharacterActivityForActivityResult(fragment, Uri.fromFile(file));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -133,60 +127,71 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
         }
     }
 
-    @Background
     void downloadImageAndShowFileUploadDialog(Activity activity,
                                               ProgressDialog downloadProgress,
                                               String url, String downloadDir, String downloadName) {
-        try {
-            File file = GoogleImagePickerUtil.downloadFile(
-                    downloadProgress, url, downloadDir, downloadName);
-            dismissProgressDialog(downloadProgress);
-            uploadProfileImage(activity, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        Observable.fromCallable(() -> {
+            return GoogleImagePickerUtil.downloadFile(downloadProgress,
+                    url,
+                    downloadDir,
+                    downloadName);
+
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    dismissProgressDialog(downloadProgress);
+                    uploadProfileImage(activity, file);
+                }, Throwable::printStackTrace);
     }
 
-    @Background
     void uploadProfileImage(Activity activity, File profileFile) {
         showProgressWheel(activity);
-        File convertedProfileFile = ImageUtil.convertProfileFile(profileFile);
-        try {
-            Human human = filePickerModel.uploadProfilePhoto(profileFile);
-            String photoUrl = human.getPhotoUrl();
-            long myId = TeamInfoLoader.getInstance().getMyId();
-            HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
-            TeamInfoLoader.getInstance().refresh();
-            successPhotoUpload(activity.getApplicationContext());
-            dismissProgressWheel();
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            dismissProgressWheel();
-            LogUtil.e("uploadFileDone: FAILED", e);
-            failPhotoUpload(activity.getApplicationContext());
-        } finally {
-            convertedProfileFile.delete();
-        }
+
+        Observable.fromCallable(() -> {
+
+            File convertedProfileFile = ImageUtil.convertProfileFile(profileFile);
+            try {
+                Human human = filePickerModel.uploadProfilePhoto(convertedProfileFile);
+                String photoUrl = human.getPhotoUrl();
+                long myId = TeamInfoLoader.getInstance().getMyId();
+                HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
+            } finally {
+                if (convertedProfileFile != null && convertedProfileFile.exists()) {
+                    convertedProfileFile.delete();
+                }
+            }
+            return convertedProfileFile;
+        }).subscribeOn(Schedulers.io())
+                .doOnNext(it -> TeamInfoLoader.getInstance().refresh())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    successPhotoUpload(activity.getApplicationContext());
+                    dismissProgressWheel();
+                }, t -> {
+                    t.printStackTrace();
+                    dismissProgressWheel();
+                    LogUtil.e("uploadFileDone: FAILED", t);
+                    failPhotoUpload(activity.getApplicationContext());
+                });
+
+
     }
 
-    @UiThread
     void failPhotoUpload(Context context) {
         ColoredToast.show(context.getString(R.string.err_profile_photo_upload));
     }
 
-    @UiThread
     void successPhotoUpload(Context context) {
         ColoredToast.show(context.getString(R.string.jandi_profile_photo_upload_succeed));
     }
 
-    @UiThread(propagation = UiThread.Propagation.ENQUEUE)
     void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.ENQUEUE)
     void showProgressWheel(Activity activity) {
         if (progressWheel == null) {
             progressWheel = new ProgressWheel(activity);
@@ -198,7 +203,6 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
         if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
             uploadProgressDialog.dismiss();

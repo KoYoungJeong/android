@@ -224,9 +224,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     StickerViewModel stickerViewModel;
 
-    @Bean
     UploadMenuViewModel uploadMenuViewModel;
-    @Bean(value = MainFileUploadControllerImpl.class)
     FileUploadController fileUploadController;
     @Bean
     FileUploadStateViewModel fileUploadStateViewModel;
@@ -473,6 +471,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     void initObjects() {
         room = Room.create(entityId, isFromPush);
         messagePointer = MessagePointer.create(lastReadLinkId);
+        fileUploadController = new MainFileUploadControllerImpl();
+        uploadMenuViewModel = new UploadMenuViewModel();
     }
 
     @AfterViews
