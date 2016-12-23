@@ -12,27 +12,21 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.EBean;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
 
 
-/**
- * Created by tonyjs on 15. 6. 24..
- */
-@EBean
 public class AnnouncementModel {
 
     @Inject
     Lazy<AnnounceApi> announceApi;
+
     private boolean isActionFromUser = false;
 
-    @AfterInject
-    void initObject() {
+    public AnnouncementModel() {
         DaggerApiClientComponent.create().inject(this);
     }
 
@@ -62,7 +56,6 @@ public class AnnouncementModel {
         }
     }
 
-    @Background
     public void updateAnnouncementStatus(long teamId, long topicId, boolean isOpened) {
         long memberId = TeamInfoLoader.getInstance().getMyId();
 

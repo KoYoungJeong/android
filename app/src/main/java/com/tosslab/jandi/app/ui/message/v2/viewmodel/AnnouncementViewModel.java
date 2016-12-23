@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.viewmodel;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -31,43 +31,39 @@ import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.image.transform.JandiProfileTransform;
 import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.Date;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-@EBean
+
 public class AnnouncementViewModel {
 
-    @ViewById(R.id.vg_announcement)
+    @Bind(R.id.vg_announcement)
     ViewGroup vgAnnouncement;
-    @ViewById(R.id.vg_announcement_info)
+    @Bind(R.id.vg_announcement_info)
     ViewGroup vgAnnouncementInfo;
-    @ViewById(R.id.vg_announcement_action)
+    @Bind(R.id.vg_announcement_action)
     ViewGroup vgAnnouncementAction;
-    @ViewById(R.id.iv_announcement_user)
+    @Bind(R.id.iv_announcement_user)
     ImageView ivAnnouncementUser;
-    @ViewById(R.id.tv_announcement_user_name)
+    @Bind(R.id.tv_announcement_user_name)
     TextView tvAnnouncementUserName;
-    @ViewById(R.id.tv_announcement_date)
+    @Bind(R.id.tv_announcement_date)
     TextView tvAnnouncementDate;
-    @ViewById(R.id.sv_announcement_message)
+    @Bind(R.id.sv_announcement_message)
     ScrollView svAnnouncementMessage;
-    @ViewById(R.id.tv_announcement_message)
+    @Bind(R.id.tv_announcement_message)
     TextView tvAnnouncementMessage;
-    @ViewById(R.id.btn_announcement_open)
+    @Bind(R.id.btn_announcement_open)
     View btnAnnouncementOpen;
-    @ViewById(R.id.btn_announcement_close)
+    @Bind(R.id.btn_announcement_cose)
     View btnAnnouncementClose;
 
-    @RootContext
-    Activity activity;
+    Context context;
+
     private Announcement announcement;
 
     private boolean isOpened;
@@ -76,8 +72,9 @@ public class AnnouncementViewModel {
     private OnAnnouncementOpenListener onAnnouncementOpenListener;
     private OnAnnouncementCloseListener onAnnouncementCloseListener;
 
-    @AfterViews
-    void init() {
+    public AnnouncementViewModel(Context context, View view) {
+        this.context = context;
+        ButterKnife.bind(this, view);
         isAfterViews = true;
 
         if (announcement != null) {
@@ -85,7 +82,6 @@ public class AnnouncementViewModel {
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setAnnouncement(Announcement announcement) {
         this.announcement = announcement;
         this.isOpened = announcement != null && announcement.isOpened();
@@ -202,25 +198,24 @@ public class AnnouncementViewModel {
         openAnnouncement(isOpened);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void openAnnouncement(boolean isOpened) {
         btnAnnouncementOpen.setVisibility(isOpened ? View.GONE : View.VISIBLE);
         vgAnnouncementInfo.setVisibility(isOpened ? View.VISIBLE : View.GONE);
     }
 
-    @Click(R.id.btn_announcement_delete)
+    @OnClick(R.id.btn_announcement_delete)
     void showDeleteAlertDialog() {
-        new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setMessage(activity.getString(R.string.jandi_announcement_delete_question))
-                .setPositiveButton(activity.getString(R.string.jandi_confirm), (dialog, which) -> {
+        new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(context.getString(R.string.jandi_announcement_delete_question))
+                .setPositiveButton(context.getString(R.string.jandi_confirm), (dialog, which) -> {
                     EventBus.getDefault().post(new AnnouncementEvent(AnnouncementEvent.Action.DELETE));
                 })
-                .setNegativeButton(activity.getString(R.string.jandi_cancel), null)
+                .setNegativeButton(context.getString(R.string.jandi_cancel), null)
                 .create()
                 .show();
     }
 
-    @Click({R.id.vg_announcement_info, R.id.vg_announcement_message})
+    @OnClick({R.id.vg_announcement_info, R.id.vg_announcement_message})
     void showAndHideAnnouncementAction() {
         int visibility = vgAnnouncementAction.getVisibility();
         vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -262,17 +257,15 @@ public class AnnouncementViewModel {
         });
     }
 
-    @UiThread
     public void showCreateAlertDialog(DialogInterface.OnClickListener confirmListener) {
-        new AlertDialog.Builder(activity, R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setMessage(activity.getString(R.string.jandi_announcement_create_question))
-                .setPositiveButton(activity.getString(R.string.jandi_confirm), confirmListener)
-                .setNegativeButton(activity.getString(R.string.jandi_cancel), null)
+        new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(context.getString(R.string.jandi_announcement_create_question))
+                .setPositiveButton(context.getString(R.string.jandi_confirm), confirmListener)
+                .setNegativeButton(context.getString(R.string.jandi_cancel), null)
                 .create()
                 .show();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setAnnouncementViewVisibility(boolean visibility) {
         if (vgAnnouncement == null) {
             return;
@@ -300,4 +293,5 @@ public class AnnouncementViewModel {
     public interface OnAnnouncementCloseListener {
         void onClose();
     }
+
 }

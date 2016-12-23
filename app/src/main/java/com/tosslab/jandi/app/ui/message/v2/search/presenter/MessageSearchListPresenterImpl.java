@@ -38,6 +38,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -46,7 +47,7 @@ import rx.subjects.PublishSubject;
 public class MessageSearchListPresenterImpl implements MessageSearchListPresenter {
     @Bean
     MessageListModel messageListModel;
-    @Bean
+
     AnnouncementModel announcementModel;
 
     private View view;
@@ -61,9 +62,10 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     private long lastMarker;
     private int entityType;
 
-
     @AfterInject
     void initObject() {
+        announcementModel = new AnnouncementModel();
+
         messageState = new MessageState();
 
         messagePublishSubject = PublishSubject.create();
@@ -232,14 +234,19 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Override
     public void onAccouncementOpen() {
-        announcementModel.setActionFromUser(true);
-        announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+        Completable.fromAction(() -> {
+            announcementModel.setActionFromUser(true);
+            announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+        }).subscribeOn(Schedulers.newThread()).subscribe();
+
     }
 
     @Override
     public void onAnnouncementClose() {
-        announcementModel.setActionFromUser(true);
-        announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+        Completable.fromAction(() -> {
+            announcementModel.setActionFromUser(true);
+            announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+        }).subscribeOn(Schedulers.newThread()).subscribe();
     }
 
     @Background

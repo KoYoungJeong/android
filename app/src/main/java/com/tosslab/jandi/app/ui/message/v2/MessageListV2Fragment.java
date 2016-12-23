@@ -231,7 +231,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Bean
     FileUploadStateViewModel fileUploadStateViewModel;
 
-    @Bean
     AnnouncementViewModel announcementViewModel;
 
     MentionControlViewModel mentionControlViewModel;
@@ -676,6 +675,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initAnnouncement() {
+        if (announcementViewModel == null) {
+            announcementViewModel = new AnnouncementViewModel(getContext(), getView());
+        }
         announcementViewModel.setOnAnnouncementCloseListener(() -> {
             announcementViewModel.openAnnouncement(false);
             messageListPresenter.setAnnouncementActionFrom(true);

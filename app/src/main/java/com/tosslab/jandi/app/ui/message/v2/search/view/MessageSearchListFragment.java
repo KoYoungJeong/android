@@ -172,7 +172,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @ViewById(R.id.progress_message)
     View oldProgressBar;
 
-    @Bean
     AnnouncementViewModel announcementViewModel;
 
     @Bean(MessageSearchListPresenterImpl.class)
@@ -225,6 +224,9 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
         messageSearchListPresenter.checkEnabledUser(entityId);
         messageSearchListPresenter.onInitRoomInfo();
+        if (announcementViewModel == null) {
+            announcementViewModel = new AnnouncementViewModel(getContext(), getView());
+        }
         announcementViewModel.setOnAnnouncementOpenListener(() -> {
             announcementViewModel.openAnnouncement(true);
             messageSearchListPresenter.onAccouncementOpen();

@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -68,7 +69,7 @@ public class MessageListV2Presenter {
 
     @Bean
     MessageListModel messageListModel;
-    @Bean
+
     AnnouncementModel announcementModel;
 
     View view;
@@ -103,6 +104,7 @@ public class MessageListV2Presenter {
 
     @AfterInject
     void initObjects() {
+        announcementModel = new AnnouncementModel();
         currentMessageState = new MessageState();
         messageRepositoryModel = new MessageRepositoryModel();
 
@@ -471,7 +473,9 @@ public class MessageListV2Presenter {
     }
 
     public void onUpdateAnnouncement(boolean isOpened) {
-        announcementModel.updateAnnouncementStatus(room.getTeamId(), room.getRoomId(), isOpened);
+        Completable.fromAction(() -> {
+            announcementModel.updateAnnouncementStatus(room.getTeamId(), room.getRoomId(), isOpened);
+        }).subscribeOn(Schedulers.newThread()).subscribe();
     }
 
     public void onChangeAnnouncementOpenStatusAction(boolean shouldOpened) {
