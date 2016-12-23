@@ -74,6 +74,22 @@ public class ImageUtil {
         return getImageFileUrl(targetUrl);
     }
 
+    public static String getLargestThumbnail(ResMessages.FileContent fileContent) {
+        if (fileContent == null || fileContent.extraInfo == null) {
+            return null;
+        }
+
+        String targetUrl;
+
+        if (!TextUtils.isEmpty(fileContent.extraInfo.thumbnailUrl)) {
+            targetUrl = fileContent.extraInfo.thumbnailUrl;
+        } else {
+            targetUrl = fileContent.fileUrl;
+        }
+
+        return getImageFileUrl(targetUrl);
+    }
+
     public static String getOriginalUrl(ResMessages.FileContent content) {
         if (content == null) {
             return null;
