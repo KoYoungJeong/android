@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataView;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
@@ -15,7 +14,7 @@ import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApiClientModule.class)
+@Module
 public class ChatChooseModule {
 
     private final ChatChoosePresenter.View view;

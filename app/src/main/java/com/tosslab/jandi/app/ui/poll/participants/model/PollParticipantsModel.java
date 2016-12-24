@@ -6,7 +6,8 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResPollParticipants;
-import com.tosslab.jandi.app.team.member.User;
+
+import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
@@ -19,6 +20,7 @@ public class PollParticipantsModel {
     @VisibleForTesting
     Lazy<PollApi> pollApi;
 
+    @Inject
     public PollParticipantsModel(Lazy<PollApi> api) {
         pollApi = api;
     }

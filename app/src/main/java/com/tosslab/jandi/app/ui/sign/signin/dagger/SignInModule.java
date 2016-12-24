@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.sign.signin.dagger;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.sign.signin.model.SignInModel;
 import com.tosslab.jandi.app.ui.sign.signin.presenter.SignInPresenter;
 import com.tosslab.jandi.app.ui.sign.signin.presenter.SignInPresenterImpl;
@@ -14,7 +13,7 @@ import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = {ApiClientModule.class})
+@Module
 public class SignInModule {
 
     private SignInPresenter.View view;

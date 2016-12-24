@@ -1,7 +1,6 @@
-package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.module;
+package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dagger;
 
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.model.MentionListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.view.MentionListDataView;
@@ -10,16 +9,11 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter.MentionLis
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter.MentionListPresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
 
-import javax.inject.Singleton;
-
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tonyjs on 16. 3. 17..
- */
-@Module(includes = ApiClientModule.class)
+@Module
 public class MentionListModule {
 
     private final MentionListView view;

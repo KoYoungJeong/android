@@ -1,8 +1,7 @@
-package com.tosslab.jandi.app.ui.maintab.module;
+package com.tosslab.jandi.app.ui.maintab.dagger;
 
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.model.MainTabModel;
 import com.tosslab.jandi.app.ui.maintab.presenter.MainTabPresenter;
 import com.tosslab.jandi.app.ui.maintab.presenter.MainTabPresenterImpl;
@@ -11,10 +10,7 @@ import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tonyjs on 2016. 8. 23..
- */
-@Module(includes = ApiClientModule.class)
+@Module
 public class MainTabModule {
 
     private final MainTabPresenter.View mainTabView;

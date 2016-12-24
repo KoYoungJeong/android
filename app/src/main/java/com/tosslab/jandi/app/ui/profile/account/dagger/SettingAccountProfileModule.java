@@ -1,21 +1,12 @@
 package com.tosslab.jandi.app.ui.profile.account.dagger;
 
-import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.ui.profile.account.model.SettingAccountProfileModel;
 import com.tosslab.jandi.app.ui.profile.account.presenter.SettingAccountProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.account.presenter.SettingAccountProfilePresenterImpl;
 
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tee on 2016. 9. 30..
- */
-
-@Module(includes = ApiClientModule.class)
+@Module
 public class SettingAccountProfileModule {
 
     SettingAccountProfilePresenter.View view;
@@ -25,19 +16,12 @@ public class SettingAccountProfileModule {
     }
 
     @Provides
-    SettingAccountProfilePresenter.View provideView() {
+    SettingAccountProfilePresenter.View view() {
         return view;
     }
 
     @Provides
-    SettingAccountProfileModel provideSettingAccountProfileModel(Lazy<LoginApi> loginApi,
-                                                                 Lazy<AccountProfileApi> accountProfileApi) {
-        return new SettingAccountProfileModel(loginApi, accountProfileApi);
-    }
-
-    @Provides
-    SettingAccountProfilePresenter provideSettingAccountProfilePresenter(
-            SettingAccountProfilePresenterImpl presenter) {
+    SettingAccountProfilePresenter presenter(SettingAccountProfilePresenterImpl presenter) {
         return presenter;
     }
 

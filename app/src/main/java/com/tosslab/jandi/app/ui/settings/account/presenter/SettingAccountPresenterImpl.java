@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.ui.settings.account.model.SettingAccountModel;
 import com.tosslab.jandi.app.ui.settings.account.view.SettingAccountView;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import javax.inject.Inject;
+
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -18,6 +20,7 @@ public class SettingAccountPresenterImpl implements SettingAccountPresenter {
     private final SettingAccountModel model;
     private final SettingAccountView view;
 
+    @Inject
     public SettingAccountPresenterImpl(SettingAccountModel model, SettingAccountView view) {
         this.model = model;
         this.view = view;

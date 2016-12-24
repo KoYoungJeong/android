@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -36,6 +35,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
@@ -49,7 +49,6 @@ import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-import com.tosslab.jandi.app.services.socket.dagger.SocketServiceModule;
 import com.tosslab.jandi.app.services.socket.model.SocketModelExtractor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
@@ -144,7 +143,6 @@ public class JandiSocketServiceModelTest {
     @Before
     public void setUp() throws Exception {
         DaggerJandiSocketServiceModelTest_JandiSocketServiceModelTestComponent.builder()
-                .socketServiceModule(new SocketServiceModule(JandiApplication.getContext()))
                 .build()
                 .inject(JandiSocketServiceModelTest.this);
         accept = false;
@@ -996,7 +994,7 @@ public class JandiSocketServiceModelTest {
         EventBus.getDefault().register(new EventBusListener<T>(call));
     }
 
-    @Component(modules = SocketServiceModule.class)
+    @Component(modules = {ApiClientModule.class})
     public interface JandiSocketServiceModelTestComponent {
         void inject(JandiSocketServiceModelTest model);
     }

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.services.socket;
 
-import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
@@ -157,7 +156,6 @@ import rx.subjects.PublishSubject;
 public class JandiSocketServiceModel {
     public static final String TAG = JandiSocketServiceModel.class.getSimpleName();
 
-    private final Context context;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<DirectMessageApi> directMessageApi;
     PublishSubject<Object> eventPublisher;
@@ -168,11 +166,9 @@ public class JandiSocketServiceModel {
     private SocketEventHistoryUpdator historyUpdator;
 
     @Inject
-    JandiSocketServiceModel(Context context,
-                            Lazy<LoginApi> loginApi,
+    JandiSocketServiceModel(Lazy<LoginApi> loginApi,
                             SocketEventHistoryUpdator historyUpdator,
                             Lazy<DirectMessageApi> directMessageApi) {
-        this.context = context;
         this.loginApi = loginApi;
         this.historyUpdator = historyUpdator;
         this.directMessageApi = directMessageApi;
@@ -1468,7 +1464,7 @@ public class JandiSocketServiceModel {
         }, () -> {
             MessageRepository.getRepository().deleteAllLink();
             JandiPreference.setSocketConnectedLastTime(-1);
-            IntroActivity.startActivity(context, false);
+            IntroActivity.startActivity(JandiApplication.getContext(), false);
         });
     }
 

@@ -6,6 +6,8 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -17,6 +19,7 @@ public class SettingAccountModel {
 
     private Lazy<AccountProfileApi> accountProfileApi;
 
+    @Inject
     public SettingAccountModel(Lazy<AccountProfileApi> accountProfileApi) {this.accountProfileApi = accountProfileApi;}
 
     public Observable<ResAccountInfo> getAccountInfoObservable() {

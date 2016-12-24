@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -23,15 +22,14 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.CalendarDialogFragment;
 import com.tosslab.jandi.app.dialogs.TimePickerDialogFragment;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.poll.create.component.DaggerPollCreateComponent;
-import com.tosslab.jandi.app.ui.poll.create.module.PollCreateModule;
+import com.tosslab.jandi.app.ui.poll.create.dagger.DaggerPollCreateComponent;
+import com.tosslab.jandi.app.ui.poll.create.dagger.PollCreateModule;
 import com.tosslab.jandi.app.ui.poll.create.presenter.PollCreatePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.text.DateFormat;

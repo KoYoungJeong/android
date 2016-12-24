@@ -5,13 +5,12 @@ import android.content.Context;
 import android.media.AudioManager;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApiClientModule.class)
+@Module
 public class PushHandlerModule {
 
     @Provides

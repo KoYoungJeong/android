@@ -1,6 +1,5 @@
-package com.tosslab.jandi.app.ui.maintab.navigation.module;
+package com.tosslab.jandi.app.ui.maintab.navigation.dagger;
 
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.NavigationAdapter;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataView;
@@ -10,10 +9,7 @@ import com.tosslab.jandi.app.ui.maintab.navigation.presenter.NavigationPresenter
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tonyjs on 2016. 8. 17..
- */
-@Module(includes = ApiClientModule.class)
+@Module
 public class NavigationModule {
 
     private final NavigationAdapter navigationAdapter;

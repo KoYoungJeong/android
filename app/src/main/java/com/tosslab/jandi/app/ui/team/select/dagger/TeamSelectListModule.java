@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.team.select.dagger;
 
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.team.select.adapter.TeamSelectListAdapter;
 import com.tosslab.jandi.app.ui.team.select.adapter.datamodel.TeamSelectListAdapterDataModel;
 import com.tosslab.jandi.app.ui.team.select.adapter.viewmodel.TeamSelectListAdapterViewModel;
@@ -10,11 +9,8 @@ import com.tosslab.jandi.app.ui.team.select.presenter.TeamSelectListPresenterImp
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tee on 2016. 9. 27..
- */
 
-@Module(includes = {ApiClientModule.class})
+@Module
 public class TeamSelectListModule {
 
     private TeamSelectListPresenter.View view;
