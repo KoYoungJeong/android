@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -19,6 +20,8 @@ import org.junit.runner.RunWith;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
@@ -33,7 +36,7 @@ import static org.junit.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class ModifyProfileModelTest {
 
-    private ModifyProfileModel modifyProfileModel;
+    @Inject ModifyProfileModel modifyProfileModel;
     private User user;
 
     @BeforeClass
@@ -48,8 +51,15 @@ public class ModifyProfileModelTest {
 
     @Before
     public void setUp() throws Exception {
-        modifyProfileModel = new ModifyProfileModel();
+        DaggerModifyProfileModelTest_Component.builder()
+                .build()
+                .inject(this);
         user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
+    }
+
+    @dagger.Component(modules = ApiClientModule.class)
+    public interface Component {
+        void inject(ModifyProfileModelTest test);
     }
 
     @Test

@@ -55,7 +55,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.PollDetailAdapter;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
 import com.tosslab.jandi.app.ui.poll.detail.component.DaggerPollDetailComponent;
@@ -186,7 +185,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     }
 
     private void initObjects(Bundle savedInstanceState) {
-        stickerViewModel = new StickerViewModel(getBaseContext());
+        stickerViewModel = new StickerViewModel();
         clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
@@ -873,14 +872,15 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,
                                           boolean isStarred) {
         runOnUiThread(() -> {
-            MessageListV2Activity_.intent(PollDetailActivity.this)
+            startActivity(Henson.with(PollDetailActivity.this)
+                    .gotoMessageListV2Activity()
                     .teamId(TeamInfoLoader.getInstance().getTeamId())
                     .entityId(entityId)
                     .entityType(entityType)
                     .roomId(roomId)
                     .isFromPush(false)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .start();
+                    .build()
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         });
     }
 

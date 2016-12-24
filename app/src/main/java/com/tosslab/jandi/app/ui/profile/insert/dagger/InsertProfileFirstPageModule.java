@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileFirstPagePresenter;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileFirstPagePresenterImpl;
-import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -18,10 +17,6 @@ public class InsertProfileFirstPageModule {
         this.view = view;
     }
 
-    @Provides
-    ModifyProfileModel provideModifyProfileModel() {
-        return new ModifyProfileModel();
-    }
 
     @Provides
     FileUploadController provideProfileFileUploadController() {

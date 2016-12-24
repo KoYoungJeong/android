@@ -1,18 +1,12 @@
 package com.tosslab.jandi.app.ui.poll.detail.module;
 
-import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.PollDetailAdapter;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
-import com.tosslab.jandi.app.ui.poll.detail.model.PollDetailModel;
 import com.tosslab.jandi.app.ui.poll.detail.presenter.PollDetailPresenter;
 import com.tosslab.jandi.app.ui.poll.detail.presenter.PollDetailPresenterImpl;
 
-import javax.inject.Singleton;
-
-import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
@@ -47,12 +41,6 @@ public class PollDetailModule {
     @Provides
     public PollDetailDataView providesPollDetailDataView() {
         return pollDetailAdapter;
-    }
-
-    @Provides
-    @Singleton
-    public PollDetailModel providesPollDetailModel(Lazy<PollApi> pollApi, Lazy<MessageApi> messageApi) {
-        return new PollDetailModel(pollApi, messageApi);
     }
 
 }

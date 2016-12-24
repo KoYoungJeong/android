@@ -26,6 +26,8 @@ import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
@@ -42,6 +44,9 @@ public class FileUploadStateViewModel {
     WebLoadingBar webLoadingBar;
 
     private Room room;
+
+    @Inject
+    public FileUploadStateViewModel() { }
 
     public void initView(View view) {
         ButterKnife.bind(this, view);

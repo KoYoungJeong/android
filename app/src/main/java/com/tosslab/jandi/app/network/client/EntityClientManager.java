@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -28,9 +27,6 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,29 +34,35 @@ import javax.inject.Inject;
 import dagger.Lazy;
 
 
-/**
- * Created by justinygchoi on 2014. 8. 27..
- */
-@EBean
 public class EntityClientManager {
 
-    @Inject
     Lazy<ChannelApi> channelApi;
-    @Inject
     Lazy<GroupApi> groupApi;
-    @Inject
     Lazy<StarredEntityApi> starredEntityApi;
-    @Inject
     Lazy<ProfileApi> profileApi;
-    @Inject
     Lazy<MessageApi> messageApi;
-    @Inject
     Lazy<CommentApi> commentApi;
-    @Inject
     Lazy<FileApi> fileApi;
     private long selectedTeamId;
 
-    @AfterInject
+    @Inject
+    public EntityClientManager(Lazy<ChannelApi> channelApi,
+                               Lazy<GroupApi> groupApi,
+                               Lazy<StarredEntityApi> starredEntityApi,
+                               Lazy<ProfileApi> profileApi,
+                               Lazy<MessageApi> messageApi,
+                               Lazy<CommentApi> commentApi,
+                               Lazy<FileApi> fileApi) {
+        this.channelApi = channelApi;
+        this.groupApi = groupApi;
+        this.starredEntityApi = starredEntityApi;
+        this.profileApi = profileApi;
+        this.messageApi = messageApi;
+        this.commentApi = commentApi;
+        this.fileApi = fileApi;
+        initAuthentication();
+    }
+
     void initAuthentication() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if (selectedTeamInfo == null) {
@@ -68,10 +70,6 @@ public class EntityClientManager {
         }
         selectedTeamId = selectedTeamInfo.getTeamId();
 
-        DaggerApiClientComponent
-                .builder()
-                .build()
-                .inject(this);
     }
 
     public Topic createPublicTopic(String entityName, String topicDescription, boolean isAutojoin) throws RetrofitException {

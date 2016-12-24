@@ -1,15 +1,13 @@
 package com.tosslab.jandi.app.ui.profile.modify.dagger;
 
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApiClientModule.class)
+@Module
 public class ModifyProfileModule {
 
     private final ModifyProfilePresenter.View view;
@@ -26,11 +24,6 @@ public class ModifyProfileModule {
     @Provides
     ProfileFileUploadControllerImpl provideFileUploadController() {
         return new ProfileFileUploadControllerImpl();
-    }
-
-    @Provides
-    ModifyProfileModel provideModifyProfileModel() {
-        return new ModifyProfileModel();
     }
 
     @Provides

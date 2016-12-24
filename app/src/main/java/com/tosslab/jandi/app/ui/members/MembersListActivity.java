@@ -35,7 +35,6 @@ import com.tosslab.jandi.app.ui.members.dagger.MemberListModule;
 import com.tosslab.jandi.app.ui.members.kick.KickDialogFragment;
 import com.tosslab.jandi.app.ui.members.owner.AssignTopicOwnerDialog;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -353,14 +352,15 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     @Override
     public void moveDirectMessageActivity(long teamId, long userId) {
-        MessageListV2Activity_.intent(MembersListActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(Henson.with(MembersListActivity.this)
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .roomId(-1)
                 .entityId(userId)
                 .isFromPush(false)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override

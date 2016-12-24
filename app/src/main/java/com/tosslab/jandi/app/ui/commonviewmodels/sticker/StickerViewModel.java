@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
-import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -22,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
  */
@@ -41,8 +42,6 @@ public class StickerViewModel {
     public static final int TYPE_FILE_DETAIL = 13;
     public static final int TYPE_POLL_DETAIL = 14;
 
-    Context context;
-
     // sticker view
     private LinearLayout vgStickerGroups;
     private ViewPager pagerStickerItems;
@@ -59,12 +58,11 @@ public class StickerViewModel {
     private boolean isShow = false;
     private View vgStickers;
 
-    public StickerViewModel(Context context) {
-        this.context = context;
-    }
+    @Inject
+    public StickerViewModel() { }
 
     public void showStickerPanel(ViewGroup root) {
-        vgStickers = LayoutInflater.from(context).inflate(R.layout.layout_stickers_default, root, true);
+        vgStickers = LayoutInflater.from(root.getContext()).inflate(R.layout.layout_stickers_default, root, true);
 
         vgStickerGroups = (LinearLayout) vgStickers.findViewById(R.id.vg_sticker_default_groups);
         pagerStickerItems = (ViewPager) vgStickers.findViewById(R.id.pager_sticker_default_items);
@@ -146,7 +144,7 @@ public class StickerViewModel {
             viewPagerIndicator.setVisibility(View.VISIBLE);
         }
 
-        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers,
+        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(stickers,
                 (groupId, stickerId) -> {
                     if (onStickerClick != null) {
                         onStickerClick.onStickerClick(groupId, stickerId);

@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 
 public class UploadMenuViewModel {
@@ -23,6 +25,9 @@ public class UploadMenuViewModel {
     private RoomType roomType = RoomType.TOPIC;
 
     private OnClickUploadEventListener onClickUploadEventListener;
+
+    @Inject
+    public UploadMenuViewModel() { }
 
     public void showUploadPanel(ViewGroup root) {
         vgUploadMenuSelector =

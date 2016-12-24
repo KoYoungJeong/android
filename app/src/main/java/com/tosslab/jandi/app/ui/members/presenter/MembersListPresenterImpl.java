@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
@@ -41,21 +40,23 @@ import rx.subjects.PublishSubject;
 
 public class MembersListPresenterImpl implements MembersListPresenter {
 
+
     MembersModel memberModel;
-
     EntityClientManager entityClientManager;
-
     private View view;
+
     private PublishSubject<String> objectPublishSubject;
     private PublishSubject<Integer> entityRefreshPublishSubject;
     private Subscription subscribe;
     private Subscription entityRefreshSubscriber;
 
     @Inject
-    public MembersListPresenterImpl(View view, MembersModel memberModel) {
+    public MembersListPresenterImpl(View view,
+                                    MembersModel memberModel,
+                                    EntityClientManager entityClientManager) {
         this.memberModel = memberModel;
         this.view = view;
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        this.entityClientManager = entityClientManager;
 
         initObject();
     }

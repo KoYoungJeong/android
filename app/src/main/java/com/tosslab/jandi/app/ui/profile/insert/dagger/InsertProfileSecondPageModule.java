@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.profile.insert.dagger;
 
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileSecondPagePresenter;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileSecondPagePresenterImpl;
-import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,10 +15,6 @@ public class InsertProfileSecondPageModule {
         this.view = view;
     }
 
-    @Provides
-    ModifyProfileModel provideModifyProfileModel() {
-        return new ModifyProfileModel();
-    }
 
     @Provides
     InsertProfileSecondPagePresenter.View provideViewOfSetProfileSecondPagePresenter() {

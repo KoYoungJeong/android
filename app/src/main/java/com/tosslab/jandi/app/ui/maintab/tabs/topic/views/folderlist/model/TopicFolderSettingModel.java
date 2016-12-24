@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateFolder;
@@ -23,9 +21,9 @@ public class TopicFolderSettingModel {
     Lazy<FolderApi> folderApi;
 
     @Inject
-    public TopicFolderSettingModel(Lazy<FolderApi> folderApi) {
+    public TopicFolderSettingModel(Lazy<FolderApi> folderApi, EntityClientManager entityClientManager) {
         this.folderApi = folderApi;
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        this.entityClientManager = entityClientManager;
     }
 
     public ResCreateFolder createFolder(String title) throws RetrofitException {

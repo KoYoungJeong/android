@@ -17,13 +17,13 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.DaggerTopicCreateComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.TopicCreateModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.presenter.TopicCreatePresenter;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -264,13 +264,14 @@ public class TopicCreateActivity extends BaseAppCompatActivity implements TopicC
             entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
         }
 
-        MessageListV2Activity_.intent(TopicCreateActivity.this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(Henson.with(TopicCreateActivity.this)
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .roomId(entityId)
                 .entityType(entityType)
                 .entityId(entityId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
 
         TopicCreateActivity.this.finish();
 

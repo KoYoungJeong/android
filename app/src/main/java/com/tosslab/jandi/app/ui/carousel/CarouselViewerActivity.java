@@ -54,7 +54,6 @@ import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -973,14 +972,15 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,
                                           boolean isStarred) {
-        MessageListV2Activity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoMessageListV2Activity()
                 .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromPush(false)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override

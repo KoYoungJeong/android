@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.dagger;
 
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailPresenter;
 
@@ -23,6 +22,6 @@ public class FileDetailModule {
 
     @Provides
     StickerViewModel stickerViewModel() {
-        return new StickerViewModel(JandiApplication.getContext());
+        return new StickerViewModel();
     }
 }

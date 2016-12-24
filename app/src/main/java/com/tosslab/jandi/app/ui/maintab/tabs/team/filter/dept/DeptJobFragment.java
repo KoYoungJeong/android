@@ -38,7 +38,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.KeywordObservabl
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnSearchModeChangeListener;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -255,14 +254,15 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
 
     @Override
     public void moveDirectMessage(long teamId, long userId, long roomId, long lastLinkId) {
-        MessageListV2Activity_.intent(getActivity())
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(userId)
                 .roomId(roomId)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .lastReadLinkId(lastLinkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         getActivity().finish();
     }
 

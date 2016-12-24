@@ -5,7 +5,6 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -33,10 +32,12 @@ public class EntityMenuDialogModel {
     Lazy<RoomsApi> roomsApi;
 
     @Inject
-    public EntityMenuDialogModel(Lazy<ChatApi> chatApi, Lazy<RoomsApi> roomsApi) {
+    public EntityMenuDialogModel(Lazy<ChatApi> chatApi,
+                                 Lazy<RoomsApi> roomsApi,
+                                 EntityClientManager entityClientManager) {
         this.chatApi = chatApi;
         this.roomsApi = roomsApi;
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+        this.entityClientManager = entityClientManager;
     }
 
     public void requestStarred(long entityId) throws RetrofitException {
@@ -57,7 +58,7 @@ public class EntityMenuDialogModel {
 
     public ResCommon requestDeleteChat(long entityId) throws RetrofitException {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        
+
         return chatApi.get().deleteChat(teamId, entityId);
     }
 

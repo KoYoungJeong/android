@@ -34,7 +34,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.member.MemberApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
@@ -49,7 +48,6 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.dagger.DaggerMemberProfileComponent;
 import com.tosslab.jandi.app.ui.profile.member.model.InactivedMemberProfileLoader;
 import com.tosslab.jandi.app.ui.profile.member.model.JandiBotProfileLoader;
@@ -98,15 +96,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @InjectExtra
     int from;
 
-    EntityClientManager entityClientManager;
-
     @Bind(R.id.vg_swipe_exit_layout)
     SwipeExitLayout swipeExitLayout;
+
     @Bind(R.id.v_member_profile_img_large_overlay)
     View vProfileImageLargeOverlay;
-
     @Bind(R.id.tv_member_profile_description)
     TextView tvProfileDescription;
+
     @Bind(R.id.tv_member_profile_name)
     TextView tvProfileName;
     @Bind(R.id.tv_member_profile_division)
@@ -119,9 +116,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     TextView tvProfileEmail;
     @Bind(R.id.tv_member_profile_team_level)
     TextView tvTeamLevel;
-
     @Bind(R.id.vg_member_profile_img_large)
     ViewGroup vgProfileImageLarge;
+
     @Bind(R.id.vg_member_profile_detail)
     ViewGroup vgProfileTeamDetail;
     @Nullable
@@ -129,20 +126,23 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     ViewGroup vgProfileTeamBottoms;
     @Bind(R.id.vg_member_profile_buttons)
     ViewGroup vgProfileTeamButtons;
-
     @Bind(R.id.v_member_profile_disable)
     View vDisableIcon;
+
     @Bind(R.id.btn_member_profile_star)
     View btnProfileStar;
-
     @Bind(R.id.iv_member_profile_img_full)
     PhotoView ivProfileImageFull;
+
     @Bind(R.id.iv_member_profile_img_large)
     ImageView ivProfileImageLarge;
     @Bind(R.id.iv_member_profile_img_small)
     ImageView ivProfileImageSmall;
 
     ProfileLoader profileLoader;
+
+    @Inject
+    EntityClientManager entityClientManager;
     @Inject
     Lazy<TeamApi> teamApi;
     @Inject
@@ -166,7 +166,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         ButterKnife.bind(this);
 
         DaggerMemberProfileComponent.create().inject(this);
-        entityClientManager = EntityClientManager_.getInstance_(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -860,13 +859,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     private void startMessageListActivity(long teamId, long entityId) {
-        MessageListV2Activity_.intent(MemberProfileActivity.this)
+        startActivity(Henson.with(MemberProfileActivity.this)
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .roomId(-1)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     private boolean isMe() {

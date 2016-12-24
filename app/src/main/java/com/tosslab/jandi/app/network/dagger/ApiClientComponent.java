@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.network.dagger;
 
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
@@ -17,9 +15,6 @@ import dagger.Component;
 
 @Component(modules = ApiClientModule.class)
 public interface ApiClientComponent {
-    void inject(MessageManipulator injector);
-
-    void inject(EntityClientManager injector);
 
     void inject(OpenAction openAction);
 

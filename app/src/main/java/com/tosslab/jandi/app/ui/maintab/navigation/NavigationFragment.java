@@ -42,7 +42,7 @@ import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.NavigationAdapter;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataView;
 import com.tosslab.jandi.app.ui.maintab.navigation.component.DaggerNavigationComponent;
@@ -610,7 +610,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     private void showBugReportDialog() {
-        UsageInformationDialogFragment_.builder().build()
+        UsageInformationDialogFragment.create()
                 .show(getFragmentManager(), "usageInformationKnock");
     }
 

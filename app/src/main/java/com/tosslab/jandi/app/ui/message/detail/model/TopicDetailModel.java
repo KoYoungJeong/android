@@ -5,7 +5,6 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
@@ -27,10 +26,9 @@ public class TopicDetailModel {
     private Lazy<RoomsApi> roomsApi;
 
     @Inject
-    public TopicDetailModel(Lazy<RoomsApi> roomsApi) {
+    public TopicDetailModel(Lazy<RoomsApi> roomsApi, EntityClientManager entityClientManager) {
         this.roomsApi = roomsApi;
-        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
-        ;
+        this.entityClientManager = entityClientManager;
     }
 
     public TopicRoom getTopic(long entityId) {
