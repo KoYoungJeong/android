@@ -8,8 +8,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

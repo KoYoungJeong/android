@@ -1,16 +1,14 @@
-package com.tosslab.jandi.app.ui.carousel.component;
+package com.tosslab.jandi.app.ui.carousel.dagger;
 
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
-import com.tosslab.jandi.app.ui.carousel.module.CarouselViewerModule;
-
-import javax.inject.Singleton;
 
 import dagger.Component;
 
 /**
  * Created by tonyjs on 2016. 8. 3..
  */
-@Component(modules = {CarouselViewerModule.class})
+@Component(modules = {ApiClientModule.class, CarouselViewerModule.class})
 public interface CarouselViewerComponent {
     void inject(CarouselViewerActivity activity);
 }

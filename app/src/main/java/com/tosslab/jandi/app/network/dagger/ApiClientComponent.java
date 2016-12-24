@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.dagger;
 
-import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
@@ -17,8 +16,6 @@ import dagger.Component;
 public interface ApiClientComponent {
 
     void inject(OpenAction openAction);
-
-    void inject(CarouselViewerModel carouselViewerModel);
 
     void inject(FileListModel fileListModel);
 
