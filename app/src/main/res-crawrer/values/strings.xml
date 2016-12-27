@@ -40,6 +40,7 @@
 	<string name="common_hamburger_teamlist">"Team List"</string>
 	<string name="common_launch_fail">"Failed to load initial data.
 Please restart the app."</string>
+	<string name="common_launch_maintenance">"JANDI is currently unavailable due to scheduled maintenance. Thanks for your patience."</string>
 	<string name="common_pricingplan_fileupload">"Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_pricingplan_livesupport">"Live Support"</string>
 	<string name="common_pricingplan_moreinfo">"More details"</string>
