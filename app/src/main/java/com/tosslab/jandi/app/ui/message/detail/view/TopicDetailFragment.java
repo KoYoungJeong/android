@@ -415,7 +415,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
         new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(Html.fromHtml(String.format("<b>%s</b><br/><br/>%s", title, message)))
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_topic_delete, (dialog, which) -> {
+                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> {
                     topicDetailPresenter.deleteTopic(getActivity(), entityId);
                 })
                 .create()
