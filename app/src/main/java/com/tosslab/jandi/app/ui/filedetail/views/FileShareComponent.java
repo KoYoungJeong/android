@@ -7,6 +7,5 @@ import dagger.Component;
 
 @Component(modules = ApiClientModule.class)
 public interface FileShareComponent {
-    void inject(FileShareActivity activity);
     void inject(FileSharedEntityChooseActivity activity);
 }

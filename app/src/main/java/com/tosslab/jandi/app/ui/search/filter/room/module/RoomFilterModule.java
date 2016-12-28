@@ -22,11 +22,14 @@ public class RoomFilterModule {
 
     private RoomFilterAdapter roomFilterAdapter;
     private RoomFilterPresenter.View roomFilterView;
+    private long teamId;
 
     public RoomFilterModule(RoomFilterAdapter roomFilterAdapter,
-                            RoomFilterPresenter.View roomFilterView) {
+                            RoomFilterPresenter.View roomFilterView,
+                            long teamId) {
         this.roomFilterAdapter = roomFilterAdapter;
         this.roomFilterView = roomFilterView;
+        this.teamId = teamId;
     }
 
     @Provides
@@ -48,7 +51,7 @@ public class RoomFilterModule {
 
     @Provides
     public RoomFilterModel providesRoomFilterModel() {
-        return new RoomFilterModel();
+        return new RoomFilterModel(teamId);
     }
 
     @Provides

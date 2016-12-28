@@ -195,7 +195,7 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.vg_select_topic_for_associate)
     void onCLickSelectTopic() {
-        RoomFilterActivity.startForResultForInvitation(this, REQ_SELECT_TOPIC);
+        RoomFilterActivity.startForResultForAssociateInvitation(this, REQ_SELECT_TOPIC);
     }
 
     @Override

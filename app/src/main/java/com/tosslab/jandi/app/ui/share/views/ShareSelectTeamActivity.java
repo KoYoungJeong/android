@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareTeamsAdapter;
-import com.tosslab.jandi.app.ui.share.views.dagger.DaggerShareSelectRoomComponent;
+import com.tosslab.jandi.app.ui.share.views.dagger.DaggerShareSelectTeamComponent;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -48,6 +48,7 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     Lazy<StartApi> startApi;
     @Inject
     Lazy<TeamApi> teamApi;
+
     ShareTeamsAdapter adapter;
 
     ProgressWheel progressWheel;
@@ -57,7 +58,10 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_team);
         ButterKnife.bind(this);
-        DaggerShareSelectRoomComponent.create().inject(this);
+
+        DaggerShareSelectTeamComponent
+                .builder().build()
+                .inject(this);
 
         adapter = new ShareTeamsAdapter();
         initViews();

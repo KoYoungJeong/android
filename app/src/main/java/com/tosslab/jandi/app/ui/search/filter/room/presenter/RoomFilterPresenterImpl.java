@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -31,6 +30,7 @@ import rx.subjects.PublishSubject;
 /**
  * Created by tonyjs on 2016. 7. 29..
  */
+
 public class RoomFilterPresenterImpl implements RoomFilterPresenter {
 
     private final RoomFilterModel roomFilterModel;
@@ -133,18 +133,12 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
         List<TopicRoom> initializedTopicRooms = roomFilterDataModel.getTopicRooms();
 
         if (initializedTopicFolders != null && !initializedTopicFolders.isEmpty()) {
-
             initTopicRoomsWithFolderFromCache(
                     initializedTopicFolders, initializedTopicRooms, onCompleteAction);
-
         } else if (initializedTopicRooms != null && !initializedTopicRooms.isEmpty()) {
-
             initTopicRoomsFromCache(initializedTopicRooms, onCompleteAction);
-
         } else {
-
             initTopicRoomsFromTeamInfo(onCompleteAction);
-
         }
     }
 
@@ -242,55 +236,81 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
     private void initUsers(@Nullable Action0 onCompeteAction) {
         List<User> initializedUsers = roomFilterDataModel.getUsers();
         if (initializedUsers != null && !initializedUsers.isEmpty()) {
-
             initializeUsersFromCache(initializedUsers, onCompeteAction);
-
         } else {
-
             initializeUsersFromTeamInfo(onCompeteAction);
-
         }
     }
 
     private void initializeUsersFromTeamInfo(@Nullable Action0 onCompeteAction) {
         roomFilterView.showProgress();
 
-        Observable.from(roomFilterModel.getUserList())
-                .filter(User::isEnabled)
-                .filter(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
-                .toSortedList((lhs, rhs) -> {
-                    if (TeamInfoLoader.getInstance().isJandiBot(lhs.getId())) {
-                        return -1;
-                    } else if (TeamInfoLoader.getInstance().isJandiBot(rhs.getId())) {
-                        return 1;
-                    }
-                    String lhsName = lhs.getName();
-                    String rhsName = rhs.getName();
+        if (!roomFilterModel.isAssociate()) {
+            Observable.from(roomFilterModel.getUserList())
+                    .filter(User::isEnabled)
+                    .filter(user -> user.getId() != roomFilterModel.getTeamInfoLoader().getMyId())
+                    .toSortedList((lhs, rhs) -> {
+                        if (roomFilterModel.getTeamInfoLoader().isJandiBot(lhs.getId())) {
+                            return -1;
+                        } else if (roomFilterModel.getTeamInfoLoader().isJandiBot(rhs.getId())) {
+                            return 1;
+                        }
+                        String lhsName = lhs.getName();
+                        String rhsName = rhs.getName();
 
-                    return StringCompareUtil.compare(lhsName, rhsName);
-                })
-                .doOnNext(roomFilterDataModel::setUsers)
-                .map(roomFilterDataModel::getUserRows)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(rows -> {
-                    roomFilterDataModel.clearAllRows();
-                    roomFilterDataModel.addRows(rows);
-                    roomFilterView.notifyDataSetChanged();
-                }, throwable -> {
-                    LogUtil.e(Log.getStackTraceString(throwable));
-                    roomFilterView.hideProgress();
-                }, () -> {
-                    roomFilterView.hideProgress();
-                    if (onCompeteAction != null) {
-                        onCompeteAction.call();
-                    }
-                });
+                        return StringCompareUtil.compare(lhsName, rhsName);
+                    })
+                    .doOnNext(roomFilterDataModel::setUsers)
+                    .map(roomFilterDataModel::getUserRows)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(rows -> {
+                        roomFilterDataModel.clearAllRows();
+                        roomFilterDataModel.addRows(rows);
+                        roomFilterView.notifyDataSetChanged();
+                    }, throwable -> {
+                        LogUtil.e(Log.getStackTraceString(throwable));
+                        roomFilterView.hideProgress();
+                    }, () -> {
+                        roomFilterView.hideProgress();
+                        if (onCompeteAction != null) {
+                            onCompeteAction.call();
+                        }
+                    });
+        } else {
+            Observable.from(roomFilterModel.getTeamInfoLoader().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
+                    .distinct()
+                    .filter(it -> roomFilterModel.getTeamInfoLoader().isUser(it))
+                    .filter(it -> roomFilterModel.getTeamInfoLoader().getMyId() != it)
+                    .filter(it -> roomFilterModel.getTeamInfoLoader().getChatId(it) > 0)
+                    .map(it -> roomFilterModel.getTeamInfoLoader().getUser(it))
+                    .toSortedList((formattedEntity, formattedEntity2) ->
+                            StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
+                    .doOnNext(users -> users.add(roomFilterModel.getTeamInfoLoader().getJandiBot()))
+                    .doOnNext(roomFilterDataModel::setUsers)
+                    .map(roomFilterDataModel::getUserRows)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(rows -> {
+                        roomFilterDataModel.clearAllRows();
+                        roomFilterDataModel.addRows(rows);
+                        roomFilterView.notifyDataSetChanged();
+                    }, throwable -> {
+                        LogUtil.e(Log.getStackTraceString(throwable));
+                        roomFilterView.hideProgress();
+                    }, () -> {
+                        roomFilterView.hideProgress();
+                        if (onCompeteAction != null) {
+                            onCompeteAction.call();
+                        }
+                    });
+        }
     }
 
     private void initializeUsersFromCache(List<User> initializedDirectMessages,
                                           @Nullable Action0 onCompeteAction) {
-
         Observable.just(initializedDirectMessages)
                 .map(roomFilterDataModel::getUserRows)
                 .subscribeOn(Schedulers.io())

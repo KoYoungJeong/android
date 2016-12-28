@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
-import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -28,6 +27,7 @@ import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.text.dagger.DaggerTextShareComponent;
 import com.tosslab.jandi.app.ui.share.text.dagger.TextShareModule;
@@ -194,10 +194,9 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
     @OnClick(R.id.vg_room)
     void clickSelectRoom() {
         LogUtil.e("room");
-        startActivity(Henson                .with(getActivity())
-                .gotoShareSelectRoomActivity()
-                .teamId(textSharePresenterImpl.getTeamId())
-                .build());
+        RoomFilterActivity.startForResultWithTeamId(getActivity(),
+                textSharePresenterImpl.getTeamId(), MainShareActivity.REQ_SELECT_ROOM);
+
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
 

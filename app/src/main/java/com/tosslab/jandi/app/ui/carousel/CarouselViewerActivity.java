@@ -51,9 +51,10 @@ import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
-import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -380,10 +381,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             return;
         }
 
-        startActivityForResult(Henson.with(this)
-                .gotoFileShareActivity()
-                .fileId(carouselFileInfo.getFileMessageId())
-                .build(), FileDetailActivity.REQUEST_CODE_SHARE);
+        RoomFilterActivity.startForResultWithTopicId(this, -1,
+                FileDetailActivity.REQUEST_CODE_SHARE);
 
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Share);
     }
@@ -1045,18 +1044,26 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     }
 
     void onShareResult(int resultCode, Intent data) {
-        if (resultCode != RESULT_OK
-                || data == null
-                || !data.hasExtra(FileShareActivity.KEY_ENTITY_ID)) {
+
+        if (resultCode != RESULT_OK || data == null) {
             return;
         }
+
+        boolean isTopic = data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, true);
 
         CarouselFileInfo carouselFileInfo = getCarouselFileInfo();
         if (carouselFileInfo == null) {
             return;
         }
 
-        long entityId = data.getLongExtra(FileShareActivity.KEY_ENTITY_ID, -1);
+        long entityId = -1;
+
+        if (isTopic) {
+            entityId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1);
+        } else {
+            entityId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_MEMBER_ID, -1);
+        }
+
         carouselViewerPresenter.onShareAction(entityId, carouselFileInfo);
     }
 

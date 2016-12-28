@@ -75,12 +75,12 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
 import com.tosslab.jandi.app.ui.filedetail.dagger.DaggerFileDetailComponent;
 import com.tosslab.jandi.app.ui.filedetail.dagger.FileDetailModule;
-import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -1167,10 +1167,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     void share() {
-        startActivityForResult(Henson.with(this)
-                .gotoFileShareActivity()
-                .fileId(fileId)
-                .build(), REQUEST_CODE_SHARE);
+        RoomFilterActivity.startForResultWithTopicId(this, -1, REQUEST_CODE_SHARE);
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Share);
     }
 
@@ -1370,17 +1367,26 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     void onShareResult(int resultCode, Intent data) {
         if (resultCode != RESULT_OK
-                || data == null
-                || !data.hasExtra(FileShareActivity.KEY_ENTITY_ID)) {
+                || data == null) {
             return;
         }
 
+        boolean isTopic = data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, true);
+
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
+
         if (fileMessage == null) {
             return;
         }
 
-        long entityId = data.getLongExtra(FileShareActivity.KEY_ENTITY_ID, -1);
+        long entityId = -1;
+
+        if (isTopic) {
+            entityId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1);
+        } else {
+            entityId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_MEMBER_ID, -1);
+        }
+
         fileDetailPresenter.onShareAction(entityId, fileId);
     }
 
