@@ -20,11 +20,13 @@ import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.permissions.OnRequestPermissionsResult;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.ui.share.model.MainShareModel;
 import com.tosslab.jandi.app.ui.share.multi.MultiShareFragment;
 import com.tosslab.jandi.app.ui.share.text.TextShareFragment;
@@ -35,11 +37,13 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import java.util.Arrays;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 public class MainShareActivity extends BaseAppCompatActivity {
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final String FRAGMENT_TAG = "share";
-
+    public static final int REQ_SELECT_ROOM = 1002;
     MainShareModel mainShareModel;
 
     private Share share;
@@ -241,6 +245,30 @@ public class MainShareActivity extends BaseAppCompatActivity {
         actionBar.setTitle(R.string.jandi_share_to_jandi);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        switch (requestCode) {
+            case REQ_SELECT_ROOM:
+                boolean isTopic = data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, false);
+
+                long roomId = -1;
+                if (isTopic) {
+                    roomId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1);
+                } else {
+                    roomId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_MEMBER_ID, -1);
+                }
+                ShareSelectRoomEvent event = new ShareSelectRoomEvent();
+                event.setRoomId(roomId);
+                EventBus.getDefault().post(event);
+                break;
+        }
+    }
+
     public enum IntentType {
         Text, Multiple, File
     }
@@ -248,5 +276,4 @@ public class MainShareActivity extends BaseAppCompatActivity {
     public interface Share {
         void startShare();
     }
-
 }

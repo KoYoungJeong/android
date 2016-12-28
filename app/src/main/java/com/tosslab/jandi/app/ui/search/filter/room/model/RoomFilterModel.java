@@ -22,15 +22,28 @@ import rx.functions.Func0;
  */
 public class RoomFilterModel {
 
+    private TeamInfoLoader teamInfoLoader;
+
+    public RoomFilterModel(long teamId) {
+        if (teamId > 0) {
+            teamInfoLoader = TeamInfoLoader.getInstance(teamId);
+        } else {
+            teamInfoLoader = TeamInfoLoader.getInstance();
+        }
+    }
+
+    public TeamInfoLoader getTeamInfoLoader() {
+        return teamInfoLoader;
+    }
+
     public List<TopicFolder> getTopicRoomsWithFolder() {
-        return TeamInfoLoader.getInstance().getTopicFolders();
+        return teamInfoLoader.getTopicFolders();
     }
 
     public List<TopicFolder> getTopicRoomsWithFolderExceptDefaultTopic() {
-
         //Deep Copy가 필요함 안그러면 TeamInfoLoader의 정보가 바뀜
         List<TopicFolder> sourceTopicFolders =
-                TeamInfoLoader.getInstance().getTopicFolders();
+                teamInfoLoader.getTopicFolders();
 
         ArrayList<TopicFolder> destTopicFolders = new ArrayList<>();
 
@@ -60,28 +73,26 @@ public class RoomFilterModel {
                 });
 
         return destTopicFolders;
-
     }
 
     public List<User> getUserList() {
-
-        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
-            return TeamInfoLoader.getInstance().getUserList();
+        if (teamInfoLoader.getMyLevel() != Level.Guest) {
+            return teamInfoLoader.getUserList();
         } else {
-            return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+            return Observable.from(teamInfoLoader.getTopicList())
                     .filter(TopicRoom::isJoined)
                     .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
                     .distinct()
-                    .filter(memberId -> TeamInfoLoader.getInstance().isUser(memberId))
-                    .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                    .filter(memberId -> teamInfoLoader.isUser(memberId))
+                    .map(memberId -> teamInfoLoader.getUser(memberId))
                     .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
                     .toBlocking().firstOrDefault(new ArrayList<>());
         }
-
     }
 
     public List<User> getSearchedDirectMessages(String query, List<User> initializedDirectMessages) {
         List<User> searchedDirectMessages = new ArrayList<>();
+
         if (initializedDirectMessages == null || initializedDirectMessages.isEmpty()) {
             return searchedDirectMessages;
         }
@@ -112,7 +123,7 @@ public class RoomFilterModel {
     }
 
     public List<TopicRoom> getSearchedTopics(String query, boolean isShowDefaultTopic) {
-        List<TopicRoom> topicRooms = TeamInfoLoader.getInstance().getTopicList();
+        List<TopicRoom> topicRooms = teamInfoLoader.getTopicList();
         if (topicRooms == null || topicRooms.isEmpty()) {
             return new ArrayList<>();
         }
@@ -139,7 +150,6 @@ public class RoomFilterModel {
     }
 
     public List<TopicRoom> getUnfoldedTopics(List<TopicFolder> topicFolders, boolean isShowDefaultTopic) {
-
         List<TopicRoom> unFoldedTopics = new ArrayList<>();
 
         List<Long> foldedTopicIds = new ArrayList<>();
@@ -148,7 +158,7 @@ public class RoomFilterModel {
                 .collect(() -> foldedTopicIds, (topicIds, topicRoom) -> topicIds.add(topicRoom.getId()))
                 .defaultIfEmpty(new ArrayList<>(0))
                 .concatMap(ids ->
-                        Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                        Observable.from(teamInfoLoader.getTopicList())
                                 .filter(topicRoom -> {
                                             if (isShowDefaultTopic) {
                                                 return true;
@@ -177,21 +187,26 @@ public class RoomFilterModel {
     }
 
     public Observable<Long> getRoomIdFromMemberIdObservable(long memberId) {
-        return Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
+        return Observable.from(teamInfoLoader.getDirectMessageRooms())
                 .takeFirst(room -> room.getCompanionId() == memberId)
                 .map(DirectMessageRoom::getId)
                 .firstOrDefault(-1L);
     }
 
     public long getUserIdFromRoomId(long roomId) {
-        Room room = TeamInfoLoader.getInstance().getRoom(roomId);
+        Room room = teamInfoLoader.getRoom(roomId);
         if (room == null || room.getId() <= 0 || !(room instanceof DirectMessageRoom)) {
             return -1L;
         }
 
         return Observable.from(room.getMembers())
-                .takeFirst(memberId -> TeamInfoLoader.getInstance().getMyId() != memberId)
+                .takeFirst(memberId -> teamInfoLoader.getMyId() != memberId)
                 .toBlocking()
                 .firstOrDefault(-1L);
     }
+
+    public boolean isAssociate() {
+        return teamInfoLoader.getMyLevel() == Level.Guest;
+    }
+
 }
