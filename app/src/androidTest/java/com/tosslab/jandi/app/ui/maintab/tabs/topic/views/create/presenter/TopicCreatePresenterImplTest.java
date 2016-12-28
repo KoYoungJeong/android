@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.TopicCreateModule;
@@ -62,7 +63,7 @@ public class TopicCreatePresenterImplTest {
 
     }
 
-    @Component(modules = TopicCreateModule.class)
+    @Component(modules = {ApiClientModule.class, TopicCreateModule.class})
     interface TestComponent {
         void inject(TopicCreatePresenterImplTest test);
     }

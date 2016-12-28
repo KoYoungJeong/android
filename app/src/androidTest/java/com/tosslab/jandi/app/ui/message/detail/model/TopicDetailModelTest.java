@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.detail.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 
@@ -10,6 +11,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import setup.BaseInitUtil;
@@ -25,7 +28,8 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 @RunWith(AndroidJUnit4.class)
 public class TopicDetailModelTest {
 
-    private TopicDetailModel topicDetailModel;
+    @Inject
+    TopicDetailModel topicDetailModel;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -39,7 +43,9 @@ public class TopicDetailModelTest {
 
     @Before
     public void setUp() throws Exception {
-        topicDetailModel = new TopicDetailModel(null);
+        DaggerTopicDetailModelTest_Component.builder()
+                .build()
+                .inject(this);
     }
 
     @Test
@@ -110,5 +116,10 @@ public class TopicDetailModelTest {
                 .getMemberCount();
 
         assertThat(enabledTeamMemberCount, is(lessThanOrEqualTo(memberCount)));
+    }
+
+    @dagger.Component(modules = ApiClientModule.class)
+    public interface Component {
+        void inject(TopicDetailModelTest test);
     }
 }

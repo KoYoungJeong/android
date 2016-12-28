@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.dagger;
 
 
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMemberPresenter;
@@ -10,7 +9,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMe
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApiClientModule.class)
+@Module
 public class TeamMemberModule {
     private final TeamMemberPresenter.View view;
     private final TeamMemberDataModel teamMemberDataModel;

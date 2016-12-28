@@ -5,6 +5,9 @@ import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
+
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import rx.Observable;
 
@@ -17,6 +20,7 @@ public class StarredListModel {
 
     private final Lazy<MessageApi> messageApi;
 
+    @Inject
     public StarredListModel(Lazy<MessageApi> messageApi) {
         this.messageApi = messageApi;
     }

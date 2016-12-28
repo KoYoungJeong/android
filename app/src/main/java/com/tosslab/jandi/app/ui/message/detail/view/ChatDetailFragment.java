@@ -15,14 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
@@ -56,6 +54,7 @@ public class ChatDetailFragment extends Fragment {
     @Bind(R.id.iv_chat_detail_starred)
     View ivStarred;
 
+    @Inject
     EntityClientManager entityClientManager;
 
     @Inject
@@ -92,7 +91,6 @@ public class ChatDetailFragment extends Fragment {
                 .build()
                 .inject(this);
 
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
         initArgument();
 
         initViews();

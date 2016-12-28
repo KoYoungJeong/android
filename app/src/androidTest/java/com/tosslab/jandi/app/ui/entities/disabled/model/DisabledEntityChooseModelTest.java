@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.entities.disabled.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 
 import org.junit.AfterClass;
@@ -36,7 +35,7 @@ public class DisabledEntityChooseModelTest {
 
     @Before
     public void setUp() throws Exception {
-        model = DisabledEntityChooseModel_.getInstance_(JandiApplication.getContext());
+        model = new DisabledEntityChooseModel();
     }
 
 

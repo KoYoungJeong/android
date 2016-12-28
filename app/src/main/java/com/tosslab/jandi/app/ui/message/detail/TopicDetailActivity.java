@@ -5,29 +5,28 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.message.detail.view.ChatDetailFragment;
 import com.tosslab.jandi.app.ui.message.detail.view.TopicDetailFragment;
 
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-
-@EActivity(R.layout.activity_topic_detail)
 public class TopicDetailActivity extends BaseAppCompatActivity {
 
     public static final int REQUEST_DETAIL = 0x11;
     public static final String EXTRA_LEAVE = "leave";
-    @Extra
+    @InjectExtra
     long entityId;
-    @Extra
+    @InjectExtra
     long teamId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_topic_detail);
+        Dart.inject(this);
 
         boolean isDirectMessage = TeamInfoLoader.getInstance().isUser(entityId);
 

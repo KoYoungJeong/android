@@ -7,41 +7,41 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
-import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileUpload;
 import com.tosslab.jandi.app.utils.file.FileUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@EBean
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class MainFileUploadControllerImpl implements FileUploadController {
 
-    @Bean
     FilePickerModel filePickerModel;
 
     private File filePath;
+
+    public MainFileUploadControllerImpl() {
+        filePickerModel = new FilePickerModel();
+    }
 
     @Override
     public void selectFileSelector(int type, Fragment fragment, long entityId) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_
-                        .intent(fragment)
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoImageAlbumActivity()
                         .entityId(entityId)
-                        .startForResult(TYPE_UPLOAD_GALLERY);
+                        .build(), TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
                 try {
@@ -65,7 +65,9 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int type, Activity activity) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_.intent(activity).startForResult(TYPE_UPLOAD_GALLERY);
+                activity.startActivityForResult(Henson.with(activity)
+                        .gotoImageAlbumActivity()
+                        .build(), TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
 
@@ -90,7 +92,9 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     public void selectFileSelector(int type, Fragment fragment) {
         switch (type) {
             case TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_.intent(fragment).startForResult(TYPE_UPLOAD_GALLERY);
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoImageAlbumActivity()
+                        .build(), TYPE_UPLOAD_GALLERY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
 
@@ -138,29 +142,29 @@ public class MainFileUploadControllerImpl implements FileUploadController {
         uploadFile(activity.getApplicationContext(), title, entityId, realFilePath, comment, uploadProgress);
     }
 
-    @Background
     void uploadFile(Context context, String title, long entityId, String realFilePath, String comment, ProgressDialog uploadProgress) {
-        try {
-            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, title, entityId, comment);
-            LogUtil.e("Upload Success : " + result);
-            showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
-            SprinklrFileUpload.sendLog(entityId, result.getMessageId());
-        } catch (Exception e) {
-            SprinklrFileUpload.sendFailLog(-1);
-            LogUtil.e("Upload Error : ", e);
-            showFailToast(context, context.getString(R.string.err_file_upload_failed));
-        } finally {
-            dismissProgressDialog(uploadProgress);
-        }
 
+        Completable.fromCallable(() -> {
+            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, title, entityId, comment);
+            SprinklrFileUpload.sendLog(entityId, result.getMessageId());
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(() -> {
+                    dismissProgressDialog(uploadProgress);
+                })
+                .subscribe(() -> {
+                    showSuccessToast(context, context.getString(R.string.jandi_file_upload_succeed));
+                }, t -> {
+                    SprinklrFileUpload.sendFailLog(-1);
+                    showFailToast(context, context.getString(R.string.err_file_upload_failed));
+                });
     }
 
-    @UiThread
     void showFailToast(Context context, String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread
     void showSuccessToast(Context context, String message) {
         ColoredToast.show(message);
     }
@@ -177,16 +181,10 @@ public class MainFileUploadControllerImpl implements FileUploadController {
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
         if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
             uploadProgressDialog.dismiss();
         }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void exceedMaxFileSizeError(Context context) {
-        ColoredToast.showError(context.getString(R.string.jandi_file_size_large_error));
     }
 
     @Override

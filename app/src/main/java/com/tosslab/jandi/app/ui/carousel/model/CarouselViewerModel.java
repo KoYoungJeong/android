@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import rx.Observable;
 
@@ -20,6 +22,7 @@ public class CarouselViewerModel {
 
     private final Lazy<FileApi> fileApi;
 
+    @Inject
     public CarouselViewerModel(Lazy<FileApi> fileApi) {
         this.fileApi = fileApi;
     }

@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.entities.disabled.presenter;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.entities.disabled.model.DisabledEntityChooseModel;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -34,9 +34,8 @@ public class DisabledEntityChoosePresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        presenter = DisabledEntityChoosePresenterImpl_.getInstance_(JandiApplication.getContext());
         mockView = mock(DisabledEntityChoosePresenter.View.class);
-        presenter.setView(mockView);
+        presenter = new DisabledEntityChoosePresenterImpl(mockView, new DisabledEntityChooseModel());
     }
 
 

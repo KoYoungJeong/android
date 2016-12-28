@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
@@ -44,17 +43,15 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDele
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -62,17 +59,13 @@ import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-@EBean
 public class MessageListV2Presenter {
     public static final String TAG = MessageListV2Presenter.class.getSimpleName();
 
-    @Bean
     MessageListModel messageListModel;
-    @Bean
     AnnouncementModel announcementModel;
-
     View view;
-
+    private MessageRepositoryModel messageRepositoryModel;
     private PublishSubject<MessageContainer> messageRequestQueue;
     private PublishSubject<Object> markerRequestQueue;
     private Subscription messageLoadSubscription;
@@ -81,15 +74,21 @@ public class MessageListV2Presenter {
     private MessagePointer messagePointer;
     private boolean isInitialized;
     private MessageListAdapterModel adapterModel;
-    private MessageRepositoryModel messageRepositoryModel;
     private boolean isViewResumed;
 
-    public void setView(View view) {
+    @Inject
+    public MessageListV2Presenter(MessageListModel messageListModel,
+                                  AnnouncementModel announcementModel,
+                                  MessageRepositoryModel messageRepositoryModel,
+                                  View view, Room room, MessagePointer messagePointer) {
+        this.messageListModel = messageListModel;
+        this.announcementModel = announcementModel;
+        this.messageRepositoryModel = messageRepositoryModel;
         this.view = view;
-    }
-
-    public void setRoom(Room room) {
         this.room = room;
+        this.messagePointer = messagePointer;
+
+        initObjects();
     }
 
     public void setEntityInfo() {
@@ -97,14 +96,8 @@ public class MessageListV2Presenter {
         messageRepositoryModel.setEntityInfo(room.getEntityType(), room.getEntityId());
     }
 
-    public void setMessagePointer(MessagePointer messagePointer) {
-        this.messagePointer = messagePointer;
-    }
-
-    @AfterInject
     void initObjects() {
         currentMessageState = new MessageState();
-        messageRepositoryModel = new MessageRepositoryModel();
 
         initMessageLoadQueue();
     }
@@ -441,11 +434,9 @@ public class MessageListV2Presenter {
     }
 
     public void onInitAnnouncement() {
-        Observable.just(1)
-                .observeOn(Schedulers.io())
-                .subscribe(integer -> {
-                    initAnnouncement();
-                });
+        Completable.fromAction(this::initAnnouncement)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
     // 같은 쓰레드에서 처리를 위함
@@ -471,7 +462,9 @@ public class MessageListV2Presenter {
     }
 
     public void onUpdateAnnouncement(boolean isOpened) {
-        announcementModel.updateAnnouncementStatus(room.getTeamId(), room.getRoomId(), isOpened);
+        Completable.fromAction(() -> {
+            announcementModel.updateAnnouncementStatus(room.getTeamId(), room.getRoomId(), isOpened);
+        }).subscribeOn(Schedulers.newThread()).subscribe();
     }
 
     public void onChangeAnnouncementOpenStatusAction(boolean shouldOpened) {
@@ -480,43 +473,61 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
     public void onCheckAnnouncementExistsAndCreate(long messageId) {
-        Announcement announcement =
-                announcementModel.getAnnouncement(room.getTeamId(), room.getRoomId());
+        Observable.defer(() -> {
 
-        if (announcement == null) {
-            createAnnouncement(messageId);
-            return;
-        }
+            Announcement announcement =
+                    announcementModel.getAnnouncement(room.getTeamId(), room.getRoomId());
+            if (announcement == null) {
+                createAnnouncement(messageId);
+                return Observable.empty();
+            } else {
+                return Observable.just(announcement);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((it) -> view.showAnnouncementCreateDialog(messageId));
 
-        view.showAnnouncementCreateDialog(messageId);
+
     }
 
     // 같은 쓰레드에서 처리를 위함
     private void createAnnouncement(long messageId) {
-        view.showProgressWheel();
+        Observable.just(messageId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(id -> {
+                    view.showProgressWheel();
+                })
+                .observeOn(Schedulers.io())
+                .doOnNext(id -> {
+                    announcementModel.createAnnouncement(room.getTeamId(), room.getRoomId(), messageId);
+                })
+                .filter(id -> !JandiSocketManager.getInstance().isConnectingOrConnected())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aLong -> initAnnouncement(), Throwable::printStackTrace);
 
-        announcementModel.createAnnouncement(room.getTeamId(), room.getRoomId(), messageId);
-
-        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
-        if (!isSocketConnected) {
-            initAnnouncement();
-        }
     }
 
-    @Background
     public void onCreateAnnouncement(long messageId) {
         createAnnouncement(messageId);
     }
 
-    @Background
     public void onDeleteAnnouncementAction() {
-        view.showProgressWheel();
+        Observable.just(true)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(aBoolean -> {
+                    view.showProgressWheel();
+                })
+                .observeOn(Schedulers.io())
+                .doOnNext(it -> {
+                    announcementModel.deleteAnnouncement(room.getTeamId(), room.getRoomId());
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    initAnnouncement();
+                });
 
-        announcementModel.deleteAnnouncement(room.getTeamId(), room.getRoomId());
 
-        initAnnouncement();
     }
 
     private long getRoomId() {
@@ -543,11 +554,12 @@ public class MessageListV2Presenter {
         return Room.INVALID_ROOM_ID;
     }
 
-    @Background
     public void onInitMessages(boolean withProgress) {
 
         if (withProgress) {
-            view.showProgressView();
+            Completable.fromAction(() -> {
+                view.showProgressView();
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
         }
 
         long roomId = room.getRoomId();
@@ -555,32 +567,45 @@ public class MessageListV2Presenter {
         LogUtil.i(TAG, "roomId = " + roomId);
 
         if (roomId <= 0) {
-            roomId = getRoomId();
+            roomId = Observable.just(roomId)
+                    .observeOn(Schedulers.io())
+                    .map(it -> getRoomId())
+                    .firstOrDefault(Room.INVALID_ROOM_ID)
+                    .toBlocking().first();
             if (roomId <= Room.INVALID_ROOM_ID) {
-                view.showInvalidEntityToast();
-                view.finish();
+                Completable.fromAction(() -> {
+                    view.showInvalidEntityToast();
+                    view.finish();
+                }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
                 return;
             }
         }
 
-        room.setRoomId(roomId);
+        Observable.just(roomId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(roomid -> {
 
-        String readyMessage = messageListModel.getReadyMessage(roomId);
-        view.initRoomInfo(roomId, readyMessage);
+                    room.setRoomId(roomid);
 
-        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId);
+                    String readyMessage = messageListModel.getReadyMessage(roomid);
+                    view.initRoomInfo(roomid, readyMessage);
+                })
+                .observeOn(Schedulers.io())
+                .subscribe(roomid -> {
+                    SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
 
-        OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
+                    long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
+                    messagePointer.setLastReadLinkId(lastReadLinkId);
+                    messageListModel.setRoomId(roomid);
+                    isInitialized = true;
 
-        long lastReadLinkId = messageListModel.getLastReadLinkId(roomId);
-        messagePointer.setLastReadLinkId(lastReadLinkId);
-        messageListModel.setRoomId(roomId);
-        isInitialized = true;
+                    OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
+                    addQueue(oldMessageQueue);
 
-        addQueue(oldMessageQueue);
+                    NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
+                    addQueue(newMessageQueue);
+                }, Throwable::printStackTrace);
 
-        NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
-        addQueue(newMessageQueue);
 
     }
 
@@ -628,7 +653,9 @@ public class MessageListV2Presenter {
     private Observable<List<ResMessages.Link>> checkNullNewMessage(List<ResMessages.Link> links) {
         if (links == null || links.isEmpty()) {
             boolean hasMessages = hasMessages(adapterModel.getCount());
-            view.showEmptyView(!hasMessages);
+            Completable.fromAction(() -> {
+                view.showEmptyView(!hasMessages);
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
 
             if (currentMessageState.isFirstLoadNewMessage()) {
                 currentMessageState.setIsFirstLoadNewMessage(false);
@@ -836,30 +863,6 @@ public class MessageListV2Presenter {
         }
     }
 
-    @Background
-    public void onDeletePollMessageAction(long messageId, long pollId) {
-        view.showProgressWheel();
-
-        try {
-            messageListModel.deletePollMessage(room.getTeamId(), pollId);
-
-            MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
-            view.dismissProgressWheel();
-
-            int position = adapterModel.indexByMessageId(messageId);
-            if (position >= 0) {
-                adapterModel.remove(position);
-                view.refreshMessages();
-            }
-        } catch (RetrofitException e) {
-            LogUtil.e(Log.getStackTraceString(e));
-            view.dismissProgressWheel();
-        } catch (Exception e) {
-            LogUtil.e(Log.getStackTraceString(e));
-            view.dismissProgressWheel();
-        }
-    }
-
     public void onDeleteDummyMessageAction(long localId) {
         Observable.just(localId)
                 .doOnNext(it -> {
@@ -874,10 +877,9 @@ public class MessageListV2Presenter {
                 });
     }
 
-    @Background
     public void onDeleteMessageAction(int messageType, long messageId) {
         view.showProgressWheel();
-        try {
+        Completable.fromCallable(() -> {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
             } else if (messageType == MessageItem.TYPE_STICKER) {
@@ -887,26 +889,25 @@ public class MessageListV2Presenter {
                 messageListModel.deleteStickerComment(feedbackId, messageId);
             }
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
-
-            view.dismissProgressWheel();
-
-            int position = adapterModel.indexByMessageId(messageId);
-            if (position >= 0) {
-                adapterModel.remove(position);
-                view.refreshMessages();
-            }
-
-
             SprinklrMessageDelete.sendLog(messageId);
-
-        } catch (RetrofitException e) {
-            view.dismissProgressWheel();
-            SprinklrMessageDelete.sendFailLog(e.getResponseCode());
-        } catch (Exception e) {
-            view.dismissProgressWheel();
-            SprinklrMessageDelete.sendFailLog(-1);
-        }
-
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(() -> view.dismissProgressWheel())
+                .subscribe(() -> {
+                    int position = adapterModel.indexByMessageId(messageId);
+                    if (position >= 0) {
+                        adapterModel.remove(position);
+                        view.refreshMessages();
+                    }
+                }, t -> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        SprinklrMessageDelete.sendFailLog(e.getResponseCode());
+                    } else {
+                        SprinklrMessageDelete.sendFailLog(-1);
+                    }
+                });
     }
 
     public void onTeamLeaveEvent(long teamId, long memberId) {
@@ -915,9 +916,12 @@ public class MessageListV2Presenter {
         }
 
         if (memberId == room.getEntityId()) {
-            String name = TeamInfoLoader.getInstance().getName(memberId);
-            view.showLeavedMemberDialog(name);
-            view.showDisabledUserLayer();
+            Observable.just(TeamInfoLoader.getInstance().getName(memberId))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(name -> {
+                        view.showLeavedMemberDialog(name);
+                        view.showDisabledUserLayer();
+                    });
         }
     }
 
@@ -955,20 +959,14 @@ public class MessageListV2Presenter {
                 });
     }
 
-    @Background
     public void onMessageUnStarredAction(long messageId) {
 
-        Observable.defer(() -> {
-            try {
-                messageListModel.unregistStarredMessage(room.getTeamId(), messageId);
-                return Observable.just(true);
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        })
-                .subscribeOn(Schedulers.io())
+        Completable.fromCallable(() -> {
+            messageListModel.unregistStarredMessage(room.getTeamId(), messageId);
+            return true;
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> {
+                .subscribe(() -> {
                     view.showMessageUnStarSuccessToast();
                     int position = adapterModel.indexByMessageId(messageId);
                     if (position >= 0) {
@@ -1187,8 +1185,6 @@ public class MessageListV2Presenter {
         void showMessageStarSuccessToast();
 
         void showMessageUnStarSuccessToast();
-
-        void modifyStarredInfo(long messageId, boolean isStarred);
 
         void dismissUserStatusLayout();
 

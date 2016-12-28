@@ -2,10 +2,8 @@ package com.tosslab.jandi.app.ui.profile.modify.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -17,14 +15,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class ModifyProfileModel {
 
     EntityClientManager entityClientManager;
 
-    public ModifyProfileModel() {
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
+    @Inject
+    public ModifyProfileModel(EntityClientManager entityClientManager) {
+        this.entityClientManager = entityClientManager;
     }
 
     public User getProfile() throws RetrofitException {

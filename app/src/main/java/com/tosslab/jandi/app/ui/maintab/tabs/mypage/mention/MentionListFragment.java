@@ -30,11 +30,10 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.view.MentionListDataView;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.component.DaggerMentionListComponent;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.module.MentionListModule;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dagger.DaggerMentionListComponent;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dagger.MentionListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter.MentionListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -173,7 +172,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
+        if (isVisibleToUser) {
 
         }
     }
@@ -297,15 +296,16 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     public void moveToMessageListActivity(
             long teamId, long entityId, int entityType, long roomId, long linkId) {
 
-        MessageListV2Activity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromSearch(true)
                 .lastReadLinkId(linkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
     }
 

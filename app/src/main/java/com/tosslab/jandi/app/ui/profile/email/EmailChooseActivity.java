@@ -1,128 +1,104 @@
 package com.tosslab.jandi.app.ui.profile.email;
 
+import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.DeleteEmailEvent;
 import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.events.profile.RetryNewEmailEvent;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
-import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
+import com.tosslab.jandi.app.ui.profile.email.adapter.EmailChooseAdapter;
+import com.tosslab.jandi.app.ui.profile.email.adapter.EmailChooseAdapterViewModel;
+import com.tosslab.jandi.app.ui.profile.email.dagger.DaggerEmailChooseComponent;
+import com.tosslab.jandi.app.ui.profile.email.dagger.EmailChooseModule;
+import com.tosslab.jandi.app.ui.profile.email.presenter.EmailChoosePresenter;
+import com.tosslab.jandi.app.ui.profile.email.presenter.EmailChoosePresenterImpl;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrChangeAccountPrimaryEmail;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrRequestVerificationEmail;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ItemLongClick;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
+import javax.inject.Inject;
 
-import java.util.List;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
+public class EmailChooseActivity extends BaseAppCompatActivity
+        implements EmailChoosePresenter.View {
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 12..
- */
-@EActivity(R.layout.activity_email_choose)
-@OptionsMenu(R.menu.email_choose)
-public class EmailChooseActivity extends BaseAppCompatActivity {
+    @Bind(R.id.lv_email_choose)
+    ListView emailListView;
 
-    @Bean
-    EmailChoosePresenter emailChoosePresenter;
+    @Inject
+    EmailChooseAdapterViewModel adapterViewModel;
 
-    @Bean
-    EmailChooseModel emailChooseModel;
+    @Inject
+    EmailChoosePresenterImpl emailChoosePresenter;
 
-    @AfterViews
-    void initView() {
-
-        setUpActionBar();
-
-        List<AccountEmail> accountEmails = emailChooseModel.getAccountEmails();
-        emailChoosePresenter.setEmails(accountEmails);
-
-        getAccountEmailFromServer();
-
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseAnEmail);
-    }
-
-    @OptionsItem(R.id.action_confirm)
-    void onOkOptionSelected() {
-        AccountEmail selectedAccountEmail = emailChoosePresenter.getSelectedEmail();
-
-        if (selectedAccountEmail == null) {
-            return;
-        }
-
-        String selectedEmail = selectedAccountEmail.getEmail();
-        String originPrimaryEmail = emailChooseModel.getPrimaryEmail();
-        if (!TextUtils.equals(originPrimaryEmail, selectedEmail)) {
-            requestChangePrimaryEmail(selectedEmail);
-        } else {
-            finish();
-        }
-    }
-
-    @Background
-    void requestChangePrimaryEmail(String selectedEmail) {
-        emailChoosePresenter.showProgressWheel();
-
-        try {
-            ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
-            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
-
-            SprinklrChangeAccountPrimaryEmail.sendLog(emailChooseModel.getPrimaryEmail());
-
-            emailChoosePresenter.finishWithResultOK();
-        } catch (RetrofitException e) {
-            int errorCode = e.getStatusCode();
-            SprinklrChangeAccountPrimaryEmail.trackFail(errorCode);
-            e.printStackTrace();
-            emailChoosePresenter.showFailToast(getString(R.string.err_network));
-        } finally {
-            emailChoosePresenter.dismissProgressWheel();
-        }
-    }
-
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionSelected() {
-        finish();
-    }
-
-
-    @Background
-    void getAccountEmailFromServer() {
-        try {
-            ResAccountInfo accountInfo = emailChooseModel.getAccountEmailsFromServer();
-            AccountRepository.getRepository().upsertUserEmail(accountInfo.getEmails());
-            List<AccountEmail> accountEmails = emailChooseModel.getAccountEmails();
-            emailChoosePresenter.refreshEmails(accountEmails);
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
-    }
+    private ProgressWheel progressWheel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_email_choose);
         setShouldReconnectSocketService(false);
+        setUpActionBar();
+        ButterKnife.bind(this);
+
+        EmailChooseAdapter emailChooseAdapter = new EmailChooseAdapter(this);
+        DaggerEmailChooseComponent.builder().emailChooseModule(
+                new EmailChooseModule(this, emailChooseAdapter))
+                .build()
+                .inject(this);
+        setListView(emailChooseAdapter);
+
+        emailChoosePresenter.getAccountEmailFromServer();
+
+        progressWheel = new ProgressWheel(this);
         EventBus.getDefault().register(this);
+        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.ChooseAnEmail);
+    }
+
+    private void setListView(EmailChooseAdapter emailChooseAdapter) {
+        emailListView.setAdapter(emailChooseAdapter);
+
+        emailListView.setOnItemClickListener((parent, view, position, id) -> {
+            emailChoosePresenter.onEmailItemSelected(position);
+        });
+
+        emailListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            emailChoosePresenter.onEmailItemLongClicked(position);
+            return false;
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.email_choose, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_confirm:
+                emailChoosePresenter.setChangePrimaryEmail();
+                break;
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -132,120 +108,97 @@ public class EmailChooseActivity extends BaseAppCompatActivity {
     }
 
     private void setUpActionBar() {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
         toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
-
-    }
-
-    @ItemClick(R.id.lv_email_choose)
-    void onEmailItemClick(AccountEmail clickedItem) {
-
-        if (!(clickedItem instanceof AccountEmail.DummyEmail)) {
-
-            AccountEmail selectedEmail = emailChoosePresenter.getSelectedEmail();
-
-            if (clickedItem.isConfirmed()) {
-
-                if (selectedEmail != null && clickedItem != selectedEmail) {
-                    selectedEmail.setSelected(!selectedEmail.isSelected());
-                    clickedItem.setSelected(!clickedItem.isSelected());
-                    emailChoosePresenter.refreshListView();
-                }
-
-            } else {
-                // non-case...
-                emailChoosePresenter.showRetryEmailDialog(selectedEmail.getEmail());
-            }
-
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.ChooseEmail);
-        } else {
-            emailChoosePresenter.showNewEmailDialog();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseAnEmail, AnalyticsValue.Action.AddNewEmail);
-        }
-
-    }
-
-    @ItemLongClick(R.id.lv_email_choose)
-    void onEmailItemLongClick(AccountEmail accountEmail) {
-        if (!(accountEmail instanceof AccountEmail.DummyEmail)) {
-            String primaryEmail = emailChooseModel.getPrimaryEmail();
-            if (!TextUtils.equals(primaryEmail, accountEmail.getEmail()) && !accountEmail.isSelected()) {
-                emailChoosePresenter.showDeleteEmail(accountEmail.getEmail());
-            }
-        }
     }
 
     public void onEvent(NewEmailEvent newEmailEvent) {
-        if (!emailChoosePresenter.hasSameEmail(newEmailEvent.getEmail())) {
-            if (!emailChooseModel.isConfirmedEmail(newEmailEvent.getEmail())) {
-                requestNewEmail(newEmailEvent.getEmail());
-            }
-        } else {
-            emailChoosePresenter.showFailToast(getString(R.string.jandi_already_linked_email));
-        }
+        emailChoosePresenter.requestNewEmail(newEmailEvent.getEmail());
     }
 
     public void onEvent(RetryNewEmailEvent retryNewEmailEvent) {
-        requestNewEmail(retryNewEmailEvent.getEmail());
+        emailChoosePresenter.requestNewEmail(retryNewEmailEvent.getEmail());
     }
 
     public void onEvent(DeleteEmailEvent deleteEmailEvent) {
-        requestDeleteEmail(deleteEmailEvent.getEmail());
-    }
-
-    @Background
-    void requestDeleteEmail(String email) {
-        emailChoosePresenter.showProgressWheel();
-
-        try {
-            ResAccountInfo resAccountInfo = emailChooseModel.requestDeleteEmail(email);
-            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
-            emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-            emailChoosePresenter.showFailToast(getString(R.string.err_network));
-        } finally {
-            emailChoosePresenter.dismissProgressWheel();
-        }
-    }
-
-    @Background
-    void requestNewEmail(String email) {
-        emailChoosePresenter.showProgressWheel();
-        try {
-            ResAccountInfo resAccountInfo = emailChooseModel.requestNewEmail(email);
-            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
-
-            SprinklrRequestVerificationEmail.sendLog(email);
-
-            emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
-            emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-
-            int errorCode = e.getResponseCode();
-            SprinklrRequestVerificationEmail.sendFailLog(errorCode);
-
-            String errorMessage = getString(R.string.err_team_creation_failed);
-            if (errorCode == 40001) {
-                errorMessage = getString(R.string.err_email_exists);
-            }
-            emailChoosePresenter.showFailToast(errorMessage);
-        } finally {
-            emailChoosePresenter.dismissProgressWheel();
-        }
+        emailChoosePresenter.requestDeleteEmail(deleteEmailEvent.getEmail());
     }
 
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    @Override
+    public void showProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+        if (progressWheel != null) {
+            progressWheel.show();
+        }
+    }
+
+    @Override
+    public void dismissProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @Override
+    public void showSuccessToast(int messageResourceId) {
+        ColoredToast.show(getString(messageResourceId));
+    }
+
+    @Override
+    public void showFailToast(int messageResourceId) {
+        ColoredToast.showError(getString(messageResourceId));
+    }
+
+    @Override
+    public void showWarning(int messageResourceId) {
+        ColoredToast.showWarning(getString(messageResourceId));
+    }
+
+    @Override
+    public void showDeleteEmail(final String email) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,
+                R.style.JandiTheme_AlertDialog_FixWidth_300);
+        builder.setTitle(R.string.jandi_action_delete)
+                .setMessage(R.string.jandi_r_u_sure_to_delete_email)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) ->
+                        EventBus.getDefault().post(new DeleteEmailEvent(email)))
+                .create()
+                .show();
+    }
+
+    @Override
+    public void showNewEmailDialog() {
+        EditTextDialogFragment editTextDialogFragment =
+                EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_NEW_EMAIL, "");
+        editTextDialogFragment.show(getFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void finishWithResultOK() {
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void refreshListView() {
+        adapterViewModel.refresh();
+    }
+
+    @Override
+    public void activityFinish() {
+        finish();
     }
 }

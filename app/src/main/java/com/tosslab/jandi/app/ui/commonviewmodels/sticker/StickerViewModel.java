@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
-import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -18,17 +17,16 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
  */
-@EBean
+
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
@@ -43,8 +41,6 @@ public class StickerViewModel {
     public static final int TYPE_TOPIC = 12;
     public static final int TYPE_FILE_DETAIL = 13;
     public static final int TYPE_POLL_DETAIL = 14;
-    @RootContext
-    Context context;
 
     // sticker view
     private LinearLayout vgStickerGroups;
@@ -62,8 +58,11 @@ public class StickerViewModel {
     private boolean isShow = false;
     private View vgStickers;
 
+    @Inject
+    public StickerViewModel() { }
+
     public void showStickerPanel(ViewGroup root) {
-        vgStickers = LayoutInflater.from(context).inflate(R.layout.layout_stickers_default, root, true);
+        vgStickers = LayoutInflater.from(root.getContext()).inflate(R.layout.layout_stickers_default, root, true);
 
         vgStickerGroups = (LinearLayout) vgStickers.findViewById(R.id.vg_sticker_default_groups);
         pagerStickerItems = (ViewPager) vgStickers.findViewById(R.id.pager_sticker_default_items);
@@ -145,7 +144,7 @@ public class StickerViewModel {
             viewPagerIndicator.setVisibility(View.VISIBLE);
         }
 
-        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers,
+        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(stickers,
                 (groupId, stickerId) -> {
                     if (onStickerClick != null) {
                         onStickerClick.onStickerClick(groupId, stickerId);

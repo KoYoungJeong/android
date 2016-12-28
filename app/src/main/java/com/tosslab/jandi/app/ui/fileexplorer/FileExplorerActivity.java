@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel;
-import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleOnItemSelectedListner;
 
@@ -50,8 +49,8 @@ public class FileExplorerActivity extends BaseAppCompatActivity {
 
                 getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-                getFragmentManager().beginTransaction()
-                        .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.file_explorer_container, FileExplorerFragment.create())
                         .commit();
 
             }
@@ -68,10 +67,10 @@ public class FileExplorerActivity extends BaseAppCompatActivity {
 
         setupActionbar();
 
-        fileExplorerModel = FileExplorerModel_.getInstance_(FileExplorerActivity.this);
+        fileExplorerModel = new FileExplorerModel();
 
-        getFragmentManager().beginTransaction()
-                .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.file_explorer_container, FileExplorerFragment.create())
                 .commit();
 
         initSpinner = true;
@@ -164,13 +163,11 @@ public class FileExplorerActivity extends BaseAppCompatActivity {
                     }
 
 
-                    FileExplorerFragment fragment = FileExplorerFragment_.builder()
-                            .currentPath(movePath)
-                            .build();
+                    FileExplorerFragment fragment = FileExplorerFragment.create(movePath);
 
                     getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-                    getFragmentManager().beginTransaction()
+                    getSupportFragmentManager().beginTransaction()
                             .add(R.id.file_explorer_container, fragment, movePath)
                             .commit();
                 }

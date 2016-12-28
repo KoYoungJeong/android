@@ -3,83 +3,96 @@ package com.tosslab.jandi.app.ui.profile.defaultimage.presenter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by tee on 16. 1. 6..
- */
+import javax.inject.Inject;
 
-@EBean
+import rx.Completable;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 public class ProfileImageSelectorPresenter {
-    @Bean
     ProfileImageSelectorModel profileImageSelectorModel;
-
     View view;
 
-    public void setView(View view) {
+    @Inject
+    public ProfileImageSelectorPresenter(ProfileImageSelectorModel profileImageSelectorModel, View view) {
+        this.profileImageSelectorModel = profileImageSelectorModel;
         this.view = view;
     }
 
-    @Background
     public void initLists() {
-        List<String> characterUrls = profileImageSelectorModel.getCharactersInfo();
-        view.showCharacterList(characterUrls);
-        List<Integer> colorRGBs = profileImageSelectorModel.getColors();
-        view.showColorList(colorRGBs);
-        view.showInitialImage();
+        Observable.fromCallable(() -> {
+            List<String> characterUrls = profileImageSelectorModel.getCharactersInfo();
+            List<Integer> colorRGBs = profileImageSelectorModel.getColors();
+
+            return Pair.create(characterUrls, colorRGBs);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(pair -> {
+                    view.showCharacterList(pair.first);
+                    view.showColorList(pair.second);
+                    view.showInitialImage();
+
+                }, Throwable::printStackTrace);
     }
 
-    @Background
     public void makeCustomProfileImageFile(Uri fileUri, String imageUrl, int color) {
         view.showProgress();
-        File profileImageFile = new File(fileUri.getPath());
-        Bitmap profileImageBitmap = null;
 
-        try {
-            profileImageBitmap = ImageLoader.newInstance().uri(Uri.parse(imageUrl)).getBitmapRect(JandiApplication.getContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Completable.fromAction(() -> {
+            File profileImageFile = new File(fileUri.getPath());
+            Bitmap profileImageBitmap = null;
 
-        if (profileImageBitmap != null) {
-            int x = profileImageBitmap.getWidth();
-            int y = profileImageBitmap.getHeight();
-            Bitmap newProfileBitmap = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(newProfileBitmap);
-            canvas.drawColor(color);
-            canvas.drawBitmap(profileImageBitmap, 0, 0, null);
-
-            FileOutputStream fileOutpuStream = null;
             try {
-                fileOutpuStream = new FileOutputStream(profileImageFile);
-                newProfileBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutpuStream);
-            } catch (IOException e) {
+                profileImageBitmap = ImageLoader.newInstance().uri(Uri.parse(imageUrl)).getBitmapRect(JandiApplication.getContext());
+            } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (fileOutpuStream != null) {
-                    try {
-                        fileOutpuStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            }
+
+            if (profileImageBitmap != null) {
+                int x = profileImageBitmap.getWidth();
+                int y = profileImageBitmap.getHeight();
+                Bitmap newProfileBitmap = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(newProfileBitmap);
+                canvas.drawColor(color);
+                canvas.drawBitmap(profileImageBitmap, 0, 0, null);
+
+                FileOutputStream fileOutpuStream = null;
+                try {
+                    fileOutpuStream = new FileOutputStream(profileImageFile);
+                    newProfileBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutpuStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (fileOutpuStream != null) {
+                        try {
+                            fileOutpuStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
-        }
 
-        view.finishProgress();
-        view.finishWithOK();
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    view.finishProgress();
+                    view.finishWithOK();
+                }, Throwable::printStackTrace);
+
+
     }
 
     public void removeFile(String filePath) {

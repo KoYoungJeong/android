@@ -14,10 +14,8 @@ import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Steve SeongUg Jung on 15. 1. 12..
- */
-public class EmailChooseAdapter extends BaseAdapter {
+public class EmailChooseAdapter extends BaseAdapter implements EmailChooseAdapterDataModel,
+        EmailChooseAdapterViewModel {
 
     private Context context;
     private List<AccountEmail> accountEmails;
@@ -72,8 +70,14 @@ public class EmailChooseAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
     public void setAccountEmails(List<AccountEmail> accountEmails) {
         this.accountEmails.clear();
         this.accountEmails.addAll(accountEmails);
+    }
+
+    @Override
+    public void refresh() {
+        notifyDataSetChanged();
     }
 }

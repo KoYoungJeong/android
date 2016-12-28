@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel_;
+import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
 import com.tosslab.jandi.app.ui.album.imagealbum.vo.ImagePicture;
 
 import org.junit.Test;
@@ -24,8 +24,7 @@ public class ProfileApiTest {
     }
 
     protected List<ImagePicture> getImageList() {
-        return ImageAlbumModel_.getInstance_(JandiApplication.getContext()).getAllPhotoList(
-                JandiApplication.getContext(), 0);
+        return new ImageAlbumModel().getAllPhotoList(JandiApplication.getContext(), 0);
     }
 
     @Test

@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.network.socket.domain.SocketUpdateRoom;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.services.socket.dagger.DaggerSocketServiceComponent;
-import com.tosslab.jandi.app.services.socket.dagger.SocketServiceModule;
 import com.tosslab.jandi.app.services.socket.model.SocketEmitModel;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceCloser;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
@@ -36,9 +35,6 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by Steve SeongUg Jung on 15. 4. 3..
- */
 public class JandiSocketService extends Service {
 
     public static final String TAG = "SocketService";
@@ -114,7 +110,6 @@ public class JandiSocketService extends Service {
     public void onCreate() {
         super.onCreate();
         DaggerSocketServiceComponent.builder()
-                .socketServiceModule(new SocketServiceModule(this))
                 .build()
                 .inject(this);
 

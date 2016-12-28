@@ -14,9 +14,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
-import com.tosslab.jandi.app.ui.settings.account.component.DaggerSettingAccountComponent;
-import com.tosslab.jandi.app.ui.settings.account.module.SettingAccountModule;
+import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity;
+import com.tosslab.jandi.app.ui.settings.account.dagger.DaggerSettingAccountComponent;
+import com.tosslab.jandi.app.ui.settings.account.dagger.SettingAccountModule;
 import com.tosslab.jandi.app.ui.settings.account.presenter.SettingAccountPresenter;
 import com.tosslab.jandi.app.ui.settings.account.view.SettingAccountView;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -100,8 +100,8 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
 
     @OnClick(R.id.vg_settin_account_email)
     void onClickAccountEmail() {
-        EmailChooseActivity_.intent(this)
-                .startForResult(REQUEST_EMAIL_CHOOSE);
+        Intent intent = new Intent(this, EmailChooseActivity.class);
+        startActivityForResult(intent, REQUEST_EMAIL_CHOOSE);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountSetting, AnalyticsValue.Action.ChooseAnEmail);
     }
 

@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.presenter.DeptJobPresenter;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -63,7 +63,7 @@ public class DeptJobFragmentTest {
         int lastLinkId = -1;
         rule.runOnUiThread(() -> fragment.moveDirectMessage(teamId, userId, roomId, lastLinkId));
 
-        intending(hasComponent(MessageListV2Activity_.class.getName()));
+        intending(hasComponent(MessageListV2Activity.class.getName()));
         intending(hasExtra("teamId", teamId));
         intending(hasExtra("entityId", userId));
         intending(hasExtra("roomId", roomId));

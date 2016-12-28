@@ -7,9 +7,6 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,15 +16,17 @@ import java.io.OutputStream;
  * Created by tee on 16. 2. 3..
  */
 
-@EBean
 public class ImageCropPickerViewModel {
 
     private final int IMAGE_MAX_SIZE = 1024;
 
     private final Bitmap.CompressFormat outputFormat = Bitmap.CompressFormat.JPEG;
 
-    @RootContext
     Context context;
+
+    public ImageCropPickerViewModel(Context context) {
+        this.context = context;
+    }
 
     public Bitmap getBitmap(Uri uri) {
         InputStream in = null;

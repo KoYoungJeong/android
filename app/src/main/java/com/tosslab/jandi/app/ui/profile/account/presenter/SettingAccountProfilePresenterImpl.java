@@ -20,14 +20,14 @@ import rx.schedulers.Schedulers;
 
 public class SettingAccountProfilePresenterImpl implements SettingAccountProfilePresenter {
 
-    @Inject
     SettingAccountProfileModel model;
 
     private SettingAccountProfilePresenter.View view;
 
     @Inject
-    public SettingAccountProfilePresenterImpl(View view) {
+    public SettingAccountProfilePresenterImpl(View view, SettingAccountProfileModel model) {
         this.view = view;
+        this.model = model;
     }
 
     @Override

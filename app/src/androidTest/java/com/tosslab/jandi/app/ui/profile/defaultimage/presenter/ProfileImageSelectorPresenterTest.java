@@ -4,7 +4,9 @@ import android.net.Uri;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.network.client.profile.ProfileApi;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
 import org.junit.AfterClass;
@@ -45,10 +47,8 @@ public class ProfileImageSelectorPresenterTest {
 
     @Before
     public void setUp() throws Exception {
-        profileImageSelectorPresenter = ProfileImageSelectorPresenter_
-                .getInstance_(JandiApplication.getContext());
         mockView = mock(ProfileImageSelectorPresenter.View.class);
-        profileImageSelectorPresenter.setView(mockView);
+        profileImageSelectorPresenter = new ProfileImageSelectorPresenter(new ProfileImageSelectorModel(() -> new ProfileApi(RetrofitBuilder.getInstance())), mockView);
 
     }
 

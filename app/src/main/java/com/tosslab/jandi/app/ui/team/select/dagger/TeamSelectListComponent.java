@@ -1,17 +1,11 @@
 package com.tosslab.jandi.app.ui.team.select.dagger;
 
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectListActivity;
-
-import javax.inject.Singleton;
 
 import dagger.Component;
 
-/**
- * Created by tee on 2016. 9. 27..
- */
-
-@Component(modules = {TeamSelectListModule.class})
-@Singleton
+@Component(modules = {ApiClientModule.class, TeamSelectListModule.class})
 public interface TeamSelectListComponent {
     void inject(TeamSelectListActivity activity);
 }

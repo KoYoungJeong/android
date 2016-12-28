@@ -26,8 +26,6 @@ import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapterDataView
 import com.tosslab.jandi.app.ui.entities.chats.dagger.ChatChooseModule;
 import com.tosslab.jandi.app.ui.entities.chats.dagger.DaggerChatChooseComponent;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
-import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -119,13 +117,14 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
     @Override
     public void moveChatMessage(long teamId, long entityId) {
         getActivity().finish();
-        MessageListV2Activity_.intent(getActivity())
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .roomId(-1)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override
@@ -135,8 +134,9 @@ public class ChatsChooseFragment extends Fragment implements ChatChoosePresenter
 
     @Override
     public void MoveDisabledEntityList() {
-        DisabledEntityChooseActivity_.intent(ChatsChooseFragment.this)
-                .startForResult(REQ_DISABLED_MEMBERS);
+        startActivityForResult(Henson.with(getActivity())
+                .gotoDisabledEntityChooseActivity()
+                .build(), REQ_DISABLED_MEMBERS);
         getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
     }
 

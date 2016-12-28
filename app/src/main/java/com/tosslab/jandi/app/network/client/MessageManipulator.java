@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageAp
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.sendmessage.SendMessageApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSendMessages;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
@@ -18,9 +17,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.EBean;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,7 +24,6 @@ import javax.inject.Inject;
 import dagger.Lazy;
 
 
-@EBean
 public class MessageManipulator {
     public static final int NUMBER_OF_MESSAGES = 50;
     public static final int MAX_OF_MESSAGES = 50;
@@ -36,34 +31,40 @@ public class MessageManipulator {
 
     int entityType;
     long entityId;
-
-    @Inject
     Lazy<GroupMessageApi> groupMessageApi;
-    @Inject
     Lazy<ChannelMessageApi> channelMessageApi;
-    @Inject
     Lazy<DirectMessageApi> directMessageApi;
-    @Inject
     Lazy<SendMessageApi> sendMessageApi;
-    @Inject
     Lazy<CommentApi> commentApi;
-
-    @Inject
     Lazy<StickerApi> stickerApi;
-    @Inject
     Lazy<MessageApi> messageApi;
     private long selectedTeamId;
     private long roomId;
 
-    @AfterInject
+    @Inject
+    public MessageManipulator(Lazy<GroupMessageApi> groupMessageApi,
+                              Lazy<ChannelMessageApi> channelMessageApi,
+                              Lazy<DirectMessageApi> directMessageApi,
+                              Lazy<SendMessageApi> sendMessageApi,
+                              Lazy<CommentApi> commentApi,
+                              Lazy<StickerApi> stickerApi,
+                              Lazy<MessageApi> messageApi) {
+        this.groupMessageApi = groupMessageApi;
+        this.channelMessageApi = channelMessageApi;
+        this.directMessageApi = directMessageApi;
+        this.sendMessageApi = sendMessageApi;
+        this.commentApi = commentApi;
+        this.stickerApi = stickerApi;
+        this.messageApi = messageApi;
+        initSelectedTeam();
+    }
+
     void initSelectedTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         if (selectedTeamInfo == null) {
             return;
         }
         selectedTeamId = selectedTeamInfo.getTeamId();
-        DaggerApiClientComponent.builder().build()
-                .inject(this);
     }
 
     public void initEntity(int entityType, long entityId) {

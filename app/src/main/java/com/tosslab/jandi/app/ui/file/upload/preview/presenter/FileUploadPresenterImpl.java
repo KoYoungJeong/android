@@ -12,25 +12,28 @@ import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-@EBean
 public class FileUploadPresenterImpl implements FileUploadPresenter {
 
-    @Bean
     FileUploadModel fileUploadModel;
     private View view;
 
     private List<FileUploadVO> fileUploadVOs;
+
+    @Inject
+    public FileUploadPresenterImpl(View view, FileUploadModel fileUploadModel) {
+        this.fileUploadModel = fileUploadModel;
+        this.view = view;
+    }
 
     @Override
     public void setView(View view) {

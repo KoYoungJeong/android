@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.search.presenter;
 
 import android.support.v4.app.Fragment;
-import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -13,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementContainer;
@@ -32,24 +30,21 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDele
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-@EBean
 public class MessageSearchListPresenterImpl implements MessageSearchListPresenter {
-    @Bean
     MessageListModel messageListModel;
-    @Bean
     AnnouncementModel announcementModel;
-
     private View view;
+
     private MessageState messageState;
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
@@ -61,8 +56,16 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     private long lastMarker;
     private int entityType;
 
+    @Inject
+    public MessageSearchListPresenterImpl(MessageListModel messageListModel,
+                                          AnnouncementModel announcementModel,
+                                          View view) {
+        this.messageListModel = messageListModel;
+        this.announcementModel = announcementModel;
+        this.view = view;
+        initObject();
+    }
 
-    @AfterInject
     void initObject() {
         messageState = new MessageState();
 
@@ -98,15 +101,8 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         this.newsMessageLoader = newsMessageLoader;
         this.oldMessageLoader = oldMessageLoader;
 
-    }
-
-    @Override
-    public void setView(View view) {
-
-        this.view = view;
-        ((MarkerNewMessageLoader) newsMessageLoader).setView(view);
-        ((MarkerOldMessageLoader) oldMessageLoader).setView(view);
-
+        newsMessageLoader.setView(view);
+        oldMessageLoader.setView(view);
     }
 
     private void loadOldMessage(MessageContainer messageContainer) {
@@ -158,48 +154,50 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     @Override
-    public boolean onOptionItemSelected(Fragment fragment, MenuItem item, long teamId, long entityId) {
-        MenuCommand menuCommand = messageListModel.getMenuCommand(fragment,
-                teamId, entityId, item);
-
-        if (menuCommand != null) {
-            menuCommand.execute(item);
-            return true;
-        }
-        return false;
-    }
-
-    @Background
-    @Override
     public void onInitRoomInfo() {
-        if (roomId <= 0) {
-            boolean user = TeamInfoLoader.getInstance().isUser(entityId);
 
-            if (!user) {
-                roomId = entityId;
-            } else if (NetworkCheckUtil.isConnected()) {
+        Observable.just(roomId)
+                .observeOn(Schedulers.io())
+                .map(roomid -> {
 
-                roomId = messageListModel.getRoomId();
+                    if (roomId <= 0) {
+                        boolean user = TeamInfoLoader.getInstance().isUser(entityId);
 
+                        if (!user) {
+                            roomId = entityId;
+                        } else if (NetworkCheckUtil.isConnected()) {
 
-            }
-        }
-
-        if (roomId > 0) {
-            view.setRoomId(roomId);
-        }
-
-        messageListModel.setRoomId(roomId);
+                            roomId = messageListModel.getRoomId();
 
 
-        sendMessagePublisherEvent(new CheckAnnouncementContainer());
-        sendMessagePublisherEvent(new OldMessageContainer(messageState));
+                        }
+                    }
 
+                    return roomid;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(roomid -> {
+                    this.roomId = roomid;
 
-        if (view.isForeground()) {
-            sendMessagePublisherEvent(new NewMessageContainer(messageState));
-        }
-        view.setRoomInit(true);
+                    if (roomid > 0) {
+                        view.setRoomId(roomid);
+                    }
+                    messageListModel.setRoomId(roomid);
+                })
+                .observeOn(Schedulers.io())
+                .doOnNext(roomid -> {
+                    sendMessagePublisherEvent(new CheckAnnouncementContainer());
+                    sendMessagePublisherEvent(new OldMessageContainer(messageState));
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(roomid -> {
+                    if (view.isForeground()) {
+                        sendMessagePublisherEvent(new NewMessageContainer(messageState));
+                    }
+                    view.setRoomInit(true);
+
+                });
+
     }
 
     @Override
@@ -232,73 +230,65 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Override
     public void onAccouncementOpen() {
-        announcementModel.setActionFromUser(true);
-        announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+        Completable.fromAction(() -> {
+            announcementModel.setActionFromUser(true);
+            announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+        }).subscribeOn(Schedulers.newThread()).subscribe();
+
     }
 
     @Override
     public void onAnnouncementClose() {
-        announcementModel.setActionFromUser(true);
-        announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+        Completable.fromAction(() -> {
+            announcementModel.setActionFromUser(true);
+            announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+        }).subscribeOn(Schedulers.newThread()).subscribe();
     }
 
-    @Background
     @Override
     public void onCreatedAnnouncement(boolean isRoomInit) {
         if (isRoomInit) {
-            Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
-            view.setAnnouncement(announcement);
+            Observable.just(TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(announcement -> view.setAnnouncement(announcement));
         }
     }
 
-    @Background
     @Override
     public void onUpdateAnnouncement(boolean isForeground, boolean isRoomInit, boolean opened) {
-        if (!isForeground) {
+        Completable.fromAction(() -> {
+
+            if (!isForeground) {
+                announcementModel.setActionFromUser(false);
+                return;
+            }
+            if (!announcementModel.isActionFromUser()) {
+                view.openAnnouncement(opened);
+            }
             announcementModel.setActionFromUser(false);
-            return;
-        }
-        if (!announcementModel.isActionFromUser()) {
-            view.openAnnouncement(opened);
-        }
-        announcementModel.setActionFromUser(false);
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
-    @Background
-    @Override
-    public void checkAnnouncementExistsAndCreate(long messageId) {
-        Announcement announcement = announcementModel.getAnnouncement(teamId, roomId);
-
-        if (announcement == null) {
-            createAnnouncement(messageId);
-            return;
-        }
-
-        view.showCreateAlertDialog((dialog, which) -> createAnnouncement(messageId));
-    }
-
-    @Background
-    void createAnnouncement(long messageId) {
-
-        view.showProgressWheel();
-        announcementModel.createAnnouncement(teamId, roomId, messageId);
-
-        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
-        if (!isSocketConnected) {
-            getAnnouncement();
-        }
-    }
-
-    @Background
     @Override
     public void onDeleteAnnouncement() {
-        view.showProgressWheel();
-        announcementModel.deleteAnnouncement(teamId, roomId);
+        Observable.just(true)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(() -> {
+                    view.showProgressWheel();
+                })
+                .observeOn(Schedulers.io())
+                .doOnNext(it -> {
+                    announcementModel.deleteAnnouncement(teamId, roomId);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(it -> {
+                    boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+                    if (!isSocketConnected) {
+                        getAnnouncement();
+                    }
+                });
 
-        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
-        if (!isSocketConnected) {
-            getAnnouncement();
-        }
     }
 
     @Override
@@ -361,11 +351,12 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         }
     }
 
-    @Background
     @Override
     public void deleteMessage(int messageType, long messageId) {
-        view.showProgressWheel();
-        try {
+        Completable.fromAction(() -> view.showProgressWheel())
+                .subscribeOn(AndroidSchedulers.mainThread()).subscribe();
+
+        Completable.fromCallable(() -> {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
                 LogUtil.d("deleteMessageInBackground : succeed");
@@ -378,46 +369,54 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
                 LogUtil.d("deleteStickerCommentInBackground : succeed");
             }
             MessageRepository.getRepository().deleteMessageOfMessageId(messageId);
-            view.deleteLinkByMessageId(messageId);
-
             SprinklrMessageDelete.sendLog(messageId);
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(() -> view.dismissProgressWheel())
+                .subscribe(() -> {
+                    view.deleteLinkByMessageId(messageId);
 
-        } catch (RetrofitException e) {
-            LogUtil.e("deleteMessageInBackground : FAILED", e);
-            int errorCode = e.getStatusCode();
-            SprinklrMessageDelete.sendFailLog(errorCode);
-        } catch (Exception e) {
-            LogUtil.e("deleteMessageInBackground : FAILED", e);
-            SprinklrMessageDelete.sendFailLog(-1);
-        }
-        view.dismissProgressWheel();
+                }, t -> {
+                    LogUtil.e("deleteMessageInBackground : FAILED", t);
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        int errorCode = e.getStatusCode();
+                        SprinklrMessageDelete.sendFailLog(errorCode);
+                    } else {
+                        SprinklrMessageDelete.sendFailLog(-1);
+                    }
+                });
+
     }
 
-    @Background
     @Override
     public void registStarredMessage(long teamId, long messageId) {
-        try {
+        Completable.fromCallable(() -> {
             messageListModel.registStarredMessage(teamId, messageId);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
-            view.modifyStarredInfo(messageId, true);
-            EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_message_starred));
+                    view.modifyStarredInfo(messageId, true);
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
+                }, Throwable::printStackTrace);
 
     }
 
-    @Background
     @Override
     public void unregistStarredMessage(long teamId, long messageId) {
-        try {
+        Completable.fromCallable(() -> {
             messageListModel.unregistStarredMessage(teamId, messageId);
-            view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
-            view.modifyStarredInfo(messageId, false);
-            EventBus.getDefault().post(new StarredInfoChangeEvent());
-        } catch (RetrofitException e) {
-            e.printStackTrace();
-        }
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    view.showSuccessToast(JandiApplication.getContext().getString(R.string.jandi_unpinned_message));
+                    view.modifyStarredInfo(messageId, false);
+                    EventBus.getDefault().post(new StarredInfoChangeEvent());
+                }, Throwable::printStackTrace);
     }
 
     @Override

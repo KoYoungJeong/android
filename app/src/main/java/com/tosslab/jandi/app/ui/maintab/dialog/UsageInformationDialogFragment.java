@@ -23,15 +23,16 @@ import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.EFragment;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
 
-@EFragment
 public class UsageInformationDialogFragment extends DialogFragment {
+
+    public static UsageInformationDialogFragment create() {
+        return new UsageInformationDialogFragment();
+    }
 
     @NonNull
     @Override

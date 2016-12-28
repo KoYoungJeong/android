@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -14,9 +15,9 @@ import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.services.download.DownloadService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.carousel.dagger.CarouselViewerModule;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
-import com.tosslab.jandi.app.ui.carousel.module.CarouselViewerModule;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -177,7 +178,7 @@ public class CarouselViewerPresenterImplTest {
         Intents.release();
     }
 
-    @Component(modules = CarouselViewerModule.class)
+    @Component(modules = {ApiClientModule.class, CarouselViewerModule.class})
     @Singleton
     public interface CarouselViewerPresenterImplTestComponent {
         void inject(CarouselViewerPresenterImplTest test);

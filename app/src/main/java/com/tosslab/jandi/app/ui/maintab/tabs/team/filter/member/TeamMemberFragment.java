@@ -28,7 +28,6 @@ import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
-import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberHeaderAdapter;
@@ -40,7 +39,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnSearchModeChan
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.OnToggledUser;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.ToggledUserView;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -119,7 +117,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         super.onActivityCreated(savedInstanceState);
 
         Dart.inject(this, getArguments());
-        
+
         TeamMemberAdapter adapter = new TeamMemberAdapter();
         adapter.setSelectedMode(selectMode && roomId > 0);
         teamMemberDataView = adapter;
@@ -187,8 +185,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void moveDisabledMembers() {
-        DisabledEntityChooseActivity_.intent(this)
-                .startForResult(REQ_DISABLED_MEMBER);
+
+        startActivityForResult(Henson.with(getActivity())
+                .gotoDisabledEntityChooseActivity()
+                .build(), REQ_DISABLED_MEMBER);
     }
 
     @Override
@@ -259,14 +259,16 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void moveDirectMessage(long teamId, long userId, long roomId, long lastLinkId) {
-        MessageListV2Activity_.intent(getActivity())
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(userId)
                 .roomId(roomId)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .lastReadLinkId(lastLinkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
         AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseMember);
         if (userId == TeamInfoLoader.getInstance().getJandiBot().getId()) {
             AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.ChooseJANDI);

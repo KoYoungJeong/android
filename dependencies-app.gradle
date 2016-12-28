@@ -31,8 +31,6 @@ rootProject.allprojects { project ->
                 compile rootProject.ext.dependecies.libraries.imageZoomCrop
 
                 retrolambdaConfig rootProject.ext.dependecies.libraries.retrolambda
-                apt rootProject.ext.dependecies.libraries.androidAnnotationApt
-                compile rootProject.ext.dependecies.libraries.androidAnnotation
                 compile rootProject.ext.dependecies.libraries.butterknife
 
                 apt rootProject.ext.dependecies.libraries.dagger2Apt

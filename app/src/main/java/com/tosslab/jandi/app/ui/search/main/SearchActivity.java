@@ -25,13 +25,13 @@ import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersDecoration;
 import com.timehop.stickyheadersrecyclerview.StickyRecyclerHeadersTouchListener;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.view.TopicInfoDialog;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.ui.search.file.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.filter.member.MemberFilterActivity;
@@ -397,11 +397,12 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @Override
     public void moveToMessageActivity(long entityId, int entityType) {
-        MessageListV2Activity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(Henson.with(this)
+                .gotoMessageListV2Activity()
                 .entityId(entityId)
                 .entityType(entityType)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
     @Override
@@ -411,13 +412,14 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @Override
     public void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId) {
-        MessageListV2Activity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(Henson.with(this)
+                .gotoMessageListV2Activity()
                 .entityId(entityId)
                 .entityType(entityType)
                 .isFromSearch(true)
                 .lastReadLinkId(linkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override
@@ -577,12 +579,13 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     private void moveDirectMessage(long memberId) {
-        MessageListV2Activity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoMessageListV2Activity()
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(memberId)
                 .roomId(-1)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override

@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.ui.profile.insert.dagger;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl_;
+import com.tosslab.jandi.app.files.upload.ProfileFileUploadControllerImpl;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileFirstPagePresenter;
 import com.tosslab.jandi.app.ui.profile.insert.presenter.InsertProfileFirstPagePresenterImpl;
-import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -19,14 +17,10 @@ public class InsertProfileFirstPageModule {
         this.view = view;
     }
 
-    @Provides
-    ModifyProfileModel provideModifyProfileModel() {
-        return new ModifyProfileModel();
-    }
 
     @Provides
     FileUploadController provideProfileFileUploadController() {
-        return ProfileFileUploadControllerImpl_.getInstance_(JandiApplication.getContext());
+        return new ProfileFileUploadControllerImpl();
     }
 
     @Provides

@@ -24,24 +24,21 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.passcode.OnUnLockSuccessListener;
+import com.tosslab.jandi.app.ui.passcode.fingerprint.dagger.DaggerFingerprintAuthComponent;
+import com.tosslab.jandi.app.ui.passcode.fingerprint.dagger.FingerprintAuthModule;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.presneter.FingerprintAuthPresenter;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.view.FingerprintAuthView;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EFragment;
+import javax.inject.Inject;
 
-/**
- * Created by tonyjs on 16. 3. 24..
- */
 @TargetApi(Build.VERSION_CODES.M)
-@EFragment
 public class FingerprintAuthDialogFragment extends DialogFragment implements FingerprintAuthView {
 
     public static final int REQUEST_USE_FINGERPRINT = 325;
 
-    @Bean
+    @Inject
     FingerprintAuthPresenter presenter;
 
     View rootView;
@@ -60,6 +57,10 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         fingerprintManager = (FingerprintManager) JandiApplication.getContext().getSystemService(Context.FINGERPRINT_SERVICE);
+        DaggerFingerprintAuthComponent.builder()
+                .fingerprintAuthModule(new FingerprintAuthModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override
@@ -79,6 +80,7 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         rootView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_fingerprint, null);
+
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.jandi_verify_fingerprint)
                 .setView(rootView)
@@ -89,7 +91,6 @@ public class FingerprintAuthDialogFragment extends DialogFragment implements Fin
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        presenter.setView(this);
     }
 
     @Override

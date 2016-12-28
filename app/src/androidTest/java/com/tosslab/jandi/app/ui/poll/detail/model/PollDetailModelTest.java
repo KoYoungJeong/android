@@ -1,13 +1,10 @@
 package com.tosslab.jandi.app.ui.poll.detail.model;
 
-import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
-import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
@@ -29,18 +26,23 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 16. 6. 14..
  */
 public class PollDetailModelTest {
 
-    private PollDetailModel model;
+    @Inject
+    PollDetailModel model;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -54,9 +56,12 @@ public class PollDetailModelTest {
 
     @Before
     public void setup() throws Exception {
+        DaggerPollDetailModelTest_Component.builder().build().inject(this);
+    }
 
-        model = new PollDetailModel(() -> new PollApi(RetrofitBuilder.getInstance()),
-                () -> new MessageApi(RetrofitBuilder.getInstance()));
+    @dagger.Component(modules = ApiClientModule.class)
+    public interface Component {
+        void inject(PollDetailModelTest test);
     }
 
     @Test

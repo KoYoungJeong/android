@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.ui.settings.main.dagger;
 
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenter;
 import com.tosslab.jandi.app.ui.settings.main.presenter.SettingsPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApiClientModule.class)
+@Module
 public class SettingsModule {
 
     private SettingsPresenter.View view;

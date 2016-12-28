@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.network.dagger;
 
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.interfaces.actions.OpenAction;
@@ -12,19 +9,13 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.model.EntityMenuDialog
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
 
 import dagger.Component;
 
 @Component(modules = ApiClientModule.class)
 public interface ApiClientComponent {
-    void inject(MessageManipulator injector);
-
-    void inject(EntityClientManager injector);
 
     void inject(OpenAction openAction);
-
-    void inject(CarouselViewerModel carouselViewerModel);
 
     void inject(FileListModel fileListModel);
 
@@ -35,8 +26,6 @@ public interface ApiClientComponent {
     void inject(MessageListModel messageListModel);
 
     void inject(FileDetailModel fileDetailModel);
-
-    void inject(ProfileImageSelectorModel profileImageSelectorModel);
 
     void inject(MembersModel membersModel);
 

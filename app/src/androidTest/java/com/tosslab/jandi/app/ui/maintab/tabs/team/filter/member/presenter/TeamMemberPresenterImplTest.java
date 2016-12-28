@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter;
 
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -63,7 +64,7 @@ public class TeamMemberPresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        
+
         try {
             MockitoAnnotations.initMocks(this);
         } catch (Exception e) {
@@ -268,7 +269,7 @@ public class TeamMemberPresenterImplTest {
                 .first();
     }
 
-    @Component(modules = TeamMemberModule.class)
+    @Component(modules = {ApiClientModule.class, TeamMemberModule.class})
     interface TestComponent {
         void inject(TeamMemberPresenterImplTest test);
     }

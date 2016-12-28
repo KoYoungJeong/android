@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.tosslab.jandi.app.R;
@@ -12,14 +14,9 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.togoto.imagezoomcrop.cropoverlay.CropOverlayView;
 import io.togoto.imagezoomcrop.photoview.PhotoView;
 
@@ -27,38 +24,41 @@ import io.togoto.imagezoomcrop.photoview.PhotoView;
  * Created by tee on 16. 2. 2..
  */
 
-@EActivity(R.layout.activity_image_crop)
+
 public class ImageCropPickerActivity extends BaseAppCompatActivity {
 
-    @Bean
-    ImageCropPickerViewModel imageCropPickerViewModel;
-
-    @ViewById(R.id.iv_photo)
+    @Bind(R.id.iv_photo)
     PhotoView ivPhoto;
-
-    @ViewById(R.id.crop_overlay)
+    @Bind(R.id.crop_overlay)
     CropOverlayView cropOverlayView;
 
-    @Extra("input")
-    Uri originUri;
+    private ImageCropPickerViewModel imageCropPickerViewModel;
+    private Uri originUri;
+    private Uri saveUri;
 
-    @Extra("output")
-    Uri saveUri;
-
-    @AfterViews
-    void initViews() {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_image_crop);
+        ButterKnife.bind(this);
+        getExtras();
+        imageCropPickerViewModel = new ImageCropPickerViewModel(this);
         ivPhoto.setImageBoundsListener(() -> cropOverlayView.getImageBounds());
         initImage();
     }
 
-    @Click(R.id.btn_cancel)
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    private void getExtras() {
+        originUri = getIntent().getParcelableExtra("input");
+        saveUri = getIntent().getParcelableExtra("output");
+    }
+
+
+    @OnClick(R.id.btn_cancel)
     void onClickCancelButton() {
         finish();
     }
 
-    @Click(R.id.btn_ok)
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @OnClick(R.id.btn_ok)
     void onClickOkButton() {
         saveUploadCroppedImage();
     }
@@ -75,7 +75,6 @@ public class ImageCropPickerActivity extends BaseAppCompatActivity {
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showUnexpectedErrorToast() {
         ColoredToast.show(R.string.jandi_err_unexpected);
     }

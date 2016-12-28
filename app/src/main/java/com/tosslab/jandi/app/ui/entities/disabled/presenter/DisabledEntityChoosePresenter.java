@@ -5,7 +5,6 @@ import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import java.util.List;
 
 public interface DisabledEntityChoosePresenter {
-    void setView(View view);
 
     void initDisabledMembers();
 
