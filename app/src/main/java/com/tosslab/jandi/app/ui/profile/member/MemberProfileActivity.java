@@ -473,7 +473,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             HumanRepository.getInstance().updateStarred(memberId, star);
             TeamInfoLoader.getInstance().refresh();
             return true;
-        }).subscribeOn(Schedulers.io()).subscribe(() -> {}, Throwable::printStackTrace);
+        }).subscribeOn(Schedulers.io()).subscribe(() -> {
+        }, Throwable::printStackTrace);
 
     }
 
@@ -519,6 +520,18 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             }));
         } else {
             if (!isJandiBot(member)) {
+                if (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin
+                        || TeamInfoLoader.getInstance().getMyLevel() == Level.Owner) {
+                    vgProfileTeamButtons.addView(
+                            getButton(R.drawable.icon_profile_edit,
+                                    getString(R.string.jandi_member_profile_edit), (v) -> {
+//                                        startModifyProfileActivity();
+//                                        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.EditProfile);
+                                    }
+                            )
+                    );
+                }
+
                 User user = (User) member;
                 String phoneNumber = user.getPhoneNumber();
                 if (!TextUtils.isEmpty(phoneNumber)) {
