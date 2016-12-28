@@ -7,9 +7,9 @@ import android.view.View;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity_;
+import com.tosslab.jandi.app.ui.entities.disabled.view.DisabledEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.presenter.TeamMemberPresenter;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +57,7 @@ public class TeamMemberFragmentTest {
     @Test
     public void moveDisabledMembers() throws Throwable {
         rule.runOnUiThread(() -> fragment.moveDisabledMembers());
-        intending(hasComponent(DisabledEntityChooseActivity_.class.getName()));
+        intending(hasComponent(DisabledEntityChooseActivity.class.getName()));
     }
 
 
@@ -70,7 +70,7 @@ public class TeamMemberFragmentTest {
 
         rule.runOnUiThread(() -> fragment.moveDirectMessage(teamId, userId, chatId, lastLinkId));
 
-        intending(hasComponent(MessageListV2Activity_.class.getName()));
+        intending(hasComponent(MessageListV2Activity.class.getName()));
         intending(hasExtra("teamId", teamId));
         intending(hasExtra("entityType", JandiConstants.TYPE_DIRECT_MESSAGE));
         intending(hasExtra("entityId", userId));

@@ -14,8 +14,16 @@
     <View
         android:id="@+id/v_navigation_profile_large_overlay"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/rgb_000000_20" />
+        android:layout_alignBottom="@+id/iv_navigation_profile_large"
+        android:layout_alignLeft="@+id/iv_navigation_profile_large"
+        android:layout_alignRight="@+id/iv_navigation_profile_large"
+        android:layout_alignTop="@+id/iv_navigation_profile_large"
+        android:background="@color/jandi_transparent_black_40p" />
 
     <ImageView
         android:id="@+id/iv_navigation_profile"
@@ -45,6 +53,7 @@
         <com.tosslab.jandi.app.views.FixedLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView

@@ -47,51 +47,58 @@ public class ItemViewBinder {
         View view = getItemView();
         ButterKnife.bind(this, view);
 
+        int bgColor = vgContent.getResources().getColor(R.color.white);
+
         if (item.getStatus() == InviteEmailVO.Status.AVAILABLE) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_blue));
             tvStatusMessage.setTextColor(0xff00ace9);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_email_valid));
+                    .getString(R.string.invite_email_valid));
         } else if (item.getStatus() == InviteEmailVO.Status.JOINED) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_red));
             tvStatusMessage.setTextColor(0xfff15544);
+            bgColor = vgContent.getResources().getColor(R.color.rgb_ffedeb);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_email_alreadyinteam));
+                    .getString(R.string.invite_email_alreadyinteam));
         } else if (item.getStatus() == InviteEmailVO.Status.DUMMY) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_grey));
             tvStatusMessage.setTextColor(0xff999999);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_email_alreadyinvited));
+                    .getString(R.string.invite_email_alreadyinvited));
         } else if (item.getStatus() == InviteEmailVO.Status.BLOCKED) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_red));
             tvStatusMessage.setTextColor(0xfff15544);
+            bgColor = vgContent.getResources().getColor(R.color.rgb_ffedeb);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_email_blocked));
+                    .getString(R.string.invite_email_blocked));
         } else if (item.getStatus() == InviteEmailVO.Status.ACCOUNT_JOIN) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_red));
             tvStatusMessage.setTextColor(0xfff15544);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_account_alreadyinteam));
+                    .getString(R.string.invite_account_alreadyinteam));
+            bgColor = vgContent.getResources().getColor(R.color.rgb_ffedeb);
         } else if (item.getStatus() == InviteEmailVO.Status.ACCOUNT_DUMMY) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_red));
             tvStatusMessage.setTextColor(0xfff15544);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_account_alreadyinvited));
+                    .getString(R.string.invite_account_alreadyinvited));
         } else if (item.getStatus() == InviteEmailVO.Status.ACCOUNT_BLOCKED) {
             vStatusDot.setImageDrawable(JandiApplication.getContext()
                     .getResources().getDrawable(R.drawable.email_validation_red));
             tvStatusMessage.setTextColor(0xfff15544);
+            bgColor = vgContent.getResources().getColor(R.color.rgb_ffedeb);
             tvStatusMessage.setText(JandiApplication.getContext()
-                    .getText(R.string.invite_account_blocked));
+                    .getString(R.string.invite_account_blocked));
         }
 
         tvEmail.setText(item.getEmail());
+        vgContent.setBackgroundColor(bgColor);
 
         vgInviteEmailCancel.setOnClickListener(v -> {
             inviteCancelListener.cancel(view);

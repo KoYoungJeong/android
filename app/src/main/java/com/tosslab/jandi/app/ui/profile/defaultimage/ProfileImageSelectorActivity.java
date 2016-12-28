@@ -1,16 +1,22 @@
 package com.tosslab.jandi.app.ui.profile.defaultimage;
 
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.CharacterSelectorAdapter;
 import com.tosslab.jandi.app.ui.profile.defaultimage.adapter.ColorSelectorAdapter;
+import com.tosslab.jandi.app.ui.profile.defaultimage.dagger.DaggerProfileImageSelectorComponent;
+import com.tosslab.jandi.app.ui.profile.defaultimage.dagger.ProfileImageSelectorModule;
 import com.tosslab.jandi.app.ui.profile.defaultimage.presenter.ProfileImageSelectorPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -19,21 +25,14 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.utils.progresswheel.ProgressWheelUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
-/**
- * Created by tee on 16. 1. 6..
- */
+import javax.inject.Inject;
 
-@EActivity(R.layout.activity_profile_image_selector)
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class ProfileImageSelectorActivity extends BaseAppCompatActivity implements ProfileImageSelectorPresenter.View, OnRecyclerItemClickListener {
 
     public static final int CHARACTER_SELECTOR_MODE = 0x00;
@@ -41,22 +40,22 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
 
     public int mode = CHARACTER_SELECTOR_MODE;
 
-    @ViewById(R.id.vg_option_character)
+    @Bind(R.id.vg_option_character)
     LinearLayout vgOptionCharacter;
 
-    @ViewById(R.id.vg_option_color)
+    @Bind(R.id.vg_option_color)
     LinearLayout vgOptionColor;
 
-    @ViewById(R.id.lv_profile_item_selector)
+    @Bind(R.id.lv_profile_item_selector)
     RecyclerView lvProfileItemSelector;
 
-    @ViewById(R.id.iv_main_image)
+    @Bind(R.id.iv_main_image)
     ImageView ivMain;
 
-    @Bean
+    @Inject
     ProfileImageSelectorPresenter profileImageSelectorPresenter;
 
-    @Extra("profile_image_file_uri")
+    @InjectExtra("profile_image_file_uri")
     Uri imageUri;
 
     private CharacterSelectorAdapter profileCharacterSelectorAdapter;
@@ -65,13 +64,25 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     private String selectedCharacterUrl = null;
     private ProgressWheelUtil progressWheelUtil;
 
-    @AfterViews
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile_image_selector);
+
+        Dart.inject(this);
+        ButterKnife.bind(this);
+        DaggerProfileImageSelectorComponent.builder()
+                .profileImageSelectorModule(new ProfileImageSelectorModule(this))
+                .build()
+                .inject(this);
+        initViews();
+    }
+
     void initViews() {
         if (!NetworkCheckUtil.isConnected()) {
             ColoredToast.show(getResources().getString(R.string.err_network));
             finish();
         } else {
-            profileImageSelectorPresenter.setView(this);
             profileCharacterSelectorAdapter = new CharacterSelectorAdapter();
             profileColorSelectorAdapter = new ColorSelectorAdapter();
             profileCharacterSelectorAdapter.setOnRecyclerItemClickListener(this);
@@ -89,37 +100,32 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showInitialImage() {
         selectedCharacterUrl = profileCharacterSelectorAdapter.getSelectedItem();
         selectedColor = profileColorSelectorAdapter.getSelectedItem();
         showMainProfileImage();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCharacterList(List<String> characterUrls) {
         profileCharacterSelectorAdapter.setItems(characterUrls);
         profileCharacterSelectorAdapter.notifyDataSetChanged();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showColorList(List<Integer> colorRGBs) {
         profileColorSelectorAdapter.setItems(colorRGBs);
         profileColorSelectorAdapter.notifyDataSetChanged();
     }
 
-    @Click(R.id.btn_cancel)
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @OnClick(R.id.btn_cancel)
     void onClickCancelButton() {
         LogUtil.e("click cancel button");
         profileImageSelectorPresenter.removeFile(imageUri.getPath());
         finish();
     }
 
-    @Click(R.id.btn_ok)
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @OnClick(R.id.btn_ok)
     void onClickOkButton() {
         if (selectedCharacterUrl != null && selectedColor != -1) {
             profileImageSelectorPresenter.makeCustomProfileImageFile(imageUri,
@@ -129,22 +135,19 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
     }
 
     @Override
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void finishWithOK() {
         setResult(RESULT_OK);
         finish();
     }
 
-    @Click(R.id.vg_option_color)
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @OnClick(R.id.vg_option_color)
     void onClickOptionColorButton() {
         LogUtil.e("click option color button");
         mode = COLOR_SELECTOR_MODE;
         changeMode(mode);
     }
 
-    @Click(R.id.vg_option_character)
-    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @OnClick(R.id.vg_option_character)
     void onClickOptionCharacterButton() {
         LogUtil.e("click option character button");
         mode = CHARACTER_SELECTOR_MODE;
@@ -185,13 +188,11 @@ public class ProfileImageSelectorActivity extends BaseAppCompatActivity implemen
         super.onBackPressed();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgress() {
         progressWheelUtil.showProgressWheel(this);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishProgress() {
         progressWheelUtil.dismissProgressWheel(this);

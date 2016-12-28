@@ -388,4 +388,14 @@ public class FileListPresenterImpl implements FileListPresenter {
 
         view.moveFileSearch(entity, writer, type);
     }
+
+    @Override
+    public void onFileUnshared(long fileId, long roomId) {
+        int position = searchedFilesAdapterModel.findPositionByFileId(fileId);
+        if (position >= 0) {
+            pageSubject.onNext(1);
+            endDateSubject.onNext(new Date());
+        }
+
+    }
 }

@@ -2,9 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.model;
 
 import android.support.v4.util.Pair;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
@@ -37,9 +35,9 @@ public class MainTopicModel {
     Lazy<FolderApi> folderApi;
 
     @Inject
-    public MainTopicModel(Lazy<FolderApi> folderApi) {
+    public MainTopicModel(EntityClientManager entityClientManager, Lazy<FolderApi> folderApi) {
+        this.entityClientManager = entityClientManager;
         this.folderApi = folderApi;
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
     }
 
     // 폴더 정보 가져오기

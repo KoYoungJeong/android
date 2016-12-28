@@ -219,7 +219,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             AnalyticsValue.Action action = AnalyticsValue.Action.TopicSubMenu_Star;
             AnalyticsValue.Label label = starred ? AnalyticsValue.Label.Star : AnalyticsValue.Label.Unstar;
             AnalyticsUtil.sendEvent(category, action, label);
-            return !starred;
+            return starred;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(() -> {
@@ -300,8 +300,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
-                long memberId = TeamInfoLoader.getInstance().getMyId();
-                entityMenuDialogModel.requestDeleteChat(memberId, entityId);
+                entityMenuDialogModel.requestDeleteChat(entityId);
             }
             if (!isUser) {
                 TopicRepository.getInstance().deleteTopic(entityId);

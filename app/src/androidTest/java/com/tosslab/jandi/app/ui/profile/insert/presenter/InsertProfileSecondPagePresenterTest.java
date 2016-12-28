@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileSecondPageModule;
 
 import org.junit.AfterClass;
@@ -109,7 +110,7 @@ public class InsertProfileSecondPagePresenterTest {
         verify(mockView).dismissProgressWheel();
     }
 
-    @Component(modules = InsertProfileSecondPageModule.class)
+    @Component(modules = {ApiClientModule.class, InsertProfileSecondPageModule.class})
     interface TestComponent {
         void inject(InsertProfileSecondPagePresenterTest test);
     }

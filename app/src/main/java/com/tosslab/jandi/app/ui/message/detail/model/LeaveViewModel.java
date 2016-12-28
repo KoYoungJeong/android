@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -30,11 +29,11 @@ public class LeaveViewModel {
     private Lazy<ChatApi> chatApi;
 
     @Inject
-    public LeaveViewModel(Lazy<ChatApi> chatApi) {
-        this.entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
-        ;
+    public LeaveViewModel(EntityClientManager entityClientManager, Lazy<ChatApi> chatApi) {
+        this.entityClientManager = entityClientManager;
         this.chatApi = chatApi;
     }
+
 
     public void leave(long entityId) {
         leaveEntityInBackground(entityId);
@@ -80,8 +79,8 @@ public class LeaveViewModel {
                                 entityClientManager.leavePrivateGroup(entityid);
                             }
                         } else {
-                            long memberId = TeamInfoLoader.getInstance().getMyId();
-                            chatApi.get().deleteChat(memberId, entityid);
+                            long teamId = TeamInfoLoader.getInstance().getTeamId();
+                            chatApi.get().deleteChat(teamId, entityId);
                         }
                         SprinklrTopicLeave.sendLog(entityId);
                         return Observable.just(entityid);

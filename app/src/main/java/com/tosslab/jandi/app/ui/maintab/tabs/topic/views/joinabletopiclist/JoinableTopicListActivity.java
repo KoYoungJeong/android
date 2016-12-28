@@ -32,7 +32,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.prese
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.view.JoinableTopicDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.view.JoinableTopicListView;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.view.TopicInfoDialog;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -136,14 +135,15 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     @Override
     public void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId,
                                       long lastReadLinkId) {
-        MessageListV2Activity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(Henson.with(this)
+                .gotoMessageListV2Activity()
                 .entityType(entityType)
                 .entityId(entityId)
                 .teamId(teamId)
                 .roomId(entityId)
                 .lastReadLinkId(lastReadLinkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
 
         finish();
     }

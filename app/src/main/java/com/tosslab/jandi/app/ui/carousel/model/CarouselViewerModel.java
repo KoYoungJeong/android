@@ -13,16 +13,16 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import rx.Observable;
 
-/**
- * Created by Bill MinWook Heo on 15. 6. 23..
- */
 public class CarouselViewerModel {
 
     private final Lazy<FileApi> fileApi;
 
+    @Inject
     public CarouselViewerModel(Lazy<FileApi> fileApi) {
         this.fileApi = fileApi;
     }
@@ -35,7 +35,7 @@ public class CarouselViewerModel {
                 .fileName(fileMessage.content.title)
                 .fileType(fileMessage.content.type)
                 .fileLinkUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
-                .fileThumbUrl(ImageUtil.getThumbnailUrl(fileMessage.content))
+                .fileThumbUrl(ImageUtil.getLargestThumbnail(fileMessage.content))
                 .fileOriginalUrl(ImageUtil.getImageFileUrl(fileMessage.content.fileUrl))
                 .ext(fileMessage.content.ext)
                 .size(fileMessage.content.size)

@@ -40,10 +40,11 @@ import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl_;
+import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -52,7 +53,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterView;
@@ -177,7 +177,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                 .build()
                 .inject(this);
 
-        filePickerViewModel = MainFileUploadControllerImpl_.getInstance_(getContext());
+        filePickerViewModel = new MainFileUploadControllerImpl();
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -621,10 +621,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         }
         List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, intent);
         if (filePath != null && filePath.size() > 0) {
-            FileUploadPreviewActivity_.intent(this)
-                    .singleUpload(true)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
                     .realFilePathList(new ArrayList<>(filePath))
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .singleUpload(true)
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 
@@ -635,10 +636,11 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
         List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_EXPLORER, intent);
         if (filePath != null && filePath.size() > 0) {
-            FileUploadPreviewActivity_.intent(this)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePath))
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 
@@ -747,6 +749,10 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             return;
         }
         fileListPresenter.onTopicDeleted(event.getTeamId());
+    }
+
+    public void onEvent(UnshareFileEvent event) {
+        fileListPresenter.onFileUnshared(event.getFileId(), event.getRoomId());
     }
 
     public void onEventMainThread(NetworkConnectEvent event) {

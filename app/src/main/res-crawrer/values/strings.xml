@@ -40,6 +40,7 @@
 	<string name="common_hamburger_teamlist">"Team List"</string>
 	<string name="common_launch_fail">"Failed to load initial data.
 Please restart the app."</string>
+	<string name="common_launch_maintenance">"JANDI is currently unavailable due to scheduled maintenance. Thanks for your patience."</string>
 	<string name="common_pricingplan_fileupload">"Your team has exceeded the storage limit. Uploading may be restricted at any time. Upgrade to the STANDARD plan for unlimited collaboration."</string>
 	<string name="common_pricingplan_livesupport">"Live Support"</string>
 	<string name="common_pricingplan_moreinfo">"More details"</string>
@@ -50,7 +51,7 @@ Please restart the app."</string>
 	<string name="common_sharetojandi_choose_team">"Choose a team"</string>
 	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
-	<string name="common_signup_invalid_emaildomain">""</string>
+	<string name="common_signup_invalid_emaildomain">"Please enter a correct domain name for your email address."</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
 	<string name="err_download">"File could not be downloaded"</string>
 	<string name="err_email_exists">"That email is already registered"</string>
@@ -118,6 +119,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_alreadyinvited">"This email address has already been invited to the team."</string>
 	<string name="invite_email_blocked">"This email address had been blocked from the team."</string>
 	<string name="invite_email_cancelinvite">"Would you like to cancel in invite?"</string>
+	<string name="invite_email_error_max10">""</string>
 	<string name="invite_email_error_partially">"Some invitations have not been sent. Please try again after checking the result."</string>
 	<string name="invite_email_error_unknown">"There has been an unknown error. Please try again later."</string>
 	<string name="invite_email_failedtryagain">"Failed to send the email. Try again."</string>
@@ -353,7 +355,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_finished">"Ended"</string>
 	<string name="jandi_folder_alread_has_name">"That name is already taken"</string>
 	<string name="jandi_folder_ask_delete">"Are you sure you want to delete this folder?
-  (Topics inside a folder are preserved even if the folder is deleted.)"</string>
+(Topics inside a folder are preserved even if the folder is deleted.)"</string>
 	<string name="jandi_folder_choose">"Choose a folder"</string>
 	<string name="jandi_folder_delete">"Delete this folder"</string>
 	<string name="jandi_folder_has_been_move_to">"The topic has been moved to %s folder."</string>

@@ -79,7 +79,6 @@ import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
@@ -333,10 +332,10 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                 }
             });
 
-            ivMention.setVisibility(mentionControlViewModel.hasMentionMember() ? View.VISIBLE : View.GONE);
         } else {
             mentionControlViewModel.refreshMembers(sharedTopicIds);
         }
+        ivMention.setVisibility(mentionControlViewModel.hasMentionMember() ? View.VISIBLE : View.GONE);
 
         removeClipboardListenerForMention();
         registerClipboardListenerForMention();
@@ -1143,14 +1142,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,
                                           boolean isStarred) {
-        MessageListV2Activity_.intent(FileDetailActivity.this)
+        startActivity(Henson.with(FileDetailActivity.this)
+                .gotoMessageListV2Activity()
                 .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromPush(false)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override

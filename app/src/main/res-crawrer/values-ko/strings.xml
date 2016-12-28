@@ -41,6 +41,7 @@
 	<string name="common_hamburger_teamlist">"팀 리스트"</string>
 	<string name="common_launch_fail">"초기 정보를 불러오지 못했습니다. 
 앱을 다시 실행하여 주세요."</string>
+	<string name="common_launch_maintenance">"더 나은 서비스 제공을 위해 점검을 진행하고 있습니다. 이용에 불편을 드려 죄송합니다."</string>
 	<string name="common_pricingplan_fileupload">"현재 팀에서 무료 사용량을 초과하여 언제든 업로드가 제한될 수  \n 있습니다. 지금 STANDARD 플랜으로 전환하시고  \n 더욱 더 쾌적하게 협업하세요."</string>
 	<string name="common_pricingplan_livesupport">"1:1 문의하기"</string>
 	<string name="common_pricingplan_moreinfo">"자세히 알아보기"</string>
@@ -119,6 +120,7 @@
 	<string name="invite_email_alreadyinvited">"이미 팀에 초대 중인 이메일입니다."</string>
 	<string name="invite_email_blocked">"팀에서 차단된 이메일입니다."</string>
 	<string name="invite_email_cancelinvite">"초대를 취소하시겠습니까?"</string>
+	<string name="invite_email_error_max10">"한번에 최대 10명까지 초대하실 수 있습니다."</string>
 	<string name="invite_email_error_partially">"일부 메일 발송을 실패하였습니다. 
 결과 확인 후 다시 시도해 주세요."</string>
 	<string name="invite_email_error_unknown">"알 수 없는 에러에 의해 
@@ -358,7 +360,7 @@
 	<string name="jandi_finished">"종료됨"</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?
-  (폴더를 삭제해도 해당 폴더내 토픽들은 사라지지 않습니다.)"</string>
+(폴더를 삭제해도 해당 폴더내 토픽들은 사라지지 않습니다.)"</string>
 	<string name="jandi_folder_choose">"이동할 폴더를 선택해주세요."</string>
 	<string name="jandi_folder_delete">"폴더 삭제"</string>
 	<string name="jandi_folder_has_been_move_to">"토픽을 %s 폴더로 이동했습니다."</string>

@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.passcode.fingerprint.presneter;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.passcode.fingerprint.dagger.FingerprintAuthModule;
 import com.tosslab.jandi.app.ui.passcode.fingerprint.view.FingerprintAuthView;
 
 import org.junit.Before;
@@ -10,8 +10,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import javax.inject.Inject;
+
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -26,13 +26,17 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class FingerprintAuthPresenterTest {
 
-    private FingerprintAuthPresenter presenter;
+    @Inject
+    FingerprintAuthPresenter presenter;
     private FingerprintAuthView view;
+
     @Before
     public void setup() throws Exception {
-        presenter = FingerprintAuthPresenter_.getInstance_(JandiApplication.getContext());
         view = mock(FingerprintAuthView.class);
-        presenter.setView(view);
+        DaggerFingerprintAuthPresenterTest_Component.builder()
+                .fingerprintAuthModule(new FingerprintAuthModule(view))
+                .build()
+                .inject(this);
     }
 
     @Test
@@ -91,5 +95,10 @@ public class FingerprintAuthPresenterTest {
 
         // Then
         verify(view).setFingerprintAuthSuccess();
+    }
+
+    @dagger.Component(modules = FingerprintAuthModule.class)
+    public interface Component {
+        void inject(FingerprintAuthPresenterTest test);
     }
 }

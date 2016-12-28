@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.file.dagger;
 
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenterImpl;
@@ -8,16 +7,12 @@ import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenterImp
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tee on 16. 6. 28..
- */
-
-@Module(includes = ApiClientModule.class)
+@Module
 public class FileListModule {
 
+    private final boolean inSearchActivity;
     private FileListPresenterImpl.View view;
     private long searchedEntityId;
-    private final boolean inSearchActivity;
 
     public FileListModule(FileListPresenterImpl.View view, long searchedEntityId, boolean inSearchActivity) {
         this.view = view;

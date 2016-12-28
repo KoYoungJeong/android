@@ -42,11 +42,11 @@ import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.dialog.UsageInformationDialogFragment;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.NavigationAdapter;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataView;
-import com.tosslab.jandi.app.ui.maintab.navigation.component.DaggerNavigationComponent;
-import com.tosslab.jandi.app.ui.maintab.navigation.module.NavigationModule;
+import com.tosslab.jandi.app.ui.maintab.navigation.dagger.DaggerNavigationComponent;
+import com.tosslab.jandi.app.ui.maintab.navigation.dagger.NavigationModule;
 import com.tosslab.jandi.app.ui.maintab.navigation.presenter.NavigationPresenter;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
@@ -545,7 +545,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         });
         tvName.setText(user.getName());
 
-        AccessLevelUtil.setTextOfLevel(user.getLevel(), tvLevelBadge);
+        AccessLevelUtil.setTextOfLevelInNav(user.getLevel(), tvLevelBadge);
 
         tvEmail.setText(user.getEmail());
         easterEggForLog(tvEmail);
@@ -610,7 +610,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     private void showBugReportDialog() {
-        UsageInformationDialogFragment_.builder().build()
+        UsageInformationDialogFragment.create()
                 .show(getFragmentManager(), "usageInformationKnock");
     }
 

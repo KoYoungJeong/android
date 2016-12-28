@@ -5,11 +5,11 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
@@ -37,8 +40,9 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
+import com.tosslab.jandi.app.ui.file.upload.preview.dagger.DaggerFileUploadComponent;
+import com.tosslab.jandi.app.ui.file.upload.preview.dagger.FileUploadModule;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
-import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
@@ -46,34 +50,23 @@ import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
-import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.ViewsById;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by Bill MinWook Heo on 15. 6. 15..
- */
-@EActivity(R.layout.activity_file_upload_insert_comment)
-@OptionsMenu(R.menu.file_insert_comment_menu)
 public class FileUploadPreviewActivity extends BaseAppCompatActivity implements FileUploadPresenter.View {
 
     public static final int REQUEST_CODE = 17863;
@@ -82,34 +75,38 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public static final int FROM_TAKE_PHOTO = 0x02;
     public static final int FROM_SELECT_FILE = 0x03;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     long selectedEntityIdToBeShared;    // Share 할 chat-room
 
-    @Extra
+    @Nullable
+    @InjectExtra
     boolean singleUpload = false;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     int from = FROM_SELECT_IMAGE;
 
-    @Extra
+    @Nullable
+    @InjectExtra
     ArrayList<String> realFilePathList;
-    @Bean(FileUploadPresenterImpl.class)
+    @Inject
     FileUploadPresenter fileUploadPresenter;
-    @SystemService
+
     InputMethodManager inputMethodManager;
-    @ViewById(R.id.vp_file_upload_preview)
+    @Bind(R.id.vp_file_upload_preview)
     ViewPager vpFilePreview;
-    @ViewById(R.id.tv_file_upload_title)
+    @Bind(R.id.tv_file_upload_title)
     TextView tvFileTitle;
-    @ViewById(R.id.tv_file_upload_entity)
+    @Bind(R.id.tv_file_upload_entity)
     TextView tvEntity;
-    @ViewById(R.id.et_file_upload_comment)
+    @Bind(R.id.et_file_upload_comment)
     EditText etComment;
-    @ViewById(R.id.vg_file_upload_preview_content)
+    @Bind(R.id.vg_file_upload_preview_content)
     ViewGroup vgFileInfo;
-    @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
+    @Bind({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
-    @ViewById(R.id.layout_pricing_plan_warning)
+    @Bind(R.id.layout_pricing_plan_warning)
     ViewGroup layoutPricingPlanWarning;
 
 
@@ -121,15 +118,24 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setNeedUnLockPassCode(false);
+        setContentView(R.layout.activity_file_upload_insert_comment);
+        ButterKnife.bind(this);
+        Dart.inject(this);
+
+        DaggerFileUploadComponent.builder()
+                .fileUploadModule(new FileUploadModule(this))
+                .build()
+                .inject(this);
+
+        initView();
     }
 
-    @AfterViews
     void initView() {
+        inputMethodManager = ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE));
         setupActionbar();
 
         fileUploadPresenter.setView(this);
-        fileUploadPresenter.onInitEntity(FileUploadPreviewActivity.this, selectedEntityIdToBeShared);
-        fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
+        fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared, realFilePathList);
 
         scrollButtonPublishSubject = PublishSubject.create();
         subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
@@ -201,7 +207,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
-        mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        if (mentionControlViewModel != null) {
+            mentionControlViewModel.mentionedMemberHighlightInEditText(searchedItemVO);
+        }
     }
 
     public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
@@ -234,12 +242,24 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         super.onDestroy();
     }
 
-    @OptionsItem(android.R.id.home)
-    void onGoBackOptionSelect() {
-        finish();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.file_insert_comment_menu, menu);
+        return true;
     }
 
-    @OptionsItem(R.id.action_confirm)
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_confirm) {
+            onSendFile();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void onSendFile() {
         fileUploadPresenter.onMultiFileUpload(mentionControlViewModel);
     }
@@ -377,13 +397,13 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         }
     }
 
-    @AfterTextChange(R.id.et_file_upload_comment)
-    void onCommentTextChange(Editable text) {
+    @OnTextChanged(value = R.id.et_file_upload_comment, callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
+    void onCommentTextChange(CharSequence text) {
         int currentItemPosition = vpFilePreview.getCurrentItem();
         fileUploadPresenter.onCommentTextChange(text.toString(), currentItemPosition);
     }
 
-    @Click(R.id.iv_file_upload_preview_previous)
+    @OnClick(R.id.iv_file_upload_preview_previous)
     void onPreviousClick() {
         int currentItem = vpFilePreview.getCurrentItem();
 
@@ -392,7 +412,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         }
     }
 
-    @Click(R.id.iv_file_upload_preview_next)
+    @OnClick(R.id.iv_file_upload_preview_next)
     void onNextClick() {
         int currentItem = vpFilePreview.getCurrentItem();
         int count = vpFilePreview.getAdapter().getCount();
@@ -402,7 +422,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         }
     }
 
-    @Click(R.id.tv_file_rename_button)
+    @OnClick(R.id.tv_file_rename_button)
     void onClickFileRename() {
         showRenameTitleDialog();
     }
@@ -450,8 +470,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @Override
     public void setShareEntity(long entityId, boolean isUser) {
-        this.selectedEntityIdToBeShared = entityId;
-
         if (!isUser) {
             mentionControlViewModel = MentionControlViewModel.newInstance(FileUploadPreviewActivity.this,
                     etComment,

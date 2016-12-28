@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.services.upload.dagger.DaggerUploadNotificationComp
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import javax.inject.Inject;
 
@@ -118,14 +117,15 @@ public class UploadNotificationActivity extends BaseAppCompatActivity {
             roomId = TeamInfoLoader.getInstance().getChatId(entityId);
         }
 
-        MessageListV2Activity_.intent(UploadNotificationActivity.this)
+        startActivity(Henson.with(UploadNotificationActivity.this)
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromPush(false)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
         overridePendingTransition(0, 0);
 
         finish();

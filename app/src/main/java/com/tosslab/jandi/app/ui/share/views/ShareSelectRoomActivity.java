@@ -231,7 +231,9 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                         .filter(TopicRoom::isJoined)
                         .flatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
                         .distinct()
-                        .map(memberId -> teamInfoLoader.getUser(memberId));
+                        .filter(memberId -> teamInfoLoader.getChatId(memberId) > 0)
+                        .map(memberId -> teamInfoLoader.getUser(memberId))
+                        .concatWith(Observable.just(teamInfoLoader.getJandiBot()));
             }
         })
                 .filter(User::isEnabled)
@@ -245,9 +247,9 @@ public class ShareSelectRoomActivity extends BaseAppCompatActivity implements Sh
                     return expandRoomData;
                 })
                 .toSortedList((lhs, rhs) -> {
-                    if (TeamInfoLoader.getInstance().isJandiBot(lhs.getEntityId())) {
+                    if (teamInfoLoader.isJandiBot(lhs.getEntityId())) {
                         return -1;
-                    } else if (TeamInfoLoader.getInstance().isJandiBot(rhs.getEntityId())) {
+                    } else if (teamInfoLoader.isJandiBot(rhs.getEntityId())) {
                         return 1;
                     }
                     String lhsName = lhs.getName();

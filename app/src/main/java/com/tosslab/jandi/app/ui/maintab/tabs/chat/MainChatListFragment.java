@@ -41,7 +41,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
@@ -56,7 +55,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
 public class MainChatListFragment extends Fragment
@@ -206,14 +204,15 @@ public class MainChatListFragment extends Fragment
 
     @Override
     public void moveMessageActivity(long teamId, long entityId, long roomId, long lastLinkId) {
-        MessageListV2Activity_.intent(getActivity())
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .roomId(roomId)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .lastReadLinkId(lastLinkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
 
@@ -251,7 +250,7 @@ public class MainChatListFragment extends Fragment
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (foreground) {
-            if(AccessLevelUtil.hasAccessLevel(event.userId)) {
+            if (AccessLevelUtil.hasAccessLevel(event.userId)) {
                 startActivity(Henson.with(getActivity())
                         .gotoMemberProfileActivity()
                         .memberId(event.userId)
@@ -372,7 +371,6 @@ public class MainChatListFragment extends Fragment
                 .show(getFragmentManager(), "dialog");
     }
 
-    @OnClick(R.id.btn_chat_list_no_messages)
     void chooseUser() {
         if (getActivity() != null && !getActivity().isFinishing()) {
             startActivity(Henson.with(getActivity())

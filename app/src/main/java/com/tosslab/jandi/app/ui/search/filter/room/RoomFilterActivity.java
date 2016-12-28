@@ -40,9 +40,6 @@ import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 
-/**
- * Created by tonyjs on 16. 7. 22..
- */
 public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFilterPresenter.View {
     public static final int REQUEST_CODE_VOICE = 8812;
 
@@ -112,7 +109,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     public static void startForResultForInvitation(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, RoomFilterActivity.class);
         intent.putExtra(KEY_IS_TOPIC, false);
-        intent.putExtra(KEY_SELECTED_ROOM_ID, -1);
+        intent.putExtra(KEY_SELECTED_ROOM_ID, -1L);
         intent.putExtra(KEY_IS_ONLY_SHOW_TOPIC_ROOM, true);
         intent.putExtra(KEY_IS_SHOW_DEFAULT_TOPIC, false);
         activity.startActivityForResult(intent, requestCode);

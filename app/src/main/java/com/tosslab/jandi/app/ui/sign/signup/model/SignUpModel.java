@@ -9,12 +9,15 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.PasswordChecker;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 
 public class SignUpModel {
 
     Lazy<SignUpApi> signUpApi;
 
+    @Inject
     public SignUpModel(Lazy<SignUpApi> signUpApi) {
         this.signUpApi = signUpApi;
     }

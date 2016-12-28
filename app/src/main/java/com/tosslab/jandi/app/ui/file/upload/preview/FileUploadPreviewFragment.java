@@ -1,45 +1,68 @@
 package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ViewById;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-@EFragment(R.layout.fragment_file_upload_insert_comment)
 public class FileUploadPreviewFragment extends Fragment {
 
-    @FragmentArg
+    @InjectExtra
     String realFilePath;
 
-    @ViewById(R.id.iv_file_upload_preview)
+    @Bind(R.id.iv_file_upload_preview)
     ImageView ivFileImage;
 
-    @ViewById(R.id.vg_file_extensions)
+    @Bind(R.id.vg_file_extensions)
     ViewGroup vgFileExtensions;
 
-    @ViewById(R.id.iv_file_extensions)
+    @Bind(R.id.iv_file_extensions)
     ImageView ivFileExtensions;
 
-    @ViewById(R.id.tv_file_extenstions)
+    @Bind(R.id.tv_file_extenstions)
     TextView tvFileExtensions;
 
-    @AfterViews
+    public static FileUploadPreviewFragment create(String realFilePath) {
+        FileUploadPreviewFragment frag = new FileUploadPreviewFragment();
+        Bundle args = new Bundle();
+        args.putString("realFilePath", realFilePath);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_file_upload_insert_comment, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Dart.inject(this, getArguments());
+        initView();
+    }
+
     void initView() {
         FileExtensionsUtil.Extensions extensions = FileExtensionsUtil.getExtensions(realFilePath);
 
@@ -61,7 +84,7 @@ public class FileUploadPreviewFragment extends Fragment {
         }
     }
 
-    @Click(R.id.iv_file_upload_preview)
+    @OnClick(R.id.iv_file_upload_preview)
     void onImageClick() {
         EventBus.getDefault().post(new FileUploadPreviewImageClickEvent());
     }

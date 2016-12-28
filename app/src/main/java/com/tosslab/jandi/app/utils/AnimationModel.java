@@ -11,12 +11,17 @@ import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
+import javax.inject.Inject;
+
 /**
  * Created by Steve SeongUg Jung on 15. 6. 15..
  */
 public class AnimationModel {
 
     private AnimatorSet mCurrentAnimator;
+
+    @Inject
+    public AnimationModel() { }
 
     public void zoomImageFromThumb(View rootView, View thumbView, ImageView expandedImageView, Bitmap resource) {
         // If there's an animation in progress, cancel it

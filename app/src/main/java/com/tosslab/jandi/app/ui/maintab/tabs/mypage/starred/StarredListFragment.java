@@ -24,10 +24,9 @@ import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.StarredListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.view.StarredListDataView;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.component.DaggerStarredListComponent;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.module.StarredListModule;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.dagger.DaggerStarredListComponent;
+import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.dagger.StarredListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.presentor.StarredListPresenter;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -216,15 +215,16 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void moveToMessageList(long teamId, long entityId, long roomId, int entityType, long linkId) {
-        MessageListV2Activity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(teamId)
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromSearch(true)
                 .lastReadLinkId(linkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override

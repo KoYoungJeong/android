@@ -4,15 +4,17 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
-@EBean
 public class DisabledEntityChooseModel {
+    @Inject
+    public DisabledEntityChooseModel() { }
+
     public List<ChatChooseItem> getDisabledMembers() {
 
         List<ChatChooseItem> items = new ArrayList<>();

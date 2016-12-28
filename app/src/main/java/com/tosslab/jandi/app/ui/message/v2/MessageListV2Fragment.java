@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -23,6 +24,8 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +42,8 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
@@ -85,7 +90,6 @@ import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
 import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
-import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
@@ -114,7 +118,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
@@ -125,6 +128,8 @@ import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.dagger.DaggerMessageListComponent;
+import com.tosslab.jandi.app.ui.message.v2.dagger.MessageListModule;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog;
 import com.tosslab.jandi.app.ui.message.v2.domain.MessagePointer;
 import com.tosslab.jandi.app.ui.message.v2.domain.Room;
@@ -162,19 +167,6 @@ import com.tosslab.jandi.app.views.controller.SoftInputAreaController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.spannable.JandiURLSpan;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FocusChange;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.TextChange;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -183,17 +175,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnFocusChange;
+import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tee on 16. 2. 16..
- */
-@OptionsMenu(R.menu.message_list_menu_basic)
-@EFragment(R.layout.fragment_message_list)
 public class MessageListV2Fragment extends Fragment implements MessageListV2Presenter.View,
         MessageListV2Activity.OnBackPressedListener,
         MessageListV2Activity.OnKeyPressListener {
@@ -206,125 +200,129 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public static final int REQ_WINDOW_PERMISSION = 102;
     public static final String REQUEST_FILE_UPLOAD_EVENT_TYPE = "request_file_upload_event_type";
     private static final StickerInfo NULL_STICKER = new StickerInfo();
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     int entityType;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long entityId;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     boolean isFavorite = false;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     boolean isFromPush = false;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long teamId;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long lastReadLinkId = -1;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long roomId;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long firstCursorLinkId = -1;
 
-    @Bean
+    @Inject
     MessageListV2Presenter messageListPresenter;
-
-    @Bean
+    @Inject
     StickerViewModel stickerViewModel;
-    @Bean
+    @Inject
     UploadMenuViewModel uploadMenuViewModel;
-    @Bean(value = MainFileUploadControllerImpl.class)
+    @Inject
     FileUploadController fileUploadController;
-    @Bean
+    @Inject
     FileUploadStateViewModel fileUploadStateViewModel;
+    @Inject
+    Room room;
+    @Inject
+    MessagePointer messagePointer;
 
-    @Bean
     AnnouncementViewModel announcementViewModel;
 
     MentionControlViewModel mentionControlViewModel;
+
     DateAnimator dateAnimator;
 
-    @SystemService
-    ClipboardManager clipboardManager;
-
-    @ViewById(R.id.vg_messages_soft_input_detector)
+    @Bind(R.id.vg_messages_soft_input_detector)
     SoftInputDetectLinearLayout vgSoftInputDetector;
-
-    @ViewById(R.id.vg_messages_soft_input_area)
+    @Bind(R.id.vg_messages_soft_input_area)
     ViewGroup vgSoftInputArea;
-
-    @ViewById(R.id.lv_messages)
+    @Bind(R.id.lv_messages)
     RecyclerView lvMessages;
-    @ViewById(R.id.btn_send_message)
+    @Bind(R.id.btn_send_message)
     View btnSend;
-    @ViewById(R.id.et_message)
+    @Bind(R.id.et_message)
     BackPressCatchEditText etMessage;
-    @ViewById(R.id.vg_messages_preview_last_item)
+    @Bind(R.id.vg_messages_preview_last_item)
     View vgPreview;
-    @ViewById(R.id.iv_message_preview_user_profile)
+    @Bind(R.id.iv_message_preview_user_profile)
     ImageView ivPreviewProfile;
-    @ViewById(R.id.tv_message_preview_user_name)
+    @Bind(R.id.tv_message_preview_user_name)
     TextView tvPreviewUserName;
-    @ViewById(R.id.tv_message_preview_content)
+    @Bind(R.id.tv_message_preview_content)
     TextView tvPreviewContent;
-    @ViewById(R.id.vg_messages_input)
+
+    @Bind(R.id.vg_messages_input)
     View vgMessageInput;
-    @ViewById(R.id.vg_messages_go_to_latest)
+
+    @Bind(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
-
-    @ViewById(R.id.tv_messages_date_divider)
+    @Bind(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
-
-    @ViewById(R.id.layout_messages_empty)
+    @Bind(R.id.layout_messages_empty)
     LinearLayout vgEmptyLayout;
-    @ViewById(R.id.layout_messages_loading)
+    @Bind(R.id.layout_messages_loading)
     View vgProgressForMessageList;
-    @ViewById(R.id.iv_go_to_latest)
+    @Bind(R.id.iv_go_to_latest)
     View vMoveToLatest;
-    @ViewById(R.id.progress_go_to_latest)
+    @Bind(R.id.progress_go_to_latest)
     View progressGoToLatest;
-    @ViewById(R.id.vg_messages_preview_sticker)
+    @Bind(R.id.vg_messages_preview_sticker)
     ViewGroup vgStickerPreview;
-    @ViewById(R.id.iv_messages_preview_sticker_image)
+    @Bind(R.id.iv_messages_preview_sticker_image)
     ImageView ivSticker;
-    @ViewById(R.id.vg_message_offline)
+    @Bind(R.id.vg_message_offline)
     View vgOffline;
-    @ViewById(R.id.progress_message)
+    @Bind(R.id.progress_message)
     View oldProgressBar;
-    @ViewById(R.id.btn_show_mention)
+
+    @Bind(R.id.btn_show_mention)
     ImageView btnShowMention;
-    @ViewById(R.id.vg_easteregg_snow)
+    @Bind(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
 
-    @ViewById(R.id.btn_message_action_button_1)
+    @Bind(R.id.btn_message_action_button_1)
     ImageView btnAction1;
-    @ViewById(R.id.btn_message_action_button_2)
+    @Bind(R.id.btn_message_action_button_2)
     ImageView btnAction2;
-
-    @ViewById(R.id.vg_messages_member_status_alert)
+    @Bind(R.id.vg_messages_member_status_alert)
     View vgMemberStatusAlert;
-    @ViewById(R.id.iv_messages_member_status_alert)
+
+    @Bind(R.id.iv_messages_member_status_alert)
     ImageView ivMemberStatusAlert;
-    @ViewById(R.id.tv_messages_member_status_alert)
+
+    @Bind(R.id.tv_messages_member_status_alert)
     TextView tvMemberStatusAlert;
 
-    @ViewById(R.id.vg_main_synchronize)
+
+    @Bind(R.id.vg_main_synchronize)
     View vgSynchronize;
 
-    @ViewById(R.id.tv_synchronize)
+    @Bind(R.id.tv_synchronize)
     TextView tvSynchronize;
-
 
     private OfflineLayer offlineLayer;
 
     private ProgressWheel progressWheel;
 
     private StickerInfo stickerInfo = NULL_STICKER;
-
     private File photoFileByCamera;
 
     private boolean isForeground = true;
     private LinearLayoutManager layoutManager;
-
-    private Room room;
-    private MessagePointer messagePointer;
     private SoftInputAreaController softInputAreaController;
     private int requestFileUploadEventType = -1;
     private MessageRecyclerViewManager messageRecyclerViewManager;
@@ -338,6 +336,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             photoFileByCamera = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
             requestFileUploadEventType = savedInstanceState.getInt(REQUEST_FILE_UPLOAD_EVENT_TYPE);
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_message_list, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Dart.inject(this, getArguments());
+        DaggerMessageListComponent.builder()
+                .messageListModule(new MessageListModule(this, Room.create(entityId, isFromPush), MessagePointer.create(lastReadLinkId)))
+                .build()
+                .inject(this);
+        initViews();
     }
 
     @Override
@@ -354,6 +371,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         messageListPresenter.restoreStatus();
         refreshMessages();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.message_list_menu_basic, menu);
     }
 
     @Override
@@ -474,13 +497,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         super.onDestroy();
     }
 
-    @AfterInject
-    void initObjects() {
-        room = Room.create(entityId, isFromPush);
-        messagePointer = MessagePointer.create(lastReadLinkId);
-    }
 
-    @AfterViews
     void initViews() {
         setUpActionbar();
         setHasOptionsMenu(true);
@@ -488,6 +505,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         Completable.fromAction(this::trackScreenView)
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
+
+        fileUploadStateViewModel.initView(getView());
 
         initPresenter();
 
@@ -543,9 +562,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initPresenter() {
-        messageListPresenter.setView(this);
-        messageListPresenter.setRoom(room);
-        messageListPresenter.setMessagePointer(messagePointer);
         messageListPresenter.setEntityInfo();
     }
 
@@ -610,6 +626,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initStickerViewModel() {
+
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
             if (oldSticker.getStickerGroupId() == groupId
@@ -660,7 +677,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initFileUploadStateViewModel() {
-        fileUploadStateViewModel.setEntityId(entityId);
+        fileUploadStateViewModel.setRoom(room);
     }
 
     private void initActionListeners() {
@@ -676,6 +693,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initAnnouncement() {
+        if (announcementViewModel == null) {
+            announcementViewModel = new AnnouncementViewModel(getContext(), getView());
+        }
         announcementViewModel.setOnAnnouncementCloseListener(() -> {
             announcementViewModel.openAnnouncement(false);
             messageListPresenter.setAnnouncementActionFrom(true);
@@ -813,7 +833,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         messageListPresenter.onInitMessages(withProgress);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void initMentionControlViewModel(String readyMessage) {
         if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
@@ -868,7 +887,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showDisabledUserLayer() {
         vgMessageInput.setVisibility(View.GONE);
@@ -880,7 +898,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         vgMemberStatusAlert.setOnClickListener(null);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showInactivedUserLayer() {
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
@@ -892,13 +909,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         });
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setAnnouncement(Announcement announcement) {
         announcementViewModel.setAnnouncement(announcement);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         if (progressWheel != null && !progressWheel.isShowing()) {
@@ -906,7 +921,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
@@ -914,7 +928,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressView() {
         vgProgressForMessageList.animate()
@@ -922,7 +935,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 .setDuration(150);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressView() {
         vgProgressForMessageList.animate()
@@ -930,7 +942,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 .setDuration(250);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void initRoomInfo(long roomId, String readyMessage) {
 
@@ -948,7 +959,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         showToast(message, true /* isError */);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setUpOldMessage(boolean isFirstLoad) {
 
@@ -959,7 +969,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setUpNewMessage(List<ResMessages.Link> records, long myId,
                                 boolean isFirstLoad) {
@@ -982,7 +991,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void moveLastReadLink() {
         long lastReadLinkId = messagePointer.getLastReadLinkId();
 
@@ -998,7 +1006,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
 
-    @UiThread
     public void showPreviewIfNotLastItem(ResMessages.Link lastUpdatedMessage) {
 
         ResMessages.Link item = lastUpdatedMessage;
@@ -1148,23 +1155,25 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             filePaths.add(filePath);
         }
 
-        FileUploadPreviewActivity_.intent(this)
+        startActivityForResult(Henson.with(getActivity())
+                .gotoFileUploadPreviewActivity()
                 .singleUpload(true)
                 .realFilePathList(new ArrayList<>(filePaths))
                 .selectedEntityIdToBeShared(entityId)
                 .from(FileUploadPreviewActivity.FROM_TAKE_PHOTO)
-                .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                .build(), FileUploadPreviewActivity.REQUEST_CODE);
     }
 
     private void showPreviewForUploadFiles(int requestCode, Intent intent) {
         List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths != null && filePaths.size() > 0) {
-            FileUploadPreviewActivity_.intent(this)
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePaths))
                     .selectedEntityIdToBeShared(entityId)
                     .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
-                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
     }
 
@@ -1182,22 +1191,22 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @FocusChange(R.id.et_message)
-    void onEditTextFocusChange(boolean focus, View view) {
+    @OnFocusChange(R.id.et_message)
+    void onEditTextFocusChange(boolean focus) {
         if (focus) {
             sendAnalyticsEvent(AnalyticsValue.Action.MessageInputField);
         }
     }
 
-    @TextChange(R.id.et_message)
-    void onMessageChanged(TextView tv, CharSequence text) {
+    @OnTextChanged(R.id.et_message)
+    void onMessageChanged(CharSequence text) {
 
         boolean isEmptyText = TextUtils.isEmpty(text.toString().trim()) && stickerInfo == NULL_STICKER;
         setSendButtonEnabled(!isEmptyText);
 
     }
 
-    @Click(R.id.tv_messages_date_divider)
+    @OnClick(R.id.tv_messages_date_divider)
     void dateClick() {
         int firstVisibleItemPosition = ((LinearLayoutManager) lvMessages.getLayoutManager()).findFirstVisibleItemPosition();
         MainMessageListAdapter messageAdapter = (MainMessageListAdapter) lvMessages.getAdapter();
@@ -1221,7 +1230,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         lvMessages.scrollToPosition(tempPosition);
     }
 
-    @Click(R.id.btn_send_message)
+    @OnClick(R.id.btn_send_message)
     void sendMessage() {
         String message = etMessage.getText().toString();
 
@@ -1271,7 +1280,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         sendAnalyticsEvent(AnalyticsValue.Action.Sticker_Send);
     }
 
-    @Click(R.id.btn_show_mention)
+    @OnClick(R.id.btn_show_mention)
     void onMentionClick() {
         etMessage.requestFocus();
 
@@ -1298,7 +1307,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         return false;
     }
 
-    @Click(R.id.iv_messages_preview_sticker_close)
+    @OnClick(R.id.iv_messages_preview_sticker_close)
     void onStickerPreviewClose() {
         this.stickerInfo = NULL_STICKER;
         dismissStickerPreview();
@@ -1320,7 +1329,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         vgStickerPreview.setVisibility(View.GONE);
     }
 
-    @Click(R.id.vg_messages_preview_last_item)
+    @OnClick(R.id.vg_messages_preview_last_item)
     void onPreviewClick() {
         setPreviewVisible(false);
         messageRecyclerViewManager.scrollToLast();
@@ -1339,7 +1348,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showOldLoadProgress() {
         if (oldProgressBar.getVisibility() != View.GONE) {
@@ -1359,32 +1367,27 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         oldProgressBar.startAnimation(inAnim);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showEmptyView(boolean show) {
         vgEmptyLayout.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Click(R.id.vg_message_offline)
+    @OnClick(R.id.vg_message_offline)
     @Override
     public void dismissOfflineLayer() {
         offlineLayer.dismissOfflineView();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showOfflineLayer() {
         offlineLayer.showOfflineView();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void moveLastPage() {
         messageRecyclerViewManager.scrollToLast();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissOldLoadProgress() {
 
@@ -1424,7 +1427,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    public void onEvent(TopicInfoUpdateEvent event) {
+    public void onEventMainThread(TopicInfoUpdateEvent event) {
         if (event.getId() == room.getRoomId()) {
             modifyTitle(TeamInfoLoader.getInstance().getTopic(room.getRoomId()).getName());
         }
@@ -1446,7 +1449,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    public void onEvent(MentionableMembersRefreshEvent event) {
+    public void onEventMainThread(MentionableMembersRefreshEvent event) {
         if (!isForeground) {
             return;
         }
@@ -1458,7 +1461,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         setMentionButtonVisibility(mentionControlViewModel.hasMentionMember());
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void setMentionButtonVisibility(boolean show) {
         btnShowMention.setVisibility(show
                 ? View.VISIBLE : View.GONE);
@@ -1575,15 +1577,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void closeDialogFragment() {
-        android.app.Fragment dialogFragment =
-                getActivity().getFragmentManager().findFragmentByTag("dialog");
-        if (dialogFragment != null && dialogFragment instanceof android.app.DialogFragment) {
-            ((android.app.DialogFragment) dialogFragment).dismiss();
-        }
-    }
-
     public void onEvent(LinkPreviewClickEvent event) {
 
         String linkUrl = event.getLinkUrl();
@@ -1597,7 +1590,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
     }
 
-    public void onEvent(ProfileChangeEvent event) {
+    public void onEventMainThread(ProfileChangeEvent event) {
         refreshMessages();
         updateMentionInfo();
     }
@@ -1690,7 +1683,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         messageListPresenter.onDeleteDummyMessageAction(event.getLocalId());
     }
 
-    public void onEvent(RequestDeleteMessageEvent event) {
+    public void onEventMainThread(RequestDeleteMessageEvent event) {
         if (!isForeground) {
             return;
         }
@@ -1707,6 +1700,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         final ClipData clipData = ClipData.newPlainText("", event.contentString);
+        ClipboardManager clipboardManager =
+                (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.setPrimaryClip(clipData);
         sendAnalyticsEvent(AnalyticsValue.Action.MsgLongTap_Copy);
     }
@@ -1734,13 +1729,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
 
-        MessageListV2Activity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
                 .isFromPush(isFromPush)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     public void onEvent(DeleteFileEvent event) {
@@ -1847,8 +1843,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         PollCreateActivity.start(getActivity(), room.getRoomId());
     }
 
-    public void onEvent(NetworkConnectEvent event) {
+    public void onEventMainThread(NetworkConnectEvent event) {
+
         if (event.isConnected()) {
+
             messageListPresenter.onNetworkConnect();
 
             dismissOfflineLayer();
@@ -1862,7 +1860,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showOfflineToast() {
         String message = JandiApplication.getContext()
                 .getResources()
@@ -1870,7 +1867,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         ColoredToast.showGray(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void updateMentionInfo() {
         if (mentionControlViewModel != null) {
             boolean popupShowing = etMessage.isPopupShowing();
@@ -1885,7 +1881,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finish() {
         FragmentActivity activity = getActivity();
@@ -1911,7 +1906,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void insertTopicMemberEmptyLayout() {
 
@@ -1929,19 +1923,18 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    public void onEvent(TopicLeftEvent event) {
+    public void onEventMainThread(TopicLeftEvent event) {
         if (event.getTopicId() == room.getRoomId()) {
             updateMentionInfo();
         }
     }
 
-    public void onEvent(TopicJoinEvent event) {
+    public void onEventMainThread(TopicJoinEvent event) {
         if (event.getTopicId() == room.getRoomId()) {
             updateMentionInfo();
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void clearEmptyMessageLayout() {
         if (vgEmptyLayout != null) {
@@ -1949,7 +1942,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void insertMessageEmptyLayout() {
 
@@ -1963,7 +1955,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void modifyTitle(String name) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(name);
@@ -1974,14 +1965,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         announcementViewModel.openAnnouncement(shouldOpenAnnouncement);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showAnnouncementCreateDialog(long messageId) {
         announcementViewModel.showCreateAlertDialog(
                 (dialog, which) -> messageListPresenter.onCreateAnnouncement(messageId));
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showStickerMessageMenuDialog(ResMessages.StickerMessage stickerMessage) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByStickerMessage(
@@ -1989,7 +1978,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         newFragment.show(getActivity().getSupportFragmentManager(), "dioalog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showTextMessageMenuDialog(ResMessages.TextMessage textMessage,
                                           boolean isDirectMessage, boolean isMyMessage) {
@@ -2000,7 +1988,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showCommentMessageMenuDialog(ResMessages.CommentMessage message) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(
@@ -2008,7 +1995,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         newFragment.show(getActivity().getSupportFragmentManager(), "dioalog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showLeavedMemberDialog(String name) {
         String msg = JandiApplication.getContext()
@@ -2033,23 +2019,17 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         showToast(msg, false /* isError */);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void modifyStarredInfo(long messageId, boolean isStarred) {
-
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissUserStatusLayout() {
         vgMemberStatusAlert.setVisibility(View.GONE);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void refreshMessages() {
         if (adapterView != null) {
-            adapterView.refresh();
+            Completable.fromAction(() -> {
+                adapterView.refresh();
+            }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
         }
     }
 
@@ -2059,19 +2039,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         messageRecyclerViewManager.updateLastVisibleItem();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showToast(String message, boolean isError) {
         if (isError) {
             ColoredToast.showError(message);
         } else {
             ColoredToast.show(message);
         }
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void refreshActionbar() {
-        setUpActionbar();
-        getActivity().invalidateOptionsMenu();
     }
 
     private boolean isInDirectMessage() {

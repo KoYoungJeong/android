@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.local.orm.RealmManager;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.manager.okhttp.OkHttpClientFactory;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
@@ -33,14 +32,11 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
-import org.androidannotations.api.BackgroundExecutor;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
 import io.fabric.sdk.android.Fabric;
@@ -84,6 +80,24 @@ public class JandiApplication extends MultiDexApplication {
         return okHttpClient;
     }
 
+    public static void updatePlatformStatus(boolean active) {
+        LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
+
+        String accessToken = TokenUtil.getAccessToken();
+        if (TextUtils.isEmpty(accessToken)) {
+            return;
+        }
+
+        SimpleApiRequester.request(() -> {
+            ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
+            try {
+                new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
+            } catch (RetrofitException e) {
+                LogUtil.e("PlatformApi", Log.getStackTraceString(e));
+            }
+        }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -100,10 +114,6 @@ public class JandiApplication extends MultiDexApplication {
         RealmManager.init(this);
 
         StethoInitializer.init(this);
-
-        // Set AndroidAnnotations Background pool
-        BackgroundExecutor.setExecutor(
-                Executors.newScheduledThreadPool(PoolableRequestApiExecutor.MAX_POOL_SIZE));
 
         boolean isReleaseBuild =
                 BuildConfig.FLAVOR.contains("full") || BuildConfig.FLAVOR.contains("inhouse");
@@ -236,24 +246,6 @@ public class JandiApplication extends MultiDexApplication {
 
         }
         return mTrackers.get(trackerId);
-    }
-
-    public static void updatePlatformStatus(boolean active) {
-        LogUtil.i("PlatformApi", "updatePlatformStatus - " + active);
-
-        String accessToken = TokenUtil.getAccessToken();
-        if (TextUtils.isEmpty(accessToken)) {
-            return;
-        }
-
-        SimpleApiRequester.request(() -> {
-            ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
-            try {
-                new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
-            } catch (RetrofitException e) {
-                LogUtil.e("PlatformApi", Log.getStackTraceString(e));
-            }
-        }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 
     private void trackApplicationActive() {

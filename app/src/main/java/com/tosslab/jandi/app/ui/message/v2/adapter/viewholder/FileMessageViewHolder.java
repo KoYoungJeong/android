@@ -7,11 +7,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
@@ -63,7 +66,6 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         tvCommonFileSize = (TextView) rootView.findViewById(R.id.tv_common_file_size);
 
         vgFileContent = rootView.findViewById(R.id.vg_message_common_file);
-
     }
 
     @Override
@@ -139,6 +141,8 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
             boolean isSharedFile = false;
 
+            boolean isAssociate = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
+
             Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = ((ResMessages.FileMessage) link.message).shareEntities;
 
             // ArrayList로 나오는 경우 아직 DB에 기록되지 않은 경우 - object가 자동갱신되지 않는 문제 해결
@@ -172,15 +176,17 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 vFileIconBorder.setVisibility(View.GONE);
             } else if (!isSharedFile) {
                 tvFileName.setText(fileMessage.content.title);
-                boolean image = fileMessage.content.icon.startsWith("image");
-                if (!image && !isPublicTopic) {
+                if (isAssociate || !isPublicTopic) {
                     ivFileImage.setImageResource(R.drawable.file_icon_unshared);
                     loadIcon = false;
                     vFileIconBorder.setVisibility(View.GONE);
+                    vgFileContent.setOnClickListener(v -> {
+                        Toast.makeText(JandiApplication.getContext()
+                                , R.string.jandi_unshared_message, Toast.LENGTH_SHORT).show();
+                    });
                 } else {
                     vFileIconBorder.setVisibility(View.VISIBLE);
                 }
-
                 ivFileImage.setClickable(false);
                 tvFileUploaderName.setText(R.string.jandi_unshared_file);
                 tvFileName.setTextColor(resources.getColor(R.color.jandi_text_light));
@@ -230,11 +236,14 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
             }
         }
 
+
     }
 
     @Override
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        vgFileContent.setOnClickListener(itemClickListener);
+        if (!vgFileContent.hasOnClickListeners()) {
+            vgFileContent.setOnClickListener(itemClickListener);
+        }
     }
 
     @Override

@@ -27,13 +27,11 @@ class StickerViewPagerAdapter extends PagerAdapter {
     public static final int STICKER_MAX_VIEW_PORTAIT = 8;
     public static final int STICKER_MAX_VIEW_LANDSCAPE = 6;
     public static final int PAGE_MULTIPLE = 30;
-    private final Context context;
     private final StickerViewModel.OnStickerClick onStickerClick;
     private List<ResMessages.StickerContent> stickers;
     private int stickerMax;
 
-    protected StickerViewPagerAdapter(Context context, List<ResMessages.StickerContent> stickers, StickerViewModel.OnStickerClick onStickerClick) {
-        this.context = context;
+    protected StickerViewPagerAdapter(List<ResMessages.StickerContent> stickers, StickerViewModel.OnStickerClick onStickerClick) {
         this.stickers = stickers;
 
         this.onStickerClick = onStickerClick;
@@ -73,7 +71,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         int actualPosition = getAcualPosition(position, getActualCount());
 
-        View view = getStickerItemLayout(actualPosition, Math.min(stickerMax, stickers.size() - (actualPosition * stickerMax)), stickerMax);
+        View view = getStickerItemLayout(container.getContext(), actualPosition, Math.min(stickerMax, stickers.size() - (actualPosition * stickerMax)), stickerMax);
         container.addView(view);
         return view;
     }
@@ -85,7 +83,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
         }
     }
 
-    private LinearLayout getStickerItemLayout(int page, int size, int stickerMax) {
+    private LinearLayout getStickerItemLayout(Context context, int page, int size, int stickerMax) {
 
         boolean isPortrait = stickerMax == STICKER_MAX_VIEW_PORTAIT;
         int columnCount = isPortrait ? STICKER_MAX_VIEW_PORTAIT / 2 : STICKER_MAX_VIEW_LANDSCAPE;

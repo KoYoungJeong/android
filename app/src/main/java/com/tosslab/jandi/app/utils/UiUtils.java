@@ -60,6 +60,15 @@ public class UiUtils {
         return statusBarHeight;
     }
 
+    public static int getSoftKeyHeight() {
+        Resources resources = JandiApplication.getContext().getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return resources.getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
     public interface KeyboardHandler {
         void hideKeyboard();
     }

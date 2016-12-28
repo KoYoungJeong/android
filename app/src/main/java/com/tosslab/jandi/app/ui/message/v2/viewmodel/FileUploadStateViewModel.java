@@ -11,48 +11,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadFinishEvent;
 import com.tosslab.jandi.app.events.files.FileUploadProgressEvent;
 import com.tosslab.jandi.app.events.files.FileUploadStartEvent;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.WebLoadingBar;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-@EBean
 public class FileUploadStateViewModel {
 
-    @ViewById(R.id.rv_message_upload_file)
+    @Bind(R.id.rv_message_upload_file)
     RecyclerView rvUploadFile;
 
-    @ViewById(R.id.vg_message_upload_file)
+    @Bind(R.id.vg_message_upload_file)
     View vgContentWrapper;
 
-    @ViewById(R.id.loading_message_upload_file)
+    @Bind(R.id.loading_message_upload_file)
     WebLoadingBar webLoadingBar;
 
-    @RootContext
-    Context context;
+    private Room room;
 
-    private long entityId;
+    @Inject
+    public FileUploadStateViewModel() { }
 
-    @AfterViews
-    void initViews() {
-        webLoadingBar.setColor(context.getResources().getColor(R.color.jandi_accent_color));
+    public void initView(View view) {
+        ButterKnife.bind(this, view);
+        webLoadingBar.setColor(JandiApplication.getContext().getResources().getColor(R.color.jandi_accent_color));
     }
+
 
     public void registerEventBus() {
         EventBus.getDefault().register(this);
@@ -63,7 +63,7 @@ public class FileUploadStateViewModel {
     }
 
     public void onEventMainThread(FileUploadStartEvent event) {
-        if (event.getEntity() != entityId) {
+        if (event.getEntity() != room.getRoomId()) {
             return;
         }
 
@@ -77,7 +77,7 @@ public class FileUploadStateViewModel {
 
     public void onEventMainThread(FileUploadProgressEvent event) {
 
-        if (event.getEntity() != entityId) {
+        if (event.getEntity() != room.getRoomId()) {
             return;
         }
 
@@ -95,7 +95,7 @@ public class FileUploadStateViewModel {
     public void onEventMainThread(FileUploadFinishEvent event) {
 
         FileUploadDTO fileUploadDTO = event.getFileUploadDTO();
-        if (fileUploadDTO.getEntity() != entityId) {
+        if (fileUploadDTO.getEntity() != room.getRoomId()) {
             return;
         }
 
@@ -116,14 +116,9 @@ public class FileUploadStateViewModel {
 
     }
 
-    public void setEntityId(long entityId) {
-        this.entityId = entityId;
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void initDownloadState() {
         FileUploadManager instance = FileUploadManager.getInstance();
-        List<FileUploadDTO> uploadInfos = instance.getUploadInfos(entityId);
+        List<FileUploadDTO> uploadInfos = instance.getUploadInfos(room.getRoomId());
 
         if (uploadInfos.size() <= 0) {
             vgContentWrapper.setVisibility(View.GONE);
@@ -132,8 +127,12 @@ public class FileUploadStateViewModel {
 
         vgContentWrapper.setVisibility(View.VISIBLE);
 
-        rvUploadFile.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        rvUploadFile.setAdapter(new FileUploadInfoAdapter(context, uploadInfos));
+        rvUploadFile.setLayoutManager(new LinearLayoutManager(rvUploadFile.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvUploadFile.setAdapter(new FileUploadInfoAdapter(rvUploadFile.getContext(), uploadInfos));
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     private static class FileUploadInfoAdapter extends RecyclerView.Adapter<FileUploadViewHolder> {

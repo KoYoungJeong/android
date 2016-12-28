@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.services.socket;
 
-import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 
@@ -157,7 +156,6 @@ import rx.subjects.PublishSubject;
 public class JandiSocketServiceModel {
     public static final String TAG = JandiSocketServiceModel.class.getSimpleName();
 
-    private final Context context;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<DirectMessageApi> directMessageApi;
     PublishSubject<Object> eventPublisher;
@@ -168,11 +166,9 @@ public class JandiSocketServiceModel {
     private SocketEventHistoryUpdator historyUpdator;
 
     @Inject
-    JandiSocketServiceModel(Context context,
-                            Lazy<LoginApi> loginApi,
+    JandiSocketServiceModel(Lazy<LoginApi> loginApi,
                             SocketEventHistoryUpdator historyUpdator,
                             Lazy<DirectMessageApi> directMessageApi) {
-        this.context = context;
         this.loginApi = loginApi;
         this.historyUpdator = historyUpdator;
         this.directMessageApi = directMessageApi;
@@ -517,6 +513,12 @@ public class JandiSocketServiceModel {
                     marker.setRoomId(chat.getId());
                 }
             }
+
+            RealmList<RealmLong> memberIds = new RealmList<>();
+            for (Long memberId : chat.getMembers()) {
+                memberIds.add(new RealmLong(memberId));
+            }
+            chat.setMemberIds(memberIds);
 
             chat.setReadLinkId(-1);
             chat.setCompanionId(Observable.from(chat.getMembers())
@@ -913,7 +915,8 @@ public class JandiSocketServiceModel {
 
     public void onTeamLeft(Object object) {
         try {
-            SocketTeamLeaveEvent event = SocketModelExtractor.getObject(object, SocketTeamLeaveEvent.class);
+
+            SocketTeamLeaveEvent event = SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamLeaveEvent.class);
             saveEvent(event);
 
             SocketTeamLeaveEvent.Data data = event.getData();
@@ -927,6 +930,9 @@ public class JandiSocketServiceModel {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(leaveEvent -> {
                             ResAccountInfo.UserTeam team = AccountRepository.getRepository().getSelectedTeamInfo();
+                            if (team == null) {
+                                return;
+                            }
                             String teamName = JandiApplication.getContext()
                                     .getString(R.string.jandi_your_access_disabled, team.getName());
                             ColoredToast.showError(teamName);
@@ -1215,6 +1221,7 @@ public class JandiSocketServiceModel {
             RealmList<Marker> markers = new RealmList<>();
             RealmList<RealmLong> memberIds = new RealmList<>();
 
+            RealmList<RealmLong> ids = new RealmList<>();
             for (Long memberId : topic.getMembers()) {
                 Marker marker = new Marker();
                 marker.setRoomId(topic.getId());
@@ -1222,7 +1229,13 @@ public class JandiSocketServiceModel {
                 marker.setReadLinkId(-1);
                 markers.add(marker);
                 memberIds.add(new RealmLong(memberId));
+
+                ids.add(new RealmLong(memberId));
             }
+
+            topic.setMemberIds(ids);
+
+
             if (topic.getCreatorId() == TeamInfoLoader.getInstance().getMyId()) {
                 topic.setSubscribe(true);
                 topic.setIsJoined(true);
@@ -1284,11 +1297,15 @@ public class JandiSocketServiceModel {
                     marker.setRoomId(topic.getId());
                     marker.setMemberId(memberId);
                     marker.setReadLinkId(-1);
-
                     markers.add(marker);
                 }
             }
 
+            RealmList<RealmLong> ids = new RealmList<>();
+            for (Long memberId : topic.getMembers()) {
+                ids.add(new RealmLong(memberId));
+            }
+            topic.setMemberIds(ids);
 
             topic.setSubscribe(true);
             topic.setIsJoined(true);
@@ -1298,7 +1315,6 @@ public class JandiSocketServiceModel {
             TopicRepository.getInstance().addTopic(topic);
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1448,7 +1464,7 @@ public class JandiSocketServiceModel {
         }, () -> {
             MessageRepository.getRepository().deleteAllLink();
             JandiPreference.setSocketConnectedLastTime(-1);
-            IntroActivity.startActivity(context, false);
+            IntroActivity.startActivity(JandiApplication.getContext(), false);
         });
     }
 

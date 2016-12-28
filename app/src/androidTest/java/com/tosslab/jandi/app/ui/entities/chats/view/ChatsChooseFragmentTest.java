@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.presenter.ChatChoosePresenter;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -68,7 +68,7 @@ public class ChatsChooseFragmentTest {
         Intents.init();
 
         rule.runOnUiThread(() -> fragment.moveChatMessage(TeamInfoLoader.getInstance().getTeamId(), getOtherMemberId()));
-        Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity_.class.getName()));
+        Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity.class.getName()));
         assertThat(activity.isFinishing(), is(true));
 
         Intents.release();

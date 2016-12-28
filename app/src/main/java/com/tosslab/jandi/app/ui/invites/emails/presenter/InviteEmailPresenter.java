@@ -38,5 +38,7 @@ public interface InviteEmailPresenter {
         void showSuccessDialog();
 
         void changeInvitationButtonIfPatiallyFailed();
+
+        void showDialogOver10();
     }
 }

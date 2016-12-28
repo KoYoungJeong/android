@@ -2,12 +2,10 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -17,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class MessageRepositoryModel {
@@ -24,10 +24,9 @@ public class MessageRepositoryModel {
     public static final int MAX_COUNT = 50;
     MessageManipulator messageManipulator;
 
-    private boolean isFirst = true;
-
-    public MessageRepositoryModel() {
-        messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
+    @Inject
+    public MessageRepositoryModel(MessageManipulator messageManipulator) {
+        this.messageManipulator = messageManipulator;
     }
 
     public void setEntityInfo(int entityType, long entityId) {
@@ -39,7 +38,7 @@ public class MessageRepositoryModel {
         List<ResMessages.Link> oldMessages = MessageRepository.getRepository().getOldMessages(roomId, startLinkId, MAX_COUNT);
 
         if (oldMessages.isEmpty()) {
-            if (!isFirst) {
+            if (startLinkId > 0) {
                 try {
                     ResMessages messages = messageManipulator.getMessages(startLinkId, MAX_COUNT);
                     oldMessages = messages.records;
@@ -48,7 +47,9 @@ public class MessageRepositoryModel {
                 }
             } else {
                 try {
-                    oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId, MAX_COUNT).records;
+                    if (startLinkId < 0) {
+                        oldMessages = messageManipulator.getBeforeMarkerMessage(startLinkId, MAX_COUNT).records;
+                    }
                 } catch (RetrofitException e) {
                     e.printStackTrace();
                 }
@@ -95,7 +96,7 @@ public class MessageRepositoryModel {
             }
         }
 
-        if (isFirst) {
+        if (startLinkId > 0) {
             List<SendMessage> sendMessageOfRoom = SendMessageRepository.getRepository().getSendMessageOfRoom(roomId);
             List<ResMessages.Link> dummyLinks = new ArrayList<>();
             for (SendMessage sendMessage : sendMessageOfRoom) {
@@ -114,10 +115,6 @@ public class MessageRepositoryModel {
                 dummyLinks.add(dummyMessageLink);
             }
             oldMessages.addAll(dummyLinks);
-        }
-
-        if (!oldMessages.isEmpty()) {
-            isFirst = false;
         }
 
         if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {

@@ -21,4 +21,5 @@ public class PropertyKey {
     public static final String StarredType = "p48";
     public static final String MentionCount = "p49";
     public static final String StickerId = "p53";
+    public static final String InvitationCategory = "p57";
 }

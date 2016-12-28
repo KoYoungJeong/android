@@ -14,7 +14,9 @@ public interface Member {
     boolean isInactive();
 
     boolean isTeamOwner();
+
     String getType();
+
     boolean isBot();
 
     boolean isStarred();

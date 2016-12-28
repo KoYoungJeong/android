@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dagger.Lazy;
 import rx.Observable;
 
@@ -29,6 +31,7 @@ public class PollListModel {
     @VisibleForTesting
     Lazy<PollApi> pollApi;
 
+    @Inject
     public PollListModel(Lazy<PollApi> api) {
         pollApi = api;
     }

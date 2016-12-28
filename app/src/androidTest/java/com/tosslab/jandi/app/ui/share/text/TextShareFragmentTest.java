@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -112,7 +112,7 @@ public class TextShareFragmentTest {
         rule.runOnUiThread(() -> textShareFragment.moveEntity(teamId, topicId, topicId, JandiConstants.TYPE_PUBLIC_TOPIC));
 
         Intents.intended(IntentMatchers.hasComponent(MainTabActivity.class.getName()));
-        Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity_.class.getName()));
+        Intents.intended(IntentMatchers.hasComponent(MessageListV2Activity.class.getName()));
 
         Intents.release();
 

@@ -2,10 +2,11 @@ package com.tosslab.jandi.app.ui.message.v2.search.view;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -59,12 +63,14 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
+import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog;
+import com.tosslab.jandi.app.ui.message.v2.search.dagger.DaggerMessageSearchListComponent;
+import com.tosslab.jandi.app.ui.message.v2.search.dagger.MessageSearchListModule;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
-import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenterImpl;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.DateAnimator;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
@@ -83,102 +89,99 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
+import javax.inject.Inject;
 
-@EFragment(R.layout.fragment_message_list)
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
+
 public class MessageSearchListFragment extends Fragment implements MessageSearchListPresenter.View {
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     int entityType;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long entityId;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     boolean isFavorite = false;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long teamId;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long lastMarker = -1;
-    @FragmentArg
+    @Nullable
+    @InjectExtra
     long roomId;
-    @ViewById(R.id.lv_messages)
+    @Bind(R.id.lv_messages)
     RecyclerView lvMessages;
 
-    @ViewById(R.id.btn_send_message)
+    @Bind(R.id.btn_send_message)
     View sendButton;
 
-    @ViewById(R.id.et_message)
+    @Bind(R.id.et_message)
     EditText etMessage;
 
-    @SystemService
-    ClipboardManager clipboardManager;
-
-    @SystemService
     InputMethodManager inputMethodManager;
 
-    @ViewById(R.id.vg_messages_preview_last_item)
+    @Bind(R.id.vg_messages_preview_last_item)
     View vgPreview;
 
-    @ViewById(R.id.iv_message_preview_user_profile)
+    @Bind(R.id.iv_message_preview_user_profile)
     ImageView ivPreviewProfile;
 
-    @ViewById(R.id.tv_message_preview_user_name)
+    @Bind(R.id.tv_message_preview_user_name)
     TextView tvPreviewUserName;
 
-    @ViewById(R.id.tv_message_preview_content)
+    @Bind(R.id.tv_message_preview_content)
     TextView tvPreviewContent;
 
-    @ViewById(R.id.vg_messages_input)
+    @Bind(R.id.vg_messages_input)
     View vgMessageInput;
 
-    @ViewById(R.id.vg_messages_go_to_latest)
+    @Bind(R.id.vg_messages_go_to_latest)
     View vgMoveToLatest;
 
-    @ViewById(R.id.vg_messages_member_status_alert)
+    @Bind(R.id.vg_messages_member_status_alert)
     View vDisabledUser;
 
-    @ViewById(R.id.layout_messages_empty)
+    @Bind(R.id.layout_messages_empty)
     LinearLayout layoutEmpty;
 
-    @ViewById(R.id.layout_messages_loading)
+    @Bind(R.id.layout_messages_loading)
     View vgProgressForMessageList;
 
-    @ViewById(R.id.iv_go_to_latest)
+    @Bind(R.id.iv_go_to_latest)
     View vMoveToLatest;
 
-    @ViewById(R.id.progress_go_to_latest)
+    @Bind(R.id.progress_go_to_latest)
     View progressGoToLatestView;
 
-    @ViewById(R.id.vg_messages_preview_sticker)
+    @Bind(R.id.vg_messages_preview_sticker)
     ViewGroup vgStickerPreview;
 
-    @ViewById(R.id.iv_messages_preview_sticker_image)
+    @Bind(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
 
-    @ViewById(R.id.vg_message_offline)
+    @Bind(R.id.vg_message_offline)
     View vgOffline;
-    @ViewById(R.id.progress_message)
+    @Bind(R.id.progress_message)
     View oldProgressBar;
 
-    @Bean
     AnnouncementViewModel announcementViewModel;
 
-    @Bean(MessageSearchListPresenterImpl.class)
+    @Inject
     MessageSearchListPresenter messageSearchListPresenter;
     DateAnimator dateAnimator;
-    @ViewById(R.id.tv_messages_date_divider)
+    @Bind(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
     private boolean isForeground;
     private boolean isRoomInit;
@@ -186,10 +189,28 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     private OfflineLayer offlineLayer;
     private ProgressWheel progressWheelForAction;
 
-    @AfterInject
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_message_list, container, false);
+        ButterKnife.bind(this, view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Dart.inject(this, getArguments());
+        DaggerMessageSearchListComponent.builder()
+                .messageSearchListModule(new MessageSearchListModule(this))
+                .build()
+                .inject(this);
+        initObject();
+        initViews();
+    }
+
     void initObject() {
 
-        messageSearchListPresenter.setView(this);
         messageSearchListPresenter.setDefaultInfos(teamId, roomId, entityId, lastMarker, entityType);
 
         SendMessageRepository.getRepository().deleteAllOfCompletedMessages();
@@ -201,9 +222,10 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         messageAdapter.setEntityId(entityId);
 
         progressWheelForAction = new ProgressWheel(getActivity());
+
+        inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
-    @AfterViews
     void initViews() {
         int screenView = TeamInfoLoader.getInstance().isPublicTopic(entityId)
                 ? ScreenViewProperty.PUBLIC_TOPIC : ScreenViewProperty.PRIVATE_TOPIC;
@@ -225,6 +247,9 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
         messageSearchListPresenter.checkEnabledUser(entityId);
         messageSearchListPresenter.onInitRoomInfo();
+        if (announcementViewModel == null) {
+            announcementViewModel = new AnnouncementViewModel(getContext(), getView());
+        }
         announcementViewModel.setOnAnnouncementOpenListener(() -> {
             announcementViewModel.openAnnouncement(true);
             messageSearchListPresenter.onAccouncementOpen();
@@ -268,7 +293,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         newFragment.show(getFragmentManager(), "dioalog");
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void deleteLinkByMessageId(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
@@ -278,7 +302,17 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return messageSearchListPresenter.onOptionItemSelected(MessageSearchListFragment.this, item, teamId, entityId);
+        MenuCommand menuCommand = MenuCommandBuilder.init((AppCompatActivity) getActivity())
+                .with(this)
+                .teamId(teamId)
+                .entityId(entityId)
+                .build(item);
+
+        if (menuCommand != null) {
+            menuCommand.execute(item);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -315,12 +349,10 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void dismissOfflineLayer() {
         offlineLayer.dismissOfflineView();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showOfflineLayer() {
         offlineLayer.showOfflineView();
     }
@@ -436,21 +468,23 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         actionBar.setTitle(TeamInfoLoader.getInstance().getName(entityId));
     }
 
-    @Click(R.id.vg_messages_go_to_latest)
+    @OnClick(R.id.vg_messages_go_to_latest)
     void onGotoLatestClick() {
         int itemCount = messageAdapter.getItemCount();
         long firstCursorLinkId = -1;
         if (itemCount > 0) {
             firstCursorLinkId = messageAdapter.getItem(0).id;
         }
-        MessageListV2Activity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .entityType(entityType)
                 .entityId(entityId)
                 .teamId(teamId)
                 .roomId(roomId)
                 .firstCursorLinkId(firstCursorLinkId)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
         getActivity().overridePendingTransition(0, 0);
     }
 
@@ -475,6 +509,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     private void copyToClipboard(String contentString) {
         final ClipData clipData = ClipData.newPlainText("", contentString);
+        ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         clipboardManager.setPrimaryClip(clipData);
     }
 
@@ -534,14 +569,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
-    @UiThread
-    void closeDialogFragment() {
-        android.app.Fragment dialogFragment = getActivity().getFragmentManager().findFragmentByTag("dialog");
-        if (dialogFragment != null && dialogFragment instanceof android.app.DialogFragment) {
-            ((android.app.DialogFragment) dialogFragment).dismiss();
-        }
-    }
-
     public void onEvent(TeamLeaveEvent event) {
 
         messageSearchListPresenter.onTeamLeave(event.getTeamId(), event.getMemberId());
@@ -566,11 +593,10 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     }
 
-    public void onEvent(DeleteFileEvent event) {
+    public void onEventMainThread(DeleteFileEvent event) {
         changeToArchive(event.getId());
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void changeToArchive(long messageId) {
         int position = messageAdapter.indexByMessageId(messageId);
         String archivedStatus = "archived";
@@ -594,14 +620,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             messageAdapter.notifyItemRangeChanged(0, messageAdapter.getItemCount());
         }
     }
-
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    void refreshActionbar() {
-        setUpActionbar();
-        getActivity().invalidateOptionsMenu();
-    }
-
 
     public void onEventMainThread(ShowProfileEvent event) {
         if (!isForeground) {
@@ -644,16 +662,17 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
 
 
-        MessageListV2Activity_.intent(getActivity())
-                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(Henson.with(getActivity())
+                .gotoMessageListV2Activity()
                 .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
                 .isFromPush(false)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
-    public void onEvent(NetworkConnectEvent event) {
+    public void onEventMainThread(NetworkConnectEvent event) {
         if (event.isConnected()) {
             if (messageAdapter.getItemCount() <= 0) {
                 // roomId 설정 후...
@@ -677,30 +696,20 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void showGrayToast(String message) {
         ColoredToast.showGray(message);
     }
 
-    @UiThread
-    @Override
-    public void modifyEntitySucceed(String changedEntityName) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showFailToast(String message) {
         ColoredToast.showError(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showSuccessToast(String message) {
         ColoredToast.show(message);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void modifyStarredInfo(long messageId, boolean starred) {
         int position = messageAdapter.indexByMessageId(messageId);
@@ -715,51 +724,55 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         AlertUtil.showConfirmDialog(getActivity(), msg, null, false);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showOldLoadingProgress() {
 
-        if (oldProgressBar.getVisibility() != View.GONE) {
-            return;
-        }
+        Completable.fromAction(() -> {
 
-        oldProgressBar.setVisibility(View.VISIBLE);
+            if (oldProgressBar.getVisibility() != View.GONE) {
+                return;
+            }
 
-        Animation inAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, -1f,
-                Animation.RELATIVE_TO_SELF, 0f);
-        inAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
-        inAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-        inAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+            oldProgressBar.setVisibility(View.VISIBLE);
 
-        oldProgressBar.startAnimation(inAnim);
+            Animation inAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                    Animation.RELATIVE_TO_SELF, 0f,
+                    Animation.RELATIVE_TO_SELF, -1f,
+                    Animation.RELATIVE_TO_SELF, 0f);
+            inAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
+            inAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+            inAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+
+            oldProgressBar.startAnimation(inAnim);
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
 
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissOldLoadingProgress() {
-
-        if (oldProgressBar.getVisibility() != View.VISIBLE) {
-            return;
-        }
-
-        Animation outAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, 0f,
-                Animation.RELATIVE_TO_SELF, -1f);
-        outAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
-        outAnim.setInterpolator(new AccelerateDecelerateInterpolator());
-        outAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-
-        outAnim.setAnimationListener(new SimpleEndAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                oldProgressBar.setVisibility(View.GONE);
+        Completable.fromAction(() -> {
+            if (oldProgressBar.getVisibility() != View.VISIBLE) {
+                return;
             }
-        });
-        oldProgressBar.startAnimation(outAnim);
+
+            Animation outAnim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f,
+                    Animation.RELATIVE_TO_SELF, 0f,
+                    Animation.RELATIVE_TO_SELF, 0f,
+                    Animation.RELATIVE_TO_SELF, -1f);
+            outAnim.setDuration(oldProgressBar.getContext().getResources().getInteger(R.integer.duration_short_anim));
+            outAnim.setInterpolator(new AccelerateDecelerateInterpolator());
+            outAnim.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+
+            outAnim.setAnimationListener(new SimpleEndAnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    oldProgressBar.setVisibility(View.GONE);
+                }
+            });
+            oldProgressBar.startAnimation(outAnim);
+
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     @Override
@@ -801,12 +814,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         return isForeground;
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissProgressWheel() {
-        if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
-            progressWheelForAction.dismiss();
-        }
+        Completable.fromAction(() -> {
+            if (progressWheelForAction != null && progressWheelForAction.isShowing()) {
+                progressWheelForAction.dismiss();
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     @Override
@@ -819,13 +833,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         announcementViewModel.openAnnouncement(opened);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    @Override
-    public void showCreateAlertDialog(DialogInterface.OnClickListener onConfirmClick) {
-        announcementViewModel.showCreateAlertDialog(onConfirmClick);
-    }
-
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showProgressWheel() {
         dismissProgressWheel();
@@ -836,26 +843,28 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
     }
 
-    @UiThread
     @Override
     public void updateMarkerNewMessage(ResMessages newMessage, boolean isLastLinkId, boolean firstLoad) {
-        long firstVisibleItemLinkId = getFirstVisibleItemLinkId();
-        int firstVisibleItemTop = getFirstVisibleItemTop();
-        int lastItemPosition = messageAdapter.getItemCount();
+        Completable.fromAction(() -> {
+            long firstVisibleItemLinkId = getFirstVisibleItemLinkId();
+            int firstVisibleItemTop = getFirstVisibleItemTop();
+            int lastItemPosition = messageAdapter.getItemCount();
 
-        messageAdapter.addAll(lastItemPosition, newMessage.records);
-        messageAdapter.notifyDataSetChanged();
-        if (!firstLoad && firstVisibleItemLinkId > 0) {
-            moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
-        }
-        if (!isLastLinkId) {
-            messageAdapter.setNewLoadingComplete();
-        } else {
-            messageAdapter.setNewNoMoreLoading();
-        }
+            messageAdapter.addAll(lastItemPosition, newMessage.records);
+            messageAdapter.notifyDataSetChanged();
+            if (!firstLoad && firstVisibleItemLinkId > 0) {
+                moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
+            }
+            if (!isLastLinkId) {
+                messageAdapter.setNewLoadingComplete();
+            } else {
+                messageAdapter.setNewNoMoreLoading();
+            }
+
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void moveToMessage(long messageId, int firstVisibleItemTop) {
         int itemPosition = messageAdapter.indexByMessageId(messageId);
         ((LinearLayoutManager) lvMessages.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
@@ -881,12 +890,14 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         return messageAdapter.getItemCount();
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void dismissLoadingView() {
-        vgProgressForMessageList.animate()
-                .alpha(0f)
-                .setDuration(250);
+        Completable.fromAction(() -> {
+            vgProgressForMessageList.animate()
+                    .alpha(0f)
+                    .setDuration(250);
+
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     @Override
@@ -899,43 +910,44 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         }
     }
 
-    @UiThread
     @Override
     public void updateMarkerMessage(long linkId, ResMessages oldMessage, boolean noFirstLoad,
                                     boolean isFirstMessage, long latestVisibleMessageId,
                                     int firstVisibleItemTop) {
-        messageAdapter.addAll(0, oldMessage.records);
+        Completable.fromAction(() -> {
+            messageAdapter.addAll(0, oldMessage.records);
 
-        if (latestVisibleMessageId > 0) {
-            moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
-        } else {
-            // if has no first item...
+            if (latestVisibleMessageId > 0) {
+                moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
+            } else {
+                // if has no first item...
 
-            long messageId = -1;
-            for (ResMessages.Link record : oldMessage.records) {
-                if (record.id == linkId) {
-                    messageId = record.messageId;
+                long messageId = -1;
+                for (ResMessages.Link record : oldMessage.records) {
+                    if (record.id == linkId) {
+                        messageId = record.messageId;
+                    }
+                }
+                if (messageId > 0) {
+                    int yPosition = JandiApplication.getContext()
+                            .getResources()
+                            .getDisplayMetrics().heightPixels * 2 / 5;
+                    moveToMessage(messageId, yPosition);
+                } else {
+                    moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
                 }
             }
-            if (messageId > 0) {
-                int yPosition = JandiApplication.getContext()
-                        .getResources()
-                        .getDisplayMetrics().heightPixels * 2 / 5;
-                moveToMessage(messageId, yPosition);
+
+            if (!isFirstMessage) {
+                messageAdapter.setOldLoadingComplete();
             } else {
-                moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
+                messageAdapter.setOldNoMoreLoading();
             }
-        }
 
-        if (!isFirstMessage) {
-            messageAdapter.setOldLoadingComplete();
-        } else {
-            messageAdapter.setOldNoMoreLoading();
-        }
-
-        if (!noFirstLoad) {
-            dismissLoadingView();
-        }
+            if (!noFirstLoad) {
+                dismissLoadingView();
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.invites.emails.dagger;
 
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapter;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterDataModel;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterViewModel;
@@ -13,11 +12,7 @@ import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by tee on 2016. 12. 12..
- */
-
-@Module(includes = ApiClientModule.class)
+@Module
 public class InviteEmailModule {
     private InviteEmailPresenter.View view;
     private InviteEmailListAdapter listAdapter;

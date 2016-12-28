@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.network.DomainUtil;
 
 public class JandiConstantsForFlavors {
     // These constants are for REAL sevice
-    public static final String SERVICE_DOMAIN_BASE = "jandi.com";
+    public static final String SERVICE_DOMAIN_BASE = "a-jandi.com";
 
     public static final String GA_TRACK_ID = "UA-53634725-3";
 

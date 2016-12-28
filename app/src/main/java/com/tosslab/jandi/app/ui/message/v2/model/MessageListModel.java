@@ -2,12 +2,9 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.app.NotificationManager;
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Pair;
-import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -26,7 +23,6 @@ import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
-import com.tosslab.jandi.app.network.dagger.DaggerApiClientComponent;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqNull;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -41,8 +37,6 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
-import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
-import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.poll.util.PollUtil;
@@ -51,11 +45,6 @@ import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessagePost;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrStarred;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrUnstarred;
-
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,28 +57,28 @@ import javax.inject.Inject;
 import dagger.Lazy;
 import rx.Observable;
 
-@EBean
 public class MessageListModel {
 
-    @Bean
     MessageManipulator messageManipulator;
-    @Bean
     EntityClientManager entityClientManager;
-    @RootContext
-    AppCompatActivity activity;
-
-    @Inject
     Lazy<RoomsApi> roomsApi;
-    @Inject
     Lazy<StickerApi> stickerApi;
-    @Inject
     Lazy<MessageApi> messageApi;
-    @Inject
     Lazy<PollApi> pollApi;
 
-    @AfterInject
-    void initObject() {
-        DaggerApiClientComponent.create().inject(this);
+    @Inject
+    public MessageListModel(MessageManipulator messageManipulator,
+                            EntityClientManager entityClientManager,
+                            Lazy<RoomsApi> roomsApi,
+                            Lazy<StickerApi> stickerApi,
+                            Lazy<MessageApi> messageApi,
+                            Lazy<PollApi> pollApi) {
+        this.messageManipulator = messageManipulator;
+        this.entityClientManager = entityClientManager;
+        this.roomsApi = roomsApi;
+        this.stickerApi = stickerApi;
+        this.messageApi = messageApi;
+        this.pollApi = pollApi;
     }
 
     public boolean isTopic(long entityid) {
@@ -148,14 +137,6 @@ public class MessageListModel {
 
     public boolean isDirectMessage(int entityType) {
         return entityType == JandiConstants.TYPE_DIRECT_MESSAGE;
-    }
-
-    public MenuCommand getMenuCommand(Fragment fragmet, long teamId, long entityId, MenuItem item) {
-        return MenuCommandBuilder.init(activity)
-                .with(fragmet)
-                .teamId(teamId)
-                .entityId(entityId)
-                .build(item);
     }
 
     public long getRoomId() {
@@ -316,10 +297,10 @@ public class MessageListModel {
 
     public void removeNotificationSameEntityId(long entityId) {
 
-        long chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
+        long chatIdFromPush = JandiPreference.getChatIdFromPush(JandiApplication.getContext());
         if (chatIdFromPush == entityId) {
             NotificationManager notificationManager =
-                    (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+                    (NotificationManager) JandiApplication.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
         }
 

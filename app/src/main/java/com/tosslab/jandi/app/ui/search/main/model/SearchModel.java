@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.search.JandiSearchDatabaseManager;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
@@ -33,10 +32,12 @@ import rx.Observable;
 public class SearchModel {
 
     private final Lazy<SearchApi> searchApi;
+    private EntityClientManager entityClientManager;
 
     @Inject
-    public SearchModel(Lazy<SearchApi> searchApi) {
+    public SearchModel(Lazy<SearchApi> searchApi, EntityClientManager entityClientManager) {
         this.searchApi = searchApi;
+        this.entityClientManager = entityClientManager;
     }
 
     public ResSearch searchMessages(ReqSearch reqSearch) throws RetrofitException {
@@ -159,8 +160,6 @@ public class SearchModel {
     }
 
     public void joinTopic(long topicId) throws RetrofitException {
-        EntityClientManager entityClientManager
-                = EntityClientManager_.getInstance_(JandiApplication.getContext());
         entityClientManager.joinChannel(topicId);
         TopicRepository.getInstance().updateTopicJoin(topicId, true);
         TeamInfoLoader.getInstance().refresh();

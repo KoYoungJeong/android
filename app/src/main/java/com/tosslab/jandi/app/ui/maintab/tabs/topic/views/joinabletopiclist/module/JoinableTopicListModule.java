@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.module;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.adapter.JoinableTopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.model.JoinableTopicDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.presenter.JoinableTopicListPresenter;
@@ -31,11 +28,6 @@ public class JoinableTopicListModule {
     @Provides
     public JoinableTopicListView provideJoinableTopicListView() {
         return view;
-    }
-
-    @Provides
-    public EntityClientManager provideEntityClientManager() {
-        return EntityClientManager_.getInstance_(JandiApplication.getContext());
     }
 
     @Provides

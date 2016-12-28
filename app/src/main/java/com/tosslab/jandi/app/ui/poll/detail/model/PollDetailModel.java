@@ -2,14 +2,11 @@ package com.tosslab.jandi.app.ui.poll.detail.model;
 
 import android.support.annotation.VisibleForTesting;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -44,17 +41,20 @@ public class PollDetailModel {
 
     @VisibleForTesting
     Lazy<PollApi> pollApi;
-    @Inject
-    Lazy<MessageApi> messageApi;
 
+    Lazy<MessageApi> messageApi;
     MessageManipulator messageManipulator;
     EntityClientManager entityClientManager;
 
-    public PollDetailModel(Lazy<PollApi> pollApi, Lazy<MessageApi> messageApi) {
+    @Inject
+    public PollDetailModel(Lazy<PollApi> pollApi,
+                           Lazy<MessageApi> messageApi,
+                           MessageManipulator messageManipulator,
+                           EntityClientManager entityClientManager) {
         this.pollApi = pollApi;
         this.messageApi = messageApi;
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
-        messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
+        this.messageManipulator = messageManipulator;
+        this.entityClientManager = entityClientManager;
     }
 
     public Observable<ResPollDetail> getPollDetailObservable(long pollId) {

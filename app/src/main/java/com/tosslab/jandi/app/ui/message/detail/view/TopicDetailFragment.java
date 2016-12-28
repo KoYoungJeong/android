@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -386,9 +387,11 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Override
     public void showDilaogInviteToDefaultTopic() {
+        String title = getString(R.string.topic_default_invite_error_title);
+        String message = getString(R.string.topic_default_invite_error_desc);
+
         new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(R.string.topic_default_invite_error_title)
-                .setMessage(R.string.topic_default_invite_error_desc)
+                .setMessage(Html.fromHtml(String.format("<b>%s</b><br/><br/>%s", title, message)))
                 .setPositiveButton(R.string.jandi_confirm, null)
                 .create()
                 .show();
@@ -407,11 +410,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     @Override
     public void showTopicDeleteAtLeastGuest() {
+        String title = getString(R.string.topic_delete_associatejoined_title);
+        String message = getString(R.string.topic_delete_associatejoined_desc);
         new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(R.string.topic_delete_associatejoined_title)
-                .setMessage(R.string.topic_delete_associatejoined_desc)
+                .setMessage(Html.fromHtml(String.format("<b>%s</b><br/><br/>%s", title, message)))
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_topic_delete, (dialog, which) -> {
+                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> {
                     topicDetailPresenter.deleteTopic(getActivity(), entityId);
                 })
                 .create()

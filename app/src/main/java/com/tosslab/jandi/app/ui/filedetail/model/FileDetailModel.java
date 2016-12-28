@@ -3,14 +3,11 @@ package com.tosslab.jandi.app.ui.filedetail.model;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
@@ -62,13 +59,17 @@ public class FileDetailModel {
     Lazy<FileApi> fileApi;
 
     @Inject
-    public FileDetailModel(Lazy<StickerApi> stickerApi, Lazy<MessageApi> messageApi, Lazy<FileApi> fileApi) {
+    public FileDetailModel(EntityClientManager entityClientManager,
+                           MessageManipulator messageManipulator,
+                           Lazy<StickerApi> stickerApi,
+                           Lazy<MessageApi> messageApi,
+                           Lazy<FileApi> fileApi) {
+        this.messageManipulator = messageManipulator;
+        this.entityClientManager = entityClientManager;
         this.stickerApi = stickerApi;
         this.messageApi = messageApi;
         this.fileApi = fileApi;
 
-        messageManipulator = MessageManipulator_.getInstance_(JandiApplication.getContext());
-        entityClientManager = EntityClientManager_.getInstance_(JandiApplication.getContext());
     }
 
     public boolean isNetworkConneted() {
@@ -349,6 +350,7 @@ public class FileDetailModel {
                     .filter(it -> TeamInfoLoader.getInstance().isUser(it))
                     .filter(it -> !TeamInfoLoader.getInstance().isJandiBot(it))
                     .filter(it -> TeamInfoLoader.getInstance().getMyId() != it)
+                    .filter(it -> TeamInfoLoader.getInstance().getChatId(it) > 0)
                     .map(it -> TeamInfoLoader.getInstance().getUser(it))
                     .toSortedList((formattedEntity, formattedEntity2) ->
                             StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))

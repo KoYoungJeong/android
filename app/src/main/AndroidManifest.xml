@@ -89,7 +89,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.message.v2.MessageListV2Activity_"
+            android:name=".ui.message.v2.MessageListV2Activity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="fullUser"
@@ -142,19 +142,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.invites.email.InviteByEmailActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/menu_entity_invite"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
-
-        <activity
-            android:name=".ui.entities.EntityChooseActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
-
-        <activity
             android:name=".ui.carousel.CarouselViewerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="fullUser"
@@ -179,12 +166,12 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
-            android:name=".ui.message.detail.TopicDetailActivity_"
+            android:name=".ui.message.detail.TopicDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.profile.email.EmailChooseActivity_"
+            android:name=".ui.profile.email.EmailChooseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_choose_email"
             android:screenOrientation="portrait" />
@@ -196,13 +183,13 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
+            android:name=".ui.file.upload.preview.FileUploadPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-            android:name=".ui.album.imagealbum.ImageAlbumActivity_"
+            android:name=".ui.album.imagealbum.ImageAlbumActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
@@ -477,7 +464,7 @@
         <activity android:name=".ui.web.PageNotFoundActivity" />
 
         <activity
-            android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity_"
+            android:name=".ui.profile.defaultimage.ProfileImageSelectorActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />
@@ -486,7 +473,7 @@
         </activity>
 
         <activity
-            android:name=".ui.album.imagecrop.ImageCropPickerActivity_"
+            android:name=".ui.album.imagecrop.ImageCropPickerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -500,7 +487,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity_"
+            android:name=".ui.entities.disabled.view.DisabledEntityChooseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_disabled_members"
             android:screenOrientation="portrait" />
@@ -542,12 +529,14 @@
         <activity
             android:name=".ui.search.filter.member.MemberFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Transparent" />
 
         <activity
             android:name=".ui.search.filter.room.RoomFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Transparent" />
 
         <activity
             android:name=".ui.search.main.SearchActivity"
@@ -645,16 +634,6 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-
-        <!--
-                <receiver
-                    android:name="com.google.ads.conversiontracking.InstallReceiver"
-                    android:exported="true">
-                    <intent-filter>
-                        <action android:name="com.android.vending.INSTALL_REFERRER"/>
-                    </intent-filter>
-                </receiver>
-        -->
 
         <meta-data
             android:name="io.fabric.ApiKey"

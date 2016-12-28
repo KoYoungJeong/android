@@ -45,16 +45,15 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.carousel.component.DaggerCarouselViewerComponent;
+import com.tosslab.jandi.app.ui.carousel.dagger.CarouselViewerModule;
+import com.tosslab.jandi.app.ui.carousel.dagger.DaggerCarouselViewerComponent;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.carousel.model.CarouselViewerModel;
-import com.tosslab.jandi.app.ui.carousel.module.CarouselViewerModule;
 import com.tosslab.jandi.app.ui.carousel.presenter.CarouselViewerPresenter;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.OnSwipeExitListener;
@@ -973,14 +972,15 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,
                                           boolean isStarred) {
-        MessageListV2Activity_.intent(this)
+        startActivity(Henson.with(this)
+                .gotoMessageListV2Activity()
                 .teamId(TeamInfoLoader.getInstance().getTeamId())
                 .entityId(entityId)
                 .entityType(entityType)
                 .roomId(roomId)
                 .isFromPush(false)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override

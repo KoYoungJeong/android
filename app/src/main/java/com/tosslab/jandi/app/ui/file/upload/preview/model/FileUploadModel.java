@@ -3,12 +3,14 @@ package com.tosslab.jandi.app.ui.file.upload.preview.model;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-import org.androidannotations.annotations.EBean;
+import javax.inject.Inject;
 
-@EBean
 public class FileUploadModel {
 
     public static final String FILE_SAPERATOR = "/";
+
+    @Inject
+    public FileUploadModel() { }
 
     public String getFileName(String path) {
         int separatorIndex = path.lastIndexOf(FILE_SAPERATOR);

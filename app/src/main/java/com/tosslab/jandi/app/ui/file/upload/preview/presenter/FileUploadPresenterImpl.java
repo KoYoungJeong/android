@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
-import android.app.Activity;
-
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -11,25 +12,28 @@ import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-@EBean
 public class FileUploadPresenterImpl implements FileUploadPresenter {
 
-    @Bean
     FileUploadModel fileUploadModel;
     private View view;
 
     private List<FileUploadVO> fileUploadVOs;
+
+    @Inject
+    public FileUploadPresenterImpl(View view, FileUploadModel fileUploadModel) {
+        this.fileUploadModel = fileUploadModel;
+        this.view = view;
+    }
 
     @Override
     public void setView(View view) {
@@ -37,7 +41,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     }
 
     @Override
-    public void onInitEntity(Activity activity, long entityId) {
+    public void onInitEntity(long entityId, List<String> realFilePathList) {
 
         String entityName;
         if (fileUploadModel.isValid(entityId)) {
@@ -47,15 +51,40 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
             entityId = topicId;
             entityName = fileUploadModel.getEntityName(topicId);
         }
-
         view.setEntityInfo(entityName);
         view.setShareEntity(entityId, fileUploadModel.isUser(entityId));
+
+        Observable.just(entityId)
+                .map(it -> {
+                    long roomId = -1;
+                    if (TeamInfoLoader.getInstance().isUser(it)) {
+                        long chatId = TeamInfoLoader.getInstance().getChatId(it);
+                        if (chatId > 0) {
+                            roomId = chatId;
+                        } else {
+                            try {
+                                roomId = new ChatApi(RetrofitBuilder.getInstance()).createChat(TeamInfoLoader.getInstance().getTeamId(), it).id;
+                            } catch (RetrofitException e) {
+                                e.printStackTrace();
+                                roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
+                            }
+                        }
+                    } else {
+                        roomId = it;
+                    }
+                    return roomId;
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(roomId -> {
+                    onInitViewPager(roomId, realFilePathList);
+                }, Throwable::printStackTrace);
+
 
     }
 
     @Override
     public void onInitPricingInfo() {
-        rx.Observable.defer(() -> {
+        Observable.defer(() -> {
             boolean isLimited = fileUploadModel.isUploadLimited();
             return Observable.just(isLimited);
         }).subscribeOn(Schedulers.io())
@@ -68,26 +97,6 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     @Override
     public void onCommentTextChange(String text, int currentItemPosition) {
         fileUploadVOs.get(currentItemPosition).setComment(text);
-    }
-
-    @Override
-    public void onEntityUpdate(long entityId) {
-        for (FileUploadVO fileUploadVO : fileUploadVOs) {
-            fileUploadVO.setEntity(entityId);
-        }
-
-        view.setEntityInfo(fileUploadModel.getEntityString(entityId));
-    }
-
-    @Deprecated
-    @Override
-    public void onSingleFileUpload() {
-        if (fileUploadVOs == null || fileUploadVOs.isEmpty()) {
-            return;
-        }
-
-        FileUploadVO fileUploadVO = fileUploadVOs.get(0);
-        view.exitOnOk(fileUploadVO);
     }
 
     @Override
@@ -119,9 +128,8 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
         view.exitOnOK();
     }
 
-    @Override
-    public void onInitViewPager(long selectedEntityIdToBeShared, ArrayList<String> realFilePathList) {
-        fileUploadVOs = new ArrayList<FileUploadVO>();
+    public void onInitViewPager(long selectedEntityIdToBeShared, List<String> realFilePathList) {
+        fileUploadVOs = new ArrayList<>();
 
         for (String filePath : realFilePathList) {
             fileUploadVOs.add(new FileUploadVO.Builder()
@@ -140,7 +148,6 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
         view.setFileName(fileUploadVO.getFileName());
         view.setComment(fileUploadVO.getComment());
-        view.setEntityInfo(fileUploadModel.getEntityString(fileUploadVO.getEntity()));
     }
 
     @Override

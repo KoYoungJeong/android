@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.profile.insert.presenter;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.insert.dagger.InsertProfileFirstPageModule;
@@ -111,7 +112,7 @@ public class InsertProfileFirstPagePresenterTest {
         verify(mockView).displayProfileImage(anyObject());
     }
 
-    @Component(modules = InsertProfileFirstPageModule.class)
+    @Component(modules = {ApiClientModule.class ,InsertProfileFirstPageModule.class})
     interface TestComponent {
         void inject(InsertProfileFirstPagePresenterTest test);
     }

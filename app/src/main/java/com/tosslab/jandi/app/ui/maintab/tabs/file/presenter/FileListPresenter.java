@@ -46,6 +46,8 @@ public interface FileListPresenter {
 
     void onMoveFileSearch();
 
+    void onFileUnshared(long fileId, long roomId);
+
     interface View {
         void clearListView();
 

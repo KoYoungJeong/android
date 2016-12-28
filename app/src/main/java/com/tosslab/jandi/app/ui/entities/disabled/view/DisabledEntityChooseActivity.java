@@ -2,56 +2,68 @@ package com.tosslab.jandi.app.ui.entities.disabled.view;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
+import com.f2prateek.dart.HensonNavigable;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.disabled.dagger.DaggerDisabledEntityChooseComponent;
+import com.tosslab.jandi.app.ui.entities.disabled.dagger.DisabledEntityChooseModule;
 import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenter;
-import com.tosslab.jandi.app.ui.entities.disabled.presenter.DisabledEntityChoosePresenterImpl;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
-import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.ViewById;
-
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-@EActivity(R.layout.activity_disabled_entity_choose)
+@HensonNavigable
 public class DisabledEntityChooseActivity extends BaseAppCompatActivity implements DisabledEntityChoosePresenter.View {
 
     public static final String EXTRA_RESULT = "result";
-    @Bean(DisabledEntityChoosePresenterImpl.class)
+    @Inject
     DisabledEntityChoosePresenter presenter;
-    @ViewById(R.id.lv_disabled_choose)
+    @Bind(R.id.lv_disabled_choose)
     RecyclerView lvMembers;
 
     ChatChooseAdapter adapter;
 
-    @AfterInject
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_disabled_entity_choose);
+        ButterKnife.bind(this);
+        DaggerDisabledEntityChooseComponent.builder()
+                .disabledEntityChooseModule(new DisabledEntityChooseModule(this))
+                .build()
+                .inject(this);
+        initObject();
+        initViews();
+    }
+
     void initObject() {
         adapter = new ChatChooseAdapter(DisabledEntityChooseActivity.this);
         adapter.setOnRecyclerItemClickListener((view, adapter1, position) -> {
             onMemberItemClick(position);
         });
-        presenter.setView(this);
     }
 
-    @AfterViews
     void initViews() {
         initActionBarTitle();
         presenter.initDisabledMembers();
@@ -108,9 +120,13 @@ public class DisabledEntityChooseActivity extends BaseAppCompatActivity implemen
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamMembers, action);
     }
 
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionClick() {
-        finish();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

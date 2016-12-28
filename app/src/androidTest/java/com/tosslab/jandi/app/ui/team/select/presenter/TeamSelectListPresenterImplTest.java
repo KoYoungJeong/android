@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.team.select.adapter.TeamSelectListAdapter;
 import com.tosslab.jandi.app.ui.team.select.dagger.TeamSelectListModule;
 
@@ -97,7 +98,7 @@ public class TeamSelectListPresenterImplTest {
     }
 
 
-    @Component(modules = TeamSelectListModule.class)
+    @Component(modules = {ApiClientModule.class, TeamSelectListModule.class})
     public interface TeamSelectListPresenterImplTestComponent {
         void inject(TeamSelectListPresenterImplTest test);
     }

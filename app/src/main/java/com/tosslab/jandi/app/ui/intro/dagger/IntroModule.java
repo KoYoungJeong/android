@@ -1,12 +1,11 @@
 package com.tosslab.jandi.app.ui.intro.dagger;
 
-import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.ui.intro.presenter.IntroActivityPresenter;
 
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = ApiClientModule.class)
+@Module
 public class IntroModule {
     private IntroActivityPresenter.View view;
 
