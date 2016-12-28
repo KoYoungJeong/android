@@ -40,6 +40,7 @@
 	<string name="common_hamburger_teamlist">"團隊列表"</string>
 	<string name="common_launch_fail">"暫時無法讀取啟動資訊
 請重新啟動 app"</string>
+	<string name="common_launch_maintenance">"JANDI現在基於定期維護而無法使用。感謝您的耐心等候。"</string>
 	<string name="common_pricingplan_fileupload">""</string>
 	<string name="common_pricingplan_livesupport">"線上客服"</string>
 	<string name="common_pricingplan_moreinfo">"瞭解更多"</string>

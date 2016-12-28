@@ -40,6 +40,7 @@
 	<string name="common_hamburger_teamlist">"チームリスト"</string>
 	<string name="common_launch_fail">"データの取得に失敗しました。
 アプリを再起動してください。"</string>
+	<string name="common_launch_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。ご不便をお掛けし申し訳ありません。"</string>
 	<string name="common_pricingplan_fileupload">"現在無料ストレージを全部使用しました。 \n  ファイルのアップロードが制限される可能性があります。 STANDARDプランで、\n  より効率的なコラボレーションをお楽しみください。"</string>
 	<string name="common_pricingplan_livesupport">"お問い合わせ"</string>
 	<string name="common_pricingplan_moreinfo">"詳細はこちら"</string>
