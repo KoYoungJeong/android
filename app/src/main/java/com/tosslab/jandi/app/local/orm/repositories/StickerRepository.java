@@ -28,6 +28,7 @@ public class StickerRepository extends LockExecutorTemplate {
     public static final long DEFAULT_GROUP_ID_MALLOW_DOG = 104;
     public static final long DEFAULT_GROUP_ID_BANILA = 105;
     public static final long DEFAULT_GROUP_ID_DEAN = 106;
+    public static final long DEFAULT_GROUP_ID_STAMP_107 = 107;
     public static final long DEFAULT_MOZZI_COUNT = 26;
 
 
@@ -87,6 +88,9 @@ public class StickerRepository extends LockExecutorTemplate {
 
                 String[] deanList = assetManager.list("stickers/default/dean");
                 addStickerConetentIfNeed(dao, deanList, DEFAULT_GROUP_ID_DEAN);
+
+                String[] stamp107List = assetManager.list("stickers/default/stamp_107");
+                addStickerConetentIfNeed(dao, stamp107List, DEFAULT_GROUP_ID_STAMP_107);
 
             } catch (SQLException e) {
                 e.printStackTrace();

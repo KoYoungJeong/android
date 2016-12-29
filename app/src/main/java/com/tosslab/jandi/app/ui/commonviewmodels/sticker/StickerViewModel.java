@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.sticker;
 
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -23,6 +24,9 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by Steve SeongUg Jung on 15. 6. 3..
  */
@@ -30,12 +34,13 @@ import javax.inject.Inject;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_DEAN = 1;
-    public static final int STICKER_GROUP_BANILA = 2;
-    public static final int STICKER_GROUP_MALLOW = 3;
-    public static final int STICKER_GROUP_DINGO = 4;
-    public static final int STICKER_GROUP_DAY = 5;
-    public static final int STICKER_GROUP_MOZZI = 6;
+    public static final int STICKER_GROUP_STAMP_107 = 1;
+    public static final int STICKER_GROUP_DEAN = 2;
+    public static final int STICKER_GROUP_BANILA = 3;
+    public static final int STICKER_GROUP_MALLOW = 4;
+    public static final int STICKER_GROUP_DINGO = 5;
+    public static final int STICKER_GROUP_DAY = 6;
+    public static final int STICKER_GROUP_MOZZI = 7;
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
@@ -43,10 +48,14 @@ public class StickerViewModel {
     public static final int TYPE_POLL_DETAIL = 14;
 
     // sticker view
-    private LinearLayout vgStickerGroups;
-    private ViewPager pagerStickerItems;
-    private ViewGroup vgNoItemsLayout;
-    private ViewPagerIndicator viewPagerIndicator;
+    @Bind(R.id.vg_sticker_default_groups)
+    LinearLayout vgStickerGroups;
+    @Bind(R.id.pager_sticker_default_items)
+    ViewPager pagerStickerItems;
+    @Bind(R.id.vg_sticker_default_items_no_item)
+    ViewGroup vgNoItemsLayout;
+    @Bind(R.id.indicator_sticker_default_items_page_indicator)
+    ViewPagerIndicator viewPagerIndicator;
 
     private OnStickerClick onStickerClick;
     private OnStickerDoubleTapListener onStickerDoubleTapListener;
@@ -58,23 +67,23 @@ public class StickerViewModel {
     private boolean isShow = false;
     private View vgStickers;
 
+    private ArrayMap<Integer, Integer> lastPositionOfStickers;
+    private int lastPosition;
+
     @Inject
-    public StickerViewModel() { }
+    public StickerViewModel() {
+        lastPositionOfStickers = new ArrayMap<>();
+    }
 
     public void showStickerPanel(ViewGroup root) {
         vgStickers = LayoutInflater.from(root.getContext()).inflate(R.layout.layout_stickers_default, root, true);
 
-        vgStickerGroups = (LinearLayout) vgStickers.findViewById(R.id.vg_sticker_default_groups);
-        pagerStickerItems = (ViewPager) vgStickers.findViewById(R.id.pager_sticker_default_items);
-        vgNoItemsLayout = (ViewGroup) vgStickers.findViewById(R.id.vg_sticker_default_items_no_item);
-        viewPagerIndicator =
-                (ViewPagerIndicator) vgStickers.findViewById(
-                        R.id.indicator_sticker_default_items_page_indicator);
+        ButterKnife.bind(this, root);
 
         initClicks();
 
         int tabIndex = getStickerTabIndex();
-
+        lastPosition = tabIndex;
         setupGroupState(tabIndex, vgStickerGroups);
         updateStickerItems(tabIndex, pagerStickerItems);
 
@@ -84,12 +93,31 @@ public class StickerViewModel {
     }
 
     private void initClicks() {
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
         for (int idx = 0, size = vgStickerGroups.getChildCount(); idx < size; ++idx) {
             final int finalIdx = idx;
+
+            if (idx == STICKER_GROUP_STAMP_107) {
+                if (Locale.KOREA.equals(locale)
+                        || Locale.KOREAN.equals(locale)) {
+                    vgStickerGroups.getChildAt(idx).setVisibility(View.VISIBLE);
+                } else {
+                    vgStickerGroups.getChildAt(idx).setVisibility(View.GONE);
+                }
+            }
+
             vgStickerGroups.getChildAt(idx).setOnClickListener(view -> {
+                lastPositionOfStickers.put(lastPosition, pagerStickerItems.getCurrentItem());
                 setupGroupState(finalIdx, vgStickerGroups);
                 updateStickerItems(finalIdx, pagerStickerItems);
                 sendAnalyticsAction(finalIdx);
+                if (lastPositionOfStickers.containsKey(finalIdx)) {
+                    int itemPosition = lastPositionOfStickers.get(finalIdx);
+                    if (itemPosition < pagerStickerItems.getAdapter().getCount()) {
+                        pagerStickerItems.setCurrentItem(itemPosition);
+                    }
+                }
+                lastPosition = finalIdx;
             });
         }
     }
@@ -102,7 +130,9 @@ public class StickerViewModel {
             case STICKER_GROUP_RECENT:
                 stickers = stickerRepository.getRecentStickers();
                 break;
-
+            case STICKER_GROUP_STAMP_107:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_STAMP_107);
+                break;
             case STICKER_GROUP_DINGO:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DINGO);
                 break;
@@ -194,10 +224,15 @@ public class StickerViewModel {
 
     private void setupGroupState(int groupIdx, LinearLayout vgStickerGroups) {
         for (int idx = 0, size = vgStickerGroups.getChildCount(); idx < size; ++idx) {
+            View item = vgStickerGroups.getChildAt(idx);
             if (groupIdx != idx) {
-                vgStickerGroups.getChildAt(idx).setSelected(false);
+                if (item.isSelected()) {
+                    item.setSelected(false);
+                }
             } else {
-                vgStickerGroups.getChildAt(idx).setSelected(true);
+                if (!item.isSelected()) {
+                    item.setSelected(true);
+                }
             }
         }
     }
@@ -210,6 +245,9 @@ public class StickerViewModel {
         } else {
             String group;
             switch (groupIdx) {
+                case STICKER_GROUP_STAMP_107:
+                    group = "(Stamp)";
+                    break;
                 case STICKER_GROUP_DEAN:
                     group = "(Dean)";
                     break;
@@ -262,7 +300,12 @@ public class StickerViewModel {
         if (recentStickers != null && !recentStickers.isEmpty()) {
             return STICKER_GROUP_RECENT;
         }
-        return STICKER_GROUP_DEAN;
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        if (Locale.KOREA.equals(locale) || Locale.KOREAN.equals(locale)) {
+            return STICKER_GROUP_STAMP_107;
+        } else {
+            return STICKER_GROUP_DEAN;
+        }
     }
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
