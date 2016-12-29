@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -367,9 +368,25 @@ public class TopicRepository extends RealmRepository {
     public boolean updateTopic(Topic topic) {
         return execute((realm) -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            topic.setTeamId(selectedTeamId);
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
+            Topic savedTopic = realm.where(Topic.class).equalTo("id", topic.getId()).findFirst();
+            if (savedTopic == null) {
+                topic.setTeamId(TeamInfoLoader.getInstance().getTeamId());
+                realm.executeTransaction(realm1 -> {
+                    realm.copyToRealmOrUpdate(topic);
+                });
+            } else {
+                realm.executeTransaction(realm1 -> {
+                    savedTopic.setName(topic.getName());
+                    savedTopic.setStatus(topic.getStatus());
+                    savedTopic.setDescription(topic.getDescription());
+                    savedTopic.setIsDefault(topic.isDefault());
+                    savedTopic.setAutoJoin(topic.isAutoJoin());
+                    savedTopic.setIsAnnouncement(topic.isAnnouncement());
+                    savedTopic.setLastLinkId(topic.getLastLinkId());
+                    savedTopic.setCreatorId(topic.getCreatorId());
+                    savedTopic.setDeleterId(topic.getDeleterId());
+                });
+            }
 
             return true;
         });
