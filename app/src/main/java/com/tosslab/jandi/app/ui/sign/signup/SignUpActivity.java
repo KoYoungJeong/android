@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
@@ -25,6 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -50,7 +53,6 @@ import butterknife.OnFocusChange;
 
 public class SignUpActivity extends BaseAppCompatActivity implements SignUpPresenter.View {
 
-    private static final String EXTRA_PRESERVED_EMAIL = "preserved_email";
     @Inject
     SignUpPresenter signUpPresenter;
 
@@ -82,15 +84,16 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
 
     private android.view.View previousFocusView;
 
-    private String preservedEmail;
+    @Nullable
+    @InjectExtra
+    String preservedEmail;
 
     public static void startActivity(Context context, String preservedEmail) {
-        Intent intent = new Intent(context, SignUpActivity.class);
-        if (!TextUtils.isEmpty(preservedEmail)) {
-            intent.putExtra(EXTRA_PRESERVED_EMAIL, preservedEmail);
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(intent);
+        context.startActivity(Henson.with(context)
+                .gotoSignUpActivity()
+                .preservedEmail(preservedEmail)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
     @Override
@@ -101,17 +104,16 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         setShouldReconnectSocketService(false);
 
         ButterKnife.bind(this);
+        Dart.inject(this);
 
         DaggerSignUpComponent.builder()
                 .signUpModule(new SignUpModule(this))
                 .build()
                 .inject(this);
 
-        initExtra();
-
         btnSignUp.setEnabled(false);
-        etEmail.addTextChangedListener(new TextInputWatcher());
-        etPassword.addTextChangedListener(new TextInputWatcher());
+        etEmail.addTextChangedListener(checkEmailAndPassword());
+        etPassword.addTextChangedListener(checkEmailAndPassword());
         etPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (btnSignUp.isEnabled()) {
@@ -126,12 +128,30 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
         if (!TextUtils.isEmpty(preservedEmail)) {
             etEmail.setText(preservedEmail);
         }
+
+        signUpPresenter.onInitEmailTypo();
     }
 
-    private void initExtra() {
-        if (getIntent() != null) {
-            preservedEmail = getIntent().getStringExtra(EXTRA_PRESERVED_EMAIL);
-        }
+    @NonNull
+    private SimpleTextWatcher checkEmailAndPassword() {
+        return new SimpleTextWatcher(){
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (etEmail.getText().length() > 0
+                        && etPassword.getText().length() > 0) {
+                    btnSignUp.setEnabled(true);
+                } else {
+                    btnSignUp.setEnabled(false);
+                }
+                if (etEmail.isFocused() && etLayoutEmail.isErrorEnabled()) {
+                    removeErrorEmail();
+                }
+                if (etPassword.isFocused() && etLayoutPassword.isErrorEnabled()) {
+                    removeErrorPassword();
+                }
+            }
+
+        };
     }
 
     @Override
@@ -210,6 +230,14 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
     public void showErrorInvalidEmail() {
         etLayoutEmail.setErrorEnabled(true);
         etLayoutEmail.setError(getString(R.string.jandi_err_invalid_email));
+
+        startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
+    }
+
+    @Override
+    public void showErrorEmailTypo() {
+        etLayoutEmail.setErrorEnabled(true);
+        etLayoutEmail.setError(getString(R.string.common_signup_invalid_emaildomain));
 
         startBounceAnimation(etLayoutEmail.getChildAt(etLayoutEmail.getChildCount() - 1));
     }
@@ -385,22 +413,4 @@ public class SignUpActivity extends BaseAppCompatActivity implements SignUpPrese
                 .putExtra(TermActivity.EXTRA_TERM_MODE, TermActivity.Mode.Privacy.name()));
     }
 
-    private class TextInputWatcher extends SimpleTextWatcher {
-        @Override
-        public void afterTextChanged(Editable editable) {
-            if (etEmail.getText().length() > 0
-                    && etPassword.getText().length() > 0) {
-                btnSignUp.setEnabled(true);
-            } else {
-                btnSignUp.setEnabled(false);
-            }
-            if (etEmail.isFocused() && etLayoutEmail.isErrorEnabled()) {
-                removeErrorEmail();
-            }
-            if (etPassword.isFocused() && etLayoutPassword.isErrorEnabled()) {
-                removeErrorPassword();
-            }
-        }
-
-    }
 }

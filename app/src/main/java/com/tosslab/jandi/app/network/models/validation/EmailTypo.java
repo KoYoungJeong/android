@@ -1,18 +1,21 @@
 package com.tosslab.jandi.app.network.models.validation;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ResValidation {
-    private boolean isValidate;
+public class EmailTypo {
+    private List<String> domains;
 
-    public boolean isValidate() {
-        return isValidate;
+    public List<String> getDomains() {
+        return domains;
     }
 
-    public void setIsValidate(boolean isValidate) {
-        this.isValidate = isValidate;
+    public void setDomains(List<String> domains) {
+        this.domains = domains;
     }
 }
