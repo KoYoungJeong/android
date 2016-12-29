@@ -1,6 +1,5 @@
 ext.dependecies = [
         libraries   : [
-
                 multidex                         : 'com.android.support:multidex:1.0.1',
 
                 sprinklrAndroid                  : 'com.tosslab.jandi.lib:sprinkler-android:1.5', // 로컬 : project(':sprinkler-android')
@@ -88,6 +87,7 @@ ext.dependecies = [
                 assertj_android_recyclerview     : 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
                 assertj                          : 'org.assertj:assertj-core:1.7.1',
                 junit                            : 'junit:junit:4.12',
+                subsampling_scale_image_view     : 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0',
                 mockito                          : 'org.mockito:mockito-core:1.10.19'
         ],
 
