@@ -92,7 +92,7 @@ public class NameStatusPresenterTest {
         }).when(mockView).successUpdate();
 
         User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
-        presenter.updateName(user.getName());
+        presenter.updateName(user.getName(), TeamInfoLoader.getInstance().getMyId());
 
         await().until(() -> finish);
 
@@ -108,7 +108,7 @@ public class NameStatusPresenterTest {
         }).when(mockView).successUpdate();
 
         User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
-        presenter.updateStatus(user.getStatusMessage());
+        presenter.updateStatus(user.getStatusMessage(), TeamInfoLoader.getInstance().getMyId());
 
         await().until(() -> finish);
 
@@ -137,7 +137,7 @@ public class NameStatusPresenterTest {
             o[0] = mock.getArguments()[0];
             return mock;
         }).when(mockView).setContent(any());
-        presenter.onInitUserInfo();
+        presenter.onInitUserInfo(TeamInfoLoader.getInstance().getMyId());
 
         await().until(() -> o[0] != null);
 

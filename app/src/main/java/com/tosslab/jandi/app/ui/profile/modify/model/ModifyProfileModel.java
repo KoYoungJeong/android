@@ -28,13 +28,13 @@ public class ModifyProfileModel {
         this.entityClientManager = entityClientManager;
     }
 
-    public User getProfile() throws RetrofitException {
-        Human human = entityClientManager.getUserProfile(TeamInfoLoader.getInstance().getMyId());
+    public User getProfile(long memberId) throws RetrofitException {
+        Human human = entityClientManager.getUserProfile(memberId);
         return new User(human);
     }
 
-    public Human updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitException {
-        return entityClientManager.updateUserProfile(TeamInfoLoader.getInstance().getMyId(), reqUpdateProfile);
+    public Human updateProfile(ReqUpdateProfile reqUpdateProfile, long memberId) throws RetrofitException {
+        return entityClientManager.updateUserProfile(memberId, reqUpdateProfile);
     }
 
     public String[] getAccountEmails() {
@@ -73,9 +73,8 @@ public class ModifyProfileModel {
         return TeamInfoLoader.getInstance().getMyId() == id;
     }
 
-    public User getSavedProfile() {
-
-        return TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
-
+    public User getSavedProfile(long memberId) {
+        return TeamInfoLoader.getInstance().getUser(memberId);
     }
+
 }

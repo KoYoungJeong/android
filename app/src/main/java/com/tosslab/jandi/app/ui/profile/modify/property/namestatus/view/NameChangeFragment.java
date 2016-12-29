@@ -30,6 +30,7 @@ import butterknife.OnTextChanged;
 public class NameChangeFragment extends Fragment implements NameStatusPresenter.View {
 
     public static final String NAME_CHANGE_MODE = "name_change_mode";
+    public static final String ARG_MEMBER_ID = "member_id";
     public static final int MODE_FROM_TEAM_PROFILE = 0x01;
     public static final int MODE_FROM_MAIN_ACCOUNT = 0x02;
 
@@ -43,10 +44,16 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
 
     @Bind(R.id.toolbar_name_change)
     Toolbar toolbar;
+
     @Inject
     NameStatusPresenter presenter;
-    int mode = MODE_FROM_TEAM_PROFILE;
+
+    private int mode = MODE_FROM_TEAM_PROFILE;
+
+    private long memberId = -1;
+
     private ProgressWheel progressWheel;
+
 
     @Nullable
     @Override
@@ -67,15 +74,16 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
 
         mode = getArguments().getInt(NAME_CHANGE_MODE, MODE_FROM_TEAM_PROFILE);
 
+        memberId = getArguments().getLong(ARG_MEMBER_ID, -1L);
+
         if (mode == MODE_FROM_TEAM_PROFILE) {
-            presenter.onInitUserInfo();
+            presenter.onInitUserInfo(memberId);
         } else if (mode == MODE_FROM_MAIN_ACCOUNT) {
             presenter.onInitUserNameForMainAccount();
         }
 
         setUpActionbar();
         setHasOptionsMenu(true);
-
     }
 
     private void setUpActionbar() {
@@ -118,7 +126,7 @@ public class NameChangeFragment extends Fragment implements NameStatusPresenter.
     void updateName() {
         showProgress();
         if (mode == MODE_FROM_TEAM_PROFILE) {
-            presenter.updateName(etName.getText().toString());
+            presenter.updateName(etName.getText().toString(), memberId);
         } else if (mode == MODE_FROM_MAIN_ACCOUNT) {
             presenter.updateNameForMainAccount(etName.getText().toString());
         }

@@ -55,6 +55,7 @@ public class EditTextDialogFragment extends DialogFragment {
     private final static String ARG_TOPIC_TYPE = "topicType";
     private final static String ARG_TOPIC_ID = "topicId";
     private final static String ARG_CURRENT_MGS = "currentMessage";
+
     private int actionType;
     private int topicType;
     private long topicId;

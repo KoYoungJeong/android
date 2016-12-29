@@ -34,6 +34,8 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
 
     private View view;
 
+    private long myId = TeamInfoLoader.getInstance().getMyId();
+
     @Inject
     public InsertProfileFirstPagePresenterImpl(
             InsertProfileFirstPagePresenter.View view,
@@ -47,7 +49,7 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
     @Override
     public void requestProfile() {
         view.showProgressWheel();
-        Observable.fromCallable(() -> model.getSavedProfile())
+        Observable.fromCallable(() -> model.getSavedProfile(myId))
                 .subscribeOn(Schedulers.io())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -71,7 +73,7 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
                 try {
                     ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
                     reqUpdateProfile.name = name;
-                    model.updateProfile(reqUpdateProfile);
+                    model.updateProfile(reqUpdateProfile, myId);
                     subscriber.onNext(name);
                 } catch (RetrofitException e) {
                     subscriber.onError(e);

@@ -524,8 +524,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                     vgProfileTeamButtons.addView(
                             getButton(R.drawable.icon_profile_edit,
                                     getString(R.string.jandi_member_profile_edit), (v) -> {
-//                                        startModifyProfileActivity();
-//                                        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.EditProfile);
+                                        startModifyProfileActivityForAdmin(memberId);
                                     }
                             )
                     );
@@ -798,6 +797,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         Intent intent = new Intent(MemberProfileActivity.this, ModifyProfileActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivityForResult(intent, ModifyProfileActivity.REQUEST_CODE);
+    }
+
+    private void startModifyProfileActivityForAdmin(long memberId) {
+        startActivityForResult(Henson.with(this)
+                .gotoModifyProfileActivity()
+                .adminMode(true)
+                .memberId(memberId)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), ModifyProfileActivity.REQUEST_CODE);
     }
 
     private void startStarMentionListActivity() {

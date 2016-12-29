@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -31,6 +30,7 @@ import rx.subscriptions.CompositeSubscription;
 public class NameStatusPresenter {
 
     private final View view;
+
     Lazy<ProfileApi> profileApi;
     Lazy<AccountProfileApi> accountProfileApi;
     BehaviorSubject<String> nameSubject;
@@ -64,14 +64,8 @@ public class NameStatusPresenter {
         nameSubject.onNext(text);
     }
 
-    public void updateName(String newName) {
-        deferUpdateName(newName)
-                .doOnNext(pair -> {
-                    if (pair.first) {
-                        HumanRepository.getInstance().updateHuman(pair.second);
-                        TeamInfoLoader.getInstance().refresh();
-                    }
-                })
+    public void updateName(String newName, long memberId) {
+        deferUpdateName(newName, memberId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updateFinish());
@@ -92,21 +86,13 @@ public class NameStatusPresenter {
                 .subscribe(i -> {
                     view.successUpdate();
                 });
-
     }
 
-    public void updateStatus(String newStatus) {
-        deferUpdateStatus(newStatus)
-                .doOnNext(pair -> {
-                    if (pair.first) {
-                        HumanRepository.getInstance().updateHuman(pair.second);
-                        TeamInfoLoader.getInstance().refresh();
-                    }
-                })
+    public void updateStatus(String newStatus, long memberId) {
+        deferUpdateStatus(newStatus, memberId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(updateFinish());
-
     }
 
     @NonNull
@@ -130,12 +116,14 @@ public class NameStatusPresenter {
     }
 
 
-    private Observable<Pair<Boolean, Human>> deferUpdateName(String newName) {
+    private Observable<Pair<Boolean, Human>> deferUpdateName(String newName, long memberId) {
         return Observable.defer(() -> {
-
-            long myId = TeamInfoLoader.getInstance().getMyId();
             long teamId = TeamInfoLoader.getInstance().getTeamId();
-            User user = TeamInfoLoader.getInstance().getUser(myId);
+            long userId = memberId;
+            if (memberId <= 0) {
+                userId = TeamInfoLoader.getInstance().getMyId();
+            }
+            User user = TeamInfoLoader.getInstance().getUser(userId);
             if (TextUtils.equals(newName, user.getName())) {
                 return Observable.just(Pair.create(false, (Human) null));
             }
@@ -143,7 +131,7 @@ public class NameStatusPresenter {
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.name = newName;
             try {
-                Human human = profileApi.get().updateMemberProfile(teamId, myId, reqUpdateProfile);
+                Human human = profileApi.get().updateMemberProfile(teamId, userId, reqUpdateProfile);
                 return Observable.just(Pair.create(true, human));
             } catch (RetrofitException e) {
                 return Observable.error(e);
@@ -152,12 +140,17 @@ public class NameStatusPresenter {
     }
 
     @NonNull
-    private Observable<Pair<Boolean, Human>> deferUpdateStatus(String newStatus) {
+    private Observable<Pair<Boolean, Human>> deferUpdateStatus(String newStatus, long memberId) {
         return Observable.defer(() -> {
-
-            long myId = TeamInfoLoader.getInstance().getMyId();
             long teamId = TeamInfoLoader.getInstance().getTeamId();
-            User user = TeamInfoLoader.getInstance().getUser(myId);
+            long userId = memberId;
+
+            if (userId <= 0) {
+                userId = TeamInfoLoader.getInstance().getMyId();
+            }
+
+            User user = TeamInfoLoader.getInstance().getUser(userId);
+
             if (TextUtils.equals(newStatus, user.getStatusMessage())) {
                 return Observable.just(Pair.create(false, (Human) null));
             }
@@ -165,7 +158,7 @@ public class NameStatusPresenter {
             ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
             reqUpdateProfile.statusMessage = newStatus;
             try {
-                Human human = profileApi.get().updateMemberProfile(teamId, myId, reqUpdateProfile);
+                Human human = profileApi.get().updateMemberProfile(teamId, userId, reqUpdateProfile);
                 return Observable.just(Pair.create(true, human));
             } catch (RetrofitException e) {
                 return Observable.error(e);
@@ -173,9 +166,15 @@ public class NameStatusPresenter {
         });
     }
 
-    public void onInitUserInfo() {
+    public void onInitUserInfo(long memberId) {
         Observable.defer(() -> {
-            User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
+            long userId = memberId;
+
+            if (userId <= 0) {
+                userId = TeamInfoLoader.getInstance().getMyId();
+            }
+
+            User user = TeamInfoLoader.getInstance().getUser(userId);
             return Observable.just(user);
         }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -41,7 +41,7 @@ public class ModifyProfilePresenterImplTest {
     public void setUp() throws Exception {
         mockView = Mockito.mock(ModifyProfilePresenter.View.class);
         DaggerModifyProfileTestComponent.builder()
-                .modifyProfileModule(new ModifyProfileModule(mockView))
+                .modifyProfileModule(new ModifyProfileModule(mockView, TeamInfoLoader.getInstance().getMyId()))
                 .build()
                 .inject(this);
 

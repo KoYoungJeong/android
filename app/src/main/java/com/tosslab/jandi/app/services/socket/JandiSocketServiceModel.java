@@ -1327,8 +1327,14 @@ public class JandiSocketServiceModel {
             saveEvent(event);
 
             SocketMemberUpdatedEvent.Data data = event.getData();
+
+            if (data.getMember() != null && data.getMember().getProfile() != null) {
+                data.getMember().getProfile().setId(data.getMember().getId());
+            }
+
             HumanRepository.getInstance().updateHuman(data.getMember());
             JandiPreference.setSocketConnectedLastTime(event.getTs());
+            TeamInfoLoader.getInstance().refresh();
 
             postEvent(new ProfileChangeEvent(data.getMember()));
         } catch (Exception e) {

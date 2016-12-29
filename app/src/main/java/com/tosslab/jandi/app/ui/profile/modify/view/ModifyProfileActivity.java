@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +20,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -72,6 +75,14 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     public static final int REQUEST_GET_DEPARTMENT = 0x22;
     public static final int REQUEST_NAME_STATUS = 0x23;
 
+    @Nullable
+    @InjectExtra
+    boolean adminMode = false;
+
+    @Nullable
+    @InjectExtra
+    long memberId = -1;
+
     @Inject
     ModifyProfilePresenter modifyProfilePresenter;
 
@@ -100,14 +111,14 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        ButterKnife.bind(this);
+        Dart.inject(this);
         if (savedInstanceState != null) {
             photoFile = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
         }
-
-        ButterKnife.bind(this);
-
         DaggerModifyProfileComponent.builder()
-                .modifyProfileModule(new ModifyProfileModule(this))
+                .modifyProfileModule(new ModifyProfileModule(this, memberId))
                 .build()
                 .inject(this);
 
@@ -120,6 +131,11 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         setupActionBar();
 
         modifyProfilePresenter.onRequestProfile();
+
+        if (adminMode && memberId > 0) {
+            tvProfileUserEmail.setClickable(false);
+            tvProfileUserEmail.setTextColorContent(0x96666666);
+        }
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.EditProfile);
     }
@@ -172,9 +188,9 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
 
     @OnClick(R.id.profile_user_status_message)
     void editStatusMessage() {
-        // 닉네임
         startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
+                .memberId(memberId)
                 .type(NameStatusActivity.EXTRA_TYPE_STATUS)
                 .build(), REQUEST_NAME_STATUS);
 
@@ -185,6 +201,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     void editName() {
         startActivityForResult(Henson.with(ModifyProfileActivity.this)
                 .gotoNameStatusActivity()
+                .memberId(memberId)
                 .type(NameStatusActivity.EXTRA_TYPE_NAME_FOR_TEAM_PROFILE)
                 .build(), REQUEST_NAME_STATUS);
 

@@ -28,6 +28,9 @@ import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 
 public class StatusChangeFragment extends Fragment implements NameStatusPresenter.View {
+
+    public static final String ARG_MEMBER_ID = "member_id";
+
     public static final int STATUS_MAX_LENGTH = 60;
 
     @Bind(R.id.et_status_change)
@@ -41,6 +44,8 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
     @Inject
     NameStatusPresenter presenter;
     private ProgressWheel progressWheel;
+
+    private long memberId = -1;
 
     @Nullable
     @Override
@@ -58,7 +63,9 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
                 .build()
                 .inject(this);
 
-        presenter.onInitUserInfo();
+        memberId = getArguments().getLong(ARG_MEMBER_ID, -1L);
+
+        presenter.onInitUserInfo(memberId);
 
         setUpToolbar();
         setHasOptionsMenu(true);
@@ -91,7 +98,7 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
 
     void updateStatus() {
         showProgress();
-        presenter.updateStatus(etStatus.getText().toString());
+        presenter.updateStatus(etStatus.getText().toString(), memberId);
     }
 
     private void showProgress() {
@@ -141,4 +148,5 @@ public class StatusChangeFragment extends Fragment implements NameStatusPresente
         etStatus.setText(content);
         etStatus.setSelection(content.length());
     }
+
 }
