@@ -12,6 +12,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.f2prateek.dart.HensonNavigable;
 import com.tosslab.jandi.app.R;
@@ -32,10 +35,24 @@ public class CallSettingActivity extends BaseAppCompatActivity {
 
     private static final int REQ_PERMISSIONS = 101;
 
-    @Bind(R.id.switch_call_preview_setting_call)
-    SwitchCompat switchCall;
-    @Bind(R.id.switch_call_preview_setting_canvas)
-    SwitchCompat switchCanvas;
+    @Bind(R.id.tv_call_preview_setting_call)
+    TextView tvCallPermission;
+    @Bind(R.id.tv_call_preview_setting_canvas)
+    TextView tvCanvasPermission;
+
+    @Bind(R.id.tv_call_preview_setting_guide2)
+    TextView tvGuide2;
+    @Bind(R.id.tv_call_preview_setting_guide3)
+    TextView tvGuide3;
+
+    @Bind(R.id.vg_call_preview_setting_call)
+    ViewGroup vgCallPermission;
+    @Bind(R.id.vg_call_preview_setting_canvas)
+    ViewGroup vgCanvasPermission;
+    @Bind(R.id.vg_call_preview_setting_caller_id)
+    ViewGroup vgCallerId;
+    @Bind(R.id.switch_call_preview_setting_caller_id)
+    SwitchCompat switchCallerId;
 
     @Bind(R.id.layout_dept_job_group_bar)
     Toolbar toolbar;
@@ -65,34 +82,48 @@ public class CallSettingActivity extends BaseAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setCanvasPermission();
-        setCallPermission();
+        if (SdkUtils.hasCanvasPermission() && hasCallPermission()) {
+            vgCallPermission.setVisibility(View.GONE);
+            vgCanvasPermission.setVisibility(View.GONE);
+            tvGuide2.setVisibility(View.GONE);
+            tvGuide3.setVisibility(View.GONE);
+            vgCallerId.setVisibility(View.VISIBLE);
+            switchCallerId.setChecked(JandiPreference.isShowCallPopup());
+        } else {
+            vgCallPermission.setVisibility(View.VISIBLE);
+            vgCanvasPermission.setVisibility(View.VISIBLE);
+            tvGuide2.setVisibility(View.VISIBLE);
+            tvGuide3.setVisibility(View.VISIBLE);
+            vgCallerId.setVisibility(View.GONE);
 
-        if (JandiPreference.isShowCallPermissionPopup()) {
-            if (hasCanvasPermission() && hasCallPermission()) {
-                JandiPreference.setShowCallPermissionPopup();
-            }
+            setCanvasPermission();
+            setCallPermission();
         }
+
 
     }
 
     private void setCallPermission() {
-        switchCall.setChecked(hasCallPermission());
+        boolean hasCallPermission = hasCallPermission();
+        tvCallPermission.setSelected(hasCallPermission);
+        if (hasCallPermission) {
+            tvCallPermission.setText(R.string.common_calleridnotifier_status_allowed);
+        } else {
+            tvCallPermission.setText(R.string.common_calleridnotifier_status_allow);
+        }
     }
 
     private boolean hasCallPermission() {
-        return SdkUtils.hasPermission(this, Manifest.permission.CALL_PHONE);
+        return SdkUtils.hasPermission(Manifest.permission.CALL_PHONE);
     }
 
     private void setCanvasPermission() {
-        switchCanvas.setChecked(hasCanvasPermission());
-    }
-
-    private boolean hasCanvasPermission() {
-        if (SdkUtils.isMarshmallow()) {
-            return Settings.canDrawOverlays(this);
+        boolean hasCanvasPermission = SdkUtils.hasCanvasPermission();
+        tvCanvasPermission.setSelected(hasCanvasPermission);
+        if (hasCanvasPermission) {
+            tvCanvasPermission.setText(R.string.common_calleridnotifier_status_allowed);
         } else {
-            return true;
+            tvCanvasPermission.setText(R.string.common_calleridnotifier_status_allow);
         }
     }
 
@@ -127,12 +158,18 @@ public class CallSettingActivity extends BaseAppCompatActivity {
 
     @OnClick(R.id.vg_call_preview_setting_canvas)
     void onCanvasPermissionClick() {
-        if (hasCanvasPermission()) {
+        if (SdkUtils.hasCanvasPermission()) {
             return;
         }
         if (SdkUtils.isMarshmallow()) {
             startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.fromParts("package", getPackageName(), null)));
         }
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamPhoneNumberSetting, AnalyticsValue.Action.DrawOverApps);
+    }
+
+    @OnClick(R.id.vg_call_preview_setting_caller_id)
+    void onCallIdSetting() {
+        switchCallerId.setChecked(!switchCallerId.isChecked());
+        JandiPreference.setShowCallPopup(switchCallerId.isChecked());
     }
 }

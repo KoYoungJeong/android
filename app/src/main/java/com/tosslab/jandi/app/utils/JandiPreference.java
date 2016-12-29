@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiApplication;
+
+import java.util.Calendar;
 
 /**
  * Created by justinygchoi on 2014. 7. 8..
@@ -62,7 +65,9 @@ public class JandiPreference {
     private static final String PREF_LAST_SELECTED_OF_TEAM = "last_selected_of_team";
 
     private static final String PREF_CALL_PREVIEW_Y = "call_preview_coordinate_y";
+    private static final String PREF_CALL_POPUP = "call_preview_popup";
     private static final String PREF_CALL_PERMISSION_POPUP = "call_preview_permission_popup";
+    private static final String PREF_CALL_PERMISSION_POPUP_TODAY = "call_preview_permission_popup_today";
 
     private static final String PREF_REALM_INITIATE = "realm_initiate";
 
@@ -202,6 +207,7 @@ public class JandiPreference {
         return pref.getBoolean(PREF_FIRST_LOGIN, false);
     }
 
+    @NonNull
     private static SharedPreferences getSharedPreferences() {
         return JandiApplication.getContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
@@ -421,27 +427,22 @@ public class JandiPreference {
                 .commit();
     }
 
+    public static long getLatestFcmTokenUpdate() {
+        return getSharedPreferences().getLong(PREF_LATEST_FCM_TOKEN_UPDATE, 0);
+    }
+
     public static void setLatestFcmTokenUpdate(long time) {
         getSharedPreferences().edit()
                 .putLong(PREF_LATEST_FCM_TOKEN_UPDATE, time)
                 .commit();
     }
 
-    public static long getLatestFcmTokenUpdate() {
-        return getSharedPreferences().getLong(PREF_LATEST_FCM_TOKEN_UPDATE, 0);
-    }
-
-    public static void setLastSelectedTabOfMyPage(int position) {
-        getSharedPreferences().edit().putInt(PREF_LAST_SELECTED_OF_MYPAGE, position)
-                .commit();
-    }
     public static int getLastSelectedTabOfMyPage() {
         return getSharedPreferences().getInt(PREF_LAST_SELECTED_OF_MYPAGE, 0);
     }
 
-
-    public static void setLastSelectedTabOfTeam(int position) {
-        getSharedPreferences().edit().putInt(PREF_LAST_SELECTED_OF_TEAM, position)
+    public static void setLastSelectedTabOfMyPage(int position) {
+        getSharedPreferences().edit().putInt(PREF_LAST_SELECTED_OF_MYPAGE, position)
                 .commit();
     }
 
@@ -449,17 +450,45 @@ public class JandiPreference {
         return getSharedPreferences().getInt(PREF_LAST_SELECTED_OF_TEAM, 0);
     }
 
+    public static void setLastSelectedTabOfTeam(int position) {
+        getSharedPreferences().edit().putInt(PREF_LAST_SELECTED_OF_TEAM, position)
+                .commit();
+    }
+
     public static int getCallPreviewCoordinateY() {
         return getSharedPreferences().getInt(PREF_CALL_PREVIEW_Y, 0);
     }
+
     public static void setCallPreviewCoordinateY(int callPreviewY) {
         getSharedPreferences().edit().putInt(PREF_CALL_PREVIEW_Y, callPreviewY).commit();
     }
+
     public static boolean isShowCallPermissionPopup() {
         return getSharedPreferences().getBoolean(PREF_CALL_PERMISSION_POPUP, true);
     }
+
     public static void setShowCallPermissionPopup() {
         getSharedPreferences().edit().putBoolean(PREF_CALL_PERMISSION_POPUP, false).commit();
+    }
+
+    public static boolean isShowCallPermissionToday() {
+        return (getSharedPreferences().getInt(PREF_CALL_PERMISSION_POPUP_TODAY, 0) !=
+                Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+    }
+
+    public static void setShowCallPermissionToday() {
+        getSharedPreferences()
+                .edit()
+                .putInt(PREF_CALL_PERMISSION_POPUP_TODAY, Calendar.getInstance().get(Calendar.DAY_OF_YEAR))
+                .commit();
+    }
+
+    public static boolean isShowCallPopup() {
+        return getSharedPreferences().getBoolean(PREF_CALL_POPUP, true);
+    }
+
+    public static void setShowCallPopup(boolean value) {
+        getSharedPreferences().edit().putBoolean(PREF_CALL_POPUP, value).commit();
     }
 
     public static long getRealmInitiateStamp() {
@@ -470,11 +499,11 @@ public class JandiPreference {
         getSharedPreferences().edit().putLong(PREF_REALM_INITIATE, BuildConfig.VERSION_CODE).commit();
     }
 
-    public static void setPushLastSentAt(long time) {
-        getSharedPreferences().edit().putLong(PREF_PUSH_LAST_SENT_AT, time).commit();
-    }
-
     public static long getPushLastSentAt() {
         return getSharedPreferences().getLong(PREF_PUSH_LAST_SENT_AT, 0);
+    }
+
+    public static void setPushLastSentAt(long time) {
+        getSharedPreferences().edit().putLong(PREF_PUSH_LAST_SENT_AT, time).commit();
     }
 }

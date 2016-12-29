@@ -54,6 +54,7 @@ public class JandiCallManager {
         subject = PublishRelay.create();
 
         subject.onBackpressureBuffer()
+                .filter(it -> JandiPreference.isShowCallPopup())
                 .filter(it -> {
                     if (SdkUtils.isMarshmallow()) {
                         if (Settings.canDrawOverlays(JandiApplication.getContext())) {
@@ -106,7 +107,7 @@ public class JandiCallManager {
                 .delay(500, TimeUnit.MILLISECONDS)
                 .filter(callState -> {
 
-                    if (SdkUtils.hasPermission(JandiApplication.getContext(), Manifest.permission.READ_CONTACTS)) {
+                    if (SdkUtils.hasPermission(Manifest.permission.READ_CONTACTS)) {
                         Cursor cursor = JandiApplication.getContext()
                                 .getContentResolver()
                                 .query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(callState.number)),

@@ -308,6 +308,7 @@
     <color name="rgb_808080">#FF808080</color>
     <color name="rgb_000000_20">#33000000</color>
     <color name="rgb_333333">#FF333333</color>
+    <color name="rgb_333333_50">#7F333333</color>
     <color name="rgb_666666">#FF666666</color>
     <color name="rgb_0081b8">#FF0081B8</color>
     <color name="rgb_00abe8_30">#4C00ABE8</color>
