@@ -49,6 +49,7 @@ public class JoinableTopicListModel {
                             .name(topicRoom.getName())
                             .markerLinkId(topicRoom.getReadLinkId())
                             .unreadCount(topicRoom.getUnreadCount())
+                            .readOnly(topicRoom.isReadOnly())
                             .build();
                 })
                 .filter(topic -> TextUtils.isEmpty(query)

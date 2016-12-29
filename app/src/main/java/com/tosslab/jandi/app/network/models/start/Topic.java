@@ -36,6 +36,15 @@ public class Topic extends RealmObject {
     private Announcement announcement;
     private long readLinkId;
     private int unreadCount;
+    private boolean isAnnouncement;
+
+    public boolean isAnnouncement() {
+        return isAnnouncement;
+    }
+
+    public void setIsAnnouncement(boolean announcement) {
+        isAnnouncement = announcement;
+    }
 
     public String getName() {
         return name;

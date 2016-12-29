@@ -155,6 +155,7 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/v_topic_detail_divide_assign_topic_owner"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/account_home_divide_line" />
@@ -176,6 +177,84 @@
                     android:textSize="@dimen/jandi_text_size_large" />
 
             </LinearLayout>
+
+            <View
+                android:id="@+id/v_topic_detail_divide_read_only"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
+
+            <LinearLayout
+                android:id="@+id/vg_topic_detail_set_read_only"
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:minHeight="104dp"
+                android:orientation="horizontal"
+                android:paddingBottom="24dp"
+                android:paddingTop="24dp">
+
+                <LinearLayout
+                    android:id="@+id/vg_topic_detail_set_read_only_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:duplicateParentState="true"
+                        android:text="읽기 전용 설정이라능"
+                        android:textColor="@color/text_color_setting_check_title"
+                        android:textSize="@dimen/jandi_text_size_large" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:duplicateParentState="true"
+                        android:text="관리자만 설정 가능하다능"
+                        android:textColor="@color/text_color_setting_check_summary"
+                        android:textSize="@dimen/jandi_text_size_medium" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="51dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="32dp"
+                    android:gravity="center">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switch_topic_detail_set_read_only"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        app:theme="@style/Jandi.Default.Switch" />
+
+                    <TextView
+                        android:id="@+id/tv_topic_detail_set_read_only"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="right|center_vertical"
+                        android:text="@string/jandi_auto_join_on"
+                        android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+                        android:textSize="@dimen/jandi_text_size_medium" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
 
             <View
                 android:layout_width="match_parent"

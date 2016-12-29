@@ -19,9 +19,10 @@ public class Topic {
     private boolean isPushOn;
     private int type;
     private long lastLinkId;
+    private boolean isReadOnly;
 
     private Topic(String name, boolean isStarred, boolean isJoined, long entityId, int memberCount, int unreadCount,
-                  boolean isPublic, String description, long creatorId, long markerLinkId, boolean isPushOn, long lastLinkId) {
+                  boolean isPublic, String description, long creatorId, long markerLinkId, boolean isPushOn, long lastLinkId, boolean isReadOnly) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -34,6 +35,7 @@ public class Topic {
         this.markerLinkId = markerLinkId;
         this.isPushOn = isPushOn;
         this.lastLinkId = lastLinkId;
+        this.isReadOnly = isReadOnly;
     }
 
     public long getMarkerLinkId() {
@@ -144,6 +146,14 @@ public class Topic {
         this.lastLinkId = lastLinkId;
     }
 
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        isReadOnly = readOnly;
+    }
+
     public static class Builder {
         private String name;
         private boolean isStarred;
@@ -157,6 +167,7 @@ public class Topic {
         private long markerLinkId;
         private boolean isPushOn;
         private long lastLinkId;
+        private boolean isReadOnly;
 
         public Builder name(String name) {
             this.name = name;
@@ -218,9 +229,14 @@ public class Topic {
             return this;
         }
 
+        public Builder readOnly(boolean readOnly) {
+            isReadOnly = readOnly;
+            return this;
+        }
+
         public Topic build() {
             return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
-                    isPublic, description, creatorId, markerLinkId, isPushOn, lastLinkId);
+                    isPublic, description, creatorId, markerLinkId, isPushOn, lastLinkId, isReadOnly);
         }
     }
 }

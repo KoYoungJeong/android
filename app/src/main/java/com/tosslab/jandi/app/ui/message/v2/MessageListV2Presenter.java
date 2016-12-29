@@ -589,6 +589,7 @@ public class MessageListV2Presenter {
 
                     String readyMessage = messageListModel.getReadyMessage(roomid);
                     view.initRoomInfo(roomid, readyMessage);
+                    view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly());
                 })
                 .observeOn(Schedulers.io())
                 .subscribe(roomid -> {
@@ -1200,6 +1201,8 @@ public class MessageListV2Presenter {
         void refreshMessages();
 
         void updateRecyclerViewInfo();
+
+        void showReadOnly(boolean readOnly);
     }
 
 }

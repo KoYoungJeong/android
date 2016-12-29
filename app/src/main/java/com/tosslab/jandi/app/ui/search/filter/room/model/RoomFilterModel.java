@@ -167,7 +167,8 @@ public class RoomFilterModel {
                                             }
                                         }
                                 )
-                                .filter(topicRoom -> topicRoom.isJoined() && !(ids.contains(topicRoom.getId()))))
+                                .filter(topicRoom -> topicRoom.isJoined() && !(ids.contains(topicRoom.getId())))
+                                .filter(this::canShare))
                 .sorted((lhs, rhs) -> {
                     if (lhs.isStarred() && rhs.isStarred()) {
                         return StringCompareUtil.compare(lhs.getName(), rhs.getName());
@@ -203,6 +204,17 @@ public class RoomFilterModel {
                 .takeFirst(memberId -> teamInfoLoader.getMyId() != memberId)
                 .toBlocking()
                 .firstOrDefault(-1L);
+    }
+
+    public boolean canShare(TopicRoom topicRoom) {
+        if (!topicRoom.isReadOnly()) {
+            return true;
+        }
+
+        // 읽기 전용은 권한 없으면 false
+        return topicRoom.getCreatorId() == teamInfoLoader.getMyId()
+                || teamInfoLoader.getMyLevel() == Level.Admin
+                || teamInfoLoader.getMyLevel() == Level.Owner;
     }
 
     public boolean isAssociate() {

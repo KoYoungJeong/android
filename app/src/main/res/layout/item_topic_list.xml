@@ -32,9 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignWithParentIfMissing="true"
-            android:layout_marginRight="16dp"
-            android:layout_toLeftOf="@+id/vg_entity_listitem_badge"
-            android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+            android:layout_marginEnd="16dp"
+            android:layout_toStartOf="@+id/vg_entity_listitem_badge"
+            android:layout_toEndOf="@+id/iv_entity_listitem_icon"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="6dp"
+                    android:layout_marginStart="6dp"
                     android:maxLines="1"
                     android:text="(11)"
                     android:textColor="@color/jandi_text"
@@ -76,7 +76,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/icon_notification_off" />
             </com.tosslab.jandi.app.views.FixedLinearLayout>
 
@@ -98,8 +98,8 @@
         <RelativeLayout
             android:id="@+id/vg_entity_listitem_badge"
             android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_alignParentRight="true"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true">
 
 
@@ -114,6 +114,12 @@
                 android:textColor="@color/jandi_text_white"
                 android:textSize="11sp" />
 
+            <TextView
+                android:id="@+id/tv_entity_listitem_read_only"
+                android:layout_width="wrap_content"
+                android:text="읽기 전용"
+                android:layout_height="wrap_content" />
+
         </RelativeLayout>
 
         <ImageView
@@ -122,15 +128,15 @@
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:background="#ffe5e5e5"
-            android:visibility="gone"></ImageView>
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_folder_item_underline"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="62dp"
-            android:background="#ffe5e5e5"></ImageView>
+            android:layout_marginStart="62dp"
+            android:background="#ffe5e5e5"/>
     </RelativeLayout>
 
     <View

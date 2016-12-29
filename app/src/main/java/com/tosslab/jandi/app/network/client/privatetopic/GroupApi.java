@@ -12,6 +12,9 @@ import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -61,6 +64,12 @@ public class GroupApi extends ApiTemplate<GroupApi.Api> {
         return call(() -> getApi().inviteGroup(groupId, inviteUsers));
     }
 
+    public ResCommon modifyReadOnly(long teamId, long topicId, boolean readOnly) throws RetrofitException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("isAnnouncement", readOnly);
+        return call(() -> getApi().modifyReadOnly(topicId, teamId, map));
+    }
+
     interface Api {
 
         // Private Group 생성
@@ -79,6 +88,12 @@ public class GroupApi extends ApiTemplate<GroupApi.Api> {
         Call<ResCommon> modifyGroupDescription(@Path("groupId") long groupId, @Query("teamId") long teamId,
                                                @Body ReqModifyTopicDescription description);
 
+        @PUT("privateGroups/{groupId}")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+        Call<ResCommon> modifyReadOnly(@Path("groupId") long topicId,
+                                       @Query("teamId") long teamId,
+                                       @Body Map<String, Object> map);
+
         // Private Group 삭제
         @HTTP(path = "privateGroups/{groupId}", hasBody = true, method = "DELETE")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
@@ -93,6 +108,5 @@ public class GroupApi extends ApiTemplate<GroupApi.Api> {
         @PUT("privateGroups/{groupId}/invite")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> inviteGroup(@Path("groupId") long groupId, @Body ReqInviteTopicUsers inviteUsers);
-
     }
 }

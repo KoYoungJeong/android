@@ -19,13 +19,14 @@ public class TopicItemData {
     private boolean selected;
     private long markerLinkId;
     private boolean isPushOn;
+    private boolean isReadOnly;
 
-    public TopicItemData() {
+    private TopicItemData() {
     }
 
-    public TopicItemData(long id, long creatorId, String name, boolean isStarred,
-                         boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
-                         boolean selected, String description, boolean isPublic, int memberCount) {
+    private TopicItemData(long id, long creatorId, String name, boolean isStarred,
+                          boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
+                          boolean selected, String description, boolean isPublic, int memberCount, boolean isReadOnly) {
         this.id = id;
         this.creatorId = creatorId;
         this.name = name;
@@ -39,16 +40,17 @@ public class TopicItemData {
         this.description = description;
         this.isPublic = isPublic;
         this.memberCount = memberCount;
+        this.isReadOnly = isReadOnly;
     }
 
     public static TopicItemData newInstance(long id, long creatorId, String name,
                                             boolean isStarred, boolean isJoined, long entityId,
                                             int unreadCount, long markerLinkId, boolean isPushOn,
                                             boolean selected, String description, boolean isPublic,
-                                            int memberCount) {
+                                            int memberCount, boolean isReadOnly) {
 
         return new TopicItemData(id, creatorId, name, isStarred, isJoined, entityId,
-                unreadCount, markerLinkId, isPushOn, selected, description, isPublic, memberCount);
+                unreadCount, markerLinkId, isPushOn, selected, description, isPublic, memberCount, isReadOnly);
 
     }
 
@@ -161,4 +163,11 @@ public class TopicItemData {
         this.isPushOn = isPushOn;
     }
 
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        isReadOnly = readOnly;
+    }
 }

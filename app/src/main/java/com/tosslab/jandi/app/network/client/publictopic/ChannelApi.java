@@ -13,6 +13,9 @@ import com.tosslab.jandi.app.network.models.ReqModifyTopicName;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -36,20 +39,20 @@ public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
     }
 
     public ResCommon modifyPublicTopicName(long teamId,
-                                    ReqModifyTopicName topicName,
-                                    long channelId) throws RetrofitException {
+                                           ReqModifyTopicName topicName,
+                                           long channelId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicName(channelId, teamId, topicName));
     }
 
     public ResCommon modifyPublicTopicDescription(long teamId,
-                                           ReqModifyTopicDescription description,
-                                           long channelId) throws RetrofitException {
+                                                  ReqModifyTopicDescription description,
+                                                  long channelId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicDescription(channelId, teamId, description));
     }
 
     public ResCommon modifyPublicTopicAutoJoin(long teamId,
-                                        ReqModifyTopicAutoJoin topicAutoJoin,
-                                        long channelId) throws RetrofitException {
+                                               ReqModifyTopicAutoJoin topicAutoJoin,
+                                               long channelId) throws RetrofitException {
         return call(() -> getApi().modifyPublicTopicAutoJoin(channelId, teamId, topicAutoJoin));
     }
 
@@ -71,6 +74,12 @@ public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
     // 채널 invite
     public ResCommon invitePublicTopic(long channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitException {
         return call(() -> getApi().invitePublicTopic(channelId, reqInviteTopicUsers));
+    }
+
+    public ResCommon modifyReadOnly(long teamId, long topicId, boolean readOnly) throws RetrofitException {
+        Map<String, Object> map = new HashMap<>();
+        map.put("isAnnouncement", readOnly);
+        return call(() -> getApi().modifyReadOnly(topicId, teamId, map));
     }
 
 
@@ -95,6 +104,10 @@ public class ChannelApi extends ApiTemplate<ChannelApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<ResCommon> modifyPublicTopicAutoJoin(@Path("channelId") long channelId, @Query("teamId") long teamId,
                                                   @Body ReqModifyTopicAutoJoin topicAutoJoin);
+
+        @PUT("channels/{channelId}")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+        Call<ResCommon> modifyReadOnly(@Path("channelId") long topicId, @Query("teamId") long teamId, @Body Map<String, Object> map);
 
         // 채널 삭제
         @HTTP(path = "channels/{channelId}", method = "DELETE", hasBody = true)

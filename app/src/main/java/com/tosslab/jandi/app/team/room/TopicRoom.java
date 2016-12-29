@@ -93,6 +93,11 @@ public class TopicRoom implements Room {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return topic.isAnnouncement();
+    }
+
+    @Override
     public Collection<Marker> getMarkers() {
         return topic.getMarkers();
     }

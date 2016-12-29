@@ -51,17 +51,18 @@ public class MainTopicModel {
         LinkedHashMap<Long, Topic> topicHashMap = new LinkedHashMap<>();
 
         Observable.from(topicRooms)
-                .map(formattedEntity -> new Topic.Builder()
-                        .entityId(formattedEntity.getId())
-                        .description(formattedEntity.getDescription())
+                .map(topicRoom -> new Topic.Builder()
+                        .entityId(topicRoom.getId())
+                        .description(topicRoom.getDescription())
                         .isJoined(true)
-                        .isPublic(formattedEntity.isPublicTopic())
-                        .isStarred(formattedEntity.isStarred())
-                        .memberCount(formattedEntity.getMemberCount())
-                        .name(formattedEntity.getName())
-                        .unreadCount(formattedEntity.getUnreadCount())
-                        .markerLinkId(formattedEntity.getLastLinkId())
-                        .isPushOn(formattedEntity.isPushSubscribe())
+                        .isPublic(topicRoom.isPublicTopic())
+                        .isStarred(topicRoom.isStarred())
+                        .memberCount(topicRoom.getMemberCount())
+                        .name(topicRoom.getName())
+                        .unreadCount(topicRoom.getUnreadCount())
+                        .markerLinkId(topicRoom.getLastLinkId())
+                        .isPushOn(topicRoom.isPushSubscribe())
+                        .readOnly(topicRoom.isReadOnly())
                         .build())
                 .toSortedList((lhs, rhs) -> {
                     if (lhs.isStarred() && rhs.isStarred()) {
@@ -137,7 +138,7 @@ public class MainTopicModel {
                                         topic.isStarred(), topic.isJoined(), topic.getEntityId(),
                                         topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
                                         topic.isSelected(), topic.getDescription(), topic.isPublic(),
-                                        topic.getMemberCount());
+                                        topic.getMemberCount(), topic.isReadOnly());
                                 topicItemMap.get(topicFolder.getId()).add(topicItemData);
 
                                 int badgeCount = badgeCountMap.get(topicFolder.getId());
@@ -187,7 +188,7 @@ public class MainTopicModel {
                             itemIndex, topic.getCreatorId(), topic.getName(),
                             topic.isStarred(), topic.isJoined(), topic.getEntityId(),
                             topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
-                            topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount());
+                            topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount(), topic.isReadOnly());
                 })
                 .subscribe(noFolderTopicItemDatas::add);
 
@@ -223,6 +224,7 @@ public class MainTopicModel {
                         .markerLinkId(topicRoom.getReadLinkId())
                         .lastLinkId(topicRoom.getLastLinkId())
                         .isPushOn(topicRoom.isPushSubscribe())
+                        .readOnly(topicRoom.isReadOnly())
                         .build())
                 .toSortedList((lhs, rhs) -> {
                     long lhsLastLinkId = lhs.getLastLinkId();

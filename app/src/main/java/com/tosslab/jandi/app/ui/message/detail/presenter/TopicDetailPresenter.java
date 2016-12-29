@@ -33,6 +33,8 @@ public interface TopicDetailPresenter {
 
     void onInviteMember(long entityId);
 
+    void onUpdateReadOnly(long entityId, boolean readOnly);
+
     interface View {
 
         void leaveTopic();
@@ -81,5 +83,7 @@ public interface TopicDetailPresenter {
         void showTopicDeleteAtLeastGuest();
 
         void showDialogNeedToAssignMember();
+
+        void setReadOnly(boolean readOnly, boolean owner, boolean defaultTopic);
     }
 }

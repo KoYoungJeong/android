@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.local.orm.upgrade.RealmUpgradeChecker;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -25,7 +26,8 @@ import io.realm.RealmSchema;
 import rx.Observable;
 
 public class RealmManager {
-    private static int REALM_VERSION_MEMBER_AUTHORITY = 2;
+    private static long REALM_VERSION_MEMBER_AUTHORITY = 2;
+    private static long REALM_VERSION_READ_ONLY_OF_TOPIC = 3;
 
     public static void init(Context context) {
         ActivityManager activityManager =
@@ -62,7 +64,7 @@ public class RealmManager {
             if (oldVersion < newVersion) {
                 RealmSchema schema = realm.getSchema();
                 List<RealmUpgradeChecker> upgradeCheckers = Arrays.asList(
-                        RealmUpgradeChecker.create(() -> 2L, () -> {
+                        RealmUpgradeChecker.create(() -> REALM_VERSION_MEMBER_AUTHORITY, () -> {
                             schema.get(TeamPlan.class.getSimpleName())
                                     .addField("messageCount", long.class);
 
@@ -78,6 +80,10 @@ public class RealmManager {
                                     .addField("createdAt", Date.class)
                                     .addField("status", String.class);
 
+                        }),
+                        RealmUpgradeChecker.create(() -> REALM_VERSION_READ_ONLY_OF_TOPIC, () -> {
+                            schema.get(Topic.class.getSimpleName())
+                                    .addField("isAnnouncement", boolean.class);
                         })
                 );
 

@@ -24,6 +24,7 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -199,6 +200,16 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                     return new ArrayList<>();
                 })
                 .defaultIfEmpty(new ArrayList<>(0))
+                .concatMap(topicFolders -> {
+                    return Observable.from(topicFolders)
+                            .concatMap(topicFolder -> {
+                                return Observable.from(topicFolder.getRooms())
+                                        .filter(roomFilterModel::canShare)
+                                        .collect((Func0<List<TopicRoom>>) ArrayList::new, List::add)
+                                        .map(topicRooms -> new TopicFolder(topicFolder.getFolder(), topicRooms));
+                            })
+                            .collect((Func0<List<TopicFolder>>) ArrayList::new, List::add);
+                })
                 .doOnNext(roomFilterDataModel::setFolders)
                 .map(topicFolders -> {
                     List<TopicRoom> unFoldedTopics =

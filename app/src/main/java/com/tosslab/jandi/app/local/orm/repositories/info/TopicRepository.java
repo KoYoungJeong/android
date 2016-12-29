@@ -425,4 +425,19 @@ public class TopicRepository extends RealmRepository {
             return false;
         });
     }
+
+    public boolean updateReadOnly(long roomId, boolean readOnly) {
+        return execute(realm -> {
+            Topic topic = realm.where(Topic.class)
+                    .equalTo("id", roomId)
+                    .findFirst();
+
+            if (topic != null) {
+                realm.executeTransaction(realm1 -> topic.setIsAnnouncement(readOnly));
+                return true;
+            }
+
+            return false;
+        });
+    }
 }
