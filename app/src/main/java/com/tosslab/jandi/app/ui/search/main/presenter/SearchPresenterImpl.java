@@ -499,6 +499,19 @@ public class SearchPresenterImpl implements SearchPresenter {
         view.showChooseRoomDialog(showAllRoom);
     }
 
+    @Override
+    public void onOneToOneRoomClick(long memberId) {
+        if (!searchModel.isGuest()) {
+            view.moveDirectMessage(memberId);
+        } else {
+            if (searchModel.isOpenedOfChatUser(memberId)) {
+                view.moveDirectMessage(memberId);
+            } else {
+                view.showShouldOpenedUser();
+            }
+        }
+    }
+
     public enum MoreState {
         Idle, Loading
     }
