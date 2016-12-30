@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.Room;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.TeamMemberDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.member.adapter.ToggleCollector;
@@ -148,12 +149,12 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
             List<User> userList = new ArrayList<>();
 
             Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                    .filter(topic -> topic.isJoined())
+                    .filter(TopicRoom::isJoined)
                     .concatMap(topic -> Observable.from(topic.getMembers()))
                     .distinct()
-                    .subscribe(memberId -> {
-                        userList.add(TeamInfoLoader.getInstance().getUser(memberId));
-                    });
+                    .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                    .collect(() -> userList, List::add)
+                    .subscribe();
             return userList;
         } else {
             return TeamInfoLoader.getInstance().getUserList();

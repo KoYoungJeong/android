@@ -5,7 +5,7 @@ import com.tosslab.jandi.app.network.DomainUtil;
 public class JandiConstantsForFlavors {
     // These constants are just for DEBUG mode
     private static final String SERVICE_PROTOCOL = "https";
-    public static final String SERVICE_DOMAIN_BASE = "jandi.io";
+    public static final String SERVICE_DOMAIN_BASE = "a-jandi.com";
     private static final String SERVICE_PORT = "443";
 
 

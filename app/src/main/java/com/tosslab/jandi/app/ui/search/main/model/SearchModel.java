@@ -102,9 +102,9 @@ public class SearchModel {
 
     public List<SearchOneToOneRoomData> getSearchedOneToOneRoom(String keyword) {
 
-        List<User> userList = TeamInfoLoader.getInstance().getUserList();
+
         List<SearchOneToOneRoomData> searchOneToOneRoomDatas = new ArrayList<>();
-        Observable.from(userList)
+        Observable.from(getUsers())
                 .filter(User::isEnabled)
                 .filter(user -> user.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .filter(user -> user.getId() != TeamInfoLoader.getInstance().getMyId())
@@ -115,13 +115,30 @@ public class SearchModel {
                         .setTitle(user.getName())
                         .setUserProfileUrl(user.getPhotoUrl())
                         .build())
-                .toSortedList((lhs, rhs) -> {
-                    return StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle());
-                })
+                .toSortedList((lhs, rhs) ->
+                        StringCompareUtil.compare(lhs.getTitle(), rhs.getTitle()))
                 .collect(() -> searchOneToOneRoomDatas, List::addAll)
                 .subscribe(it -> {}, Throwable::printStackTrace);
 
         return searchOneToOneRoomDatas;
+
+    }
+
+    private List<User> getUsers() {
+        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
+            List<User> userList = new ArrayList<>();
+
+            Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                    .filter(TopicRoom::isJoined)
+                    .concatMap(topic -> Observable.from(topic.getMembers()))
+                    .distinct()
+                    .map(memberId -> TeamInfoLoader.getInstance().getUser(memberId))
+                    .collect(() -> userList, List::add)
+                    .subscribe();
+            return userList;
+        } else {
+            return TeamInfoLoader.getInstance().getUserList();
+        }
 
     }
 
@@ -185,6 +202,6 @@ public class SearchModel {
     }
 
     public boolean isGuest() {
-        return TeamInfoLoader.getInstance().getMyLevel() != Level.Guest;
+        return TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
     }
 }
