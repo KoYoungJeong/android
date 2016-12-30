@@ -38,6 +38,9 @@ public class ResAccountInfo {
     private String notificationTarget;
     @DatabaseField
     private String status;
+    @DatabaseField
+    private String uuid;
+
 
     @ForeignCollectionField()
     private Collection<UserDevice> devices;
@@ -182,6 +185,14 @@ public class ResAccountInfo {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @DatabaseTable(tableName = "account_devices")
