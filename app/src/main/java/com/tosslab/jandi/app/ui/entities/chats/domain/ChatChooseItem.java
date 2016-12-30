@@ -20,8 +20,7 @@ public class ChatChooseItem {
     private boolean isChooseItem = false;
     private boolean isOwner = false;
 
-    public ChatChooseItem() {
-    }
+    public ChatChooseItem() { }
 
     public static ChatChooseItem create(User user) {
         return new ChatChooseItem().entityId(user.getId())
