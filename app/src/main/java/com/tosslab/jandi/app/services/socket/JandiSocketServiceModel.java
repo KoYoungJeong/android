@@ -62,6 +62,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Mention;
@@ -1202,7 +1203,8 @@ public class JandiSocketServiceModel {
             saveEvent(event);
 
             SocketTeamJoinEvent.Data data = event.getData();
-            HumanRepository.getInstance().addHuman(data.getTeamId(), data.getMember());
+            Human member = data.getMember();
+            HumanRepository.getInstance().addHuman(data.getTeamId(), member);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             postEvent(new RetrieveTopicListEvent());
             postEvent(new TeamJoinEvent());
@@ -1327,7 +1329,11 @@ public class JandiSocketServiceModel {
             saveEvent(event);
 
             SocketMemberUpdatedEvent.Data data = event.getData();
-            HumanRepository.getInstance().updateHuman(data.getMember());
+            Human member = data.getMember();
+            if (member != null && member.getProfile() != null) {
+                member.getProfile().setId(member.getId());
+            }
+            HumanRepository.getInstance().updateHuman(member);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new ProfileChangeEvent(data.getMember()));

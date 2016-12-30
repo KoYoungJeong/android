@@ -57,6 +57,10 @@ public class ChatRepository extends RealmRepository {
                 chat.setTeamId(teamId);
             }
 
+            if (chat.getLastMessage() != null) {
+                chat.getLastMessage().setChatId(chat.getId());
+            }
+
             InitialInfo initialInfo = realm.where(InitialInfo.class).equalTo("teamId", teamId).findFirst();
             if (initialInfo != null && realm.where(Chat.class)
                     .equalTo("id", chat.getId())

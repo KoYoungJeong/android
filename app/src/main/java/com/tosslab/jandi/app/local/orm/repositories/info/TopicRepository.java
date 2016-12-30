@@ -354,6 +354,9 @@ public class TopicRepository extends RealmRepository {
             InitialInfo initialInfo = realm.where(InitialInfo.class)
                     .equalTo("teamId", selectedTeamId)
                     .findFirst();
+            if (topic.getAnnouncement() != null) {
+                topic.getAnnouncement().setRoomId(topic.getId());
+            }
             if (initialInfo != null) {
                 realm.executeTransaction(realm1 -> {
                     topic.setTeamId(selectedTeamId);
@@ -369,6 +372,9 @@ public class TopicRepository extends RealmRepository {
 
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             topic.setTeamId(selectedTeamId);
+            if (topic.getAnnouncement() != null) {
+                topic.getAnnouncement().setRoomId(topic.getId());
+            }
             realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
 
             return true;

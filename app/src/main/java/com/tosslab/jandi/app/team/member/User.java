@@ -68,7 +68,9 @@ public class User implements Member {
 
     @Override
     public boolean isTeamOwner() {
-        return rank != null && rank.getLevel() == Level.Owner.getLevel();
+        return rank != null &&
+                (rank.getLevel() == Level.Owner.getLevel() ||
+                        rank.getLevel() == Level.Admin.getLevel());
     }
 
     @Override
