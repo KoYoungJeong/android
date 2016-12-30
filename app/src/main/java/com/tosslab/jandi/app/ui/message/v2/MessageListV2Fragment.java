@@ -200,6 +200,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public static final int REQ_WINDOW_PERMISSION = 102;
     public static final String REQUEST_FILE_UPLOAD_EVENT_TYPE = "request_file_upload_event_type";
     private static final StickerInfo NULL_STICKER = new StickerInfo();
+
     @Nullable
     @InjectExtra
     int entityType;
@@ -1100,13 +1101,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
             } else if (link.message instanceof ResMessages.FileMessage) {
                 ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
+
                 boolean isImageFile = fileMessage.content.type.startsWith("image")
                         && !fileMessage.content.type.contains("dwg");
                 sendAnalyticsEvent(isImageFile
                         ? AnalyticsValue.Action.FileView_ByPhoto
                         : AnalyticsValue.Action.FileView_ByFile);
 
-                if (isImageFile) {
+                boolean isDeleted = TextUtils.equals(link.message.status, "archived");
+
+                if (isImageFile && !isDeleted) {
                     Intent intent = CarouselViewerActivity.getCarouselViewerIntent(
                             getActivity(), fileMessage.id, room.getRoomId())
                             .build();
@@ -1120,7 +1124,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                             .build(), JandiConstants.TYPE_FILE_DETAIL_REFRESH);
                 }
                 getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-
             }
         }
     }
