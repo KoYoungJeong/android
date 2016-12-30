@@ -73,10 +73,8 @@ public class TeamSelectListModel {
     public List<Team> getTeamInfos() throws RetrofitException {
         List<Team> teams = new ArrayList<Team>();
 
-        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
-        teams.addAll(convertJoinedTeamList(userTeams));
-
         List<ResPendingTeamInfo> pendingTeamInfo = invitationApi.get().getPedingTeamInfo();
+
         for (int idx = pendingTeamInfo.size() - 1; idx >= 0; idx--) {
             if (!TextUtils.equals(pendingTeamInfo.get(idx).getStatus(), "pending")) {
                 pendingTeamInfo.remove(idx);
@@ -84,6 +82,10 @@ public class TeamSelectListModel {
         }
 
         teams.addAll(convertPedingTeamList(pendingTeamInfo));
+
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
+        teams.addAll(convertJoinedTeamList(userTeams));
+
         teams.add(Team.createEmptyTeam());
 
         return teams;
