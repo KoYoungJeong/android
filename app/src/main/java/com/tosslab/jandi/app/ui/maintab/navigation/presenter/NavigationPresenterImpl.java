@@ -379,27 +379,26 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     @Override
     public void onInitIntercom() {
 
-        Observable.just(new Object())
-                .observeOn(Schedulers.io())
-                .subscribe(o -> {
-                    Registration it = Registration.create();
-                    ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
-                    it.withUserId(accountInfo.getId());
-                    Intercom.client().registerIdentifiedUser(it);
+        Completable.fromAction(() -> {
+            Registration it = Registration.create();
+            ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+            it.withUserId(accountInfo.getUuid());
+            Intercom.client().registerIdentifiedUser(it);
 
-                    long myId = TeamInfoLoader.getInstance().getMyId();
-                    User user = TeamInfoLoader.getInstance().getUser(myId);
+            long myId = TeamInfoLoader.getInstance().getMyId();
+            User user = TeamInfoLoader.getInstance().getUser(myId);
 
-                    Map<String, Object> attr = new HashMap<>();
-                    attr.put("name", user.getName());
-                    attr.put("email", user.getEmail());
-                    attr.put("create_at", accountInfo.getCreatedAt());
-                    attr.put("language_override", Locale.getDefault().getDisplayLanguage());
+            Map<String, Object> attr = new HashMap<>();
+            attr.put("name", user.getName());
+            attr.put("email", user.getEmail());
+            attr.put("create_at", accountInfo.getCreatedAt());
+            attr.put("language_override", Locale.getDefault().getDisplayLanguage());
 
-                    Intercom.client().updateUser(attr);
-                    Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
-                }, it -> {
-                });
+            Intercom.client().updateUser(attr);
+            Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
+
+        }).subscribeOn(Schedulers.computation())
+                .subscribe(() -> {}, t -> {});
 
 
     }
