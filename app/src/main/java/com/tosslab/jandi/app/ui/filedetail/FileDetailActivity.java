@@ -514,16 +514,43 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         List<FileDetailAdapter.Row<?>> rows = new ArrayList<>();
         rows.add(new FileDetailAdapter.Row<>(null, FileDetailAdapter.VIEW_TYPE_COMMENT_DIVIDER));
-        Observable.from(fileComments)
-                .subscribe(commentMessage -> {
-                    boolean isSticker = !(commentMessage instanceof ResMessages.CommentMessage);
-                    int viewType = isSticker
-                            ? FileDetailAdapter.VIEW_TYPE_STICKER
-                            : FileDetailAdapter.VIEW_TYPE_COMMENT;
-                    rows.add(new FileDetailAdapter.Row<>(commentMessage, viewType));
-                });
+        Observable.range(0, fileComments.size())
+                .map(index -> {
+                    ResMessages.OriginalMessage current = fileComments.get(index);
+                    boolean textComment = current instanceof ResMessages.CommentMessage;
+
+                    boolean profile = true;
+                    ResMessages.OriginalMessage before = null;
+                    if (index > 0) {
+                        before = fileComments.get(index - 1);
+                        profile = current.writerId != before.writerId;
+                    }
+
+                    int viewType = getCommentViewType(textComment, profile);
+                    return new FileDetailAdapter.Row<>(current, viewType);
+                })
+                .collect(() -> rows, List::add)
+                .subscribe();
 
         adapter.addRows(rows);
+    }
+
+    private int getCommentViewType(boolean textComment, boolean profile) {
+        int viewType;
+        if (textComment) {
+            if (profile) {
+                viewType = FileDetailAdapter.VIEW_TYPE_COMMENT;
+            } else {
+                viewType = FileDetailAdapter.VIEW_TYPE_COMMENT_NO_PROFILE;
+            }
+        } else {
+            if (profile) {
+                viewType = FileDetailAdapter.VIEW_TYPE_STICKER;
+            } else {
+                viewType = FileDetailAdapter.VIEW_TYPE_STICKER_NO_PROFILE;
+            }
+        }
+        return viewType;
     }
 
     @Override
@@ -944,7 +971,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         .filter(position -> position >= 0)
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(position -> adapter.remove(position), Throwable::printStackTrace, () -> {
+                        .subscribe(this::removeComment, Throwable::printStackTrace, () -> {
                             adapter.notifyDataSetChanged();
                         });
             }
@@ -1453,7 +1480,49 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void removeComment(int position) {
+        ResMessages.OriginalMessage before = null;
+        if (position > 0) {
+            Object obj = adapter.getItem(position - 1);
+            if (obj instanceof ResMessages.CommentMessage
+                    || obj instanceof ResMessages.CommentStickerMessage) {
+                before = (ResMessages.OriginalMessage) obj;
+            }
+        }
+
+        ResMessages.OriginalMessage after = null;
+        if (position < adapter.getItemCount() - 1) {
+            Object obj = adapter.getItem(position + 1);
+            if (obj instanceof ResMessages.CommentMessage
+                    || obj instanceof ResMessages.CommentStickerMessage) {
+                after = (ResMessages.OriginalMessage) obj;
+            }
+        }
+
         adapter.remove(position);
+
+        if (after != null) {
+            int commentViewType;
+            if (before == null) {
+
+                boolean textComment = after instanceof ResMessages.CommentMessage;
+                commentViewType = getCommentViewType(textComment, true);
+
+            } else {
+
+                boolean textComment = after instanceof ResMessages.CommentMessage;
+
+                boolean profile = true;
+                if (position > 0) {
+                    profile = after.writerId != before.writerId;
+                }
+
+                commentViewType = getCommentViewType(textComment, profile);
+            }
+            adapter.setRow(position, new FileDetailAdapter.Row<>(after, commentViewType));
+
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     @Override
@@ -1463,11 +1532,26 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void addComment(int adapterPosition, ResMessages.OriginalMessage comment) {
-        boolean isSticker = !(comment instanceof ResMessages.CommentMessage);
-        int viewType = isSticker
-                ? FileDetailAdapter.VIEW_TYPE_STICKER
-                : FileDetailAdapter.VIEW_TYPE_COMMENT;
+        boolean sticker = !(comment instanceof ResMessages.CommentMessage);
+        boolean profile = true;
+        if (adapter.getItemCount() > 0) {
+            ResMessages.OriginalMessage before = getItemIfCommentType(adapter.getItem(adapterPosition - 1));
+            if (before != null) {
+                profile = before.writerId != comment.writerId;
+            }
+        }
+        int viewType = getCommentViewType(!sticker, profile);
         adapter.addRow(adapterPosition, new FileDetailAdapter.Row<>(comment, viewType));
+    }
+
+    @Nullable
+    private ResMessages.OriginalMessage getItemIfCommentType(Object item) {
+        ResMessages.OriginalMessage message = null;
+        if (item instanceof ResMessages.CommentMessage
+                || item instanceof ResMessages.CommentStickerMessage) {
+            message = (ResMessages.OriginalMessage) item;
+        }
+        return message;
     }
 
     @Override

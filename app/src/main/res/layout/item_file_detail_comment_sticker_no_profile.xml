@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
+
+    <View
+        android:id="@+id/v_file_detail_comment_sticker_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/view_file_detail_comment_sticker_cell_divider"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/bg_topic_selector" />
+
+    <ImageView
+        android:id="@+id/iv_file_detail_comment_sticker_content"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginEnd="@dimen/jandi_file_detail_padding_sides"
+        android:layout_marginStart="46dp"
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/tv_file_detail_comment_sticker_create_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/iv_file_detail_comment_sticker_content"
+        android:layout_below="@+id/iv_file_detail_comment_sticker_content"
+        android:gravity="center"
+        android:text="01/14/2016, 08:59 pm"
+        android:textColor="@color/jand_detail_page_date"
+        android:textSize="@dimen/jandi_file_detail_text_date" />
+
+    <View
+        android:id="@+id/view_file_detail_comment_sticker_cell_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignStart="@+id/tv_file_detail_comment_sticker_create_date"
+        android:layout_below="@+id/tv_file_detail_comment_sticker_create_date"
+        android:layout_marginTop="11.5dp"
+        android:background="@color/rgb_d9d9d9" />
+
+</RelativeLayout>

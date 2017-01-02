@@ -34,6 +34,18 @@ public class DateTransformator {
         }
     }
 
+    public static String getTimeStringForComment(Date date) {
+        Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
+        switch (locale.getLanguage()) {
+            case "ko":
+            case "zh":
+            case "ja":
+                return getTimeString(date, "yyyy.MM.dd. hh:mm a");
+            default:
+                return getTimeString(date, "MM.dd.yyyy. hh:mm a");
+        }
+    }
+
     public static String getTimeString(Date date, String format) {
         if (TextUtils.isEmpty(format) || date == null) {
             return "";

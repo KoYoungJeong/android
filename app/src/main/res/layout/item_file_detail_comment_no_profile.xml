@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
+
+    <View
+        android:id="@+id/v_file_detail_comment_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/view_file_detail_comment_cell_divider"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/bg_topic_selector"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_file_detail_comment_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="46dp"
+        android:layout_marginTop="12dp"
+        android:lineSpacingExtra="2dp"
+        android:minHeight="@dimen/jandi_file_detail_comment_date_text"
+        android:text="HiHi\nThis is Comment"
+        android:textColor="@color/jandi_file_detail_comment_text"
+        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
+
+    <TextView
+        android:id="@+id/tv_file_detail_comment_create_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tv_file_detail_comment_content"
+        android:layout_below="@+id/tv_file_detail_comment_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="01/14/2016, 08:59 pm"
+        android:textColor="@color/jand_detail_page_date"
+        android:textSize="@dimen/jandi_file_detail_text_date" />
+
+    <View
+        android:id="@+id/view_file_detail_comment_cell_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignStart="@+id/tv_file_detail_comment_content"
+        android:layout_below="@+id/tv_file_detail_comment_create_date"
+        android:layout_marginTop="11.5dp"
+        android:background="@color/rgb_d9d9d9" />
+
+</RelativeLayout>

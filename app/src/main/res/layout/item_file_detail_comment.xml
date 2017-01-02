@@ -1,96 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="10dp"
-    android:paddingLeft="11dp"
-    android:paddingRight="11dp"
-    android:paddingTop="8dp">
+    android:background="?android:attr/selectableItemBackground">
+
+    <View
+        android:id="@+id/v_file_detail_comment_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/view_file_detail_comment_cell_divider"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/bg_topic_selector"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/iv_file_detail_comment_user_profile"
         android:layout_width="@dimen/jandi_file_detail_comment_profile_size"
-        android:layout_height="@dimen/jandi_file_detail_comment_profile_size"/>
+        android:layout_height="@dimen/jandi_file_detail_comment_profile_size"
+        android:layout_marginStart="11dp"
+        android:src="@drawable/profile_img"
+        android:layout_marginTop="12dp" />
 
-    <com.tosslab.jandi.app.views.FixedLinearLayout
-        android:id="@+id/vg_file_detail_comment_user_name"
-        android:layout_width="match_parent"
-        android:layout_height="19dp"
-        android:layout_marginLeft="9dp"
-        android:layout_toRightOf="@+id/iv_file_detail_comment_user_profile">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="9dp">
+    <TextView
+        android:id="@+id/tv_file_detail_comment_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/iv_file_detail_comment_user_profile"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="9dp"
+        android:layout_toEndOf="@+id/iv_file_detail_comment_user_profile"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="gUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser Name"
+        android:textColor="@color/jandi_text"
+        android:textSize="@dimen/jandi_text_size_medium"
+        android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_file_detail_comment_user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="gUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser NameUser Name"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/jandi_text"
-                android:textSize="@dimen/jandi_file_detail_comment_name_text"
-                android:textStyle="bold"/>
+    <ImageView
+        android:id="@+id/v_file_detail_comment_user_name_disable_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_file_detail_comment_user_name"
+        android:layout_alignEnd="@+id/tv_file_detail_comment_user_name"
+        android:layout_alignStart="@+id/tv_file_detail_comment_user_name"
+        android:layout_alignTop="@+id/tv_file_detail_comment_user_name"
+        android:src="@drawable/line_gray" />
 
-            <ImageView
-                android:id="@+id/v_file_detail_comment_user_name_disable_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/tv_file_detail_comment_user_name"
-                android:layout_alignLeft="@+id/tv_file_detail_comment_user_name"
-                android:layout_alignRight="@+id/tv_file_detail_comment_user_name"
-                android:layout_alignTop="@+id/tv_file_detail_comment_user_name"
-                android:src="@drawable/line_gray"/>
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tv_file_detail_comment_create_date"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="01/14/2016, 08:59 pm"
-            android:textColor="@color/jand_detail_page_date"
-            android:textSize="@dimen/jandi_file_detail_text_date"/>
-
-    </com.tosslab.jandi.app.views.FixedLinearLayout>
 
     <View
         android:id="@+id/v_file_detail_comment_user_profile_disable_indicator"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:layout_alignBottom="@+id/iv_file_detail_comment_user_profile"
-        android:layout_alignLeft="@+id/iv_file_detail_comment_user_profile"
-        android:layout_alignRight="@+id/iv_file_detail_comment_user_profile"
+        android:layout_alignEnd="@+id/iv_file_detail_comment_user_profile"
+        android:layout_alignStart="@+id/iv_file_detail_comment_user_profile"
         android:layout_alignTop="@+id/iv_file_detail_comment_user_profile"
         android:background="@color/jandi_member_profile_disabled"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_file_detail_comment_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/vg_file_detail_comment_user_name"
-        android:layout_below="@+id/vg_file_detail_comment_user_name"
+        android:layout_alignStart="@+id/tv_file_detail_comment_user_name"
+        android:layout_below="@+id/tv_file_detail_comment_user_name"
+        android:layout_marginEnd="10dp"
         android:layout_marginTop="2dp"
         android:lineSpacingExtra="2dp"
         android:minHeight="@dimen/jandi_file_detail_comment_date_text"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
-        android:textSize="@dimen/jandi_file_detail_comment_date_text"/>
+        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
+
+    <TextView
+        android:id="@+id/tv_file_detail_comment_create_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tv_file_detail_comment_content"
+        android:layout_below="@+id/tv_file_detail_comment_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="2dp"
+        android:gravity="center"
+        android:text="01/14/2016, 08:59 pm"
+        android:textColor="@color/jand_detail_page_date"
+        android:textSize="@dimen/jandi_file_detail_text_date" />
 
     <View
-        android:id="@+id/v_file_detail_comment_anim"
+        android:id="@+id/view_file_detail_comment_cell_divider"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/tv_file_detail_comment_content"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/bg_topic_selector"/>
+        android:layout_height="0.5dp"
+        android:layout_alignStart="@+id/tv_file_detail_comment_content"
+        android:layout_below="@+id/tv_file_detail_comment_create_date"
+        android:layout_marginTop="11.5dp"
+        android:background="@color/rgb_d9d9d9" />
 
 </RelativeLayout>

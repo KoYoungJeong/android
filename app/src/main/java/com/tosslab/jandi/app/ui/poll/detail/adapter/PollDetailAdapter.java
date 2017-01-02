@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter;
 
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.view.ViewGroup;
 
@@ -12,21 +13,22 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
-import com.tosslab.jandi.app.ui.comment.CommentViewHolder;
+import com.tosslab.jandi.app.ui.comment.CellDividerUpdater;
 import com.tosslab.jandi.app.ui.comment.OnCommentClickListener;
 import com.tosslab.jandi.app.ui.comment.OnCommentLongClickListener;
 import com.tosslab.jandi.app.ui.comment.StickerCommentViewHolder;
+import com.tosslab.jandi.app.ui.comment.TextCommentViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.model.PollDetailDataModel;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.view.PollDetailDataView;
-import com.tosslab.jandi.app.views.decoration.DividerViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollDeletedInfoViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollDetailRow;
+import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollHeaderViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollInfoViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollItemViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollSharedInViewHolder;
 import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollVoteViewHolder;
-import com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder.PollHeaderViewHolder;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.views.decoration.DividerViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +41,17 @@ import rx.Observable;
 public class PollDetailAdapter extends MultiItemRecyclerAdapter
         implements PollDetailDataModel, PollDetailDataView {
 
-    public static final int VIEW_TYPE_POLL_HEADER = 0;
-    public static final int VIEW_TYPE_POLL_INFO = 1;
-    public static final int VIEW_TYPE_POLL_ITEM = 2;
-    public static final int VIEW_TYPE_POLL_ITEM_VOTE = 3;
-    public static final int VIEW_TYPE_POLL_SHARED_IN = 4;
-    public static final int VIEW_TYPE_COMMENT = 5;
-    public static final int VIEW_TYPE_STICKER = 6;
-    public static final int VIEW_TYPE_DIVIDER = 7;
-    public static final int VIEW_TYPE_POLL_DELETED = 8;
+    private static final int VIEW_TYPE_POLL_HEADER = 0;
+    private static final int VIEW_TYPE_POLL_INFO = 1;
+    private static final int VIEW_TYPE_POLL_ITEM = 2;
+    private static final int VIEW_TYPE_POLL_ITEM_VOTE = 3;
+    private static final int VIEW_TYPE_POLL_SHARED_IN = 4;
+    private static final int VIEW_TYPE_COMMENT = 5;
+    private static final int VIEW_TYPE_STICKER = 6;
+    private static final int VIEW_TYPE_DIVIDER = 7;
+    private static final int VIEW_TYPE_POLL_DELETED = 8;
+    private static final int VIEW_TYPE_COMMENT_NO_PROFILE = 9;
+    private static final int VIEW_TYPE_STICKER_NO_PROFILE = 10;
 
     private OnCommentClickListener onCommentClickListener;
     private OnCommentLongClickListener onCommentLongClickListener;
@@ -80,13 +84,32 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
             case VIEW_TYPE_DIVIDER:
                 return DividerViewHolder.newInstance(parent);
-
             case VIEW_TYPE_COMMENT:
-                return CommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
+                return TextCommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
             case VIEW_TYPE_STICKER:
                 return StickerCommentViewHolder.newInstance(parent, onCommentClickListener, onCommentLongClickListener);
+            case VIEW_TYPE_COMMENT_NO_PROFILE:
+                return TextCommentViewHolder.newInstanceNoProfile(parent, onCommentClickListener, onCommentLongClickListener);
+            case VIEW_TYPE_STICKER_NO_PROFILE:
+                return StickerCommentViewHolder.newInstanceNoProfile(parent, onCommentClickListener, onCommentLongClickListener);
         }
-        return null;
+        return DividerViewHolder.newInstance(parent);
+    }
+
+    @Override
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
+
+        if (holder instanceof CellDividerUpdater) {
+            CellDividerUpdater updater = (CellDividerUpdater) holder;
+            if (position >= getItemCount() - 1) {
+                updater.cellUpdater(true);
+            } else {
+                ResMessages.OriginalMessage current = getItem(position);
+                ResMessages.OriginalMessage after = getItem(position + 1);
+                updater.cellUpdater(current.writerId != after.writerId);
+            }
+        }
     }
 
     @Override
@@ -182,28 +205,58 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
 
         List<Row<?>> rows = new ArrayList<>();
 
-        rows.add(getPollCommentDividerRow());
+        if (!hasCommentRows()
+                && getItemViewType(getItemCount() - 1) != VIEW_TYPE_DIVIDER) {
+            addRow(getPollCommentDividerRow());
+        }
 
-        Observable.from(comments)
-                .subscribe(commentMessage -> {
-                    rows.add(getPollCommentRow(commentMessage));
-                });
+        Observable.range(0, comments.size())
+                .map(it -> {
+                    if (it > 0) {
+                        return getPollCommentRow(comments.get(it), comments.get(it - 1));
+                    } else {
+                        return getPollCommentRow(comments.get(it), null);
+                    }
+                })
+                .collect(() -> rows, List::add)
+                .subscribe();
 
         addRows(rows);
     }
 
     @Override
     public void addPollComment(ResMessages.OriginalMessage comment) {
-        if (!hasCommentRows()) {
+        if (!hasCommentRows()
+                && getItemViewType(getItemCount() - 1) != VIEW_TYPE_DIVIDER) {
             addRow(getPollCommentDividerRow());
         }
 
-        addRow(getPollCommentRow(comment));
+        int itemCount = getItemCount();
+        if (itemCount > 0) {
+            addRow(getPollCommentRow(comment, getItemIfCommentType(getItem(itemCount - 1))));
+        } else {
+            addRow(getPollCommentRow(comment, null));
+        }
     }
 
     @Override
     public void addPollComment(int position, ResMessages.OriginalMessage comment) {
-        addRow(position, getPollCommentRow(comment));
+        int itemCount = getItemCount();
+        if (itemCount > 0) {
+            addRow(position, getPollCommentRow(comment, getItemIfCommentType(getItem(itemCount - 1))));
+        } else {
+            addRow(position, getPollCommentRow(comment, null));
+        }
+    }
+
+    @Nullable
+    private ResMessages.OriginalMessage getItemIfCommentType(Object item) {
+        ResMessages.OriginalMessage message = null;
+        if (item instanceof ResMessages.CommentMessage
+                || item instanceof ResMessages.CommentStickerMessage) {
+            message = (ResMessages.OriginalMessage) item;
+        }
+        return message;
     }
 
     @Override
@@ -238,11 +291,36 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
             ResMessages.OriginalMessage comment = (ResMessages.OriginalMessage) item;
             if (comment.id == messageId) {
                 remove(i);
+                updateCommentMessageType(i);
                 return Pair.create(i, comment);
             }
         }
 
         return Pair.create(-1, new ResMessages.OriginalMessage());
+    }
+
+    private void updateCommentMessageType(int position) {
+        ResMessages.OriginalMessage before = null;
+        if (position > 0) {
+            Object obj = getItem(position - 1);
+            if (obj instanceof ResMessages.CommentMessage
+                    || obj instanceof ResMessages.CommentStickerMessage) {
+                before = (ResMessages.OriginalMessage) obj;
+            }
+        }
+
+        ResMessages.OriginalMessage after = null;
+        if (position < getItemCount()) {
+            Object obj = getItem(position);
+            if (obj instanceof ResMessages.CommentMessage
+                    || obj instanceof ResMessages.CommentStickerMessage) {
+                after = (ResMessages.OriginalMessage) obj;
+            }
+        }
+        if (after != null) {
+            Row row = getPollCommentRow(after, before);
+            setRow(position, row);
+        }
     }
 
     @Override
@@ -257,6 +335,7 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
             ResMessages.OriginalMessage message = (ResMessages.OriginalMessage) item;
             if (message.id == messageId) {
                 remove(i);
+                updateCommentMessageType(i);
                 break;
             }
         }
@@ -296,16 +375,35 @@ public class PollDetailAdapter extends MultiItemRecyclerAdapter
         return Row.create(dividerInfo, VIEW_TYPE_DIVIDER);
     }
 
-    public Row getPollCommentRow(ResMessages.OriginalMessage commentMessage) {
-        boolean isSticker = !(commentMessage instanceof ResMessages.CommentMessage);
-        int viewType = isSticker ? VIEW_TYPE_STICKER : VIEW_TYPE_COMMENT;
-        return Row.create(commentMessage, viewType);
+    public Row getPollCommentRow(ResMessages.OriginalMessage current, ResMessages.OriginalMessage before) {
+        boolean profile = true;
+        if (before != null) {
+            profile = before.writerId != current.writerId;
+        }
+
+        boolean comment = current instanceof ResMessages.CommentMessage;
+        int viewType;
+        if (comment) {
+            if (profile) {
+                viewType = VIEW_TYPE_COMMENT;
+            } else {
+                viewType = VIEW_TYPE_COMMENT_NO_PROFILE;
+            }
+        } else {
+            if (profile) {
+                viewType = VIEW_TYPE_STICKER;
+            } else {
+                viewType = VIEW_TYPE_STICKER_NO_PROFILE;
+            }
+        }
+        return Row.create(current, viewType);
     }
 
     @Override
     public boolean hasCommentRows() {
-        for (Row<?> row : getRows()) {
-            if (row.getItem() instanceof ResMessages.OriginalMessage) {
+        for (int idx = getItemCount() - 1; idx >= 0; idx--) {
+            Row<?> row = getRow(idx);
+            if (row != null && row.getItem() instanceof ResMessages.OriginalMessage) {
                 return true;
             }
         }
