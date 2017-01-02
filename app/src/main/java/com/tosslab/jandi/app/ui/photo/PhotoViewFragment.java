@@ -71,6 +71,8 @@ public class PhotoViewFragment extends Fragment {
     @InjectExtra
     int mode; // only for use Sprinklr
 
+    @Bind(R.id.vg_no_preview)
+    ViewGroup vgNoPreview;
     @Bind(R.id.pv_photoview)
     PhotoView photoView;
     @Bind(R.id.progress_photoview)
@@ -355,7 +357,8 @@ public class PhotoViewFragment extends Fragment {
 
     void showError() {
         Completable.fromAction(() -> {
-            ImageLoader.loadFromResources(photoView, R.drawable.file_noimage);
+            vgNoPreview.setVisibility(View.VISIBLE);
+            photoView.setVisibility(View.GONE);
         }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
