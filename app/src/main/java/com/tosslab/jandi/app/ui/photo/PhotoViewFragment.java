@@ -80,11 +80,11 @@ public class PhotoViewFragment extends Fragment {
     @Bind(R.id.iv_photoView)
     SubsamplingScaleImageView ivPhotoView;
 
-    @Bind(R.id.vg_no_preview)
-    ViewGroup vgNoPreview;
-
     @Bind(R.id.pv_photoview)
     PhotoView pvPhotoView;
+
+    @Bind(R.id.vg_no_preview)
+    ViewGroup vgNoPreview;
 
     @Bind(R.id.progress_photoview)
     CircleProgressBar progressBar;
