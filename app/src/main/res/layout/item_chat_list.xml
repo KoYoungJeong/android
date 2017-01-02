@@ -81,15 +81,6 @@
             android:layout_alignTop="@+id/tv_user_name"
             android:src="@drawable/line_black" />
 
-        <ImageView
-            android:id="@+id/iv_entity_listitem_warning"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_name_line_through"
-            android:layout_alignTop="@+id/iv_name_line_through"
-            android:layout_toRightOf="@+id/iv_name_line_through"
-            android:scaleType="centerInside"
-            android:src="@drawable/alert_icon_warning" />
     </RelativeLayout>
 
     <TextView
