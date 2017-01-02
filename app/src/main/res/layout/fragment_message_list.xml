@@ -187,8 +187,8 @@
                 android:layout_marginTop="2dp"
                 android:layout_toRightOf="@+id/iv_message_preview_user_profile"
                 android:ellipsize="end"
-                android:maxWidth="200dp"
                 android:maxLines="1"
+                android:maxWidth="200dp"
                 android:singleLine="true"
                 android:text="User name"
                 android:textColor="@color/white"
@@ -213,10 +213,10 @@
         <View
             android:id="@+id/v_messages_divider"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:layout_above="@+id/vg_messages_input"
             android:layout_alignWithParentIfMissing="true"
-            android:background="@color/jandi_line_gray" />
+            android:background="@color/rgb_bebebe" />
 
         <LinearLayout
             android:id="@+id/vg_messages_input"

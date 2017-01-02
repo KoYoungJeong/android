@@ -3,13 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_sticker_view_background"
+    android:background="@color/white"
     android:orientation="vertical">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/jandi_line_gray" />
 
     <RelativeLayout
         android:layout_width="match_parent"

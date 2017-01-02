@@ -184,7 +184,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     private void startActivityWithAnimationAndFinish(final Intent intent) {
 
-        Completable.fromAction(() -> {})
+        Completable.fromAction(() -> {
+        })
                 .delay(keepServiceRunning ? NO_ANIM_DELAY_TIME + delayStartTime - System.currentTimeMillis() : ANIM_TIME + ANIM_DELAY + delayStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
