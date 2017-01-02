@@ -24,21 +24,17 @@
 
             <EditText
                 android:id="@+id/et_status_change"
+                style="@style/JandiTopic.Create.TextView.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_marginTop="24dp"
                 android:hint="@string/jandi_enter_your_status_message"
                 android:imeOptions="actionDone"
                 android:lineSpacingExtra="2dp"
-                android:paddingTop="0dp"
                 android:maxLength="60"
-                android:paddingBottom="16dp"
                 android:scrollHorizontally="true"
-                android:scrollbars="horizontal"
-                android:theme="@style/FloatingEditTextTheme" />
+                android:scrollbars="horizontal" />
 
             <TextView
                 android:id="@+id/tv_status_change_count"
