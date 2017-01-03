@@ -20,7 +20,9 @@ import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
@@ -118,25 +120,34 @@ public class NavigationModel {
     }
 
     public Observable<Object> getUpdateEntityInfoObservable(final long teamId) {
-        return Observable.create(subscriber -> {
-            AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+        return Observable.fromCallable(() -> {
 
-            try {
-                if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
-                    InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-                    InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                    JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
-                    MessageRepository.getRepository().deleteAllLink();
+            if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
+                InitialInfo initializeInfo;
+                try {
+                    initializeInfo = startApi.get().getInitializeInfo(teamId);
+                } catch (RetrofitException e) {
+                    e.printStackTrace();
+                    if (e.getStatusCode() == 403) {
+                        ResAccessToken accessToken = loginApi.get().getAccessToken(ReqAccessToken.createRefreshReqToken(TokenUtil.getRefreshToken()));
+                        TokenUtil.saveTokenInfoByRefresh(accessToken);
+
+                        initializeInfo = startApi.get().getInitializeInfo(teamId);
+                    } else {
+                        throw e;
+                    }
+
                 }
-
-                refreshRankIfNeed(teamId);
-
-                TeamInfoLoader.getInstance().refresh();
-                subscriber.onNext(new Object());
-            } catch (Exception error) {
-                subscriber.onError(error);
+                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                MessageRepository.getRepository().deleteAllLink();
             }
-            subscriber.onCompleted();
+
+            refreshRankIfNeed(teamId);
+            AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+            TeamInfoLoader.getInstance().refresh();
+
+            return teamId;
         });
     }
 
