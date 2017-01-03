@@ -96,12 +96,12 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
     }
 
     private void setUpMemberCount() {
+        // JandiBot 을 제거해줘야 함.
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
                 .count()
                 .defaultIfEmpty(0)
-                .subscribe(it -> labelTeamMemberCount.setTextContent(String.valueOf(it)));
-
+                .subscribe(it -> labelTeamMemberCount.setTextContent(String.valueOf(it - 1)));
     }
 
     private void setUpTeamAdmin() {
