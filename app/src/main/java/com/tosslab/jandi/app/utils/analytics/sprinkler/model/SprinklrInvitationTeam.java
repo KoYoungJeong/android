@@ -3,21 +3,21 @@ package com.tosslab.jandi.app.utils.analytics.sprinkler.model;
 
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IInvitationCategory;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IMemberCount;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IRankId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITeamId;
 
 public class SprinklrInvitationTeam extends MainSprinklrModel
-        implements ITeamId, IMemberCount, IInvitationCategory {
+        implements ITeamId, IMemberCount, IRankId {
     private SprinklrInvitationTeam() {
         super(SprinklerEvents.InviteTeam, false, false);
     }
 
-    public static void sendLog(long teamId, int memberCount, String category) {
+    public static void sendLog(long teamId, int memberCount, long rankId) {
         new SprinklrInvitationTeam()
                 .setTeamId(teamId)
                 .setMemberCount(memberCount)
-                .setInvitationCatory(category)
+                .setRankId(rankId)
                 .send();
     }
 
@@ -34,8 +34,8 @@ public class SprinklrInvitationTeam extends MainSprinklrModel
     }
 
     @Override
-    public SprinklrInvitationTeam setInvitationCatory(String category) {
-        setProperty(PropertyKey.InvitationCategory, category);
+    public SprinklrInvitationTeam setRankId(long rankId) {
+        setProperty(PropertyKey.RankdId, rankId);
         return this;
     }
 }
