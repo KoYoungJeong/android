@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.insert.presenter;
 
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -11,6 +12,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -96,8 +98,12 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
             reqUpdateProfile.phoneNumber = phoneNumber;
             reqUpdateProfile.statusMessage = statusMessage;
             Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
+            if (human != null && human.getProfile() != null) {
+                human.getProfile().setId(human.getId());
+            }
             HumanRepository.getInstance().updateHuman(human);
             TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new ProfileChangeEvent(human));
             return human;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
