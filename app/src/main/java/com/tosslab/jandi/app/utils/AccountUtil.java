@@ -21,7 +21,7 @@ public class AccountUtil {
         return accountInfo != null ? accountInfo.getId() : null;
     }
 
-    public static String getAccountUUid(Context context) {
+    public static String getAccountUUID(Context context) {
         if (context == null) {
             return null;
         }
