@@ -34,9 +34,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by tee on 15. 8. 26..
- */
 public class ExpandableTopicAdapter
         extends AbstractExpandableItemAdapter<TopicFolderViewHolder, TopicItemViewHolder> {
 

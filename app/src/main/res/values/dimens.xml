@@ -123,6 +123,7 @@
     <dimen name="jandi_text_size_small">12sp</dimen>
     <dimen name="jandi_comment_text_size">11dp</dimen>
     <dimen name="jandi_text_size_11sp">11sp</dimen>
+    <dimen name="jandi_text_size_13sp">13sp</dimen>
     <dimen name="jandi_text_size_21sp">21sp</dimen>
     <dimen name="jandi_text_size_smaller">10sp</dimen>
     <dimen name="jandi_progress_size">20dp</dimen>

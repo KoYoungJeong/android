@@ -207,7 +207,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:duplicateParentState="true"
-                        android:text="읽기 전용 설정이라능"
+                        android:text="@string/topic_viewonly_set_title"
                         android:textColor="@color/text_color_setting_check_title"
                         android:textSize="@dimen/jandi_text_size_large" />
 
@@ -216,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:duplicateParentState="true"
-                        android:text="관리자만 설정 가능하다능"
+                        android:text="@string/topic_viewonly_set_body"
                         android:textColor="@color/text_color_setting_check_summary"
                         android:textSize="@dimen/jandi_text_size_medium" />
                 </LinearLayout>

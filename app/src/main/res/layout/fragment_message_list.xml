@@ -288,17 +288,25 @@
             android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
             android:visibility="visible">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="읽기 전용 대화방입니다." />
+                android:gravity="center"
+                android:text="@string/topic_viewonly_alert_title"
+                android:textColor="@color/rgb_333333"
+                android:textSize="@dimen/jandi_text_size_13sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="관리자만 메시지를 전송할 수 있습니다." />
+                android:gravity="center"
+                android:text="@string/topic_viewonly_alert_body"
+                android:textColor="@color/rgb_333333"
+                android:textSize="@dimen/jandi_text_size_small" />
 
         </LinearLayout>
 
