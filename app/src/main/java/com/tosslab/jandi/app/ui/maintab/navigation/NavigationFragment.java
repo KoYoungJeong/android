@@ -558,6 +558,17 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         }
     }
 
+    @Override
+    public void moveTeamList() {
+        startActivity(Henson.with(getActivity())
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(true)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
     private void easterEggForLog(View view) {
         KnockListener knockListener = KnockListener.create()
                 .expectKnockCount(10)

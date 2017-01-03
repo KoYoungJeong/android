@@ -246,6 +246,17 @@ public class InsertTeamInfoFragment extends Fragment implements InsertTeamInfoPr
         getActivity().finish();
     }
 
+    @Override
+    public void moveTeamListActivity() {
+        startActivity(Henson.with(getActivity())
+                .gotoTeamSelectListActivity()
+                .shouldRefreshAccountInfo(true)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
     private void registTeamNameTextWatcher() {
         etInsertTeamName.addTextChangedListener(new TextWatcher() {
             @Override
