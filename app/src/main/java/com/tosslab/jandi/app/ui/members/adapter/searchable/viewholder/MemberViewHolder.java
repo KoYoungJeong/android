@@ -80,7 +80,6 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     protected MemberViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-
         teamOwnerPaddingTop = vgAuthorityBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
     }
 
