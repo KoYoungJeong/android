@@ -87,7 +87,7 @@ public class InitializeInfoConverter implements Converter<InitialInfo, InitialIn
                     for (Long id : chat.getMembers()) {
                         Marker marker = new Marker();
                         marker.setMemberId(id);
-                        marker.setReadLinkId(chat.getLastLinkId());
+                        marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : -1L);
                         marker.setRoomId(chat.getId());
                         marker.setId(chat.getId() + "_" + marker.getMemberId());
                         markers1.add(marker);

@@ -509,7 +509,7 @@ public class JandiSocketServiceModel {
                 for (Long memberId : chat.getMembers()) {
                     Marker marker = new Marker();
                     marker.setRoomId(chat.getId());
-                    marker.setReadLinkId(-1);
+                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : -1);
                     marker.setMemberId(memberId);
                     markers.add(marker);
                 }
@@ -1235,7 +1235,7 @@ public class JandiSocketServiceModel {
                 Marker marker = new Marker();
                 marker.setRoomId(topic.getId());
                 marker.setMemberId(memberId);
-                marker.setReadLinkId(-1);
+                marker.setReadLinkId(topic.getLastLinkId() > 0 ? topic.getLastLinkId() : -1L);
                 markers.add(marker);
                 memberIds.add(new RealmLong(memberId));
 
@@ -1305,7 +1305,7 @@ public class JandiSocketServiceModel {
                     Marker marker = new Marker();
                     marker.setRoomId(topic.getId());
                     marker.setMemberId(memberId);
-                    marker.setReadLinkId(-1);
+                    marker.setReadLinkId(topic.getLastLinkId() > 0 ? topic.getLastLinkId() : -1);
                     markers.add(marker);
                 }
             }
