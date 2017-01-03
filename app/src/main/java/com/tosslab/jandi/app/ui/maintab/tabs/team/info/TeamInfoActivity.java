@@ -106,7 +106,7 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
 
     private void setUpTeamAdmin() {
         Observable.from(TeamInfoLoader.getInstance().getUserList())
-                .takeFirst(User::isTeamOwner)
+                .takeFirst((user) -> user.getLevel() == Level.Owner)
                 .map(User::getName)
                 .defaultIfEmpty("")
                 .subscribe(it -> labelTeamAdmin.setTextContent(it));

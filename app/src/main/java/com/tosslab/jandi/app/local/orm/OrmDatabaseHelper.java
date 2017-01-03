@@ -73,7 +73,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD = 24;
     private static final int DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN = 25;
     private static final int DATABASE_VERSION_MEMBER_AUTHORITY = 26;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_MEMBER_AUTHORITY;
+    private static final int DATABASE_VERSION_ACCOUNT_UUID = 27;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ACCOUNT_UUID;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -373,6 +374,10 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_AUTHORITY, () -> {
                         Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
                         dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN rankId INTEGER;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_UUID, () -> {
+                        Dao<ResAccountInfo, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.class);
+                        dao.executeRawNoArgs("ALTER TABLE `accounts` ADD COLUMN uuid VARCHAR;");
                     }));
 
             Observable.from(upgradeCheckers)

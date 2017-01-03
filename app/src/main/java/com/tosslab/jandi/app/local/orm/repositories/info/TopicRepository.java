@@ -355,6 +355,9 @@ public class TopicRepository extends RealmRepository {
             InitialInfo initialInfo = realm.where(InitialInfo.class)
                     .equalTo("teamId", selectedTeamId)
                     .findFirst();
+            if (topic.getAnnouncement() != null) {
+                topic.getAnnouncement().setRoomId(topic.getId());
+            }
             if (initialInfo != null) {
                 realm.executeTransaction(realm1 -> {
                     topic.setTeamId(selectedTeamId);
@@ -367,6 +370,10 @@ public class TopicRepository extends RealmRepository {
 
     public boolean updateTopic(Topic topic) {
         return execute((realm) -> {
+
+            if (topic.getAnnouncement() != null) {
+                topic.getAnnouncement().setRoomId(topic.getId());
+            }
 
             Topic savedTopic = realm.where(Topic.class).equalTo("id", topic.getId()).findFirst();
             if (savedTopic == null) {
