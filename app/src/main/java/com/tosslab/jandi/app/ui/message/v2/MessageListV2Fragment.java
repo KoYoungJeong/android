@@ -1933,6 +1933,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (event.getTopicId() == room.getRoomId()) {
             updateMentionInfo();
         }
+        if (event.isMe()) {
+            finish();
+        }
     }
 
     public void onEvent(TopicJoinEvent event) {
