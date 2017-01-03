@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel_;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
@@ -34,6 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 @EBean
 public class ProfileFileUploadControllerImpl implements FileUploadController {
@@ -155,6 +158,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
             long myId = TeamInfoLoader.getInstance().getMyId();
             HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
             TeamInfoLoader.getInstance().refresh();
+            EventBus.getDefault().post(new ProfileChangeEvent(human));
             successPhotoUpload(activity.getApplicationContext());
             dismissProgressWheel();
         } catch (RetrofitException e) {

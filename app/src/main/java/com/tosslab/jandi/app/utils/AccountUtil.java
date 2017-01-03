@@ -21,6 +21,16 @@ public class AccountUtil {
         return accountInfo != null ? accountInfo.getId() : null;
     }
 
+    public static String getAccountUUid(Context context) {
+        if (context == null) {
+            return null;
+        }
+
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+
+        return accountInfo != null ? accountInfo.getUuid() : null;
+    }
+
     public static long getMemberId(Context context) {
         if (context == null) {
             return -1;

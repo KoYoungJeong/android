@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="2dp"
                 android:maxLines="2"
-                android:text="준회원은 서비스 사용에 제한이 있습니다."
+                android:text="@string/invite_member_option_associate_desc"
                 android:textColor="@color/rgb_999999"
                 android:textSize="14dp" />
 
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="2dp"
-                android:text="정회원은 추후 준회원으로 변경이 불가합니다."
+                android:text="@string/invite_member_option_member_desc"
                 android:textColor="@color/rgb_999999"
                 android:textSize="14dp" />
 
