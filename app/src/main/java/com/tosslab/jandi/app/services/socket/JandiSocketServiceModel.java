@@ -962,7 +962,7 @@ public class JandiSocketServiceModel {
                         });
             } else {
 
-                HumanRepository.getInstance().updateStatus(memberId, "disabled");
+                HumanRepository.getInstance().updateStatus(memberId, data.getMemberStatus());
                 JandiPreference.setSocketConnectedLastTime(event.getTs());
 
                 postEvent(teamLeaveEvent);
