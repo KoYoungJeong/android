@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.SearchedFilesAdapterModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.model.FileListModel;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrFileKeywordSearch;
@@ -278,7 +279,11 @@ public class FileListPresenterImpl implements FileListPresenter {
             accessType = "accessible";
         } else {
             entity = sharedEntityId;
-            accessType = "accessible";
+            if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
+                accessType = "accessible";
+            } else {
+                accessType = "joined";
+            }
         }
         entitySubject.onNext(entity);
         accessTypeSubject.onNext(accessType);
