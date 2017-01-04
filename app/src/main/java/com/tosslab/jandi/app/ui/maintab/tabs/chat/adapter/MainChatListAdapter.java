@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -95,7 +97,14 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             viewHolder.tvBadgeCount.setVisibility(View.VISIBLE);
         }
 
-        viewHolder.tvAdditional.setText(item.getLastMessage());
+        String lastMessage = SpannableLookUp
+                .text(item.getLastMessage())
+                .webLink(true)
+                .hyperLink(true)
+                .markdown(true)
+                .lookUp(JandiApplication.getContext()).toString();
+
+        viewHolder.tvAdditional.setText(lastMessage);
 
 
         if (item.getStatus()) {
