@@ -33,6 +33,7 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
     private TextView tvFileSize;
     private View vFullDivider;
     private View vSemiDivider;
+    private View vProfileCover;
 
     private StarredFileViewHolder(View itemView) {
         super(itemView);
@@ -46,6 +47,7 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
         tvFileSize = (TextView) itemView.findViewById(R.id.tv_file_size);
         vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
         vFullDivider = itemView.findViewById(R.id.v_full_divider);
+        vProfileCover = itemView.findViewById(R.id.v_starred_profile_cover);
     }
 
     public static StarredFileViewHolder newInstance(ViewGroup parent) {
@@ -57,7 +59,7 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
     @Override
     public void onBindView(StarredMessage starredMessage) {
         User user = TeamInfoLoader.getInstance().getUser(starredMessage.getMessage().writerId);
-        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
+        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover)
                 .bind(user);
 
         StarredMessage.Message.Content content = starredMessage.getMessage().content;

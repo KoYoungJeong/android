@@ -26,6 +26,7 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
 
     private View vSemiDivider;
     private View vFullDivider;
+    private View vProfileCover;
 
     private StarredPollViewHolder(View itemView) {
         super(itemView);
@@ -36,6 +37,7 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
         tvCreatedTime = (TextView) itemView.findViewById(R.id.tv_starred_poll_create_date);
         vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
         vFullDivider = itemView.findViewById(R.id.v_full_divider);
+        vProfileCover = itemView.findViewById(R.id.v_starred_profile_cover);
     }
 
     public static StarredPollViewHolder newInstance(ViewGroup parent) {
@@ -47,7 +49,7 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
     @Override
     public void onBindView(StarredMessage starredMessage) {
         User user = TeamInfoLoader.getInstance().getUser(starredMessage.getMessage().writerId);
-        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
+        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover)
                 .bind(user);
 
         StarredMessage.Message.Content content = starredMessage.getMessage().content;

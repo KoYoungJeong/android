@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.viewholder;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,21 +18,24 @@ import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 /**
  * Created by tonyjs on 2016. 8. 10..
  */
+
 public class StarredMessageProfileBinder {
+
     private TextView tvUserName;
     private ImageView ivUserProfile;
+    private android.view.View vProfileCover;
 
-    public StarredMessageProfileBinder(TextView tvUserName, ImageView ivUserProfile) {
+    public StarredMessageProfileBinder(TextView tvUserName, ImageView ivUserProfile, android.view.View vProfileCover) {
         this.tvUserName = tvUserName;
         this.ivUserProfile = ivUserProfile;
+        this.vProfileCover = vProfileCover;
     }
 
-    public static StarredMessageProfileBinder newInstance(TextView tvUserName, ImageView ivUserProfile) {
-        return new StarredMessageProfileBinder(tvUserName, ivUserProfile);
+    public static StarredMessageProfileBinder newInstance(TextView tvUserName, ImageView ivUserProfile, android.view.View vProfileCover) {
+        return new StarredMessageProfileBinder(tvUserName, ivUserProfile, vProfileCover);
     }
 
     public void bind(Member writer) {
-
         if (writer == null) {
             return;
         }
@@ -61,6 +66,17 @@ public class StarredMessageProfileBinder {
         }
 
         tvUserName.setText(writer.getName());
-    }
 
+        if (writer.isEnabled()) {
+            vProfileCover.setVisibility(View.GONE);
+            if ((tvUserName.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
+                tvUserName.setPaintFlags(
+                        tvUserName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            }
+        } else {
+            vProfileCover.setVisibility(View.VISIBLE);
+            tvUserName.setPaintFlags(tvUserName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
+    }
 }
