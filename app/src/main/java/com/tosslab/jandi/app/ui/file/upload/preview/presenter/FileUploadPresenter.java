@@ -37,6 +37,8 @@ public interface FileUploadPresenter {
 
         void exitOnOk(FileUploadVO fileUploadVO);
 
+        void exitOnFail();
+
         void setShareEntity(long entityId, boolean isUser);
 
         void setPricingLimitView(Boolean isLimited);
