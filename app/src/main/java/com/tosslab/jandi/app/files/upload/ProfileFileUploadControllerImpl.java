@@ -29,8 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-
-@EBean
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
