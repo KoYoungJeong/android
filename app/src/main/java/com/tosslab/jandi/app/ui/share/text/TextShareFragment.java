@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -189,6 +190,11 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
         startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
+    }
+    @OnClick(R.id.vg_share_content)
+    void onContentClick() {
+        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
     }
 
     @OnClick(R.id.vg_room)
