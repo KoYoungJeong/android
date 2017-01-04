@@ -87,13 +87,7 @@ public class ProfileBinder {
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivProfile, R.drawable.logotype_80);
         } else {
-            if (writer.isEnabled()) {
-                ImageUtil.loadProfileImage(
-                        ivProfile, writer.getPhotoUrl(), R.drawable.profile_img);
-            } else {
-                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
-            }
+            ImageUtil.loadProfileImage(ivProfile, writer.getPhotoUrl(), R.drawable.profile_img);
         }
 
         String writerName = writer.getName();
