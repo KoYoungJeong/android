@@ -164,10 +164,8 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
 
     private void makeRoomDatas() {
         SearchData headerData = new SearchData();
-        if (!guest) {
-            headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
-            datas.add(headerData);
-        }
+        headerData.setType(SearchData.ITEM_TYPE_ROOM_HEADER);
+        datas.add(headerData);
 
         if (searchTopicRoomDatas.size() == 0 && searchOneToOneRoomDatas.size() == 0) {
             SearchData data = new SearchData();
@@ -310,6 +308,11 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
         }
 
         holder.onBindView(datas.get(position));
+
+        if (holder instanceof RoomHeaderViewHolder) {
+            RoomHeaderViewHolder roomHeader = (RoomHeaderViewHolder) holder;
+            roomHeader.setGuest(guest);
+        }
     }
 
     private void setViewConfiguration(RecyclerView.ViewHolder holder, int position) {

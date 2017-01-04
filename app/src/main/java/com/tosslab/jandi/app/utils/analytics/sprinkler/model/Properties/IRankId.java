@@ -6,6 +6,6 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.MainSprinklrModel;
  * Created by tee on 2016. 9. 13..
  */
 
-public interface IInvitationCategory {
-    MainSprinklrModel setInvitationCatory(String category);
+public interface IRankId {
+    MainSprinklrModel setRankId(long rankId);
 }

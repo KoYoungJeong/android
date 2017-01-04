@@ -98,6 +98,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="17dp"
                             android:background="@drawable/bg_user_level_team_admin"
+                            android:gravity="center"
                             android:textSize="@dimen/jandi_text_size_11sp" />
 
                         <ImageView

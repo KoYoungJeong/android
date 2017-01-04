@@ -101,7 +101,7 @@
 	<string name="err_team_creation_failed">"메일 전송에 실패했습니다"</string>
 	<string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
 	<string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
-	<string name="exclamation_mark">"님을 토픽 관리자로 지정하시겠습니까?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_detail_nopreview">"미리보기 할 수 없는 형식의 파일입니다."</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
@@ -338,7 +338,7 @@
 	<string name="jandi_file_category_spreadsheet">"엑셀 파일"</string>
 	<string name="jandi_file_category_video">"동영상"</string>
 	<string name="jandi_file_category_zip">"압축 파일"</string>
-	<string name="jandi_file_delete">"Com"</string>
+	<string name="jandi_file_delete">"파일 삭제"</string>
 	<string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
 	<string name="jandi_file_deleted_with_date">"%s에 삭제되었습니다."</string>
 	<string name="jandi_file_downloaded_into">"%s 에 저장되었습니다."</string>
@@ -851,8 +851,14 @@
 팀에서도 차단됩니다."</string>
 	<string name="topic_room_deletetopicconfirm">"해당 토픽이 삭제되었습니다."</string>
 	<string name="topic_room_selectallmembers">"전체 선택"</string>
+	<string name="topic_search_1on1_unable">"준회원은 1:1 메시지를 먼저 전송하실 수 없습니다."</string>
 	<string name="topic_topicchat_mentionall">"@all (모든 토픽 멤버)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"토픽이 %s 폴더에서 제거되었습니다."</string>
+	<string name="topic_viewonly_alert_body">"관리자 이상만 메시지를 전송하실 수 있습니다."</string>
+	<string name="topic_viewonly_alert_title">"읽기 전용 대화방입니다."</string>
+	<string name="topic_viewonly_label">"읽기 전용"</string>
+	<string name="topic_viewonly_set_body">"설정 시 관리자 이상만 메시지 작성이 가능합니다."</string>
+	<string name="topic_viewonly_set_title">"읽기 전용 설정"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"이미 모든 멤버가 이 토픽에 참여하고 있습니다."</string>
 	<string name="warn_messages_empty">"등록된 메시지가 없습니다"</string>
