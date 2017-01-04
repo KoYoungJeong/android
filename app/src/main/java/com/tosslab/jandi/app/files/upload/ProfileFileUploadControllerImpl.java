@@ -158,16 +158,16 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 String photoUrl = human.getPhotoUrl();
                 long myId = TeamInfoLoader.getInstance().getMyId();
                 HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
+                return human;
             } finally {
                 if (convertedProfileFile != null && convertedProfileFile.exists()) {
                     convertedProfileFile.delete();
                 }
             }
-            return convertedProfileFile;
         }).subscribeOn(Schedulers.io())
                 .doOnNext(it -> {
                     TeamInfoLoader.getInstance().refresh();
-                    EventBus.getDefault().post(new ProfileChangeEvent(human));
+                    EventBus.getDefault().post(new ProfileChangeEvent(it));
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
