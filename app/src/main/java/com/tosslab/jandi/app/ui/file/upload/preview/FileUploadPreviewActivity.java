@@ -450,6 +450,11 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     @Override
+    public void exitOnFail() {
+        finish();
+    }
+
+    @Override
     public void setShareEntity(long entityId, boolean isUser) {
         if (!isUser) {
             mentionControlViewModel = MentionControlViewModel.newInstance(FileUploadPreviewActivity.this,

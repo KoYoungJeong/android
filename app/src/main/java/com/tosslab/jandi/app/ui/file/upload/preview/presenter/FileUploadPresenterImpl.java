@@ -48,6 +48,12 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
             entityId = topicId;
             entityName = fileUploadModel.getEntityName(topicId);
         }
+
+        if (entityId == -1) {
+            view.exitOnFail();
+            return;
+        }
+
         view.setEntityInfo(entityName);
         view.setShareEntity(entityId, fileUploadModel.isUser(entityId));
 
