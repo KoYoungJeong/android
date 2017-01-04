@@ -583,7 +583,7 @@ public class SearchActivity extends BaseAppCompatActivity
         searchQueryAdapter.addAll(keywords);
     }
 
-    private void moveDirectMessage(long memberId) {
+    public void moveDirectMessage(long memberId) {
         startActivity(Henson.with(this)
                 .gotoMessageListV2Activity()
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
