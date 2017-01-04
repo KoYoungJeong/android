@@ -465,9 +465,10 @@ public class JandiSocketServiceModel {
             SocketTopicUpdatedEvent event =
                     SocketModelExtractor.getObject(object, SocketTopicUpdatedEvent.class);
             saveEvent(event);
-            TopicRepository.getInstance().updateTopic(event.getData().getTopic());
+            Topic topic = event.getData().getTopic();
+            TopicRepository.getInstance().updateTopic(topic);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            postEvent(new TopicInfoUpdateEvent(event.getData().getTopic().getId()));
+            postEvent(new TopicInfoUpdateEvent(topic.getId()));
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
