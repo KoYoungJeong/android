@@ -50,8 +50,8 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        String accountId = AccountUtil.getAccountId(getApplicationContext());
-        if (TextUtils.isEmpty(accountId)) {
+        String accountUUid = AccountUtil.getAccountUUID(getApplicationContext());
+        if (TextUtils.isEmpty(accountUUid)) {
             LogUtil.e(TAG, "Account Id is empty.");
             return;
         }
@@ -151,7 +151,7 @@ public class JandiPushIntentService extends IntentService {
     }
 
     private boolean isPushForMyAccountId(BasePushInfo basePushInfo) {
-        return TextUtils.equals(basePushInfo.getAccountId(), AccountRepository.getRepository().getAccountInfo().getId());
+        return TextUtils.equals(basePushInfo.getAccountId(), AccountUtil.getAccountUUID(JandiApplication.getContext()));
     }
 
 

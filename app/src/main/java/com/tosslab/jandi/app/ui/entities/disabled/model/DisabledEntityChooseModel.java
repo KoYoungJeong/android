@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.entities.disabled.model;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
@@ -19,7 +20,7 @@ public class DisabledEntityChooseModel {
         long myId = TeamInfoLoader.getInstance().getMyId();
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(user -> user.getId() != myId)
-                .filter(user -> !user.isEnabled())
+                .filter(User::isDisabled)
                 .map(ChatChooseItem::create)
                 .toSortedList((lhs, rhs) -> {
                     return StringCompareUtil.compare(lhs.getName(), rhs.getName());

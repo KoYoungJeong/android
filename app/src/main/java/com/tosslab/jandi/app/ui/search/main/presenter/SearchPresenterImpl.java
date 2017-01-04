@@ -433,9 +433,10 @@ public class SearchPresenterImpl implements SearchPresenter {
             view.refreshHistory();
         }
 
-        if (!TextUtils.equals(accessTypeSubject.getValue(), accessType)) {
+        if (!TextUtils.equals(accessTypeSubject.getValue(), accessType)
+                || roomSubject.getValue() != -1) {
             pageSubject.onNext(1);
-            roomSubject.onNext(-1l);
+            roomSubject.onNext(-1L);
             endDateSubject.onNext(new Date());
             accessTypeSubject.onNext(accessType);
         }
