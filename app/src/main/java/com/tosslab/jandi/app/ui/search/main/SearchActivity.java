@@ -583,6 +583,7 @@ public class SearchActivity extends BaseAppCompatActivity
         searchQueryAdapter.addAll(keywords);
     }
 
+    @Override
     public void moveDirectMessage(long memberId) {
         startActivity(Henson.with(this)
                 .gotoMessageListV2Activity()
