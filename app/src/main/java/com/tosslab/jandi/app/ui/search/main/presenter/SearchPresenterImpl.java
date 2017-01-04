@@ -433,9 +433,10 @@ public class SearchPresenterImpl implements SearchPresenter {
             view.refreshHistory();
         }
 
-        if (!TextUtils.equals(accessTypeSubject.getValue(), accessType)) {
+        if (!TextUtils.equals(accessTypeSubject.getValue(), accessType)
+                || roomSubject.getValue() != -1) {
             pageSubject.onNext(1);
-            roomSubject.onNext(-1l);
+            roomSubject.onNext(-1L);
             endDateSubject.onNext(new Date());
             accessTypeSubject.onNext(accessType);
         }
@@ -497,6 +498,19 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void onRoomSelect() {
         boolean showAllRoom = searchModel.isShowAllRoom();
         view.showChooseRoomDialog(showAllRoom);
+    }
+
+    @Override
+    public void onOneToOneRoomClick(long memberId) {
+        if (!searchModel.isGuest()) {
+            view.moveDirectMessage(memberId);
+        } else {
+            if (searchModel.isOpenedOfChatUser(memberId)) {
+                view.moveDirectMessage(memberId);
+            } else {
+                view.showShouldOpenedUser();
+            }
+        }
     }
 
     public enum MoreState {

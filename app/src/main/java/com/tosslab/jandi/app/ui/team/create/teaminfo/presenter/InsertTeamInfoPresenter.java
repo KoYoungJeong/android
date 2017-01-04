@@ -31,5 +31,7 @@ public interface InsertTeamInfoPresenter {
         void onMoveMainTabActivity();
 
         void finish();
+
+        void moveTeamListActivity();
     }
 }
