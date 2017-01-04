@@ -510,10 +510,11 @@ public class JandiSocketServiceModel {
                 for (Long memberId : chat.getMembers()) {
                     Marker marker = new Marker();
                     marker.setRoomId(chat.getId());
-                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : -1);
+                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : 0);
                     marker.setMemberId(memberId);
                     markers.add(marker);
                 }
+                chat.setMarkers(markers);
             } else {
                 for (Marker marker : chat.getMarkers()) {
                     marker.setRoomId(chat.getId());

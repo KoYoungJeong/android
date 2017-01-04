@@ -242,7 +242,7 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
                 builderWithBadge.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            UnreadCountUtil.getUnreadCount(teamId, roomId, link.id, link.fromEntity, myId)
+            UnreadCountUtil.getUnreadCount(roomId, link.id, link.fromEntity, myId)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(unreadCount -> {
                         if (unreadCount > 0) {
