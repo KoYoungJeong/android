@@ -75,6 +75,7 @@ public class SocketTeamLeaveEvent implements EventHistoryInfo {
     public static class Data {
         private long memberId;
         private long teamId;
+        private String memberStatus;
 
         public long getMemberId() {
             return memberId;
@@ -90,6 +91,14 @@ public class SocketTeamLeaveEvent implements EventHistoryInfo {
 
         public void setTeamId(long teamId) {
             this.teamId = teamId;
+        }
+
+        public String getMemberStatus() {
+            return memberStatus;
+        }
+
+        public void setMemberStatus(String memberStatus) {
+            this.memberStatus = memberStatus;
         }
     }
 

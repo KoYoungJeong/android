@@ -505,7 +505,7 @@ public class JandiSocketServiceModel {
                 for (Long memberId : chat.getMembers()) {
                     Marker marker = new Marker();
                     marker.setRoomId(chat.getId());
-                    marker.setReadLinkId(-1);
+                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : -1);
                     marker.setMemberId(memberId);
                     markers.add(marker);
                 }
@@ -543,7 +543,11 @@ public class JandiSocketServiceModel {
             SocketTopicLeftEvent.Data data = event.getData();
             if (data.getMemberId() == TeamInfoLoader.getInstance().getMyId()) {
                 TopicRepository.getInstance().updateTopicJoin(data.getTopicId(), false);
-                postEvent(new TopicDeleteEvent(event.getTeamId(), data.getTopicId()));
+                postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId(), true));
+
+            } else {
+                postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId(), false));
+
             }
             TopicRepository.getInstance().removeMember(data.getTopicId(), data.getMemberId());
             RoomMarkerRepository.getInstance().deleteMarker(data.getTopicId(), data.getMemberId());
@@ -552,7 +556,6 @@ public class JandiSocketServiceModel {
 //            PollRepository.initiate().upsertPollStatus(data.getTopicId(), "deleted");
 
             postEvent(new RetrieveTopicListEvent());
-            postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId()));
             postEvent(new RequestRefreshPollBadgeCountEvent(event.getTeamId()));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -955,7 +958,7 @@ public class JandiSocketServiceModel {
                         });
             } else {
 
-                HumanRepository.getInstance().updateStatus(memberId, "disabled");
+                HumanRepository.getInstance().updateStatus(memberId, data.getMemberStatus());
                 JandiPreference.setSocketConnectedLastTime(event.getTs());
 
                 postEvent(teamLeaveEvent);
@@ -1228,7 +1231,7 @@ public class JandiSocketServiceModel {
                 Marker marker = new Marker();
                 marker.setRoomId(topic.getId());
                 marker.setMemberId(memberId);
-                marker.setReadLinkId(-1);
+                marker.setReadLinkId(topic.getLastLinkId() > 0 ? topic.getLastLinkId() : -1L);
                 markers.add(marker);
                 memberIds.add(new RealmLong(memberId));
 
@@ -1298,7 +1301,7 @@ public class JandiSocketServiceModel {
                     Marker marker = new Marker();
                     marker.setRoomId(topic.getId());
                     marker.setMemberId(memberId);
-                    marker.setReadLinkId(-1);
+                    marker.setReadLinkId(topic.getLastLinkId() > 0 ? topic.getLastLinkId() : -1);
                     markers.add(marker);
                 }
             }

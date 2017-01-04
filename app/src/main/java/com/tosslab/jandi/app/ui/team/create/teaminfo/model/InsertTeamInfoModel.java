@@ -7,11 +7,14 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.validation.ValidationApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
@@ -19,6 +22,7 @@ import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,7 @@ import rx.Observable;
 public class InsertTeamInfoModel {
 
     private final Lazy<StartApi> startApi;
+    private final Lazy<LoginApi> loginApi;
     private Lazy<AccountApi> accountApi;
     private Lazy<ValidationApi> validationApi;
     private Lazy<TeamApi> teamApi;
@@ -43,11 +48,13 @@ public class InsertTeamInfoModel {
     public InsertTeamInfoModel(Lazy<TeamApi> teamApi,
                                Lazy<ValidationApi> validationApi,
                                Lazy<AccountApi> accountApi,
-                               Lazy<StartApi> startApi) {
+                               Lazy<StartApi> startApi,
+                               Lazy<LoginApi> loginApi) {
         this.teamApi = teamApi;
         this.validationApi = validationApi;
         this.accountApi = accountApi;
         this.startApi = startApi;
+        this.loginApi = loginApi;
     }
 
     public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws RetrofitException {
@@ -101,14 +108,14 @@ public class InsertTeamInfoModel {
         MessageRepository.getRepository().deleteAllLink();
     }
 
-    public void updateRank(long teamId) {
+    public void updateRank(long teamId) throws RetrofitException {
         if (!RankRepository.getInstance().hasRanks(teamId)) {
-            try {
-                Ranks ranks = teamApi.get().getRanks(teamId);
-                RankRepository.getInstance().addRanks(ranks.getRanks());
-            } catch (RetrofitException e) {
-                e.printStackTrace();
-            }
+            Ranks ranks = teamApi.get().getRanks(teamId);
+            RankRepository.getInstance().addRanks(ranks.getRanks());
         }
+    }
+
+    public ResAccessToken refreshToken() throws RetrofitException {
+        return loginApi.get().getAccessToken(ReqAccessToken.createRefreshReqToken(TokenUtil.getRefreshToken()));
     }
 }

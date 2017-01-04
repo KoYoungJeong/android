@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.models.start.Human;
@@ -27,6 +28,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
+@EBean
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -163,7 +167,10 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
             }
             return convertedProfileFile;
         }).subscribeOn(Schedulers.io())
-                .doOnNext(it -> TeamInfoLoader.getInstance().refresh())
+                .doOnNext(it -> {
+                    TeamInfoLoader.getInstance().refresh();
+                    EventBus.getDefault().post(new ProfileChangeEvent(human));
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     successPhotoUpload(activity.getApplicationContext());

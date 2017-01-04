@@ -203,4 +203,13 @@ public class SearchModel {
     public boolean isGuest() {
         return TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
     }
+
+    public boolean isOpenedOfChatUser(long memberId) {
+        long chatId = TeamInfoLoader.getInstance().getChatId(memberId);
+        if (chatId > 0) {
+            return TeamInfoLoader.getInstance().getChat(chatId).isJoined();
+        } else {
+            return false;
+        }
+    }
 }
