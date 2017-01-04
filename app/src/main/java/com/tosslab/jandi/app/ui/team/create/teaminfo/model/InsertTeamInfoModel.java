@@ -67,7 +67,7 @@ public class InsertTeamInfoModel {
 
 
     public boolean isValidDomainCharacters(String domainName) {
-        return domainName.matches("[a-zA-Z1-9\\-]+");
+        return domainName.matches("[a-zA-Z0-9\\-]+");
     }
 
     public boolean isValidDomainLength(String domainName) {
