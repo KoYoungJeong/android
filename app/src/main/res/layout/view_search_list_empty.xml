@@ -1,54 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:fillViewport="true">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="13.5dp"
+    android:paddingTop="50dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <ImageView
+        android:id="@+id/iv_file_empty_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_upload_file" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:orientation="vertical"
-        android:paddingTop="50dp"
-        android:paddingBottom="13.5dp">
+        android:text="@string/jandi_cannot_find_search_result_1"
+        android:textColor="@color/account_home_help_dialog_text"
+        android:textSize="@dimen/jandi_text_size_large"
+        android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/iv_file_empty_upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/img_upload_file" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/jandi_cannot_find_search_result_2"
+        android:textColor="@color/account_home_help_dialog_text"
+        android:textSize="@dimen/jandi_text_size_medium" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="@string/jandi_cannot_find_search_result_1"
-            android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="@dimen/jandi_text_size_large"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/btn_file_empty_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@android:color/transparent"
+        android:padding="20dp"
+        android:text="@string/jandi_upload_a_file"
+        android:textColor="@color/jandi_accent_color"
+        android:textSize="@dimen/jandi_text_size_large"
+        android:textStyle="bold" />
+</LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/jandi_cannot_find_search_result_2"
-            android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="@dimen/jandi_text_size_medium" />
-
-        <TextView
-            android:id="@+id/btn_file_empty_upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:background="@android:color/transparent"
-            android:padding="20dp"
-            android:text="@string/jandi_upload_a_file"
-            android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_text_size_large"
-            android:textStyle="bold" />
-    </LinearLayout>
-</ScrollView>
