@@ -22,7 +22,6 @@ public class BaiduPushReceiver extends PushServiceReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (TextUtils.equals(intent.getAction(), "com.baidu.android.pushservice.action.notification.SHOW")) {
-            LogUtil.d(TAG, "onReceive()");
             String pushServicePackageName = intent.getStringExtra("pushService_package_name");
             String serviceName = intent.getStringExtra("service_name");
             Parcelable publicMsgParcelable = intent.getParcelableExtra("public_msg");
@@ -58,6 +57,7 @@ public class BaiduPushReceiver extends PushServiceReceiver {
                         objectMapper.readValue(customContent, new TypeReference<Map<String, String>>() {});
                 if (map != null && map.containsKey(KEY_PUSH_CONTENT)) {
                     String content = map.get(KEY_PUSH_CONTENT);
+                    LogUtil.d(TAG, "onReceive() : " + content);
                     JandiPushIntentService.startService(context, content);
                 } else {
                     throw new NullPointerException("BaiduPushReceiver content is null");

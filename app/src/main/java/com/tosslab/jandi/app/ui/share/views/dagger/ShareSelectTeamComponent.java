@@ -6,6 +6,6 @@ import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import dagger.Component;
 
 @Component(modules = ApiClientModule.class)
-public interface ShareSelectRoomComponent {
+public interface ShareSelectTeamComponent {
     void inject(ShareSelectTeamActivity activity);
 }

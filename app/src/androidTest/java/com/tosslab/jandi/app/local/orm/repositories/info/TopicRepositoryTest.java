@@ -307,10 +307,10 @@ public class TopicRepositoryTest {
     @Test
     public void testUpdateReadId() throws Exception {
 
-        assertThat(TopicRepository.getInstance().updateReadId(defaultTopicId, TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId() - 1)).isFalse();
+        assertThat(TopicRepository.getInstance().updateReadLinkId(defaultTopicId, TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId() - 1)).isFalse();
 
         long newReadId = TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId() + 1;
-        assertThat(TopicRepository.getInstance().updateReadId(defaultTopicId, newReadId)).isTrue();
+        assertThat(TopicRepository.getInstance().updateReadLinkId(defaultTopicId, newReadId)).isTrue();
         assertThat(TopicRepository.getInstance().getTopic(defaultTopicId).getReadLinkId()).isEqualTo(newReadId);
     }
 }

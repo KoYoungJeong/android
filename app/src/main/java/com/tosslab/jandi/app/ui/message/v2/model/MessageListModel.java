@@ -564,7 +564,7 @@ public class MessageListModel {
 
     public void initBadge(long roomId, long lastLinkId) {
         if (TeamInfoLoader.getInstance().isTopic(roomId)) {
-            TopicRepository.getInstance().updateReadId(roomId, lastLinkId);
+            TopicRepository.getInstance().updateReadLinkId(roomId, lastLinkId);
             TopicRepository.getInstance().updateUnreadCount(roomId, 0);
         } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
             ChatRepository.getInstance().updateReadLinkId(roomId, lastLinkId);

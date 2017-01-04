@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class InitialInfoRepositoryTest {
-
     private static InitialInfo initializeInfo;
     private static long teamId;
 
@@ -27,6 +26,22 @@ public class InitialInfoRepositoryTest {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
         initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+    }
+
+    @Test
+    public void findMyIdFromChats() throws Exception {
+        long id = initializeInfo.getChats().get(0).getId();
+        assertThat(InitialInfoRepository.getInstance().findMyIdFromChats(id)).isEqualTo(initializeInfo.getSelf().getId());
+        assertThat(InitialInfoRepository.getInstance().findMyIdFromChats(1L)).isEqualTo(-1L);
+
+    }
+
+    @Test
+    public void findMyIdFromTopics() throws Exception {
+        long id = initializeInfo.getTopics().get(0).getId();
+        assertThat(InitialInfoRepository.getInstance().findMyIdFromTopics(id)).isEqualTo(initializeInfo.getSelf().getId());
+        assertThat(InitialInfoRepository.getInstance().findMyIdFromTopics(1L)).isEqualTo(-1L);
+
     }
 
     @Before

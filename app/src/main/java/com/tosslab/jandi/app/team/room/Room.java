@@ -26,6 +26,8 @@ public interface Room {
 
     boolean isJoined();
 
+    boolean isReadOnly();
+
     Collection<Marker> getMarkers();
 
     Collection<Long> getMembers();

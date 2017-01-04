@@ -45,6 +45,11 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
 
     private long selectedUserId = -1L;
     private long selectedTopicRoomId = -1L;
+    private long teamId = -1L;
+
+    public RoomFilterAdapter(long teamId) {
+        this.teamId = teamId;
+    }
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -56,7 +61,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
             case VIEW_TYPE_TOPIC:
                 return TopicRoomViewHolder.newInstance(parent);
             case VIEW_TYPE_USER:
-                return MemberViewHolder.createForUser(parent);
+                return MemberViewHolder.createForUserWithTeamId(parent, teamId);
         }
         return null;
     }
@@ -231,5 +236,4 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
     public void setOnMemberClickListener(OnMemberClickListener onMemberClickListener) {
         this.onMemberClickListener = onMemberClickListener;
     }
-
 }

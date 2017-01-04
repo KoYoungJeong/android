@@ -589,6 +589,7 @@ public class MessageListV2Presenter {
 
                     String readyMessage = messageListModel.getReadyMessage(roomid);
                     view.initRoomInfo(roomid, readyMessage);
+                    view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly());
                 })
                 .observeOn(Schedulers.io())
                 .subscribe(roomid -> {
@@ -668,6 +669,15 @@ public class MessageListV2Presenter {
             }
             return Observable.empty();
         } else {
+
+            if (currentMessageState.isFirstLoadNewMessage()) {
+                currentMessageState.setIsFirstLoadNewMessage(false);
+                long lastReadLinkId = messagePointer.getLastReadLinkId();
+                if (links.get(links.size() - 1).id <= lastReadLinkId) {
+                    messagePointer.setLastReadLinkId(-1);
+                }
+            }
+
             return Observable.just(links);
         }
     }
@@ -1191,6 +1201,8 @@ public class MessageListV2Presenter {
         void refreshMessages();
 
         void updateRecyclerViewInfo();
+
+        void showReadOnly(boolean readOnly);
     }
 
 }

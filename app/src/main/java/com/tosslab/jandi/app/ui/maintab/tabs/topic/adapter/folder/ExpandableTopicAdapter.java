@@ -34,9 +34,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by tee on 15. 8. 26..
- */
 public class ExpandableTopicAdapter
         extends AbstractExpandableItemAdapter<TopicFolderViewHolder, TopicItemViewHolder> {
 
@@ -152,16 +149,16 @@ public class ExpandableTopicAdapter
 
     @Override
     public TopicItemViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
-        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         // 리스트의 마지막에 Join Topic Button 추가
         if (viewType == TYPE_FOR_JOIN_TOPIC_BUTTON) {
-            final View v = inflater.inflate(R.layout.item_join_topic, parent, false);
+            View v = inflater.inflate(R.layout.item_join_topic, parent, false);
             return new TopicJoinButtonViewHolder(v);
         }
 
-        final View v = inflater.inflate(R.layout.item_topic_list, parent, false);
-        return new TopicItemViewHolder(v);
+        View v = inflater.inflate(R.layout.item_topic_list, parent, false);
+        return new TopicItemViewHolder(v, true);
     }
 
     @Override
@@ -249,17 +246,25 @@ public class ExpandableTopicAdapter
 
         holder.itemView.setClickable(true);
         holder.tvTopicName.setText(item.getName());
+        holder.vReadOnly.setVisibility(item.isReadOnly()? View.VISIBLE : View.GONE);
 
         if (item.getUnreadCount() > 0) {
-            holder.vgTopicBadge.setVisibility(View.VISIBLE);
+            holder.tvTopicBadge.setVisibility(View.VISIBLE);
             if (item.getUnreadCount() > 999) {
                 holder.tvTopicBadge.setText(String.valueOf(999));
             } else {
                 holder.tvTopicBadge.setText(String.valueOf(item.getUnreadCount()));
             }
         } else {
-            holder.vgTopicBadge.setVisibility(View.GONE);
+            holder.tvTopicBadge.setVisibility(View.GONE);
         }
+
+        if (item.getUnreadCount() <= 0 && !item.isReadOnly()) {
+            holder.vgTopicBadge.setVisibility(View.GONE);
+        } else {
+            holder.vgTopicBadge.setVisibility(View.VISIBLE);
+        }
+
         holder.tvTopicUserCnt.setText("(" + item.getMemberCount() + ")");
         if (!TextUtils.isEmpty(item.getDescription())) {
             holder.tvTopicDescription.setVisibility(View.VISIBLE);

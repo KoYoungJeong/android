@@ -74,6 +74,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View vgDelete;
     @Bind(R.id.vg_topic_detail_leave)
     View vgLeave;
+    @Bind(R.id.v_topic_detail_divide_assign_topic_owner)
+    View vDividerTopicOwner;
     @Bind(R.id.vg_topic_detail_assign_topic_owner)
     View vgAssignTopicOwner;
     @Bind(R.id.view_topic_detail_leve_to_delete)
@@ -86,6 +88,16 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     View ivStarred;
     @Bind(R.id.switch_topic_detail_set_push)
     SwitchCompat switchSetPush;
+
+    @Bind(R.id.v_topic_detail_divide_read_only)
+    View vReadOnlyDivider;
+    @Bind(R.id.vg_topic_detail_set_read_only)
+    ViewGroup vgReadOnly;
+    @Bind(R.id.switch_topic_detail_set_read_only)
+    SwitchCompat switchReadOnly;
+    @Bind(R.id.tv_topic_detail_set_read_only)
+    TextView tvReadOnlyStatus;
+
     @Bind(R.id.switch_topic_detail_set_auto_join)
     SwitchCompat switchAutoJoin;
     @Bind(R.id.tv_topic_detail_set_auto_join)
@@ -258,6 +270,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .build().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Participants);
+    }
+
+    @OnClick(R.id.vg_topic_detail_set_read_only)
+    void onReadOnlyClick() {
+        boolean readOnly = switchReadOnly.isChecked();
+        topicDetailPresenter.onUpdateReadOnly(entityId, !readOnly);
     }
 
     @OnClick(R.id.vg_topic_detail_set_auto_join)
@@ -433,6 +451,29 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
+    public void setReadOnly(boolean readOnly, boolean owner, boolean defaultTopic) {
+        if (!defaultTopic) {
+            vgReadOnly.setVisibility(View.GONE);
+            vReadOnlyDivider.setVisibility(View.GONE);
+        } else {
+            vgReadOnly.setVisibility(View.VISIBLE);
+            vReadOnlyDivider.setVisibility(View.VISIBLE);
+
+            if (owner) {
+                switchReadOnly.setVisibility(View.VISIBLE);
+                tvReadOnlyStatus.setVisibility(View.GONE);
+            } else {
+                switchReadOnly.setVisibility(View.GONE);
+                tvReadOnlyStatus.setVisibility(View.VISIBLE);
+            }
+            switchReadOnly.setChecked(readOnly);
+            tvReadOnlyStatus.setText(readOnly? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
+            vgReadOnly.setEnabled(owner);
+        }
+
+    }
+
+    @Override
     public void setTopicAutoJoin(boolean autoJoin, boolean owner, boolean defaultTopic, boolean privateTopic, boolean enabled) {
         if (privateTopic) {
             vgAutoJoinText.setEnabled(false);
@@ -495,6 +536,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     @Override
     public void setAssignTopicOwnerVisible(boolean owner) {
         vgAssignTopicOwner.setVisibility(owner ? View.VISIBLE : View.GONE);
+        vDividerTopicOwner.setVisibility(owner ? View.VISIBLE : View.GONE);
         if (!owner) {
             ViewGroup parent = (ViewGroup) vgAssignTopicOwner.getParent();
             int assignTopicOwnerIdex = -1;

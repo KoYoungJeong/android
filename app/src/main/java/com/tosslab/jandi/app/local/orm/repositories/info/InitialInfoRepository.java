@@ -63,4 +63,29 @@ public class InitialInfoRepository extends RealmRepository {
             return true;
         });
     }
+
+    public long findMyIdFromChats(long roomId) {
+        return execute(realm -> {
+
+            InitialInfo info = realm.where(InitialInfo.class).equalTo("chats.id", roomId).findFirst();
+            if (info != null && info.getSelf() != null) {
+                return info.getSelf().getId();
+            }
+
+            return -1L;
+        });
+    }
+
+    public long findMyIdFromTopics(long roomId) {
+        return execute(realm -> {
+
+            InitialInfo info = realm.where(InitialInfo.class).equalTo("topics.id", roomId).findFirst();
+            if (info != null && info.getSelf() != null) {
+                return info.getSelf().getId();
+            }
+
+            return -1L;
+        });
+
+    }
 }

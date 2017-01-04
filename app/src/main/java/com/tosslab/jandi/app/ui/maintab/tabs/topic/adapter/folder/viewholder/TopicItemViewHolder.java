@@ -9,40 +9,48 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.libraries.advancerecyclerview.utils.AbstractExpandableItemViewHolder;
 import com.tosslab.jandi.app.views.FixedLinearLayout;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by tee on 15. 8. 27..
  */
 public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
 
+    @Bind(R.id.rl_topic_item_container)
     public RelativeLayout container;
+    @Bind(R.id.iv_entity_listitem_icon)
     public ImageView ivTopicIcon;
+    @Bind(R.id.vg_entity_listitem_name)
     public FixedLinearLayout vgTopicName;
+    @Bind(R.id.tv_user_name)
     public TextView tvTopicName;
+    @Bind(R.id.tv_entity_listitem_additional)
     public TextView tvTopicUserCnt;
+    @Bind(R.id.v_push_off)
     public View vPushOff;
+    @Bind(R.id.tv_entity_listitem_description)
     public TextView tvTopicDescription;
+    @Bind(R.id.tv_entity_listitem_badge)
     public TextView tvTopicBadge;
+    @Bind(R.id.iv_default_underline)
     public ImageView ivDefaultUnderline;
+    @Bind(R.id.iv_folder_item_underline)
     public ImageView ivFolderItemUnderline;
+    @Bind(R.id.iv_shadow_underline)
     public ImageView ivShadowUnderline;
+    @Bind(R.id.vg_entity_listitem_badge)
     public RelativeLayout vgTopicBadge;
+    @Bind(R.id.v_topic_item_animator)
     public View vAnimator;
+    @Bind(R.id.tv_entity_listitem_read_only)
+    public View vReadOnly;
 
-    public TopicItemViewHolder(View itemView) {
+    public TopicItemViewHolder(View itemView, boolean bindView) {
         super(itemView);
-        container = (RelativeLayout) itemView.findViewById(R.id.rl_topic_item_container);
-        ivTopicIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
-        vgTopicName = (FixedLinearLayout) itemView.findViewById(R.id.vg_entity_listitem_name);
-        tvTopicName = (TextView) itemView.findViewById(R.id.tv_user_name);
-        tvTopicUserCnt = (TextView) itemView.findViewById(R.id.tv_entity_listitem_additional);
-        vPushOff = itemView.findViewById(R.id.v_push_off);
-        tvTopicDescription = (TextView) itemView.findViewById(R.id.tv_entity_listitem_description);
-        vgTopicBadge = (RelativeLayout) itemView.findViewById(R.id.vg_entity_listitem_badge);
-        tvTopicBadge = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
-        ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_default_underline);
-        ivFolderItemUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_item_underline);
-        ivShadowUnderline = (ImageView) itemView.findViewById(R.id.iv_shadow_underline);
-        vAnimator = itemView.findViewById(R.id.v_topic_item_animator);
+        if (bindView) {
+            ButterKnife.bind(this, itemView);
+        }
     }
 
 }
