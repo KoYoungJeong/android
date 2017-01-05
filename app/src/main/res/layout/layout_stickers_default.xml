@@ -83,6 +83,11 @@
                 android:src="@drawable/btn_sticker_group_recent" />
 
             <ImageView
+                android:id="@+id/btn_stciker_group_default_stamp_107"
+                style="@style/JandiSticker.Group"
+                android:src="@drawable/btn_sticker_group_stamp_107" />
+
+            <ImageView
                 android:id="@+id/btn_stciker_group_default_dean"
                 style="@style/JandiSticker.Group"
                 android:src="@drawable/btn_sticker_group_dean" />
