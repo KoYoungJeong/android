@@ -101,13 +101,11 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (item.getStatus()) {
 
             viewHolder.vDisableLineThrough.setVisibility(View.GONE);
-            viewHolder.vDisableWarning.setVisibility(View.GONE);
             viewHolder.vDisableCover.setVisibility(View.GONE);
 
         } else {
 
             viewHolder.vDisableLineThrough.setVisibility(View.VISIBLE);
-            viewHolder.vDisableWarning.setVisibility(View.VISIBLE);
             viewHolder.vDisableCover.setVisibility(View.VISIBLE);
 
         }
@@ -223,7 +221,6 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public TextView tvAdditional;
         public TextView tvBadgeCount;
         public View vDisableLineThrough;
-        public View vDisableWarning;
         public View vDisableCover;
         public View selector;
 
@@ -236,7 +233,6 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvAdditional = (TextView) itemView.findViewById(R.id.tv_user_department);
             tvBadgeCount = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
             vDisableLineThrough = itemView.findViewById(R.id.iv_name_line_through);
-            vDisableWarning = itemView.findViewById(R.id.iv_entity_listitem_warning);
             vDisableCover = itemView.findViewById(R.id.v_name_warning);
         }
 
