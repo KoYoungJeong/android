@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.share.multi.adapter.items;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ShareFileItemFragment extends Fragment {
     public static final String EXTRA_FILE_PATH = "file_path";
@@ -45,6 +48,13 @@ public class ShareFileItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item_share_file, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @OnClick(value ={R.id.iv_item_share_file_image,
+            R.id.vg_item_share_file_icon})
+    void onContentClick() {
+        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
     }
 
     @Override
