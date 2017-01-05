@@ -17,10 +17,15 @@ import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.crashlytics.android.Crashlytics;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.tosslab.jandi.app.utils.image.ProgressTarget;
 import com.tosslab.jandi.app.utils.image.target.DynamicImageViewTarget;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -168,6 +173,21 @@ public class ImageLoader {
                         .build(imageView));
     }
 
+    public void into(SubsamplingScaleImageView imageView) {
+        DrawableRequestBuilder<Uri> request = getRequestBuilder(imageView);
+        if (request == null) return;
+
+        request.listener(listener)
+                .into(new SimpleTarget<GlideDrawable>() {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        Bitmap bitmap = ((GlideBitmapDrawable) resource).getBitmap();
+                        imageView.setImage(ImageSource.bitmap(bitmap));
+                    }
+                });
+    }
+
+
     @SuppressWarnings("unchecked")
     public void intoWithProgress(ImageView imageView,
                                  ProgressStarted progressStarted,
@@ -214,9 +234,56 @@ public class ImageLoader {
                 });
     }
 
+    @SuppressWarnings("unchecked")
+    public void intoWithProgress(SubsamplingScaleImageView imageView,
+                                 ProgressStarted progressStarted,
+                                 ProgressDownloading progressDownloading,
+                                 ProgressCompleted progressCompleted,
+                                 ProgressPresent progressPresent) {
+        DrawableRequestBuilder<Uri> request = getRequestBuilder(imageView);
+        if (request == null) return;
+
+
+        request.listener(listener)
+                .into(new ProgressTarget<String, GlideDrawable>(uri.toString(), new SimpleTarget<GlideDrawable>() {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        Bitmap bitmap = ((GlideBitmapDrawable) resource).getBitmap();
+                        imageView.setImage(ImageSource.bitmap(bitmap));
+                    }
+                }) {
+                    @Override
+                    protected void onConnecting() {
+                        if (progressStarted != null) {
+                            progressStarted.onStart();
+                        }
+                    }
+
+                    @Override
+                    protected void onDownloading(long bytesRead, long expectedLength) {
+                        if (progressDownloading != null) {
+                            progressDownloading.onDownloading(((int) (bytesRead * 100 / expectedLength)));
+                        }
+                    }
+
+                    @Override
+                    protected void onDownloaded() {
+                        if (progressCompleted != null) {
+                            progressCompleted.onCompleted();
+                        }
+                    }
+
+                    @Override
+                    protected void onDelivered() {
+                        if (progressPresent != null) {
+                            progressPresent.onPresent();
+                        }
+                    }
+                });
+    }
+
     @Nullable
     protected DrawableRequestBuilder<Uri> getRequestBuilder(ImageView imageView) {
-
 
         DrawableRequestBuilder<Uri> request;
         try {
@@ -224,6 +291,63 @@ public class ImageLoader {
                 request = getRequest(this.fragment.get());
             } else {
                 Context context = getAvailableContext(imageView);
+                if (context == null) {
+                    return null;
+                }
+                request = getRequest(context);
+            }
+        } catch (Exception e) {
+            LogUtil.e(Log.getStackTraceString(e));
+            String log = String.format("ImageLoader.getRequest Exception : %s", Log.getStackTraceString(e));
+            Crashlytics.getInstance().core.log(log);
+            return null;
+        }
+
+        if (backgroundColor != Integer.MAX_VALUE) {
+            imageView.setBackgroundColor(backgroundColor);
+        }
+
+
+        request.fitCenter();
+
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
+
+        if (placeHolderDrawable != null) {
+            request.placeholder(placeHolderDrawable);
+        } else if (placeHolder != -1) {
+            request.placeholder(placeHolder);
+        }
+
+        request.error(error);
+
+        if (transformation != null) {
+            request.bitmapTransform(transformation);
+        }
+
+        if (anim != -1) {
+            request.animate(anim);
+        } else if (animator != null) {
+            request.animate(animator);
+        } else {
+            // crossFade 가 동작하면 fitCenter 가 정상동작하지 않는다.(TransitionDrawable issue)
+            request.animate(view -> {
+                view.setAlpha(0.0f);
+                view.animate()
+                        .alpha(1.0f)
+                        .setDuration(300);
+            });
+        }
+        return request;
+    }
+
+    protected DrawableRequestBuilder<Uri> getRequestBuilder(SubsamplingScaleImageView imageView) {
+
+        DrawableRequestBuilder<Uri> request;
+        try {
+            if (this.fragment != null && this.fragment.get() != null) {
+                request = getRequest(this.fragment.get());
+            } else {
+                Context context = imageView.getContext();
                 if (context == null) {
                     return null;
                 }
