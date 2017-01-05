@@ -74,7 +74,7 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
     private void setBadge(ResMessages.Link link, long teamId, long roomId) {
 
-        UnreadCountUtil.getUnreadCount(teamId, roomId,
+        UnreadCountUtil.getUnreadCount(roomId,
                 link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {

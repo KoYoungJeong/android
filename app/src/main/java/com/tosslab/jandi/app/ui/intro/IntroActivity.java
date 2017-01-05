@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.StartApiCalledEvent;
@@ -41,33 +44,52 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     private static final String EXTRA_START_FOR_INVITE = "startForInvite";
     private static final int ANIM_DELAY = 300;
 
+    @Nullable
+    @InjectExtra
     boolean startForInvite = false;
     @Bind(R.id.iv_jandi_icon)
     ImageView ivJandiIcon;
     @Inject
     IntroActivityPresenter presenter;
+
+    @Nullable
+    @InjectExtra
+    boolean skipAnimation = false;
+
     private AnimationDrawable splashDrawable;
     private long delayStartTime;
-    private boolean keepServiceRunning; // keepalive 가 동작중이기 때문에 애니메이션과 딜레이 필요없음
+    private boolean loadAnimation; // keepalive 가 동작중이기 때문에 애니메이션과 딜레이 필요없음
 
     public static void startActivity(Context context, boolean startForInvite) {
-        Intent intent = new Intent(context, IntroActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(EXTRA_START_FOR_INVITE, startForInvite);
-        context.startActivity(intent);
+        context.startActivity(Henson.with(context)
+                .gotoIntroActivity()
+                .startForInvite(startForInvite)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
+    public static void startActivitySkipAnimation(Context context, boolean skipAnimation) {
+        context.startActivity(Henson.with(context)
+                .gotoIntroActivity()
+                .skipAnimation(skipAnimation)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        keepServiceRunning = KeepExecutedService.isServiceRunning(this);
-        if (keepServiceRunning) {
-            setContentView(R.layout.activity_intro);
-        } else {
+        Dart.inject(this);
+        loadAnimation = !KeepExecutedService.isServiceRunning(this) && !skipAnimation;
+        if (!loadAnimation) {
             setContentView(R.layout.activity_intro_animation);
+        } else {
+            setContentView(R.layout.activity_intro);
         }
         setNeedUnLockPassCode(false);
         setShouldReconnectSocketService(false);
@@ -85,7 +107,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         startOn();
 
         delayStartTime = System.currentTimeMillis();
-        if (!keepServiceRunning) {
+        if (!loadAnimation) {
 
             splashDrawable = ((AnimationDrawable) ivJandiIcon.getDrawable());
             Completable.fromAction(Completable::complete)
@@ -106,7 +128,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     }
 
     public void onEventMainThread(StartApiCalledEvent event) {
-        if (keepServiceRunning
+        if (loadAnimation
                 && !ApplicationUtil.isActivityDestroyed(this)) {
             moveMainActivityWithoutDelay();
         }
@@ -185,7 +207,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     private void startActivityWithAnimationAndFinish(final Intent intent) {
 
         Completable.fromAction(() -> {})
-                .delay(keepServiceRunning ? NO_ANIM_DELAY_TIME + delayStartTime - System.currentTimeMillis() : ANIM_TIME + ANIM_DELAY + delayStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .delay(loadAnimation ? NO_ANIM_DELAY_TIME + delayStartTime - System.currentTimeMillis() : ANIM_TIME + ANIM_DELAY + delayStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     if (!ApplicationUtil.isActivityDestroyed(IntroActivity.this)) {
@@ -236,6 +258,12 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                 })
                 .create()
                 .show();
+    }
+
+    @Override
+    public void restartIntroActivity() {
+        overridePendingTransition(0, 0);
+        startActivitySkipAnimation(this, true);
     }
 
 }

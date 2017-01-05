@@ -76,6 +76,9 @@ public class HumanRepository extends RealmRepository {
 
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             member.setTeamId(selectedTeamId);
+            if (member.getProfile() != null) {
+                member.getProfile().setId(member.getId());
+            }
 
             realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(member));
 
@@ -90,6 +93,9 @@ public class HumanRepository extends RealmRepository {
             if (initialInfo != null) {
                 realm.executeTransaction(realm1 -> {
                     member.setTeamId(teamId);
+                    if (member.getProfile() != null) {
+                        member.getProfile().setId(member.getId());
+                    }
                     initialInfo.getMembers().add(member);
                 });
                 return true;

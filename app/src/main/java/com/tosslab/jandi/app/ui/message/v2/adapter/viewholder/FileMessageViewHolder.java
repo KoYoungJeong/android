@@ -108,7 +108,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         boolean isPublicTopic = room.isPublicTopic();
 
         UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, teamInfoLoader.getMyId())
+                roomId, link.id, fromEntityId, teamInfoLoader.getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
 

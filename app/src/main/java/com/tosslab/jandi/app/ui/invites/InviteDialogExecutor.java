@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.invites.emails.InviteEmailActivity;
 import com.tosslab.jandi.app.ui.invites.member.MemberInvitationActivity;
@@ -154,7 +155,7 @@ public class InviteDialogExecutor {
     private String getOwnerName() {
         List<User> users = TeamInfoLoader.getInstance().getUserList();
         return Observable.from(users)
-                .filter(User::isTeamOwner)
+                .takeFirst(user -> user.getLevel() == Level.Owner)
                 .map(User::getName)
                 .toBlocking()
                 .firstOrDefault("");

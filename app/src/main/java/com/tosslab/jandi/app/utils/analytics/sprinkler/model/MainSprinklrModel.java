@@ -42,7 +42,7 @@ public class MainSprinklrModel {
     }
 
     private void setAccountId() {
-        builder.accountId(AccountUtil.getAccountId(JandiApplication.getContext()));
+        builder.accountId(AccountUtil.getAccountUUID(JandiApplication.getContext()));
     }
 
     private void setMemberId() {

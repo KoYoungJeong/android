@@ -100,7 +100,7 @@ Please restart the app."</string>
 	<string name="err_team_creation_failed">"Email could not be sent"</string>
 	<string name="err_unshare">"File could not be unshared"</string>
 	<string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"Team creation not completed"</string>
 	<string name="file_detail_nopreview">"This file can't be previewed."</string>
 	<string name="file_upload_comment">"Comments (Optional)"</string>
@@ -119,7 +119,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_alreadyinvited">"This email address has already been invited to the team."</string>
 	<string name="invite_email_blocked">"This email address had been blocked from the team."</string>
 	<string name="invite_email_cancelinvite">"Would you like to cancel in invite?"</string>
-	<string name="invite_email_error_max10">""</string>
+	<string name="invite_email_error_max10">"You can send invitation emails maximum 10 people at once."</string>
 	<string name="invite_email_error_partially">"Some invitations have not been sent. Please try again after checking the result."</string>
 	<string name="invite_email_error_unknown">"There has been an unknown error. Please try again later."</string>
 	<string name="invite_email_failedtryagain">"Failed to send the email. Try again."</string>
@@ -127,7 +127,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_sending">"Sending invitation..."</string>
 	<string name="invite_email_sendinvitation_disable">"Send Invitation"</string>
 	<string name="invite_email_sendinvitation_withcounts">"Send invitation to %s people. "</string>
-	<string name="invite_email_success">"All intivations has been sent. "</string>
+	<string name="invite_email_success">"All intivations have been sent. "</string>
 	<string name="invite_email_title">"Enter email address"</string>
 	<string name="invite_email_valid">"This is a valid email address."</string>
 	<string name="invite_member_copyurl">"Copy invitation URL"</string>
@@ -827,8 +827,14 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="topic_remove_associatewithonetopic_title">"Removing this Associate from the topic will delete this person from the team."</string>
 	<string name="topic_room_deletetopicconfirm">"This topic has been deleted"</string>
 	<string name="topic_room_selectallmembers">"Select All"</string>
+	<string name="topic_search_1on1_unable">""</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>
+	<string name="topic_viewonly_alert_body">"Only Admin-level members are able to send messages."</string>
+	<string name="topic_viewonly_alert_title">"This chat is view-only."</string>
+	<string name="topic_viewonly_label">"View-Only"</string>
+	<string name="topic_viewonly_set_body">"By selecting this option, only Admin-level members will be able to enter messages."</string>
+	<string name="topic_viewonly_set_title">"Set view-only"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>

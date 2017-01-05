@@ -73,6 +73,8 @@ public interface NavigationPresenter {
         void setUserProfile(User user);
 
         void closeNavigation();
+
+        void moveTeamList();
     }
 
 }
