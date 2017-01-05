@@ -16,8 +16,6 @@
     <EditText
         android:id="@+id/et_topic_description_edit_content"
         style="@style/JandiTopic.Create.TextView.Input"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginTop="24dp"
         android:gravity="center_vertical"
         android:hint="@string/jandi_explain_topic_description"
