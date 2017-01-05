@@ -231,7 +231,6 @@ public class SearchSelectorViewController {
                     .filter(it -> TeamInfoLoader.getInstance().isUser(it))
                     .filter(it -> !TeamInfoLoader.getInstance().isJandiBot(it))
                     .filter(it -> TeamInfoLoader.getInstance().getMyId() != it)
-                    .filter(it -> TeamInfoLoader.getInstance().getChatId(it) > 0)
                     .map(it -> TeamInfoLoader.getInstance().getUser(it))
                     .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
                     .toBlocking().firstOrDefault(new ArrayList<>());
