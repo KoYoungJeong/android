@@ -1340,6 +1340,7 @@ public class JandiSocketServiceModel {
             }
             HumanRepository.getInstance().updateHuman(member);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
+            TeamInfoLoader.getInstance().refresh();
 
             postEvent(new ProfileChangeEvent(data.getMember()));
         } catch (Exception e) {

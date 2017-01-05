@@ -472,7 +472,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             HumanRepository.getInstance().updateStarred(memberId, star);
             TeamInfoLoader.getInstance().refresh();
             return true;
-        }).subscribeOn(Schedulers.io()).subscribe(() -> {}, Throwable::printStackTrace);
+        }).subscribeOn(Schedulers.io()).subscribe(() -> {
+        }, Throwable::printStackTrace);
 
     }
 
@@ -518,6 +519,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             }));
         } else {
             if (!isJandiBot(member)) {
+                if (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin
+                        || TeamInfoLoader.getInstance().getMyLevel() == Level.Owner) {
+                    vgProfileTeamButtons.addView(
+                            getButton(R.drawable.icon_profile_edit,
+                                    getString(R.string.jandi_member_profile_edit), (v) -> {
+                                        startModifyProfileActivityForAdmin(memberId);
+                                    }
+                            )
+                    );
+                }
+
                 User user = (User) member;
                 String phoneNumber = user.getPhoneNumber();
                 if (!TextUtils.isEmpty(phoneNumber)) {
@@ -785,6 +797,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         Intent intent = new Intent(MemberProfileActivity.this, ModifyProfileActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivityForResult(intent, ModifyProfileActivity.REQUEST_CODE);
+    }
+
+    private void startModifyProfileActivityForAdmin(long memberId) {
+        startActivityForResult(Henson.with(this)
+                .gotoModifyProfileActivity()
+                .adminMode(true)
+                .memberId(memberId)
+                .build()
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), ModifyProfileActivity.REQUEST_CODE);
     }
 
     private void startStarMentionListActivity() {

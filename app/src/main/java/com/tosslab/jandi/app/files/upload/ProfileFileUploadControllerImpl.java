@@ -116,22 +116,23 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     }
 
     @Override
-    public void startUpload(Activity activity, String title, long entityId, String realFilePath, String comment) {
+    public void startUpload(Activity activity, String title, long memberId, String realFilePath, String comment) {
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
             String downloadDir = FileUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
             ProgressDialog downloadProgress =
                     GoogleImagePickerUtil.getDownloadProgress(activity, downloadDir, downloadName);
             downloadImageAndShowFileUploadDialog(activity,
-                    downloadProgress, realFilePath, downloadDir, downloadName);
+                    downloadProgress, realFilePath, downloadDir, downloadName, memberId);
         } else {
-            uploadProfileImage(activity, new File(realFilePath));
+            uploadProfileImage(activity, new File(realFilePath), memberId);
         }
     }
 
     void downloadImageAndShowFileUploadDialog(Activity activity,
                                               ProgressDialog downloadProgress,
-                                              String url, String downloadDir, String downloadName) {
+                                              String url, String downloadDir, String downloadName,
+                                              long memberId) {
 
         Observable.fromCallable(() -> {
             return GoogleImagePickerUtil.downloadFile(downloadProgress,
@@ -143,18 +144,22 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     dismissProgressDialog(downloadProgress);
-                    uploadProfileImage(activity, file);
+                    uploadProfileImage(activity, file, memberId);
                 }, Throwable::printStackTrace);
     }
 
-    void uploadProfileImage(Activity activity, File profileFile) {
+    void uploadProfileImage(Activity activity, File profileFile, long memberId) {
         showProgressWheel(activity);
 
         Observable.fromCallable(() -> {
 
             File convertedProfileFile = ImageUtil.convertProfileFile(profileFile);
             try {
-                Human human = filePickerModel.uploadProfilePhoto(convertedProfileFile);
+                long userId = memberId;
+                if (userId <= 0) {
+                    userId = TeamInfoLoader.getInstance().getMyId();
+                }
+                Human human = filePickerModel.uploadProfilePhoto(convertedProfileFile, userId);
                 String photoUrl = human.getPhotoUrl();
                 long myId = TeamInfoLoader.getInstance().getMyId();
                 HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);

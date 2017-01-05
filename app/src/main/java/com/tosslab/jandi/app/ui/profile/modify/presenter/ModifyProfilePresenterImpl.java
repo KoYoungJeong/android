@@ -32,11 +32,18 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     private View view;
 
+    private long memberId = -1;
+
     @Inject
-    public ModifyProfilePresenterImpl(ProfileFileUploadControllerImpl filePickerViewModel, ModifyProfileModel modifyProfileModel, View view) {
+    public ModifyProfilePresenterImpl(ProfileFileUploadControllerImpl filePickerViewModel,
+                                      ModifyProfileModel modifyProfileModel, View view) {
         this.filePickerViewModel = filePickerViewModel;
         this.modifyProfileModel = modifyProfileModel;
         this.view = view;
+    }
+
+    public void setMemberId(long memberId) {
+        this.memberId = memberId;
     }
 
     @Override
@@ -45,7 +52,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> view.showProgressWheel());
 
-        Observable.defer(() -> Observable.just(modifyProfileModel.getSavedProfile()))
+        Observable.defer(() -> Observable.just(modifyProfileModel.getSavedProfile(memberId)))
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -62,14 +69,13 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
         Observable.defer(() -> {
             try {
-                Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
+                Human human = modifyProfileModel.updateProfile(reqUpdateProfile, memberId);
                 return Observable.just(human);
             } catch (RetrofitException e) {
                 e.printStackTrace();
                 return Observable.error(e);
             }
-        })
-                .subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.io())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .doOnNext(human1 -> {
                     HumanRepository.getInstance().updateHuman(human1);
@@ -87,12 +93,12 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onStartUpload(Activity activity, String filePath) {
-        filePickerViewModel.startUpload(activity, null, -1, filePath, null);
+        filePickerViewModel.startUpload(activity, null, memberId, filePath, null);
     }
 
     @Override
     public void onProfileChange(User user) {
-        if (user != null && modifyProfileModel.isMyId(user.getId())) {
+        if (user != null) {
             Observable.just(new Object())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(o -> {
@@ -104,7 +110,7 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
 
     @Override
     public void onEditEmailClick() {
-        User savedProfile = modifyProfileModel.getSavedProfile();
+        User savedProfile = modifyProfileModel.getSavedProfile(memberId);
         String[] accountEmails = modifyProfileModel.getAccountEmails();
         view.showEmailChooseDialog(accountEmails, savedProfile.getEmail());
     }

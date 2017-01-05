@@ -181,8 +181,8 @@ public class FilePickerModel {
 
     }
 
-    public Human uploadProfilePhoto(File file) throws RetrofitException {
-        return new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), TeamInfoLoader.getInstance().getMyId(), file);
+    public Human uploadProfilePhoto(File file, long memberId) throws RetrofitException {
+        return new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), memberId, file);
     }
 
     public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {

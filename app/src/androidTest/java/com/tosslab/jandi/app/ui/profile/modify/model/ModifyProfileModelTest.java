@@ -36,7 +36,8 @@ import static org.junit.Assert.fail;
 @RunWith(AndroidJUnit4.class)
 public class ModifyProfileModelTest {
 
-    @Inject ModifyProfileModel modifyProfileModel;
+    @Inject
+    ModifyProfileModel modifyProfileModel;
     private User user;
 
     @BeforeClass
@@ -57,14 +58,9 @@ public class ModifyProfileModelTest {
         user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
     }
 
-    @dagger.Component(modules = ApiClientModule.class)
-    public interface Component {
-        void inject(ModifyProfileModelTest test);
-    }
-
     @Test
     public void testGetProfile() throws Exception {
-        User profile = modifyProfileModel.getProfile();
+        User profile = modifyProfileModel.getProfile(TeamInfoLoader.getInstance().getMyId());
 
         assertThat(user.getEmail(), is(equalTo(profile.getEmail())));
         assertThat(user.getDivision(), is(equalTo(profile.getDivision())));
@@ -83,7 +79,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.department = "department : " + new Date().toString();
 
             // When
-            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
 
             //Then
             assertThat(user.getDivision(), is(not(equalTo(reqUpdateProfile.department))));
@@ -97,7 +93,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.phoneNumber = "010-1234-5678";
 
             // When
-            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
 
             //Then
             assertThat(user.getPhoneNumber(), is(not(equalTo(reqUpdateProfile.phoneNumber))));
@@ -112,7 +108,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.position = "position  : " + new Date().toString();
 
             // When
-            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
 
             //Then
             assertThat(user.getPosition(), is(not(equalTo(reqUpdateProfile.position))));
@@ -127,7 +123,7 @@ public class ModifyProfileModelTest {
             reqUpdateProfile.statusMessage = "statusMessage  : " + new Date().toString();
 
             // When
-            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human resCommon = modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
 
             //Then
             assertThat(user.getStatusMessage(), is(not(equalTo(reqUpdateProfile.statusMessage))));
@@ -142,7 +138,7 @@ public class ModifyProfileModelTest {
         reqUpdateProfile.department = user.getDivision();
         reqUpdateProfile.phoneNumber = user.getPhoneNumber();
 
-        modifyProfileModel.updateProfile(reqUpdateProfile);
+        modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
 
     }
 
@@ -151,14 +147,14 @@ public class ModifyProfileModelTest {
         String newName = new Date().toString().replaceAll(" ", "");
         ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
         reqUpdateProfile.name = newName;
-        modifyProfileModel.updateProfile(reqUpdateProfile);
+        modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
 
-        User newProfile = modifyProfileModel.getProfile();
+        User newProfile = modifyProfileModel.getProfile(TeamInfoLoader.getInstance().getMyId());
         assertThat(newProfile.getName(), is(equalTo(newName)));
         assertThat(newProfile.getName(), is(not(equalTo(user.getName()))));
 
         reqUpdateProfile.name = user.getName();
-        modifyProfileModel.updateProfile(reqUpdateProfile);
+        modifyProfileModel.updateProfile(reqUpdateProfile, TeamInfoLoader.getInstance().getMyId());
     }
 
     @Test
@@ -196,12 +192,17 @@ public class ModifyProfileModelTest {
 
     @Test
     public void testGetSavedProfile() throws Exception {
-        User savedProfile = modifyProfileModel.getSavedProfile();
+        User savedProfile = modifyProfileModel.getSavedProfile(TeamInfoLoader.getInstance().getMyId());
         assertThat(savedProfile.getEmail(), is(equalTo(user.getEmail())));
         assertThat(savedProfile.getDivision(), is(equalTo(user.getDivision())));
         assertThat(savedProfile.getPhoneNumber(), is(equalTo(user.getPhoneNumber())));
         assertThat(savedProfile.getPosition(), is(equalTo(user.getPosition())));
         assertThat(savedProfile.getName(), is(equalTo(user.getName())));
         assertThat(savedProfile.getPhotoUrl(), is(equalTo(user.getPhotoUrl())));
+    }
+
+    @dagger.Component(modules = ApiClientModule.class)
+    public interface Component {
+        void inject(ModifyProfileModelTest test);
     }
 }

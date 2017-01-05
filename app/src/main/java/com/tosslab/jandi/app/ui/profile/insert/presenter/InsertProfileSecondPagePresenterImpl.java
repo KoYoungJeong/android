@@ -28,6 +28,8 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
 
     private InsertProfileSecondPagePresenter.View view;
 
+    private long myId = TeamInfoLoader.getInstance().getMyId();
+
     @Inject
     public InsertProfileSecondPagePresenterImpl(ModifyProfileModel modifyProfileModel, View view) {
         this.modifyProfileModel = modifyProfileModel;
@@ -36,7 +38,7 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
 
     @Override
     public void requestProfile() {
-        Observable.fromCallable(() -> modifyProfileModel.getSavedProfile()).subscribeOn(Schedulers.io())
+        Observable.fromCallable(() -> modifyProfileModel.getSavedProfile(myId)).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(me -> view.displayProfileInfos(me))
                 .subscribe(o -> {
@@ -97,7 +99,7 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
             reqUpdateProfile.position = position;
             reqUpdateProfile.phoneNumber = phoneNumber;
             reqUpdateProfile.statusMessage = statusMessage;
-            Human human = modifyProfileModel.updateProfile(reqUpdateProfile);
+            Human human = modifyProfileModel.updateProfile(reqUpdateProfile, myId);
             if (human != null && human.getProfile() != null) {
                 human.getProfile().setId(human.getId());
             }

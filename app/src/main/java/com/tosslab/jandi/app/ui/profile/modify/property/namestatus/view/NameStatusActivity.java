@@ -15,6 +15,11 @@ public class NameStatusActivity extends BaseAppCompatActivity {
     public static final int EXTRA_TYPE_NAME_FOR_MAIN_ACCOUNT = 2;
     public static final int EXTRA_TYPE_STATUS = 3;
 
+    @Nullable
+    @InjectExtra
+    long memberId = -1;
+
+    @Nullable
     @InjectExtra
     int type = EXTRA_TYPE_NAME_FOR_TEAM_PROFILE;
 
@@ -29,6 +34,7 @@ public class NameStatusActivity extends BaseAppCompatActivity {
             fragment = Fragment.instantiate(this, NameChangeFragment.class.getName());
             Bundle bundle = new Bundle();
             bundle.putInt(NameChangeFragment.NAME_CHANGE_MODE, NameChangeFragment.MODE_FROM_TEAM_PROFILE);
+            bundle.putLong(NameChangeFragment.ARG_MEMBER_ID, memberId);
             fragment.setArguments(bundle);
         } else if (type == EXTRA_TYPE_NAME_FOR_MAIN_ACCOUNT) {
             fragment = Fragment.instantiate(this, NameChangeFragment.class.getName());
@@ -37,6 +43,9 @@ public class NameStatusActivity extends BaseAppCompatActivity {
             fragment.setArguments(bundle);
         } else {
             fragment = Fragment.instantiate(this, StatusChangeFragment.class.getName());
+            Bundle bundle = new Bundle();
+            bundle.putLong(StatusChangeFragment.ARG_MEMBER_ID, memberId);
+            fragment.setArguments(bundle);
         }
 
         getSupportFragmentManager()
@@ -44,4 +53,5 @@ public class NameStatusActivity extends BaseAppCompatActivity {
                 .replace(android.R.id.content, fragment, fragment.getClass().getName())
                 .commit();
     }
+
 }

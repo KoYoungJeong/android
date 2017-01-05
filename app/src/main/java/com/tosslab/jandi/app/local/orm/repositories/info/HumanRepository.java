@@ -73,7 +73,6 @@ public class HumanRepository extends RealmRepository {
 
     public boolean updateHuman(Human member) {
         return execute((realm) -> {
-
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             member.setTeamId(selectedTeamId);
             if (member.getProfile() != null) {
@@ -81,7 +80,6 @@ public class HumanRepository extends RealmRepository {
             }
 
             realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(member));
-
             return true;
         });
     }
