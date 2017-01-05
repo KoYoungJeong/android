@@ -19,7 +19,6 @@ import android.widget.CheckBox;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestInviteMemberEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
@@ -36,7 +35,6 @@ import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.schedulers.Schedulers;
 
@@ -152,14 +150,18 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
 
         if (activity != null
                 && DeviceUtil.isCallableDevice()
-                && JandiPreference.isShowCallPermissionPopup()) {
+                && (!SdkUtils.hasCanvasPermission() || !SdkUtils.hasPermission(Manifest.permission.CALL_PHONE))
+                && JandiPreference.isShowCallPermissionPopup()
+                && JandiPreference.isShowCallPermissionToday()) {
+
+            JandiPreference.setShowCallPermissionToday();
 
             View view = LayoutInflater.from(activity).inflate(R.layout.dialog_call_preview_permission, null);
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_call_preview_permission);
 
             boolean moveSettingBtn;
             if (SdkUtils.isMarshmallow()) {
-                if (!SdkUtils.hasPermission(activity, Manifest.permission.CALL_PHONE)
+                if (!SdkUtils.hasPermission(Manifest.permission.CALL_PHONE)
                         || !Settings.canDrawOverlays(activity)) {
                     moveSettingBtn = true;
                 } else {

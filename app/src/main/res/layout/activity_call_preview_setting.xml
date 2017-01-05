@@ -25,9 +25,9 @@
         android:textSize="@dimen/jandi_text_size_small" />
 
     <TextView
+        android:id="@+id/tv_call_preview_setting_guide2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:layout_marginEnd="25dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="3dp"
@@ -39,13 +39,14 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="12dp"
         android:background="@color/jandi_star_mention_item_divider" />
 
 
     <RelativeLayout
         android:id="@+id/vg_call_preview_setting_call"
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="63dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,17 +57,20 @@
             android:textColor="@color/jandi_text"
             android:textSize="@dimen/jandi_text_size_large" />
 
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/switch_call_preview_setting_call"
+        <TextView
+            android:id="@+id/tv_call_preview_setting_call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="25dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginStart="16dp"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            app:theme="@style/Jandi.Default.Switch" />
+            android:text="@string/common_calleridnotifier_status_allowed"
+            android:textColor="@color/text_color_call_setting_allow"
+            android:textSize="@dimen/jandi_text_size_medium" />
 
         <View
             android:layout_width="match_parent"
@@ -80,44 +84,32 @@
     <RelativeLayout
         android:id="@+id/vg_call_preview_setting_canvas"
         android:layout_width="match_parent"
-        android:layout_height="88dp">
+        android:layout_height="63dp">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="25dp"
-            android:layout_toLeftOf="@+id/switch_call_preview_setting_canvas"
-            android:orientation="vertical">
+            android:layout_toLeftOf="@+id/tv_call_preview_setting_canvas"
+            android:text="@string/common_calleridnotifier_authorizedrawover1"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/common_calleridnotifier_authorizedrawover1"
-                android:textColor="@color/jandi_text"
-                android:textSize="@dimen/jandi_text_size_large" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/common_calleridnotifier_authorizedrawover2"
-                android:textColor="@color/jandi_text_medium"
-                android:textSize="@dimen/jandi_text_size_medium" />
-        </LinearLayout>
-
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/switch_call_preview_setting_canvas"
+        <TextView
+            android:id="@+id/tv_call_preview_setting_canvas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="25dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginStart="16dp"
             android:clickable="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            app:theme="@style/Jandi.Default.Switch" />
+            android:text="@string/common_calleridnotifier_status_allowed"
+            android:textColor="@color/text_color_call_setting_allow"
+            android:textSize="@dimen/jandi_text_size_medium" />
 
         <View
             android:layout_width="match_parent"
@@ -127,5 +119,48 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tv_call_preview_setting_guide3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/common_calleridnotifier_authorizedrawover2" />
+
+    <RelativeLayout
+        android:id="@+id/vg_call_preview_setting_caller_id"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="25dp"
+            android:layout_toLeftOf="@+id/switch_call_preview_setting_caller_id"
+            android:text="@string/common_calleridnotifier_authorizedrawover1"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_call_preview_setting_caller_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="28dp"
+            android:layout_marginStart="16dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/jandi_star_mention_item_divider" />
+
+    </RelativeLayout>
 
 </LinearLayout>

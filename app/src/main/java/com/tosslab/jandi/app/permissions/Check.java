@@ -35,7 +35,7 @@ public class Check {
             return;
         }
         String permissionString = permission.getPermission();
-        if (SdkUtils.hasPermission(activity, permissionString)) {
+        if (SdkUtils.hasPermission(permissionString)) {
             if (hasPermission != null) {
                 hasPermission.hasPermission();
             }
