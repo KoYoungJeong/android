@@ -30,7 +30,6 @@ import rx.schedulers.Schedulers;
 
 
 public class IntroActivityPresenter {
-
     private static final long MAX_DELAY_MS = 100;
     private static final int DAYS_30 = 30;
 
@@ -44,7 +43,6 @@ public class IntroActivityPresenter {
     }
 
     public void checkNewVersion(boolean startForInvite) {
-
         if (!JandiPreference.isPutVersionCodeStamp()) {
             MessageRepository.getRepository().deleteAllLink();
             SendMessageRepository.getRepository().deleteAllMessages();
@@ -111,7 +109,6 @@ public class IntroActivityPresenter {
                             });
 
                 });
-
     }
 
     private void moveNextActivityWithAccountRefresh(boolean startForInvite) {

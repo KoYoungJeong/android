@@ -17,7 +17,7 @@
                 <color android:color="@color/jandi_line_gray" />
             </item>
             <item android:right="1dp">
-                <color android:color="@color/jandi_sticker_view_background" />
+                <color android:color="@color/white" />
             </item>
         </layer-list>
 

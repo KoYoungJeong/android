@@ -2,13 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_sticker_view_background"
+    android:background="@color/white"
     android:orientation="vertical">
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/jandi_line_gray"/>
 
     <LinearLayout
         android:layout_width="320dp"
@@ -27,7 +22,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/selector_icon_upload_image"/>
+                android:src="@drawable/selector_icon_upload_image" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,7 +31,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/jandi_upload_menu_gallay"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="14dp"/>
+                android:textSize="14dp" />
         </LinearLayout>
 
 
@@ -52,7 +47,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/selector_icon_upload_camera"/>
+                android:src="@drawable/selector_icon_upload_camera" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -61,7 +56,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/jandi_upload_menu_camera"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="14dp"/>
+                android:textSize="14dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -76,7 +71,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/selector_icon_upload_file"/>
+                android:src="@drawable/selector_icon_upload_file" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -85,7 +80,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/jandi_upload_menu_file"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="14dp"/>
+                android:textSize="14dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -100,7 +95,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/selector_icon_upload_poll"/>
+                android:src="@drawable/selector_icon_upload_poll" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -109,7 +104,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/jandi_poll"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="14dp"/>
+                android:textSize="14dp" />
         </LinearLayout>
     </LinearLayout>
 
