@@ -179,6 +179,9 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         } else {
             if (fileContent.size > 0) {
                 String fileSize = FileUtil.formatFileSize(fileContent.size);
+                if (fileContent.type.contains("gif")) {
+                    fileSize = String.format("%s • %s", "GIF", fileSize);
+                }
                 tvFileSize.setText(fileSize);
                 tvFileSize.setVisibility(View.VISIBLE);
             } else {
