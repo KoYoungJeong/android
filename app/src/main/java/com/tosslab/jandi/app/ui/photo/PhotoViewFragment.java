@@ -83,6 +83,9 @@ public class PhotoViewFragment extends Fragment {
     @Bind(R.id.pv_photoview)
     PhotoView pvPhotoView;
 
+    @Bind(R.id.vg_no_preview)
+    ViewGroup vgNoPreview;
+
     @Bind(R.id.progress_photoview)
     CircleProgressBar progressBar;
     @Bind(R.id.tv_photoview_percentage)
@@ -444,15 +447,14 @@ public class PhotoViewFragment extends Fragment {
 
     void showError() {
         Completable.fromAction(() -> {
-            if (ivPhotoView.getVisibility() == View.VISIBLE) {
-                ivPhotoView.setImage(ImageSource.resource(R.drawable.file_noimage));
-            } else {
-                ImageLoader.loadFromResources(pvPhotoView, R.drawable.file_noimage);
-            }
+            vgNoPreview.setVisibility(View.VISIBLE);
+            pvPhotoView.setVisibility(View.GONE);
+            ivPhotoView.setVisibility(View.GONE);
         }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     public void setOnCarouselImageClickListener(
+
             CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener) {
         this.carouselImageClickListener = carouselImageClickListener;
     }
