@@ -157,7 +157,7 @@ public class IntegrationBotViewHolder implements BodyViewHolder, HighlightView {
 
         LinkifyUtil.setOnLinkClick(tvMessage);
 
-        UnreadCountUtil.getUnreadCount(teamId, roomId,
+        UnreadCountUtil.getUnreadCount(roomId,
                 link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {

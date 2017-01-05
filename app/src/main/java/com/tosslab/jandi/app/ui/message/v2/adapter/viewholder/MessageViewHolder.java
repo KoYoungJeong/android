@@ -92,7 +92,7 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
         }
         setMessage(link);
         setMessageTime(link);
-        setBadge(teamId, roomId, link);
+        setBadge(roomId, link);
 
         setMessageBackground(link);
     }
@@ -156,14 +156,14 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
         }
     }
 
-    private void setBadge(long teamId, long roomId, final ResMessages.Link link) {
-        tvMessageBadge.setTag(link);
-        UnreadCountUtil.getUnreadCount(teamId, roomId,
+    private void setBadge(long roomId, final ResMessages.Link link) {
+        tvMessageBadge.setTag(link.id);
+        UnreadCountUtil.getUnreadCount(roomId,
                 link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
-                    ResMessages.Link linkFromTag = getLinkFromTag(tvMessageBadge);
-                    if (linkFromTag != null && linkFromTag.id != link.id) {
+                    long linkId = getLinkIdFromTag(tvMessageBadge);
+                    if (linkId <= 0 || linkId != link.id) {
                         return;
                     }
 
@@ -176,13 +176,13 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
                 });
     }
 
-    private ResMessages.Link getLinkFromTag(View view) {
+    private long getLinkIdFromTag(View view) {
         if (view == null || view.getTag() == null
-                || !view.getTag().getClass().isAssignableFrom(ResMessages.Link.class)) {
-            return null;
+                || !view.getTag().getClass().isAssignableFrom(Long.class)) {
+            return -1L;
         }
 
-        return ((ResMessages.Link) view.getTag());
+        return ((Long) view.getTag());
     }
 
     @Override

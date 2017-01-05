@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -371,28 +372,55 @@ public class TopicRepository extends RealmRepository {
     public boolean updateTopic(Topic topic) {
         return execute((realm) -> {
 
-            if (topic.getAnnouncement() != null) {
-                topic.getAnnouncement().setRoomId(topic.getId());
-            }
-
             Topic savedTopic = realm.where(Topic.class).equalTo("id", topic.getId()).findFirst();
-            if (savedTopic == null) {
-                topic.setTeamId(TeamInfoLoader.getInstance().getTeamId());
-                realm.executeTransaction(realm1 -> {
-                    realm.copyToRealmOrUpdate(topic);
-                });
-            } else {
+
+            if (savedTopic != null) {
                 realm.executeTransaction(realm1 -> {
                     savedTopic.setName(topic.getName());
                     savedTopic.setStatus(topic.getStatus());
                     savedTopic.setDescription(topic.getDescription());
                     savedTopic.setIsDefault(topic.isDefault());
                     savedTopic.setAutoJoin(topic.isAutoJoin());
-                    savedTopic.setIsAnnouncement(topic.isAnnouncement());
+                    savedTopic.setAnnouncement(topic.getAnnouncement());
                     savedTopic.setLastLinkId(topic.getLastLinkId());
-                    savedTopic.setCreatorId(topic.getCreatorId());
-                    savedTopic.setDeleterId(topic.getDeleterId());
+
+                    // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
+                    List<Long> members = topic.getMembers();
+                    RealmList<RealmLong> memberIds = new RealmList<>();
+                    for (Long roomId : members) {
+                        RealmLong object = new RealmLong();
+                        object.setValue(roomId);
+                        memberIds.add(object);
+                    }
+                    topic.setMemberIds(memberIds);
                 });
+            } else {
+
+                long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+                topic.setTeamId(selectedTeamId);
+
+                // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
+                List<Long> members = topic.getMembers();
+                RealmList<RealmLong> memberIds = new RealmList<>();
+                for (Long roomId : members) {
+                    RealmLong object = new RealmLong();
+                    object.setValue(roomId);
+                    memberIds.add(object);
+                }
+                topic.setMemberIds(memberIds);
+                RealmList<Marker> markers = topic.getMarkers();
+
+                if (markers != null && !markers.isEmpty()) {
+                    for (Marker marker : markers) {
+                        marker.setRoomId(topic.getId());
+                        marker.setId(topic.getId() + "_" + marker.getMemberId());
+                    }
+                }
+
+                if (topic.getAnnouncement() != null) {
+                    topic.getAnnouncement().setRoomId(topic.getId());
+                }
+                realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
             }
 
             return true;

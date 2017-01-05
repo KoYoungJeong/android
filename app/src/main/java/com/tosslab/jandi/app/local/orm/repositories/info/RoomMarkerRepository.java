@@ -82,6 +82,20 @@ public class RoomMarkerRepository extends RealmRepository {
 
     }
 
+    public long getMarkerReadLinkId(long roomId, long memberId) {
+        return execute(realm -> {
+            Marker it = realm.where(Marker.class)
+                    .equalTo("id", roomId + "_" + memberId)
+                    .findFirst();
+            if (it != null) {
+                return it.getReadLinkId();
+            } else {
+                return -1L;
+            }
+        });
+
+    }
+
     public long getRoomMarkerCount(long roomId, long linkId) {
         return execute(realm -> realm.where(Marker.class)
                 .equalTo("roomId", roomId)
