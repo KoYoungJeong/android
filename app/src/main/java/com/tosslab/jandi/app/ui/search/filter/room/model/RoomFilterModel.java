@@ -84,9 +84,14 @@ public class RoomFilterModel {
                     .concatMap(topicRoom -> Observable.from(topicRoom.getMembers()))
                     .distinct()
                     .filter(memberId -> teamInfoLoader.isUser(memberId))
+                    .filter(memberId -> {
+                        DirectMessageRoom chat = teamInfoLoader.getChat(teamInfoLoader.getChatId(memberId));
+                        return chat != null && chat.isJoined();
+                    })
                     .map(memberId -> teamInfoLoader.getUser(memberId))
                     .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
-                    .toBlocking().firstOrDefault(new ArrayList<>());
+                    .toBlocking()
+                    .firstOrDefault(new ArrayList<>());
         }
     }
 
