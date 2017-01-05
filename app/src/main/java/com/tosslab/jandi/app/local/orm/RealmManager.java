@@ -7,12 +7,14 @@ import android.os.Process;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.BuildConfig;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.upgrade.RealmUpgradeChecker;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
 import io.realm.RealmSchema;
+import io.realm.internal.Util;
 import rx.Observable;
 
 public class RealmManager {
@@ -33,20 +36,38 @@ public class RealmManager {
         for (ActivityManager.RunningAppProcessInfo processInfo : activityManager.getRunningAppProcesses()) {
             if (Process.myPid() == processInfo.pid) {
                 if (TextUtils.equals(processInfo.processName, BuildConfig.APPLICATION_ID)) {
-                    if (JandiPreference.getRealmInitiateStamp() < 246) {
-                        // 2.5.1.6 이전 버전 사용자, 설치 후 처음 사용자를 대상으로 realm 데이터 초기화
-                        Realm.init(context);
-                        Realm.deleteRealm(new RealmConfiguration.Builder().build());
-                        JandiPreference.setRealmInitiateStamp();
+                    if (JandiPreference.getRealmInitiateStamp() < BuildConfig.VERSION_CODE) {
+                        // 신규 업데이트 사용자는 삭제하고 시작
+                        if (deleteReamAndInit()) {
+                            JandiPreference.setRealmInitiateStamp();
+                        }
+                    } else {
+                        // proccess 선언이 되어 있지 않은 것에 한해서 동작하도록 함
+                        initRealm(context);
                     }
-
-                    // proccess 선언이 되어 있지 않은 것에 한해서 동작하도록 함
-                    Realm.init(context);
-                    Realm.setDefaultConfiguration(realmConfiguration());
                 }
                 break;
             }
         }
+    }
+
+    private static void initRealm(Context context) {
+        Realm.init(context);
+        Realm.setDefaultConfiguration(realmConfiguration());
+    }
+
+    public static boolean deleteReamAndInit() {
+        try {
+            File realmFolder = JandiApplication.getContext().getFilesDir();
+            String realmFile = Realm.DEFAULT_REALM_NAME;
+            String realmPath = new File(realmFolder.getPath(), realmFile).getCanonicalPath();
+            return Util.deleteRealm(realmPath, realmFolder, realmFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            initRealm(JandiApplication.getContext());
+        }
+        return false;
     }
 
     private static RealmConfiguration realmConfiguration() {

@@ -148,7 +148,7 @@ public class JandiBotViewHolder implements BodyViewHolder {
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            UnreadCountUtil.getUnreadCount(teamId, roomId,
+            UnreadCountUtil.getUnreadCount(roomId,
                     link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(unreadCount -> {

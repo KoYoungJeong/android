@@ -34,6 +34,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
+import static com.tosslab.jandi.app.ui.members.MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER;
+import static com.tosslab.jandi.app.ui.members.MembersListActivity.TYPE_MEMBERS_LIST_TEAM;
+
 /**
  * Created by Tee on 15. x. x..
  */
@@ -69,7 +72,17 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                 .map(s -> {
                     List<ChatChooseItem> members = getChatChooseItems();
                     return getFilteredChatChooseItems(s, members);
-                })
+                }).concatMap(chatChooseItems -> Observable.from(chatChooseItems)
+                        .filter(item -> {
+                            if (view.getType() == TYPE_ASSIGN_TOPIC_OWNER) {
+                                if (TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel() != Level.Guest) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        }).toList())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(topicMembers -> {
                     view.dismissProgressWheel();
@@ -109,10 +122,10 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         long entityId = view.getEntityId();
         int type = view.getType();
         List<ChatChooseItem> members;
-        if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
+        if (type == TYPE_MEMBERS_LIST_TEAM) {
             members = memberModel.getTeamMembers();
         } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC
-                || type == MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER) {
+                || type == TYPE_ASSIGN_TOPIC_OWNER) {
             members = memberModel.getTopicMembers(entityId);
         } else {
             members = memberModel.getTeamMembers();

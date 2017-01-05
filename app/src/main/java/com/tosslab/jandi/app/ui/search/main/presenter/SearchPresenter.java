@@ -46,6 +46,8 @@ public interface SearchPresenter {
 
     void onRoomSelect();
 
+    void onOneToOneRoomClick(long memberId);
+
     interface View {
 
         void refreshSearchedAll();
@@ -62,6 +64,8 @@ public interface SearchPresenter {
 
         void showTopicInfoDialog(TopicRoom topicRoom);
 
+        void moveDirectMessage(long memberId);
+
         void showJoinRoomDialog(TopicRoom topicRoom, long linkId);
 
         void moveToPollActivity(long pollId);
@@ -75,5 +79,7 @@ public interface SearchPresenter {
         void setPricingLimitView(Boolean isLimited);
 
         void showChooseRoomDialog(boolean showAllRoom);
+
+        void showShouldOpenedUser();
     }
 }

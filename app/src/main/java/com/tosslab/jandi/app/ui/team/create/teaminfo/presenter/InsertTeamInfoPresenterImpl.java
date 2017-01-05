@@ -3,12 +3,14 @@ package com.tosslab.jandi.app.ui.team.create.teaminfo.presenter;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.InsertTeamInfoFragment;
 import com.tosslab.jandi.app.ui.team.create.teaminfo.model.InsertTeamInfoModel;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrCreateTeam;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -68,25 +70,36 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
             return;
         }
 
-        Observable.create(subscriber -> {
-            try {
-                ResValidation validation = teamInsertInfoModel.validDomain(teamDomain);
-                if (!validation.isValidate()) {
-                    subscriber.onError(new Throwable());
-                }
-                ResTeamDetailInfo newTeam = teamInsertInfoModel.createNewTeam(teamName, teamDomain);
-                long teamId = newTeam.getInviteTeam().getTeamId();
-                teamInsertInfoModel.updateEntityInfo(teamId);
-                teamInsertInfoModel.updateRank(teamId);
-                teamInsertInfoModel.updateTeamInfo(teamId);
-                TeamInfoLoader.getInstance().refresh();
-                SprinklrCreateTeam.sendLog(teamId);
-                subscriber.onNext(new Object());
-            } catch (RetrofitException e) {
-                subscriber.onError(e);
+        Observable.fromCallable(() -> {
+            ResValidation validation = teamInsertInfoModel.validDomain(teamDomain);
+            if (!validation.isValidate()) {
+                throw new Exception();
             }
-            subscriber.onCompleted();
+            ResTeamDetailInfo newTeam = teamInsertInfoModel.createNewTeam(teamName, teamDomain);
+            long teamId = newTeam.getInviteTeam().getTeamId();
+            teamInsertInfoModel.updateTeamInfo(teamId);
+            SprinklrCreateTeam.sendLog(teamId);
+
+            return teamId;
         }).subscribeOn(Schedulers.io())
+                .switchMap(teamId -> Observable.fromCallable(() -> {
+                    try {
+                        teamInsertInfoModel.updateEntityInfo(teamId);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                        if (e.getStatusCode() == 403) {
+                            ResAccessToken resAccessToken = teamInsertInfoModel.refreshToken();
+                            TokenUtil.saveTokenInfoByRefresh(resAccessToken);
+                            teamInsertInfoModel.updateEntityInfo(teamId);
+                        } else {
+                            throw e;
+                        }
+                    }
+                    teamInsertInfoModel.updateRank(teamId);
+                    TeamInfoLoader.getInstance().refresh();
+
+                    return teamId;
+                }))
                 .doOnSubscribe(() -> view.showProgressWheel())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -104,9 +117,12 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                         SprinklrCreateTeam.sendFailLog(e.getResponseCode());
                         if (errorCode >= 500) {
                             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
-                            return;
+                        } else if (errorCode == 403) {
+                            // 서버에서 딜레이로 인해 잘못된 처리로 판단하고 AccountHome 으로 전환
+                            view.moveTeamListActivity();
+                        } else {
+                            view.failCreateTeam(errorCode);
                         }
-                        view.failCreateTeam(errorCode);
                     } else {
                         view.showTeamInvalidOrSameDomainError();
                     }
