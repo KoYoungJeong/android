@@ -29,6 +29,7 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
     private TextView tvMentionTopicName;
     private View vSemiDivider;
     private View vFullDivider;
+    private View vProfileCover;
 
     private StarredMessageViewHolder(View itemView) {
         super(itemView);
@@ -39,6 +40,7 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         tvDate = (TextView) itemView.findViewById(R.id.tv_starred_date);
         vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
         vFullDivider = itemView.findViewById(R.id.v_full_divider);
+        vProfileCover = itemView.findViewById(R.id.v_starred_profile_cover);
 
     }
 
@@ -51,7 +53,7 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
     @Override
     public void onBindView(StarredMessage starredMessage) {
         Member member = TeamInfoLoader.getInstance().getMember(starredMessage.getMessage().writerId);
-        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
+        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover)
                 .bind(member);
         long roomId = starredMessage.getRoom().id;
         String roomName = getRoomName(roomId);
@@ -82,10 +84,10 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         String date = DateTransformator.getTimeString(starredMessage.getMessage().createdAt);
         tvDate.setText(date);
 
-        if(starredMessage.hasSemiDivider()){
+        if (starredMessage.hasSemiDivider()) {
             vSemiDivider.setVisibility(View.VISIBLE);
             vFullDivider.setVisibility(View.GONE);
-        }else{
+        } else {
             vFullDivider.setVisibility(View.VISIBLE);
             vSemiDivider.setVisibility(View.GONE);
         }

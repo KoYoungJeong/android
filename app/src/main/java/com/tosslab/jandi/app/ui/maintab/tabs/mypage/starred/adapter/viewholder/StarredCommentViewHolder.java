@@ -32,6 +32,7 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
     private TextView tvRoomName;
     private View vSemiDivider;
     private View vFullDivider;
+    private View vProfileCover;
 
     private StarredCommentViewHolder(View itemView) {
         super(itemView);
@@ -45,6 +46,7 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
         tvRoomName = (TextView) itemView.findViewById(R.id.tv_room_name);
         vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
         vFullDivider = itemView.findViewById(R.id.v_full_divider);
+        vProfileCover = itemView.findViewById(R.id.v_starred_profile_cover);
     }
 
     public static StarredCommentViewHolder newInstance(ViewGroup parent) {
@@ -56,7 +58,7 @@ public class StarredCommentViewHolder extends BaseViewHolder<StarredMessage> {
     @Override
     public void onBindView(StarredMessage starredMessage) {
         Member member = TeamInfoLoader.getInstance().getMember(starredMessage.getMessage().writerId);
-        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile)
+        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover)
                 .bind(member);
 
         tvFileName.setText(starredMessage.getMessage().feedbackTitle);
