@@ -34,7 +34,7 @@ public class SprinklerEvents {
 
     public static final Event InviteTeam = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e15",
-            new String[]{PropertyKey.MemberCount, PropertyKey.TeamId, PropertyKey.InvitationCategory});
+            new String[]{PropertyKey.MemberCount, PropertyKey.TeamId, PropertyKey.RankdId});
 
     public static final Event ChangeAccountName = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e16",

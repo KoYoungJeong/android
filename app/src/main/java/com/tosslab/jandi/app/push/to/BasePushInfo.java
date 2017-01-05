@@ -31,6 +31,8 @@ public class BasePushInfo {
     private int badgeCount;
     @JsonProperty("account_id")
     private String accountId;
+    @JsonProperty("account_uuid")
+    private String accountUuid;
     @JsonProperty("room_id")
     private long roomId;
     @JsonProperty("is_ringing")
@@ -115,5 +117,13 @@ public class BasePushInfo {
     public BasePushInfo setSentAt(Date sentAt) {
         this.sentAt = sentAt;
         return this;
+    }
+
+    public String getAccountUuid() {
+        return accountUuid;
+    }
+
+    public void setAccountUuid(String accountUuid) {
+        this.accountUuid = accountUuid;
     }
 }

@@ -131,7 +131,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
 
         UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, TeamInfoLoader.getInstance().getMyId())
+                roomId, link.id, fromEntityId, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
 

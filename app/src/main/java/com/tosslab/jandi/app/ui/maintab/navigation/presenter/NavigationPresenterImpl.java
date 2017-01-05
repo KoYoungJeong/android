@@ -188,8 +188,14 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .subscribe(o -> {
                     navigationView.dismissProgressWheel();
                     navigationView.moveToSelectTeam();
-                }, error -> {
+                }, t -> {
                     navigationView.dismissProgressWheel();
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getStatusCode() == 403) {
+                            navigationView.moveTeamList();
+                        }
+                    }
                 });
     }
 
@@ -253,8 +259,15 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .subscribe(o -> {
                     navigationView.dismissProgressWheel();
                     navigationView.moveToSelectTeam();
-                }, error -> {
+                }, t -> {
                     navigationView.dismissProgressWheel();
+
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getStatusCode() == 403) {
+                            navigationView.moveTeamList();
+                        }
+                    }
                 });
     }
 

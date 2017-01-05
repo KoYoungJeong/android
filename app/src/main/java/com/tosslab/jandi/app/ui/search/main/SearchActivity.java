@@ -261,7 +261,7 @@ public class SearchActivity extends BaseAppCompatActivity
 
     private void initAdapterViewModel() {
         searchAdapterViewModel.setOnCheckChangeListener(isChecked -> {
-            onCheckUnjoinTopic(isChecked);
+            searchPresenter.setChangeIsShowUnjoinedTopic(isChecked);
             if (isChecked) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UniversalSearch,
                         AnalyticsValue.Action.IncludeNotJoinedTopics, AnalyticsValue.Label.On);
@@ -303,7 +303,7 @@ public class SearchActivity extends BaseAppCompatActivity
         LinearLayoutManager layoutManager = (LinearLayoutManager) lvSearchResult.getLayoutManager();
 
         searchAdapterViewModel.setOnClickOneToOneRoomListener(memberId -> {
-            moveDirectMessage(memberId);
+            searchPresenter.onOneToOneRoomClick(memberId);
             AnalyticsUtil.sendEvent(screenMode,
                     AnalyticsValue.Action.ChooseDm);
         });
@@ -366,10 +366,6 @@ public class SearchActivity extends BaseAppCompatActivity
     @Override
     public void refreshHistory() {
         searchAdapterViewModel.refreshHistory();
-    }
-
-    public void onCheckUnjoinTopic(boolean isChecked) {
-        searchPresenter.setChangeIsShowUnjoinedTopic(isChecked);
     }
 
     @Override
@@ -562,6 +558,15 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     @Override
+    public void showShouldOpenedUser() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.topic_search_1on1_unable)
+                .setPositiveButton(R.string.jandi_confirm,null)
+                .create()
+                .show();
+    }
+
+    @Override
     protected void onDestroy() {
         searchPresenter.onDestroy();
         super.onDestroy();
@@ -578,7 +583,8 @@ public class SearchActivity extends BaseAppCompatActivity
         searchQueryAdapter.addAll(keywords);
     }
 
-    private void moveDirectMessage(long memberId) {
+    @Override
+    public void moveDirectMessage(long memberId) {
         startActivity(Henson.with(this)
                 .gotoMessageListV2Activity()
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)

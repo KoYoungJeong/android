@@ -54,7 +54,9 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
                 return AllMemberViewHolder.newInstance(parent);
             default:
             case VIEW_TYPE_MEMBER:
-                return MemberViewHolder.createForUser(parent);
+                MemberViewHolder viewHolder = MemberViewHolder.createForUser(parent);
+                viewHolder.setIsTeamMemberList(true);
+                return viewHolder;
         }
     }
 

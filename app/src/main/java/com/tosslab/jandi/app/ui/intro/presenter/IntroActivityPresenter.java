@@ -2,13 +2,14 @@ package com.tosslab.jandi.app.ui.intro.presenter;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.local.orm.RealmManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -20,8 +21,10 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import javax.inject.Inject;
 
+import io.realm.exceptions.RealmError;
+import io.realm.exceptions.RealmException;
+import io.realm.exceptions.RealmFileException;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -59,16 +62,7 @@ public class IntroActivityPresenter {
             return;
         }
 
-        Observable.create((Subscriber<? super ResConfig> subscriber) -> {
-            try {
-                subscriber.onNext(model.getConfigInfo());
-            } catch (RetrofitException e) {
-                subscriber.onError(e);
-            }
-
-            subscriber.onCompleted();
-
-        })
+        Observable.fromCallable(() -> model.getConfigInfo())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(config -> {
@@ -194,6 +188,16 @@ public class IntroActivityPresenter {
                         view.showDialogNoRank();
                     }
                 }, t -> {
+                    t.printStackTrace();
+                    if (t instanceof RealmError
+                            || t instanceof RealmException
+                            || t instanceof RealmFileException) {
+                        Crashlytics.logException(t);
+                        RealmManager.deleteReamAndInit();
+                        view.restartIntroActivity();
+                    } else {
+                        view.showDialogNoRank();
+                    }
                 });
 
         // 팀 정보가 없거나 초대에 의해 시작한 경우
@@ -220,6 +224,8 @@ public class IntroActivityPresenter {
         void startSocketService();
 
         void showDialogNoRank();
+
+        void restartIntroActivity();
     }
 
 }

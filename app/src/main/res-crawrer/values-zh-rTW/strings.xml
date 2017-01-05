@@ -100,7 +100,7 @@
 	<string name="err_team_creation_failed">"電子郵件無法送出"</string>
 	<string name="err_unshare">"檔案無法取消分享"</string>
 	<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s"</string>
-	<string name="exclamation_mark">"?"</string>
+	<string name="exclamation_mark">"!"</string>
 	<string name="fail_to_create_team">"团队未完成建立"</string>
 	<string name="file_detail_nopreview">"此檔案無法預覽"</string>
 	<string name="file_upload_comment">"留言（非必要）"</string>
@@ -118,7 +118,7 @@
 	<string name="invite_email_alreadyinvited">"此電子郵箱已被邀請至此團隊"</string>
 	<string name="invite_email_blocked">"此電子郵箱已被此團隊封鎖"</string>
 	<string name="invite_email_cancelinvite">"你要取消此邀請嗎？"</string>
-	<string name="invite_email_error_max10">""</string>
+	<string name="invite_email_error_max10">"邀請電郵一次最多可寄送 10 封"</string>
 	<string name="invite_email_error_partially">"部分邀請無法順利寄送。請確認後再試"</string>
 	<string name="invite_email_error_unknown">"出現未知的錯誤，請稍等"</string>
 	<string name="invite_email_failedtryagain">"郵件寄送失敗，再試一次"</string>
@@ -823,8 +823,14 @@
 	<string name="topic_remove_associatewithonetopic_title">"自此議題剔除，將會封鎖此準成員"</string>
 	<string name="topic_room_deletetopicconfirm">"此議題已被刪除"</string>
 	<string name="topic_room_selectallmembers">"選擇全部"</string>
+	<string name="topic_search_1on1_unable">""</string>
 	<string name="topic_topicchat_mentionall">"@all (議題成員)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"議題已從 %s 中移除"</string>
+	<string name="topic_viewonly_alert_body">"僅有管理員權限的成員可發送訊息"</string>
+	<string name="topic_viewonly_alert_title">"此討論只能閱覽"</string>
+	<string name="topic_viewonly_label">"僅限閱覽"</string>
+	<string name="topic_viewonly_set_body">"選擇設定，限定有管理員權限的成員才可發送訊息"</string>
+	<string name="topic_viewonly_set_title">"設定發送權限"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"所有的團隊成員已加入此議題"</string>
 	<string name="warn_messages_empty">"現在沒有訊息"</string>
