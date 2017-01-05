@@ -461,9 +461,10 @@ public class JandiSocketServiceModel {
             SocketTopicUpdatedEvent event =
                     SocketModelExtractor.getObject(object, SocketTopicUpdatedEvent.class);
             saveEvent(event);
-            TopicRepository.getInstance().updateTopic(event.getData().getTopic());
+            Topic topic = event.getData().getTopic();
+            TopicRepository.getInstance().updateTopic(topic);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
-            postEvent(new TopicInfoUpdateEvent(event.getData().getTopic().getId()));
+            postEvent(new TopicInfoUpdateEvent(topic.getId()));
             postEvent(new RetrieveTopicListEvent());
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -505,10 +506,11 @@ public class JandiSocketServiceModel {
                 for (Long memberId : chat.getMembers()) {
                     Marker marker = new Marker();
                     marker.setRoomId(chat.getId());
-                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : -1);
+                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : 0);
                     marker.setMemberId(memberId);
                     markers.add(marker);
                 }
+                chat.setMarkers(markers);
             } else {
                 for (Marker marker : chat.getMarkers()) {
                     marker.setRoomId(chat.getId());

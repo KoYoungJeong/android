@@ -164,7 +164,7 @@ public class DummyMessageViewHolder implements BodyViewHolder {
 
     private void setUnreadCount(long teamId, long roomId, final ResMessages.Link link) {
         tvUnreadCount.setTag(link);
-        UnreadCountUtil.getUnreadCount(teamId, roomId,
+        UnreadCountUtil.getUnreadCount(roomId,
                 link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(unreadCount -> {
