@@ -12,6 +12,8 @@ public interface SignUpPresenter {
 
     void trySignUp(String name, String email, String password);
 
+    void onInitEmailTypo();
+
     interface View {
 
         void showProgressWheel();
@@ -37,6 +39,8 @@ public interface SignUpPresenter {
         void showErrorDuplicationEmail();
 
         void startSignUpRequestVerifyActivity();
+
+        void showErrorEmailTypo();
     }
 
 }
