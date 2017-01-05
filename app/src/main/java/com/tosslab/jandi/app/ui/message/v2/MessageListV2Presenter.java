@@ -668,6 +668,15 @@ public class MessageListV2Presenter {
             }
             return Observable.empty();
         } else {
+
+            if (currentMessageState.isFirstLoadNewMessage()) {
+                currentMessageState.setIsFirstLoadNewMessage(false);
+                long lastReadLinkId = messagePointer.getLastReadLinkId();
+                if (links.get(links.size() - 1).id <= lastReadLinkId) {
+                    messagePointer.setLastReadLinkId(-1);
+                }
+            }
+
             return Observable.just(links);
         }
     }

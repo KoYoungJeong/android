@@ -462,7 +462,7 @@ public class TopicRepository extends RealmRepository {
         });
     }
 
-    public boolean updateReadId(long roomId, long linkId) {
+    public boolean updateReadLinkId(long roomId, long linkId) {
         return execute((realm) -> {
 
             Topic topic = realm.where(Topic.class)

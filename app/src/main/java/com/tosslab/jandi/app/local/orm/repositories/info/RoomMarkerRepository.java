@@ -24,7 +24,11 @@ public class RoomMarkerRepository extends RealmRepository {
 
             Marker marker = realm.where(Marker.class).equalTo("id", roomId + "_" + memberId).findFirst();
             if (marker != null) {
-                realm.executeTransaction(realm1 -> marker.setReadLinkId(lastLinkId));
+                realm.executeTransaction(realm1 -> {
+                    if (marker.getReadLinkId() < lastLinkId) {
+                        marker.setReadLinkId(lastLinkId);
+                    }
+                });
             } else {
 
                 realm.executeTransaction(realm1 -> {
@@ -33,8 +37,15 @@ public class RoomMarkerRepository extends RealmRepository {
                     marker2.setMemberId(memberId);
                     marker2.setRoomId(roomId);
 
-                    Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
-                    Topic topic = realm.where(Topic.class).equalTo("id", roomId).findFirst();
+                    Chat chat = realm.where(Chat.class)
+                            .equalTo("id", roomId)
+                            .equalTo("memberIds.value", memberId)
+                            .findFirst();
+
+                    Topic topic = realm.where(Topic.class)
+                            .equalTo("id", roomId)
+                            .equalTo("memberIds.value", memberId)
+                            .findFirst();
 
                     if (chat != null) {
                         if (chat.getMarkers() != null) {
