@@ -27,7 +27,11 @@ public class ProgressRequestBody extends RequestBody {
     @Override
     public MediaType contentType() {
         String contentType = URLConnection.guessContentTypeFromName(file.getName());
-        return MediaType.parse(contentType);
+        if (contentType != null) {
+            return MediaType.parse(contentType);
+        } else {
+            return null;
+        }
     }
 
     @Override
