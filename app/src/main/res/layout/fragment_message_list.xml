@@ -278,6 +278,42 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/vg_messages_read_only"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_alignBottom="@+id/vg_messages_input"
+            android:layout_alignWithParentIfMissing="false"
+            android:background="@drawable/bg_message_read_only"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:visibility="visible">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/topic_viewonly_alert_title"
+                android:textColor="@color/rgb_333333"
+                android:textSize="@dimen/jandi_text_size_13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/topic_viewonly_alert_body"
+                android:textColor="@color/rgb_333333"
+                android:textSize="@dimen/jandi_text_size_small" />
+
+
+        </LinearLayout>
+
+
         <RelativeLayout
             android:id="@+id/vg_messages_go_to_latest"
             android:layout_width="match_parent"

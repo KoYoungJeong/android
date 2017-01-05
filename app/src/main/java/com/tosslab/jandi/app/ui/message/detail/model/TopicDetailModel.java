@@ -5,10 +5,13 @@ import android.preference.PreferenceManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 
@@ -23,12 +26,19 @@ import rx.Observable;
 public class TopicDetailModel {
 
     private EntityClientManager entityClientManager;
+    private final Lazy<ChannelApi> channelApi;
+    private final Lazy<GroupApi> groupApi;
     private Lazy<RoomsApi> roomsApi;
 
     @Inject
-    public TopicDetailModel(Lazy<RoomsApi> roomsApi, EntityClientManager entityClientManager) {
+    public TopicDetailModel(Lazy<RoomsApi> roomsApi,
+                            EntityClientManager entityClientManager,
+                            Lazy<ChannelApi> channelApi,
+                            Lazy<GroupApi> groupApi) {
         this.roomsApi = roomsApi;
         this.entityClientManager = entityClientManager;
+        this.channelApi = channelApi;
+        this.groupApi = groupApi;
     }
 
     public TopicRoom getTopic(long entityId) {
@@ -104,9 +114,13 @@ public class TopicDetailModel {
     }
 
     public boolean isTeamOwner() {
-        return TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).isTeamOwner();
+        return TeamInfoLoader.getInstance().getMyLevel() == Level.Owner;
     }
 
+
+    public boolean isTeamAdmin() {
+        return TeamInfoLoader.getInstance().getMyLevel() == Level.Admin;
+    }
 
     public int getEnabledTeamMemberCount() {
         List<User> userList = TeamInfoLoader.getInstance().getUserList();
@@ -147,6 +161,19 @@ public class TopicDetailModel {
             entityClientManager.enableFavorite(entityId);
         } else {
             entityClientManager.disableFavorite(entityId);
+        }
+    }
+
+    public boolean isReadOnly(long entityId) {
+        return TeamInfoLoader.getInstance().getRoom(entityId).isReadOnly();
+    }
+
+    public void updateReadOnly(long entityId, boolean readOnly) throws RetrofitException {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        if (TeamInfoLoader.getInstance().isPublicTopic(entityId)) {
+            channelApi.get().modifyReadOnly(teamId, entityId, readOnly);
+        } else {
+            groupApi.get().modifyReadOnly(teamId, entityId, readOnly);
         }
     }
 }

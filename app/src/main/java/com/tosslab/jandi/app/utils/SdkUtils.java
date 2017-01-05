@@ -17,6 +17,11 @@ public class SdkUtils {
         return Build.VERSION.SDK_INT >= 23;
     }
 
+    public static boolean isJellyBeanMR1() {
+//         Build.VERSION_CODES.JELLY_BEAN_MR1 = 17
+        return Build.VERSION.SDK_INT >= 17;
+    }
+
     public static boolean hasPermission(String permission) {
         if (isMarshmallow()) {
             return ContextCompat.checkSelfPermission(JandiApplication.getContext(), permission) == PackageManager.PERMISSION_GRANTED;

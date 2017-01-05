@@ -44,6 +44,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     public static final int REQUEST_CODE_VOICE = 8812;
 
     public static final String KEY_IS_TOPIC = "isTopic";
+
     public static final String KEY_SELECTED_ROOM_ID = "selectedRoomId";
 
     public static final String KEY_FILTERED_ROOM_ID = "roomId";
@@ -53,6 +54,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     public static final String KEY_IS_ONLY_SHOW_TOPIC_ROOM = "isOnlyTopicMode";
 
     public static final String KEY_IS_SHOW_DEFAULT_TOPIC = "isShowDefaultTopic";
+
+    private static final String KEY_TEAM_ID = "teamId";
 
     @Inject
     InputMethodManager inputMethodManager;
@@ -92,6 +95,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     private boolean isShowDefaultTopic = true;
 
+    private boolean isOnlyTalkedRooms = false;
+
     public static void startForResultWithDirectMessageId(Activity activity, long selectedRoomId, int requestCode) {
         Intent intent = new Intent(activity, RoomFilterActivity.class);
         intent.putExtra(KEY_IS_TOPIC, false);
@@ -106,10 +111,14 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void startForResultForInvitation(Activity activity, int requestCode) {
+    public static void startForResultWithTeamId(Activity activity, long teamId, int requestCode) {
         Intent intent = new Intent(activity, RoomFilterActivity.class);
-        intent.putExtra(KEY_IS_TOPIC, false);
-        intent.putExtra(KEY_SELECTED_ROOM_ID, -1L);
+        intent.putExtra(KEY_TEAM_ID, teamId);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void startForResultForAssociateInvitation(Activity activity, int requestCode) {
+        Intent intent = new Intent(activity, RoomFilterActivity.class);
         intent.putExtra(KEY_IS_ONLY_SHOW_TOPIC_ROOM, true);
         intent.putExtra(KEY_IS_SHOW_DEFAULT_TOPIC, false);
         activity.startActivityForResult(intent, requestCode);
@@ -122,8 +131,10 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_filter);
 
-        RoomFilterAdapter roomFilterAdapter = new RoomFilterAdapter();
-        injectComponent(roomFilterAdapter);
+        long teamId = getIntent().getLongExtra(KEY_TEAM_ID, -1);
+
+        RoomFilterAdapter roomFilterAdapter = new RoomFilterAdapter(teamId);
+        injectComponent(roomFilterAdapter, teamId);
 
         ButterKnife.bind(this);
 
@@ -185,9 +196,9 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         });
     }
 
-    private void injectComponent(RoomFilterAdapter roomFilterAdapter) {
+    private void injectComponent(RoomFilterAdapter roomFilterAdapter, long teamId) {
         DaggerRoomFilterComponent.builder()
-                .roomFilterModule(new RoomFilterModule(roomFilterAdapter, this))
+                .roomFilterModule(new RoomFilterModule(roomFilterAdapter, this, teamId))
                 .build()
                 .inject(this);
     }

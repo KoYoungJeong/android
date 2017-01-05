@@ -75,12 +75,12 @@ import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
 import com.tosslab.jandi.app.ui.filedetail.adapter.FileDetailAdapter;
 import com.tosslab.jandi.app.ui.filedetail.dagger.DaggerFileDetailComponent;
 import com.tosslab.jandi.app.ui.filedetail.dagger.FileDetailModule;
-import com.tosslab.jandi.app.ui.filedetail.views.FileShareActivity;
 import com.tosslab.jandi.app.ui.filedetail.views.FileSharedEntityChooseActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -514,16 +514,43 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
         List<FileDetailAdapter.Row<?>> rows = new ArrayList<>();
         rows.add(new FileDetailAdapter.Row<>(null, FileDetailAdapter.VIEW_TYPE_COMMENT_DIVIDER));
-        Observable.from(fileComments)
-                .subscribe(commentMessage -> {
-                    boolean isSticker = !(commentMessage instanceof ResMessages.CommentMessage);
-                    int viewType = isSticker
-                            ? FileDetailAdapter.VIEW_TYPE_STICKER
-                            : FileDetailAdapter.VIEW_TYPE_COMMENT;
-                    rows.add(new FileDetailAdapter.Row<>(commentMessage, viewType));
-                });
+        Observable.range(0, fileComments.size())
+                .map(index -> {
+                    ResMessages.OriginalMessage current = fileComments.get(index);
+                    boolean textComment = current instanceof ResMessages.CommentMessage;
+
+                    boolean profile = true;
+                    ResMessages.OriginalMessage before = null;
+                    if (index > 0) {
+                        before = fileComments.get(index - 1);
+                        profile = current.writerId != before.writerId;
+                    }
+
+                    int viewType = getCommentViewType(textComment, profile);
+                    return new FileDetailAdapter.Row<>(current, viewType);
+                })
+                .collect(() -> rows, List::add)
+                .subscribe();
 
         adapter.addRows(rows);
+    }
+
+    private int getCommentViewType(boolean textComment, boolean profile) {
+        int viewType;
+        if (textComment) {
+            if (profile) {
+                viewType = FileDetailAdapter.VIEW_TYPE_COMMENT;
+            } else {
+                viewType = FileDetailAdapter.VIEW_TYPE_COMMENT_NO_PROFILE;
+            }
+        } else {
+            if (profile) {
+                viewType = FileDetailAdapter.VIEW_TYPE_STICKER;
+            } else {
+                viewType = FileDetailAdapter.VIEW_TYPE_STICKER_NO_PROFILE;
+            }
+        }
+        return viewType;
     }
 
     @Override
@@ -944,7 +971,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
                         .filter(position -> position >= 0)
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(position -> adapter.remove(position), Throwable::printStackTrace, () -> {
+                        .subscribe(this::removeComment, Throwable::printStackTrace, () -> {
                             adapter.notifyDataSetChanged();
                         });
             }
@@ -1167,10 +1194,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     void share() {
-        startActivityForResult(Henson.with(this)
-                .gotoFileShareActivity()
-                .fileId(fileId)
-                .build(), REQUEST_CODE_SHARE);
+        RoomFilterActivity.startForResultWithTopicId(this, -1, REQUEST_CODE_SHARE);
         sendAnalyticsEvent(AnalyticsValue.Action.FileSubMenu_Share);
     }
 
@@ -1370,17 +1394,26 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     void onShareResult(int resultCode, Intent data) {
         if (resultCode != RESULT_OK
-                || data == null
-                || !data.hasExtra(FileShareActivity.KEY_ENTITY_ID)) {
+                || data == null) {
             return;
         }
 
+        boolean isTopic = data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, true);
+
         ResMessages.FileMessage fileMessage = getFileMessageFromAdapter();
+
         if (fileMessage == null) {
             return;
         }
 
-        long entityId = data.getLongExtra(FileShareActivity.KEY_ENTITY_ID, -1);
+        long entityId = -1;
+
+        if (isTopic) {
+            entityId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1);
+        } else {
+            entityId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_MEMBER_ID, -1);
+        }
+
         fileDetailPresenter.onShareAction(entityId, fileId);
     }
 
@@ -1453,7 +1486,49 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void removeComment(int position) {
+        ResMessages.OriginalMessage before = null;
+        if (position > 0) {
+            Object obj = adapter.getItem(position - 1);
+            if (obj instanceof ResMessages.CommentMessage
+                    || obj instanceof ResMessages.CommentStickerMessage) {
+                before = (ResMessages.OriginalMessage) obj;
+            }
+        }
+
+        ResMessages.OriginalMessage after = null;
+        if (position < adapter.getItemCount() - 1) {
+            Object obj = adapter.getItem(position + 1);
+            if (obj instanceof ResMessages.CommentMessage
+                    || obj instanceof ResMessages.CommentStickerMessage) {
+                after = (ResMessages.OriginalMessage) obj;
+            }
+        }
+
         adapter.remove(position);
+
+        if (after != null) {
+            int commentViewType;
+            if (before == null) {
+
+                boolean textComment = after instanceof ResMessages.CommentMessage;
+                commentViewType = getCommentViewType(textComment, true);
+
+            } else {
+
+                boolean textComment = after instanceof ResMessages.CommentMessage;
+
+                boolean profile = true;
+                if (position > 0) {
+                    profile = after.writerId != before.writerId;
+                }
+
+                commentViewType = getCommentViewType(textComment, profile);
+            }
+            adapter.setRow(position, new FileDetailAdapter.Row<>(after, commentViewType));
+
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     @Override
@@ -1463,11 +1538,26 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void addComment(int adapterPosition, ResMessages.OriginalMessage comment) {
-        boolean isSticker = !(comment instanceof ResMessages.CommentMessage);
-        int viewType = isSticker
-                ? FileDetailAdapter.VIEW_TYPE_STICKER
-                : FileDetailAdapter.VIEW_TYPE_COMMENT;
+        boolean sticker = !(comment instanceof ResMessages.CommentMessage);
+        boolean profile = true;
+        if (adapter.getItemCount() > 0) {
+            ResMessages.OriginalMessage before = getItemIfCommentType(adapter.getItem(adapterPosition - 1));
+            if (before != null) {
+                profile = before.writerId != comment.writerId;
+            }
+        }
+        int viewType = getCommentViewType(!sticker, profile);
         adapter.addRow(adapterPosition, new FileDetailAdapter.Row<>(comment, viewType));
+    }
+
+    @Nullable
+    private ResMessages.OriginalMessage getItemIfCommentType(Object item) {
+        ResMessages.OriginalMessage message = null;
+        if (item instanceof ResMessages.CommentMessage
+                || item instanceof ResMessages.CommentStickerMessage) {
+            message = (ResMessages.OriginalMessage) item;
+        }
+        return message;
     }
 
     @Override

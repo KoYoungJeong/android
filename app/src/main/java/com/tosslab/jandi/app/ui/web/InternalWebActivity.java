@@ -25,11 +25,10 @@ import android.webkit.WebViewClient;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.ui.web.presenter.InternalWebPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -44,6 +43,7 @@ import de.greenrobot.event.EventBus;
 public class InternalWebActivity extends BaseAppCompatActivity implements InternalWebPresenter.View {
 
     public static final int REQ_PAGE_ERROR = 0x00;
+    public static final int REQ_SHARE = 0x01;
     @InjectExtra
     String url;
     @Nullable
@@ -158,11 +158,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     }
 
     public void onShareToTopicOptionSelect() {
-        long teamId = TeamInfoLoader.getInstance().getTeamId();
-        startActivity(Henson                .with(this)
-                .gotoShareSelectRoomActivity()
-                .teamId(teamId)
-                .build());
+        RoomFilterActivity.startForResultWithTopicId(this, -1, REQ_SHARE);
     }
 
     public void onCopyLinkOptionSelect() {
@@ -350,6 +346,22 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_PAGE_ERROR) {
             onPageErrorResult(resultCode);
+        } else if (requestCode == REQ_SHARE) {
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+
+            boolean isTopic = data.getBooleanExtra(RoomFilterActivity.KEY_IS_TOPIC, false);
+
+            long roomId = -1;
+            if (isTopic) {
+                roomId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_ROOM_ID, -1);
+            } else {
+                roomId = data.getLongExtra(RoomFilterActivity.KEY_FILTERED_MEMBER_ID, -1);
+            }
+            ShareSelectRoomEvent event = new ShareSelectRoomEvent();
+            event.setRoomId(roomId);
+            EventBus.getDefault().post(event);
         }
     }
 

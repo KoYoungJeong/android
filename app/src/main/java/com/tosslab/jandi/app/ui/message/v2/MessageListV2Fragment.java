@@ -269,8 +269,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Bind(R.id.vg_messages_input)
     View vgMessageInput;
 
-    @Bind(R.id.vg_messages_go_to_latest)
-    View vgMoveToLatest;
+    @Bind(R.id.vg_messages_read_only)
+    View vgReadOnly;
     @Bind(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
     @Bind(R.id.layout_messages_empty)
@@ -2043,6 +2043,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void updateRecyclerViewInfo() {
         messageRecyclerViewManager.updateFirstVisibleItem();
         messageRecyclerViewManager.updateLastVisibleItem();
+    }
+
+    @Override
+    public void showReadOnly(boolean readOnly) {
+        vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
+        if (readOnly) {
+            vgReadOnly.setOnClickListener(v -> { });
+        } else {
+            vgReadOnly.setOnClickListener(null);
+        }
     }
 
     void showToast(String message, boolean isError) {

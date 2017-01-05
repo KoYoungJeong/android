@@ -9,6 +9,6 @@ import android.view.View;
 public class TopicJoinButtonViewHolder extends TopicItemViewHolder {
 
     public TopicJoinButtonViewHolder(View itemView) {
-        super(itemView);
+        super(itemView, false);
     }
 }

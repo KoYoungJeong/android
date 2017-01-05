@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -34,6 +33,7 @@ import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
+import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareAdapterDataView;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
@@ -66,8 +66,8 @@ import rx.functions.Func0;
 public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share {
 
     private static final int REQ_SELECT_TEAM = 1001;
-    private static final int REQ_SELECT_ROOM = 1002;
     private static final String EXTRA_URIS = "uris";
+
     @Inject
     MultiSharePresenter multiSharePresenter;
 
@@ -211,10 +211,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void callRoomSelector(long teamId) {
-        startActivity(Henson.with(getActivity())
-                .gotoShareSelectRoomActivity()
-                .teamId(teamId)
-                .build());
+        RoomFilterActivity.startForResultWithTeamId(getActivity(), teamId,
+                MainShareActivity.REQ_SELECT_ROOM);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TopicSelect);
     }
 
@@ -285,7 +283,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void moveRoom(long teamId, long roomId) {
-
         Completable.fromAction(() -> {
             if (getActivity() == null) {
                 return;

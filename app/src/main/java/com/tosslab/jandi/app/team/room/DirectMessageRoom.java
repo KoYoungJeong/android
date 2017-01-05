@@ -75,6 +75,11 @@ public class DirectMessageRoom implements Room {
     }
 
     @Override
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    @Override
     public Collection<Marker> getMarkers() {
         return chat.getMarkers();
     }

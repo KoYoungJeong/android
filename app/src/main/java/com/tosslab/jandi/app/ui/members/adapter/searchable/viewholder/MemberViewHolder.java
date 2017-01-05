@@ -36,11 +36,11 @@ import de.greenrobot.event.EventBus;
 public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
     private final int teamOwnerPaddingTop;
+    protected long teamId = -1;
     @Bind(R.id.iv_profile)
     ImageView ivProfile;
     @Bind(R.id.iv_favorite)
     ImageView ivFavorite;
-
     @Bind(R.id.vg_content)
     ViewGroup vgContent;
     @Bind(R.id.vg_user_name)
@@ -71,7 +71,6 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     View vHalfDivider;
     @Bind(R.id.v_full_divider)
     View vFullDivider;
-
     private boolean isTeamMemberList = false;
     private boolean isKickMode = false;
     private boolean isSelectMode = false;
@@ -81,6 +80,12 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         super(itemView);
         ButterKnife.bind(this, itemView);
         teamOwnerPaddingTop = vgAuthorityBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
+    }
+
+    public static MemberViewHolder createForUserWithTeamId(ViewGroup parent, long teamId) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
+        return new UserViewHolder(itemView, teamId);
     }
 
     public static MemberViewHolder createForUser(ViewGroup parent) {
@@ -137,7 +142,13 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
         setUserInfo(item);
 
-        long myId = TeamInfoLoader.getInstance().getMyId();
+        long myId = -1;
+
+        if (teamId == -1) {
+            myId = TeamInfoLoader.getInstance().getMyId();
+        } else {
+            myId = TeamInfoLoader.getInstance(teamId).getMyId();
+        }
 
         if (isKickMode && item.getEntityId() != myId && !item.isBot()) {
             ivUserKick.setVisibility(View.VISIBLE);
@@ -257,7 +268,13 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             tvAuthorityBadge.setText(JandiApplication.getContext()
                     .getString(R.string.jandi_topic_owner));
         } else {
-            Level level = TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel();
+            Level level;
+            if (teamId == -1) {
+                level = TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel();
+            } else {
+                level = TeamInfoLoader.getInstance(teamId).getUser(item.getEntityId()).getLevel();
+            }
+
             AccessLevelUtil.setTextOfLevel(level, tvAuthorityBadge);
         }
 
@@ -320,6 +337,11 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
         UserViewHolder(View itemView) {
             super(itemView);
+        }
+
+        UserViewHolder(View itemView, long teamId) {
+            super(itemView);
+            this.teamId = teamId;
         }
 
         @Override

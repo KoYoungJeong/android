@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -470,6 +471,21 @@ public class TopicRepository extends RealmRepository {
                     .findFirst();
             if (topic != null && topic.getReadLinkId() < linkId) {
                 realm.executeTransaction(realm1 -> topic.setReadLinkId(linkId));
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    public boolean updateReadOnly(long roomId, boolean readOnly) {
+        return execute(realm -> {
+            Topic topic = realm.where(Topic.class)
+                    .equalTo("id", roomId)
+                    .findFirst();
+
+            if (topic != null) {
+                realm.executeTransaction(realm1 -> topic.setIsAnnouncement(readOnly));
                 return true;
             }
 

@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrTopicUnStar
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -59,12 +60,14 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         int topicMemberCount = topicDetailModel.getTopicMemberCount(entityId);
         boolean isStarred = topicDetailModel.isStarred(entityId);
         boolean owner = topicDetailModel.isOwner(entityId)
-                || topicDetailModel.isTeamOwner();
+                || topicDetailModel.isTeamOwner()
+                || topicDetailModel.isTeamAdmin();
         boolean isTopicPushSubscribe = topicDetailModel.isPushOn(entityId);
 
         boolean defaultTopic = topicDetailModel.isDefaultTopic(entityId);
         boolean privateTopic = topicDetailModel.isPrivateTopic(entityId);
         boolean autoJoin = topicDetailModel.isAutoJoin(entityId);
+        boolean readOnly = topicDetailModel.isReadOnly(entityId);
 
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
@@ -85,6 +88,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic, myLevel != Level.Guest);
         view.setAssignTopicOwnerVisible(owner);
+        view.setReadOnly(readOnly, owner, defaultTopic);
     }
 
     @Override
@@ -360,9 +364,9 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                     view.dismissProgressWheel();
                     onInit(it.first);
                 }, t -> {
+                    view.dismissProgressWheel();
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
-                        view.dismissProgressWheel();
 
                         if (e.getStatusCode() >= 500) {
                             view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
@@ -370,6 +374,29 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                     }
                 });
 
+    }
+
+    @Override
+    public void onUpdateReadOnly(long entityId, boolean readOnly) {
+        view.showProgressWheel();
+        Completable.fromCallable(() -> {
+            topicDetailModel.updateReadOnly(entityId, readOnly);
+            TopicRepository.getInstance().updateReadOnly(entityId, readOnly);
+            TeamInfoLoader.getInstance().refresh();
+            return true;
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnUnsubscribe(() -> view.dismissProgressWheel())
+                .subscribe(() -> {
+                    onInit(entityId);
+                }, t-> {
+                    if (t instanceof RetrofitException) {
+                        RetrofitException e = (RetrofitException) t;
+                        if (e.getStatusCode() >= 500) {
+                            view.showFailToast(JandiApplication.getContext().getString(R.string.err_network));
+                        }
+                    }
+                });
     }
 
     @Override

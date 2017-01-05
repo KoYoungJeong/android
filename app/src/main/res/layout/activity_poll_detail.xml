@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.tosslab.jandi.app.views.SoftInputDetectLinearLayout
-    android:id="@+id/vg_poll_detail_soft_input_detector"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_poll_detail_soft_input_detector"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_message_item"
@@ -18,9 +18,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/space_poll_detail_divider"
             android:layout_below="@+id/toolbar_poll_detail"
-            android:background="@color/white"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp"/>
+            android:background="@color/white" />
 
         <RelativeLayout
             android:id="@+id/vg_poll_detail_preview_sticker"
@@ -35,7 +33,7 @@
                 android:layout_width="140dp"
                 android:layout_height="140dp"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp" />
 
             <ImageView
                 android:id="@+id/iv_poll_detail_preview_sticker_close"
@@ -44,7 +42,7 @@
                 android:layout_alignParentRight="true"
                 android:padding="15dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/icon_sticker_close"/>
+                android:src="@drawable/icon_sticker_close" />
 
         </RelativeLayout>
 
@@ -54,7 +52,7 @@
             android:layout_height="1dp"
             android:layout_above="@+id/vg_poll_detail_input_comment"
             android:layout_alignWithParentIfMissing="true"
-            android:background="@color/jandi_line_gray"/>
+            android:background="@color/jandi_line_gray" />
 
         <LinearLayout
             android:id="@+id/vg_poll_detail_input_comment"
@@ -62,12 +60,12 @@
             android:layout_alignParentBottom="true">
 
             <FrameLayout
-                android:layout_gravity="bottom"
-                style="@style/JandiChat.ActionButton.Wrapper">
+                style="@style/JandiChat.ActionButton.Wrapper"
+                android:layout_gravity="bottom">
 
                 <ImageView
                     android:id="@+id/btn_poll_detail_action"
-                    style="@style/JandiChat.ActionButton.Sticker"/>
+                    style="@style/JandiChat.ActionButton.Sticker" />
             </FrameLayout>
 
             <LinearLayout
@@ -85,7 +83,7 @@
                     android:lineSpacingExtra="2dp"
                     android:minHeight="36dp"
                     android:paddingBottom="2dp"
-                    android:paddingTop="2dp"/>
+                    android:paddingTop="2dp" />
 
                 <ImageView
                     android:id="@+id/btn_show_mention"
@@ -96,7 +94,7 @@
                     android:paddingRight="9dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/chat_mention"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
             </LinearLayout>
 
             <TextView
@@ -104,7 +102,7 @@
                 style="@style/JandiChat.Button"
                 android:gravity="center"
                 android:text="@string/jandi_message_send"
-                android:textSize="@dimen/jandi_text_size_large"/>
+                android:textSize="@dimen/jandi_text_size_large" />
         </LinearLayout>
 
         <android.support.v7.widget.Toolbar
@@ -112,7 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentTop="true"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
     </RelativeLayout>
 
@@ -120,6 +118,6 @@
         android:id="@+id/vg_poll_detail_soft_input_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </com.tosslab.jandi.app.views.SoftInputDetectLinearLayout>
