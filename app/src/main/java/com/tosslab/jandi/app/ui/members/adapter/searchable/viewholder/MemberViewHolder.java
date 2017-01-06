@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder;
 
-import android.graphics.Paint;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
-import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -199,67 +196,22 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         String jobTitle = item.getJobTitle();
         if (TextUtils.isEmpty(jobTitle)) {
             tvUserJobTitle.setVisibility(View.GONE);
-            LinearLayout.LayoutParams userNameLP = (LinearLayout.LayoutParams) vgUserName.getLayoutParams();
-            userNameLP.width = vgContent.getLayoutParams().width;
-            vgUserName.setLayoutParams(userNameLP);
         } else {
             tvUserJobTitle.setVisibility(View.VISIBLE);
-            int maxUserNameWidth = (int) (vgContent.getLayoutParams().width * 0.7);
-            Paint userNamePaint = tvUserName.getPaint();
-            int nameWidth = (int) userNamePaint.measureText(tvUserName.getText().toString());
-            if (nameWidth > maxUserNameWidth) {
-                LinearLayout.LayoutParams userNameLP =
-                        (LinearLayout.LayoutParams) vgUserName.getLayoutParams();
-                userNameLP.width = (int) (vgContent.getLayoutParams().width * 0.7);
-                vgUserName.setLayoutParams(userNameLP);
-                int maxUserJobTitleWidth = (int) (vgContent.getLayoutParams().width * 0.3);
-                LinearLayout.LayoutParams userJobTitleLP =
-                        (LinearLayout.LayoutParams) tvUserJobTitle.getLayoutParams();
-                userJobTitleLP.width = maxUserJobTitleWidth;
-                tvUserJobTitle.setLayoutParams(userJobTitleLP);
-            } else {
-                LinearLayout.LayoutParams userNameLP =
-                        (LinearLayout.LayoutParams) vgUserName.getLayoutParams();
-                userNameLP.width = nameWidth;
-                vgUserName.setLayoutParams(userNameLP);
-
-                int leftWidth = vgContent.getLayoutParams().width - nameWidth;
-                LinearLayout.LayoutParams userJobTitleLP =
-                        (LinearLayout.LayoutParams) tvUserJobTitle.getLayoutParams();
-                userJobTitleLP.width = leftWidth;
-                tvUserJobTitle.setLayoutParams(userJobTitleLP);
-            }
             tvUserJobTitle.setText(jobTitle);
         }
     }
 
     private void measureContentWidth(ChatChooseItem item) {
-        DisplayMetrics displayMetrics = JandiApplication.getContext().getResources().getDisplayMetrics();
-        float displayWidth = displayMetrics.widthPixels;
-
-        LinearLayout.LayoutParams contentLP = (LinearLayout.LayoutParams) vgContent.getLayoutParams();
-
-        contentLP.width = (int) (displayWidth - UiUtils.getPixelFromDp(75));
-        contentLP.rightMargin = (int) UiUtils.getPixelFromDp(16);
-
-        int boxWidth = (int) UiUtils.getPixelFromDp(50);
-
-        contentLP.width = contentLP.width - contentLP.rightMargin;
 
         if (isKickMode) {
             vgUserKick.setVisibility(View.VISIBLE);
             vgUserSelected.setVisibility(View.GONE);
-            if (!item.isOwner()) {
-                contentLP.width = contentLP.width - boxWidth;
-            } else {
-                contentLP.width = contentLP.width - contentLP.rightMargin;
-            }
         } else if (isSelectMode) {
             vgUserKick.setVisibility(View.GONE);
             vgUserSelected.setVisibility(View.VISIBLE);
-            contentLP.width = contentLP.width - boxWidth;
         } else {
-            ivUserKick.setVisibility(View.GONE);
+            vgUserKick.setVisibility(View.GONE);
             vgUserSelected.setVisibility(View.GONE);
         }
 
@@ -278,18 +230,6 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             AccessLevelUtil.setTextOfLevel(level, tvAuthorityBadge);
         }
 
-        Paint ownerBadgePaint = tvAuthorityBadge.getPaint();
-        int ownerPadding = (int) UiUtils.getPixelFromDp(14);
-        int ownerMargin = (int) UiUtils.getPixelFromDp(16);
-        int ownerBadgeWidth = (int) ownerBadgePaint.measureText(tvAuthorityBadge.getText().toString()) + ownerPadding;
-
-        contentLP.width = contentLP.width - ownerBadgeWidth;
-
-        if (!(isKickMode || isSelectMode)) {
-            contentLP.width = contentLP.width - ownerMargin;
-        }
-
-        vgContent.setLayoutParams(contentLP);
     }
 
     private void setProfileImage(ChatChooseItem item) {
