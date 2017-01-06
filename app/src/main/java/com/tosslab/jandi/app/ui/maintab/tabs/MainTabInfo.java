@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.views.TabView;
 /**
  * Created by tonyjs on 2016. 8. 18..
  */
-public interface TabInfo {
+public interface MainTabInfo {
 
     int getIndex();
 

@@ -56,14 +56,14 @@ import com.tosslab.jandi.app.ui.maintab.dagger.MainTabModule;
 import com.tosslab.jandi.app.ui.maintab.navigation.NavigationFragment;
 import com.tosslab.jandi.app.ui.maintab.navigation.widget.BadgeOverFlowMenu;
 import com.tosslab.jandi.app.ui.maintab.presenter.MainTabPresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
+import com.tosslab.jandi.app.ui.maintab.tabs.MainTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.ChatTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.MypageTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.TeamTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
-import com.tosslab.jandi.app.ui.maintab.tabs.util.TabFactory;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.MainTabFactory;
 import com.tosslab.jandi.app.ui.offline.OfflineLayer;
 import com.tosslab.jandi.app.ui.profile.insert.InsertProfileActivity;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -349,7 +349,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     private void initTabs() {
-        List<TabInfo> tabInfos = TabFactory.getTabs(selectedEntity);
+        List<MainTabInfo> tabInfos = MainTabFactory.getTabs(selectedEntity);
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
@@ -436,7 +436,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         }
     }
 
-    private void initTabView(TabInfo tabInfo, TabView tabView) {
+    private void initTabView(MainTabInfo tabInfo, TabView tabView) {
         if (tabInfo instanceof TopicTabInfo) {
             tabTopic = tabView;
         } else if (tabInfo instanceof ChatTabInfo) {

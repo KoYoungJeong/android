@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
+import com.tosslab.jandi.app.ui.maintab.tabs.MainTabInfo;
 import com.tosslab.jandi.app.views.TabView;
 
 /**
  * Created by tonyjs on 2016. 8. 18..
  */
-public class FileTabInfo implements TabInfo {
+public class FileTabInfo implements MainTabInfo {
     @Override
     public int getIndex() {
         return 2;

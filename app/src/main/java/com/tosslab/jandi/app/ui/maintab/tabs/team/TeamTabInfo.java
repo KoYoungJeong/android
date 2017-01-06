@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
+import com.tosslab.jandi.app.ui.maintab.tabs.MainTabInfo;
 import com.tosslab.jandi.app.views.TabView;
 
 /**
  * Created by tonyjs on 2016. 8. 18..
  */
-public class TeamTabInfo implements TabInfo {
+public class TeamTabInfo implements MainTabInfo {
 
     public static final int INDEX = 3;
 

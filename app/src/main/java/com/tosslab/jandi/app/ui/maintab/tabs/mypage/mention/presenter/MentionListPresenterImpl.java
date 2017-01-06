@@ -5,7 +5,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -245,7 +245,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .doOnNext(mentionMessage -> {
 
                     mentionListModel.increaseMentionUnreadCount();
-                    EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+                    EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mentionMessage -> {
@@ -280,7 +280,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                             && item.getMessageId() > actuallLastMarkerId) {
                         mentionListModel.decreaseMentionCount();
 
-                        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+                        EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -326,7 +326,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     .subscribe(() -> {
                         InitialMentionInfoRepository.getInstance().clearUnreadCount();
                         TeamInfoLoader.getInstance().refreshMention();
-                        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+                        EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
                     }, Throwable::printStackTrace);
             actuallLastMarkerId = item.getMessageId();
         }
