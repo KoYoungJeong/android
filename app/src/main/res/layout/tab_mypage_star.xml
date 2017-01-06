@@ -9,6 +9,6 @@
         android:layout_gravity="center"
         android:text="@string/jandi_starred_star"
         android:textColor="@color/text_color_mypage_tab"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
 </FrameLayout>

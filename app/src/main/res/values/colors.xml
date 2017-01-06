@@ -107,7 +107,7 @@
     <color name="jandi_sign_in_button_default">#144a66</color>
     <color name="jandi_sign_in_button_tab">#082a3b</color>
     <color name="jandi_sign_in_under_line">#000000</color>
-    <!-- Main TabInfo -->
+    <!-- Main MainTabInfo -->
     <color name="jandi_tab_background">@color/jandi_primary_color</color>
     <color name="jandi_tab_text_active">@color/white</color>
     <color name="jandi_tab_text_inactive">#FF496c82</color>

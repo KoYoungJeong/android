@@ -11,21 +11,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
+import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
-import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.component.DaggerMyPageComponent;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.module.MyPageModule;
-import com.tosslab.jandi.app.ui.maintab.tabs.mypage.presenter.MyPagePresenter;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
-
-import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,18 +33,16 @@ import rx.schedulers.Schedulers;
 /**
  * Created by tonyjs on 16. 3. 17..
  */
-public class MyPageFragment extends Fragment implements MyPagePresenter.View, TabFocusListener {
+public class MyPageFragment extends Fragment implements TabFocusListener {
 
     @Bind(R.id.pager_mypage)
     ViewPager viewPager;
     @Bind(R.id.tab_mypage)
     TabLayout tabLayout;
 
-    @Inject
-    MyPagePresenter presenter;
-
-    private TextView tvPollBadge;
     private MyPagePagerAdapter tabPagerAdapter;
+    private TextView tvPollbadge;
+    private TextView tvMentionBadge;
 
     @Nullable
     @Override
@@ -60,8 +55,6 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        injectComponent();
-
         ButterKnife.bind(this, view);
 
         viewPager.setOffscreenPageLimit(2);
@@ -70,6 +63,15 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.getTabAt(0).setCustomView(R.layout.tab_mypage_mention);
+        tvMentionBadge = (TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.tv_badge);
+
+        tabLayout.getTabAt(1).setCustomView(R.layout.tab_mypage_star);
+
+        tabLayout.getTabAt(2).setCustomView(R.layout.tab_mypage_poll);
+        tvPollbadge = (TextView) tabLayout.getTabAt(2).getCustomView().findViewById(R.id.tv_badge);
+
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -91,6 +93,8 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
                 if (fragment != null && fragment instanceof TabFocusListener) {
                     ((TabFocusListener) fragment).onFocus();
                 }
+
+                setPollBadge();
             }
 
             @Override
@@ -126,6 +130,32 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+
+    }
+
+    private void setMentionBadge() {
+        int mentionBadgeCnt = TeamInfoLoader.getInstance().getMention().getUnreadCount();
+        if (mentionBadgeCnt > 0) {
+            tvMentionBadge.setVisibility(View.VISIBLE);
+            tvMentionBadge.setText(String.valueOf(Math.min(mentionBadgeCnt, 999)));
+        } else {
+            tvMentionBadge.setVisibility(View.GONE);
+        }
+    }
+
+    private void setPollBadge() {
+        int pollBadge = TeamInfoLoader.getInstance().getPollBadge();
+        if (pollBadge > 0) {
+            tvPollbadge.setVisibility(View.VISIBLE);
+            tvPollbadge.setText(String.valueOf(Math.min(pollBadge, 999)));
+        } else {
+            tvPollbadge.setVisibility(View.GONE);
+        }
+    }
+
+    private void setBadges() {
+        setMentionBadge();
+        setPollBadge();
     }
 
     @Override
@@ -136,53 +166,34 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
         }
     }
 
-    private void injectComponent() {
-        DaggerMyPageComponent.builder()
-                .myPageModule(new MyPageModule(this))
-                .build()
-                .inject(this);
-    }
-
-    @Override
-    public void setPollBadge(int count) {
-        if (tvPollBadge == null) {
-            return;
-        }
-
-        if (count <= 0) {
-            tvPollBadge.setVisibility(View.GONE);
-            return;
-        }
-
-        tvPollBadge.setVisibility(View.VISIBLE);
-        tvPollBadge.setText(String.valueOf(Math.min(count, 999)));
-    }
-
-    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
-        int count = event.getBadgeCount();
-        setPollBadge(count);
-    }
-
-    public void onEvent(SocketPollEvent event) {
+    public void onEventMainThread(SocketPollEvent event) {
         Poll poll = event.getPoll();
         if (poll == null
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-        presenter.onInitializePollBadge();
     }
 
-    public void onEvent(RequestRefreshPollBadgeCountEvent event) {
+    public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
+        setMentionBadge();
+    }
+
+    public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
+        setPollBadge();
+        setMentionBadge();
+    }
+
+    public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
-        presenter.onInitializePollBadge();
+        setPollBadge();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        presenter.onInitializePollBadge();
+        setBadges();
     }
 
     @Override
@@ -211,6 +222,6 @@ public class MyPageFragment extends Fragment implements MyPagePresenter.View, Ta
                 ((TabFocusListener) item).onFocus();
             }
         }
-
     }
+
 }

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.maintab.tabs.TabInfo;
+import com.tosslab.jandi.app.ui.maintab.tabs.MainTabInfo;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
     private SparseArray<String> titles;
     private SparseArray<Fragment> fragments;
 
-    public MainTabPagerAdapter(FragmentManager supportFragmentManager, List<TabInfo> tabInfos) {
+    public MainTabPagerAdapter(FragmentManager supportFragmentManager, List<MainTabInfo> tabInfos) {
         super(supportFragmentManager);
 
         fragments = new SparseArray<>();
