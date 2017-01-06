@@ -375,12 +375,17 @@ public class TopicRepository extends RealmRepository {
 
             if (savedTopic != null) {
                 realm.executeTransaction(realm1 -> {
+                    savedTopic.setType(topic.getType());
                     savedTopic.setName(topic.getName());
                     savedTopic.setStatus(topic.getStatus());
                     savedTopic.setDescription(topic.getDescription());
                     savedTopic.setIsDefault(topic.isDefault());
                     savedTopic.setAutoJoin(topic.isAutoJoin());
+                    if (topic.getAnnouncement() != null) {
+                        topic.getAnnouncement().setRoomId(topic.getId());
+                    }
                     savedTopic.setAnnouncement(topic.getAnnouncement());
+                    savedTopic.setCreatorId(topic.getCreatorId());
                     savedTopic.setLastLinkId(topic.getLastLinkId());
 
                     // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
