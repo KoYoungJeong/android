@@ -350,7 +350,6 @@ public class FileDetailModel {
                     .filter(it -> TeamInfoLoader.getInstance().isUser(it))
                     .filter(it -> !TeamInfoLoader.getInstance().isJandiBot(it))
                     .filter(it -> TeamInfoLoader.getInstance().getMyId() != it)
-                    .filter(it -> TeamInfoLoader.getInstance().getChatId(it) > 0)
                     .map(it -> TeamInfoLoader.getInstance().getUser(it))
                     .toSortedList((formattedEntity, formattedEntity2) ->
                             StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))

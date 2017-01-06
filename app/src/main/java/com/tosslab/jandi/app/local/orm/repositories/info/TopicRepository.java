@@ -4,6 +4,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
@@ -370,12 +371,61 @@ public class TopicRepository extends RealmRepository {
     public boolean updateTopic(Topic topic) {
         return execute((realm) -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            topic.setTeamId(selectedTeamId);
-            if (topic.getAnnouncement() != null) {
-                topic.getAnnouncement().setRoomId(topic.getId());
+            Topic savedTopic = realm.where(Topic.class).equalTo("id", topic.getId()).findFirst();
+
+            if (savedTopic != null) {
+                realm.executeTransaction(realm1 -> {
+                    savedTopic.setType(topic.getType());
+                    savedTopic.setName(topic.getName());
+                    savedTopic.setStatus(topic.getStatus());
+                    savedTopic.setDescription(topic.getDescription());
+                    savedTopic.setIsDefault(topic.isDefault());
+                    savedTopic.setAutoJoin(topic.isAutoJoin());
+                    if (topic.getAnnouncement() != null) {
+                        topic.getAnnouncement().setRoomId(topic.getId());
+                    }
+                    savedTopic.setAnnouncement(topic.getAnnouncement());
+                    savedTopic.setCreatorId(topic.getCreatorId());
+                    savedTopic.setLastLinkId(topic.getLastLinkId());
+
+                    // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
+                    List<Long> members = topic.getMembers();
+                    RealmList<RealmLong> memberIds = new RealmList<>();
+                    for (Long roomId : members) {
+                        RealmLong object = new RealmLong();
+                        object.setValue(roomId);
+                        memberIds.add(object);
+                    }
+                    topic.setMemberIds(memberIds);
+                });
+            } else {
+
+                long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+                topic.setTeamId(selectedTeamId);
+
+                // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
+                List<Long> members = topic.getMembers();
+                RealmList<RealmLong> memberIds = new RealmList<>();
+                for (Long roomId : members) {
+                    RealmLong object = new RealmLong();
+                    object.setValue(roomId);
+                    memberIds.add(object);
+                }
+                topic.setMemberIds(memberIds);
+                RealmList<Marker> markers = topic.getMarkers();
+
+                if (markers != null && !markers.isEmpty()) {
+                    for (Marker marker : markers) {
+                        marker.setRoomId(topic.getId());
+                        marker.setId(topic.getId() + "_" + marker.getMemberId());
+                    }
+                }
+
+                if (topic.getAnnouncement() != null) {
+                    topic.getAnnouncement().setRoomId(topic.getId());
+                }
+                realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
             }
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
 
             return true;
         });

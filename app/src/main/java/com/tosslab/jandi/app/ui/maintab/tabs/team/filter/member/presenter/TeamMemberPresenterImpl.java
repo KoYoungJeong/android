@@ -117,9 +117,9 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                             return Observable.just(TextUtils.isEmpty(it) && selectMode && roomId < 0)
                                     .filter(pickmode -> pickmode)
                                     .flatMap(ttt -> Observable.from(getUserList()))
-                                    .map(User::isEnabled) // enabled 상태 받음
-                                    .takeFirst(enabled -> !enabled) // disabled 인 상태 필터
-                                    .map(disabld -> new TeamDisabledMemberItem(null, it));
+                                    .map(User::isDisabled) // enabled 상태 받음
+                                    .takeFirst(disabled -> disabled) // disabled 인 상태 필터
+                                    .map(disabled -> new TeamDisabledMemberItem(null, it));
                         }))
                         .compose(sort())
                         .compose(textToSpan(it)))

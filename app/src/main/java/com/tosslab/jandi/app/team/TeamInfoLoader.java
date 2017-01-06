@@ -663,6 +663,24 @@ public class TeamInfoLoader {
         });
     }
 
+    public Rank getRankOfGuest() {
+        for (Rank rank : ranks.values()) {
+            if (rank.getLevel() == Level.Guest.getLevel()) {
+                return rank;
+            }
+        }
+        return null;
+    }
+
+    public Rank getRankOfMember() {
+        for (Rank rank : ranks.values()) {
+            if (rank.getLevel() == Level.Member.getLevel()) {
+                return rank;
+            }
+        }
+        return null;
+    }
+
     interface Call0<T> {
         T execute();
     }

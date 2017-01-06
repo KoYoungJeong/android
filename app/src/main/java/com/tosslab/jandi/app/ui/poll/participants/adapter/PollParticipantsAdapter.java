@@ -26,7 +26,9 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_MEMBER) {
-            return MemberViewHolder.createForUser(parent);
+            MemberViewHolder memberViewHolder = MemberViewHolder.createForUser(parent);
+            memberViewHolder.setIsTeamMemberList(true);
+            return memberViewHolder;
         } else if (viewType == VIEW_TYPE_TITLE) {
             return PollOptionTitleViewHolder.newInstance(parent);
         }
@@ -44,7 +46,7 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
         }
 
         if (holder instanceof MemberViewHolder) {
-            MemberViewHolder memberViewHolder = (MemberViewHolder)holder;
+            MemberViewHolder memberViewHolder = (MemberViewHolder) holder;
             if (position == getItemCount() - 1) {
                 memberViewHolder.showFullDivider();
             } else {

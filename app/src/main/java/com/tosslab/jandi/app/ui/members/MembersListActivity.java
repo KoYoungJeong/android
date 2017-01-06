@@ -99,8 +99,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         initObject();
         initViews();
         membersListPresenter.onInit();
-
-
     }
 
     void initObject() {

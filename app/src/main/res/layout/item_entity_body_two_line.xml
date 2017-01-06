@@ -2,11 +2,11 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="75dp">
+    android:layout_height="@dimen/jandi_entity_item_title_margin_left">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -25,21 +25,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/iv_profile"
-                android:layout_alignRight="@+id/iv_profile"
+                android:layout_alignEnd="@+id/iv_profile"
                 android:layout_marginBottom="-2dp"
-                android:layout_marginRight="-2dp"
+                android:layout_marginEnd="-2dp"
                 android:src="@drawable/icon_team_member_star" />
 
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/vg_content"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/vg_profile"
+            android:layout_toStartOf="@+id/vg_authority_badge"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <LinearLayout
+            <!-- 커스텀 레이아웃으로 만들 것! -->
+            <com.tosslab.jandi.app.views.viewgroup.RateLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -48,13 +51,14 @@
                     android:id="@+id/vg_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:text="Topic Namefewqfewqfqwefewqf"
@@ -67,8 +71,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/tv_user_name"
-                        android:layout_alignLeft="@+id/tv_user_name"
-                        android:layout_alignRight="@+id/tv_user_name"
+                        android:layout_alignEnd="@+id/tv_user_name"
+                        android:layout_alignStart="@+id/tv_user_name"
                         android:layout_alignTop="@+id/tv_user_name"
                         android:src="@drawable/line_black" />
 
@@ -84,22 +88,19 @@
                     android:singleLine="true"
                     android:text="fewfq fefwpefewfweffweqfewfr423142134"
                     android:textColor="@color/dark_gray"
-                    android:textSize="12dp" />
-            </LinearLayout>
+                    android:textSize="@dimen/jandi_text_size_small" />
+            </com.tosslab.jandi.app.views.viewgroup.RateLinearLayout>
 
             <TextView
                 android:id="@+id/tv_user_department"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/vg_entity_listitem_name"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@+id/vg_entity_listitem_name"
                 android:layout_marginTop="7dp"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:text="So Good"
                 android:textColor="@color/jandi_text_light"
-                android:textSize="12dp"
+                android:textSize="@dimen/jandi_text_size_small"
                 android:visibility="visible" />
 
         </LinearLayout>
@@ -108,6 +109,8 @@
             android:id="@+id/vg_authority_badge"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_toStartOf="@+id/vg_user_kick"
             android:gravity="center_vertical"
             android:visibility="visible">
 
@@ -115,29 +118,30 @@
                 android:id="@+id/tv_authority_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="17dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="16dp"
                 android:background="@drawable/bg_user_level_team_admin"
                 android:gravity="center_vertical"
                 android:text="@string/common_authority_title_owner"
                 android:textColor="@color/jandi_text_level_team_admin"
-                android:textSize="11dp" />
+                android:textSize="@dimen/jandi_text_size_11sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/vg_user_kick"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_marginEnd="12dp"
+            android:layout_toStartOf="@+id/vg_user_selected"
             android:gravity="center"
             android:visibility="visible">
 
             <ImageView
                 android:id="@+id/iv_user_kick"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="9dp"
-                android:layout_marginRight="9dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:scaleType="centerInside"
                 android:src="@drawable/kick_member" />
 
@@ -145,26 +149,23 @@
 
         <LinearLayout
             android:id="@+id/vg_user_selected"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
             android:gravity="center"
             android:visibility="visible">
 
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/cb_user_selected"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="9dp"
-                android:layout_marginRight="9dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:clickable="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:theme="@style/Jandi.Default.CheckBox" />
 
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
     <View
         android:id="@+id/v_name_warning"

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.invites.emails.presenter;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
+import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterDataModel;
 import com.tosslab.jandi.app.ui.invites.emails.model.InviteEmailModel;
@@ -53,7 +54,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                 }
             }
 
-            if(availableCount < 10) {
+            if (availableCount < 10) {
                 InviteEmailVO.Status status = getInviteEmailStatus(email);
                 if (status != null) {
                     InviteEmailVO item = new InviteEmailVO();
@@ -135,7 +136,8 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
             } else {
                 view.showProgressWheel();
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
-                SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(),"associate");
+                Rank rankOfGuest = TeamInfoLoader.getInstance().getRankOfGuest();
+                SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(), rankOfGuest != null ? rankOfGuest.getId() : -1);
 
                 Observable.defer(() -> {
                     List<ResInvitationMembers> invitationMembers =
@@ -167,7 +169,8 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
         if (invitationUserCnt > 0) {
 
             long teamId = TeamInfoLoader.getInstance().getTeamId();
-            SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(),"member");
+            Rank rankOfMember = TeamInfoLoader.getInstance().getRankOfMember();
+            SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(), rankOfMember != null ? rankOfMember.getId() : -1);
 
             view.showProgressWheel();
             Observable.defer(() -> {
