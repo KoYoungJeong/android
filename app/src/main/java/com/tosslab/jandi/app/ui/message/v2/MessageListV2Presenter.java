@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -589,7 +590,10 @@ public class MessageListV2Presenter {
 
                     String readyMessage = messageListModel.getReadyMessage(roomid);
                     view.initRoomInfo(roomid, readyMessage);
-                    view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly());
+                    Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
+                    view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
+                            && myLevel != Level.Owner
+                            && myLevel != Level.Admin);
                 })
                 .observeOn(Schedulers.io())
                 .subscribe(roomid -> {
@@ -1129,6 +1133,19 @@ public class MessageListV2Presenter {
         addMarkerQueue();
     }
 
+    public void onTopicInfoUpdate() {
+        Completable.fromAction(() -> {
+            TopicRoom topic = TeamInfoLoader.getInstance().getTopic(room.getRoomId());
+            String topicName = topic.getName();
+            view.setTopicTitle(topicName);
+            Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
+            view.showReadOnly(topic.isReadOnly()
+                    && myLevel != Level.Owner
+                    && myLevel != Level.Admin);
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {}, Throwable::printStackTrace);
+    }
+
     public interface View {
         void showDisabledUserLayer();
 
@@ -1177,7 +1194,7 @@ public class MessageListV2Presenter {
 
         void initMentionControlViewModel(String readyMessage);
 
-        void modifyTitle(String name);
+        void setTopicTitle(String name);
 
         void openAnnouncement(boolean shouldOpenAnnouncement);
 

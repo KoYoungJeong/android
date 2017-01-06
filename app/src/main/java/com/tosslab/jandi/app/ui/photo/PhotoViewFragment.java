@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.target.Target;
-import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -272,6 +271,9 @@ public class PhotoViewFragment extends Fragment {
                     new GestureDetector.SimpleOnGestureListener() {
                         @Override
                         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                            if (ivPhotoView.getScale() != ivPhotoView.getMinScale()) {
+                                return false;
+                            }
                             if (Math.abs(velocityX) > Math.abs(velocityY)) {
                                 return false;
                             }
@@ -358,7 +360,7 @@ public class PhotoViewFragment extends Fragment {
 
     @OnClick(R.id.btn_photoview_play)
     void onPlayGifClick() {
-        loadImage(Uri.parse(originalUrl));
+        loadImageForGif(Uri.parse(originalUrl));
         vgPlayGif.setVisibility(View.GONE);
 
     }

@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -385,6 +384,7 @@ public class TopicRepository extends RealmRepository {
                     if (topic.getAnnouncement() != null) {
                         topic.getAnnouncement().setRoomId(topic.getId());
                     }
+                    savedTopic.setIsAnnouncement(topic.isAnnouncement());
                     savedTopic.setAnnouncement(topic.getAnnouncement());
                     savedTopic.setCreatorId(topic.getCreatorId());
                     savedTopic.setLastLinkId(topic.getLastLinkId());

@@ -1432,7 +1432,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public void onEventMainThread(TopicInfoUpdateEvent event) {
         if (event.getId() == room.getRoomId()) {
-            modifyTitle(TeamInfoLoader.getInstance().getTopic(room.getRoomId()).getName());
+            messageListPresenter.onTopicInfoUpdate();
+            setTopicTitle(TeamInfoLoader.getInstance().getTopic(room.getRoomId()).getName());
         }
     }
 
@@ -1962,7 +1963,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     @Override
-    public void modifyTitle(String name) {
+    public void setTopicTitle(String name) {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(name);
     }
 
