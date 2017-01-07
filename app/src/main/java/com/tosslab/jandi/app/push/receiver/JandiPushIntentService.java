@@ -151,7 +151,7 @@ public class JandiPushIntentService extends IntentService {
     }
 
     private boolean isPushForMyAccountId(BasePushInfo basePushInfo) {
-        return TextUtils.equals(basePushInfo.getAccountId(), AccountUtil.getAccountUUID(JandiApplication.getContext()));
+        return TextUtils.equals(basePushInfo.getAccountUuid(), AccountUtil.getAccountUUID(JandiApplication.getContext()));
     }
 
 
