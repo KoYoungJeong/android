@@ -833,7 +833,7 @@
 	<string name="topic_remove_associatewithonetopic_title">"この準メンバーをトピックから退出させるとチームからブロックされます。"</string>
 	<string name="topic_room_deletetopicconfirm">"このトピックは削除されました。"</string>
 	<string name="topic_room_selectallmembers">"すべて選択"</string>
-	<string name="topic_search_1on1_unable">""</string>
+	<string name="topic_search_1on1_unable">"準メンバーはダイレクトメッセージを送信できません。"</string>
 	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"%sフォルダからトピックが除かれました"</string>
 	<string name="topic_viewonly_alert_body">"管理人・副管理人のみメッセージを作成できます。"</string>
