@@ -823,7 +823,7 @@
 	<string name="topic_remove_associatewithonetopic_title">"自此議題剔除，將會封鎖此準成員"</string>
 	<string name="topic_room_deletetopicconfirm">"此議題已被刪除"</string>
 	<string name="topic_room_selectallmembers">"選擇全部"</string>
-	<string name="topic_search_1on1_unable">""</string>
+	<string name="topic_search_1on1_unable">"準成員無法開始新的 1:1 私訊"</string>
 	<string name="topic_topicchat_mentionall">"@all (議題成員)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"議題已從 %s 中移除"</string>
 	<string name="topic_viewonly_alert_body">"僅有管理員權限的成員可發送訊息"</string>

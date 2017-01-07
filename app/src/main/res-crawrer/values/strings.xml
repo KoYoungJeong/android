@@ -827,7 +827,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="topic_remove_associatewithonetopic_title">"Removing this Associate from the topic will delete this person from the team."</string>
 	<string name="topic_room_deletetopicconfirm">"This topic has been deleted"</string>
 	<string name="topic_room_selectallmembers">"Select All"</string>
-	<string name="topic_search_1on1_unable">""</string>
+	<string name="topic_search_1on1_unable">"Associates are unable to begin a 1:1 message."</string>
 	<string name="topic_topicchat_mentionall">"@all (topic members)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"The topic has been removed from %s folder"</string>
 	<string name="topic_viewonly_alert_body">"Only Admin-level members are able to send messages."</string>
