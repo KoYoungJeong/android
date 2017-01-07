@@ -106,8 +106,9 @@ public class JandiInterfaceModel {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
             InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
             InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-            refreshRankInfoIfNeed(selectedTeamId);
-            TeamInfoLoader.getInstance().refresh();
+            if (!refreshRankInfoIfNeed(selectedTeamId)) {
+                TeamInfoLoader.getInstance().refresh();
+            }
             refreshPollList(selectedTeamId);
             JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
@@ -120,15 +121,18 @@ public class JandiInterfaceModel {
         }
     }
 
-    private void refreshRankInfoIfNeed(long selectedTeamId) {
+    private boolean refreshRankInfoIfNeed(long selectedTeamId) {
         if (!RankRepository.getInstance().hasRanks(selectedTeamId)) {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeamId);
                 RankRepository.getInstance().addRanks(ranks.getRanks());
+                TeamInfoLoader.getInstance().refresh();
+                return true;
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 
     /**

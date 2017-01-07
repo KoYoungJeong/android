@@ -130,6 +130,7 @@ public class IntroActivityModel {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeam);
                 RankRepository.getInstance().addRanks(ranks.getRanks());
+                TeamInfoLoader.getInstance().refresh();
                 return true;
             } catch (RetrofitException e) {
                 e.printStackTrace();
