@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/jandi_no_recent_stickers"
                 android:textColor="#FF97989A"
-                android:textSize="21dp" />
+                android:textSize="14dp" />
         </LinearLayout>
 
         <com.tosslab.jandi.app.views.ViewPagerIndicator
