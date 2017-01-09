@@ -41,7 +41,7 @@ public class ModifyProfileModel {
 
         Iterator<String> confirmedEmails = Observable.from(userEmails)
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
-                .map(ResAccountInfo.UserEmail::getId)
+                .map(ResAccountInfo.UserEmail::getEmail)
                 .toBlocking()
                 .getIterator();
 

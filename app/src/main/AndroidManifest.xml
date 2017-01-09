@@ -623,6 +623,16 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="jandifile"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/external_file_path" />
+        </provider>
+
         <!-- Google Play Analytics -->
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"

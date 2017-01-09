@@ -39,8 +39,8 @@ public class SettingAccountPresenterImpl implements SettingAccountPresenter {
         model.getAccountEmailObservable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userEmail -> {
-                    if (!TextUtils.isEmpty(userEmail.getId())) {
-                        view.setAccountEmail(userEmail.getId());
+                    if (!TextUtils.isEmpty(userEmail.getEmail())) {
+                        view.setAccountEmail(userEmail.getEmail());
                     }
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));

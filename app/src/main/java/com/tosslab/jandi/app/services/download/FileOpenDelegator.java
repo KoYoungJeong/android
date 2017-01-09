@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
@@ -46,8 +47,11 @@ public class FileOpenDelegator extends BroadcastReceiver {
 
         File file = (File) serializable;
         Intent fileViewerOpenIntent = new Intent(Intent.ACTION_VIEW);
-        fileViewerOpenIntent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
-        fileViewerOpenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Uri data = FileProvider.getUriForFile(context, "jandifile", file);
+        fileViewerOpenIntent.setDataAndType(data, getFileType(file, fileType));
+        fileViewerOpenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         try {
             context.startActivity(fileViewerOpenIntent);
         } catch (Exception e) {

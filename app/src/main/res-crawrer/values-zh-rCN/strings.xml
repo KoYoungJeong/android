@@ -52,6 +52,8 @@
 	<string name="common_sharetojandi_errormsg">"发生错误！请重试一次"</string>
 	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，\n请输入验证码完成认证"</string>
 	<string name="common_signup_invalid_emaildomain">"请确认电子邮箱网域是否正确"</string>
+	<string name="delete_cache">"删除缓存"</string>
+	<string name="delete_cache_confirm">"你确定要删除存储于缓存中的数据吗？"</string>
 	<string name="err_delete_file">"文件无法删除"</string>
 	<string name="err_download">"文件无法下载"</string>
 	<string name="err_email_exists">"这电子邮件已被注冊"</string>

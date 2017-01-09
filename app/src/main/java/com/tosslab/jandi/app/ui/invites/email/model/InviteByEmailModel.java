@@ -57,7 +57,7 @@ public class InviteByEmailModel {
                 .getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
-            if (TextUtils.equals(emailText, userEmail.getId())) {
+            if (TextUtils.equals(emailText, userEmail.getEmail())) {
                 return true;
             }
         }
