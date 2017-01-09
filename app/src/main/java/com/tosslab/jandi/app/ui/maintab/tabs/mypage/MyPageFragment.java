@@ -172,6 +172,7 @@ public class MyPageFragment extends Fragment implements TabFocusListener {
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
+        setPollBadge();
     }
 
     public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
