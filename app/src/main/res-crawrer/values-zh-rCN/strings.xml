@@ -52,6 +52,8 @@
 	<string name="common_sharetojandi_errormsg">"发生错误！请重试一次"</string>
 	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，\n请输入验证码完成认证"</string>
 	<string name="common_signup_invalid_emaildomain">"请确认电子邮箱网域是否正确"</string>
+	<string name="delete_cache">"删除缓存"</string>
+	<string name="delete_cache_confirm">"你确定要删除存储于缓存中的数据吗？"</string>
 	<string name="err_delete_file">"文件无法删除"</string>
 	<string name="err_download">"文件无法下载"</string>
 	<string name="err_email_exists">"这电子邮件已被注冊"</string>
@@ -792,6 +794,8 @@
 	<string name="menu_entity_invite">"邀请"</string>
 	<string name="menu_entity_leave">"离开"</string>
 	<string name="menu_gallery">"从照片集上传"</string>
+	<string name="menu_hide_1_1">""</string>
+	<string name="menu_hide_desc_1_1">""</string>
 	<string name="modify_message">"编辑信息"</string>
 	<string name="mypage_editprofile_dept">"输入你的部门"</string>
 	<string name="mypage_editprofile_jobtitle">"输入你的职位"</string>
@@ -805,6 +809,10 @@
 	<string name="team_info">"团队资料"</string>
 	<string name="team_invite_email_disabledmember_desc">"联系团队管理员重启权限"</string>
 	<string name="team_invite_email_disabledmember_title">"此成员权限已被关闭"</string>
+	<string name="team_teamleave_member_desc">""</string>
+	<string name="team_teamleave_member_title">""</string>
+	<string name="team_teamleave_owner_desc">""</string>
+	<string name="team_teamleave_owner_title">""</string>
 	<string name="title_cdp_invite">"请选择欲邀请的成员"</string>
 	<string name="title_file_detail">"叙述"</string>
 	<string name="title_file_upload">"上传文件"</string>
@@ -817,6 +825,7 @@
 	<string name="topic_leave_associateintopic_title">"你是议题管理员"</string>
 	<string name="topic_memberautojoin_button">"自动邀请成员"</string>
 	<string name="topic_memberautojoin_desc">"邀请所有新成员至此议题"</string>
+	<string name="topic_menu_Browse_other_public_topics">"浏览其他公开议题"</string>
 	<string name="topic_polls_deletedpoll">"已删除的问卷"</string>
 	<string name="topic_remove_associatewithonetopic_desc">"此准成员仅参与此一议题，若你剔除此准成员，这位准成员将自动被此团队封锁。请问你要继续并剔除吗？"</string>
 	<string name="topic_remove_associatewithonetopic_remove">"剔除"</string>

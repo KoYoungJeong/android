@@ -52,6 +52,8 @@
 	<string name="common_sharetojandi_errormsg">"予期しないエラーが発生しました。後でもう一度やり直してください。"</string>
 	<string name="common_signup_codeverification">"上記のメールアドレスに認証コードを送信しました。\n認証コードを入力してください。"</string>
 	<string name="common_signup_invalid_emaildomain">"アドレスの形式が正しいことを確認してください。"</string>
+	<string name="delete_cache">"キャッシュ消去"</string>
+	<string name="delete_cache_confirm">"すべてのキャッシュデータを消去しますか？"</string>
 	<string name="err_delete_file">"ファイルが削除できませんでした"</string>
 	<string name="err_download">"ファイルがダウンロードできませんでした"</string>
 	<string name="err_email_exists">"そのメールアドレスは既に使用されています"</string>
@@ -802,6 +804,8 @@
 	<string name="menu_entity_invite">"招待する"</string>
 	<string name="menu_entity_leave">"退出する"</string>
 	<string name="menu_gallery">"ギャラリーからアップロード"</string>
+	<string name="menu_hide_1_1">""</string>
+	<string name="menu_hide_desc_1_1">""</string>
 	<string name="modify_message">"メッセージを編集する"</string>
 	<string name="mypage_editprofile_dept">"部署を入力してください"</string>
 	<string name="mypage_editprofile_jobtitle">"役職を入力してください"</string>
@@ -815,6 +819,10 @@
 	<string name="team_info">"チーム情報"</string>
 	<string name="team_invite_email_disabledmember_desc">"解除をご希望の場合、チーム管理者にお問い合わせください。"</string>
 	<string name="team_invite_email_disabledmember_title">"無効化されたメンバーです。"</string>
+	<string name="team_teamleave_member_desc">""</string>
+	<string name="team_teamleave_member_title">""</string>
+	<string name="team_teamleave_owner_desc">""</string>
+	<string name="team_teamleave_owner_title">""</string>
 	<string name="title_cdp_invite">"招待するメンバーを選択してください"</string>
 	<string name="title_file_detail">"説明"</string>
 	<string name="title_file_upload">"ファイルをアップロード"</string>
@@ -827,6 +835,7 @@
 	<string name="topic_leave_associateintopic_title">"お客さんはこのトピックの管理者です。"</string>
 	<string name="topic_memberautojoin_button">"正メンバー自動招待"</string>
 	<string name="topic_memberautojoin_desc">"新しくチームに参加するメンーバ全員をこのトピックに招待します。"</string>
+	<string name="topic_menu_Browse_other_public_topics">"トピック一覧を表示"</string>
 	<string name="topic_polls_deletedpoll">"削除された投票"</string>
 	<string name="topic_remove_associatewithonetopic_desc">"このトピックだけに参加している準メンバーです。トピックからこのメンバーを退出させると自動的にチームからブロックされます。本当にトピックから退出させますか？"</string>
 	<string name="topic_remove_associatewithonetopic_remove">"退出させる"</string>
