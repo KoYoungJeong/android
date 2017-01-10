@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -1119,10 +1120,11 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void startExportedFileViewerActivity(File file) {
         Intent target = new Intent(Intent.ACTION_SEND);
-        Uri parse = Uri.parse(file.getAbsolutePath());
+        Uri parse = FileProvider.getUriForFile(this, "jandifile", file);
         String mimeType = getFileType(file);
         if (mimeType != null) {
-            target.setDataAndType(parse, mimeType);
+            target.setDataAndType(parse, mimeType)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             Bundle extras = new Bundle();
             extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
             target.putExtras(extras);
@@ -1143,7 +1145,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             intent.setAction(Intent.ACTION_VIEW);
             String mimeType = getFileType(file);
             if (mimeType != null) {
-                intent.setDataAndType(Uri.fromFile(file), mimeType);
+                Uri data = FileProvider.getUriForFile(this, "jandifile", file);
+                intent.setDataAndType(data, mimeType)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 startActivity(intent);
                 showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
             }

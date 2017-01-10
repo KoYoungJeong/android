@@ -64,7 +64,7 @@ public class SettingAccountProfileModelTest {
         boolean assertResult = false;
         for (ResAccountInfo.UserEmail email : emails) {
             if (email.isPrimary()) {
-                if (email.getId().equals(primaryEmail)) {
+                if (email.getEmail().equals(primaryEmail)) {
                     assertResult = true;
                 }
             }
@@ -104,11 +104,11 @@ public class SettingAccountProfileModelTest {
     }
 
     private String getPrimaryEmail() {
-        String primaryEmail = AccountRepository.getRepository().getAccountEmails().get(0).getId();
+        String primaryEmail = AccountRepository.getRepository().getAccountEmails().get(0).getEmail();
         List<ResAccountInfo.UserEmail> emails = AccountRepository.getRepository().getAccountEmails();
         for (ResAccountInfo.UserEmail email : emails) {
             if (email.isPrimary()) {
-                primaryEmail = email.getId();
+                primaryEmail = email.getEmail();
             }
         }
         return primaryEmail;
