@@ -25,7 +25,7 @@ public class EmailChooseModel {
             if (!TextUtils.equals(userEmail.getStatus(), "confirmed")) {
                 continue;
             }
-            AccountEmail object = new AccountEmail(userEmail.getId(), true);
+            AccountEmail object = new AccountEmail(userEmail.getEmail(), true);
             if (userEmail.isPrimary()) {
                 object.setSelected(true);
             }
