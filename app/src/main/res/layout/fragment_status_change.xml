@@ -20,14 +20,14 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/et_status_change"
                 style="@style/JandiTopic.Create.TextView.Input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_marginTop="24dp"
                 android:hint="@string/jandi_enter_your_status_message"
                 android:imeOptions="actionDone"
@@ -38,14 +38,10 @@
 
             <TextView
                 android:id="@+id/tv_status_change_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignRight="@+id/et_status_change"
+                style="@style/JandiTopic.Create.TextView.TextCount"
                 android:layout_below="@+id/et_status_change"
-                android:gravity="center"
                 android:text="0/60"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="12sp" />
+                android:textColor="@color/jandi_text_light" />
         </RelativeLayout>
     </ScrollView>
 
