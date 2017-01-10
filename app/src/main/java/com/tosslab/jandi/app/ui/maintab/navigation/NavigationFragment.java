@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.baidu.android.pushservice.PushSettings;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -35,6 +36,7 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.DomainUtil;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
@@ -294,6 +296,12 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 AnalyticsUtil.sendEvent(
                         AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.LiveSupport);
                 return true;
+            case R.id.nav_delete_cache:
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::showDeleteCacheDialog);
             case R.id.nav_sign_out:
                 Completable.fromAction(this::closeNavigation)
                         .subscribeOn(AndroidSchedulers.mainThread())
@@ -309,6 +317,17 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteCacheDialog() {
+        new AlertDialog.Builder(getContext(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.delete_cache_confirm)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    OpenHelperManager.getHelper(getContext(), OrmDatabaseHelper.class)
+                            .clearAllDataExceptLoginInfo();
+                }).setNegativeButton(R.string.jandi_cancel, null)
+                .create()
+                .show();
     }
 
     private void showChangeDomainDialog() {
