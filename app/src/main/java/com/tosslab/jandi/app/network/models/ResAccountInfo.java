@@ -405,6 +405,8 @@ public class ResAccountInfo {
         ResAccountInfo accountInfo;
         @DatabaseField(id = true)
         private String id;
+        @DatabaseField
+        private String email;
         @JsonProperty("isPrimary")
         @DatabaseField
         private boolean primary;
@@ -413,6 +415,14 @@ public class ResAccountInfo {
         private String confirmedAt;
         @DatabaseField
         private String status;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
 
         public ResAccountInfo getAccountInfo() {
             return accountInfo;

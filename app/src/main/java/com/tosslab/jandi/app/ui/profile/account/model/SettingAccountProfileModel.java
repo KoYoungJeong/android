@@ -48,10 +48,10 @@ public class SettingAccountProfileModel {
         if (accountEmails == null || accountEmails.isEmpty()) {
             return "";
         }
-        String primaryEmail = accountEmails.get(0).getId();
+        String primaryEmail = accountEmails.get(0).getEmail();
         for (ResAccountInfo.UserEmail email : accountEmails) {
             if (email.isPrimary()) {
-                primaryEmail = email.getId();
+                primaryEmail = email.getEmail();
             }
         }
         return primaryEmail;
@@ -64,7 +64,7 @@ public class SettingAccountProfileModel {
         Observable.from(userEmails)
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
                 .subscribe(userEmail -> {
-                    emails.add(userEmail.getId());
+                    emails.add(userEmail.getEmail());
                 });
         int size = emails.size();
         String[] emailArray = new String[size];

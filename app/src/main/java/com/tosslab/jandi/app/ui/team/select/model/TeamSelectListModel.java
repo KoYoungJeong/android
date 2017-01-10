@@ -144,10 +144,10 @@ public class TeamSelectListModel {
             return "";
         }
         int length = emails.size();
-        String primaryEmail = emails.get(0).getId();
+        String primaryEmail = emails.get(0).getEmail();
         for (int i = 0; i < length; i++) {
             if (emails.get(i).isPrimary()) {
-                primaryEmail = emails.get(i).getId();
+                primaryEmail = emails.get(i).getEmail();
             }
         }
         return primaryEmail;

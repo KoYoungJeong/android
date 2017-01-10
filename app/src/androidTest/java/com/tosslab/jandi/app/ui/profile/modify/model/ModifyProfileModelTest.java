@@ -164,7 +164,7 @@ public class ModifyProfileModelTest {
         TestSubscriber<String> subscriber = new TestSubscriber<>();
         Observable.from(AccountRepository.getRepository().getAccountEmails())
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
-                .map(ResAccountInfo.UserEmail::getId)
+                .map(ResAccountInfo.UserEmail::getEmail)
                 .subscribe(subscriber);
 
         subscriber.assertValueCount(accountEmails.length);

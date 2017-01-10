@@ -52,6 +52,8 @@ Please restart the app."</string>
 	<string name="common_sharetojandi_errormsg">"We encountered an unexpected error. Please try again."</string>
 	<string name="common_signup_codeverification">"A verification code has been sent to your email address above.\nPlease enter the verification code."</string>
 	<string name="common_signup_invalid_emaildomain">"Please enter a correct domain name for your email address."</string>
+	<string name="delete_cache">"Clear Cache"</string>
+	<string name="delete_cache_confirm">"Are you sure you want to delete all cache data?"</string>
 	<string name="err_delete_file">"File could not be deleted"</string>
 	<string name="err_download">"File could not be downloaded"</string>
 	<string name="err_email_exists">"That email is already registered"</string>

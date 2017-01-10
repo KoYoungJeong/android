@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -812,8 +813,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void startExportedFileViewerActivity(File file, String mimeType) {
         Intent target = new Intent(Intent.ACTION_SEND);
-        Uri parse = Uri.parse(file.getAbsolutePath());
-        target.setDataAndType(parse, mimeType);
+        Uri parse = FileProvider.getUriForFile(this, "jandifile", file);
+        target.setDataAndType(parse, mimeType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Bundle extras = new Bundle();
         extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
         target.putExtras(extras);
@@ -831,7 +833,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         try {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), mimeType);
+            Uri data = FileProvider.getUriForFile(this, "jandifile", file);
+            intent.setDataAndType(data, mimeType)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivity(intent);
             ColoredToast.show(getString(R.string.jandi_file_downloaded_into, file.getPath()));
         } catch (ActivityNotFoundException e) {
