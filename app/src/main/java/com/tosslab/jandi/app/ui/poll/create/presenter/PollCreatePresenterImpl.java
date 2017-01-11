@@ -80,6 +80,30 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
     }
 
     @Override
+    public boolean isAvailablePoll() {
+        if (createPollBuilder.getDueDate() == null) {
+            createPollBuilder.dueDate(Calendar.getInstance());
+        }
+
+        if (!pollCreateModel.hasSubject(createPollBuilder.getSubject())) {
+            return false;
+        }
+
+        List<String> filteredItems = pollCreateModel.getFilteredItems(createPollBuilder.getItemsMap());
+        if (!pollCreateModel.hasEnoughItems(filteredItems)) {
+            return false;
+        }
+
+        pollCreateModel.buildDueDate(createPollBuilder);
+
+        if (!pollCreateModel.isAvailableDueDate(createPollBuilder.getDueDate())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public void onCreatePoll() {
         if (createPollBuilder.getDueDate() == null) {
             createPollBuilder.dueDate(Calendar.getInstance());

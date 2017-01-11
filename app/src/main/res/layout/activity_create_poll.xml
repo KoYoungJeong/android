@@ -221,6 +221,7 @@
                 android:layout_height="36dp"
                 android:layout_margin="16dp"
                 android:background="@drawable/btn_create_poll_bg"
+                android:enabled="false"
                 android:gravity="center"
                 android:text="@string/jandi_poll_create"
                 android:textColor="@color/white"

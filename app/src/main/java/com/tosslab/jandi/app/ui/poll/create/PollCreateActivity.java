@@ -71,6 +71,8 @@ public class PollCreateActivity extends BaseAppCompatActivity
     TextView tvCreatePollDate;
     @Bind(R.id.tv_create_poll_time)
     TextView tvCreatePollTime;
+    @Bind(R.id.btn_create_poll)
+    TextView tvCreatePollButton;
 
     private ProgressWheel progressWheel;
 
@@ -151,6 +153,7 @@ public class PollCreateActivity extends BaseAppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 pollCreatePresenter.onPollItemInput(position, s.toString());
+                changePollButtonState();
             }
         });
 
@@ -191,12 +194,20 @@ public class PollCreateActivity extends BaseAppCompatActivity
         if (childCount >= 31) {
             btnCreatePoll.setVisibility(View.GONE);
         }
+    }
 
+    private void changePollButtonState() {
+        if (pollCreatePresenter.isAvailablePoll()) {
+            tvCreatePollButton.setEnabled(true);
+        } else {
+            tvCreatePollButton.setEnabled(false);
+        }
     }
 
     @OnTextChanged(R.id.et_create_poll_subject)
     void onSubjectChanged(CharSequence subject) {
         pollCreatePresenter.onPollSubjectChanged(subject.toString());
+        changePollButtonState();
     }
 
     @OnClick(R.id.btn_create_poll_duedate)
