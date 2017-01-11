@@ -57,8 +57,11 @@ public final class Flusher {
             long time =
                     cursor.getLong(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns.TIME));
 
+            String version =
+                    cursor.getString(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns.VERSION));
+
             list.add(new Track(index,
-                    event, getMapFromString(identifiers), platform, getMapFromString(properties), time));
+                    event, getMapFromString(identifiers), platform, getMapFromString(properties), time, version));
         }
         cursor.close();
 
@@ -152,9 +155,9 @@ public final class Flusher {
         }
     }
 
-    public ResponseBody flush(boolean retry, int num, String deviceId, long lastDate, List<Track> data)
+    public ResponseBody flush(boolean retry, int num, String deviceId, long lastDate, List<Track> data, String version)
             throws Exception {
-        RequestManager.Request<ResponseBody> request = getRequest(num, deviceId, lastDate, data);
+        RequestManager.Request<ResponseBody> request = getRequest(num, deviceId, lastDate, data, version);
         if (retry) {
             return requestManager.requestWithRetry(request);
         }
@@ -162,12 +165,12 @@ public final class Flusher {
     }
 
     private RequestManager.Request<ResponseBody> getRequest(
-            final int num, final String deviceId, final long lastDate, final List<Track> data) {
+            final int num, final String deviceId, final long lastDate, final List<Track> data, final String version) {
 
         return new RequestManager.Request<ResponseBody>() {
             @Override
             public ResponseBody performRequest() throws IOException {
-                RequestBody body = new RequestBody(num, deviceId, lastDate, data);
+                RequestBody body = new RequestBody(num, deviceId, lastDate, data, version);
                 RequestClient client = requestManager.getClient(RequestClient.class);
                 ResponseBody response = client.post(body).clone().execute().body();
                 return response;

@@ -45,7 +45,8 @@ public final class Tracker {
                           Map<String, Object> identifiersMap,
                           String platform,
                           Map<String, Object> propertiesMap,
-                          long time) {
+                          long time,
+                          String version) {
         if (TextUtils.isEmpty(event)) {
             Logger.e(TAG, "Track insert fail. You must be set \'event\' into Track Data.");
             return false;
@@ -54,7 +55,7 @@ public final class Tracker {
         String identifiers = getJSONFormatFromMap(identifiersMap);
         String properties = getJSONFormatFromMap(propertiesMap);
 
-        boolean insert = databaseHelper.insert(event, identifiers, platform, properties, time);
+        boolean insert = databaseHelper.insert(event, identifiers, platform, properties, time, version);
 
         return insert;
     }
