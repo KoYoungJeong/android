@@ -13,7 +13,7 @@ buildscript {
 }
 
 group = "com.tosslab.jandi.lib"
-version = 1.5
+version = 1.6
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -26,7 +26,6 @@ android {
     lintOptions {
         abortOnError false
     }
-
 
     packagingOptions.excludes = [
             'META-INF/DEPENDENCIES',
@@ -62,7 +61,6 @@ dependencies {
     androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_support
     androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_appcompat
     androidTestCompile rootProject.ext.dependecies.libraries.assertj_android_recyclerview
-
 }
 
 
