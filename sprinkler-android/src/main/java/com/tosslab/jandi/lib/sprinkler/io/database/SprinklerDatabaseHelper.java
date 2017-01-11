@@ -17,7 +17,7 @@ import com.tosslab.jandi.lib.sprinkler.util.Logger;
 public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
     public static final String TAG = Logger.makeTag(SprinklerDatabaseHelper.class);
     public static final int QUERY_LIMIT = 500;
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "sprinkler.db";
     private static final String TABLE_NAME_TRACK = "track";
 
@@ -27,7 +27,7 @@ public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
             + TableColumns.IDENTIFIERS + " TEXT, "
             + TableColumns.PLATFORM + " TEXT, "
             + TableColumns.PROPERTIES + " TEXT, "
-            + TableColumns.TIME + " INTEGER "
+            + TableColumns.TIME + " INTEGER, "
             + TableColumns.VERSION + " TEXT );";
 
     private static SprinklerDatabaseHelper sInstance;

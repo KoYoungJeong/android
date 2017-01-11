@@ -56,7 +56,6 @@ public final class Flusher {
                     cursor.getString(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns.PROPERTIES));
             long time =
                     cursor.getLong(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns.TIME));
-
             String version =
                     cursor.getString(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns.VERSION));
 
