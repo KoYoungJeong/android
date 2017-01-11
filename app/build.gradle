@@ -109,6 +109,9 @@ android {
             variant.setIgnore(true);
         }
     }
+    applicationVariants.all { variant ->
+        variant.resValue "string", "jandi_file_authority", "${variant.applicationId}.jandifile"
+    }
 
     packagingOptions.excludes = [
             'META-INF/DEPENDENCIES',

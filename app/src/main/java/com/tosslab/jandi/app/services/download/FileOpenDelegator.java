@@ -47,7 +47,7 @@ public class FileOpenDelegator extends BroadcastReceiver {
 
         File file = (File) serializable;
         Intent fileViewerOpenIntent = new Intent(Intent.ACTION_VIEW);
-        Uri data = FileProvider.getUriForFile(context, "jandifile", file);
+        Uri data = FileProvider.getUriForFile(context, context.getString(R.string.jandi_file_authority), file);
         fileViewerOpenIntent.setDataAndType(data, getFileType(file, fileType));
         fileViewerOpenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_GRANT_READ_URI_PERMISSION

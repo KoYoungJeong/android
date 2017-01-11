@@ -597,17 +597,19 @@ public class MentionControlViewModel {
             }
             ClipboardManager clipBoard = (ClipboardManager) etMessage.getContext()
                     .getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData primaryClip = clipBoard.getPrimaryClip();
+            if (primaryClip == null) {
+                return;
+            }
             CharSequence pasteData;
-            ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
+            ClipData.Item item = primaryClip.getItemAt(0);
             pasteData = item.getText();
             if (!TextUtils.isEmpty(pasteData) && et.contains(pasteData.toString())) {
                 String convertedMessage;
                 if (isCut) {
-                    convertedMessage =
-                            getMentionInfoObject(et).getMessage();
+                    convertedMessage = getMentionInfoObject(et).getMessage();
                 } else {
-                    convertedMessage =
-                            getMentionInfoObject(et).getMessage();
+                    convertedMessage = getMentionInfoObject(et).getMessage();
                 }
                 Log.e(convertedMessage, convertedMessage);
                 setTextOnClip(convertedMessage);

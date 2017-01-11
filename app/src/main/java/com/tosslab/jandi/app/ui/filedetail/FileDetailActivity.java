@@ -1120,7 +1120,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void startExportedFileViewerActivity(File file) {
         Intent target = new Intent(Intent.ACTION_SEND);
-        Uri parse = FileProvider.getUriForFile(this, "jandifile", file);
+        Uri parse = FileProvider.getUriForFile(this, getString(R.string.jandi_file_authority), file);
         String mimeType = getFileType(file);
         if (mimeType != null) {
             target.setDataAndType(parse, mimeType)
@@ -1145,7 +1145,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
             intent.setAction(Intent.ACTION_VIEW);
             String mimeType = getFileType(file);
             if (mimeType != null) {
-                Uri data = FileProvider.getUriForFile(this, "jandifile", file);
+                Uri data = FileProvider.getUriForFile(this, getString(R.string.jandi_file_authority), file);
                 intent.setDataAndType(data, mimeType)
                         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 startActivity(intent);
