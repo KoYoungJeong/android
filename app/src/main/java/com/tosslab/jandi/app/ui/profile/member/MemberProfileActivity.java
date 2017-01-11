@@ -165,6 +165,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         Dart.inject(this);
         ButterKnife.bind(this);
 
+        if (!TeamInfoLoader.getInstance().isUser(memberId)
+                && !TeamInfoLoader.getInstance().isJandiBot(memberId)) {
+            finish();
+            return;
+        }
+
         DaggerMemberProfileComponent.create().inject(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

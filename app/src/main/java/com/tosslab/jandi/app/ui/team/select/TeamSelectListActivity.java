@@ -69,6 +69,7 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
 
     ProgressWheel progressWheel;
 
+    @Nullable
     @InjectExtra
     boolean shouldRefreshAccountInfo = true;
 
@@ -76,16 +77,15 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_team_list);
+        ButterKnife.bind(this);
+        Dart.inject(this);
         TeamSelectListAdapter teamSelectListAdapter = new TeamSelectListAdapter();
         DaggerTeamSelectListComponent.builder()
                 .teamSelectListModule(
                         new TeamSelectListModule(this, teamSelectListAdapter))
                 .build()
                 .inject(this);
-        ButterKnife.bind(this);
-        Dart.inject(this);
-        lvTeamList.setLayoutManager(new LinearLayoutManager(this,
-                RecyclerView.VERTICAL, false));
+        lvTeamList.setLayoutManager(new LinearLayoutManager(this));
         lvTeamList.setAdapter(teamSelectListAdapter);
         bindListeners();
         teamSelectListPresenter.initTeamDatas(true, shouldRefreshAccountInfo);

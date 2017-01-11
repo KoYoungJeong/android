@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.ui.profile.account.model;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ReqAccountEmail;
+import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -30,12 +30,12 @@ public class SettingAccountProfileModel {
 
     private Lazy<LoginApi> loginApi;
 
-    private Lazy<AccountProfileApi> accountProfileApi;
+    private Lazy<AccountApi> accountApi;
 
     @Inject
-    public SettingAccountProfileModel(Lazy<LoginApi> loginApi, Lazy<AccountProfileApi> accountProfileApi) {
+    public SettingAccountProfileModel(Lazy<LoginApi> loginApi, Lazy<AccountApi> accountApi) {
         this.loginApi = loginApi;
-        this.accountProfileApi = accountProfileApi;
+        this.accountApi = accountApi;
     }
 
     public String getName() {
@@ -77,7 +77,7 @@ public class SettingAccountProfileModel {
     public void updateProfileEmail(String email) {
         try {
             ResAccountInfo resAccountInfo =
-                    accountProfileApi.get().changePrimaryEmail(new ReqAccountEmail(email));
+                    accountApi.get().updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo(email));
             AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
         } catch (RetrofitException e) {
             e.printStackTrace();
