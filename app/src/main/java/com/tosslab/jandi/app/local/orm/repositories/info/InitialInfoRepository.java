@@ -5,6 +5,8 @@ import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplat
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InitialInfoRepository extends LockExecutorTemplate {
     private static InitialInfoRepository instance;
@@ -26,6 +28,22 @@ public class InitialInfoRepository extends LockExecutorTemplate {
                 e.printStackTrace();
                 return false;
             }
+        });
+    }
+
+    public List<Long> getSavedTeamList() {
+        return execute(() -> {
+            ArrayList<Long> teamIds = new ArrayList<>();
+            try {
+                Dao<RawInitialInfo, Object> dao = getDao(RawInitialInfo.class);
+                List<RawInitialInfo> teams = dao.queryBuilder().selectColumns("teamId").query();
+                for (RawInitialInfo team : teams) {
+                    teamIds.add(team.getTeamId());
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return teamIds;
         });
     }
 

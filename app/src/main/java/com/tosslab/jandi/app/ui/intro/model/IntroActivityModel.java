@@ -70,7 +70,9 @@ public class IntroActivityModel {
             long selectedTeamId = selectedTeamInfo.getTeamId();
             String initialInfo = startApi.get().getRawInitializeInfo(selectedTeamId);
             InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(selectedTeamId, initialInfo));
-            TeamInfoLoader.getInstance().refresh();
+            if (!refreshRankIfNeeds()) {
+                TeamInfoLoader.getInstance().refresh();
+            }
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();

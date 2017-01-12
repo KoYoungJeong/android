@@ -2,16 +2,23 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Profile {
-    private String email;
-    private String position;
-    private String department;
-    private String phoneNumber;
-    private String statusMessage;
-    private boolean isUpdated;
+    @GsonAdapterKey
+    String email;
+    @GsonAdapterKey
+    String position;
+    @GsonAdapterKey
+    String department;
+    @GsonAdapterKey
+    String phoneNumber;
+    @GsonAdapterKey
+    String statusMessage;
+    @GsonAdapterKey
+    boolean isUpdated;
 
     public String getEmail() {
         return email;

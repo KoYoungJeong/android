@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +29,11 @@ public class InitialInfoRepositoryTest {
         initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
+    @Test
+    public void getSavedTeamList() throws Exception {
+        List<Long> savedTeamList = InitialInfoRepository.getInstance().getSavedTeamList();
+        assertThat(savedTeamList).contains(teamId);
+    }
 
     @Before
     public void setUp() throws Exception {

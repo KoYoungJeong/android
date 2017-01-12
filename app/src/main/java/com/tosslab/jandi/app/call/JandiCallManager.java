@@ -22,8 +22,8 @@ import com.crashlytics.android.Crashlytics;
 import com.jakewharton.rxrelay.PublishRelay;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
@@ -39,7 +39,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class JandiCallManager {
-    public static final String[] CONTACTS_PROJECTION = new String[]{ContactsContract.Contacts._ID};
+    private static final String[] CONTACTS_PROJECTION = new String[]{ContactsContract.Contacts._ID};
     private static JandiCallManager instance;
     private final PhoneNumberUtil phoneNumberUtil;
 
@@ -128,20 +128,7 @@ public class JandiCallManager {
 
                     return true;
                 })
-                .filter(it -> {
-                    if (TextUtils.isEmpty(it.number)) {
-                        return false;
-                    }
-
-                    String queryNum;
-                    if (it.number.length() >= 3) {
-                        queryNum = it.number.substring(it.number.length() - 3, it.number.length());
-                    } else {
-                        queryNum = it.number;
-                    }
-
-                    return HumanRepository.getInstance().containsPhone(queryNum);
-                })
+                .filter(it -> !TextUtils.isEmpty(it.number))
                 .concatMap(callState -> {
                     String queryNum;
                     String number = callState.number.replaceAll("[^0-9]", "");
@@ -150,19 +137,19 @@ public class JandiCallManager {
                     } else {
                         queryNum = number;
                     }
-                    List<Human> containsPhone = HumanRepository.getInstance().getContainsPhone(queryNum);
+                    List<Long> savedTeamList = InitialInfoRepository.getInstance().getSavedTeamList();
 
-                    if (containsPhone == null) {
-                        return Observable.empty();
-                    }
+                    return Observable.from(savedTeamList)
+                            .map(TeamInfoLoader::getInstance)
+                            .flatMap(teamInfoLoader -> Observable.from(teamInfoLoader.getUserList()))
+                            .filter(user -> user.getPhoneNumber().contains(queryNum))
+                            .takeFirst(user -> {
+                                String phoneNumber = user.getPhoneNumber();
+                                String plainPhoneNumber = phoneNumber.replaceAll("[^0-9]", "");
 
-                    return Observable.from(containsPhone).map(User::new).takeFirst(user -> {
-                        String phoneNumber = user.getPhoneNumber();
-                        String plainPhoneNumber = phoneNumber.replaceAll("[^0-9]", "");
-
-                        PhoneNumberUtil.MatchType numberMatch = phoneNumberUtil.isNumberMatch(number, plainPhoneNumber);
-                        return numberMatch.ordinal() > PhoneNumberUtil.MatchType.NO_MATCH.ordinal();
-                    });
+                                PhoneNumberUtil.MatchType numberMatch = phoneNumberUtil.isNumberMatch(number, plainPhoneNumber);
+                                return numberMatch.ordinal() > PhoneNumberUtil.MatchType.NO_MATCH.ordinal();
+                            });
                 }).observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(it -> {
                     WindowManager windowManager = (WindowManager) JandiApplication.getContext().getSystemService(Context.WINDOW_SERVICE);

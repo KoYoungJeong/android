@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
@@ -122,7 +122,7 @@ public class TeamSelectListModelTest {
 
         // When
         String rawEntityInfo = teamSelectListModel.getEntityInfo(selectedTeamId);
-        InitialInfo initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawEntityInfo, InitialInfo.class);
+        InitialInfo initialInfo = JsonMapper.getInstance().getObjectMapper().readValue(rawEntityInfo, InitialInfo.class);
 
         // Then
         assertThat(initialInfo, is(notNullValue()));
@@ -139,7 +139,7 @@ public class TeamSelectListModelTest {
         long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
         String rawInitializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
-        InitialInfo initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawInitializeInfo, InitialInfo.class);
+        InitialInfo initialInfo = JsonMapper.getInstance().getObjectMapper().readValue(rawInitializeInfo, InitialInfo.class);
         // When
         teamSelectListModel.updateEntityInfo(new RawInitialInfo(teamId, rawInitializeInfo));
 

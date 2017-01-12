@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.TopicConverter;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.Date;
 import java.util.List;
@@ -12,28 +13,50 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(converter = TopicConverter.class)
 public class Topic {
-    private long id;
-    private long teamId;
-    private String type;
-    private String name;
-    private String status;
-    private String description;
-    private boolean isDefault;
-    private boolean autoJoin;
-    private boolean isAnnouncement;
-    private boolean messageDeletable;
-    private long creatorId;
-    private long deleterId;
-    private long lastLinkId;
-    private Date createdAt;
-    private List<Long> members;
-    private boolean isJoined;
-    private boolean isStarred;
-    private List<Marker> markers;
-    private long readLinkId;
-    private boolean subscribe;
-    private int unreadCount;
-    private Announcement announcement;
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String type;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    String status;
+    @GsonAdapterKey
+    String description;
+    @GsonAdapterKey
+    boolean isDefault;
+    @GsonAdapterKey
+    boolean autoJoin;
+    @GsonAdapterKey
+    boolean isAnnouncement;
+    @GsonAdapterKey
+    boolean messageDeletable;
+    @GsonAdapterKey
+    long creatorId;
+    @GsonAdapterKey
+    long deleterId;
+    @GsonAdapterKey
+    long lastLinkId;
+    @GsonAdapterKey
+    Date createdAt;
+    @GsonAdapterKey
+    List<Long> members;
+    @GsonAdapterKey
+    boolean isJoined;
+    @GsonAdapterKey
+    boolean isStarred;
+    @GsonAdapterKey
+    List<Marker> markers;
+    @GsonAdapterKey
+    long readLinkId;
+    @GsonAdapterKey
+    boolean subscribe;
+    @GsonAdapterKey
+    int unreadCount;
+    @GsonAdapterKey
+    Announcement announcement;
 
     public boolean isAnnouncement() {
         return isAnnouncement;

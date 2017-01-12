@@ -2,19 +2,27 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Announcement {
-    private String content;
-    private Date createdAt;
-    private long creatorId;
-    private boolean isOpened;
-    private long messageId;
-    private long writerId;
-    private Date writtenAt;
+    @GsonAdapterKey
+    String content;
+    @GsonAdapterKey
+    Date createdAt;
+    @GsonAdapterKey
+    long creatorId;
+    @GsonAdapterKey
+    boolean isOpened;
+    @GsonAdapterKey
+    long messageId;
+    @GsonAdapterKey
+    long writerId;
+    @GsonAdapterKey
+    Date writtenAt;
 
     public long getMessageId() {
         return messageId;

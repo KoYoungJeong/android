@@ -2,23 +2,35 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Human {
-    private long id;
-    private long teamId;
-    private String type;
-    private String name;
-    private String photoUrl;
-    private String accountId;
-    private Profile profile;
-    private String status;
-    private List<Long> joinTopics;
-    private long rankId;
-    private boolean isStarred;
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String type;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    String photoUrl;
+    @GsonAdapterKey
+    String accountId;
+    @GsonAdapterKey
+    Profile profile;
+    @GsonAdapterKey
+    String status;
+    @GsonAdapterKey
+    List<Long> joinTopics;
+    @GsonAdapterKey
+    long rankId;
+    @GsonAdapterKey
+    boolean isStarred;
 
     public long getId() {
         return id;

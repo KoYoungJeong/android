@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.ChatConverter;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.List;
 
@@ -11,18 +12,30 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(converter = ChatConverter.class)
 public class Chat {
-    private long id;
-    private long teamId;
-    private String type;
-    private String status;
-    private long lastLinkId;
-    private List<Long> members;
-    private boolean isOpened;
-    private long companionId;
-    private LastMessage lastMessage;
-    private List<Marker> markers;
-    private long readLinkId;
-    private int unreadCount;
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String type;
+    @GsonAdapterKey
+    String status;
+    @GsonAdapterKey
+    long lastLinkId;
+    @GsonAdapterKey
+    List<Long> members;
+    @GsonAdapterKey
+    boolean isOpened;
+    @GsonAdapterKey
+    long companionId;
+    @GsonAdapterKey
+    LastMessage lastMessage;
+    @GsonAdapterKey
+    List<Marker> markers;
+    @GsonAdapterKey
+    long readLinkId;
+    @GsonAdapterKey
+    int unreadCount;
 
     public long getId() {
         return id;

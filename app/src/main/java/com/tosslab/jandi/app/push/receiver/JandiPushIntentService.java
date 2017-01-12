@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.queue.PushHandler;
@@ -142,7 +142,7 @@ public class JandiPushIntentService extends IntentService {
         }
 
         try {
-            return JacksonMapper.getInstance().getObjectMapper().readValue(content, BasePushInfo.class);
+            return JsonMapper.getInstance().getObjectMapper().readValue(content, BasePushInfo.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

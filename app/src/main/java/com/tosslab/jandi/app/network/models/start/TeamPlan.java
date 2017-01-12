@@ -2,19 +2,27 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class TeamPlan {
-    private long teamId;
-    private String pricing;
-    private long fileSize;
-    private long messageCount;
-    private boolean isExceedFile;
-    private boolean isExceedMessage;
-    private Date updatedAt;
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String pricing;
+    @GsonAdapterKey
+    long fileSize;
+    @GsonAdapterKey
+    long messageCount;
+    @GsonAdapterKey
+    boolean isExceedFile;
+    @GsonAdapterKey
+    boolean isExceedMessage;
+    @GsonAdapterKey
+    Date updatedAt;
 
     public long getTeamId() {
         return teamId;

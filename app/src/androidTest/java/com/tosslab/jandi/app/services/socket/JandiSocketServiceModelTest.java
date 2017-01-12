@@ -36,7 +36,7 @@ import com.tosslab.jandi.app.local.orm.repositories.socket.SocketEventRepository
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -297,7 +297,7 @@ public class JandiSocketServiceModelTest {
                 "    \"ts\": 1464241715673\n" +
                 "}";
         try {
-            SocketChatCreatedEvent socketChatCreatedEvent = JacksonMapper.getInstance().getObjectMapper().readValue(content, SocketChatCreatedEvent.class);
+            SocketChatCreatedEvent socketChatCreatedEvent = JsonMapper.getInstance().getObjectMapper().readValue(content, SocketChatCreatedEvent.class);
             socketChatCreatedEvent.setTeamId(teamId);
             socketChatCreatedEvent.getData().getChat().setTeamId(teamId);
             return socketChatCreatedEvent;

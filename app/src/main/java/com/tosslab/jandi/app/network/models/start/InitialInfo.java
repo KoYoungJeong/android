@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.InitializeInfoConverter;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.List;
 
@@ -12,21 +13,33 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(converter = InitializeInfoConverter.class)
 public class InitialInfo {
-    private Self self;
-    private Team team;
-    private Poll poll;
-    private Mention mention;
-    private TeamPlan teamPlan;
+    @GsonAdapterKey
+    Self self;
+    @GsonAdapterKey
+    Team team;
+    @GsonAdapterKey
+    Poll poll;
+    @GsonAdapterKey
+    Mention mention;
+    @GsonAdapterKey
+    TeamPlan teamPlan;
 
-    private List<Folder> folders;
-    private List<Topic> topics;
-    private List<Chat> chats;
-    private List<Human> members;
-    private List<Bot> bots;
+    @GsonAdapterKey
+    List<Folder> folders;
+    @GsonAdapterKey
+    List<Topic> topics;
+    @GsonAdapterKey
+    List<Chat> chats;
+    @GsonAdapterKey
+    List<Human> members;
+    @GsonAdapterKey
+    List<Bot> bots;
 
-    private long ts;
+    @GsonAdapterKey
+    long ts;
 
-    private List<Long> starredMessageIds;
+    @GsonAdapterKey
+    List<Long> starredMessageIds;
 
     public Team getTeam() {
         return team;

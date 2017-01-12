@@ -2,17 +2,25 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Bot {
-    private long id;
-    private long teamId;
-    private String type;
-    private String botType;
-    private String status;
-    private String name;
-    private String photoUrl;
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String type;
+    @GsonAdapterKey
+    String botType;
+    @GsonAdapterKey
+    String status;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    String photoUrl;
 
     public long getId() {
         return id;

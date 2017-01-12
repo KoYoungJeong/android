@@ -2,19 +2,29 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Team {
-    private long id;
-    private String name;
-    private String status;
-    private String domain;
-    private String emailDomain;
-    private String invitationStatus;
-    private String invitationCode;
-    private String invitationUrl;
-    private String connectAuth;
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    String status;
+    @GsonAdapterKey
+    String domain;
+    @GsonAdapterKey
+    String emailDomain;
+    @GsonAdapterKey
+    String invitationStatus;
+    @GsonAdapterKey
+    String invitationCode;
+    @GsonAdapterKey
+    String invitationUrl;
+    @GsonAdapterKey
+    String connectAuth;
 
     public long getId() {
         return id;

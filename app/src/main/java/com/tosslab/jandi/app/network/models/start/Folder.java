@@ -4,16 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.annotations.Expose;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Folder {
-    private long id;
-    private String name;
-    private int seq;
-    private List<Long> rooms;
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    int seq;
+    @GsonAdapterKey
+    List<Long> rooms;
     @JsonIgnore
     @Expose(deserialize = false)
     private boolean isOpened;

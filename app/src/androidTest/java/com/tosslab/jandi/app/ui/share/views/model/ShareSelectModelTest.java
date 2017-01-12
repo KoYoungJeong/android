@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
@@ -70,7 +70,7 @@ public class ShareSelectModelTest {
 
 
         RawInitialInfo rawInitialInfo = InitialInfoRepository.getInstance().getRawInitialInfo(teamId);
-        InitialInfo initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawInitialInfo.getRawValue(), InitialInfo.class);
+        InitialInfo initialInfo = JsonMapper.getInstance().getObjectMapper().readValue(rawInitialInfo.getRawValue(), InitialInfo.class);
 
         TeamInfoLoader instance = TeamInfoLoader.getInstance(teamId);
         User entity = instance.getUser(initialInfo.getSelf().getId());

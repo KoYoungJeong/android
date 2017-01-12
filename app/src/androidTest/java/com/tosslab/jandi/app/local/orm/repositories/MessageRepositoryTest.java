@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.junit.After;
@@ -175,7 +175,7 @@ public class MessageRepositoryTest {
     private List<ResMessages.Link> getMessages() {
 
         try {
-            ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
+            ObjectMapper objectMapper = JsonMapper.getInstance().getObjectMapper();
             ResMessages resMessages = objectMapper.readValue(MESSAGE_JSON, ResMessages.class);
             return resMessages.records;
         } catch (IOException e) {
