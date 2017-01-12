@@ -53,7 +53,6 @@ public class TopicCreatePresenterImpl implements TopicCreatePresenter {
         }).doOnNext(topic -> {
 
             topicCreateModel.addTopic(topic);
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
             SprinklrTopicCreate.sendLog(topic.getId());

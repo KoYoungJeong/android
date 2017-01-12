@@ -6,8 +6,8 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Profile;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.Before;
@@ -15,7 +15,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,27 +23,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class HumanRepositoryTest {
 
-    private static InitialInfo initializeInfo;
+    private static String initializeInfo;
     private static long teamId;
 
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
     @Before
     public void setUp() throws Exception {
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
-        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
 
     }
 
     @Test
     public void testGetHuman() throws Exception {
-        long myId = initializeInfo.getSelf().getId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
         assertThat(HumanRepository.getInstance().isHuman(myId)).isTrue();
         assertThat(HumanRepository.getInstance().isHuman(0)).isFalse();
     }
@@ -56,7 +54,7 @@ public class HumanRepositoryTest {
         Human human = getHuman();
 
         // When
-        HumanRepository.getInstance().addHuman(teamId, human);
+        HumanRepository.getInstance().addHuman(human);
 
         // Then
         Human human1 = HumanRepository.getInstance().getHuman(1);
@@ -83,7 +81,7 @@ public class HumanRepositoryTest {
         }
 
         {
-            HumanRepository.getInstance().addHuman(teamId, getHuman());
+            HumanRepository.getInstance().addHuman(getHuman());
             assertThat(HumanRepository.getInstance().isHuman(getHuman().getId())).isTrue();
         }
 
@@ -91,19 +89,19 @@ public class HumanRepositoryTest {
 
     @Test
     public void testGetMemberCount() throws Exception {
-        int memberCount = HumanRepository.getInstance().getMemberCount(teamId);
+        int memberCount = HumanRepository.getInstance().getMemberCount();
 
         assertThat(memberCount).isGreaterThanOrEqualTo(1);
 
-        HumanRepository.getInstance().addHuman(teamId, getHuman());
+        HumanRepository.getInstance().addHuman(getHuman());
 
-        assertThat(HumanRepository.getInstance().getMemberCount(teamId))
+        assertThat(HumanRepository.getInstance().getMemberCount())
                 .isGreaterThan(memberCount);
     }
 
     @Test
     public void testUpdateStatus() throws Exception {
-        HumanRepository.getInstance().addHuman(teamId, getHuman());
+        HumanRepository.getInstance().addHuman(getHuman());
 
         String status = "disabled";
         HumanRepository.getInstance().updateStatus(getHuman().getId(), status);
@@ -115,7 +113,7 @@ public class HumanRepositoryTest {
 
     @Test
     public void testUpdatePhotoUrl() throws Exception {
-        HumanRepository.getInstance().addHuman(teamId, getHuman());
+        HumanRepository.getInstance().addHuman(getHuman());
         String photoUrl = "http://";
         HumanRepository.getInstance().updatePhotoUrl(getHuman().getId(), photoUrl);
         assertThat(HumanRepository.getInstance().getHuman(getHuman().getId()).getPhotoUrl())
@@ -125,7 +123,7 @@ public class HumanRepositoryTest {
     @Test
     public void testUpdateHuman() throws Exception {
         Human human = getHuman();
-        HumanRepository.getInstance().addHuman(teamId, human);
+        HumanRepository.getInstance().addHuman(human);
         human.setName("name2");
         HumanRepository.getInstance().updateHuman(human);
 
@@ -135,7 +133,7 @@ public class HumanRepositoryTest {
 
     @Test
     public void testUpdateStarred() throws Exception {
-        HumanRepository.getInstance().addHuman(teamId, getHuman());
+        HumanRepository.getInstance().addHuman(getHuman());
         HumanRepository.getInstance().updateStarred(getHuman().getId(), true);
 
         assertThat(HumanRepository.getInstance().getHuman(getHuman().getId()).isStarred())
@@ -146,11 +144,10 @@ public class HumanRepositoryTest {
     public void testContainsPhone() throws Exception {
         Human human = getHuman();
         Profile profile = new Profile();
-        profile.setId(human.getId());
         profile.setPhoneNumber("82 10 1234 5678");
         human.setProfile(profile);
 
-        HumanRepository.getInstance().addHuman(teamId, human);
+        HumanRepository.getInstance().addHuman(human);
 
         assertThat(HumanRepository.getInstance().containsPhone("678")).isTrue();
         assertThat(HumanRepository.getInstance().containsPhone("123")).isTrue();
@@ -160,12 +157,11 @@ public class HumanRepositoryTest {
     public void testGetContainsPhone() throws Exception {
         Human human = getHuman();
         Profile profile = new Profile();
-        profile.setId(human.getId());
         String phoneNumber = "82 10 1234 5678";
         profile.setPhoneNumber(phoneNumber);
         human.setProfile(profile);
 
-        HumanRepository.getInstance().addHuman(teamId, human);
+        HumanRepository.getInstance().addHuman(human);
 
         List<Human> containsPhone = HumanRepository.getInstance().getContainsPhone("678");
         assertThat(containsPhone).isNotNull();

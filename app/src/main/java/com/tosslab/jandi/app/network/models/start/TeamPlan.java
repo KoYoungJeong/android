@@ -5,13 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class TeamPlan extends RealmObject {
-    @PrimaryKey
+public class TeamPlan {
     private long teamId;
     private String pricing;
     private long fileSize;
@@ -72,8 +68,8 @@ public class TeamPlan extends RealmObject {
         return messageCount;
     }
 
-    public TeamPlan setMessageCount(long messageCount) {
+    public void setMessageCount(long messageCount) {
         this.messageCount = messageCount;
-        return this;
+
     }
 }

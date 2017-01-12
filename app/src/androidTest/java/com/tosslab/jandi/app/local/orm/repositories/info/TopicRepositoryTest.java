@@ -7,8 +7,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Announcement;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -20,7 +19,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,28 +28,27 @@ import static org.assertj.core.api.Assertions.fail;
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class TopicRepositoryTest {
 
-    private static InitialInfo initializeInfo;
+    private static String initializeInfo;
     private long selectedTeamId;
     private long defaultTopicId;
 
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
     }
 
     @Before
     public void setUp() throws Exception {
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
-        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-        TeamInfoLoader.getInstance().refresh();
         selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(selectedTeamId, initializeInfo));
+        TeamInfoLoader.getInstance().refresh();
         defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
     }
 
     @Test
     public void testGetTopics() throws Exception {
-        List<Topic> topics = TopicRepository.getInstance().getTopics(selectedTeamId);
+        List<Topic> topics = TopicRepository.getInstance().getTopics();
         assertThat(topics.size()).isGreaterThan(1);
     }
 
@@ -59,12 +56,12 @@ public class TopicRepositoryTest {
     public void testGetDefaultTopic() throws Exception {
         TopicRoom topic = TeamInfoLoader.getInstance().getTopic(defaultTopicId);
 
-        Topic defaultTopic = TopicRepository.getInstance().getDefaultTopic(selectedTeamId);
+        Topic defaultTopic = TopicRepository.getInstance().getDefaultTopic();
 
         assertThat(defaultTopic.getName()).isEqualTo(topic.getName());
         assertThat(defaultTopic.getDescription()).isEqualTo(topic.getDescription());
         assertThat(defaultTopic.isAutoJoin()).isEqualTo(topic.isAutoJoin());
-        assertThat(defaultTopic.getMemberIds().size()).isEqualTo(topic.getMemberCount());
+        assertThat(defaultTopic.getMembers().size()).isEqualTo(topic.getMemberCount());
         assertThat(defaultTopic.getUnreadCount()).isEqualTo(topic.getUnreadCount());
     }
 
@@ -116,8 +113,8 @@ public class TopicRepositoryTest {
 
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
         boolean contains = false;
-        for (RealmLong realmLong : topic.getMemberIds()) {
-            if (realmLong.getValue() == tempMemberId) {
+        for (Long memberId : topic.getMembers()) {
+            if (memberId == tempMemberId) {
                 contains = true;
             }
         }
@@ -131,10 +128,8 @@ public class TopicRepositoryTest {
         assertThat(success).isTrue();
 
         Topic topic = TopicRepository.getInstance().getTopic(defaultTopicId);
-        boolean contains = false;
-        for (RealmLong realmLong : topic.getMemberIds()) {
-            if (realmLong.getValue() == TeamInfoLoader.getInstance().getMyId()) {
-                contains = true;
+        for (Long memberId : topic.getMembers()) {
+            if (memberId == TeamInfoLoader.getInstance().getMyId()) {
                 fail("It couldn't be");
             }
         }
@@ -265,12 +260,18 @@ public class TopicRepositoryTest {
     @Test
     public void testUpdateTopic() throws Exception {
         Topic topic = null;
-        for (Topic t : initializeInfo.getTopics()) {
+        for (Topic t : TopicRepository.getInstance().getTopics()) {
             if (t.getId() == defaultTopicId) {
-                topic =t;
+                topic = t;
                 break;
             }
         }
+
+        if (topic == null) {
+            fail("It cannot be null");
+            return;
+        }
+
         topic.setName("hellow");
         boolean success = TopicRepository.getInstance().updateTopic(topic);
 
@@ -294,7 +295,7 @@ public class TopicRepositoryTest {
 
     @Test
     public void testIsTopic() throws Exception {
-        assertThat(TopicRepository.getInstance().isTopic(1l)).isFalse();
+        assertThat(TopicRepository.getInstance().isTopic(1L)).isFalse();
         assertThat(TopicRepository.getInstance().isTopic(defaultTopicId)).isTrue();
     }
 

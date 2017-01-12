@@ -1,12 +1,22 @@
 package com.tosslab.jandi.app.team;
 
+import android.support.v4.util.ArrayMap;
+import android.support.v4.util.LongSparseArray;
 import android.text.TextUtils;
 
+import com.google.gson.GsonBuilder;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TeamPlanRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -14,8 +24,7 @@ import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Poll;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
-import com.tosslab.jandi.app.network.models.start.Team;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
@@ -27,13 +36,11 @@ import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -41,65 +48,37 @@ import rx.Observable;
 import rx.functions.Func0;
 
 public class TeamInfoLoader {
-    private static TeamInfoLoader teamInfoLoader;
-
+    private static LongSparseArray<TeamInfoLoader> teamInfoLoader;
+    private final long teamId;
     private Lock lock;
     private InitialInfo initialInfo;
 
-    private List<TopicFolder> topicFolders;
+    private FolderRepository topicFolders;
 
-    private List<Room> rooms;
-    private Map<Long, DirectMessageRoom> chatRooms;
-    private Map<Long, TopicRoom> topicRooms;
+    private ChatRepository chatRooms;
+    private TopicRepository topicRooms;
 
-    private List<Member> members;
-    private Map<Long, User> users;
-    private Map<Long, WebhookBot> bots;
-    private Map<Long, Rank> ranks;
+    private HumanRepository users;
+    private BotRepository bots;
+    private ArrayMap<Long, Rank> ranks;
+
+    private TeamRepository teamRepository;
+    private InitialMentionInfoRepository mention;
+    private TeamPlanRepository teamPlan;
 
     private User me;
-    private Team team;
     private User jandiBot;
-    private Mention mention;
-    private TeamPlan teamPlan;
 
-    private int pollBadge;
+    private InitialPollInfoRepository poll;
 
-    private TeamInfoLoader() {
+    private TeamInfoLoader(long teamId) {
+        this.teamId = teamId;
         lock = new ReentrantLock();
-        rooms = new ArrayList<>();
-        chatRooms = new HashMap<>();
-        topicRooms = new HashMap<>();
-
-        topicFolders = new ArrayList<>();
-        members = new ArrayList<>();
-        users = new HashMap<>();
-        bots = new HashMap<>();
-        ranks = new HashMap<>();
-
-        refresh();
-    }
-
-    public TeamInfoLoader(long teamId) {
-        lock = new ReentrantLock();
-        rooms = new ArrayList<>();
-        chatRooms = new HashMap<>();
-        topicRooms = new HashMap<>();
-
-        topicFolders = new ArrayList<>();
-        members = new ArrayList<>();
-        users = new HashMap<>();
-        bots = new HashMap<>();
-        ranks = new HashMap<>();
-
         refresh(teamId);
     }
 
-    synchronized public static TeamInfoLoader getInstance() {
-        if (teamInfoLoader == null) {
-            teamInfoLoader = new TeamInfoLoader();
-        }
-        return teamInfoLoader;
+    public static TeamInfoLoader getInstance() {
+        return getInstance(AccountRepository.getRepository().getSelectedTeamId());
     }
 
     /**
@@ -109,137 +88,151 @@ public class TeamInfoLoader {
      * @param teamId 정보가 필요한 팀 ID
      * @return 팀 정보
      */
-    synchronized public static TeamInfoLoader getInstance(long teamId) {
-        return new TeamInfoLoader(teamId);
+    public static TeamInfoLoader getInstance(long teamId) {
+
+        if (teamInfoLoader == null) {
+            teamInfoLoader = new LongSparseArray<>();
+        }
+
+        if (teamInfoLoader.indexOfKey(teamId) < 0) {
+            teamInfoLoader.put(teamId, new TeamInfoLoader(teamId));
+        }
+
+        return teamInfoLoader.get(teamId);
     }
 
     public void refresh() {
         execute(() -> {
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
             refresh(teamId);
+            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
         });
     }
 
-    public void refresh(InitialInfo info) {
+    private void refresh(long teamId) {
         execute(() -> {
-            TeamInfoLoader.this.initialInfo = info;
-            setUp();
+            RawInitialInfo rawInitialInfo = InitialInfoRepository.getInstance().getRawInitialInfo(teamId);
+            try {
+                long l = System.currentTimeMillis();
+                initialInfo = new GsonBuilder().create().fromJson(rawInitialInfo.getRawValue(), InitialInfo.class);
+//                initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawInitialInfo.getRawValue(), InitialInfo.class);
+                System.out.println("time : " + (System.currentTimeMillis() - l));
+            } catch (Exception e) {
+                e.printStackTrace();
+                initialInfo = null;
+            }
+            setUp(teamId);
         });
     }
 
-    public void refresh(long teamId) {
-        execute(() -> {
-            initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-            setUp();
-        });
-    }
+    private void setUp(long teamId) {
+        users = HumanRepository.getInstance(teamId);
+        bots = BotRepository.getInstance(teamId);
+        chatRooms = ChatRepository.getInstance(teamId);
+        topicRooms = TopicRepository.getInstance(teamId);
+        topicFolders = FolderRepository.getInstance(teamId);
+        poll = InitialPollInfoRepository.getInstance(teamId);
+        teamPlan = TeamPlanRepository.getInstance(teamId);
+        mention = InitialMentionInfoRepository.getInstance(teamId);
+        teamRepository = TeamRepository.getInstance(teamId);
 
-    private void setUp() {
+        users.clear();
+        bots.clear();
+        chatRooms.clear();
+        topicRooms.clear();
+        topicFolders.clear();
+
+        if (ranks == null) {
+            ranks = new ArrayMap<>();
+        }
+
+        ranks.clear();
+
         if (initialInfo != null) {
             setUpTeam();
+            setUpPollBadge();
+            setUpTeamPlan();
+            setUpMention();
+
             setUpRooms();
             setUpRanks();
             setUpMembers();
             setUpMe();
             setUpTopicFolders();
-            setUpPollBadge();
-            setUpTeamPlan();
-            setUpMention();
+
         } else {
-            team = null;
-            rooms.clear();
-            chatRooms.clear();
-            topicRooms.clear();
-            members.clear();
-            ranks.clear();
-            users.clear();
-            bots.clear();
             jandiBot = null;
             me = null;
-            topicFolders.clear();
-            pollBadge = 0;
-            teamPlan = null;
         }
     }
 
     private void setUpRanks() {
-        Observable.from(RankRepository.getInstance().getRanks(team.getId()))
+        Observable.from(RankRepository.getInstance().getRanks(teamRepository.getTeam().getId()))
                 .collect(() -> ranks, (maps, rank) -> maps.put(rank.getId(), rank))
                 .subscribe();
     }
 
     private void setUpMention() {
-        this.mention = initialInfo.getMention();
+        this.mention.upsertMention(initialInfo.getMention());
     }
 
     private void setUpTeamPlan() {
-        this.teamPlan = initialInfo.getTeamPlan();
+        this.teamPlan.updateTeamPlan(initialInfo.getTeamPlan());
     }
 
+    @Deprecated
     public void refreshMention() {
-        if (initialInfo != null) {
-            execute(() -> {
-                Mention newMention = InitialMentionInfoRepository.getInstance().getMention();
-                this.mention = newMention;
-                initialInfo.setMention(mention);
-            });
-        }
+        execute(() -> {
+//            if (initialInfo != null) {
+//                Mention newMention = InitialMentionInfoRepository.getInstance(teamRepository.getId()).getMention();
+//                this.mention = newMention;
+//                initialInfo.setMention(mention);
+//            }
+        });
     }
 
     private void setUpPollBadge() {
         Poll poll = initialInfo.getPoll();
-        setPollBadge(poll != null ? poll.getVotableCount() : 0);
+        this.poll.updateVotableCount(poll.getVotableCount());
     }
 
     private void setUpTeam() {
-        team = initialInfo.getTeam();
+        teamRepository.updateTeam(initialInfo.getTeam());
     }
 
     private void setUpMe() {
         long myId = initialInfo.getSelf().getId();
-        if (users.containsKey(myId)) {
-            this.me = users.get(myId);
+        if (users.hasUser(myId)) {
+            this.me = users.getUser(myId);
         } else {
             getUserObservable()
                     .takeFirst(human -> human.getId() == myId)
                     .map((human1) -> new User(human1, ranks.get(human1.getRankId())))
-                    .subscribe(it -> {
-                        this.me = it;
-                    });
+                    .subscribe(it -> this.me = it);
         }
     }
 
     private void setUpRooms() {
-        rooms.clear();
-        chatRooms.clear();
-        topicRooms.clear();
 
         getTopicObservable()
                 .map(TopicRoom::new)
                 .subscribe(topic -> {
-                    topicRooms.put(topic.getId(), topic);
-                    rooms.add(topic);
+                    topicRooms.addTopicRoom(topic.getId(), topic);
                 });
 
         getChatObservable()
                 .map(DirectMessageRoom::new)
                 .subscribe(chatRoom -> {
-                    chatRooms.put(chatRoom.getId(), chatRoom);
-                    rooms.add(chatRoom);
+                    chatRooms.addDirectRoom(chatRoom.getId(), chatRoom);
                 });
     }
 
     private void setUpMembers() {
-        members.clear();
-        users.clear();
-        bots.clear();
         jandiBot = null;
 
         getUserObservable()
                 .map((human) -> new User(human, ranks.get(human.getRankId())))
                 .subscribe(user -> {
-                    members.add(user);
-                    users.put(user.getId(), user);
+                    users.addUser(user);
                     if (user.isBot()) {
                         jandiBot = user;
                     }
@@ -248,8 +241,7 @@ public class TeamInfoLoader {
         getBotObservable()
                 .map(WebhookBot::new)
                 .subscribe(bot -> {
-                    members.add(bot);
-                    bots.put(bot.getId(), bot);
+                    bots.addWebhookBot(bot.getId(), bot);
                 });
 
         if (jandiBot == null) {
@@ -258,38 +250,20 @@ public class TeamInfoLoader {
     }
 
     private void setUpTopicFolders() {
-        topicFolders.clear();
 
-        getFolderObservable()
-                .map(folder -> {
-                    List<TopicRoom> topicRooms = new ArrayList<>();
-                    Collection<RealmLong> rooms = folder.getRoomIds();
-                    if (rooms != null) {
-                        Observable.from(rooms)
-                                .map(RealmLong::getValue)
-                                .filter(roomId -> TeamInfoLoader.this.topicRooms.containsKey(roomId))
-                                .map(roomId -> TeamInfoLoader.this.topicRooms.get(roomId))
-                                .collect(() -> topicRooms, List::add)
-                                .subscribe();
+        Observable.from(initialInfo.getFolders())
+                .subscribe(topicFolders::addFolder);
 
-                    }
-
-                    return new TopicFolder(folder, topicRooms);
-                })
-                .toSortedList((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
-                .subscribe(topicFolder -> {
-                    topicFolders.addAll(topicFolder);
-                }, Throwable::printStackTrace);
     }
 
     private <T> T execute(Call0<T> call) {
-        if (call == null) {
-            return null;
-        }
-
         lock.lock();
 
+
         try {
+            if (call == null) {
+                return null;
+            }
             return call.execute();
         } finally {
             lock.unlock();
@@ -297,13 +271,13 @@ public class TeamInfoLoader {
     }
 
     private void execute(Call1 call) {
-        if (call == null) {
-            return;
-        }
-
         lock.lock();
 
+
         try {
+            if (call == null) {
+                return;
+            }
             call.execute();
         } finally {
             lock.unlock();
@@ -312,12 +286,16 @@ public class TeamInfoLoader {
 
     public String getMemberName(long memberId) {
 
-        return execute(() -> Observable.from(members)
-                .takeFirst(member -> member.getId() == memberId)
-                .map(Member::getName)
-                .defaultIfEmpty("")
-                .toBlocking()
-                .first());
+        return execute(() -> {
+            if (users.hasUser(memberId)) {
+                return users.getUser(memberId).getName();
+            } else if (bots.hasBot(memberId)) {
+                return bots.getWebhookBot(memberId).getName();
+            }
+            {
+                return "";
+            }
+        });
     }
 
     private Observable<Human> getUserObservable() {
@@ -325,7 +303,7 @@ public class TeamInfoLoader {
     }
 
     public List<User> getUserList() {
-        return execute(() -> Collections.unmodifiableList(new ArrayList<>(users.values())));
+        return execute(() -> Collections.unmodifiableList(new ArrayList<>(users.getUsers())));
     }
 
     private Observable<Bot> getBotObservable() {
@@ -337,21 +315,12 @@ public class TeamInfoLoader {
         });
     }
 
-    private Observable<Folder> getFolderObservable() {
-        return execute(() -> {
-            if (initialInfo.getFolders() == null) {
-                return Observable.empty();
-            }
-            return Observable.from(initialInfo.getFolders());
-        });
-    }
-
     private Observable<Topic> getTopicObservable() {
         return execute(() -> Observable.from(initialInfo.getTopics()));
     }
 
     public List<TopicRoom> getTopicList() {
-        return execute(() -> Collections.unmodifiableList(new ArrayList<>(topicRooms.values())));
+        return execute(() -> Collections.unmodifiableList(new ArrayList<>(topicRooms.getTopicRooms())));
     }
 
     private Observable<Chat> getChatObservable() {
@@ -372,13 +341,13 @@ public class TeamInfoLoader {
     }
 
     public boolean isAnnouncementOpened(long topicId) {
-        return execute(() -> topicRooms.get(topicId).isAnnouncementOpened());
+        return execute(() -> topicRooms.getTopicRoom(topicId).isAnnouncementOpened());
     }
 
     public boolean isStarredUser(long userId) {
         return execute(() -> {
-            if (users.containsKey(userId)) {
-                return users.get(userId).isStarred();
+            if (users.hasUser(userId)) {
+                return users.getUser(userId).isStarred();
             } else {
                 return false;
             }
@@ -396,34 +365,34 @@ public class TeamInfoLoader {
 
     public String getName(long id) {
         return execute(() -> {
-            if (topicRooms.containsKey(id)) {
-                return topicRooms.get(id).getName();
-            } else if (users.containsKey(id)) {
-                return users.get(id).getName();
-            } else if (bots.containsKey(id)) {
-                return bots.get(id).getName();
+            if (topicRooms.isTopic(id)) {
+                return topicRooms.getTopicRoom(id).getName();
+            } else if (users.hasUser(id)) {
+                return users.getUser(id).getName();
+            } else if (bots.hasBot(id)) {
+                return bots.getWebhookBot(id).getName();
             }
 
             return "";
         });
     }
 
-    public boolean isBot(long id) {
-        return execute(() -> bots.containsKey(id));
+    public boolean isBot(long botId) {
+        return execute(() -> bots.hasBot(botId));
     }
 
-    public boolean isUser(long id) {
-        return execute(() -> users.containsKey(id));
+    public boolean isUser(long userId) {
+        return execute(() -> users.hasUser(userId));
     }
 
     public boolean isEnabled(long id) {
         return execute(() -> {
-            if (topicRooms.containsKey(id)) {
-                return topicRooms.get(id).isEnabled();
-            } else if (users.containsKey(id)) {
-                return users.get(id).isEnabled();
-            } else if (bots.containsKey(id)) {
-                return bots.get(id).isEnabled();
+            if (topicRooms.isTopic(id)) {
+                return topicRooms.getTopicRoom(id).isEnabled();
+            } else if (users.hasUser(id)) {
+                return users.getUser(id).isEnabled();
+            } else if (bots.hasBot(id)) {
+                return bots.getWebhookBot(id).isEnabled();
             } else {
                 return false;
             }
@@ -433,10 +402,10 @@ public class TeamInfoLoader {
     public boolean isStarred(long roomId) {
         return execute(() -> {
 
-            if (topicRooms.containsKey(roomId)) {
-                return topicRooms.get(roomId).isStarred();
-            } else if (chatRooms.containsKey(roomId)) {
-                return isStarredUser(chatRooms.get(roomId).getCompanionId());
+            if (topicRooms.isTopic(roomId)) {
+                return topicRooms.getTopicRoom(roomId).isStarred();
+            } else if (chatRooms.hasChat(roomId)) {
+                return isStarredUser(chatRooms.getDirectRoom(roomId).getCompanionId());
             }
 
             return false;
@@ -445,8 +414,8 @@ public class TeamInfoLoader {
 
     public boolean isPushSubscribe(long topicId) {
         return execute(() -> {
-            if (topicRooms.containsKey(topicId)) {
-                return topicRooms.get(topicId).isPushSubscribe();
+            if (topicRooms.isTopic(topicId)) {
+                return topicRooms.getTopicRoom(topicId).isPushSubscribe();
             } else {
                 return false;
             }
@@ -455,8 +424,8 @@ public class TeamInfoLoader {
 
     public boolean isTopicOwner(long topicId, long myId) {
         return execute(() -> {
-            if (topicRooms.containsKey(topicId)) {
-                return topicRooms.get(topicId).getCreatorId() == myId;
+            if (topicRooms.isTopic(topicId)) {
+                return topicRooms.getTopicRoom(topicId).getCreatorId() == myId;
             } else {
                 return false;
             }
@@ -465,8 +434,8 @@ public class TeamInfoLoader {
 
     public boolean isPublicTopic(long topicId) {
         return execute(() -> {
-            if (topicRooms.containsKey(topicId)) {
-                return topicRooms.get(topicId).isPublicTopic();
+            if (topicRooms.isTopic(topicId)) {
+                return topicRooms.getTopicRoom(topicId).isPublicTopic();
             } else {
                 return false;
             }
@@ -475,8 +444,8 @@ public class TeamInfoLoader {
 
     public int getTopicMemberCount(long topicId) {
         return execute(() -> {
-            if (topicRooms.containsKey(topicId)) {
-                return topicRooms.get(topicId).getMemberCount();
+            if (topicRooms.isTopic(topicId)) {
+                return topicRooms.getTopicRoom(topicId).getMemberCount();
             } else {
                 return 1;
             }
@@ -486,9 +455,9 @@ public class TeamInfoLoader {
     public List<User> getTopicMember(long topicId) {
         return execute(() -> {
 
-            if (topicRooms.containsKey(topicId)) {
-                return Observable.from(topicRooms.get(topicId).getMembers())
-                        .map(memberId -> users.get(memberId))
+            if (topicRooms.isTopic(topicId)) {
+                return Observable.from(topicRooms.getTopicRoom(topicId).getMembers())
+                        .map(memberId -> users.getUser(memberId))
                         .collect((Func0<ArrayList<User>>) ArrayList::new, List::add)
                         .toBlocking()
                         .firstOrDefault(new ArrayList<>());
@@ -501,8 +470,8 @@ public class TeamInfoLoader {
 
     public boolean isDefaultTopic(long topicId) {
         return execute(() -> {
-            if (topicRooms.containsKey(topicId)) {
-                return topicRooms.get(topicId).isDefaultTopic();
+            if (topicRooms.isTopic(topicId)) {
+                return topicRooms.getTopicRoom(topicId).isDefaultTopic();
             } else {
                 return false;
             }
@@ -511,8 +480,8 @@ public class TeamInfoLoader {
 
     public long getTeamId() {
         return execute(() -> {
-            if (team != null) {
-                return team.getId();
+            if (teamRepository != null) {
+                return teamRepository.getTeam().getId();
             }
             return -1L;
         });
@@ -542,21 +511,21 @@ public class TeamInfoLoader {
 
     public Room getRoom(long roomId) {
         return execute(() -> {
-            if (topicRooms.containsKey(roomId)) {
-                return topicRooms.get(roomId);
-            } else if (chatRooms.containsKey(roomId)) {
-                return chatRooms.get(roomId);
+            if (topicRooms.isTopic(roomId)) {
+                return topicRooms.getTopicRoom(roomId);
+            } else if (chatRooms.hasChat(roomId)) {
+                return chatRooms.getDirectRoom(roomId);
             }
             return null;
         });
     }
 
     public boolean isRoom(long roomId) {
-        return execute(() -> topicRooms.containsKey(roomId) || chatRooms.containsKey(roomId));
+        return execute(() -> topicRooms.isTopic(roomId) || chatRooms.hasChat(roomId));
     }
 
     public long getDefaultTopicId() {
-        return execute(() -> Observable.from(topicRooms.values())
+        return execute(() -> Observable.from(topicRooms.getTopicRooms())
                 .takeFirst(TopicRoom::isDefaultTopic)
                 .map(TopicRoom::getId)
                 .defaultIfEmpty(-1L)
@@ -565,21 +534,21 @@ public class TeamInfoLoader {
     }
 
     public User getUser(long memberId) {
-        return execute(() -> users.get(memberId));
+        return execute(() -> users.getUser(memberId));
     }
 
     public boolean isTopic(long id) {
-        return execute(() -> topicRooms.containsKey(id));
+        return execute(() -> topicRooms.isTopic(id));
     }
 
     public boolean isChat(long id) {
-        return execute(() -> chatRooms.containsKey(id));
+        return execute(() -> chatRooms.hasChat(id));
     }
 
     public WebhookBot getBot(long botId) {
         return execute(() -> {
-            if (bots.containsKey(botId)) {
-                return bots.get(botId);
+            if (bots.hasBot(botId)) {
+                return bots.getWebhookBot(botId);
             } else {
                 return null;
             }
@@ -587,28 +556,28 @@ public class TeamInfoLoader {
     }
 
     public boolean isMember(long memberId) {
-        return execute(() -> users.containsKey(memberId) || bots.containsKey(memberId));
+        return execute(() -> users.hasUser(memberId) || bots.hasBot(memberId));
     }
 
     public Member getMember(long memberId) {
         return execute(() -> {
-            if (users.containsKey(memberId)) {
-                return users.get(memberId);
-            } else if (bots.containsKey(memberId)) {
-                return bots.get(memberId);
+            if (users.hasUser(memberId)) {
+                return users.getUser(memberId);
+            } else if (bots.hasBot(memberId)) {
+                return bots.getWebhookBot(memberId);
             }
             return null;
         });
     }
 
     public String getTeamName() {
-        return execute(() -> team.getName());
+        return execute(() -> teamRepository.getTeam().getName());
     }
 
     public TopicRoom getTopic(long topicId) {
         return execute(() -> {
-            if (topicRooms.containsKey(topicId)) {
-                return topicRooms.get(topicId);
+            if (topicRooms.isTopic(topicId)) {
+                return topicRooms.getTopicRoom(topicId);
             } else {
                 return null;
             }
@@ -616,51 +585,52 @@ public class TeamInfoLoader {
     }
 
     public String getTeamDomain() {
-        return execute(() -> team.getDomain());
+        return execute(() -> teamRepository.getTeam().getDomain());
     }
 
     public List<TopicFolder> getTopicFolders() {
-        return execute(() -> Collections.unmodifiableList(topicFolders));
+        return execute(() -> {
+            List<TopicFolder> folders = new ArrayList<>();
+            TopicFolder topicFolder;
+            ArrayList<TopicRoom> rooms;
+            for (Folder folder : topicFolders.getFolders()) {
+                rooms = new ArrayList<>();
+                topicFolder = new TopicFolder(folder, rooms);
+                folders.add(topicFolder);
+                for (Long roomId : folder.getRooms()) {
+                    rooms.add(topicRooms.getTopicRoom(roomId));
+                }
+            }
+            return folders;
+        });
     }
 
     public List<DirectMessageRoom> getDirectMessageRooms() {
-        return execute(() -> Collections.unmodifiableList(new ArrayList<>(chatRooms.values())));
+        return execute(() -> Collections.unmodifiableList(new ArrayList<>(chatRooms.getDirectRooms())));
     }
 
     public DirectMessageRoom getChat(long roomId) {
-        return execute(() -> chatRooms.get(roomId));
+        return execute(() -> chatRooms.getDirectRoom(roomId));
     }
 
     public String getInvitationUrl() {
-        return execute(() -> team.getInvitationUrl());
+        return execute(() -> teamRepository.getTeam().getInvitationUrl());
     }
 
     public String getInvitationStatus() {
-        return execute(() -> team.getInvitationStatus());
+        return execute(() -> teamRepository.getTeam().getInvitationStatus());
     }
 
     public int getPollBadge() {
-        return execute(() -> pollBadge);
-    }
-
-    private void setPollBadge(int pollBadge) {
-        this.pollBadge = pollBadge;
+        return execute(() -> poll.getVotableCount());
     }
 
     public Mention getMention() {
-        return execute(() -> mention);
+        return execute(() -> mention.getMention());
     }
 
     public TeamPlan getTeamPlan() {
-        return execute(() -> teamPlan);
-    }
-
-    public void refreshPollCount() {
-        execute(() -> {
-            int votableCount = InitialPollInfoRepository.getInstance().getVotableCount();
-            pollBadge = votableCount;
-            initialInfo.getPoll().setVotableCount(votableCount);
-        });
+        return execute(() -> teamPlan.getTeamPlan());
     }
 
     public Rank getRankOfGuest() {

@@ -7,12 +7,11 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.adapter.datamodel.TeamSelectListAdapterDataModel;
 import com.tosslab.jandi.app.ui.team.select.model.TeamSelectListModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrLaunchTeam;
 
 import java.util.ArrayList;
@@ -79,17 +78,16 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
         Observable.defer(() -> {
             model.updateSelectTeam(teamId);
             try {
-                InitialInfo initialInfo = model.getEntityInfo(teamId);
+                String initialInfo = model.getEntityInfo(teamId);
                 return Observable.just(initialInfo);
             } catch (RetrofitException e) {
                 return Observable.error(e);
             }
         })
                 .doOnNext(initialInfo -> {
-                    model.updateEntityInfo(initialInfo);
+                    model.updateEntityInfo(new RawInitialInfo(teamId, initialInfo));
                     model.refreshRankIfNeed(teamId);
                     TeamInfoLoader.getInstance().refresh();
-                    JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
                     SprinklrLaunchTeam.sendLog(teamId);
                 })
                 .subscribeOn(Schedulers.io())

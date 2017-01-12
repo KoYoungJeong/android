@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
 import javax.inject.Inject;
 
@@ -19,17 +18,15 @@ public class StartApi extends ApiTemplate<StartApi.Api> {
         super(Api.class, retrofitBuilder);
     }
 
-    public InitialInfo getInitializeInfo(long teamId) throws RetrofitException {
-        return call(() -> {
-            return getApi().getInitializeInfo(teamId);
-        });
+    public String getRawInitializeInfo(long teamId) throws RetrofitException {
+        return call(() -> getApi().getRawInitializeInfo(teamId));
     }
 
     interface Api {
 
         @GET("/start-api/teams/{teamId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-        Call<InitialInfo> getInitializeInfo(@Path("teamId") long teamId);
+        Call<String> getRawInitializeInfo(@Path("teamId") long teamId);
 
     }
 }

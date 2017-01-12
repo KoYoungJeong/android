@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.profile.modify.model.ModifyProfileModel;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
@@ -79,7 +78,6 @@ public class ModifyProfilePresenterImpl implements ModifyProfilePresenter {
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .doOnNext(human1 -> {
                     HumanRepository.getInstance().updateHuman(human1);
-                    TeamInfoLoader.getInstance().refresh();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(human2 -> {

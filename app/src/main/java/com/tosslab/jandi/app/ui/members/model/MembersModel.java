@@ -112,9 +112,7 @@ public class MembersModel {
     }
 
     public boolean removeMember(long topicId, long memberId) {
-        boolean result = TopicRepository.getInstance().removeMember(topicId, memberId);
-        TeamInfoLoader.getInstance().refresh();
-        return result;
+        return TopicRepository.getInstance().removeMember(topicId, memberId);
     }
 
     public void assignToTopicOwner(long teamId, long entityId, long memberId) throws Exception {

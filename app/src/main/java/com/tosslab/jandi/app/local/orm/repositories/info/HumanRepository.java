@@ -1,56 +1,70 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
-import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.Profile;
+import android.support.v4.util.LongSparseArray;
 
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
+import com.tosslab.jandi.app.network.models.start.Human;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmResults;
+public class HumanRepository extends LockTemplate {
+    private static LongSparseArray<HumanRepository> instance;
 
-public class HumanRepository extends RealmRepository {
-    private static HumanRepository instance;
+    private LongSparseArray<User> users;
+
+    private HumanRepository() {
+        super();
+        users = new LongSparseArray<>();
+    }
+
+    synchronized public static HumanRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            HumanRepository repository = new HumanRepository();
+            instance.put(teamId, repository);
+            return repository;
+        }
+
+    }
 
     synchronized public static HumanRepository getInstance() {
-        if (instance == null) {
-            instance = new HumanRepository();
-        }
-        return instance;
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 
     public boolean isHuman(long memberId) {
-        return execute((realm) -> realm.where(Human.class)
-                .equalTo("id", memberId)
-                .count() > 0);
+        return execute(() -> hasUser(memberId));
     }
 
     public Human getHuman(long memberId) {
-        return execute((realm) -> {
-            Human it = realm.where(Human.class)
-                    .equalTo("id", memberId)
-                    .findFirst();
-            if (it != null) {
-                return realm.copyFromRealm(it);
+        return execute(() -> {
+            if (hasUser(memberId)) {
+                return users.get(memberId).getRaw();
             } else {
                 return null;
             }
         });
     }
 
-    public int getMemberCount(long teamId) {
-        return execute((realm) -> (int) realm.where(Human.class)
-                .equalTo("teamId", teamId)
-                .count());
+    public boolean hasUser(long memberId) {
+        return execute(() -> users.indexOfKey(memberId) >= 0);
+    }
+
+    public int getMemberCount() {
+        return execute(() -> users.size());
     }
 
     public boolean updateStatus(long memberId, String status) {
-        return execute((realm) -> {
-
-            Human human = realm.where(Human.class).equalTo("id", memberId).findFirst();
-            if (human != null) {
-                realm.executeTransaction(realm1 -> human.setStatus(status));
+        return execute(() -> {
+            if (hasUser(memberId)) {
+                users.get(memberId).getRaw().setStatus(status);
                 return true;
             }
 
@@ -59,58 +73,58 @@ public class HumanRepository extends RealmRepository {
     }
 
     public boolean updatePhotoUrl(long memberId, String photoUrl) {
-        return execute((realm) -> {
-
-            Human human = realm.where(Human.class).equalTo("id", memberId).findFirst();
-            if (human != null) {
-                realm.executeTransaction(realm1 -> human.setPhotoUrl(photoUrl));
+        return execute(() -> {
+            if (hasUser(memberId)) {
+                users.get(memberId).getRaw().setPhotoUrl(photoUrl);
                 return true;
             }
-
             return false;
         });
     }
 
     public boolean updateHuman(Human member) {
-        return execute((realm) -> {
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            member.setTeamId(selectedTeamId);
-            if (member.getProfile() != null) {
-                member.getProfile().setId(member.getId());
-            }
+        return execute(() -> {
 
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(member));
-            return true;
-        });
-    }
-
-    public boolean addHuman(long teamId, Human member) {
-        return execute((realm) -> {
-
-            InitialInfo initialInfo = realm.where(InitialInfo.class).equalTo("teamId", teamId).findFirst();
-            if (initialInfo != null) {
-                realm.executeTransaction(realm1 -> {
-                    member.setTeamId(teamId);
-                    if (member.getProfile() != null) {
-                        member.getProfile().setId(member.getId());
-                    }
-                    initialInfo.getMembers().add(member);
-                });
+            if (hasUser(member.getId())) {
+                Human saved = users.get(member.getId()).getRaw();
+                saved.setType(member.getType());
+                saved.setName(member.getName());
+                saved.setPhotoUrl(member.getPhotoUrl());
+                saved.setAccountId(member.getAccountId());
+                saved.setStatus(member.getStatus());
+                saved.setProfile(member.getProfile());
+                saved.setJoinTopics(member.getJoinTopics());
+                saved.setRankId(member.getRankId());
                 return true;
             } else {
+                users.put(member.getId(), new User(member));
                 return false;
             }
 
         });
     }
 
+    public boolean addHuman(Human member) {
+        return execute(() -> {
+            if (hasUser(member.getId())) {
+                User user = users.get(member.getId());
+                member.setIsStarred(user.isStarred());
+            }
+
+            users.put(member.getId(), new User(member));
+            return true;
+        });
+    }
+
+    public void addUser(User user) {
+        users.put(user.getId(), user);
+    }
+
     public boolean updateStarred(long memberId, boolean isStarred) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-
-            Human human = realm.where(Human.class).equalTo("id", memberId).findFirst();
-            if (human != null) {
-                realm.executeTransaction(realm1 -> human.setIsStarred(isStarred));
+            if (hasUser(memberId)) {
+                users.get(memberId).getRaw().setIsStarred(isStarred);
                 return true;
             }
 
@@ -119,40 +133,59 @@ public class HumanRepository extends RealmRepository {
     }
 
     public boolean containsPhone(String queryNum) {
-        return execute(realm -> realm.where(Profile.class)
-                .contains("phoneNumber", queryNum)
-                .count() > 0);
+        return execute(() -> {
+            for (int idx = 0; idx < users.size(); idx++) {
+                if (users.valueAt(idx).getPhoneNumber().contains(queryNum)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     public List<Human> getContainsPhone(String queryNum) {
-        return execute(realm -> {
-            RealmResults<Human> it = realm.where(Human.class)
-                    .contains("profile.phoneNumber", queryNum)
-                    .findAll();
-            if (it != null) {
-                return realm.copyFromRealm(it);
-            } else {
-                return null;
+        return execute(() -> {
+            List<Human> humen = new ArrayList<>();
+            for (int idx = 0; idx < users.size(); idx++) {
+                User user = users.valueAt(idx);
+                if (user.getPhoneNumber().contains(queryNum)) {
+                    humen.add(user.getRaw());
+                }
             }
+            return humen;
         });
     }
 
     public boolean updateRank(long userId, long rankId) {
-        return execute(realm -> {
-
-            Human human = realm.where(Human.class)
-                    .equalTo("id", userId)
-                    .findFirst();
-
-            if (human != null) {
-                realm.executeTransaction(realm1 -> {
-                    human.setRankId(rankId);
-                });
-
+        return execute(() -> {
+            if (hasUser(userId)) {
+                users.get(userId).getRaw().setRankId(rankId);
                 return true;
             }
-
             return false;
+        });
+    }
+
+    public User getUser(long myId) {
+        return execute(() -> users.get(myId));
+    }
+
+    public List<User> getUsers() {
+        return execute(() -> {
+            List<User> temp = new ArrayList<>();
+            int size = users.size();
+            for (int idx = 0; idx < size; idx++) {
+                temp.add(users.valueAt(idx));
+            }
+            return temp;
+        });
+
+    }
+
+    public void clear() {
+        execute(() -> {
+            users.clear();
+            return true;
         });
     }
 }

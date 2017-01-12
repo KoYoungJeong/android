@@ -12,6 +12,10 @@ public class WebhookBot implements Member {
         this.bot = bot;
     }
 
+    public Bot getRaw() {
+        return bot;
+    }
+
     @Override
     public long getId() {
         return bot.getId();
@@ -64,5 +68,9 @@ public class WebhookBot implements Member {
 
     public boolean isJandiBot() {
         return TextUtils.equals(bot.getType(), "jandi_bot");
+    }
+
+    public void updateStatus(String status) {
+        
     }
 }

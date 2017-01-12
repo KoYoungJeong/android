@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.j256.ormlite.dao.Dao;
+import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 
-import io.realm.RealmResults;
+import java.sql.SQLException;
 
-public class InitialInfoRepository extends RealmRepository {
+public class InitialInfoRepository extends LockExecutorTemplate {
     private static InitialInfoRepository instance;
 
     synchronized public static InitialInfoRepository getInstance() {
@@ -15,77 +16,68 @@ public class InitialInfoRepository extends RealmRepository {
         return instance;
     }
 
-    public boolean upsertInitialInfo(InitialInfo initialInfo) {
-        return execute(realm -> {
-
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(initialInfo));
-            return true;
+    public boolean upsertRawInitialInfo(RawInitialInfo info) {
+        return execute(() -> {
+            try {
+                Dao<RawInitialInfo, Object> dao = getDao(RawInitialInfo.class);
+                dao.createOrUpdate(info);
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
         });
-
     }
 
-    public InitialInfo getInitialInfo(long teamId) {
-        return execute(realm -> {
-            InitialInfo initialInfo = realm.where(InitialInfo.class)
-                    .equalTo("teamId", teamId)
-                    .findFirst();
-
-            if (initialInfo != null) {
-                return realm.copyFromRealm(initialInfo);
-            } else {
+    public RawInitialInfo getRawInitialInfo(long teamId) {
+        return execute(() -> {
+            try {
+                Dao<RawInitialInfo, Long> dao = getDao(RawInitialInfo.class);
+                return dao.queryForId(teamId);
+            } catch (SQLException e) {
                 return null;
             }
         });
     }
 
     public boolean hasInitialInfo(long teamId) {
-        return execute(realm -> realm.where(InitialInfo.class)
-                .equalTo("teamId", teamId)
-                .count() > 0);
+        return execute(() -> {
+            try {
+                Dao<RawInitialInfo, Long> dao = getDao(RawInitialInfo.class);
+                return dao.queryBuilder()
+                        .where()
+                        .eq("teamId", teamId)
+                        .countOf() > 0;
+            } catch (SQLException e) {
+                return false;
+            }
+        });
     }
 
     public boolean removeInitialInfo(long teamId) {
-        return execute(realm -> {
-            RealmResults<InitialInfo> teamInfos = realm.where(InitialInfo.class)
-                    .equalTo("teamId", teamId)
-                    .findAll();
-            if (!teamInfos.isEmpty()) {
-                realm.executeTransaction(realm1 -> teamInfos.deleteAllFromRealm());
-                return true;
+        return execute(() -> {
+
+            try {
+                Dao<RawInitialInfo, Long> dao = getDao(RawInitialInfo.class);
+                return dao.deleteById(teamId) > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
-            return false;
         });
     }
 
     public boolean clear() {
-        return execute(realm -> {
-            realm.executeTransaction(realm1 -> realm.delete(InitialInfo.class));
-            return true;
-        });
-    }
-
-    public long findMyIdFromChats(long roomId) {
-        return execute(realm -> {
-
-            InitialInfo info = realm.where(InitialInfo.class).equalTo("chats.id", roomId).findFirst();
-            if (info != null && info.getSelf() != null) {
-                return info.getSelf().getId();
+        return execute(() -> {
+            try {
+                Dao<RawInitialInfo, Long> dao = getDao(RawInitialInfo.class);
+                return dao.deleteBuilder()
+                        .delete() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
-
-            return -1L;
         });
     }
 
-    public long findMyIdFromTopics(long roomId) {
-        return execute(realm -> {
-
-            InitialInfo info = realm.where(InitialInfo.class).equalTo("topics.id", roomId).findFirst();
-            if (info != null && info.getSelf() != null) {
-                return info.getSelf().getId();
-            }
-
-            return -1L;
-        });
-
-    }
 }

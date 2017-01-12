@@ -44,7 +44,7 @@ import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
@@ -74,10 +74,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageUnstarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketTeamNameUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
@@ -114,7 +112,6 @@ import javax.inject.Inject;
 import dagger.Component;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
-import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -124,7 +121,7 @@ import static org.assertj.core.api.Assertions.fail;
 public class JandiSocketServiceModelTest {
 
     private static long teamId;
-    private static InitialInfo initializeInfo;
+    private static String initializeInfo;
     @Inject
     JandiSocketServiceModel model;
 
@@ -137,7 +134,7 @@ public class JandiSocketServiceModelTest {
     public static void beforeClass() throws Exception {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
     @Before
@@ -147,8 +144,7 @@ public class JandiSocketServiceModelTest {
                 .inject(JandiSocketServiceModelTest.this);
         accept = false;
 
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
-        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
 
         model.eventPublisher.subscribe(o -> {
@@ -162,25 +158,6 @@ public class JandiSocketServiceModelTest {
         assertThat(startInfo).isNotNull();
         assertThat(startInfo.getToken()).isEqualToIgnoringCase(TokenUtil.getAccessToken());
 
-    }
-
-    @Ignore
-    @Test
-    public void testOnTeamNameUpdated() throws Exception {
-
-        register((TeamInfoChangeEvent o) -> accept = true);
-
-        SocketTeamNameUpdatedEvent event = createEvent(SocketTeamNameUpdatedEvent.class);
-        event.setTs(-1);
-        SocketTeamNameUpdatedEvent.Team team = new SocketTeamNameUpdatedEvent.Team();
-        team.setId(teamId);
-        String name = "hello-name";
-        team.setName(name);
-        event.setTeam(team);
-        model.onTeamNameUpdated(event);
-
-        assertThat(accept).isTrue();
-//        assertThat(TeamInfoLoader.initiate().getTeamName()).isEqualToIgnoringCase(name);
     }
 
     @Test
@@ -577,7 +554,7 @@ public class JandiSocketServiceModelTest {
 
         Folder folder = new Folder();
         folder.setId(1);
-        FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder);
+        FolderRepository.getInstance().addFolder(folder);
 
 
         SocketTopicFolderItemCreatedEvent event = createEvent(SocketTopicFolderItemCreatedEvent.class);
@@ -597,7 +574,7 @@ public class JandiSocketServiceModelTest {
         });
         Folder folder = new Folder();
         folder.setId(1);
-        FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder);
+        FolderRepository.getInstance().addFolder(folder);
         SocketTopicFolderItemDeletedEvent event = createEvent(SocketTopicFolderItemDeletedEvent.class);
         SocketTopicFolderItemDeletedEvent.Data data = new SocketTopicFolderItemDeletedEvent.Data();
         data.setFolderId(1);
@@ -634,7 +611,7 @@ public class JandiSocketServiceModelTest {
 
         Folder folder = new Folder();
         folder.setId(1);
-        FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder);
+        FolderRepository.getInstance().addFolder(folder);
 
         SocketTopicFolderUpdatedEvent event = createEvent(SocketTopicFolderUpdatedEvent.class);
         SocketTopicFolderUpdatedEvent.Data data = new SocketTopicFolderUpdatedEvent.Data();
@@ -814,7 +791,7 @@ public class JandiSocketServiceModelTest {
             accept = true;
         });
 
-        Topic topic = TopicRepository.getInstance().getDefaultTopic(TeamInfoLoader.getInstance().getTeamId());
+        Topic topic = TopicRepository.getInstance().getDefaultTopic();
         topic.setId(1);
 
         SocketTopicCreatedEvent event = createEvent(SocketTopicCreatedEvent.class);
@@ -848,7 +825,7 @@ public class JandiSocketServiceModelTest {
             accept = true;
         });
 
-        Topic defaultTopic = TopicRepository.getInstance().getDefaultTopic(TeamInfoLoader.getInstance().getTeamId());
+        Topic defaultTopic = TopicRepository.getInstance().getDefaultTopic();
         TopicRepository.getInstance().removeMember(defaultTopic.getId(), TeamInfoLoader.getInstance().getMyId());
         SocketTopicInvitedEvent event = createEvent(SocketTopicInvitedEvent.class);
         event.setData(new SocketTopicInvitedEvent.Data());
@@ -930,22 +907,6 @@ public class JandiSocketServiceModelTest {
         assertThat(accept).isTrue();
     }
 
-    @Ignore
-    @Test
-    public void testOnTeamDomainUpdated() throws Exception {
-        register((TeamInfoChangeEvent e) -> {
-            accept = true;
-        });
-        SocketTeamDomainUpdatedEvent event = createEvent(SocketTeamDomainUpdatedEvent.class);
-        SocketTeamDomainUpdatedEvent.Team team = new SocketTeamDomainUpdatedEvent.Team();
-        team.setId(TeamInfoLoader.getInstance().getTeamId());
-        team.setDomain("jaja");
-        event.setTeam(team);
-        model.onTeamDomainUpdated(event);
-
-        assertThat(accept).isTrue();
-    }
-
     @Test
     public void testOnAnnouncementStatusUpdated() throws Exception {
 
@@ -979,7 +940,7 @@ public class JandiSocketServiceModelTest {
 
         SocketTeamUpdatedEvent event = createEvent(SocketTeamUpdatedEvent.class);
         event.setData(new SocketTeamUpdatedEvent.Data());
-        Team team = TeamRepository.getInstance().getTeam(TeamInfoLoader.getInstance().getTeamId());
+        Team team = TeamRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).getTeam();
         String name = "hello";
         team.setName(name);
         event.getData().setTeam(team);

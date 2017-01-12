@@ -75,7 +75,6 @@ public class EntityMenuDialogModel {
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                 updatePushStatus(teamId, entityId, isTopicPushOn);
                 TopicRepository.getInstance().updatePushSubscribe(entityId, isTopicPushOn);
-                TeamInfoLoader.getInstance().refresh();
                 return true;
             }).subscribeOn(Schedulers.io())
                     .subscribe(() -> {

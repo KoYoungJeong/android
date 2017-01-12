@@ -171,7 +171,6 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
             }
         }).subscribeOn(Schedulers.io())
                 .doOnNext(it -> {
-                    TeamInfoLoader.getInstance().refresh();
                     EventBus.getDefault().post(new ProfileChangeEvent(it));
                 })
                 .observeOn(AndroidSchedulers.mainThread())

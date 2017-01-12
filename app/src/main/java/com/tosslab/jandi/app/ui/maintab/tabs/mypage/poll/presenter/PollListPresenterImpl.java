@@ -57,8 +57,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                 .doOnNext(resPollList -> {
                     if (resPollList != null) {
                         int votableCount = resPollList.getVotableCount();
-                        InitialPollInfoRepository.getInstance().updateVotableCount(votableCount);
-                        TeamInfoLoader.getInstance().refreshPollCount();
+                        InitialPollInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).updateVotableCount(votableCount);
                         RefreshPollBadgeCountEvent event = new RefreshPollBadgeCountEvent(votableCount);
                         EventBus.getDefault().post(event);
                     }

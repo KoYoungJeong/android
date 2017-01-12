@@ -4,12 +4,9 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class TopicRoom implements Room {
     private final Topic topic;
@@ -103,16 +100,12 @@ public class TopicRoom implements Room {
     }
 
     public int getMemberCount() {
-        return topic.getMemberIds().size();
+        return topic.getMembers().size();
     }
 
     @Override
     public Collection<Long> getMembers() {
-        List<Long> ids = new ArrayList<>();
-        for (RealmLong realmLong : topic.getMemberIds()) {
-            ids.add(realmLong.getValue());
-        }
-        return ids;
+        return topic.getMembers();
     }
 
     public boolean isDefaultTopic() {
@@ -125,6 +118,10 @@ public class TopicRoom implements Room {
 
     public boolean isAutoJoin() {
         return topic.isAutoJoin();
+    }
+
+    public Topic getRaw() {
+        return topic;
     }
 
     @Override

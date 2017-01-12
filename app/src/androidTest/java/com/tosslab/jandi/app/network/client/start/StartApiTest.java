@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -37,7 +38,8 @@ public class StartApiTest {
 
     @Test
     public void testGetInitializeInfo() throws Exception {
-        InitialInfo initialInfo = startApi.getInitializeInfo(accountInfo.getMemberships().iterator().next().getTeamId());
+        String rawInitializeInfo = startApi.getRawInitializeInfo(accountInfo.getMemberships().iterator().next().getTeamId());
+        InitialInfo initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawInitializeInfo, InitialInfo.class);
 
         assertThat(initialInfo).isNotNull();
         assertThat(initialInfo.getTeam()).isNotNull();

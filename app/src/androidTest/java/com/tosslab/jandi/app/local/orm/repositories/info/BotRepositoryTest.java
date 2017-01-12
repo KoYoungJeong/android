@@ -6,14 +6,13 @@ import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Bot;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import io.realm.Realm;
 import setup.BaseInitUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,19 +22,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BotRepositoryTest {
 
     private static long teamId;
-    private static InitialInfo initializeInfo;
+    private static String initializeInfo;
 
     @BeforeClass
     public static void setUpClass() throws RetrofitException {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
     @Before
     public void setUp() throws Exception {
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
-        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
     }
 

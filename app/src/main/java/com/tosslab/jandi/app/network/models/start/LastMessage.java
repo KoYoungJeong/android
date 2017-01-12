@@ -3,14 +3,9 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class LastMessage extends RealmObject {
-    @PrimaryKey
-    private long chatId;
+public class LastMessage {
     private long id;
     private String text;
     private String status;
@@ -39,11 +34,4 @@ public class LastMessage extends RealmObject {
         this.status = status;
     }
 
-    public long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(long chatId) {
-        this.chatId = chatId;
-    }
 }

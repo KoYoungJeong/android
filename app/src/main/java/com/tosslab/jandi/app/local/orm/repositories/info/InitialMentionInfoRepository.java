@@ -1,113 +1,89 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Mention;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-/**
- * Created by tony on 2016. 9. 20..
- */
-public class InitialMentionInfoRepository extends RealmRepository {
+public class InitialMentionInfoRepository extends LockTemplate {
 
-    private static InitialMentionInfoRepository instance;
+    private static LongSparseArray<InitialMentionInfoRepository> instance;
+
+    private Mention mention;
+
+    private InitialMentionInfoRepository() {
+        super();
+    }
+
+    synchronized public static InitialMentionInfoRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            InitialMentionInfoRepository value = new InitialMentionInfoRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
 
     synchronized public static InitialMentionInfoRepository getInstance() {
-        if (instance == null) {
-            instance = new InitialMentionInfoRepository();
-        }
-        return instance;
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 
     public Mention getMention() {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            Mention mention = realm.where(Mention.class)
-                    .equalTo("id", selectedTeamId).findFirst();
             if (mention == null) {
-                realm.executeTransaction(realm1 -> {
-                    Mention mention2 = realm.createObject(Mention.class, selectedTeamId);
-                    mention2.setLastMentionedMessageId(-1);
-                    mention2.setUnreadCount(0);
-
-                });
-
-                mention = realm.where(Mention.class)
-                        .equalTo("id", selectedTeamId)
-                        .findFirst();
+                mention = new Mention();
+                mention.setLastMentionedMessageId(-1);
+                mention.setUnreadCount(0);
             }
+            return mention;
 
-            if (mention != null) {
-                return realm.copyFromRealm(mention);
-            } else {
-                return null;
-            }
         });
     }
 
     public boolean upsertMention(Mention mention) {
 
-        return execute(realm -> {
-            if (mention == null) {
-                return false;
-            }
-
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(mention));
-
+        return execute(() -> {
+            this.mention = mention;
             return true;
         });
     }
 
     public boolean clearUnreadCount() {
-        return execute(realm -> {
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            Mention mention = realm.where(Mention.class)
-                    .equalTo("id", selectedTeamId)
-                    .findFirst();
+        return execute(() -> {
+            getMention().setUnreadCount(0);
+            getMention().setLastMentionedMessageId(-1);
 
-            if (mention != null) {
-                realm.executeTransaction(realm1 -> mention.setUnreadCount(0));
-                return true;
-            }
-
-            return false;
+            return true;
         });
     }
 
     public boolean increaseUnreadCount() {
-        return execute(realm -> {
+        return execute(() -> {
 
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Mention mention = getMention();
+            mention.setUnreadCount(mention.getUnreadCount() + 1);
 
-            Mention mention = realm.where(Mention.class)
-                    .equalTo("id", selectedTeamId)
-                    .findFirst();
-
-            if (mention != null) {
-                realm.executeTransaction(realm1 -> mention.setUnreadCount(mention.getUnreadCount() + 1));
-                return true;
-            }
-
-            return false;
+            return true;
         });
     }
 
     public boolean decreaseUnreadCount() {
-        return execute(realm -> {
+        return execute(() -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            Mention mention = getMention();
+            mention.setUnreadCount(mention.getUnreadCount() - 1);
 
-            Mention mention = realm.where(Mention.class)
-                    .equalTo("id", selectedTeamId)
-                    .findFirst();
 
-            if (mention != null && mention.getUnreadCount() > 0) {
-                realm.executeTransaction(realm1 -> mention.setUnreadCount(mention.getUnreadCount() - 1));
-                return true;
-            }
-
-            return false;
+            return true;
         });
     }
 }

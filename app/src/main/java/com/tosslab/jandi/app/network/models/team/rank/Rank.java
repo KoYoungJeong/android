@@ -3,85 +3,85 @@ package com.tosslab.jandi.app.network.models.team.rank;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.persister.DateConverter;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
-
+@DatabaseTable(tableName = "initial_info_rank")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Rank extends RealmObject {
-    @PrimaryKey
+public class Rank {
+    @DatabaseField(id = true)
     private long id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private int level;
+    @DatabaseField
     private long teamId;
+    @DatabaseField(persisterClass = DateConverter.class)
     private Date updatedAt;
+    @DatabaseField(persisterClass = DateConverter.class)
     private Date createdAt;
+    @DatabaseField
     private String status;
 
     public long getId() {
         return id;
     }
 
-    public Rank setId(long id) {
+    public void setId(long id) {
         this.id = id;
-        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public Rank setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public int getLevel() {
         return level;
     }
 
-    public Rank setLevel(int level) {
+    public void setLevel(int level) {
         this.level = level;
-        return this;
     }
 
     public long getTeamId() {
         return teamId;
     }
 
-    public Rank setTeamId(long teamId) {
+    public void setTeamId(long teamId) {
         this.teamId = teamId;
-        return this;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public Rank setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-        return this;
     }
 
     public Date getCreatedAt() {
         return createdAt;
     }
 
-    public Rank setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
-        return this;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public Rank setStatus(String status) {
+    public void setStatus(String status) {
         this.status = status;
-        return this;
     }
 }

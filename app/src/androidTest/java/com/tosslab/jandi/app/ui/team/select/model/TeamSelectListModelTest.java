@@ -8,10 +8,12 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
+import com.tosslab.jandi.app.network.json.JacksonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
@@ -119,7 +121,8 @@ public class TeamSelectListModelTest {
         TeamInfoLoader instance = TeamInfoLoader.getInstance(selectedTeamId);
 
         // When
-        InitialInfo initialInfo = teamSelectListModel.getEntityInfo(selectedTeamId);
+        String rawEntityInfo = teamSelectListModel.getEntityInfo(selectedTeamId);
+        InitialInfo initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawEntityInfo, InitialInfo.class);
 
         // Then
         assertThat(initialInfo, is(notNullValue()));
@@ -135,17 +138,17 @@ public class TeamSelectListModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-        InitialInfo leftSideMenu = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
-
+        String rawInitializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+        InitialInfo initialInfo = JacksonMapper.getInstance().getObjectMapper().readValue(rawInitializeInfo, InitialInfo.class);
         // When
-        teamSelectListModel.updateEntityInfo(leftSideMenu);
+        teamSelectListModel.updateEntityInfo(new RawInitialInfo(teamId, rawInitializeInfo));
 
         // Then
         assertThat(InitialInfoRepository.getInstance().hasInitialInfo(teamId), is(notNullValue()));
-        assertThat(InitialInfoRepository.getInstance().getInitialInfo(teamId).getMembers().size(),
-                is(equalTo(leftSideMenu.getMembers().size())));
-        assertThat(InitialInfoRepository.getInstance().getInitialInfo(teamId).getTopics().size(),
-                is(equalTo(leftSideMenu.getTopics().size())));
+        assertThat(TeamInfoLoader.getInstance().getUserList().size(),
+                is(equalTo(initialInfo.getMembers().size())));
+        assertThat(TeamInfoLoader.getInstance().getTopicList().size(),
+                is(equalTo(initialInfo.getTopics().size())));
 
         // Restore
         accountTeams = AccountRepository.getRepository().getAccountTeams();

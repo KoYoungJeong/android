@@ -3,14 +3,9 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Profile extends RealmObject {
-    @PrimaryKey
-    private long id;
+public class Profile {
     private String email;
     private String position;
     private String department;
@@ -66,11 +61,4 @@ public class Profile extends RealmObject {
         isUpdated = updated;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 }

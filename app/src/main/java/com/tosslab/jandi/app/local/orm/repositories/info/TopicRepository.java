@@ -1,81 +1,96 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import android.support.annotation.VisibleForTesting;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Announcement;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.Marker;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
 import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import io.realm.RealmList;
-import io.realm.RealmResults;
+import rx.Observable;
+import rx.functions.Func0;
 
-public class TopicRepository extends RealmRepository {
-    private static TopicRepository instance;
+public class TopicRepository extends LockTemplate {
+    private static LongSparseArray<TopicRepository> instance;
+
+    private LongSparseArray<TopicRoom> topics;
+
+    private TopicRepository() {
+        super();
+        topics = new LongSparseArray<>();
+    }
+
+    synchronized public static TopicRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            TopicRepository value = new TopicRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
 
     synchronized public static TopicRepository getInstance() {
-        if (instance == null) {
-            instance = new TopicRepository();
-        }
-        return instance;
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 
-    public List<Topic> getTopics(long teamId) {
-        return execute((realm) -> {
-            RealmResults<Topic> it = realm.where(Topic.class)
-                    .equalTo("teamId", teamId)
-                    .findAll();
-            if (it != null && !it.isEmpty()) {
-                return realm.copyFromRealm(it);
-            } else {
-                return new ArrayList<Topic>();
+    @VisibleForTesting
+    public List<Topic> getTopics() {
+        return execute(() -> {
+            List<Topic> rawTopics = new ArrayList<Topic>();
+            int size = topics.size();
+            for (int idx = 0; idx < size; idx++) {
+                rawTopics.add(topics.valueAt(idx).getRaw());
             }
+            return rawTopics;
         });
     }
 
-    public List<Topic> getJoinedTopics(long teamId) {
-        return execute(realm -> {
-            RealmResults<Topic> it = realm.where(Topic.class)
-                    .equalTo("teamId", teamId)
-                    .equalTo("isJoined", true)
-                    .findAll();
-            if (it != null && !it.isEmpty()) {
-                return realm.copyFromRealm(it);
-            } else {
-                return new ArrayList<Topic>();
+    public List<Topic> getJoinedTopics() {
+        return execute(() -> {
+            List<Topic> rawTopics = new ArrayList<Topic>();
+            int size = topics.size();
+            for (int idx = 0; idx < size; idx++) {
+                TopicRoom topicRoom = topics.valueAt(idx);
+                if (topicRoom.isJoined()) {
+                    rawTopics.add(topicRoom.getRaw());
+                }
             }
+            return rawTopics;
         });
     }
 
-    public Topic getDefaultTopic(long teamId) {
-        return execute((realm) -> {
-            Topic it = realm.where(Topic.class)
-                    .equalTo("teamId", teamId)
-                    .equalTo("isDefault", true)
-                    .findFirst();
-            if (it != null) {
-                return realm.copyFromRealm(it);
-            } else {
-                return null;
+    @VisibleForTesting
+    public Topic getDefaultTopic() {
+        return execute(() -> {
+
+            int size = topics.size();
+            for (int idx = 0; idx < size; idx++) {
+                TopicRoom topicRoom = topics.valueAt(idx);
+                if (topicRoom.isDefaultTopic()) {
+                    return topicRoom.getRaw();
+                }
             }
+            return null;
         });
     }
 
     public boolean updateStarred(long roomId, boolean starred) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", roomId)
-                    .findFirst();
 
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setIsStarred(starred));
+            if (isTopic(roomId)) {
+                topics.get(roomId).getRaw().setIsStarred(starred);
                 return true;
             }
 
@@ -84,26 +99,19 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean deleteTopic(long topicId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.deleteFromRealm());
-            }
+            topics.remove(topicId);
             return true;
+
         });
     }
 
     public boolean updatePushSubscribe(long topicId, boolean pushSubscribe) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setSubscribe(pushSubscribe));
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setSubscribe(pushSubscribe);
                 return true;
             }
 
@@ -112,13 +120,10 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateTopicJoin(long topicId, boolean join) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setIsJoined(join));
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setIsJoined(join);
                 return true;
             }
 
@@ -128,71 +133,36 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean addMember(long topicId, List<Long> userIds) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic == null) {
+            if (!isTopic(topicId)) {
                 return false;
             }
 
-            realm.executeTransaction(realm1 -> {
-
-                if (topic.getMemberIds() != null) {
-                    RealmList<RealmLong> memberIds = topic.getMemberIds();
-                    Set<Long> inIds = new HashSet<>();
-                    for (RealmLong memberId : memberIds) {
-                        inIds.add(memberId.getValue());
-                    }
-
-                    for (long userId : userIds) {
-                        if (!inIds.contains(userId)) {
-                            RealmLong object = new RealmLong();
-                            object.setValue(userId);
-                            memberIds.add(object);
-                        }
-                    }
-
-                } else {
-
-                    RealmList<RealmLong> memberIds = new RealmList<>();
-                    for (long userId : userIds) {
-                        RealmLong object = new RealmLong();
-                        object.setValue(userId);
-                        memberIds.add(object);
-                    }
-
-                    topic.setMemberIds(memberIds);
-                }
-            });
+            Topic raw = topics.get(topicId).getRaw();
+            if (raw.getMembers() != null) {
+                Observable.just(raw.getMembers(), userIds)
+                        .flatMap(Observable::from)
+                        .distinct()
+                        .collect((Func0<ArrayList<Long>>) ArrayList::new, List::add)
+                        .subscribe(raw::setMembers);
+            } else {
+                raw.setMembers(userIds);
+            }
 
             return true;
         });
     }
 
     public boolean removeMember(long topicId, long memberId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class).equalTo("id", topicId).findFirst();
-            if (topic == null) {
-                return false;
-            }
-
-            RealmList<RealmLong> memberIds = topic.getMemberIds();
-
-            if (memberIds == null || memberIds.isEmpty()) {
-                return true;
-            }
-
-            realm.executeTransaction(realm1 -> {
-                for (int idx = memberIds.size() - 1; idx >= 0; idx--) {
-                    if (memberIds.get(idx).getValue() == memberId) {
-                        memberIds.remove(idx);
-                        break;
-                    }
+            if (isTopic(topicId)) {
+                List<Long> members = topics.get(topicId).getRaw().getMembers();
+                if (members != null) {
+                    members.remove(memberId);
                 }
-            });
+            }
 
             return true;
         });
@@ -200,14 +170,10 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateUnreadCount(long topicId, int unreadCount) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setUnreadCount(unreadCount));
-                return true;
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setUnreadCount(unreadCount);
             }
 
             return false;
@@ -215,26 +181,22 @@ public class TopicRepository extends RealmRepository {
     }
 
     public int getUnreadCount(long topicId) {
-        return execute((realm) -> {
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic != null) {
-                return topic.getUnreadCount();
+        return execute(() -> {
+
+            if (isTopic(topicId)) {
+                return topics.get(topicId).getUnreadCount();
+            } else {
+                return 0;
             }
-            return -1;
         });
     }
 
     public boolean incrementUnreadCount(long topicId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setUnreadCount(topic.getUnreadCount() + 1));
+            if (isTopic(topicId)) {
+                Topic raw = topics.get(topicId).getRaw();
+                raw.setUnreadCount(raw.getUnreadCount() + 1);
                 return true;
             }
             return false;
@@ -242,15 +204,11 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateLastLinkId(long topicId, long lastLinkId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-
-            if (topic != null && topic.getLastLinkId() < lastLinkId) {
-                realm.executeTransaction(realm1 -> topic.setLastLinkId(lastLinkId));
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setLastLinkId(lastLinkId);
                 return true;
             }
 
@@ -259,32 +217,24 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateDescription(long topicId, String description) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setDescription(description));
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setDescription(description);
                 return true;
             }
+
             return false;
 
         });
     }
 
     public boolean updateName(long topicId, String topicName) {
-        return execute((realm) -> {
+        return execute(() -> {
 
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setName(topicName));
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setName(topicName);
                 return true;
             }
 
@@ -294,14 +244,11 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateAutoJoin(long topicId, boolean autoJoin) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
 
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setAutoJoin(autoJoin));
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setAutoJoin(autoJoin);
                 return true;
             }
 
@@ -312,36 +259,21 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean createAnnounce(long topicId, Announcement announcement) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-
-            if (topic == null) {
-                return false;
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setAnnouncement(announcement);
+                return true;
             }
-
-            announcement.setRoomId(topicId);
-            realm.executeTransaction(realm1 -> {
-                Announcement copied = realm.copyToRealmOrUpdate(announcement);
-                topic.setAnnouncement(copied);
-            });
-            return true;
+            return false;
         });
     }
 
     public boolean removeAnnounce(long topicId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-            if (topic != null && topic.getAnnouncement() != null) {
-                realm.executeTransaction(realm1 -> {
-                    topic.getAnnouncement().deleteFromRealm();
-                    topic.setAnnouncement(null);
-                });
+            if (isTopic(topicId)) {
+                topics.get(topicId).getRaw().setAnnouncement(null);
                 return true;
             }
             return false;
@@ -350,82 +282,42 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean addTopic(Topic topic) {
-        return execute((realm) -> {
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            InitialInfo initialInfo = realm.where(InitialInfo.class)
-                    .equalTo("teamId", selectedTeamId)
-                    .findFirst();
-            if (topic.getAnnouncement() != null) {
-                topic.getAnnouncement().setRoomId(topic.getId());
+        return execute(() -> {
+
+            if (!isTopic(topic.getId())) {
+                topics.put(topic.getId(), new TopicRoom(topic));
             }
-            if (initialInfo != null) {
-                realm.executeTransaction(realm1 -> {
-                    topic.setTeamId(selectedTeamId);
-                    initialInfo.getTopics().add(topic);
-                });
-            }
+
             return true;
         });
     }
 
     public boolean updateTopic(Topic topic) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic savedTopic = realm.where(Topic.class).equalTo("id", topic.getId()).findFirst();
 
-            if (savedTopic != null) {
-                realm.executeTransaction(realm1 -> {
-                    savedTopic.setType(topic.getType());
-                    savedTopic.setName(topic.getName());
-                    savedTopic.setStatus(topic.getStatus());
-                    savedTopic.setDescription(topic.getDescription());
-                    savedTopic.setIsDefault(topic.isDefault());
-                    savedTopic.setAutoJoin(topic.isAutoJoin());
-                    if (topic.getAnnouncement() != null) {
-                        topic.getAnnouncement().setRoomId(topic.getId());
-                    }
-                    savedTopic.setIsAnnouncement(topic.isAnnouncement());
-                    savedTopic.setAnnouncement(topic.getAnnouncement());
-                    savedTopic.setCreatorId(topic.getCreatorId());
-                    savedTopic.setLastLinkId(topic.getLastLinkId());
+            if (isTopic(topic.getId())) {
 
-                    // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
-                    List<Long> members = topic.getMembers();
-                    RealmList<RealmLong> memberIds = new RealmList<>();
-                    for (Long roomId : members) {
-                        RealmLong object = new RealmLong();
-                        object.setValue(roomId);
-                        memberIds.add(object);
-                    }
-                    topic.setMemberIds(memberIds);
-                });
+                Topic savedTopic = topics.get(topic.getId()).getRaw();
+
+                savedTopic.setType(topic.getType());
+                savedTopic.setName(topic.getName());
+                savedTopic.setStatus(topic.getStatus());
+                savedTopic.setDescription(topic.getDescription());
+                savedTopic.setIsDefault(topic.isDefault());
+                savedTopic.setAutoJoin(topic.isAutoJoin());
+                savedTopic.setIsAnnouncement(topic.isAnnouncement());
+                savedTopic.setAnnouncement(topic.getAnnouncement());
+                savedTopic.setCreatorId(topic.getCreatorId());
+                savedTopic.setLastLinkId(topic.getLastLinkId());
+
+                Observable.just(savedTopic.getMembers(), topic.getMembers())
+                        .flatMap(Observable::from)
+                        .distinct()
+                        .collect((Func0<ArrayList<Long>>) ArrayList::new, List::add)
+                        .subscribe(savedTopic::setMembers);
             } else {
-
-                long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-                topic.setTeamId(selectedTeamId);
-
-                // TODO InitializeInfoConverter.java 리팩토링시 수정할 것
-                List<Long> members = topic.getMembers();
-                RealmList<RealmLong> memberIds = new RealmList<>();
-                for (Long roomId : members) {
-                    RealmLong object = new RealmLong();
-                    object.setValue(roomId);
-                    memberIds.add(object);
-                }
-                topic.setMemberIds(memberIds);
-                RealmList<Marker> markers = topic.getMarkers();
-
-                if (markers != null && !markers.isEmpty()) {
-                    for (Marker marker : markers) {
-                        marker.setRoomId(topic.getId());
-                        marker.setId(topic.getId() + "_" + marker.getMemberId());
-                    }
-                }
-
-                if (topic.getAnnouncement() != null) {
-                    topic.getAnnouncement().setRoomId(topic.getId());
-                }
-                realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(topic));
+                topics.put(topic.getId(), new TopicRoom(topic));
             }
 
             return true;
@@ -433,15 +325,14 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateAnnounceOpened(long topicId, boolean opened) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", topicId)
-                    .findFirst();
-
-            if (topic.getAnnouncement() != null) {
-                realm.executeTransaction(realm1 -> topic.getAnnouncement().setIsOpened(opened));
-                return true;
+            if (isTopic(topicId)) {
+                Announcement announcement = topics.get(topicId).getRaw().getAnnouncement();
+                if (announcement != null) {
+                    announcement.setIsOpened(opened);
+                    return true;
+                }
             }
 
             return false;
@@ -450,32 +341,26 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean isTopic(long topicId) {
-        return execute((realm) -> realm.where(Topic.class)
-                .equalTo("id", topicId)
-                .count() > 0);
+        return execute(() -> topics.indexOfKey(topicId) >= 0);
     }
 
     public Topic getTopic(long roomId) {
-        return execute((realm) -> {
-            Topic it = realm.where(Topic.class)
-                    .equalTo("id", roomId)
-                    .findFirst();
-            if (it != null) {
-                return realm.copyFromRealm(it);
-            } else {
-                return it;
+        return execute(() -> {
+            if (isTopic(roomId)) {
+                return topics.get(roomId).getRaw();
             }
+            return null;
         });
     }
 
     public boolean updateReadLinkId(long roomId, long linkId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", roomId)
-                    .findFirst();
-            if (topic != null && topic.getReadLinkId() < linkId) {
-                realm.executeTransaction(realm1 -> topic.setReadLinkId(linkId));
+            if (isTopic(roomId)) {
+                Topic raw = topics.get(roomId).getRaw();
+                if (raw.getReadLinkId() < linkId) {
+                    raw.setReadLinkId(linkId);
+                }
                 return true;
             }
 
@@ -484,17 +369,43 @@ public class TopicRepository extends RealmRepository {
     }
 
     public boolean updateReadOnly(long roomId, boolean readOnly) {
-        return execute(realm -> {
-            Topic topic = realm.where(Topic.class)
-                    .equalTo("id", roomId)
-                    .findFirst();
+        return execute(() -> {
 
-            if (topic != null) {
-                realm.executeTransaction(realm1 -> topic.setIsAnnouncement(readOnly));
+            if (isTopic(roomId)) {
+                topics.get(roomId).getRaw().setIsAnnouncement(readOnly);
                 return true;
             }
-
             return false;
+        });
+    }
+
+    public boolean clear() {
+        return execute(() -> {
+            topics.clear();
+            return true;
+        });
+    }
+
+    public boolean addTopicRoom(long topicId, TopicRoom topic) {
+        return execute(() -> {
+            topics.put(topicId, topic);
+            return true;
+        });
+    }
+
+    public TopicRoom getTopicRoom(long roomId) {
+        return execute(() -> topics.get(roomId));
+    }
+
+    public List<TopicRoom> getTopicRooms() {
+        return execute(() -> {
+            List<TopicRoom> topicRooms = new ArrayList<>();
+
+            int size = topics.size();
+            for (int idx = 0; idx < size; idx++) {
+                topicRooms.add(topics.valueAt(idx));
+            }
+            return topicRooms;
         });
     }
 }

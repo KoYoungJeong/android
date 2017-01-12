@@ -3,22 +3,20 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Human extends RealmObject {
-    @PrimaryKey
+public class Human {
     private long id;
     private long teamId;
-    private String name;
     private String type;
+    private String name;
     private String photoUrl;
-    private String role;
     private String accountId;
     private Profile profile;
     private String status;
+    private List<Long> joinTopics;
     private long rankId;
     private boolean isStarred;
 
@@ -44,14 +42,6 @@ public class Human extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getAccountId() {
@@ -109,5 +99,13 @@ public class Human extends RealmObject {
     public Human setRankId(long rankId) {
         this.rankId = rankId;
         return this;
+    }
+
+    public List<Long> getJoinTopics() {
+        return joinTopics;
+    }
+
+    public void setJoinTopics(List<Long> joinTopics) {
+        this.joinTopics = joinTopics;
     }
 }

@@ -64,7 +64,7 @@ public class CarouselViewerActivityTest {
     public void setUp() throws Exception {
 
         teamId = AccountRepository.getRepository().getSelectedTeamId();
-        roomId = TopicRepository.getInstance().getDefaultTopic(teamId).getId();
+        roomId = TopicRepository.getInstance().getDefaultTopic().getId();
         latestFileId = getLatestFileId();
 
         Intent startIntent = new Intent();

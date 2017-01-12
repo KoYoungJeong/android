@@ -135,6 +135,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .filter(team -> team.getStatus() == Team.Status.JOINED)
                         .filter(team -> team.getTeamId() != TeamInfoLoader.getInstance().getTeamId())
                         .map(Team::getUnread)
+                        .defaultIfEmpty(0)
                         .reduce((prev, current) -> prev + current),
                 Observable.defer(() -> {
                     try {
@@ -165,7 +166,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         }
         Observable.from(teams)
                 .filter(team -> team.getStatus() == Team.Status.JOINED)
-                .map((team1) -> team1.getUnread())
+                .map(Team::getUnread)
+                .defaultIfEmpty(0)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
                     BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
@@ -308,7 +310,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     String versionName = SettingsModel.getVersionName();
                     rows.add(navigationDataModel.getVersionRow(versionName));
                 })
-                .subscribeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {
                     navigationDataModel.addRows(rows);

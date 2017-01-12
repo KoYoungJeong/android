@@ -127,7 +127,6 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
                 }
 
                 TopicRepository.getInstance().updateDescription(entityId, description);
-                TeamInfoLoader.getInstance().refresh();
                 return Completable.complete();
             } catch (RetrofitException e) {
                 return Completable.error(e);

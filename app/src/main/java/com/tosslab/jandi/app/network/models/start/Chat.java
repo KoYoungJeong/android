@@ -1,34 +1,28 @@
 package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.jackson.deserialize.start.ChatConverter;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Chat extends RealmObject {
-    @PrimaryKey
+@JsonDeserialize(converter = ChatConverter.class)
+public class Chat {
     private long id;
     private long teamId;
     private String type;
     private String status;
     private long lastLinkId;
-    @Ignore
     private List<Long> members;
-    private RealmList<RealmLong> memberIds;
-    private RealmList<Marker> markers;
-    private long companionId;
     private boolean isOpened;
+    private long companionId;
+    private LastMessage lastMessage;
+    private List<Marker> markers;
     private long readLinkId;
     private int unreadCount;
-    private LastMessage lastMessage;
 
     public long getId() {
         return id;
@@ -70,32 +64,19 @@ public class Chat extends RealmObject {
         this.lastLinkId = lastLinkId;
     }
 
-    @Deprecated
     public List<Long> getMembers() {
-        if (members != null) {
-            return members;
-
-        } else {
-            members = new ArrayList<>();
-            if (memberIds != null) {
-                for (RealmLong memberId : memberIds) {
-                    members.add(memberId.getValue());
-                }
-            }
-            return members;
-        }
+        return members;
     }
 
-    @Deprecated
     public void setMembers(List<Long> members) {
         this.members = members;
     }
 
-    public RealmList<Marker> getMarkers() {
+    public List<Marker> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(RealmList<Marker> markers) {
+    public void setMarkers(List<Marker> markers) {
         this.markers = markers;
     }
 
@@ -137,14 +118,6 @@ public class Chat extends RealmObject {
 
     public void setCompanionId(long companionId) {
         this.companionId = companionId;
-    }
-
-    public RealmList<RealmLong> getMemberIds() {
-        return memberIds;
-    }
-
-    public void setMemberIds(RealmList<RealmLong> memberIds) {
-        this.memberIds = memberIds;
     }
 
 }

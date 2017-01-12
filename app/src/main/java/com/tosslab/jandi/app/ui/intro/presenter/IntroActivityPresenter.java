@@ -5,7 +5,6 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.orm.RealmManager;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
@@ -21,9 +20,6 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import javax.inject.Inject;
 
-import io.realm.exceptions.RealmError;
-import io.realm.exceptions.RealmException;
-import io.realm.exceptions.RealmFileException;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -189,15 +185,8 @@ public class IntroActivityPresenter {
                     }
                 }, t -> {
                     t.printStackTrace();
-                    if (t instanceof RealmError
-                            || t instanceof RealmException
-                            || t instanceof RealmFileException) {
-                        Crashlytics.logException(t);
-                        RealmManager.deleteReamAndInit();
-                        view.restartIntroActivity();
-                    } else {
-                        view.showDialogNoRank();
-                    }
+                    Crashlytics.logException(t);
+                    view.showDialogNoRank();
                 });
 
         // 팀 정보가 없거나 초대에 의해 시작한 경우

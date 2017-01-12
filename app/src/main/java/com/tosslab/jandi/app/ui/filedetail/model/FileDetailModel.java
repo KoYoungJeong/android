@@ -364,6 +364,5 @@ public class FileDetailModel {
 
     public void updateJoinedTopic(long id) {
         TopicRepository.getInstance().updateTopicJoin(id, true);
-        TeamInfoLoader.getInstance().refresh();
     }
 }

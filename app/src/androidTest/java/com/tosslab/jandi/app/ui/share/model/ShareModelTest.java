@@ -3,12 +3,10 @@ package com.tosslab.jandi.app.ui.share.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import org.junit.AfterClass;
@@ -23,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Component;
-import rx.Observable;
 import setup.BaseInitUtil;
 
 import static org.hamcrest.core.Is.is;
@@ -79,22 +76,6 @@ public class ShareModelTest {
 
         hasLeftSideMenu = shareModel.hasLeftSideMenu(TeamInfoLoader.getInstance().getTeamId());
         assertThat(hasLeftSideMenu, is(true));
-    }
-
-    @Test
-    public void testUpdateLeftSideMenu() throws Exception {
-        long teamId = Observable.from(AccountRepository.getRepository().getAccountTeams())
-                .filter(userTeam -> userTeam.getTeamId() != AccountRepository.getRepository().getSelectedTeamId())
-                .map(ResAccountInfo.UserTeam::getTeamId)
-                .firstOrDefault(-1L)
-                .toBlocking().first();
-
-        if (teamId > 0) {
-            InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
-            boolean success = shareModel.updateInitialInfo(initialInfo);
-
-            assertThat(success, is(true));
-        }
     }
 
     @Test

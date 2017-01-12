@@ -211,7 +211,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
             } else {
                 TopicRepository.getInstance().updateStarred(roomId, !starred);
             }
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new RetrieveTopicListEvent());
             starred = TeamInfoLoader.getInstance().isStarred(roomId);
             AnalyticsValue.Screen category = roomId !=
@@ -307,7 +306,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
             } else {
                 ChatRepository.getInstance().updateChatOpened(roomId, false);
             }
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new RetrieveTopicListEvent());
             if (TeamInfoLoader.getInstance().isUser(entityId)) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);

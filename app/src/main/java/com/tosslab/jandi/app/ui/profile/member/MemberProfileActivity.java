@@ -476,7 +476,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 entityClientManager.disableFavorite(memberId);
             }
             HumanRepository.getInstance().updateStarred(memberId, star);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io()).subscribe(() -> {
         }, Throwable::printStackTrace);

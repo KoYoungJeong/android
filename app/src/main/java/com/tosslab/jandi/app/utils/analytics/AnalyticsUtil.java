@@ -9,7 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.local.orm.repositories.info.SelfRepository;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.FutureTrack;
 
@@ -91,7 +91,7 @@ public class AnalyticsUtil {
                 action = AnalyticsValue.Action.ViewProfile_Image;
                 break;
             case Mention:
-                boolean me = SelfRepository.getInstance().isMe(userId);
+                boolean me = TeamInfoLoader.getInstance().getMyId() == userId;
                 if (me) {
                     action = AnalyticsValue.Action.ViewProfile_MyMention;
                 } else {

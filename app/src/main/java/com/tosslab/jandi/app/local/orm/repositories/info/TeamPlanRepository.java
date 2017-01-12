@@ -3,18 +3,18 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import android.support.v4.util.LongSparseArray;
 
 import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
-import com.tosslab.jandi.app.network.models.start.Team;
+import com.tosslab.jandi.app.network.models.start.TeamPlan;
 
-public class TeamRepository extends LockTemplate {
-    private static LongSparseArray<TeamRepository> instance;
+public class TeamPlanRepository extends LockTemplate {
+    private static LongSparseArray<TeamPlanRepository> instance;
 
-    private Team team;
+    private TeamPlan teamPlan;
 
-    private TeamRepository() {
+    private TeamPlanRepository() {
         super();
     }
 
-    synchronized public static TeamRepository getInstance(long teamId) {
+    synchronized public static TeamPlanRepository getInstance(long teamId) {
         if (instance == null) {
             instance = new LongSparseArray<>();
         }
@@ -22,20 +22,20 @@ public class TeamRepository extends LockTemplate {
         if (instance.indexOfKey(teamId) >= 0) {
             return instance.get(teamId);
         } else {
-            TeamRepository value = new TeamRepository();
+            TeamPlanRepository value = new TeamPlanRepository();
             instance.put(teamId, value);
             return value;
 
         }
     }
 
-    public Team getTeam() {
-        return execute(() -> team);
+    public TeamPlan getTeamPlan() {
+        return execute(() -> teamPlan);
     }
 
-    public boolean updateTeam(Team team) {
+    public boolean updateTeamPlan(TeamPlan teamPlan) {
         return execute(() -> {
-            this.team = team;
+            this.teamPlan = teamPlan;
             return true;
         });
     }

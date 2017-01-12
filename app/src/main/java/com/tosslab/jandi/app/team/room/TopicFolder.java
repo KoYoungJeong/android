@@ -13,6 +13,10 @@ public class TopicFolder implements Cloneable {
         this.rooms = rooms;
     }
 
+    public Folder getRaw() {
+        return folder;
+    }
+
     public long getId() {
         return folder.getId();
     }

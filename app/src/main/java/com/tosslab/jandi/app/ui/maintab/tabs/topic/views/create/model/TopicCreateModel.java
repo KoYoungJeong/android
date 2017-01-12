@@ -7,14 +7,12 @@ import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
-import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import io.realm.RealmList;
 
 
 public class TopicCreateModel {
@@ -50,19 +48,9 @@ public class TopicCreateModel {
     }
 
     public void addTopic(Topic topic) {
-        RealmList<Marker> markers = new RealmList<>();
-        for (Long memberId : topic.getMembers()) {
-            Marker marker = new Marker();
-            marker.setRoomId(topic.getId());
-            marker.setMemberId(memberId);
-            marker.setReadLinkId(-1);
-            markers.add(marker);
-        }
 
         topic.setIsJoined(true);
         topic.setReadLinkId(-1);
-        topic.setLastLinkId(-1);
-        topic.setMarkers(markers);
         topic.setSubscribe(true);
         TopicRepository.getInstance().addTopic(topic);
     }

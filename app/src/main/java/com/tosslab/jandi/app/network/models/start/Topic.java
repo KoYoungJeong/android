@@ -1,20 +1,17 @@
 package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.network.jackson.deserialize.start.TopicConverter;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Topic extends RealmObject {
-    @PrimaryKey
+@JsonDeserialize(converter = TopicConverter.class)
+public class Topic {
     private long id;
     private long teamId;
     private String type;
@@ -23,20 +20,20 @@ public class Topic extends RealmObject {
     private String description;
     private boolean isDefault;
     private boolean autoJoin;
+    private boolean isAnnouncement;
+    private boolean messageDeletable;
     private long creatorId;
     private long deleterId;
     private long lastLinkId;
-    @Ignore
+    private Date createdAt;
     private List<Long> members;
-    private RealmList<RealmLong> memberIds;
-    private RealmList<Marker> markers;
     private boolean isJoined;
     private boolean isStarred;
-    private boolean subscribe;
-    private Announcement announcement;
+    private List<Marker> markers;
     private long readLinkId;
+    private boolean subscribe;
     private int unreadCount;
-    private boolean isAnnouncement;
+    private Announcement announcement;
 
     public boolean isAnnouncement() {
         return isAnnouncement;
@@ -134,31 +131,19 @@ public class Topic extends RealmObject {
         this.lastLinkId = lastLinkId;
     }
 
-    @Deprecated
     public List<Long> getMembers() {
-        if (members != null) {
-            return members;
-        } else {
-            members = new ArrayList<>();
-            if (memberIds != null) {
-                for (RealmLong memberId : memberIds) {
-                    members.add(memberId.getValue());
-                }
-            }
-            return members;
-        }
+        return members;
     }
 
-    @Deprecated
     public void setMembers(List<Long> members) {
         this.members = members;
     }
 
-    public RealmList<Marker> getMarkers() {
+    public List<Marker> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(RealmList<Marker> markers) {
+    public void setMarkers(List<Marker> markers) {
         this.markers = markers;
     }
 
@@ -210,12 +195,20 @@ public class Topic extends RealmObject {
         this.unreadCount = unreadCount;
     }
 
-    public RealmList<RealmLong> getMemberIds() {
-        return memberIds;
+
+    public boolean isMessageDeletable() {
+        return messageDeletable;
     }
 
-    public void setMemberIds(RealmList<RealmLong> memberIds) {
-        this.memberIds = memberIds;
+    public void setMessageDeletable(boolean messageDeletable) {
+        this.messageDeletable = messageDeletable;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 }

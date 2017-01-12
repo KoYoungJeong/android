@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import io.intercom.android.sdk.Intercom;
-import io.realm.Realm;
 
 public class SignOutUtil {
     public static void removeSignData() {
@@ -19,7 +18,6 @@ public class SignOutUtil {
         BadgeUtils.clearBadge(context);
         OpenHelperManager.getHelper(context, OrmDatabaseHelper.class)
                 .clearAllData();
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         TeamInfoLoader instance = TeamInfoLoader.getInstance();
         instance = null;
         TokenUtil.clearTokenInfo();
@@ -34,7 +32,6 @@ public class SignOutUtil {
         BadgeUtils.clearBadge(JandiApplication.getContext());
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
         TokenUtil.clearTokenInfo();
     }
 

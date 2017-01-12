@@ -180,7 +180,6 @@ public class ChatDetailFragment extends Fragment {
 
         Action1<Boolean> successAction = isStarred -> {
             HumanRepository.getInstance().updateStarred(entityId, !isStarred);
-            TeamInfoLoader.getInstance().refresh();
 
             setStarred(!isStarred);
             if (!isStarred) {

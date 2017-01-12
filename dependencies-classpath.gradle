@@ -12,6 +12,5 @@ rootProject.buildscript.dependencies {
     classpath rootProject.ext.dependecies.buildscripts.fabric
     classpath rootProject.ext.dependecies.buildscripts.android_apt
     classpath rootProject.ext.dependecies.buildscripts.retrolambda
-    classpath rootProject.ext.dependecies.buildscripts.realm
     classpath rootProject.ext.dependecies.buildscripts.dexcount_gradle
 }

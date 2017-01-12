@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
-import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -15,7 +14,7 @@ import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import setup.BaseInitUtil;
@@ -27,18 +26,15 @@ import setup.BaseInitUtil;
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class SearchApiTest {
 
-    private static ResAccountInfo accountInfo;
-    private static StartApi startApi;
+    private ResAccountInfo accountInfo;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @Before
+    public void setUpClass() throws Exception {
         BaseInitUtil.initData();
         ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance())
                 .getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
-        startApi = new StartApi(RetrofitBuilder.getInstance());
-        startApi.getInitializeInfo(accountInfo.getMemberships().iterator().next().getTeamId());
     }
 
     @Test
