@@ -26,7 +26,7 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_MEMBER) {
-            MemberViewHolder memberViewHolder = MemberViewHolder.createForUser(parent);
+            MemberViewHolder memberViewHolder = MemberViewHolder.createForChatChooseItem(parent);
             memberViewHolder.setIsTeamMemberList(true);
             return memberViewHolder;
         } else if (viewType == VIEW_TYPE_TITLE) {

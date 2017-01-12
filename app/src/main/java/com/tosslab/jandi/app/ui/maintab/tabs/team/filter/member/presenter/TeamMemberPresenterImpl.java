@@ -107,7 +107,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         .map(new Func1<User, TeamMemberItem>() {
                             @Override
                             public TeamMemberItem call(User user) {
-                                return new TeamMemberItem(user, it);
+                                return new TeamMemberItem(user, it, TeamInfoLoader.getInstance().getMyId());
                             }
                         })
                         .concatWith(Observable.defer(() -> {

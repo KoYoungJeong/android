@@ -77,7 +77,7 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map((user1) -> {
-                    TeamMemberItem teamMemberItem = new TeamMemberItem(user1, keyword);
+                    TeamMemberItem teamMemberItem = new TeamMemberItem(user1, keyword, TeamInfoLoader.getInstance().getMyId());
                     teamMemberItem.setNameOfSpan(user1.getName());
                     return teamMemberItem;
                 })

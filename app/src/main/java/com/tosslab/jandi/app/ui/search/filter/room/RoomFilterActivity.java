@@ -19,6 +19,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.search.filter.room.adapter.RoomFilterAdapter;
@@ -57,6 +59,22 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     private static final String KEY_TEAM_ID = "teamId";
 
+    @InjectExtra
+    @Nullable
+    boolean isTopic;
+    @InjectExtra
+    @Nullable
+    boolean isOnlyTopicMode;
+    @InjectExtra
+    @Nullable
+    boolean isShowDefaultTopic = true;
+    @InjectExtra
+    @Nullable
+    long selectedRoomId;
+    @InjectExtra
+    @Nullable
+    long teamId;
+
     @Inject
     InputMethodManager inputMethodManager;
 
@@ -90,12 +108,6 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     private MenuItem menuVoiceInput;
 
     private RoomFilterPresenter.RoomType roomType;
-
-    private boolean isOnlyShowTopicRoom;
-
-    private boolean isShowDefaultTopic = true;
-
-    private boolean isOnlyTalkedRooms = false;
 
     public static void startForResultWithDirectMessageId(Activity activity, long selectedRoomId, int requestCode) {
         Intent intent = new Intent(activity, RoomFilterActivity.class);
@@ -131,12 +143,16 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_filter);
 
-        long teamId = getIntent().getLongExtra(KEY_TEAM_ID, -1);
+        ButterKnife.bind(this);
+        Dart.inject(this);
 
         RoomFilterAdapter roomFilterAdapter = new RoomFilterAdapter(teamId);
-        injectComponent(roomFilterAdapter, teamId);
+        roomFilterAdapter.setHasStableIds(true);
+        DaggerRoomFilterComponent.builder()
+                .roomFilterModule(new RoomFilterModule(roomFilterAdapter, this, teamId))
+                .build()
+                .inject(this);
 
-        ButterKnife.bind(this);
 
         initFilter();
 
@@ -154,8 +170,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     }
 
     private void initFilter() {
-        isOnlyShowTopicRoom = getIntent().getBooleanExtra(KEY_IS_ONLY_SHOW_TOPIC_ROOM, false);
-        if (isOnlyShowTopicRoom) {
+        if (isOnlyTopicMode) {
             vgRoomFilterRoomType.setVisibility(View.GONE);
         } else {
             vgRoomFilterRoomType.setVisibility(View.VISIBLE);
@@ -163,23 +178,20 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     }
 
     private void initSelectedRoomId() {
-        boolean isTopic = getIntent().getBooleanExtra(KEY_IS_TOPIC, false);
-        long selectedRoomId = getIntent().getLongExtra(KEY_SELECTED_ROOM_ID, -1L);
         roomFilterPresenter.onInitializeSelectedRoomId(isTopic, selectedRoomId);
     }
 
     private void initRooms() {
-        isShowDefaultTopic = getIntent().getBooleanExtra(KEY_IS_SHOW_DEFAULT_TOPIC, true);
         roomFilterPresenter.setShowDefaultTopic(isShowDefaultTopic);
         roomType = RoomFilterPresenter.RoomType.Topic;
-        if (!isOnlyShowTopicRoom) {
+        if (!isOnlyTopicMode) {
             btnRoomTypeTopic.setSelected(true);
         }
         roomFilterPresenter.onInitializeRooms(roomType);
     }
 
     private void initRoomFilterViews(RoomFilterAdapter roomFilterAdapter) {
-        lvRoomFilter.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        lvRoomFilter.setLayoutManager(new LinearLayoutManager(this));
         lvRoomFilter.setAdapter(roomFilterAdapter);
 
         roomFilterDataView.setOnMemberClickListener(memberId -> {
@@ -194,13 +206,6 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
                     AnalyticsValue.Action.ChooseSearchResult);
         });
-    }
-
-    private void injectComponent(RoomFilterAdapter roomFilterAdapter, long teamId) {
-        DaggerRoomFilterComponent.builder()
-                .roomFilterModule(new RoomFilterModule(roomFilterAdapter, this, teamId))
-                .build()
-                .inject(this);
     }
 
     private void setupActionBar() {

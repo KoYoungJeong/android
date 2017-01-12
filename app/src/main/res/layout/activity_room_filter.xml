@@ -20,12 +20,12 @@
             android:background="@null"
             android:completionThreshold="1"
             android:gravity="center_vertical"
-            android:hint="대화방 검색"
+            android:hint="@string/jandi_search_roomsearch"
             android:imeOptions="actionSearch|flagNoExtractUi"
             android:inputType="text"
             android:textColor="@color/jandi_text"
             android:textColorHint="@color/jandi_text_medium"
-            android:textSize="18dp" />
+            android:textSize="@dimen/jandi_text_size_larger_2" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -49,7 +49,7 @@
             android:gravity="center"
             android:text="@string/jandi_tab_topic"
             android:textColor="@color/text_color_room_filter_tab"
-            android:textSize="12dp" />
+            android:textSize="@dimen/jandi_text_size_small" />
 
         <TextView
             android:id="@+id/btn_room_filter_dm"
@@ -60,7 +60,7 @@
             android:gravity="center"
             android:text="@string/jandi_tab_direct_message"
             android:textColor="@color/text_color_room_filter_tab"
-            android:textSize="12dp" />
+            android:textSize="@dimen/jandi_text_size_small" />
 
     </LinearLayout>
 

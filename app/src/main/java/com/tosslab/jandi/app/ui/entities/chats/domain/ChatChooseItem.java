@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.entities.chats.domain;
 
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 
 /**
@@ -19,6 +20,8 @@ public class ChatChooseItem {
     private boolean isInactive;
     private boolean isChooseItem = false;
     private boolean isOwner = false;
+    private boolean isMyId = true;
+    private Level level;
 
     public ChatChooseItem() { }
 
@@ -31,6 +34,7 @@ public class ChatChooseItem {
                 .inactive(user.isInactive())
                 .email(user.getEmail())
                 .isBot(user.isBot())
+                .level(user.getLevel())
                 .department(user.getDivision())
                 .jobTitle(user.getPosition())
                 .owner(user.isTeamOwner())
@@ -158,6 +162,24 @@ public class ChatChooseItem {
 
     public ChatChooseItem email(String email) {
         this.email = email;
+        return this;
+    }
+
+    public boolean isMyId() {
+        return isMyId;
+    }
+
+    public ChatChooseItem myId(boolean myId) {
+        isMyId = myId;
+        return this;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public ChatChooseItem level(Level level) {
+        this.level = level;
         return this;
     }
 }
