@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -89,6 +88,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.views.BackPressCatchEditText;
@@ -1119,16 +1119,16 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @Override
     public void startExportedFileViewerActivity(File file) {
-        Intent target = new Intent(Intent.ACTION_SEND);
-        Uri parse = FileProvider.getUriForFile(this, getString(R.string.jandi_file_authority), file);
         String mimeType = getFileType(file);
+        Intent target = FileUtil.createFileIntent(file, mimeType);
+        target.setAction(Intent.ACTION_SEND);
+
         if (mimeType != null) {
-            target.setDataAndType(parse, mimeType)
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             Bundle extras = new Bundle();
             extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
             target.putExtras(extras);
         }
+
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
             startActivity(chooser);
@@ -1141,13 +1141,9 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void startDownloadedFileViewerActivity(File file) {
         try {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
             String mimeType = getFileType(file);
             if (mimeType != null) {
-                Uri data = FileProvider.getUriForFile(this, getString(R.string.jandi_file_authority), file);
-                intent.setDataAndType(data, mimeType)
-                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                Intent intent = FileUtil.createFileIntent(file, mimeType);
                 startActivity(intent);
                 showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
             }

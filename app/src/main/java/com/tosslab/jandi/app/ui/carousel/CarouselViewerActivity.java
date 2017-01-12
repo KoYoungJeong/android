@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -812,10 +811,8 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Override
     public void startExportedFileViewerActivity(File file, String mimeType) {
-        Intent target = new Intent(Intent.ACTION_SEND);
-        Uri parse = FileProvider.getUriForFile(this, getString(R.string.jandi_file_authority), file);
-        target.setDataAndType(parse, mimeType)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        Intent target = FileUtil.createFileIntent(file, mimeType);
+        target.setAction(Intent.ACTION_SEND);
         Bundle extras = new Bundle();
         extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
         target.putExtras(extras);
@@ -831,16 +828,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            Uri data = FileProvider.getUriForFile(this, getString(R.string.jandi_file_authority), file);
-            intent.setDataAndType(data, mimeType)
-                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            startActivity(intent);
             ColoredToast.show(getString(R.string.jandi_file_downloaded_into, file.getPath()));
-        } catch (ActivityNotFoundException e) {
-            ColoredToast.showError(getString(R.string.err_unsupported_file_type, file));
-        } catch (SecurityException e) {
+            startActivity(FileUtil.createFileIntent(file, mimeType));
+        } catch (ActivityNotFoundException | SecurityException e) {
             ColoredToast.showError(getString(R.string.err_unsupported_file_type, file));
         }
     }
