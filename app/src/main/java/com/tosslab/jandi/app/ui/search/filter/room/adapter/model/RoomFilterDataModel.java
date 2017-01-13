@@ -18,7 +18,7 @@ public interface RoomFilterDataModel {
 
     List<MultiItemRecyclerAdapter.Row<?>> getTopicRows(List<TopicRoom> topicRooms);
 
-    List<MultiItemRecyclerAdapter.Row<?>> getUserRows(List<User> users);
+    List<MultiItemRecyclerAdapter.Row<?>> getUserRows(List<User> users, long myId);
 
     void setFolders(List<TopicFolder> topicFolders);
 

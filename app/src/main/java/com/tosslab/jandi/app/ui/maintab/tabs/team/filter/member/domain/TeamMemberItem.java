@@ -14,10 +14,10 @@ public class TeamMemberItem {
     private CharSequence nameOfSpan;
 
 
-    public TeamMemberItem(User user, String keyword) {
+    public TeamMemberItem(User user, String keyword, long myId) {
         if (user != null) {
 
-            chatChooseItem = ChatChooseItem.create(user);
+            chatChooseItem = ChatChooseItem.create(user).myId(myId == user.getId());
             if (!chatChooseItem.isInactive()) {
                 name = chatChooseItem.getName();
             } else {
