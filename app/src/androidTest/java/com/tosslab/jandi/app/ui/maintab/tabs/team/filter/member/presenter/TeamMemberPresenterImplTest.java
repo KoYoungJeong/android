@@ -258,7 +258,7 @@ public class TeamMemberPresenterImplTest {
     }
 
     private TeamMemberItem getMyTeamMemberItem() {
-        return new TeamMemberItem(TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()), "", myId);
+        return new TeamMemberItem(TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()), "", TeamInfoLoader.getInstance().getMyId());
     }
 
     private long getOtherMember() {
