@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.adapter.DeptJobHeaderAdapter;
@@ -157,6 +158,25 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+
+        setListViewScroll();
+    }
+
+    private void setListViewScroll() {
+        if (getActivity() instanceof MainTabActivity) {
+            MainTabActivity activity = (MainTabActivity) getActivity();
+            lvMember.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
+                }
+            });
         }
     }
 

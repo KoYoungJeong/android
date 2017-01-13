@@ -131,6 +131,23 @@ public class MainChatListFragment extends Fragment
 
         mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
+        setListViewScroll();
+    }
+
+    private void setListViewScroll() {
+        MainTabActivity activity = (MainTabActivity) getActivity();
+
+        lvChat.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    activity.setTabLayoutVisible(false);
+                } else {
+                    activity.setTabLayoutVisible(true);
+                }
+            }
+        });
     }
 
     @Override

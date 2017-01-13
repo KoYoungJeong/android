@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.StarredListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.view.StarredListDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.dagger.DaggerStarredListComponent;
@@ -131,6 +132,25 @@ public class StarredListFragment extends Fragment implements StarredListPresente
                 }
             }
         });
+
+        setListViewScroll();
+    }
+
+    private void setListViewScroll() {
+        if (getActivity() instanceof MainTabActivity) {
+            MainTabActivity activity = (MainTabActivity) getActivity();
+            lvStarredList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
+                }
+            });
+        }
     }
 
     private void initMoreLoadingProgress() {

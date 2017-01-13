@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicJoinEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeftEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.PollListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.view.PollListDataView;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.dagger.DaggerPollListComponent;
@@ -124,6 +125,25 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
                 }
             }
         });
+
+        setListViewScroll();
+    }
+
+    private void setListViewScroll() {
+        if (getActivity() instanceof MainTabActivity) {
+            MainTabActivity activity = (MainTabActivity) getActivity();
+            lvPollList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
+                }
+            });
+        }
     }
 
     private void injectComponent(PollListAdapter adapter) {

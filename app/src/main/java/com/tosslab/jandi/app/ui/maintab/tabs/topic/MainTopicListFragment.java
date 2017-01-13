@@ -100,16 +100,12 @@ public class MainTopicListFragment extends Fragment
 
     @Inject
     MainTopicListPresenter mainTopicListPresenter;
-
     private LinearLayoutManager layoutManager;
     private ExpandableTopicAdapter expandableTopicAdapter;
     private RecyclerViewExpandableItemManager expandableItemManager;
-
     private AlertDialog createFolderDialog;
     private RecyclerView.Adapter wrappedAdapter;
-
     private UpdatedTopicAdapter updatedTopicAdapter;
-
     private boolean isFirstLoadFragment = true;
 
     public static MainTopicListFragment create(long selectedEntity) {
@@ -140,6 +136,7 @@ public class MainTopicListFragment extends Fragment
 
         initViews(savedInstanceState);
         SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
+
     }
 
     void initViews(Bundle savedInstanceState) {
@@ -167,6 +164,24 @@ public class MainTopicListFragment extends Fragment
         }
 
         mainTopicListPresenter.checkFloatingActionMenu();
+
+        setListViewScroll();
+    }
+
+    private void setListViewScroll() {
+        MainTabActivity activity = (MainTabActivity) getActivity();
+
+        lvMainTopic.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    activity.setTabLayoutVisible(false);
+                } else {
+                    activity.setTabLayoutVisible(true);
+                }
+            }
+        });
     }
 
     @Override
