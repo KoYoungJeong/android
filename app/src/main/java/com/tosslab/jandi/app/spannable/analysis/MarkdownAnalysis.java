@@ -12,20 +12,17 @@ import android.text.style.StyleSpan;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by tonyjs on 16. 2. 19..
- */
 public class MarkdownAnalysis implements RuleAnalysis {
 
     private static final Pattern sPattern;
-    public static int STRIKE_THROUGH = 99;
+    private static int STRIKE_THROUGH = 99;
 
     static {
         sPattern = Pattern.compile(
-                "((\\~{2})([^ \n][^~\n]+[^ \n])\\~{2})" +
-                        "|((\\*{3})([^ \n][^*\n]+[^ \n])\\*{3})" +
-                        "|((\\*{2})([^ \n][^*\n]+[^ \n])\\*{2})" +
-                        "|((\\*)([^ \n][^*\n]+[^ \n])\\*)");
+                "([~]{2})((?:[^~\\s])|(?:[^~\\s](?:.*?)[^~\\s]))([~]{2})" +
+                        "|([*]{3})((?:[^*\\s])|(?:[^*\\s](?:.*?)[^*\\s]))([*]{3})" +
+                        "|([*]{2})((?:[^*\\s])|(?:[^*\\s](?:.*?)[^*\\s]))([*]{2})" +
+                        "|([*]{1})((?:[^*\\s])|(?:[^*\\s](?:.*?)[^*\\s]))([*]{1})");
     }
 
     @Override
@@ -37,14 +34,10 @@ public class MarkdownAnalysis implements RuleAnalysis {
 
             int startIndex = matcher.start(style.getStartIndex());
             int endIndex = matcher.end(style.getEndIndex());
-            int needCharacterLength = style.getNeedCharacterLength();
-            int beforeWhiteSpaces = style.getBeforeWhiteSpaces();
-            int afterWhiteSpaces = style.getAfterWhiteSpaces();
 
-            CharSequence sequence = spannableStringBuilder.subSequence(
-                    startIndex + needCharacterLength + beforeWhiteSpaces,
-                    endIndex - needCharacterLength - afterWhiteSpaces);
-            spannableStringBuilder.replace(startIndex, endIndex, sequence);
+            CharSequence sequence = spannableStringBuilder.subSequence(startIndex, endIndex);
+            startIndex = matcher.start();
+            spannableStringBuilder.replace(startIndex, matcher.end(), sequence);
 
             if (plainText) {
                 return;
@@ -62,7 +55,7 @@ public class MarkdownAnalysis implements RuleAnalysis {
         }
     }
 
-    public TextStyle getStyle(Matcher matcher) {
+    private TextStyle getStyle(Matcher matcher) {
         if (!TextUtils.isEmpty(matcher.group(2))) {
             return TextStyle.STRIKE;
         } else if (!TextUtils.isEmpty((matcher.group(5)))) {
@@ -76,27 +69,21 @@ public class MarkdownAnalysis implements RuleAnalysis {
         }
     }
 
-    public enum TextStyle {
-        BOLD_ITALIC(3, 4, 4, 0, 0, Typeface.BOLD | Typeface.ITALIC),
-        ITALIC(1, 10, 10, 0, 0, Typeface.ITALIC),
-        BOLD(2, 7, 7, 0, 0, Typeface.BOLD),
-        STRIKE(2, 1, 1, 0, 0, STRIKE_THROUGH);
+    private enum TextStyle {
+        STRIKE(2, 2, STRIKE_THROUGH),
+        BOLD_ITALIC(5, 5, Typeface.BOLD | Typeface.ITALIC),
+        BOLD(8, 8, Typeface.BOLD),
+        ITALIC(11, 11, Typeface.ITALIC);
 
         private final int typeFace;
-        int needCharacterLength, startIndex, endIndex, beforeWhiteSpaces, afterWhiteSpaces;
+        private final int startIndex;
+        private final int endIndex;
 
-        TextStyle(int needCharacterLength, int startIndex, int endIndex,
-                  int beforeWhiteSpaces, int afterWhiteSpaces, int typeFace) {
-            this.needCharacterLength = needCharacterLength;
+        TextStyle(int startIndex, int endIndex,
+                  int typeFace) {
             this.startIndex = startIndex;
             this.endIndex = endIndex;
-            this.beforeWhiteSpaces = beforeWhiteSpaces;
-            this.afterWhiteSpaces = afterWhiteSpaces;
             this.typeFace = typeFace;
-        }
-
-        public int getNeedCharacterLength() {
-            return needCharacterLength;
         }
 
         public int getStartIndex() {
@@ -105,14 +92,6 @@ public class MarkdownAnalysis implements RuleAnalysis {
 
         public int getEndIndex() {
             return endIndex;
-        }
-
-        public int getBeforeWhiteSpaces() {
-            return beforeWhiteSpaces;
-        }
-
-        public int getAfterWhiteSpaces() {
-            return afterWhiteSpaces;
         }
 
         public CharacterStyle getSpan() {
