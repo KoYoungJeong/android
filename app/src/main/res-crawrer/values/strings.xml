@@ -114,7 +114,8 @@ Please restart the app."</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"Associates can be invited to any other topic you are in, except for the default topic. Please join  an additional topic and try again. "</string>
 	<string name="invite_associate_invitoronlyindefault_title">"
 Currently, there is no topic where you could invite members to. "</string>
-	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in."</string>
+	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in. 
+"</string>
 	<string name="invite_associate_selecttopic_placeholder">"Select a topic"</string>
 	<string name="invite_associate_selecttopic_title">"Select the topic you want to invite to"</string>
 	<string name="invite_email_alreadyinteam">"This email address is already in the team."</string>
@@ -798,6 +799,8 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="menu_entity_invite">"Invite"</string>
 	<string name="menu_entity_leave">"Leave"</string>
 	<string name="menu_gallery">"Upload from Gallery"</string>
+	<string name="menu_hide_1_1">"Hide"</string>
+	<string name="menu_hide_desc_1_1">"Leaving this 1:1 chat will hide the conversation from the list, but your conversation will still remain when you reopen the chat."</string>
 	<string name="modify_message">"Edit message"</string>
 	<string name="mypage_editprofile_dept">"Enter your Department"</string>
 	<string name="mypage_editprofile_jobtitle">"Enter your Job Title"</string>
@@ -807,10 +810,16 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="primary_email_info_msg">"Choose an email address where we should send all of your JANDI related emails. To assign email addresses to specific teams, please refer to the Profile menu."</string>
 	<string name="sent_auth_email">"An email has been sent to your inbox. Please follow the link provided to verify your account and sign in."</string>
 	<string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
+	<string name="team_adminmenu_title">"Admin Menu"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"Team Information"</string>
 	<string name="team_invite_email_disabledmember_desc">"To invite this member, ask your team administrator to undo the disable."</string>
 	<string name="team_invite_email_disabledmember_title">"This member has been disabled."</string>
+	<string name="team_teamleave">"Leave Team"</string>
+	<string name="team_teamleave_member_desc">"You cannot access the data in the team once you leave. All the contents you have uploaded in the team will remain."</string>
+	<string name="team_teamleave_member_title">"Are you sure you want to leave this team?"</string>
+	<string name="team_teamleave_owner_desc">"Please transfer ownership to another member in order to leave the team."</string>
+	<string name="team_teamleave_owner_title">"The team owner is unable to leave the team."</string>
 	<string name="title_cdp_invite">"Choose members to invite"</string>
 	<string name="title_file_detail">"Description"</string>
 	<string name="title_file_upload">"Upload File"</string>
@@ -823,6 +832,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="topic_leave_associateintopic_title">"You are the topic Admin."</string>
 	<string name="topic_memberautojoin_button">"Auto invite Members"</string>
 	<string name="topic_memberautojoin_desc">"Invite all new Members to this topic."</string>
+	<string name="topic_menu_Browse_other_public_topics">"Browse other public topics."</string>
 	<string name="topic_polls_deletedpoll">"Deleted Poll"</string>
 	<string name="topic_remove_associatewithonetopic_desc">"This Associate has joined this topic only. Removing this Associate from the topic will delete this person from the team as well. Would you like to proceed and remove?"</string>
 	<string name="topic_remove_associatewithonetopic_remove">"Remove"</string>

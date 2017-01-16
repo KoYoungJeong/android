@@ -794,6 +794,8 @@
 	<string name="menu_entity_invite">"邀请"</string>
 	<string name="menu_entity_leave">"离开"</string>
 	<string name="menu_gallery">"从照片集上传"</string>
+	<string name="menu_hide_1_1">"隐藏"</string>
+	<string name="menu_hide_desc_1_1">"离开 1:1 私信将会隐藏讨论串，一旦重启对话，历史讨论串仍会保留"</string>
 	<string name="modify_message">"编辑信息"</string>
 	<string name="mypage_editprofile_dept">"输入你的部门"</string>
 	<string name="mypage_editprofile_jobtitle">"输入你的职位"</string>
@@ -803,10 +805,16 @@
 	<string name="primary_email_info_msg">"所有与您JANDI帐号相关的电子邮件将寄送到主要电子邮件地址。您可以增加其它电子邮件地址到您的帐号并且指定为某个团队专属电子邮件地址。 (请注意电子邮件地址皆需事先被确认)"</string>
 	<string name="sent_auth_email">"电子邮件已寄送至您的邮箱，请点击内建链接进行帐户验证。"</string>
 	<string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
+	<string name="team_adminmenu_title">"管理者选单"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"团队资料"</string>
 	<string name="team_invite_email_disabledmember_desc">"联系团队管理员重启权限"</string>
 	<string name="team_invite_email_disabledmember_title">"此成员权限已被关闭"</string>
+	<string name="team_teamleave">"离开团队"</string>
+	<string name="team_teamleave_member_desc">"离开团队后，你将无法取得历史信息、文件和留言。但不影响其他成员浏览你曾分享的信息、文件和留言"</string>
+	<string name="team_teamleave_member_title">"你确定要永久离开此团队？"</string>
+	<string name="team_teamleave_owner_desc">"请先转移所有者权限至其他成员，才能离开团队"</string>
+	<string name="team_teamleave_owner_title">"团队所有者无法离开团队"</string>
 	<string name="title_cdp_invite">"请选择欲邀请的成员"</string>
 	<string name="title_file_detail">"叙述"</string>
 	<string name="title_file_upload">"上传文件"</string>
@@ -819,6 +827,7 @@
 	<string name="topic_leave_associateintopic_title">"你是议题管理员"</string>
 	<string name="topic_memberautojoin_button">"自动邀请成员"</string>
 	<string name="topic_memberautojoin_desc">"邀请所有新成员至此议题"</string>
+	<string name="topic_menu_Browse_other_public_topics">"浏览其他公开议题"</string>
 	<string name="topic_polls_deletedpoll">"已删除的问卷"</string>
 	<string name="topic_remove_associatewithonetopic_desc">"此准成员仅参与此一议题，若你剔除此准成员，这位准成员将自动被此团队封锁。请问你要继续并剔除吗？"</string>
 	<string name="topic_remove_associatewithonetopic_remove">"剔除"</string>

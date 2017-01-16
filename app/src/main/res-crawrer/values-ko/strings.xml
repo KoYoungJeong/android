@@ -9,8 +9,10 @@
 	<string name="common_accthome_joinedteamlist">"가입한 팀 리스트"</string>
 	<string name="common_accthome_loggedin">"로그인됨"</string>
 	<string name="common_authority_change_alert">"멤버 권한이 변경되었습니다. 
-앱 재시동이 필요합니다."</string>
-	<string name="common_authority_change_relaunch">"재시동"</string>
+앱 재시동이 필요합니다.
+"</string>
+	<string name="common_authority_change_relaunch">"재시동
+"</string>
 	<string name="common_authority_notauthorised_body">"자세한 내용은 관리자에게 문의하세요."</string>
 	<string name="common_authority_notauthorised_title">"해당 기능에 접근 권한이 없습니다. "</string>
 	<string name="common_authority_title_associate">"준회원"</string>
@@ -52,7 +54,8 @@
 	<string name="common_sharetojandi_choose_team">"팀 선택"</string>
 	<string name="common_sharetojandi_errormsg">"예상치 못한 문제가 발생했습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="common_signup_codeverification">"위 이메일로 인증번호를 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
-	<string name="common_signup_invalid_emaildomain">"이메일의 도메인 주소를 제대로 입력했는지 다시 확인해 주세요."</string>
+	<string name="common_signup_invalid_emaildomain">"이메일의 도메인 주소를 제대로 입력했는지 다시 확인해 주세요.
+"</string>
 	<string name="delete_cache">"캐시 삭제"</string>
 	<string name="delete_cache_confirm">"캐시 데이터를 삭제하시겠습니까?"</string>
 	<string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
@@ -107,8 +110,10 @@
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_detail_nopreview">"미리보기 할 수 없는 형식의 파일입니다."</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
-	<string name="invite_account_alreadyinteam">"이미 팀에 참여 중인 계정입니다."</string>
-	<string name="invite_account_alreadyinvited">"이미 팀에 초대 중인 계정입니다."</string>
+	<string name="invite_account_alreadyinteam">"이미 팀에 참여 중인 계정입니다.
+"</string>
+	<string name="invite_account_alreadyinvited">"이미 팀에 초대 중인 계정입니다.
+"</string>
 	<string name="invite_account_blocked">"팀에서 차단된 계정입니다."</string>
 	<string name="invite_associate_desc">"초대하려는 토픽과 이메일을 선택해주세요."</string>
 	<string name="invite_associate_email_desc">"이메일을 통해 다른 준회원을 잔디로 초대할 수 있습니다."</string>
@@ -139,7 +144,8 @@
 	<string name="invite_member_copyurl">"초대 URL 복사하기"</string>
 	<string name="invite_member_copyurl_title">"초대 URL"</string>
 	<string name="invite_member_email_desc">"이메일을 통해 다른 정회원을 잔디로 초대할 수 있습니다."</string>
-	<string name="invite_member_option_associate_desc">"지정된 토픽에만 접근할 수 있는 멤버입니다."</string>
+	<string name="invite_member_option_associate_desc">"
+지정된 토픽에만 접근할 수 있는 멤버입니다."</string>
 	<string name="invite_member_option_associate_title">"준회원 초대"</string>
 	<string name="invite_member_option_desc">"새로운 멤버의 권한을 선택해 주세요."</string>
 	<string name="invite_member_option_member_desc">"모든 토픽에 접근이 가능한 멤버입니다."</string>
@@ -811,6 +817,8 @@
 	<string name="menu_entity_invite">"초대"</string>
 	<string name="menu_entity_leave">"나가기"</string>
 	<string name="menu_gallery">"사진첩에서 올리기"</string>
+	<string name="menu_hide_1_1">"숨기기"</string>
+	<string name="menu_hide_desc_1_1">"1:1 대화를 나가시면 목록에서는 사라지지만 대화 내용은 보관됩니다."</string>
 	<string name="modify_message">"Message 수정"</string>
 	<string name="mypage_editprofile_dept">"부서를 입력하세요"</string>
 	<string name="mypage_editprofile_jobtitle">"직책을 입력하세요"</string>
@@ -820,10 +828,16 @@
 	<string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
+	<string name="team_adminmenu_title">"관리자 메뉴"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"팀 정보"</string>
 	<string name="team_invite_email_disabledmember_desc">"해제를 원하신다면 관리자에게 문의해 주세요"</string>
 	<string name="team_invite_email_disabledmember_title">"팀에서 차단된 멤버입니다."</string>
+	<string name="team_teamleave">"팀 탈퇴하기"</string>
+	<string name="team_teamleave_member_desc">"탈퇴 시 모든 데이터에 접근하실 수 없게됩니다. 작성하신 데이터는 삭제되지 않습니다."</string>
+	<string name="team_teamleave_member_title">"정말로 탈퇴하시겠습니까?"</string>
+	<string name="team_teamleave_owner_desc">"탈퇴하시려면 소유자 권한을 다른 멤버에게 이관 후 탈퇴하실 수 있습니다."</string>
+	<string name="team_teamleave_owner_title">"소유자는 탈퇴하실 수 없습니다."</string>
 	<string name="title_cdp_invite">"초대할 사용자를 선택하세요"</string>
 	<string name="title_file_detail">"파일 상세 정보"</string>
 	<string name="title_file_upload">"파일 업로드"</string>
@@ -843,6 +857,7 @@
 	<string name="topic_leave_associateintopic_title">"회원님은 이 토픽의 관리자입니다."</string>
 	<string name="topic_memberautojoin_button">"정회원 자동 초대"</string>
 	<string name="topic_memberautojoin_desc">"새로 팀에 참여하는 모든 정회원을 이 토픽에 자동으로 초대합니다."</string>
+	<string name="topic_menu_Browse_other_public_topics">"참여하지 않은 토픽 목록보기"</string>
 	<string name="topic_polls_deletedpoll">"삭제된 투표"</string>
 	<string name="topic_remove_associatewithonetopic_desc">"이 토픽에만 참여 중인 준회원입니다.
  토픽에서 내보낼 시 해당 준회원은 팀에서도 
@@ -856,10 +871,10 @@
 	<string name="topic_search_1on1_unable">"준회원은 1:1 메시지를 먼저 전송하실 수 없습니다."</string>
 	<string name="topic_topicchat_mentionall">"@all (모든 토픽 멤버)"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"토픽이 %s 폴더에서 제거되었습니다."</string>
-	<string name="topic_viewonly_alert_body">"관리자 이상만 메시지를 전송하실 수 있습니다."</string>
+	<string name="topic_viewonly_alert_body">"관리자 이상만 내용을 전송하실 수 있습니다."</string>
 	<string name="topic_viewonly_alert_title">"읽기 전용 대화방입니다."</string>
 	<string name="topic_viewonly_label">"읽기 전용"</string>
-	<string name="topic_viewonly_set_body">"설정 시 관리자 이상만 메시지 작성이 가능합니다."</string>
+	<string name="topic_viewonly_set_body">"설정 시 관리자 이상만 내용 작성이 가능합니다."</string>
 	<string name="topic_viewonly_set_title">"읽기 전용 설정"</string>
 	<string name="url">"URL"</string>
 	<string name="warn_all_users_are_already_invited">"이미 모든 멤버가 이 토픽에 참여하고 있습니다."</string>
