@@ -89,17 +89,17 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
                         onTopicRoomClickListener.onTopicRoomClick(room.getId()));
             }
 
-        } else if (getItem(position) instanceof User) {
-            User user = getItem(position);
+        } else if (getItem(position) instanceof ChatChooseItem) {
+            ChatChooseItem user = getItem(position);
 
-            boolean isSelectedMember = user.getId() == selectedUserId;
+            boolean isSelectedMember = user.getEntityId() == selectedUserId;
             itemView.setBackgroundColor(isSelectedMember
                     ? resources.getColor(R.color.jandi_selected_member)
                     : resources.getColor(R.color.white));
 
             if (onMemberClickListener != null) {
                 itemView.setOnClickListener(v ->
-                        onMemberClickListener.onMemberClick(user.getId()));
+                        onMemberClickListener.onMemberClick(user.getEntityId()));
             }
         }
 
