@@ -780,4 +780,5 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             toolbar.setLayoutParams(toolbarLp);
         }
     }
+
 }

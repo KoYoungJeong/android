@@ -2,15 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="94dp"
-    android:background="@color/white"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/v_poll_list_icon"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_centerVertical="true"
+        android:paddingLeft="16dp"
         android:src="@drawable/poll_icon_normal_192" />
 
     <RelativeLayout
@@ -19,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_toRightOf="@id/v_poll_list_icon">
 
         <TextView
@@ -136,7 +136,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
         android:background="@color/jandi_team_member_divider" />
 

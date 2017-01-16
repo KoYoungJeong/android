@@ -118,7 +118,6 @@ public class DeptJobGroupPresenterImpl implements DeptJobGroupPresenter {
                 }
             } else {
                 if (!TextUtils.isEmpty(user.getDivision())) {
-
                     return user.getDivision().equals(keyword);
                 } else {
                     return TextUtils.equals(keyword, undefinedMember);

@@ -81,8 +81,6 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
             tvSubject.setTextColor(0xff333333);
             tvDueDate.setTextColor(0xff999999);
             tvCreateDate.setTextColor(0xff999999);
-
-
         } else {
             vPollIcon.setImageResource(R.drawable.poll_icon_closed_192);
 
@@ -96,22 +94,20 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
             tvSubject.setTextColor(0xffcccccc);
             tvDueDate.setTextColor(0xffcccccc);
             tvCreateDate.setTextColor(0xffcccccc);
-
         }
     }
 
     void bindCreator(Poll poll) {
         long creatorId = poll.getCreatorId();
         if (TeamInfoLoader.getInstance().isUser(creatorId)) {
-
             tvCreator.setText(TeamInfoLoader.getInstance().getMemberName(creatorId));
 
             Resources resources = tvCreator.getResources();
             if (TeamInfoLoader.getInstance().getUser(creatorId).isEnabled()) {
-                tvCreator.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));
+                tvCreator.setTextColor(0xff333333);
                 vCreatorCovoer.setVisibility(View.GONE);
             } else {
-                tvCreator.setTextColor(resources.getColor(R.color.deactivate_text_color));
+                tvCreator.setTextColor(0xff999999);
                 vCreatorCovoer.setVisibility(View.VISIBLE);
             }
         }

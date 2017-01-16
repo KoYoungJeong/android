@@ -64,6 +64,18 @@ public class MentionListAdapter extends RecyclerView.Adapter<BaseViewHolder<Ment
             return;
         }
 
+        boolean hasNextItem = getItemCount() - 1 != position;
+
+        if (hasNextItem &&
+                (mentionMessageList.get(position).getMessageCreatedAt().getMonth()
+                        == mentionMessageList.get(position + 1).getMessageCreatedAt().getMonth()) &&
+                (mentionMessageList.get(position).getMessageCreatedAt().getDate()
+                        == mentionMessageList.get(position + 1).getMessageCreatedAt().getDate())) {
+            ((MentionMessageViewHolder) holder).setHalfDivider(true);
+        } else {
+            ((MentionMessageViewHolder) holder).setHalfDivider(false);
+        }
+
         holder.onBindView(mentionMessage);
 
         holder.itemView.setOnClickListener(v -> {
@@ -178,6 +190,7 @@ public class MentionListAdapter extends RecyclerView.Adapter<BaseViewHolder<Ment
     public interface OnMentionClickListener {
         void onMentionClick(MentionMessage mention);
     }
+
     public interface OnMentionLongClickListener {
         void onMentionLongClick(MentionMessage mention);
     }
