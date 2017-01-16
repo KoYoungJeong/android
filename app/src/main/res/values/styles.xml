@@ -331,6 +331,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
         <item name="android:textSize">@dimen/jandi_text_size_large</item>
         <item name="android:textColor">@color/text_color_setting_check_title</item>
     </style>
@@ -341,9 +343,11 @@
         <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub</item>
         <item name="android:theme">@style/FloatingEditTextTheme</item>
         <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:layout_marginRight">12dp</item>
         <item name="android:paddingBottom">16dp</item>
         <item name="android:paddingTop">0dp</item>
-        <item name="android:layout_marginEnd">12dp</item>
     </style>
 
     <style name="JandiTopic.Create.TextView.TextCount" parent="JandiTopic">
@@ -351,6 +355,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
         <item name="android:gravity">right</item>
         <item name="android:textSize">@dimen/jandi_text_size_small</item>
         <item name="android:textColor">@color/jandi_message_search_item_topic_txt_color_sub</item>
@@ -486,6 +492,8 @@
     <style name="JandiMainShare.Content">
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
     </style>
 
     <style name="JandiSignUpVerify" />
@@ -620,6 +628,8 @@
         <item name="android:focusableInTouchMode">false</item>
         <item name="android:layout_marginStart">9dp</item>
         <item name="android:layout_marginEnd">9dp</item>
+        <item name="android:layout_marginLeft">9dp</item>
+        <item name="android:layout_marginRight">9dp</item>
         <item name="android:theme">@style/Jandi.Default.CheckBox</item>
     </style>
 

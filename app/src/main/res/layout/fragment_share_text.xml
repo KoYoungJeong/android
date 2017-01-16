@@ -8,7 +8,8 @@
         android:id="@+id/vg_share_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="?android:actionBarSize">
 
         <TextView
             android:id="@+id/tv_team_title"
