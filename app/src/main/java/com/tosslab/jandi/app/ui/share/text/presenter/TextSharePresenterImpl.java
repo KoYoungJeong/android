@@ -4,6 +4,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -81,15 +84,9 @@ public class TextSharePresenterImpl implements TextSharePresenter {
 
     @Override
     public void setEntity(long roomId, int roomType) {
-        if (roomType == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            this.roomId = teamInfoLoader.getChatId(roomId);
-            this.entityId = roomId;
-        } else {
-            this.roomId = roomId;
-            this.entityId = roomId;
-        }
+        this.roomId = roomId;
+        this.entityId = roomId;
         Completable.fromAction(() -> {
-
             view.setTeamName(teamInfoLoader.getTeamName());
             view.setRoomName(teamInfoLoader.getName(roomId));
             view.setMentionInfo(teamId, roomId, roomType);
@@ -110,13 +107,24 @@ public class TextSharePresenterImpl implements TextSharePresenter {
         }
 
         view.showProgressBar();
+
+
         int roomType = getRoomType(roomId);
         Completable.fromCallable(() -> {
-            if (roomId == -1 && entityId > 0) {
-                // chat 미생성으로 간주
-                roomId = shareModel.createChat(teamId, entityId);
+            long chatId;
+            if (teamInfoLoader.isTopic(roomId)) {
+                chatId = roomId;
+            } else {
+                chatId = teamInfoLoader.getChatId(roomId);
+                if (chatId <= 0) {
+                    try {
+                        chatId = new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).id;
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-            shareModel.sendMessage(teamId, roomId, messageText, mentions);
+            shareModel.sendMessage(teamId, chatId, messageText, mentions);
             return true;
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
