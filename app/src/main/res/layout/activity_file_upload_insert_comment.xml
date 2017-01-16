@@ -78,12 +78,15 @@
             <TextView
                 android:id="@+id/tv_file_rename_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="24dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:background="@drawable/bg_round_rect_border_grey"
                 android:gravity="center"
-                android:padding="2dp"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:paddingStart="9dp"
+                android:paddingEnd="9dp"
                 android:text="@string/common_fileupload_rename"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jandi_text_size_small" />
