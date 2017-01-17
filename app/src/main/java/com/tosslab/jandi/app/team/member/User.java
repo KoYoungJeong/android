@@ -32,7 +32,13 @@ public class User implements Member {
 
     @Override
     public String getPhotoUrl() {
-        return human.getPhotoUrl();
+        String photoUrl = human.getPhotoUrl();
+        if (!TextUtils.isEmpty(photoUrl)
+                && photoUrl.startsWith("http")
+                && !photoUrl.contains("?")) {
+            return photoUrl + "?size=640";
+        }
+        return photoUrl;
     }
 
     @Override
