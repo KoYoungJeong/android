@@ -10,9 +10,11 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.download.model.DownloadModel;
 
 import java.io.BufferedOutputStream;
@@ -28,7 +30,9 @@ public class ImageFilePath {
      * 임시 저장 파일의 경로를 반환
      */
     public static Uri getTempUri(Context context) {
-        return Uri.fromFile(getTempFile(context));
+        Uri uri = FileProvider.getUriForFile(context,
+                context.getString(R.string.jandi_file_authority), getTempFile(context));
+        return uri;
     }
 
     /**

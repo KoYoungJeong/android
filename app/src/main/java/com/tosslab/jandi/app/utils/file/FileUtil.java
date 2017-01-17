@@ -108,7 +108,9 @@ public class FileUtil {
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         if (context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() <= 0) {
-            intent.setDataAndType(Uri.fromFile(file), mimeType);
+            Uri uri = FileProvider.getUriForFile(context,
+                    context.getString(R.string.jandi_file_authority), file);
+            intent.setDataAndType(uri, mimeType);
             intent.setFlags(0);
         }
 
