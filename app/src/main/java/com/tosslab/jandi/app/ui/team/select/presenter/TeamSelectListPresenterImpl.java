@@ -15,9 +15,6 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrLaunchTeam;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import rx.Completable;
@@ -46,21 +43,30 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
 
     @Override
     public void initTeamDatas(boolean firstEntered, boolean shouldRefreshAccountInfo) {
-        Observable.defer(() -> {
+
+
+        Observable.fromCallable(() -> {
             if (shouldRefreshAccountInfo) {
                 model.refreshAccountInfo();
             }
-            List<Team> teams = new ArrayList<>();
-            try {
-                teams = model.getTeamInfos();
-            } catch (RetrofitException e) {
-                e.printStackTrace();
-            }
-            adapterDataModel.setDatas(teams);
-            return Observable.just(teams);
+            return model.getTeamInfos();
         }).subscribeOn(Schedulers.io())
+                .onErrorReturn(throwable -> {
+                    model.refreshAccountInfo();
+                    try {
+                        return model.getTeamInfos();
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(teams -> {
+
+                    setUserEmailInfo();
+                    view.setEditButton();
+
+                    adapterDataModel.setDatas(teams);
                     // create team 밖에 없을 때
                     if (teams.size() == 1) {
                         view.showEmptyList();
@@ -70,6 +76,11 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                     } else {
                         view.showList();
                     }
+                }, (t) -> {
+                    t.printStackTrace();
+
+                    view.showToastNoDataError();
+                    view.exit();
                 });
     }
 
