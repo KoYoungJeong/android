@@ -34,7 +34,7 @@ public class BotRepository extends LockTemplate {
         }
     }
 
-    synchronized public static BotRepository getInstance() {
+    public static BotRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

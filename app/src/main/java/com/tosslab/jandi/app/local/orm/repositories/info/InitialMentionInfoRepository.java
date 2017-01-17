@@ -31,7 +31,7 @@ public class InitialMentionInfoRepository extends LockTemplate {
         }
     }
 
-    synchronized public static InitialMentionInfoRepository getInstance() {
+    public static InitialMentionInfoRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

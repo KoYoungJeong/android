@@ -36,7 +36,7 @@ public class ChatRepository extends LockTemplate {
         }
     }
 
-    synchronized public static ChatRepository getInstance() {
+    public static ChatRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

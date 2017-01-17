@@ -40,7 +40,7 @@ public class TopicRepository extends LockTemplate {
         }
     }
 
-    synchronized public static TopicRepository getInstance() {
+    public static TopicRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

@@ -81,13 +81,6 @@ public class TeamInfoLoader {
         return getInstance(AccountRepository.getRepository().getSelectedTeamId());
     }
 
-    /**
-     * 재사용하지 않음<br/>
-     * Share 등 특수한 상황에서 쓰기 위함
-     *
-     * @param teamId 정보가 필요한 팀 ID
-     * @return 팀 정보
-     */
     synchronized public static TeamInfoLoader getInstance(long teamId) {
 
         if (teamInfoLoader == null) {
@@ -164,7 +157,7 @@ public class TeamInfoLoader {
     }
 
     private void setUpRanks() {
-        Observable.from(RankRepository.getInstance().getRanks(teamRepository.getTeam().getId()))
+        Observable.from(RankRepository.getInstance().getRanks(teamId))
                 .collect(() -> ranks, (maps, rank) -> maps.put(rank.getId(), rank))
                 .subscribe();
     }
@@ -251,11 +244,11 @@ public class TeamInfoLoader {
     private <T> T execute(Call0<T> call) {
         lock.lock();
 
-
         try {
             if (call == null) {
                 return null;
             }
+
             return call.execute();
         } finally {
             lock.unlock();
@@ -264,7 +257,6 @@ public class TeamInfoLoader {
 
     private void execute(Call1 call) {
         lock.lock();
-
 
         try {
             if (call == null) {
@@ -459,7 +451,7 @@ public class TeamInfoLoader {
         //noinspection ConstantConditions
         return execute(() -> {
             if (teamRepository != null) {
-                return teamRepository.getTeam().getId();
+                return teamId;
             }
             return -1L;
         });

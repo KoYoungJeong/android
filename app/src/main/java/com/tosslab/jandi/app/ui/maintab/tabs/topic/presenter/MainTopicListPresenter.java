@@ -61,7 +61,7 @@ public class MainTopicListPresenter {
         this.topicFolderChooseModel = topicFolderChooseModel;
     }
 
-    public void onLoadList() {
+    public void onLoadFolderList() {
         Observable
                 .fromCallable(() -> {
                     topicFolders = mainTopicModel.getTopicFolders();

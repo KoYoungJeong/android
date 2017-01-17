@@ -36,7 +36,7 @@ public class RoomMarkerRepository extends LockTemplate {
         }
     }
 
-    synchronized public static RoomMarkerRepository getInstance() {
+    public static RoomMarkerRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

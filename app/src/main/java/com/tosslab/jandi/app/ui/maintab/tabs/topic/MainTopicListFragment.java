@@ -156,7 +156,7 @@ public class MainTopicListFragment extends Fragment
         lvMainTopic.setLayoutManager(layoutManager);
         initFolderTopicAdapter();
         initUpdatedTopicAdapter();
-        mainTopicListPresenter.onLoadList();
+        mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
         mainTopicListPresenter.onInitViewList();
         if (selectedEntity > 0) {

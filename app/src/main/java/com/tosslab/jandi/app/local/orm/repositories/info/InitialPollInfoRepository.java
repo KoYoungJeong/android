@@ -31,7 +31,7 @@ public class InitialPollInfoRepository extends LockTemplate {
         }
     }
 
-    synchronized public static InitialPollInfoRepository getInstance() {
+    public static InitialPollInfoRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

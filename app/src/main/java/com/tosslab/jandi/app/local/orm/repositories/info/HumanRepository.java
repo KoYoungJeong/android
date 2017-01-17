@@ -35,7 +35,7 @@ public class HumanRepository extends LockTemplate {
 
     }
 
-    synchronized public static HumanRepository getInstance() {
+    public static HumanRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 

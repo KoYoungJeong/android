@@ -44,7 +44,7 @@ public class FolderRepository extends LockTemplate {
         }
     }
 
-    synchronized public static FolderRepository getInstance() {
+    public static FolderRepository getInstance() {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 
