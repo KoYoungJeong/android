@@ -168,11 +168,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             return;
         }
 
-        injectComponent();
-
         Dart.inject(this);
-
         ButterKnife.bind(this);
+        DaggerMainTabComponent.builder()
+                .mainTabModule(new MainTabModule(this))
+                .build()
+                .inject(this);
 
         initSelectedEntity();
 
@@ -292,13 +293,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 .subscribe(it -> {
                     sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
                 });
-    }
-
-    private void injectComponent() {
-        DaggerMainTabComponent.builder()
-                .mainTabModule(new MainTabModule(this))
-                .build()
-                .inject(this);
     }
 
     private void initToolbars() {
