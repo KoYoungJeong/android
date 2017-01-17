@@ -103,6 +103,7 @@ public class InviteDialogExecutor {
                     if (hasNonDefaultTopic()) {
                         InviteEmailActivity.startActivityForAssociate(context);
                         invitationDialog.dismiss();
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteNewMember_Associate);
                     } else {
                         showErrorNotAvailableInviteTopicDialog(context);
                     }
@@ -116,6 +117,7 @@ public class InviteDialogExecutor {
                     } else {
                         Intent intent = new Intent(context, MemberInvitationActivity.class);
                         context.startActivity(intent);
+                        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteNewMember_Member);
                     }
                     invitationDialog.dismiss();
                 });
@@ -145,7 +147,7 @@ public class InviteDialogExecutor {
                 .setPositiveButton(context.getResources().getString(R.string.jandi_confirm),
                         (dialog, id) -> {
                             AnalyticsUtil.sendEvent(
-                                    AnalyticsValue.Screen.TeamTab,
+                                    AnalyticsValue.Screen.InviteMember,
                                     AnalyticsValue.Action.InviteMember_InviteDisabled);
                             dialog.dismiss();
                         })

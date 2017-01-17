@@ -6,7 +6,7 @@ package com.tosslab.jandi.app.ui.invites.emails.presenter;
 
 public interface InviteEmailPresenter {
 
-    void addEmail(String email);
+    void addEmail(String email, int mode);
 
     void setStatusByEmailValid(String email);
 

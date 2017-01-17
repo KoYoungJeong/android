@@ -57,6 +57,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     private static final String KEY_TEAM_ID = "teamId";
 
+    private static final String KEY_IS_FROM_INVITE_ASSOCIATE = "isFromInviteAssociate";
+
     @Inject
     InputMethodManager inputMethodManager;
 
@@ -97,6 +99,8 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
     private boolean isOnlyTalkedRooms = false;
 
+    private boolean isFromInviteAssociate = false;
+
     public static void startForResultWithDirectMessageId(Activity activity, long selectedRoomId, int requestCode) {
         Intent intent = new Intent(activity, RoomFilterActivity.class);
         intent.putExtra(KEY_IS_TOPIC, false);
@@ -121,6 +125,7 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         Intent intent = new Intent(activity, RoomFilterActivity.class);
         intent.putExtra(KEY_IS_ONLY_SHOW_TOPIC_ROOM, true);
         intent.putExtra(KEY_IS_SHOW_DEFAULT_TOPIC, false);
+        intent.putExtra(KEY_IS_FROM_INVITE_ASSOCIATE, true);
         activity.startActivityForResult(intent, requestCode);
     }
 
@@ -140,8 +145,13 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
 
         initFilter();
 
-        AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SelectRoom);
+        isFromInviteAssociate = getIntent().getBooleanExtra(KEY_IS_FROM_INVITE_ASSOCIATE, false);
 
+        if (isFromInviteAssociate) {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.InviteAssociate_SelectTopic);
+        } else {
+            AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.SelectRoom);
+        }
         setupActionBar();
 
         initProgressWheel();
@@ -191,8 +201,13 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         roomFilterDataView.setOnTopicRoomClickListener(roomId -> {
             setResult(true, roomId, -1l);
             finish();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
-                    AnalyticsValue.Action.ChooseSearchResult);
+            if (isFromInviteAssociate) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate_SelectTopic,
+                        AnalyticsValue.Action.ChooseSearchResult);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                        AnalyticsValue.Action.ChooseSearchResult);
+            }
         });
     }
 
@@ -251,8 +266,13 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
     boolean onSearchAction(TextView view, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
             hideKeyboard();
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
-                    AnalyticsValue.Action.KeywordSearch);
+            if (isFromInviteAssociate) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate_SelectTopic,
+                        AnalyticsValue.Action.KeywordSearch);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                        AnalyticsValue.Action.KeywordSearch);
+            }
             return true;
         }
         return false;
@@ -274,8 +294,16 @@ public class RoomFilterActivity extends BaseAppCompatActivity implements RoomFil
         roomType = RoomFilterPresenter.RoomType.Topic;
 
         roomFilterPresenter.onRoomTypeChanged(roomType, etRoomFilter.getText().toString());
-        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
-                AnalyticsValue.Action.ChooseTopic);
+
+        if (isFromInviteAssociate) {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate_SelectTopic,
+                    AnalyticsValue.Action.ChooseTopic);
+        } else {
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SelectRoom,
+                    AnalyticsValue.Action.ChooseTopic);
+        }
+
+
     }
 
     @OnClick(R.id.btn_room_filter_dm)

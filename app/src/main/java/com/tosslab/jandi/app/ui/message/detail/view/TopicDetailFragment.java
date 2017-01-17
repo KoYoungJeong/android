@@ -435,6 +435,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> {
                     topicDetailPresenter.deleteTopic(getActivity(), entityId);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Delete_AssociateAlert);
                 })
                 .create()
                 .show();
@@ -467,7 +468,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 tvReadOnlyStatus.setVisibility(View.VISIBLE);
             }
             switchReadOnly.setChecked(readOnly);
-            tvReadOnlyStatus.setText(readOnly? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
+            tvReadOnlyStatus.setText(readOnly ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
             vgReadOnly.setEnabled(owner);
         }
 
