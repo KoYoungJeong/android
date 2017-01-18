@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -191,8 +192,11 @@ public class InsertProfileFirstPageFragment extends Fragment
         if (tempPhotoFile == null || !tempPhotoFile.exists()) {
             return;
         }
-        ImageUtil.loadProfileImage(ivProfilePicture,
-                Uri.fromFile(tempPhotoFile), R.drawable.profile_img);
+
+        Uri uri = FileProvider.getUriForFile(getContext(),
+                getString(R.string.jandi_file_authority), tempPhotoFile);
+
+        ImageUtil.loadProfileImage(ivProfilePicture, uri, R.drawable.profile_img);
     }
 
     @Override

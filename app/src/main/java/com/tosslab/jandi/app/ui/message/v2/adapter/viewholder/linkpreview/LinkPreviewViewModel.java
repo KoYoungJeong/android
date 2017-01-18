@@ -145,6 +145,10 @@ public class LinkPreviewViewModel {
     }
 
     private boolean useThumbnail(String imagUrl) {
-        return !TextUtils.isEmpty(imagUrl) && imagUrl.contains("linkpreview-thumb");
+        return !TextUtils.isEmpty(imagUrl) && isPreviewThumbUrl(imagUrl);
+    }
+
+    private boolean isPreviewThumbUrl(String imagUrl) {
+        return imagUrl.contains("linkpreview-thumb") || imagUrl.contains("files-linkPreview");
     }
 }

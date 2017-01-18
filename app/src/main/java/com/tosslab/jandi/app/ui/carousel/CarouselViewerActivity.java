@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -814,7 +815,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         Intent target = FileUtil.createFileIntent(file, mimeType);
         target.setAction(Intent.ACTION_SEND);
         Bundle extras = new Bundle();
-        extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        Uri uri = FileProvider.getUriForFile(this,
+                getString(R.string.jandi_file_authority), file);
+        extras.putParcelable(Intent.EXTRA_STREAM, uri);
         target.putExtras(extras);
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));

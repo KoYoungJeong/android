@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -215,9 +216,14 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
 
         try {
             Intent cropIntent = new Intent(getContext(), ImageCropPickerActivity.class);
-            cropIntent.putExtra("input", Uri.fromFile(new File(imagePath)));
-            cropIntent.putExtra("output", Uri.fromFile(File.createTempFile("temp_", ".jpg",
-                    new File(FileUtil.getDownloadPath()))));
+            Uri inputUri = FileProvider.getUriForFile(getContext(),
+                    getString(R.string.jandi_file_authority), new File(imagePath));
+            cropIntent.putExtra("input", inputUri);
+            Uri outputUri = FileProvider.getUriForFile(getContext(),
+                    getString(R.string.jandi_file_authority),
+                    File.createTempFile("temp_", ".jpg",
+                            new File(FileUtil.getDownloadPath())));
+            cropIntent.putExtra("output", outputUri);
             startActivityForResult(cropIntent, ModifyProfileActivity.REQUEST_CROP);
         } catch (IOException e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,7 @@ public class ShareFileItemFragment extends Fragment {
         return view;
     }
 
-    @OnClick(value ={R.id.iv_item_share_file_image,
+    @OnClick(value = {R.id.iv_item_share_file_image,
             R.id.vg_item_share_file_icon})
     void onContentClick() {
         ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
@@ -68,10 +69,12 @@ public class ShareFileItemFragment extends Fragment {
         if (isImageFile(filePath)) {
             vgFileType.setVisibility(View.GONE);
             ivImageThumb.setVisibility(View.VISIBLE);
+            Uri uri = FileProvider.getUriForFile(getContext(),
+                    getString(R.string.jandi_file_authority), new File(filePath));
             ImageLoader.newInstance()
                     .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                    .uri(Uri.fromFile(new File(filePath)))
+                    .uri(uri)
                     .into(ivImageThumb);
         } else {
             ivImageThumb.setVisibility(View.GONE);
