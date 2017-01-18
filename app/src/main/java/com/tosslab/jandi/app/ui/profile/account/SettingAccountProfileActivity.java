@@ -131,8 +131,10 @@ public class SettingAccountProfileActivity extends BaseAppCompatActivity impleme
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                     int checkedItemPosition =
                             ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                    String primaryEmail = emails[checkedItemPosition];
-                    presenter.updatePrimaryEmail(primaryEmail);
+                    if (checkedItemPosition <= emails.length-1) {
+                        String primaryEmail = emails[checkedItemPosition];
+                        presenter.updatePrimaryEmail(primaryEmail);
+                    }
                 })
                 .create().show();
     }
