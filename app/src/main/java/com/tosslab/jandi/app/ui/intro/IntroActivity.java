@@ -251,13 +251,15 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void showDialogNoRank() {
-        new AlertDialog.Builder(this)
-                .setMessage(R.string.common_launch_fail)
-                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
-                    finish();
-                })
-                .create()
-                .show();
+        if (!isFinishing()) {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.common_launch_fail)
+                    .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                        finish();
+                    })
+                    .create()
+                    .show();
+        }
     }
 
     @Override
