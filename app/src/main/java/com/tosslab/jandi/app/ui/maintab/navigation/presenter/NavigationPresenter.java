@@ -46,7 +46,7 @@ public interface NavigationPresenter {
 
     void onInitIntercom();
 
-    void onReloadTeams(boolean local);
+    void onReloadTeams();
 
     interface View {
 
