@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 
 import com.f2prateek.dart.Dart;
@@ -82,11 +81,10 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         Dart.inject(this);
         loadAnimation = !KeepExecutedService.isServiceRunning(this) && !skipAnimation;
-        if (!loadAnimation) {
+        if (loadAnimation) {
             setContentView(R.layout.activity_intro_animation);
         } else {
             setContentView(R.layout.activity_intro);
@@ -107,7 +105,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         startOn();
 
         delayStartTime = System.currentTimeMillis();
-        if (!loadAnimation) {
+        if (loadAnimation) {
 
             splashDrawable = ((AnimationDrawable) ivJandiIcon.getDrawable());
             Completable.fromAction(Completable::complete)

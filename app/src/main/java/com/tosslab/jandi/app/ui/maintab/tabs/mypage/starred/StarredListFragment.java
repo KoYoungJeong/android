@@ -76,17 +76,21 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_starred_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_starred_list, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
+
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         StarredListAdapter starredListAdapter = new StarredListAdapter();
-        injectComponent(starredListAdapter);
-
-        ButterKnife.bind(this, view);
+        DaggerStarredListComponent.builder()
+                .starredListModule(new StarredListModule(starredListAdapter, this))
+                .build()
+                .inject(this);
 
         initStarredListView(starredListAdapter);
 
@@ -99,13 +103,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-    }
-
-    void injectComponent(StarredListAdapter starredListAdapter) {
-        DaggerStarredListComponent.builder()
-                .starredListModule(new StarredListModule(starredListAdapter, this))
-                .build()
-                .inject(this);
     }
 
     private void initStarredListView(StarredListAdapter starredListAdapter) {

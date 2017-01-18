@@ -30,9 +30,6 @@ import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tonyjs on 16. 3. 17..
- */
 public class MyPageFragment extends Fragment implements TabFocusListener {
 
     @Bind(R.id.pager_mypage)
@@ -48,14 +45,14 @@ public class MyPageFragment extends Fragment implements TabFocusListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_mypage, container, false);
+        View view = inflater.inflate(R.layout.fragment_mypage, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        ButterKnife.bind(this, view);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
