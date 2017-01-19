@@ -125,6 +125,7 @@
                 android:layout_alignLeft="@+id/tv_searched_file_owner_name"
                 android:layout_alignRight="@+id/tv_searched_file_owner_name"
                 android:layout_alignTop="@+id/tv_searched_file_owner_name"
+                android:layout_centerInParent="true"
                 android:src="@drawable/line_gray" />
         </RelativeLayout>
 

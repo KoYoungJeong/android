@@ -138,7 +138,7 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
         viewPager.setOffscreenPageLimit(2);
         adapter = new TeamViewPagerAdapter(this, getSupportFragmentManager(), keywordObservable,
-                isSelectMode, false, roomId, from);
+                isSelectMode, true, roomId, from);
         viewPager.setAdapter(adapter);
         setOnViewpagerChangeListener();
         tabLayout.setupWithViewPager(viewPager);

@@ -44,7 +44,7 @@
         android:paddingRight="8dp"
         android:paddingTop="4dp"
         android:text="@string/jandi_team_select_ignore"
-        android:textColor="@color/text_color_gray"
+        android:textColor="@color/jandi_border_gray"
         android:textSize="11dp" />
 
     <TextView
@@ -60,7 +60,7 @@
         android:paddingRight="8dp"
         android:paddingTop="4dp"
         android:text="@string/jandi_team_select_accept"
-        android:textColor="@color/text_color_green"
+        android:textColor="@color/jandi_accent_color"
         android:textSize="11dp" />
 
 </RelativeLayout>

@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi;
 
 import android.content.Context;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
@@ -134,19 +132,6 @@ public class JandiBotViewHolder implements BodyViewHolder {
             }
 
             LinkifyUtil.setOnLinkClick(tvMessage);
-
-            messageStringBuilder.append(" ");
-
-            int startIndex = messageStringBuilder.length();
-            messageStringBuilder.append(
-                    DateTransformator.getTimeStringForSimple(link.message.createTime));
-            int endIndex = messageStringBuilder.length();
-
-            DateViewSpannable spannable =
-                    new DateViewSpannable(tvMessage.getContext(),
-                            DateTransformator.getTimeStringForSimple(link.message.createTime));
-            messageStringBuilder.setSpan(spannable,
-                    startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             UnreadCountUtil.getUnreadCount(roomId,
                     link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())

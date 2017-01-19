@@ -81,6 +81,7 @@ public class ImageFileViewHolder extends FileViewHolder {
 
     @Override
     public void bindFileContent(ResMessages.FileMessage fileMessage) {
+        vgProgress.setVisibility(View.GONE);
         final ResMessages.FileContent content = fileMessage.content;
 
         boolean hasImageUrl = ImageUtil.hasImageUrl(content);
@@ -88,7 +89,6 @@ public class ImageFileViewHolder extends FileViewHolder {
 
         if (!hasImageUrl || !FileExtensionsUtil.shouldSupportImageExtensions(content.type)) {
             ivFileThumb.setVisibility(View.GONE);
-            vgProgress.setVisibility(View.GONE);
             ivFileThumb.setOnClickListener(null);
             vUnavailableIndicator.setVisibility(View.VISIBLE);
             return;
@@ -139,20 +139,18 @@ public class ImageFileViewHolder extends FileViewHolder {
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                     .uri(UriUtil.getFileUri(localFilePath))
-                    .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+                    .into(ivFileThumb);
             return;
         }
 
-        if (content.type.contains("gif")
-                && content.size > 0) {
+        if (content.type.contains("gif") && content.size > 0) {
             if (content.size < 1024 * 1024) {
                 ImageLoader.newInstance()
                         .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                         .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                         .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                         .uri(Uri.parse(ImageUtil.getOriginalUrl(content)))
-                        .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
-
+                        .into(ivFileThumb);
             } else {
                 // progress 처리
                 Uri originalUri = Uri.parse(originalUrl);
