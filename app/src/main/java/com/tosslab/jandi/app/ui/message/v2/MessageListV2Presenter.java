@@ -452,8 +452,8 @@ public class MessageListV2Presenter {
                 while (index < memberLastLinks.size() - 1 &&
                         linkCursor == memberLastLinks.get(index)) {
                     index++;
-                    linkCursor = memberLastLinks.get(index);
                 }
+                linkCursor = memberLastLinks.get(index);
                 adapterModel.getItem(j).unreadCnt = index;
             }
         }
