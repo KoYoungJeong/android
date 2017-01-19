@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         app:navigationIcon="@drawable/jandi_main_logo" />
 
     <RelativeLayout
@@ -23,13 +24,15 @@
             android:layout_height="58dp"
             android:layout_alignParentBottom="true"
             android:background="@color/jandi_transparent_black_60p"
-            android:paddingLeft="16dp">
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp">
 
             <TextView
                 android:id="@+id/tv_login_info_edit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -42,22 +45,20 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/tv_login_info_edit_button"
+                android:layout_toStartOf="@id/tv_login_info_edit_button"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_login_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
                     android:singleLine="true"
-                    android:text="jandi.kim@tosslab.com"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@id/tv_login_email"
                     android:layout_marginTop="4dp"
                     android:text="@string/common_accthome_loggedin"
                     android:textColor="@color/white"
@@ -77,7 +78,6 @@
                 android:id="@+id/tv_joined_team_title"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_alignParentTop="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -89,7 +89,6 @@
                 android:id="@+id/vg_no_joined_team"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/tv_joined_team_title"
                 android:orientation="vertical"
                 android:visibility="gone">
 
