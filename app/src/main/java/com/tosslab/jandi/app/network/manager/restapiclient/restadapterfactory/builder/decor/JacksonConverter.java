@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.b
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -21,7 +21,7 @@ public class JacksonConverter {
         return new Converter.Factory() {
             @Override
             public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-                ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
+                ObjectMapper objectMapper = JsonMapper.getInstance().getObjectMapper();
                 return value -> {
                     JavaType javaType = objectMapper.getTypeFactory().constructType(type);
                     return objectMapper.readValue(value.byteStream(), javaType);
@@ -30,7 +30,7 @@ public class JacksonConverter {
 
             @Override
             public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-                ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
+                ObjectMapper objectMapper = JsonMapper.getInstance().getObjectMapper();
                 return value -> RequestBody.create(MEDIA_TYPE, objectMapper.writeValueAsBytes(value));
             }
 

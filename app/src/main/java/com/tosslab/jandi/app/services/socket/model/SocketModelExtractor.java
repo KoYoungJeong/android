@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.services.socket.model;
 
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 
 public class SocketModelExtractor {
@@ -18,7 +18,7 @@ public class SocketModelExtractor {
     public static <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz, boolean checkVersion, boolean checkTeamId) throws Exception {
         T t;
         if (object.getClass() != clazz) {
-            t = JacksonMapper.getInstance().getObjectMapper().readValue(object.toString(), clazz);
+            t = JsonMapper.getInstance().getObjectMapper().readValue(object.toString(), clazz);
         } else {
             t = (T) object;
         }

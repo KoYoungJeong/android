@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -204,8 +204,8 @@ public class BaseInitUtil {
     public static void refreshTeamInfo() {
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            InitialInfo initialInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+            String initialInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+            InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initialInfo));
             TeamInfoLoader.getInstance().refresh();
         } catch (RetrofitException e) {
             e.printStackTrace();

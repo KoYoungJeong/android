@@ -112,7 +112,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicDescription, AnalyticsValue.Action.Star, AnalyticsValue.Label.On);
                         }
                         TopicRepository.getInstance().updateStarred(entityId, !isStarred);
-                        TeamInfoLoader.getInstance().refresh();
                         return Observable.just(isStarred);
                     } catch (RetrofitException e) {
                         return Observable.error(e);
@@ -163,7 +162,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                     .takeFirst(it -> TeamInfoLoader.getInstance().getUser(it).getLevel() == Level.Guest)
                     .defaultIfEmpty(-1L)
                     .subscribe(memberId -> {
-                        if(memberId < 0){
+                        if (memberId < 0) {
                             view.showDialogNeedToAssignTopicOwner(topicName);
                         } else {
                             view.showDialogNeedToAssignMember();
@@ -257,7 +256,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 })
                 .doOnNext(it -> {
                     TopicRepository.getInstance().updateName(entityId, topicName);
-                    TeamInfoLoader.getInstance().refresh();
                     SprinklrTopicNameChange.sendLog(entityId);
                     EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
                 })
@@ -302,7 +300,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 })
                 .doOnNext(it -> {
                     TopicRepository.getInstance().updatePushSubscribe(entityId, pushOn);
-                    TeamInfoLoader.getInstance().refresh();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -356,7 +353,6 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
                 })
                 .doOnNext(it -> {
                     TopicRepository.getInstance().updateAutoJoin(it.first, it.second);
-                    TeamInfoLoader.getInstance().refresh();
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -382,14 +378,13 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         Completable.fromCallable(() -> {
             topicDetailModel.updateReadOnly(entityId, readOnly);
             TopicRepository.getInstance().updateReadOnly(entityId, readOnly);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnUnsubscribe(() -> view.dismissProgressWheel())
                 .subscribe(() -> {
                     onInit(entityId);
-                }, t-> {
+                }, t -> {
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
                         if (e.getStatusCode() >= 500) {

@@ -1,27 +1,14 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Poll extends RealmObject {
-    @JsonIgnore
-    @PrimaryKey
-    private long id;
-    private int votableCount;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+public class Poll {
+    @GsonAdapterKey
+    int votableCount;
 
     public int getVotableCount() {
         return votableCount;

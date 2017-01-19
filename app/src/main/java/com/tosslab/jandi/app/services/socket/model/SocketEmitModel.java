@@ -113,7 +113,7 @@ public class SocketEmitModel {
             ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
             long topicId = object.getData().getTopicId();
 
-            Topic topic = TopicRepository.getInstance().getTopic(topicId);
+            Topic topic = TopicRepository.getInstance(object.getTeamId()).getTopic(topicId);
             if (teamInfo != null
                     && teamInfo.getMemberId() > 0
                     && topic != null

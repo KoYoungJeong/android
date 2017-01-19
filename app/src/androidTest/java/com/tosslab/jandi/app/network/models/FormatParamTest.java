@@ -8,7 +8,7 @@ import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 
 import org.junit.Test;
@@ -25,9 +25,9 @@ public class FormatParamTest {
     @Test
     public void testFormatParams() throws Exception {
         ResMessages.Link link = getLink();
-        String rawLink = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(link);
+        String rawLink = JsonMapper.getInstance().getObjectMapper().writeValueAsString(link);
 
-        ResMessages.Link link1 = JacksonMapper.getInstance().getObjectMapper().readValue(rawLink, ResMessages.Link.class);
+        ResMessages.Link link1 = JsonMapper.getInstance().getObjectMapper().readValue(rawLink, ResMessages.Link.class);
         assertThat(link1.message.formatMessage).isNotNull()
                 .isInstanceOf(PollFinished.class);
         assertThat(((PollFinished) link1.message.formatMessage))
@@ -38,9 +38,9 @@ public class FormatParamTest {
     @Test
     public void testFormatParams_Database() throws Exception {
         ResMessages.Link link = getLink();
-        String rawLink = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(link);
+        String rawLink = JsonMapper.getInstance().getObjectMapper().writeValueAsString(link);
 
-        ResMessages.Link link1 = JacksonMapper.getInstance().getObjectMapper().readValue(rawLink, ResMessages.Link.class);
+        ResMessages.Link link1 = JsonMapper.getInstance().getObjectMapper().readValue(rawLink, ResMessages.Link.class);
 
         MessageRepository.getRepository().upsertMessage(link1);
 
@@ -73,8 +73,8 @@ public class FormatParamTest {
 
     private Map getPollFinished() throws IOException {
         PollFinished pollFinished = getPollFinishedObject();
-        String s = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(pollFinished);
-        return JacksonMapper.getInstance().getObjectMapper().readValue(s, Map.class);
+        String s = JsonMapper.getInstance().getObjectMapper().writeValueAsString(pollFinished);
+        return JsonMapper.getInstance().getObjectMapper().readValue(s, Map.class);
     }
 
     @NonNull

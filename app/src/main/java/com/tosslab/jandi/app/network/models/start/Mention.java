@@ -1,29 +1,16 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Mention extends RealmObject {
-    @JsonIgnore
-    @PrimaryKey
-    private long id;
-
-    private int unreadCount;
-    private long lastMentionedMessageId;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+public class Mention {
+    @GsonAdapterKey
+    int unreadCount;
+    @GsonAdapterKey
+    long lastMentionedMessageId;
 
     public int getUnreadCount() {
         return unreadCount;

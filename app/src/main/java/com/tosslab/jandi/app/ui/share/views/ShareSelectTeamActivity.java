@@ -17,8 +17,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.share.views.adapter.ShareTeamsAdapter;
@@ -35,8 +34,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import dagger.Lazy;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 public class ShareSelectTeamActivity extends BaseAppCompatActivity implements ShareTeamsAdapter.OnItemClickListener {
@@ -87,22 +88,15 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     }
 
     void initTeams() {
+        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> !TextUtils.equals(userTeam.getStatus(), "pending"))
-                .map(Team::createTeam)
-                .collect(() -> new ArrayList<Team>(), ArrayList::add)
-                .doOnNext(teams -> {
-                    ResAccountInfo.UserTeam selectedTeam = AccountRepository.getRepository().getSelectedTeamInfo();
-                    if (selectedTeam == null) {
-                        return;
-                    } else {
-                        Observable.from(teams)
-                                .filter(team -> team.getTeamId() == selectedTeam.getTeamId())
-                                .subscribe(team -> {
-                                    team.setSelected(true);
-                                });
-                    }
+                .map((userTeam1) -> {
+                    Team team = Team.createTeam(userTeam1);
+                    team.setSelected(userTeam1.getTeamId() == selectedTeamId);
+                    return team;
                 })
+                .collect((Func0<ArrayList<Team>>) ArrayList::new, ArrayList::add)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::showTeamList);
@@ -133,30 +127,18 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
         progressWheel = new ProgressWheel(ShareSelectTeamActivity.this);
         progressWheel.show();
 
-        Observable.defer(() -> {
-            try {
-                return Observable.just(startApi.get().getInitializeInfo(teamId));
-            } catch (RetrofitException e) {
-                return Observable.empty();
-            }
-        })
-                .doOnNext(initialInfo -> {
-                    InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
-                })
-                .doOnNext(initialInfo -> {
-                    if (!RankRepository.getInstance().hasRanks(teamId)) {
-                        try {
-                            Ranks ranks = teamApi.get().getRanks(teamId);
-                            RankRepository.getInstance().addRanks(ranks.getRanks());
-                        } catch (RetrofitException e) {
-                            e.printStackTrace();
-                        }
-                    }
+        Completable.fromCallable(() -> {
+            String initializeInfo = startApi.get().getRawInitializeInfo(teamId);
+            InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
 
-                })
-                .subscribeOn(Schedulers.io())
+            if (!RankRepository.getInstance().hasRanks(teamId)) {
+                Ranks ranks = teamApi.get().getRanks(teamId);
+                RankRepository.getInstance().addRanks(ranks.getRanks());
+            }
+            return true;
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(it -> {
+                .subscribe(() -> {
                     if (progressWheel != null && progressWheel.isShowing()) {
                         progressWheel.dismiss();
                     }
@@ -165,6 +147,10 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
                     event.setTeamName(teamName);
                     EventBus.getDefault().post(event);
                     finish();
+                }, t -> {
+                    if (progressWheel != null && progressWheel.isShowing()) {
+                        progressWheel.dismiss();
+                    }
                 });
     }
 

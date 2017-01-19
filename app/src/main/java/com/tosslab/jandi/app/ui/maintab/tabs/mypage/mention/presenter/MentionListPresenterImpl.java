@@ -31,9 +31,6 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tonyjs on 16. 3. 17..
- */
 public class MentionListPresenterImpl implements MentionListPresenter {
 
     public static final String TAG = MentionListPresenter.class.getSimpleName();
@@ -324,7 +321,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 return true;
             }).subscribeOn(Schedulers.newThread())
                     .subscribe(() -> {
-                        InitialMentionInfoRepository.getInstance().clearUnreadCount();
+                        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).clearUnreadCount();
                         TeamInfoLoader.getInstance().refreshMention();
                         EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
                     }, Throwable::printStackTrace);

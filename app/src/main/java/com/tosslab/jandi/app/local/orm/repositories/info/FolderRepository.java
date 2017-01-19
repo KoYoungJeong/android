@@ -1,82 +1,80 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
+import android.support.v4.util.LongSparseArray;
+
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Folder;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import io.realm.RealmList;
-import io.realm.RealmResults;
+import rx.Observable;
 
-public class FolderRepository extends RealmRepository {
-    private static FolderRepository instance;
+public class FolderRepository extends LockTemplate {
+    private static LongSparseArray<FolderRepository> instance;
 
-    synchronized public static FolderRepository getInstance() {
-        if (instance == null) {
-            instance = new FolderRepository();
-        }
-        return instance;
+    private LongSparseArray<Folder> folders;
+
+    private FolderRepository() {
+        super();
+        folders = new LongSparseArray<>();
     }
 
-    public List<Folder> getFolders(long teamId) {
-        return execute((realm) -> {
-            RealmResults<Folder> it = realm.where(Folder.class)
-                    .equalTo("teamId", teamId)
-                    .findAll();
-            if (it != null) {
-                return realm.copyFromRealm(it);
-            } else {
-                return null;
+    synchronized public static FolderRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            FolderRepository value = new FolderRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
+
+    public static FolderRepository getInstance() {
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
+    }
+
+    public List<Folder> getFolders() {
+        return execute(() -> {
+            int size = folders.size();
+            List<Folder> folderList = new ArrayList<>();
+            for (int idx = 0; idx < size; idx++) {
+                folderList.add(folders.valueAt(idx));
             }
+            return folderList;
         });
     }
 
-    public boolean addFolder(long teamId, Folder folder) {
-        return execute((realm) -> {
+    private boolean hasFolder(long folderId) {
+        return execute(() -> folders.indexOfKey(folderId) >= 0);
+    }
 
-            InitialInfo initialInfo = realm.where(InitialInfo.class)
-                    .equalTo("teamId", teamId)
-                    .findFirst();
-
-            if (initialInfo != null) {
-                String _id = teamId + "_" + folder.getId();
-                if (realm.where(Folder.class)
-                        .equalTo("_id", _id)
-                        .count() <= 0) {
-                    folder.set_id(_id);
-                    folder.setTeamId(teamId);
-
-                    realm.executeTransaction(realm1 -> {
-                        initialInfo.getFolders().add(folder);
-                    });
-                }
-            }
+    public boolean addFolder(Folder folder) {
+        return execute(() -> {
+            folders.put(folder.getId(), folder);
             return true;
         });
     }
 
     public boolean updateFolderName(long folderId, String name) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-
-            Folder folder = realm.where(Folder.class)
-                    .equalTo("_id", selectedTeamId + "_" + folderId)
-                    .findFirst();
-
-            if (folder != null) {
-                realm.executeTransaction(realm1 -> folder.setName(name));
+            if (hasFolder(folderId)) {
+                folders.get(folderId).setName(name);
                 return true;
             }
 
@@ -85,15 +83,14 @@ public class FolderRepository extends RealmRepository {
     }
 
     public boolean updateFolderSeq(long teamId, long folderId, int newSeq) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Folder changedFolder = realm.where(Folder.class)
-                    .equalTo("_id", teamId + "_" + folderId)
-                    .findFirst();
-
-            if (changedFolder == null) {
+            if (!hasFolder(folderId)) {
                 return false;
             }
+
+
+            Folder changedFolder = folders.get(folderId);
 
             int diffSeq;
             if (changedFolder.getSeq() > newSeq) {
@@ -102,110 +99,57 @@ public class FolderRepository extends RealmRepository {
                 diffSeq = -1;
             }
 
-            RealmResults<Folder> folders = realm.where(Folder.class)
-                    .equalTo("teamId", teamId)
-                    .greaterThanOrEqualTo("seq", newSeq)
-                    .findAll();
-            realm.executeTransaction(realm1 -> {
+            Observable.range(0, folders.size())
+                    .map(idx -> folders.valueAt(idx))
+                    .filter(raw -> raw.getSeq() >= newSeq)
+                    .subscribe(raw -> raw.setSeq(raw.getSeq() + diffSeq));
 
-                for (Folder folder : folders) {
-                    folder.setSeq(folder.getSeq() + diffSeq);
-                }
-
-                changedFolder.setSeq(newSeq);
-            });
+            changedFolder.setSeq(newSeq);
 
             return true;
         });
     }
 
     public boolean deleteFolder(long folderId) {
-        return execute((realm) -> {
-
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            Folder first = realm.where(Folder.class)
-                    .equalTo("_id", selectedTeamId + "_" + folderId)
-                    .findFirst();
-            if (first != null) {
-                realm.executeTransaction(realm1 -> first.deleteFromRealm());
-            }
-
+        return execute(() -> {
+            folders.remove(folderId);
             return true;
         });
     }
 
     public boolean addTopic(long folderId, long roomId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            Folder folder = realm.where(Folder.class)
-                    .equalTo("_id", teamId + "_" + folderId)
-                    .findFirst();
-
-            if (folder == null) {
-                return false;
+            if (hasFolder(folderId)) {
+                Folder folder = folders.get(folderId);
+                List<Long> rooms = folder.getRooms();
+                if (!rooms.contains(roomId)) {
+                    rooms.add(roomId);
+                }
+                return true;
             }
-
-            realm.executeTransaction(realm1 -> {
-
-                RealmList<RealmLong> roomIds = folder.getRoomIds();
-
-                if (roomIds == null) {
-                    roomIds = new RealmList<>();
-                    folder.setRoomIds(roomIds);
-                }
-
-                boolean contains = false;
-                for (RealmLong id : roomIds) {
-                    if (id.getValue() == roomId) {
-                        contains = true;
-                        break;
-                    }
-                }
-
-                if (!contains) {
-                    RealmLong object = realm.createObject(RealmLong.class);
-                    object.setValue(roomId);
-                    roomIds.add(object);
-                }
-            });
-
 
             return false;
         });
     }
 
     public boolean removeTopic(long folderId, long roomId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            Folder folder = realm.where(Folder.class)
-                    .equalTo("_id", teamId + "_" + folderId)
-                    .findFirst();
-
-            if (folder == null) {
-                return false;
-            }
-
-            if (folder.getRoomIds() == null || folder.getRoomIds().isEmpty()) {
-                return true;
-            }
-
-            realm.executeTransaction(realm1 -> {
-                for (RealmLong id : folder.getRoomIds()) {
-                    if (id.getValue() == roomId) {
-                        id.deleteFromRealm();
-                        break;
-                    }
+            if (hasFolder(folderId)) {
+                List<Long> rooms = folders.get(folderId).getRooms();
+                if (rooms != null && !rooms.isEmpty()) {
+                    rooms.remove(roomId);
+                    return true;
                 }
-            });
-
+            }
             return false;
+
         });
     }
 
     public List<FolderExpand> getFolderExpands() {
-        return execute((realm) -> {
+        return execute(() -> {
 
             try {
                 long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
@@ -225,7 +169,7 @@ public class FolderRepository extends RealmRepository {
     }
 
     public boolean upsertFolderExpands(long folderId, boolean expand) {
-        return execute((realm) -> {
+        return execute(() -> {
             try {
                 long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
                 Dao<FolderExpand, ?> dao = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
@@ -246,25 +190,28 @@ public class FolderRepository extends RealmRepository {
     }
 
     public boolean removeTopicOfTeam(long teamId, Collection<Long> roomIds) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            RealmResults<Folder> folders = realm.where(Folder.class)
-                    .equalTo("teamId", teamId)
-                    .findAll();
-            realm.executeTransaction(realm1 -> {
-                for (Folder folder : folders) {
-                    if (folder.getRoomIds() != null) {
-                        for (RealmLong roomId : folder.getRoomIds()) {
-                            if (roomIds.contains(roomId.getValue())) {
-                                roomId.deleteFromRealm();
-                                break;
-                            }
-                        }
+            int size = folders.size();
+            for (int idx = size - 1; idx >= 0; idx--) {
+                Folder folder = folders.valueAt(idx);
+                List<Long> rooms = folder.getRooms();
+                if (rooms != null && !rooms.isEmpty()) {
+                    for (Long roomId : roomIds) {
+                        rooms.remove(roomId);
                     }
                 }
-            });
+            }
 
             return true;
         });
     }
+
+    public boolean clear() {
+        return execute(() -> {
+            folders.clear();
+            return true;
+        });
+    }
+
 }

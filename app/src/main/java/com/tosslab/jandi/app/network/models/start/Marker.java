@@ -1,24 +1,17 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Marker extends RealmObject {
+public class Marker {
 
-    @JsonIgnore
-    @PrimaryKey
-    private String id;
-    @JsonIgnore
-    private long roomId;
-
-    private long memberId;
-    private long readLinkId;
+    @GsonAdapterKey
+    long memberId;
+    @GsonAdapterKey
+    long readLinkId;
 
     public long getMemberId() {
         return memberId;
@@ -36,19 +29,4 @@ public class Marker extends RealmObject {
         this.readLinkId = readLinkId;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
-    }
 }

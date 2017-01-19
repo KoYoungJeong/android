@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.file.body.ProgressCallback;
 import com.tosslab.jandi.app.network.file.body.ProgressRequestBody;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -43,7 +43,7 @@ public class FileUploadApi {
         }
         if (mentions != null && !mentions.isEmpty()) {
             try {
-                mentionsPart = MultipartBody.Part.createFormData("mentions", JacksonMapper.getInstance().getObjectMapper().writeValueAsString(mentions));
+                mentionsPart = MultipartBody.Part.createFormData("mentions", JsonMapper.getInstance().getObjectMapper().writeValueAsString(mentions));
             } catch (Exception e) {
             }
         }

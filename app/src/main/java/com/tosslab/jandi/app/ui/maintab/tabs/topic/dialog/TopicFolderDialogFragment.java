@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -160,7 +159,6 @@ public class TopicFolderDialogFragment extends DialogFragment {
         Completable.fromCallable(() -> {
             topicFolderDialogModel.deleteTopicFolder(folderId);
             FolderRepository.getInstance().deleteFolder(folderId);
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new TopicFolderRefreshEvent());
             return true;
         }).subscribeOn(Schedulers.io())
@@ -175,7 +173,6 @@ public class TopicFolderDialogFragment extends DialogFragment {
         Completable.fromCallable(() -> {
             topicFolderDialogModel.renameFolder(folderId, name, seq);
             FolderRepository.getInstance().updateFolderName(folderId, name);
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new TopicFolderRefreshEvent());
             return true;
         }).subscribeOn(Schedulers.io())

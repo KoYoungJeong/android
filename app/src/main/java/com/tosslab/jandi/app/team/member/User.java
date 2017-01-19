@@ -20,6 +20,10 @@ public class User implements Member {
         this.rank = rank;
     }
 
+    public Human getRaw() {
+        return human;
+    }
+
     @Override
     public long getId() {
         return human.getId();

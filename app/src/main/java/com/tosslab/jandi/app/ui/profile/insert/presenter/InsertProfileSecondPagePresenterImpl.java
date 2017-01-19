@@ -100,11 +100,7 @@ public class InsertProfileSecondPagePresenterImpl implements InsertProfileSecond
             reqUpdateProfile.phoneNumber = phoneNumber;
             reqUpdateProfile.statusMessage = statusMessage;
             Human human = modifyProfileModel.updateProfile(reqUpdateProfile, myId);
-            if (human != null && human.getProfile() != null) {
-                human.getProfile().setId(human.getId());
-            }
             HumanRepository.getInstance().updateHuman(human);
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new ProfileChangeEvent(human));
             return human;
         }).subscribeOn(Schedulers.io())

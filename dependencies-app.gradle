@@ -15,11 +15,6 @@ rootProject.allprojects { project ->
                     url 'https://dl.bintray.com/intercom/intercom-maven'
                 }
 
-                maven {
-                    // realm-stetho
-                    url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
-                }
-
                 jcenter()
 
             }
@@ -104,9 +99,15 @@ rootProject.allprojects { project ->
 
                 // Retrofit
                 compile rootProject.ext.dependecies.libraries.retrofit2
+                compile rootProject.ext.dependecies.libraries.retrofit2_scalar
+                compile rootProject.ext.dependecies.libraries.retrofit2_gson
                 compile rootProject.ext.dependecies.libraries.okhttp3
                 compile rootProject.ext.dependecies.libraries.okhttp3_ws
                 compile rootProject.ext.dependecies.libraries.jackson
+                compile rootProject.ext.dependecies.libraries.gson_stag
+                apt rootProject.ext.dependecies.libraries.gson_stag_apt
+
+
                 compile rootProject.ext.dependecies.libraries.timehop_stickyheader_recyclerview
 
                 compile rootProject.ext.dependecies.libraries.subsampling_scale_image_view
@@ -114,7 +115,6 @@ rootProject.allprojects { project ->
                 debugCompile rootProject.ext.dependecies.libraries.okhttp3_logging
 
                 debugCompile rootProject.ext.dependecies.libraries.stetho_okhttp3
-                debugCompile rootProject.ext.dependecies.libraries.stetho_realm
 
                 // Force usage of support annotations in the test app, since it is internally used by the runner module.
                 androidTestCompile rootProject.ext.dependecies.libraries.testrunner

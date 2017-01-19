@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -123,12 +123,12 @@ public class TeamSelectListModel {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public InitialInfo getEntityInfo(long teamId) throws RetrofitException {
-        return startApi.get().getInitializeInfo(teamId);
+    public String getEntityInfo(long teamId) throws RetrofitException {
+        return startApi.get().getRawInitializeInfo(teamId);
     }
 
-    public void updateEntityInfo(InitialInfo entityInfo) {
-        InitialInfoRepository.getInstance().upsertInitialInfo(entityInfo);
+    public void updateEntityInfo(RawInitialInfo entityInfo) {
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(entityInfo);
     }
 
     public void updateTeamInfo(long teamId) throws RetrofitException {

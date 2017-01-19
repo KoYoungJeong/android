@@ -2,23 +2,27 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class TeamPlan extends RealmObject {
-    @PrimaryKey
-    private long teamId;
-    private String pricing;
-    private long fileSize;
-    private long messageCount;
-    private boolean isExceedFile;
-    private boolean isExceedMessage;
-    private Date updatedAt;
+public class TeamPlan {
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String pricing;
+    @GsonAdapterKey
+    long fileSize;
+    @GsonAdapterKey
+    long messageCount;
+    @GsonAdapterKey
+    boolean isExceedFile;
+    @GsonAdapterKey
+    boolean isExceedMessage;
+    @GsonAdapterKey
+    Date updatedAt;
 
     public long getTeamId() {
         return teamId;
@@ -72,8 +76,8 @@ public class TeamPlan extends RealmObject {
         return messageCount;
     }
 
-    public TeamPlan setMessageCount(long messageCount) {
+    public void setMessageCount(long messageCount) {
         this.messageCount = messageCount;
-        return this;
+
     }
 }

@@ -179,7 +179,6 @@ public class SearchModel {
     public void joinTopic(long topicId) throws RetrofitException {
         entityClientManager.joinChannel(topicId);
         TopicRepository.getInstance().updateTopicJoin(topicId, true);
-        TeamInfoLoader.getInstance().refresh();
     }
 
     public String getWriterName(long writerId) {

@@ -3,31 +3,24 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.annotations.Expose;
+import com.vimeo.stag.GsonAdapterKey;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Folder extends RealmObject {
-    @PrimaryKey
+public class Folder {
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    int seq;
+    @GsonAdapterKey
+    List<Long> rooms;
     @JsonIgnore
-    private String _id;
-    private long id;
-
-    private long teamId;
-
-    private String name;
-    private int seq;
-    @Ignore
-    private List<Long> rooms;
-    private RealmList<RealmLong> roomIds;
-    @JsonIgnore
+    @Expose(deserialize = false)
     private boolean isOpened;
 
     public long getId() {
@@ -54,24 +47,10 @@ public class Folder extends RealmObject {
         this.seq = seq;
     }
 
-    @Deprecated
     public List<Long> getRooms() {
-        if (rooms != null) {
-            return rooms;
-        } else {
-            if (roomIds != null) {
-                rooms = new ArrayList<>();
-                for (RealmLong roomId : roomIds) {
-                    rooms.add(roomId.getValue());
-                }
-            } else {
-                rooms = new ArrayList<>();
-            }
-            return rooms;
-        }
+        return rooms;
     }
 
-    @Deprecated
     public void setRooms(List<Long> rooms) {
         this.rooms = rooms;
     }
@@ -84,27 +63,4 @@ public class Folder extends RealmObject {
         isOpened = opened;
     }
 
-    public RealmList<RealmLong> getRoomIds() {
-        return roomIds;
-    }
-
-    public void setRoomIds(RealmList<RealmLong> roomIds) {
-        this.roomIds = roomIds;
-    }
-
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
-    }
 }

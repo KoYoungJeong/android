@@ -7,10 +7,12 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -30,14 +32,9 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by jsuch2362 on 2015. 11. 3..
- */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ShareSelectModelTest {
-
-    TeamInfoLoader teamInfoLoader;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -54,13 +51,12 @@ public class ShareSelectModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         AccountRepository.getRepository().updateSelectedTeamInfo(accountTeams.get(0).getTeamId());
 
-        teamInfoLoader = TeamInfoLoader.getInstance();
-
         Observable.from(accountTeams)
                 .subscribe(userTeam -> {
                     try {
-                        InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(userTeam.getTeamId());
-                        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                        long teamId = userTeam.getTeamId();
+                        String initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+                        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
                     } catch (RetrofitException e) {
                         e.printStackTrace();
                     }
@@ -72,7 +68,9 @@ public class ShareSelectModelTest {
 
         long teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
 
-        InitialInfo initialInfo = InitialInfoRepository.getInstance().getInitialInfo(teamId);
+
+        RawInitialInfo rawInitialInfo = InitialInfoRepository.getInstance().getRawInitialInfo(teamId);
+        InitialInfo initialInfo = JsonMapper.getInstance().getObjectMapper().readValue(rawInitialInfo.getRawValue(), InitialInfo.class);
 
         TeamInfoLoader instance = TeamInfoLoader.getInstance(teamId);
         User entity = instance.getUser(initialInfo.getSelf().getId());

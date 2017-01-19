@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.utils.dynamicl10n;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatKey;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 
@@ -33,7 +33,7 @@ public class DynamicMessageUtil {
 
     public static FormatParam getFormatParam(String key, Map formatParamMap) {
         try {
-            String rawFormatParam = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(formatParamMap);
+            String rawFormatParam = JsonMapper.getInstance().getObjectMapper().writeValueAsString(formatParamMap);
             return getFormatParam(key, rawFormatParam);
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,7 +48,7 @@ public class DynamicMessageUtil {
         FormatParam param = null;
         if (formatKey != null) {
             try {
-                param = JacksonMapper.getInstance().getObjectMapper().readValue(rawFormatParam, formatKey.getKlass());
+                param = JsonMapper.getInstance().getObjectMapper().readValue(rawFormatParam, formatKey.getKlass());
             } catch (IOException e) {
                 e.printStackTrace();
             }

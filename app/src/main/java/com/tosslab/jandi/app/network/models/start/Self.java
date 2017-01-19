@@ -2,16 +2,15 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Self extends RealmObject {
-    @PrimaryKey
-    private long id;
-    private String name;
+public class Self {
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    String name;
 
     public long getId() {
         return id;

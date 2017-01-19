@@ -2,11 +2,11 @@ package com.tosslab.jandi.app.network.client.chat;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.start.Chat;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
@@ -50,20 +50,19 @@ public class ChatApiTest {
     public void createChat() throws Exception {
         User jandiBot = TeamInfoLoader.getInstance().getJandiBot();
 
-        ResCommon chat = chatApi.createChat(TeamInfoLoader.getInstance().getTeamId(), jandiBot.getId());
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        ResCommon chat = chatApi.createChat(teamId, jandiBot.getId());
 
         long chatId = TeamInfoLoader.getInstance().getChatId(jandiBot.getId());
         if (chatId > 0) {
             assertThat(chat.id).isEqualTo(chatId);
         } else {
-            InitialInfo initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
-            assertThat(initializeInfo.getChats())
-                    .extracting(Chat::getId)
-                    .contains(chat.id);
+            String rawInitializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+            InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, rawInitializeInfo));
+            TeamInfoLoader.getInstance().refresh();
+            assertThat(TeamInfoLoader.getInstance().isChat(chat.id)).isTrue();
 
-            assertThat(initializeInfo.getChats())
-                    .extracting(Chat::getCompanionId)
-                    .contains(jandiBot.getId());
+            assertThat(TeamInfoLoader.getInstance().isChat(jandiBot.getId())).isTrue();
         }
     }
 }

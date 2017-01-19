@@ -72,7 +72,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         }
 
         if (!view.hasChatItems()) {
-            Observable.defer(() -> Observable.just(mainChatListModel.getSavedChatList()))
+            Observable.fromCallable(() -> mainChatListModel.getSavedChatList())
+                    .subscribeOn(Schedulers.computation())
                     .map(savedChatList -> mainChatListModel.convertChatItems(savedChatList))
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext(chatItems -> {
@@ -96,7 +97,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
                         view.scrollToPosition(selectedEntityPosition);
                     })
-                    .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(chatItems -> {
                         int unreadCount = mainChatListModel.getUnreadCount(chatItems);
