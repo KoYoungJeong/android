@@ -183,6 +183,23 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         }
     }
 
+    private void setListViewScroll() {
+        if (getActivity() instanceof MainTabActivity) {
+            MainTabActivity activity = (MainTabActivity) getActivity();
+            lvSearchFiles.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
+                }
+            });
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -301,6 +318,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         });
         searchedFilesAdapterView = searchedFilesAdapter;
         fileListPresenter.setSearchedFilesAdapterModel(searchedFilesAdapter);
+        setListViewScroll();
     }
 
     private void moveToFileDetailActivity(ResSearch.File file) {

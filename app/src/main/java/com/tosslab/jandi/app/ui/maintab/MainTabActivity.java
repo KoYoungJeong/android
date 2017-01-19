@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
@@ -78,6 +78,7 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
+import com.tosslab.jandi.app.views.viewgroup.SwipeViewPager;
 
 import java.io.IOException;
 import java.util.List;
@@ -128,7 +129,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     View btnFab;
 
     @Bind(R.id.page_main_tab)
-    ViewPager viewPager;
+    SwipeViewPager viewPager;
 
     @Bind(R.id.vg_main_tab_navigation_wrapper)
     View vgNavigationWrapper;
@@ -156,6 +157,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     private boolean swiping = true;
     private boolean isFirstLoadActivity = true;
+    private boolean isFABController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -353,6 +355,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         tabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabInfos);
         viewPager.setAdapter(tabPagerAdapter);
+        viewPager.setPagingEnabled(false);
+
         viewPager.setOffscreenPageLimit(Math.max(tabInfos.size() - 1, 1));
         setPosition();
 
@@ -365,7 +369,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 int position = tab.getPosition();
 
                 Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
-
                 if (item instanceof FloatingActionBarDetector) {
                     ((FloatingActionBarDetector) item).onDetectFloatAction(btnFab);
                 }
@@ -374,10 +377,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 boolean withoutShadow = position == MypageTabInfo.INDEX || position == TeamTabInfo.INDEX;
                 vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
 
-                boolean isFABController = position == TopicTabInfo.INDEX ||
+                isFABController = position == TopicTabInfo.INDEX ||
                         (position == ChatTabInfo.INDEX &&
                                 TeamInfoLoader.getInstance().getMyLevel() != Level.Guest)
                         || (position == TeamTabInfo.INDEX && TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
+                                TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
+                btnFab.clearAnimation();
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);
 
                 JandiPreference.setLastSelectedTab(position);
@@ -782,4 +787,46 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             toolbar.setLayoutParams(toolbarLp);
         }
     }
+
+    public void setTabLayoutVisible(boolean visible) {
+        //FAB 버튼 위치 -> FAB 높이 + 탭 높이 + 마진
+        int fabY = btnFab.getHeight() + tabLayout.getHeight() + (int) UiUtils.getPixelFromDp(20);
+
+        if (visible) {
+            if (tabLayout.getVisibility() != View.VISIBLE) {
+                tabLayout.clearAnimation();
+                TranslateAnimation animate = new TranslateAnimation(0, 0, tabLayout.getHeight(), 0);
+                animate.setDuration(200);
+                animate.setFillAfter(true);
+                tabLayout.startAnimation(animate);
+                tabLayout.setVisibility(View.VISIBLE);
+                if (isFABController) {
+                    btnFab.clearAnimation();
+                    TranslateAnimation animate2 = new TranslateAnimation(0, 0, fabY, 0);
+                    animate2.setDuration(300);
+                    animate2.setFillAfter(true);
+                    btnFab.startAnimation(animate2);
+                    btnFab.setVisibility(View.VISIBLE);
+                }
+            }
+        } else {
+            if (tabLayout.getVisibility() == View.VISIBLE) {
+                tabLayout.clearAnimation();
+                TranslateAnimation animate = new TranslateAnimation(0, 0, 0, tabLayout.getHeight());
+                animate.setDuration(200);
+                animate.setFillAfter(true);
+                tabLayout.startAnimation(animate);
+                tabLayout.setVisibility(View.GONE);
+                if (isFABController) {
+                    btnFab.clearAnimation();
+                    TranslateAnimation animate2 = new TranslateAnimation(0, 0, 0, fabY);
+                    animate2.setDuration(300);
+                    animate2.setFillAfter(true);
+                    btnFab.startAnimation(animate2);
+                    btnFab.setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+
 }
