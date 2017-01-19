@@ -109,7 +109,7 @@
 	<string name="invite_account_alreadyinteam">"此帳號已在團隊中"</string>
 	<string name="invite_account_alreadyinvited">"此帳號已被邀請至此團隊"</string>
 	<string name="invite_account_blocked">"此帳號已被此團隊封鎖"</string>
-	<string name="invite_associate_desc">"選擇"</string>
+	<string name="invite_associate_desc">"選擇加入的準成員與議題"</string>
 	<string name="invite_associate_email_desc">"輸入準成員的電子郵箱，以便邀請加入特定議題"</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"除了預設議題外，準成員僅能被加入你目前所在的議題。請確認後再試"</string>
 	<string name="invite_associate_invitoronlyindefault_title">"目前沒有可以邀請成員的議題"</string>
@@ -597,7 +597,7 @@
 	<string name="jandi_search_no_topic_room">"無相關資料"</string>
 	<string name="jandi_search_result_count">"總共 <b>%s</b> 筆搜尋結果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>與 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
-	<string name="jandi_search_roomsearch">"搜尋對話"</string>
+	<string name="jandi_search_roomsearch">"搜尋議題"</string>
 	<string name="jandi_select_character">"選擇人物"</string>
 	<string name="jandi_select_direct_messages">"選擇直接傳訊"</string>
 	<string name="jandi_select_gallery">"選擇照片"</string>
@@ -794,6 +794,8 @@
 	<string name="menu_entity_invite">"邀請"</string>
 	<string name="menu_entity_leave">"離開"</string>
 	<string name="menu_gallery">"從照片集上傳"</string>
+	<string name="menu_hide_1_1">"隱藏"</string>
+	<string name="menu_hide_desc_1_1">"離開 1:1 私訊將會隱藏討論串，一旦重啟對話，歷史討論串仍會保留"</string>
 	<string name="modify_message">"編輯訊息"</string>
 	<string name="mypage_editprofile_dept">"輸入你的部門"</string>
 	<string name="mypage_editprofile_jobtitle">"輸入你的職位"</string>
@@ -801,12 +803,20 @@
 	<string name="mypage_editprofile_statusmessage">"輸入你的狀態"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你\"</string>
 	<string name="primary_email_info_msg">"所有與您JANDI帳號相關的電子郵件將寄送到主要電子郵件地址。您可以增加其它電子郵件地址到您的帳號并且指定爲某個團隊專屬電子郵件地址。(請注意電子郵件地址皆需事先被確認)"</string>
+	<string name="room_member_disabled_alert_body">""</string>
+	<string name="room_member_disabled_alert_title">""</string>
 	<string name="sent_auth_email">"電子郵件已寄送至您的郵箱，請點擊內建連結進行帳戶驗證。"</string>
 	<string name="sent_auth_email_short">"電子郵件已經成功寄出。 請查看您的郵箱"</string>
+	<string name="team_adminmenu_title">"管理者選單"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"團隊資料"</string>
 	<string name="team_invite_email_disabledmember_desc">"聯繫團隊管理員重啟權限"</string>
 	<string name="team_invite_email_disabledmember_title">"此成員權限已被關閉"</string>
+	<string name="team_teamleave">"離開團隊"</string>
+	<string name="team_teamleave_member_desc">"離開團隊後，你將無法取得歷史訊息、檔案和留言。但不影響其他成員瀏覽你曾分享的訊息、檔案和留言"</string>
+	<string name="team_teamleave_member_title">"你確定要永久離開此團隊？"</string>
+	<string name="team_teamleave_owner_desc">"請先轉移所有者權限至其他成員，才能離開團隊"</string>
+	<string name="team_teamleave_owner_title">"團隊所有者無法離開團隊"</string>
 	<string name="title_cdp_invite">"請選擇欲邀請的成員"</string>
 	<string name="title_file_detail">"敘述"</string>
 	<string name="title_file_upload">"上傳檔案"</string>
@@ -819,6 +829,7 @@
 	<string name="topic_leave_associateintopic_title">"你是議題管理員"</string>
 	<string name="topic_memberautojoin_button">"自動邀請成員"</string>
 	<string name="topic_memberautojoin_desc">"邀請所有新成員至此議題"</string>
+	<string name="topic_menu_Browse_other_public_topics">"瀏覽其他公開議題"</string>
 	<string name="topic_polls_deletedpoll">"已刪除的問卷"</string>
 	<string name="topic_remove_associatewithonetopic_desc">"此準成員僅參與此一議題，若你剔除此準成員，這位準成員將自動被此團隊封鎖。請問你要繼續並剔除嗎？"</string>
 	<string name="topic_remove_associatewithonetopic_remove">"剔除"</string>

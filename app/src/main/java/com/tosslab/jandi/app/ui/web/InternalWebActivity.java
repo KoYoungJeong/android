@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.ui.web.presenter.InternalWebPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.progresswheel.ProgressWheelUtil;
@@ -44,6 +46,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     public static final int REQ_PAGE_ERROR = 0x00;
     public static final int REQ_SHARE = 0x01;
+
     @InjectExtra
     String url;
     @Nullable
@@ -52,6 +55,13 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     @Nullable
     @InjectExtra
     boolean helpSite;
+    @Nullable
+    @InjectExtra
+    boolean isAdminPage = false;
+    @Nullable
+    @InjectExtra
+    boolean hasMenu = true;
+
     @Bind(R.id.web_internal_web)
     WebView webView;
     @Bind(R.id.loading_internal_web)
@@ -77,7 +87,9 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.internal_web, menu);
+        if (hasMenu) {
+            getMenuInflater().inflate(R.menu.internal_web, menu);
+        }
         return true;
     }
 
@@ -88,6 +100,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     void initView() {
         setUpActionBar();
+
         internalWebPresenter.setView(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -99,6 +112,14 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         }
 
         url = internalWebPresenter.getAvailableUrl(url);
+
+        if (isAdminPage) {
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setCookie(url, "_jd_.access_token=" + TokenUtil.getAccessToken());
+            cookieManager.setCookie(url, "_jd_.refresh_token=" + TokenUtil.getRefreshToken());
+            cookieManager.setCookie(url, "_jd_.token_type=bearer");
+        }
+
         loadWebPage(webView, url);
         webTitle = webView.getTitle();
     }
@@ -266,6 +287,14 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     @Override
     public void onBackPressed() {
+        if (isAdminPage) {
+            if (webView.getOriginalUrl().equals(url)) {
+                webView.loadUrl("about:blank");
+                super.onBackPressed();
+                return;
+            }
+        }
+
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
@@ -304,7 +333,11 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         return new WebChromeClient() {
             @Override
             public void onReceivedTitle(WebView view, String title) {
-                setActionBarTitle(title);
+                if (!isAdminPage) {
+                    setActionBarTitle(title);
+                }else{
+                    setActionBarTitle("관리자 메뉴");
+                }
             }
 
             @Override
@@ -324,8 +357,10 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                String title = view.getTitle();
-                setActionBarTitle(title);
+                if (!isAdminPage) {
+                    String title = view.getTitle();
+                    setActionBarTitle(title);
+                }
             }
 
             @Override

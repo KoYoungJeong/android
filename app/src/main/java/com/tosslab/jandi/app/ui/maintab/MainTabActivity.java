@@ -365,6 +365,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 int position = tab.getPosition();
 
                 Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
+
                 if (item instanceof FloatingActionBarDetector) {
                     ((FloatingActionBarDetector) item).onDetectFloatAction(btnFab);
                 }
@@ -375,7 +376,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
                 boolean isFABController = position == TopicTabInfo.INDEX ||
                         (position == ChatTabInfo.INDEX &&
-                                TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
+                                TeamInfoLoader.getInstance().getMyLevel() != Level.Guest)
+                        || (position == TeamTabInfo.INDEX && TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);
 
                 JandiPreference.setLastSelectedTab(position);
