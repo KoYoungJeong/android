@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -26,7 +25,6 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
-import rx.android.schedulers.AndroidSchedulers;
 
 public class JandiBotViewHolder implements BodyViewHolder {
     protected Context context;
@@ -148,17 +146,12 @@ public class JandiBotViewHolder implements BodyViewHolder {
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            UnreadCountUtil.getUnreadCount(roomId,
-                    link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(unreadCount -> {
-                        if (unreadCount > 0) {
-                            tvMessageBadge.setText(String.valueOf(unreadCount));
-                            tvMessageBadge.setVisibility(View.VISIBLE);
-                        } else {
-                            tvMessageBadge.setVisibility(View.GONE);
-                        }
-                    });
+            if (link.unreadCnt > 0) {
+                tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+                tvMessageBadge.setVisibility(View.VISIBLE);
+            } else {
+                tvMessageBadge.setVisibility(View.GONE);
+            }
 
             if (!hasOnlyBadge) {
                 tvMessageTime.setVisibility(View.VISIBLE);

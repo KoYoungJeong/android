@@ -45,6 +45,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -215,7 +216,6 @@ public class MessageListV2Presenter {
                     DummyMessageLink item = ((DummyMessageLink) adapterModel.getItem(position));
                     if (link != null) {
                         if (position >= 0) {
-
                             item.message = link.message;
                             item.id = link.id;
                             item.time = link.time;
@@ -423,6 +423,42 @@ public class MessageListV2Presenter {
                 .map(pair -> pair.first);
     }
 
+    public void resetUnreadCnt() {
+        if (adapterModel.getCount() <= 0) {
+            return;
+        }
+        List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
+
+        List<Long> memberLastLinks = new ArrayList<>();
+
+        for (Marker marker : markers) {
+            memberLastLinks.add(marker.getReadLinkId());
+        }
+
+        Collections.sort(memberLastLinks);
+
+        int index = 0;
+
+        while ((index < memberLastLinks.size() - 1) && memberLastLinks.get(index) < 0) {
+            index++;
+        }
+
+        long linkCursor = memberLastLinks.get(index);
+
+        for (int j = 0; j < adapterModel.getCount(); j++) {
+            if (adapterModel.getItem(j).id <= linkCursor) {
+                adapterModel.getItem(j).unreadCnt = index;
+            } else {
+                while (index < memberLastLinks.size() - 1 &&
+                        linkCursor == memberLastLinks.get(index)) {
+                    index++;
+                    linkCursor = memberLastLinks.get(index);
+                }
+                adapterModel.getItem(j).unreadCnt = index;
+            }
+        }
+    }
+
     public void onDetermineUserStatus() {
 
         if (messageListModel.isInactiveUser(room.getEntityId())) {
@@ -543,11 +579,17 @@ public class MessageListV2Presenter {
             }
         }
 
+        long roomId = room.getRoomId();
+        if (roomId > 0) {
+            return roomId;
+        }
+
         if (NetworkCheckUtil.isConnected()) {
-            long roomId = messageListModel.getRoomId();
+            roomId = messageListModel.getRoomId();
             if (roomId <= 0) {
                 return Room.INVALID_ROOM_ID;
             } else {
+                room.setRoomId(roomId);
                 return roomId;
             }
         }
@@ -1143,7 +1185,8 @@ public class MessageListV2Presenter {
                     && myLevel != Level.Owner
                     && myLevel != Level.Admin);
         }).subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {}, Throwable::printStackTrace);
+                .subscribe(() -> {
+                }, Throwable::printStackTrace);
     }
 
     public interface View {

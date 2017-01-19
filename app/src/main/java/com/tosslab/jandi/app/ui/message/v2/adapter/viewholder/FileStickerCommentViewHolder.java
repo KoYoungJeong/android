@@ -28,8 +28,6 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class FileStickerCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgMessageCommonFile;
@@ -205,17 +203,14 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
             tvProfileNestedCommentStickerCreateDate.setText(DateTransformator.getTimeStringForSimple(message.createTime));
 
         }
-        UnreadCountUtil.getUnreadCount(roomId,
-                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    if (unreadCount > 0) {
-                        tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
-                        tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
-                    } else {
-                        tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
-                    }
-                });
+
+        if (link.unreadCnt > 0) {
+            tvProfileNestedCommentStickerUnread.setText(String.valueOf(link.unreadCnt));
+            tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
+        } else {
+            tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
+        }
+
     }
 
     private void settingFileInfo(ResMessages.Link link, long roomId) {

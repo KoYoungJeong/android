@@ -7,13 +7,10 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-
-import rx.android.schedulers.AndroidSchedulers;
 
 public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
@@ -74,17 +71,13 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
 
     private void setBadge(ResMessages.Link link, long teamId, long roomId) {
 
-        UnreadCountUtil.getUnreadCount(roomId,
-                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    if (unreadCount > 0) {
-                        tvMessageBadge.setText(String.valueOf(unreadCount));
-                        tvMessageBadge.setVisibility(View.VISIBLE);
-                    } else {
-                        tvMessageBadge.setVisibility(View.GONE);
-                    }
-                });
+        if (link.unreadCnt > 0) {
+            tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
+        }
+
     }
 
     @Override

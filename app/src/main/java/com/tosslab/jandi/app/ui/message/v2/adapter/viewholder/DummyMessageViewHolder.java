@@ -21,8 +21,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class DummyMessageViewHolder implements BodyViewHolder {
     private ImageView ivProfile;
     private TextView tvName;
@@ -146,7 +144,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
                     tvTime.setVisibility(View.VISIBLE);
                 }
                 tvTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
-                setUnreadCount(teamId, roomId, link);
                 break;
             case SENDING: {
                 ivStatus.setVisibility(View.VISIBLE);
@@ -160,26 +157,6 @@ public class DummyMessageViewHolder implements BodyViewHolder {
                 vgUnreadAndTime.setVisibility(View.GONE);
                 break;
         }
-    }
-
-    private void setUnreadCount(long teamId, long roomId, final ResMessages.Link link) {
-        tvUnreadCount.setTag(link);
-        UnreadCountUtil.getUnreadCount(roomId,
-                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    ResMessages.Link linkFromTag = getLinkFromTag(tvUnreadCount);
-                    if (linkFromTag != null && linkFromTag.id != link.id) {
-                        return;
-                    }
-
-                    if (unreadCount > 0) {
-                        tvUnreadCount.setText(String.valueOf(unreadCount));
-                        tvUnreadCount.setVisibility(View.VISIBLE);
-                    } else {
-                        tvUnreadCount.setVisibility(View.GONE);
-                    }
-                });
     }
 
     private ResMessages.Link getLinkFromTag(View view) {

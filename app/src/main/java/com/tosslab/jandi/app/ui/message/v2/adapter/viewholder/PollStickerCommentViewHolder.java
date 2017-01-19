@@ -15,8 +15,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.poll.util.PollBinder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class PollStickerCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ViewGroup vgPoll;
@@ -194,17 +192,14 @@ public class PollStickerCommentViewHolder extends BaseCommentViewHolder implemen
             tvProfileNestedCommentStickerCreateDate.setText(DateTransformator.getTimeStringForSimple(message.createTime));
 
         }
-        UnreadCountUtil.getUnreadCount(roomId,
-                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    if (unreadCount > 0) {
-                        tvProfileNestedCommentStickerUnread.setText(String.valueOf(unreadCount));
-                        tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
-                    } else {
-                        tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
-                    }
-                });
+
+        if (link.unreadCnt > 0) {
+            tvProfileNestedCommentStickerUnread.setText(String.valueOf(link.unreadCnt));
+            tvProfileNestedCommentStickerUnread.setVisibility(View.VISIBLE);
+        } else {
+            tvProfileNestedCommentStickerUnread.setVisibility(View.GONE);
+        }
+
     }
 
     private void bindPoll(ResMessages.Link link) {
