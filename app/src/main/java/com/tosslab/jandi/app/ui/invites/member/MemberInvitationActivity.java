@@ -16,6 +16,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.emails.InviteEmailActivity;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -108,26 +110,36 @@ public class MemberInvitationActivity extends BaseAppCompatActivity {
     @OnClick(R.id.vg_invite_email)
     void onClickInviteEmail() {
         InviteEmailActivity.startActivityForMember(this);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember,
+                AnalyticsValue.Action.Email);
     }
 
     @OnClick(R.id.vg_invite_kakaotalk)
     void onClickInviteKakaoTalk() {
         startInvitation(INVITE_URL_KAKAO);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember,
+                AnalyticsValue.Action.InviteMember_KakaoTalk);
     }
 
     @OnClick(R.id.vg_invite_line)
     void onClickInviteLine() {
         startInvitation(INVITE_URL_LINE);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember,
+                AnalyticsValue.Action.InviteMember_Line);
     }
 
     @OnClick(R.id.vg_invite_facebook)
     void onClickInviteFacebook() {
         startInvitation(INVITE_URL_FACEBOOK_MESSENGER);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember,
+                AnalyticsValue.Action.InviteMember_FBMessenger);
     }
 
     @OnClick(R.id.vg_invite_wechat)
     void onClickInviteWechat() {
         startInvitation(INVITE_URL_WECHAT);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember,
+                AnalyticsValue.Action.InviteMember_WeChat);
     }
 
     @OnClick(R.id.tv_copy_invitation_url_button)
@@ -140,6 +152,8 @@ public class MemberInvitationActivity extends BaseAppCompatActivity {
         clipboardManager.setPrimaryClip(clipData);
         showTextDialog(getResources()
                 .getString(R.string.jandi_invite_succes_copy_link));
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember,
+                AnalyticsValue.Action.InviteMember_CopyLink);
     }
 
     public void showTextDialog(String alertText) {

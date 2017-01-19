@@ -2,20 +2,25 @@ package com.tosslab.jandi.app.network.models.start;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.vimeo.stag.GsonAdapterKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Bot extends RealmObject {
-    @PrimaryKey
-    private long id;
-    private long teamId;
-    private String type;
-    private String name;
-    private String photoUrl;
-    private String status;
+public class Bot {
+    @GsonAdapterKey
+    long id;
+    @GsonAdapterKey
+    long teamId;
+    @GsonAdapterKey
+    String type;
+    @GsonAdapterKey
+    String botType;
+    @GsonAdapterKey
+    String status;
+    @GsonAdapterKey
+    String name;
+    @GsonAdapterKey
+    String photoUrl;
 
     public long getId() {
         return id;
@@ -65,4 +70,11 @@ public class Bot extends RealmObject {
         this.photoUrl = photoUrl;
     }
 
+    public String getBotType() {
+        return botType;
+    }
+
+    public void setBotType(String botType) {
+        this.botType = botType;
+    }
 }

@@ -6,12 +6,11 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -20,6 +19,7 @@ import com.tosslab.jandi.app.ui.profile.modify.property.namestatus.view.NameChan
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Completable;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,17 +32,17 @@ public class NameStatusPresenter {
     private final View view;
 
     Lazy<ProfileApi> profileApi;
-    Lazy<AccountProfileApi> accountProfileApi;
+    Lazy<AccountApi> accountApi;
     BehaviorSubject<String> nameSubject;
     CompositeSubscription subscription;
 
 
     @Inject
     public NameStatusPresenter(Lazy<ProfileApi> profileApi,
-                               Lazy<AccountProfileApi> accountProfileApi,
+                               Lazy<AccountApi> accountApi,
                                View view) {
         this.profileApi = profileApi;
-        this.accountProfileApi = accountProfileApi;
+        this.accountApi = accountApi;
         this.view = view;
 
         nameSubject = BehaviorSubject.create("");
@@ -72,20 +72,17 @@ public class NameStatusPresenter {
     }
 
     public void updateNameForMainAccount(String newName) {
-        Observable.defer(() -> {
+        Completable.fromAction(() -> {
             try {
-                ResAccountInfo resAccountInfo =
-                        accountProfileApi.get().changeName(new ReqProfileName(newName));
-                AccountRepository.getRepository().updateAccountName(resAccountInfo.getName());
+                accountApi.get().updateName(new ReqProfileName(newName));
+                AccountRepository.getRepository().updateAccountName(newName);
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
-            return Observable.just(0);
+
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(i -> {
-                    view.successUpdate();
-                });
+                .subscribe(view::successUpdate);
     }
 
     public void updateStatus(String newStatus, long memberId) {
@@ -188,12 +185,10 @@ public class NameStatusPresenter {
     }
 
     public void onInitUserNameForMainAccount() {
-        Observable.defer(() -> {
-            String name = AccountRepository.getRepository().getAccountInfo().getName();
-            return Observable.just(name);
-        }).subscribeOn(Schedulers.io())
+        Observable.fromCallable(() -> AccountRepository.getRepository().getAccountInfo().getName())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(name -> view.setContent(name));
+                .subscribe(view::setContent, t -> view.setContent(""));
     }
 
 

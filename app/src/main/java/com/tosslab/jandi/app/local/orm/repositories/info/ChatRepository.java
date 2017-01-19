@@ -1,45 +1,63 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Chat;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmResults;
+public class ChatRepository extends LockTemplate {
+    private static LongSparseArray<ChatRepository> instance;
 
-public class ChatRepository extends RealmRepository {
-    private static ChatRepository instance;
+    private LongSparseArray<DirectMessageRoom> chats;
 
-    synchronized public static ChatRepository getInstance() {
+    private ChatRepository() {
+        super();
+        chats = new LongSparseArray<>();
+    }
+
+    synchronized public static ChatRepository getInstance(long teamId) {
         if (instance == null) {
-            instance = new ChatRepository();
+            instance = new LongSparseArray<>();
         }
-        return instance;
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            ChatRepository value = new ChatRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
+
+    public static ChatRepository getInstance() {
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 
     public boolean updateChatOpened(long roomId, boolean isOpened) {
-        return execute(realm -> {
-
-            Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> chat.setIsOpened(isOpened));
+        return execute(() -> {
+            if (hasChat(roomId)) {
+                chats.get(roomId).getRaw().setIsOpened(isOpened);
+                return true;
             }
-
-            return true;
+            return false;
         });
     }
 
+    public boolean hasChat(long roomId) {
+        return execute(() -> chats.indexOfKey(roomId) >= 0);
+    }
+
     public Chat getChat(long chatId) {
-        return execute((realm) -> {
-            Chat it = realm.where(Chat.class)
-                    .equalTo("id", chatId)
-                    .findFirst();
-            if (it != null) {
-                return realm.copyFromRealm(it);
+        return execute(() -> {
+            if (hasChat(chatId)) {
+                return chats.get(chatId).getRaw();
             } else {
                 return null;
             }
@@ -47,53 +65,31 @@ public class ChatRepository extends RealmRepository {
     }
 
     public boolean addChat(Chat chat) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            long teamId;
-            if (chat.getTeamId() > 0) {
-                teamId = chat.getTeamId();
-            } else {
-                teamId = AccountRepository.getRepository().getSelectedTeamId();
-                chat.setTeamId(teamId);
+            if (!hasChat(chat.getId())) {
+                chats.put(chat.getId(), new DirectMessageRoom(chat));
+                return true;
             }
+            return false;
 
-            if (chat.getLastMessage() != null) {
-                chat.getLastMessage().setChatId(chat.getId());
-            }
-
-            InitialInfo initialInfo = realm.where(InitialInfo.class).equalTo("teamId", teamId).findFirst();
-            if (initialInfo != null && realm.where(Chat.class)
-                    .equalTo("id", chat.getId())
-                    .count() <= 0) {
-                realm.executeTransaction(realm1 -> {
-                    initialInfo.getChats().add(chat);
-                });
-            }
-            return true;
         });
     }
 
     public boolean updateLastMessage(long roomId, long lastMessageId, String text, String status) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
+            if (hasChat(roomId)) {
+                Chat chat = chats.get(roomId).getRaw();
+                LastMessage lastMessage = chat.getLastMessage();
+                if (lastMessage == null) {
+                    lastMessage = new LastMessage();
+                    chat.setLastMessage(lastMessage);
+                }
 
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> {
-                    LastMessage lastMessage = chat.getLastMessage();
-                    if (lastMessage != null) {
-                        lastMessage.setStatus(status);
-                        lastMessage.setText(text);
-                        lastMessage.setId(lastMessageId);
-                    } else {
-                        lastMessage = realm.createObject(LastMessage.class, lastMessageId);
-                        lastMessage.setId(lastMessageId);
-                        lastMessage.setText(text);
-                        lastMessage.setStatus(status);
-                        chat.setLastMessage(lastMessage);
-                    }
-
-                });
+                lastMessage.setId(lastMessageId);
+                lastMessage.setText(text);
+                lastMessage.setStatus(status);
                 return true;
             }
 
@@ -102,15 +98,14 @@ public class ChatRepository extends RealmRepository {
     }
 
     public boolean isChat(long roomId) {
-        return execute((realm) -> realm.where(Chat.class).equalTo("id", roomId).count() > 0);
+        return execute(() -> hasChat(roomId));
     }
 
     public boolean updateUnreadCount(long chatId, int unreadCount) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Chat chat = realm.where(Chat.class).equalTo("id", chatId).findFirst();
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> chat.setUnreadCount(unreadCount));
+            if (hasChat(chatId)) {
+                chats.get(chatId).getRaw().setUnreadCount(unreadCount);
                 return true;
             }
 
@@ -119,10 +114,11 @@ public class ChatRepository extends RealmRepository {
     }
 
     public boolean incrementUnreadCount(long chatId) {
-        return execute((realm) -> {
-            Chat chat = realm.where(Chat.class).equalTo("id", chatId).findFirst();
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> chat.setUnreadCount(chat.getUnreadCount() + 1));
+        return execute(() -> {
+            if (hasChat(chatId)) {
+                Chat chat = chats.get(chatId).getRaw();
+                chat.setUnreadCount(chat.getUnreadCount() + 1);
+                return true;
             }
 
             return false;
@@ -130,14 +126,10 @@ public class ChatRepository extends RealmRepository {
     }
 
     public boolean updateLastLinkId(long roomId, long linkId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Chat chat = realm.where(Chat.class)
-                    .equalTo("id", roomId)
-                    .findFirst();
-
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> chat.setLastLinkId(linkId));
+            if (hasChat(roomId)) {
+                chats.get(roomId).getRaw().setLastLinkId(linkId);
                 return true;
             }
 
@@ -147,11 +139,13 @@ public class ChatRepository extends RealmRepository {
     }
 
     public boolean updateReadLinkId(long roomId, long readId) {
-        return execute((realm) -> {
+        return execute(() -> {
 
-            Chat chat = realm.where(Chat.class).equalTo("id", roomId).findFirst();
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> chat.setReadLinkId(readId));
+            if (hasChat(roomId)) {
+                Chat raw = chats.get(roomId).getRaw();
+                if (raw.getReadLinkId() < readId) {
+                    raw.setReadLinkId(readId);
+                }
                 return true;
             }
 
@@ -160,43 +154,71 @@ public class ChatRepository extends RealmRepository {
     }
 
     public int getUnreadCount(long roomId) {
-        return execute((realm) -> {
-            Chat chat =
-                    realm.where(Chat.class)
-                            .equalTo("id", roomId)
-                            .findFirst();
-            if (chat != null) {
-                return chat.getUnreadCount();
+        return execute(() -> {
+            if (hasChat(roomId)) {
+                return chats.get(roomId).getUnreadCount();
             }
-            return -1;
+            return 0;
         });
     }
 
     public boolean deleteChat(long chatId) {
-        return execute((realm) -> {
-
-            Chat chat = realm.where(Chat.class).equalTo("id", chatId).findFirst();
-            if (chat != null) {
-                realm.executeTransaction(realm1 -> chat.deleteFromRealm());
-                return true;
+        return execute(() -> {
+            if (hasChat(chatId)) {
+                chats.delete(chatId);
             }
+            return true;
 
-            return false;
         });
     }
 
-    public List<Chat> getOpenedChats(long teamId) {
-        return execute(realm -> {
-            RealmResults<Chat> it = realm.where(Chat.class)
-                    .equalTo("teamId", teamId)
-                    .equalTo("isOpened", true)
-                    .findAll();
+    public List<Chat> getOpenedChats() {
+        return execute(() -> {
+            List<Chat> chats = new ArrayList<>();
+            int size = this.chats.size();
+            for (int idx = 0; idx < size; idx++) {
 
-            if (it != null && !it.isEmpty()) {
-                return realm.copyFromRealm(it);
-            } else {
-                return new ArrayList<Chat>();
+                DirectMessageRoom room = this.chats.valueAt(idx);
+                if (room.isJoined()) {
+                    chats.add(room.getRaw());
+                }
             }
+            return chats;
+        });
+    }
+
+    public void clear() {
+        execute(() -> {
+            chats.clear();
+            return true;
+        });
+    }
+
+    public void addDirectRoom(long chatRoomId, DirectMessageRoom chatRoom) {
+        execute(() -> {
+            chats.put(chatRoomId, chatRoom);
+            return true;
+        });
+    }
+
+    public DirectMessageRoom getDirectRoom(long roomId) {
+        return execute(() -> {
+            if (hasChat(roomId)) {
+                return chats.get(roomId);
+            }
+            return null;
+        });
+    }
+
+    public List<DirectMessageRoom> getDirectRooms() {
+        return execute(() -> {
+            List<DirectMessageRoom> rooms = new ArrayList<>();
+            int size = chats.size();
+            for (int idx = 0; idx < size; idx++) {
+                rooms.add(chats.valueAt(idx));
+            }
+
+            return rooms;
         });
     }
 }

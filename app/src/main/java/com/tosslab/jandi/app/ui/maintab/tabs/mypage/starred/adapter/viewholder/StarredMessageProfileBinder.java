@@ -69,12 +69,14 @@ public class StarredMessageProfileBinder {
 
         if (writer.isEnabled()) {
             vProfileCover.setVisibility(View.GONE);
+            tvUserName.setTextColor(0xff333333);
             if ((tvUserName.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
                 tvUserName.setPaintFlags(
                         tvUserName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
             }
         } else {
             vProfileCover.setVisibility(View.VISIBLE);
+            tvUserName.setTextColor(0xff999999);
             tvUserName.setPaintFlags(tvUserName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
 

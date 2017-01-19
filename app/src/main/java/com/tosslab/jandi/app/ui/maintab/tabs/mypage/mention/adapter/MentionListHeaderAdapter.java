@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter;
 import android.view.ViewGroup;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.model.MentionListDataModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.viewholder.MentionMessageHeaderViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
@@ -41,12 +42,12 @@ public class MentionListHeaderAdapter implements StickyHeadersAdapter<MentionMes
         if (message == null) {
             return 0;
         }
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar =
+                Calendar.getInstance(JandiApplication.getContext().getResources().getConfiguration().locale);
         calendar.setTime(message.getCreatedAt());
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTimeInMillis();
+        int month = calendar.get(Calendar.MONTH);
+        int date = calendar.get(Calendar.DATE);
+        int year = calendar.get(Calendar.YEAR);
+        return year * 1000 + month * 100 + date * 10;
     }
 }

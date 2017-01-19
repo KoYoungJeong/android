@@ -24,7 +24,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import io.realm.RealmList;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -62,13 +61,11 @@ public class TopicFolderSettingPresenter {
         Completable.fromCallable(() -> {
             ResCreateFolder folder = topicFolderSettingModel.createFolder(title);
             Folder folder1 = new Folder();
-            folder1.setRoomIds(new RealmList<>());
             folder1.setOpened(false);
             folder1.setName(folder.getName());
             folder1.setId(folder.getId());
             folder1.setSeq(folder.getSeq());
-            FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder1);
-            TeamInfoLoader.getInstance().refresh();
+            FolderRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).addFolder(folder1);
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -84,7 +81,6 @@ public class TopicFolderSettingPresenter {
         Completable.fromCallable(() -> {
             topicFolderSettingModel.deleteItemFromFolder(folderId, topicId);
             FolderRepository.getInstance().removeTopic(folderId, topicId);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -105,7 +101,6 @@ public class TopicFolderSettingPresenter {
             long teamId = TeamInfoLoader.getInstance().getTeamId();
             FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(topicId));
             FolderRepository.getInstance().addTopic(folderId, topicId);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -154,7 +149,6 @@ public class TopicFolderSettingPresenter {
         Completable.fromCallable(() -> {
             topicFolderSettingModel.renameFolder(folderId, name, seq);
             FolderRepository.getInstance().updateFolderName(folderId, name);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -178,7 +172,6 @@ public class TopicFolderSettingPresenter {
         Completable.fromCallable(() -> {
             topicFolderSettingModel.modifySeqFolder(folderId, seq);
             FolderRepository.getInstance().updateFolderSeq(TeamInfoLoader.getInstance().getTeamId(), folderId, seq);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -191,7 +184,6 @@ public class TopicFolderSettingPresenter {
         Completable.fromCallable(() -> {
             topicFolderSettingModel.deleteTopicFolder(folderId);
             FolderRepository.getInstance().deleteFolder(folderId);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

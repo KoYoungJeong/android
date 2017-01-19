@@ -60,7 +60,7 @@ public class TeamMemberModel {
 
                     return true;
                 })
-                .map((user1) -> new TeamMemberItem(user1, keyword))
+                .map((user1) -> new TeamMemberItem(user1, keyword, TeamInfoLoader.getInstance().getMyId()))
                 .concatWith(Observable.defer(() -> {
                     // 검색어 없을 때
                     // 선택 모드

@@ -1,35 +1,41 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Team;
 
-public class TeamRepository extends RealmRepository {
-    private static TeamRepository instance;
+public class TeamRepository extends LockTemplate {
+    private static LongSparseArray<TeamRepository> instance;
 
-    synchronized public static TeamRepository getInstance() {
-        if (instance == null) {
-            instance = new TeamRepository();
-        }
-        return instance;
+    private Team team;
+
+    private TeamRepository() {
+        super();
     }
 
-    public Team getTeam(long teamId) {
-        return execute(realm -> {
-            Team it = realm.where(Team.class)
-                    .equalTo("id", teamId)
-                    .findFirst();
-            if (it != null) {
-                return realm.copyFromRealm(it);
-            } else {
-                return null;
-            }
-        });
+    synchronized public static TeamRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            TeamRepository value = new TeamRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
+
+    public Team getTeam() {
+        return execute(() -> team);
     }
 
     public boolean updateTeam(Team team) {
-        return execute(realm -> {
-
-            realm.executeTransaction(realm1 -> realm.insertOrUpdate(team));
+        return execute(() -> {
+            this.team = team;
             return true;
         });
     }

@@ -12,7 +12,7 @@ public interface MemberFilterableDataModel {
 
     void setInitializedMembers(List<User> members);
 
-    void addAll(List<User> members);
+    void addAll(List<User> members, long myId);
 
     void clear();
 

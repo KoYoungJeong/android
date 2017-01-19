@@ -1,43 +1,45 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.InitializeInfoConverter;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.List;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @JsonDeserialize(converter = InitializeInfoConverter.class)
-public class InitialInfo extends RealmObject {
-    @JsonIgnore
-    @PrimaryKey
-    private long teamId;
-    private Self self;
-    private Team team;
-    private Poll poll;
-    private Mention mention;
-    private TeamPlan teamPlan;
+public class InitialInfo {
+    @GsonAdapterKey
+    Self self;
+    @GsonAdapterKey
+    Team team;
+    @GsonAdapterKey
+    Poll poll;
+    @GsonAdapterKey
+    Mention mention;
+    @GsonAdapterKey
+    TeamPlan teamPlan;
 
-    private RealmList<Folder> folders;
-    private RealmList<Topic> topics;
-    private RealmList<Chat> chats;
-    private RealmList<Human> members;
-    private RealmList<Bot> bots;
+    @GsonAdapterKey
+    List<Folder> folders;
+    @GsonAdapterKey
+    List<Topic> topics;
+    @GsonAdapterKey
+    List<Chat> chats;
+    @GsonAdapterKey
+    List<Human> members;
+    @GsonAdapterKey
+    List<Bot> bots;
 
-    private long ts;
+    @GsonAdapterKey
+    long ts;
 
-    @Ignore
-    private List<Long> starredMessageIds;
-
-    private RealmList<RealmLong> starredMessages;
+    @GsonAdapterKey
+    List<Long> starredMessageIds;
 
     public Team getTeam() {
         return team;
@@ -47,43 +49,43 @@ public class InitialInfo extends RealmObject {
         this.team = team;
     }
 
-    public RealmList<Folder> getFolders() {
+    public List<Folder> getFolders() {
         return folders;
     }
 
-    public void setFolders(RealmList<Folder> folders) {
+    public void setFolders(List<Folder> folders) {
         this.folders = folders;
     }
 
-    public RealmList<Topic> getTopics() {
+    public List<Topic> getTopics() {
         return topics;
     }
 
-    public void setTopics(RealmList<Topic> topics) {
+    public void setTopics(List<Topic> topics) {
         this.topics = topics;
     }
 
-    public RealmList<Chat> getChats() {
+    public List<Chat> getChats() {
         return chats;
     }
 
-    public void setChats(RealmList<Chat> chats) {
+    public void setChats(List<Chat> chats) {
         this.chats = chats;
     }
 
-    public RealmList<Human> getMembers() {
+    public List<Human> getMembers() {
         return members;
     }
 
-    public void setMembers(RealmList<Human> members) {
+    public void setMembers(List<Human> members) {
         this.members = members;
     }
 
-    public RealmList<Bot> getBots() {
+    public List<Bot> getBots() {
         return bots;
     }
 
-    public void setBots(RealmList<Bot> bots) {
+    public void setBots(List<Bot> bots) {
         this.bots = bots;
     }
 
@@ -103,20 +105,10 @@ public class InitialInfo extends RealmObject {
         this.self = self;
     }
 
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
-    }
-
-    @Deprecated
     public List<Long> getStarredMessageIds() {
         return starredMessageIds;
     }
 
-    @Deprecated
     public void setStarredMessageIds(List<Long> starredMessageIds) {
         this.starredMessageIds = starredMessageIds;
     }
@@ -143,14 +135,6 @@ public class InitialInfo extends RealmObject {
 
     public void setTeamPlan(TeamPlan teamPlan) {
         this.teamPlan = teamPlan;
-    }
-
-    public RealmList<RealmLong> getStarredMessages() {
-        return starredMessages;
-    }
-
-    public void setStarredMessages(RealmList<RealmLong> starredMessages) {
-        this.starredMessages = starredMessages;
     }
 
 }

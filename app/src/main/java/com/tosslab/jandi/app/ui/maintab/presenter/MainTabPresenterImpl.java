@@ -76,11 +76,8 @@ public class MainTabPresenterImpl implements MainTabPresenter {
                             return;
                         }
                     }
-
-//                    completeAction.call();
                 }, t -> {
                     LogUtil.e(Log.getStackTraceString(t));
-//                    completeAction.call();
                 });
     }
 

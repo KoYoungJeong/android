@@ -107,7 +107,7 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         .map(new Func1<User, TeamMemberItem>() {
                             @Override
                             public TeamMemberItem call(User user) {
-                                return new TeamMemberItem(user, it);
+                                return new TeamMemberItem(user, it, TeamInfoLoader.getInstance().getMyId());
                             }
                         })
                         .concatWith(Observable.defer(() -> {
@@ -323,7 +323,6 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
                     TopicRepository.getInstance().addMember(roomId, toggledIds.getIds());
-                    TeamInfoLoader.getInstance().refresh();
                     EventBus.getDefault().post(new InvitationSuccessEvent());
                     view.dismissProgress();
                     view.successToInvitation();

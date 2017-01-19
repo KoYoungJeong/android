@@ -128,6 +128,8 @@ public class ResMessages {
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public Poll poll;
 
+        public long unreadCnt;
+
         public boolean hasLinkPreview() {
             boolean isTextMessage = message != null && message instanceof TextMessage;
             if (!isTextMessage) {

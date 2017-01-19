@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.view.MentionListDataView;
@@ -105,6 +106,23 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         presenter.onInitializeMyPage(false);
     }
 
+    private void setListViewScroll() {
+        if (getActivity() instanceof MainTabActivity) {
+            MainTabActivity activity = (MainTabActivity) getActivity();
+            lvMyPage.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
+                }
+            });
+        }
+    }
+
     private void injectComponent(MentionListAdapter adapter) {
         DaggerMentionListComponent.builder()
                 .mentionListModule(new MentionListModule(adapter, this))
@@ -167,6 +185,8 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
                 }
             }
         });
+
+        setListViewScroll();
     }
 
     @Override

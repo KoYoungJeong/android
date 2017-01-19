@@ -121,7 +121,7 @@ public class MemberFilterActivity extends BaseAppCompatActivity implements Membe
 
         memberFilterableDataView.setOnMemberClickListener(member -> {
             Intent data = new Intent();
-            data.putExtra(KEY_FILTERED_MEMBER_ID, member.getId());
+            data.putExtra(KEY_FILTERED_MEMBER_ID, member.getEntityId());
             setResult(RESULT_OK, data);
             finish();
             AnalyticsUtil.sendEvent(AnalyticsValue.Screen.ChooseMember,

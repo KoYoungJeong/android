@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
-import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -17,7 +16,6 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 
@@ -33,19 +31,16 @@ public class ShareModel {
 
     private Lazy<RoomsApi> roomsApi;
     private Lazy<TeamApi> teamApi;
-    private Lazy<StartApi> startApi;
     private Lazy<PollApi> pollApi;
     private Lazy<ChatApi> chatApi;
 
     @Inject
     public ShareModel(Lazy<RoomsApi> roomsApi,
                       Lazy<TeamApi> teamApi,
-                      Lazy<StartApi> startApi,
                       Lazy<PollApi> pollApi,
                       Lazy<ChatApi> chatApi) {
         this.roomsApi = roomsApi;
         this.teamApi = teamApi;
-        this.startApi = startApi;
         this.pollApi = pollApi;
         this.chatApi = chatApi;
     }
@@ -74,11 +69,8 @@ public class ShareModel {
         return InitialInfoRepository.getInstance().hasInitialInfo(teamId);
     }
 
-    public boolean updateInitialInfo(InitialInfo initialInfo) {
-        return InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
-    }
-
     public TeamInfoLoader getTeamInfoLoader(long teamId) {
+        TeamInfoLoader.getInstance(teamId).refresh();
         return TeamInfoLoader.getInstance(teamId);
     }
 

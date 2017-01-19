@@ -15,7 +15,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.tosslab.jandi.app.local.orm.RealmManager;
 import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -111,8 +110,6 @@ public class JandiApplication extends MultiDexApplication {
 
         initIntercom();
 
-        RealmManager.init(this);
-
         StethoInitializer.init(this);
 
         boolean isReleaseBuild =
@@ -131,8 +128,9 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     protected void initIntercom() {
-
         Intercom.initialize(this, JandiConstantsForFlavors.INTERCOM_API_KEY, JandiConstantsForFlavors.INTERCOM_API_ID);
+
+        Intercom.client().reset();
 
         if (BuildConfig.DEBUG) {
             Intercom.setLogLevel(IntercomLogger.VERBOSE);

@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 22..
@@ -49,6 +50,7 @@ public class RetrofitBuilder {
 
         Retrofit.Builder retofitBuilder = new Retrofit.Builder()
                 .baseUrl(url)
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(JacksonConverter.create());
 
         OkHttpClient okHttpClient = JandiApplication.getOkHttpClient();

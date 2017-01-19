@@ -104,7 +104,7 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
 
     @Override
     public long getItemId(int position) {
-        return super.getItemId(position);
+        return position;
     }
 
     public static class Row<ITEM> {

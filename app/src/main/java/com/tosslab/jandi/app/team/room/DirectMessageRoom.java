@@ -5,16 +5,17 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class DirectMessageRoom implements Room {
 
 
     private final Chat chat;
+
+    public Chat getRaw() {
+        return chat;
+    }
 
     public DirectMessageRoom(Chat chat) {
         this.chat = chat;
@@ -86,11 +87,7 @@ public class DirectMessageRoom implements Room {
 
     @Override
     public Collection<Long> getMembers() {
-        List<Long> ids = new ArrayList<>();
-        for (RealmLong realmLong : chat.getMemberIds()) {
-            ids.add(realmLong.getValue());
-        }
-        return ids;
+        return chat.getMembers();
     }
 
     public String getLastMessageStatus() {

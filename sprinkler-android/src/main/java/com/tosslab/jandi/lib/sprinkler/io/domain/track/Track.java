@@ -15,19 +15,21 @@ public class Track {
     private String pl;
     private Map<String, Object> pr;
     private long time;
+    private String version;
 
     // Just fot Count.
     public Track(int index) {
         this.index = index;
     }
 
-    public Track(int index, String ev, Map<String, Object> id, String pl, Map<String, Object> pr, long time) {
+    public Track(int index, String ev, Map<String, Object> id, String pl, Map<String, Object> pr, long time, String version) {
         this.index = index;
         this.ev = ev;
         this.id = id;
         this.pl = pl;
         this.pr = pr;
         this.time = time;
+        this.version = version;
     }
 
     public int getIndex() {
@@ -52,5 +54,9 @@ public class Track {
 
     public long getTime() {
         return time;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

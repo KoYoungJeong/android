@@ -11,12 +11,10 @@ import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Profile;
-import com.tosslab.jandi.app.network.models.start.RealmLong;
-import com.tosslab.jandi.app.network.models.start.Self;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Team;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -28,12 +26,11 @@ import com.tosslab.jandi.app.team.room.TopicFolder;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmList;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.observers.TestSubscriber;
@@ -46,20 +43,19 @@ import static org.assertj.core.api.Assertions.fail;
 @org.junit.runner.RunWith(AndroidJUnit4.class)
 public class IntegrationTest {
 
-    private static InitialInfo initializeInfo;
+    private static String initializeInfo;
     private static long teamId;
 
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getInitializeInfo(teamId);
+        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
     @Before
     public void setUp() throws Exception {
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.deleteAll());
-        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
     }
 
@@ -114,9 +110,7 @@ public class IntegrationTest {
         }
 
         {
-            Realm.getDefaultInstance().executeTransaction(realm -> {
-                realm.where(Bot.class).equalTo("id", botId).findFirst().deleteFromRealm();
-            });
+            BotRepository.getInstance().clear();
 
             TeamInfoLoader.getInstance().refresh();
             WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(botId);
@@ -152,29 +146,24 @@ public class IntegrationTest {
             chat.setType("type");
             chat.setLastLinkId(12);
             chat.setUnreadCount(10);
-            chat.setMemberIds(new RealmList<>(new RealmLong(1), new RealmLong(2)));
+            chat.setMembers(Arrays.asList(1L, 2L));
             chat.setTeamId(teamId);
 
             Marker marker = new Marker();
-            marker.setRoomId(chatId);
             marker.setMemberId(1);
-            marker.setId("1_1");
             marker.setReadLinkId(10);
 
             Marker marker2 = new Marker();
-            marker2.setRoomId(chatId);
             marker2.setMemberId(2);
-            marker2.setId("1_2");
             marker.setReadLinkId(11);
 
             LastMessage lastMessage = new LastMessage();
             lastMessage.setId(100);
-            lastMessage.setChatId(chatId);
             lastMessage.setStatus("created");
             lastMessage.setText("hello");
             chat.setLastMessage(lastMessage);
 
-            chat.setMarkers(new RealmList<>(marker, marker2));
+            chat.setMarkers(Arrays.asList(marker, marker2));
 
             ChatRepository.getInstance().addChat(chat);
             TeamInfoLoader.getInstance().refresh();
@@ -192,10 +181,10 @@ public class IntegrationTest {
 
             boolean has1 = false, has2 = false;
             for (Marker marker1 : room.getMarkers()) {
-                if (marker1.getId().equals("1_1")) {
+                if (marker1.getMemberId() == 1) {
                     has1 = true;
                 }
-                if (marker1.getId().equals("1_2")) {
+                if (marker1.getMemberId() == 2) {
                     has2 = true;
                 }
             }
@@ -262,14 +251,12 @@ public class IntegrationTest {
         long folderId = 1000;
         {
             Folder folder = new Folder();
-            folder.set_id(teamId + "_" + folder);
             folder.setSeq(2);
             folder.setId(folderId);
             folder.setName("hello");
-            folder.setTeamId(teamId);
             folder.setOpened(true);
 
-            FolderRepository.getInstance().addFolder(teamId, folder);
+            FolderRepository.getInstance().addFolder(folder);
             TeamInfoLoader.getInstance().refresh();
 
             TopicFolder topicFolder1 = getTopicFolder(folderId);
@@ -279,7 +266,6 @@ public class IntegrationTest {
             assertThat(topicFolder1.getFolder().getName()).isEqualTo("hello");
             assertThat(topicFolder1.getFolder().getSeq()).isEqualTo(2);
             assertThat(topicFolder1.getFolder().isOpened()).isTrue();
-            assertThat(topicFolder1.getFolder().getTeamId()).isEqualTo(teamId);
 
         }
 
@@ -334,7 +320,7 @@ public class IntegrationTest {
             member.setName("member");
             member.setStatus("enabled");
 
-            HumanRepository.getInstance().addHuman(teamId, member);
+            HumanRepository.getInstance().addHuman(member);
             TeamInfoLoader.getInstance().refresh();
             User user = TeamInfoLoader.getInstance().getUser(memberId);
             assertThat(user).isNotNull();
@@ -361,7 +347,6 @@ public class IntegrationTest {
             profile.setPhoneNumber("123");
             profile.setDepartment("dept");
             profile.setPosition("pos");
-            profile.setId(memberId);
             profile.setEmail("email");
             member.setProfile(profile);
 
@@ -397,9 +382,8 @@ public class IntegrationTest {
         }
 
         {
-            Realm.getDefaultInstance().executeTransaction(realm -> {
-                realm.where(Human.class).equalTo("id", memberId).findFirst().deleteFromRealm();
-            });
+
+            HumanRepository.getInstance().clear();
 
             TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getUser(memberId)).isNull();
@@ -441,7 +425,7 @@ public class IntegrationTest {
         chat.setType("type");
         chat.setLastLinkId(12);
         chat.setUnreadCount(10);
-        chat.setMemberIds(new RealmList<>(new RealmLong(1), new RealmLong(2)));
+        chat.setMembers(Arrays.asList(1L, 2L));
         chat.setTeamId(teamId);
         ChatRepository.getInstance().addChat(chat);
 
@@ -452,8 +436,6 @@ public class IntegrationTest {
         assertThat(markers).isNotNull().hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L);
-        assertThat(markers).extracting(Marker::getRoomId).contains(chatId);
-        assertThat(markers).extracting(Marker::getId).contains("1_1");
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(1, 1, 3);
         TeamInfoLoader.getInstance().refresh();
@@ -461,8 +443,6 @@ public class IntegrationTest {
         assertThat(markers).isNotNull().hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(3L);
-        assertThat(markers).extracting(Marker::getRoomId).contains(chatId);
-        assertThat(markers).extracting(Marker::getId).contains("1_1");
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(1, 2, 2);
         TeamInfoLoader.getInstance().refresh();
@@ -470,7 +450,6 @@ public class IntegrationTest {
         assertThat(markers).isNotNull().hasSize(2);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L, 2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L, 3L);
-        assertThat(markers).extracting(Marker::getId).contains("1_1", "1_2");
 
         RoomMarkerRepository.getInstance().deleteMarker(1, 1);
         TeamInfoLoader.getInstance().refresh();
@@ -478,7 +457,6 @@ public class IntegrationTest {
         assertThat(markers).isNotNull().hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).doesNotContain(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).doesNotContain(3L);
-        assertThat(markers).extracting(Marker::getId).doesNotContain("1_1");
 
         RoomMarkerRepository.getInstance().deleteMarkers(1);
         TeamInfoLoader.getInstance().refresh();
@@ -502,7 +480,6 @@ public class IntegrationTest {
         assertThat(markers).hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(1L);
-        assertThat(markers).extracting(Marker::getId).contains("2_1");
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(topicId, 2, 2);
         TeamInfoLoader.getInstance().refresh();
@@ -510,7 +487,6 @@ public class IntegrationTest {
         assertThat(markers).hasSize(2);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L, 2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(1L, 2L);
-        assertThat(markers).extracting(Marker::getId).contains("2_1", "2_2");
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(topicId, 1, 3);
         TeamInfoLoader.getInstance().refresh();
@@ -518,7 +494,6 @@ public class IntegrationTest {
         assertThat(markers).hasSize(2);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L, 2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L, 3L).doesNotContain(1L);
-        assertThat(markers).extracting(Marker::getId).contains("2_1", "2_2");
 
         RoomMarkerRepository.getInstance().deleteMarker(topicId, 1);
         TeamInfoLoader.getInstance().refresh();
@@ -526,7 +501,6 @@ public class IntegrationTest {
         assertThat(markers).hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L);
-        assertThat(markers).extracting(Marker::getId).contains("2_2");
 
         RoomMarkerRepository.getInstance().deleteMarkers(topicId);
         TeamInfoLoader.getInstance().refresh();
@@ -536,24 +510,11 @@ public class IntegrationTest {
     }
 
     @Test
-    public void transactionOfSelf() throws Exception {
-
-        Realm.getDefaultInstance().executeTransaction(realm -> realm.where(Self.class).findFirst().deleteFromRealm());
-        try {
-            TeamInfoLoader.getInstance().refresh();
-            TeamInfoLoader.getInstance().getMyId();
-            fail("It must fail");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     public void transactionOfTeam() throws Exception {
         Team team = new Team();
         team.setId(teamId);
         team.setName("hello");
-        TeamRepository.getInstance().updateTeam(team);
+        TeamRepository.getInstance(teamId).updateTeam(team);
         TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTeamName()).isEqualTo("hello");
     }
@@ -565,10 +526,10 @@ public class IntegrationTest {
         topic.setId(topicId);
         topic.setTeamId(teamId);
         topic.setName("hello");
-        topic.setMemberIds(new RealmList<>());
+        topic.setMembers(new ArrayList<>());
         topic.setUnreadCount(10);
-        topic.getMemberIds().add(new RealmLong(1));
-        topic.getMemberIds().add(new RealmLong(2));
+        topic.getMembers().add(1L);
+        topic.getMembers().add(2L);
 
         TopicRepository.getInstance().addTopic(topic);
         TeamInfoLoader.getInstance().refresh();
@@ -592,7 +553,6 @@ public class IntegrationTest {
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getMemberCount()).isEqualTo(2);
 
         Announcement announcement = new Announcement();
-        announcement.setRoomId(topicId);
         announcement.setIsOpened(true);
         announcement.setContent("content");
         TopicRepository.getInstance().createAnnounce(topicId, announcement);

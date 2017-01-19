@@ -1,67 +1,93 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-import io.realm.RealmList;
-import io.realm.RealmResults;
+import java.util.ArrayList;
+import java.util.List;
 
-public class RoomMarkerRepository extends RealmRepository {
+public class RoomMarkerRepository extends LockTemplate {
 
-    private static RoomMarkerRepository instance;
+    private static LongSparseArray<RoomMarkerRepository> instance;
+    private final long teamId;
 
-    synchronized public static RoomMarkerRepository getInstance() {
+    private RoomMarkerRepository(long teamId) {
+        super();
+        this.teamId = teamId;
+    }
+
+    synchronized public static RoomMarkerRepository getInstance(long teamId) {
         if (instance == null) {
-            instance = new RoomMarkerRepository();
+            instance = new LongSparseArray<>();
         }
-        return instance;
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            RoomMarkerRepository value = new RoomMarkerRepository(teamId);
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
+
+    public static RoomMarkerRepository getInstance() {
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
+    }
+
+    public List<Marker> getRoomMarkers(long roomId) {
+        return execute(() -> {
+            if (ChatRepository.getInstance(teamId).hasChat(roomId)) {
+                Chat chat = ChatRepository.getInstance(teamId).getChat(roomId);
+                if (chat.getMarkers() == null) {
+                    chat.setMarkers(new ArrayList<>());
+                }
+
+                return chat.getMarkers();
+
+            } else if (TopicRepository.getInstance(teamId).isTopic(roomId)) {
+                Topic topic = TopicRepository.getInstance(teamId).getTopic(roomId);
+                if (topic.getMarkers() == null) {
+                    topic.setMarkers(new ArrayList<>());
+                }
+
+                return topic.getMarkers();
+
+            } else {
+                return null;
+            }
+        });
     }
 
     public boolean upsertRoomMarker(long roomId, long memberId, long lastLinkId) {
-        return execute(realm -> {
+        return execute(() -> {
 
-            Marker marker = realm.where(Marker.class).equalTo("id", roomId + "_" + memberId).findFirst();
-            if (marker != null) {
-                realm.executeTransaction(realm1 -> {
-                    if (marker.getReadLinkId() < lastLinkId) {
-                        marker.setReadLinkId(lastLinkId);
-                    }
-                });
-            } else {
+            List<Marker> markers = getRoomMarkers(roomId);
 
-                realm.executeTransaction(realm1 -> {
-                    Marker marker2 = realm.createObject(Marker.class, roomId + "_" + memberId);
-                    marker2.setReadLinkId(lastLinkId);
-                    marker2.setMemberId(memberId);
-                    marker2.setRoomId(roomId);
-
-                    Chat chat = realm.where(Chat.class)
-                            .equalTo("id", roomId)
-                            .equalTo("memberIds.value", memberId)
-                            .findFirst();
-
-                    Topic topic = realm.where(Topic.class)
-                            .equalTo("id", roomId)
-                            .equalTo("memberIds.value", memberId)
-                            .findFirst();
-
-                    if (chat != null) {
-                        if (chat.getMarkers() != null) {
-                            chat.getMarkers().add(marker2);
-                        } else {
-                            chat.setMarkers(new RealmList<>(marker2));
-                        }
-                    } else if (topic != null) {
-                        if (topic.getMarkers() != null) {
-                            topic.getMarkers().add(marker2);
-                        } else {
-                            topic.setMarkers(new RealmList<>(marker2));
-                        }
-                    }
-                });
+            if (markers == null) {
+                return false;
             }
+
+            boolean hasMarker = false;
+            for (Marker marker : markers) {
+                if (marker.getMemberId() == memberId) {
+                    marker.setReadLinkId(lastLinkId);
+                    hasMarker = true;
+                }
+            }
+
+            if (!hasMarker) {
+                Marker marker = new Marker();
+                marker.setMemberId(memberId);
+                marker.setReadLinkId(lastLinkId);
+                markers.add(marker);
+            }
+
 
             return true;
 
@@ -69,26 +95,29 @@ public class RoomMarkerRepository extends RealmRepository {
     }
 
     public Marker getMarker(long roomId, long memberId) {
-        return execute(realm -> {
-            Marker it = realm.where(Marker.class)
-                    .equalTo("id", roomId + "_" + memberId)
-                    .findFirst();
-            if (it != null) {
-                return realm.copyFromRealm(it);
-            } else {
+        return execute(() -> {
+
+            List<Marker> markers = getRoomMarkers(roomId);
+
+            if (markers == null) {
                 return null;
             }
+
+            for (Marker marker : markers) {
+                if (marker.getMemberId() == memberId) {
+                    return marker;
+                }
+            }
+            return null;
         });
 
     }
 
     public long getMarkerReadLinkId(long roomId, long memberId) {
-        return execute(realm -> {
-            Marker it = realm.where(Marker.class)
-                    .equalTo("id", roomId + "_" + memberId)
-                    .findFirst();
-            if (it != null) {
-                return it.getReadLinkId();
+        return execute(() -> {
+            Marker marker = getMarker(roomId, memberId);
+            if (marker != null) {
+                return marker.getReadLinkId();
             } else {
                 return -1L;
             }
@@ -97,21 +126,31 @@ public class RoomMarkerRepository extends RealmRepository {
     }
 
     public long getRoomMarkerCount(long roomId, long linkId) {
-        return execute(realm -> realm.where(Marker.class)
-                .equalTo("roomId", roomId)
-                .greaterThanOrEqualTo("readLinkId", 0)
-                .lessThan("readLinkId", linkId)
-                .count());
+        return execute(() -> {
+            List<Marker> markers = getRoomMarkers(roomId);
 
+            long count = 0;
+            for (Marker marker : markers) {
+                long readLinkId = marker.getReadLinkId();
+                if (readLinkId >= 0 && readLinkId < linkId) {
+                    ++count;
+                }
+            }
+            return count;
+        });
     }
 
     public boolean deleteMarker(long roomId, long memberId) {
-        return execute(realm -> {
+        return execute(() -> {
 
-            Marker marker = realm.where(Marker.class).equalTo("id", roomId + "_" + memberId).findFirst();
-            if (marker != null) {
-                realm.executeTransaction(realm1 -> marker.deleteFromRealm());
-                return true;
+            List<Marker> roomMarkers = getRoomMarkers(roomId);
+            if (roomMarkers != null) {
+                for (int idx = roomMarkers.size() - 1; idx >= 0; idx--) {
+                    if (roomMarkers.get(idx).getMemberId() == memberId) {
+                        roomMarkers.remove(idx);
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -119,15 +158,13 @@ public class RoomMarkerRepository extends RealmRepository {
     }
 
     public boolean deleteMarkers(long roomId) {
-        return execute(realm -> {
-            RealmResults<Marker> roomId1 = realm.where(Marker.class)
-                    .equalTo("roomId", roomId)
-                    .findAll();
-            if (!roomId1.isEmpty()) {
-                realm.executeTransaction(realm1 -> roomId1.deleteAllFromRealm());
-                return true;
+        return execute(() -> {
+
+            List<Marker> roomMarkers = getRoomMarkers(roomId);
+            if (roomMarkers != null) {
+                roomMarkers.clear();
             }
-            return false;
+            return true;
         });
 
     }

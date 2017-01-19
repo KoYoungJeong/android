@@ -135,6 +135,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .filter(team -> team.getStatus() == Team.Status.JOINED)
                         .filter(team -> team.getTeamId() != TeamInfoLoader.getInstance().getTeamId())
                         .map(Team::getUnread)
+                        .defaultIfEmpty(0)
                         .reduce((prev, current) -> prev + current),
                 Observable.defer(() -> {
                     try {
@@ -165,7 +166,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         }
         Observable.from(teams)
                 .filter(team -> team.getStatus() == Team.Status.JOINED)
-                .map((team1) -> team1.getUnread())
+                .map(Team::getUnread)
+                .defaultIfEmpty(0)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
                     BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
@@ -308,7 +310,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     String versionName = SettingsModel.getVersionName();
                     rows.add(navigationDataModel.getVersionRow(versionName));
                 })
-                .subscribeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {
                     navigationDataModel.addRows(rows);
@@ -373,17 +375,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             Completable.fromAction(navigationModel::refreshAccountInfo)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
-                        navigationModel.getTeamsObservable()
-                                .flatMap(Observable::from)
-                                .subscribe(team -> {
-                                    Observable.from(navigationDataModel.getTeams())
-                                            .takeFirst(it -> it.getTeamId() == team.getTeamId())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(it -> {
-                                                it.setUnread(team.getUnread());
-                                                navigationView.notifyDataSetChanged();
-                                            });
-                                }, Throwable::printStackTrace, this::initBadgeCount);
+                        onReloadTeams();
 
                     });
         }
@@ -411,25 +403,25 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
 
         }).subscribeOn(Schedulers.computation())
-                .subscribe(() -> {}, t -> {});
+                .subscribe(() -> {
+                }, t -> {
+                });
 
 
     }
 
     @Override
-    public void onReloadTeams(boolean local) {
+    public void onReloadTeams() {
         navigationModel.getTeamsObservable()
                 .flatMap(Observable::from)
-                .subscribe(team -> {
-                    Observable.from(navigationDataModel.getTeams())
-                            .takeFirst(it -> it.getTeamId() == team.getTeamId())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(it -> {
-                                it.setUnread(team.getUnread());
-                                navigationView.notifyDataSetChanged();
-                            }, Throwable::printStackTrace, this::initBadgeCount);
-
-                });
+                .concatMap(team -> Observable.from(navigationDataModel.getTeams())
+                        .takeFirst(it -> it.getTeamId() == team.getTeamId())
+                        .doOnNext(it -> it.setUnread(team.getUnread())))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(team -> navigationView.notifyDataSetChanged(),
+                        Throwable::printStackTrace,
+                        this::initBadgeCount);
     }
 
     @Override

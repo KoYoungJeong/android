@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="20dp"
-                    android:layout_toLeftOf="@+id/btn_member_profile_star"
+                    android:layout_toLeftOf="@+id/vg_profile_star_and_level"
                     android:orientation="vertical">
 
                     <TextView
@@ -115,19 +115,32 @@
                         android:textSize="13dp" />
                 </LinearLayout>
 
-                <FrameLayout
-                    android:id="@+id/btn_member_profile_star"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                <LinearLayout
+                    android:id="@+id/vg_profile_star_and_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true">
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical">
 
-                    <View
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
+                    <TextView
+                        android:id="@+id/tv_member_profile_team_level"
+                        android:layout_width="wrap_content"
+                        android:layout_height="17dp"
+                        android:background="@drawable/bg_user_level_team_admin"
+                        android:gravity="center"
+                        android:textSize="@dimen/jandi_text_size_11sp" />
+
+                    <ImageView
+                        android:id="@+id/btn_member_profile_star"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:background="@drawable/jandi_member_profile_star_selector" />
-                </FrameLayout>
+                        android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
+                        android:src="@drawable/jandi_member_profile_star_selector" />
+                </LinearLayout>
+
             </RelativeLayout>
 
             <LinearLayout

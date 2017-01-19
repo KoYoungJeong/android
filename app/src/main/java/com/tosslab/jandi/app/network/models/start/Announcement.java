@@ -1,27 +1,28 @@
 package com.tosslab.jandi.app.network.models.start;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class Announcement extends RealmObject {
-    @JsonIgnore
-    @PrimaryKey
-    private long roomId;
-    private long messageId;
-    private String content;
-    private long writerId;
-    private long creatorId;
-    private Date writtenAt;
-    private Date createdAt;
-    private boolean isOpened;
+public class Announcement {
+    @GsonAdapterKey
+    String content;
+    @GsonAdapterKey
+    Date createdAt;
+    @GsonAdapterKey
+    long creatorId;
+    @GsonAdapterKey
+    boolean isOpened;
+    @GsonAdapterKey
+    long messageId;
+    @GsonAdapterKey
+    long writerId;
+    @GsonAdapterKey
+    Date writtenAt;
 
     public long getMessageId() {
         return messageId;
@@ -79,11 +80,4 @@ public class Announcement extends RealmObject {
         isOpened = opened;
     }
 
-    public long getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(long roomId) {
-        this.roomId = roomId;
-    }
 }

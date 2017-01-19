@@ -65,7 +65,6 @@ public class JoinableTopicListModel {
             try {
                 joinPublicTopic(topic.getEntityId());
                 TopicRepository.getInstance().updateTopicJoin(topic.getEntityId(), true);
-                TeamInfoLoader.getInstance().refresh();
                 subscriber.onNext(topic);
             } catch (RetrofitException error) {
                 subscriber.onError(error);

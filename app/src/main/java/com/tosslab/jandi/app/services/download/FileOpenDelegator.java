@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.services.download;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.File;
@@ -45,10 +45,12 @@ public class FileOpenDelegator extends BroadcastReceiver {
         }
 
         File file = (File) serializable;
-        Intent fileViewerOpenIntent = new Intent(Intent.ACTION_VIEW);
-        fileViewerOpenIntent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
-        fileViewerOpenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        String mimeType = getFileType(file, fileType);
+
+
         try {
+            Intent fileViewerOpenIntent = FileUtil.createFileIntent(file, mimeType);
+            fileViewerOpenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(fileViewerOpenIntent);
         } catch (Exception e) {
             String error = context.getResources().getString(R.string.err_unsupported_file_type);

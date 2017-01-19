@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +43,7 @@ import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -328,7 +330,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             return true;
         }
 
-        if (carouselFileInfo.getFileWriterId() == TeamInfoLoader.getInstance().getMyId()) {
+        if (carouselFileInfo.getFileWriterId() == TeamInfoLoader.getInstance().getMyId()
+                || (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin ||
+                TeamInfoLoader.getInstance().getMyLevel() == Level.Owner)) {
             getMenuInflater().inflate(R.menu.carousel_activity_my_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.carousel_activity_menu, menu);
@@ -811,11 +815,12 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
 
     @Override
     public void startExportedFileViewerActivity(File file, String mimeType) {
-        Intent target = new Intent(Intent.ACTION_SEND);
-        Uri parse = Uri.parse(file.getAbsolutePath());
-        target.setDataAndType(parse, mimeType);
+        Intent target = FileUtil.createFileIntent(file, mimeType);
+        target.setAction(Intent.ACTION_SEND);
         Bundle extras = new Bundle();
-        extras.putParcelable(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        Uri uri = FileProvider.getUriForFile(this,
+                getString(R.string.jandi_file_authority), file);
+        extras.putParcelable(Intent.EXTRA_STREAM, uri);
         target.putExtras(extras);
         try {
             Intent chooser = Intent.createChooser(target, getString(R.string.jandi_export_to_app));
@@ -829,14 +834,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
     @Override
     public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), mimeType);
-            startActivity(intent);
             ColoredToast.show(getString(R.string.jandi_file_downloaded_into, file.getPath()));
-        } catch (ActivityNotFoundException e) {
-            ColoredToast.showError(getString(R.string.err_unsupported_file_type, file));
-        } catch (SecurityException e) {
+            startActivity(FileUtil.createFileIntent(file, mimeType));
+        } catch (ActivityNotFoundException | SecurityException e) {
             ColoredToast.showError(getString(R.string.err_unsupported_file_type, file));
         }
     }

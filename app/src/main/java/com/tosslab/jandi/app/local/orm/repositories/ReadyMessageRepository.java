@@ -7,9 +7,6 @@ import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplat
 
 import java.sql.SQLException;
 
-/**
- * Created by Steve SeongUg Jung on 15. 7. 21..
- */
 public class ReadyMessageRepository extends LockExecutorTemplate {
 
 

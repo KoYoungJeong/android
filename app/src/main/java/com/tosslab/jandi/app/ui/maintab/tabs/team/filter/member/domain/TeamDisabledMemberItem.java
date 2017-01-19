@@ -7,6 +7,6 @@ public class TeamDisabledMemberItem extends TeamMemberItem {
 
 
     public TeamDisabledMemberItem(User user, String keyword) {
-        super(user, keyword);
+        super(user, keyword, -1);
     }
 }

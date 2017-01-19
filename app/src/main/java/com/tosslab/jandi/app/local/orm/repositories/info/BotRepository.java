@@ -1,27 +1,48 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+
+import android.support.annotation.VisibleForTesting;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Bot;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.WebhookBot;
 
-public class BotRepository extends RealmRepository {
-    private static BotRepository instance;
+public class BotRepository extends LockTemplate {
+    private static LongSparseArray<BotRepository> instance;
 
-    synchronized public static BotRepository getInstance() {
-        if (instance == null) {
-            instance = new BotRepository();
-        }
-        return instance;
+    private LongSparseArray<WebhookBot> bots;
+
+    private BotRepository() {
+        super();
+        bots = new LongSparseArray<>();
     }
 
+    synchronized public static BotRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
+
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            BotRepository value = new BotRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
+
+    public static BotRepository getInstance() {
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
+    }
+
+    @VisibleForTesting
     public Bot getBot(long memberId) {
-        return execute(realm -> {
-            Bot bot = realm.where(Bot.class)
-                    .equalTo("id", memberId)
-                    .findFirst();
-            if (bot != null) {
-                return realm.copyFromRealm(bot);
+        return execute(() -> {
+            if (hasBot(memberId)) {
+                return bots.get(memberId).getRaw();
             } else {
                 return null;
             }
@@ -29,51 +50,69 @@ public class BotRepository extends RealmRepository {
     }
 
     public boolean addBot(Bot bot) {
-        return execute(realm -> {
+        return execute(() -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            InitialInfo initialInfo = realm.where(InitialInfo.class)
-                    .equalTo("teamId", selectedTeamId)
-                    .findFirst();
-
-            if (initialInfo != null
-                    && realm.where(Bot.class)
-                    .equalTo("id", bot.getId())
-                    .count() <= 0) {
-                realm.executeTransaction(it -> {
-                    bot.setTeamId(selectedTeamId);
-                    initialInfo.getBots().add(bot);
-                });
+            if (!hasBot(bot.getId())) {
+                bots.put(bot.getId(), new WebhookBot(bot));
+                return true;
+            } else {
+                return false;
             }
-
-
-            return true;
         });
 
     }
 
     public boolean updateBotStatus(long botId, String status) {
-        return execute(realm -> {
-
-            Bot bot = realm.where(Bot.class).equalTo("id", botId).findFirst();
-            if (bot != null) {
-                realm.executeTransaction(realm1 -> bot.setStatus(status));
+        return execute(() -> {
+            if (hasBot(botId)) {
+                bots.get(botId).getRaw().setStatus(status);
                 return true;
+            } else {
+                return false;
             }
-
-            return false;
         });
 
     }
 
     public boolean updateBot(Bot bot) {
-        return execute(realm -> {
+        return execute(() -> {
 
-            bot.setTeamId(AccountRepository.getRepository().getSelectedTeamId());
-            realm.executeTransaction(it -> realm.copyToRealmOrUpdate(bot));
+            if (hasBot(bot.getId())) {
+                Bot saved = bots.get(bot.getId()).getRaw();
+                saved.setType(bot.getType());
+                saved.setBotType(bot.getBotType());
+                saved.setStatus(bot.getStatus());
+                saved.setName(bot.getName());
+                saved.setPhotoUrl(bot.getPhotoUrl());
+            } else {
+                bots.put(bot.getId(), new WebhookBot(bot));
+            }
 
             return true;
         });
 
+    }
+
+    public boolean hasBot(long id) {
+        return execute(() -> bots.indexOfKey(id) >= 0);
+    }
+
+
+    public WebhookBot getWebhookBot(long botId) {
+        return execute(() -> bots.get(botId));
+    }
+
+    public void addWebhookBot(long botId, WebhookBot bot) {
+        execute(() -> {
+            bots.put(botId, bot);
+            return true;
+        });
+    }
+
+    public void clear() {
+        execute(() -> {
+            bots.clear();
+            return true;
+        });
     }
 }

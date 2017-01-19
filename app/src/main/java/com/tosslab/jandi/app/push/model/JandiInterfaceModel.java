@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -104,12 +104,12 @@ public class JandiInterfaceModel {
     public boolean refreshTeamInfo() {
         try {
             long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            InitialInfo initializeInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-            refreshRankInfoIfNeed(selectedTeamId);
-            TeamInfoLoader.getInstance().refresh();
+            String initializeInfo = startApi.get().getRawInitializeInfo(selectedTeamId);
+            InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(selectedTeamId, initializeInfo));
+            if (!refreshRankInfoIfNeed(selectedTeamId)) {
+                TeamInfoLoader.getInstance().refresh();
+            }
             refreshPollList(selectedTeamId);
-            JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -120,15 +120,18 @@ public class JandiInterfaceModel {
         }
     }
 
-    private void refreshRankInfoIfNeed(long selectedTeamId) {
+    private boolean refreshRankInfoIfNeed(long selectedTeamId) {
         if (!RankRepository.getInstance().hasRanks(selectedTeamId)) {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeamId);
                 RankRepository.getInstance().addRanks(ranks.getRanks());
+                TeamInfoLoader.getInstance().refresh();
+                return true;
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 
     /**

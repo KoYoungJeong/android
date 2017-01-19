@@ -301,8 +301,10 @@ public class FileDetailModel {
     }
 
     public boolean isMyFile(long writerId) {
-        return writerId == TeamInfoLoader.getInstance().getMyId()
-                || TeamInfoLoader.getInstance().getUser(writerId).isTeamOwner();
+
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        return writerId == myId
+                || TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
     }
 
     public boolean isDeletedFile(String status) {
@@ -364,6 +366,5 @@ public class FileDetailModel {
 
     public void updateJoinedTopic(long id) {
         TopicRepository.getInstance().updateTopicJoin(id, true);
-        TeamInfoLoader.getInstance().refresh();
     }
 }

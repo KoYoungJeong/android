@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.ui.settings.account.model;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileApi;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
@@ -17,10 +16,10 @@ import rx.schedulers.Schedulers;
  */
 public class SettingAccountModel {
 
-    private Lazy<AccountProfileApi> accountProfileApi;
+    private Lazy<AccountApi> accountApi;
 
     @Inject
-    public SettingAccountModel(Lazy<AccountProfileApi> accountProfileApi) {this.accountProfileApi = accountProfileApi;}
+    public SettingAccountModel(Lazy<AccountApi> accountApi) {this.accountApi = accountApi;}
 
     public Observable<ResAccountInfo> getAccountInfoObservable() {
         return Observable.just(AccountRepository.getRepository().getAccountInfo())
@@ -35,16 +34,9 @@ public class SettingAccountModel {
     }
 
     public Observable<ResAccountInfo> getUpdateAccountNameObservable(final String newName) {
-        return Observable.<ResAccountInfo>create(subscriber -> {
-            try {
-                ReqProfileName reqProfileName = new ReqProfileName(newName);
-                ResAccountInfo resAccountInfo =
-                        accountProfileApi.get().changeName(reqProfileName);
-                subscriber.onNext(resAccountInfo);
-            } catch (RetrofitException error) {
-                subscriber.onError(error);
-            }
-            subscriber.onCompleted();
+        return Observable.fromCallable(() -> {
+            ReqProfileName reqProfileName = new ReqProfileName(newName);
+            return accountApi.get().updateName(reqProfileName);
         }).subscribeOn(Schedulers.io());
     }
 

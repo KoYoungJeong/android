@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.share.multi.presenter;
 
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
+
 import java.util.List;
 
 public interface MultiSharePresenter {
@@ -51,5 +53,7 @@ public interface MultiSharePresenter {
         void showSelectRoomToast();
 
         void setFileName(String fileName);
+
+        void setFileThumbInfos(List<FileUploadThumbAdapter.FileThumbInfo> fileThumbInfos);
     }
 }

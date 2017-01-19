@@ -182,15 +182,14 @@ public class PhotoViewFragment extends Fragment {
         }
 
         if (!TextUtils.isEmpty(imageType)
-                && imageType.toLowerCase().contains("gif")
-                && size > 0) {
+                && imageType.toLowerCase().contains("gif") && size >= 0) {
 
             pvPhotoView.setVisibility(View.VISIBLE);
             ivPhotoView.setVisibility(View.GONE);
 
             // gif 인 경우 1MB 이상은 플레이 버튼 누르도록 함
             if (size < MB_1) {
-                loadImage(Uri.parse(originalUrl));
+                loadImageForGif(Uri.parse(originalUrl));
             } else {
                 hideProgress();
                 ImageLoader.newInstance()
@@ -213,7 +212,6 @@ public class PhotoViewFragment extends Fragment {
                         .uri(Uri.parse(originalUrl))
                         .into(pvPhotoView);
             }
-
         } else if (!TextUtils.isEmpty(thumbUrl)) {
             pvPhotoView.setVisibility(View.GONE);
             ivPhotoView.setVisibility(View.VISIBLE);

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.model;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.main.ConfigApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -52,14 +51,7 @@ public class MainTabModel {
     }
 
     public Observable<ResConfig> getConfigInfoObservable() {
-        return Observable.defer(() -> {
-            try {
-                ResConfig resConfig = configApi.get().getConfig();
-                return Observable.just(resConfig);
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        });
+        return Observable.fromCallable(() -> configApi.get().getConfig());
     }
 
     public int getCurrentAppVersionCode() {

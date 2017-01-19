@@ -17,8 +17,10 @@ import android.view.MenuItem;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.poll.participants.adapter.PollParticipantsAdapter;
 import com.tosslab.jandi.app.ui.poll.participants.component.DaggerPollParticipantsComponent;
 import com.tosslab.jandi.app.ui.poll.participants.module.PollParticipantsModule;
@@ -196,9 +198,11 @@ public class PollParticipantsActivity extends AppCompatActivity
 
     @Override
     public void addMembers(List<User> members) {
+        long myId = TeamInfoLoader.getInstance().getMyId();
         Observable.from(members)
                 .map(member -> MultiItemRecyclerAdapter.Row.create(
-                        member, PollParticipantsAdapter.VIEW_TYPE_MEMBER))
+                        ChatChooseItem.create(member).myId(myId == member.getId()),
+                        PollParticipantsAdapter.VIEW_TYPE_MEMBER))
                 .subscribe(row -> pollParticipantsAdapter.addRow(row),
                         Throwable::printStackTrace,
                         () -> pollParticipantsAdapter.notifyDataSetChanged());

@@ -26,7 +26,7 @@ import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.services.socket.JandiSocketServiceModel;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeletedEvent;
@@ -151,11 +151,10 @@ public class SocketEventHistoryUpdator {
             ResEventHistory eventHistory;
             try {
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
-                InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
+                String initializeInfo = startApi.get().getRawInitializeInfo(teamId);
+                InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
                 refreshRankIfNeed(teamId);
                 TeamInfoLoader.getInstance().refresh();
-                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
                 EventBus.getDefault().post(new RetrieveTopicListEvent());
                 EventBus.getDefault().post(new ChatListRefreshEvent());
                 EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());

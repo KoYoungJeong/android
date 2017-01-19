@@ -35,7 +35,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import io.realm.RealmList;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -62,18 +61,34 @@ public class MainTopicListPresenter {
         this.topicFolderChooseModel = topicFolderChooseModel;
     }
 
-    public void onLoadList() {
-        topicFolders = mainTopicModel.getTopicFolders();
-        topicFolderItems = mainTopicModel.getJoinedTopics();
-        view.showList(mainTopicModel.getDataProvider(topicFolders, topicFolderItems));
+    public void onLoadFolderList() {
+        Observable
+                .fromCallable(() -> {
+                    topicFolders = mainTopicModel.getTopicFolders();
+                    topicFolderItems = mainTopicModel.getJoinedTopics();
+                    return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
+                })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(view::showList, Throwable::printStackTrace);
+    }
+
+    public void initUpdatedTopicList() {
+        List<Topic> topicList = new ArrayList<>();
+        mainTopicModel.getUpdatedTopicList()
+                .compose(addUnjoinedTopicForUpdated())
+                .subscribe(topicList::addAll, t -> {
+                }, () -> view.setUpdatedItems(topicList));
+
     }
 
     public void refreshList() {
-        Observable.fromCallable(() -> {
-            topicFolders = mainTopicModel.getTopicFolders();
-            topicFolderItems = mainTopicModel.getJoinedTopics();
-            return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
-        })
+        Observable
+                .fromCallable(() -> {
+                    topicFolders = mainTopicModel.getTopicFolders();
+                    topicFolderItems = mainTopicModel.getJoinedTopics();
+                    return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
+                })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(dataProvider -> {
@@ -132,12 +147,12 @@ public class MainTopicListPresenter {
         view.notifyDatasetChangedForFolder();
     }
 
+
     public void onUpdatedTopicLongClick(Topic item) {
         long entityId = item.getEntityId();
         long folderId = mainTopicModel.findFolderId(entityId);
         view.showEntityMenuDialog(entityId, folderId);
     }
-
 
     public void onChildItemLongClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
         TopicItemData topicItemData = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition);
@@ -165,6 +180,7 @@ public class MainTopicListPresenter {
         FolderRepository.getInstance()
                 .upsertFolderExpands(topicFolderData.getFolderId(), false);
     }
+
 
     public List<FolderExpand> onGetFolderExpands() {
         List<FolderExpand> folderExpands = FolderRepository.getInstance().getFolderExpands();
@@ -199,24 +215,19 @@ public class MainTopicListPresenter {
         return folderExpands;
     }
 
-
     public void createNewFolder(String title) {
         Completable.fromCallable(() -> {
 
             ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
             Folder folder1 = new Folder();
-            folder1.setRoomIds(new RealmList<>());
             folder1.setOpened(false);
             folder1.setName(folder.getName());
             folder1.setId(folder.getId());
             folder1.setSeq(folder.getSeq());
-            FolderRepository.getInstance().addFolder(TeamInfoLoader.getInstance().getTeamId(), folder1);
-            TeamInfoLoader.getInstance().refresh();
+            FolderRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).addFolder(folder1);
             return true;
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    refreshList();
-                }, t -> {
+                .subscribe(this::refreshList, t -> {
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
                         if (e.getResponseCode() == 40008) {
@@ -238,15 +249,6 @@ public class MainTopicListPresenter {
                     int unreadCount = getUnreadCountFromUpdatedList(Observable.from(topicList));
                     EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
                 });
-
-    }
-
-    public void initUpdatedTopicList() {
-        List<Topic> topicList = new ArrayList<>();
-        mainTopicModel.getUpdatedTopicList()
-                .compose(addUnjoinedTopicForUpdated())
-                .subscribe(topicList::addAll, t -> {
-                }, () -> view.setUpdatedItems(topicList));
 
     }
 

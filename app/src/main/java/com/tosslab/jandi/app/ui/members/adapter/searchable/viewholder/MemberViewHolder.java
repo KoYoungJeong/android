@@ -12,9 +12,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
-import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
-import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
@@ -33,7 +31,6 @@ import de.greenrobot.event.EventBus;
 public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
     private final int teamOwnerPaddingTop;
-    protected long teamId = -1;
     @Bind(R.id.iv_profile)
     ImageView ivProfile;
     @Bind(R.id.iv_favorite)
@@ -77,18 +74,6 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         super(itemView);
         ButterKnife.bind(this, itemView);
         teamOwnerPaddingTop = vgAuthorityBadge.getContext().getResources().getDimensionPixelSize(R.dimen.jandi_member_list_owner_badge_padding);
-    }
-
-    public static MemberViewHolder createForUserWithTeamId(ViewGroup parent, long teamId) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
-        return new UserViewHolder(itemView, teamId);
-    }
-
-    public static MemberViewHolder createForUser(ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.item_entity_body_two_line, parent, false);
-        return new UserViewHolder(itemView);
     }
 
     public static MemberViewHolder createForChatChooseItem(ViewGroup parent) {
@@ -139,15 +124,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
         setUserInfo(item);
 
-        long myId = -1;
-
-        if (teamId == -1) {
-            myId = TeamInfoLoader.getInstance().getMyId();
-        } else {
-            myId = TeamInfoLoader.getInstance(teamId).getMyId();
-        }
-
-        if (isKickMode && item.getEntityId() != myId && !item.isBot()) {
+        if (isKickMode && !item.isMyId() && !item.isBot()) {
             ivUserKick.setVisibility(View.VISIBLE);
         } else {
             ivUserKick.setVisibility(View.GONE);
@@ -220,13 +197,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             tvAuthorityBadge.setText(JandiApplication.getContext()
                     .getString(R.string.jandi_topic_owner));
         } else {
-            Level level;
-            if (teamId == -1) {
-                level = TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel();
-            } else {
-                level = TeamInfoLoader.getInstance(teamId).getUser(item.getEntityId()).getLevel();
-            }
-
+            Level level = item.getLevel();
             AccessLevelUtil.setTextOfLevel(level, tvAuthorityBadge);
         }
 
@@ -273,20 +244,4 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         }
     }
 
-    private static class UserViewHolder extends MemberViewHolder<User> {
-
-        UserViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        UserViewHolder(View itemView, long teamId) {
-            super(itemView);
-            this.teamId = teamId;
-        }
-
-        @Override
-        public void onBindView(User item) {
-            bindView(ChatChooseItem.create(item));
-        }
-    }
 }

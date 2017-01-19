@@ -10,7 +10,6 @@ apply from: 'apk-copy.gradle'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply from: 'ci-tasks.gradle'
-apply plugin: 'realm-android'
 //apply from: 'test-coverage.gradle'
 
 configurations {
@@ -33,8 +32,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 256
-        versionName '2.6.0'
+        versionCode 261
+        versionName '2.7.0'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -108,6 +107,9 @@ android {
                 || variant.getFlavors().get(0).name.equals('dev'))) {
             variant.setIgnore(true);
         }
+    }
+    applicationVariants.all { variant ->
+        variant.resValue "string", "jandi_file_authority", "${variant.applicationId}.jandifile"
     }
 
     packagingOptions.excludes = [

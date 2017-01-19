@@ -7,16 +7,12 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.adapter.datamodel.TeamSelectListAdapterDataModel;
 import com.tosslab.jandi.app.ui.team.select.model.TeamSelectListModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrLaunchTeam;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,21 +42,30 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
 
     @Override
     public void initTeamDatas(boolean firstEntered, boolean shouldRefreshAccountInfo) {
-        Observable.defer(() -> {
+
+
+        Observable.fromCallable(() -> {
             if (shouldRefreshAccountInfo) {
                 model.refreshAccountInfo();
             }
-            List<Team> teams = new ArrayList<>();
-            try {
-                teams = model.getTeamInfos();
-            } catch (RetrofitException e) {
-                e.printStackTrace();
-            }
-            adapterDataModel.setDatas(teams);
-            return Observable.just(teams);
+            return model.getTeamInfos();
         }).subscribeOn(Schedulers.io())
+                .onErrorReturn(throwable -> {
+                    model.refreshAccountInfo();
+                    try {
+                        return model.getTeamInfos();
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(teams -> {
+
+                    setUserEmailInfo();
+                    view.setEditButton();
+
+                    adapterDataModel.setDatas(teams);
                     // create team 밖에 없을 때
                     if (teams.size() == 1) {
                         view.showEmptyList();
@@ -70,6 +75,11 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                     } else {
                         view.showList();
                     }
+                }, (t) -> {
+                    t.printStackTrace();
+
+                    view.showToastNoDataError();
+                    view.exit();
                 });
     }
 
@@ -79,17 +89,16 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
         Observable.defer(() -> {
             model.updateSelectTeam(teamId);
             try {
-                InitialInfo initialInfo = model.getEntityInfo(teamId);
+                String initialInfo = model.getEntityInfo(teamId);
                 return Observable.just(initialInfo);
             } catch (RetrofitException e) {
                 return Observable.error(e);
             }
         })
                 .doOnNext(initialInfo -> {
-                    model.updateEntityInfo(initialInfo);
+                    model.updateEntityInfo(new RawInitialInfo(teamId, initialInfo));
                     model.refreshRankIfNeed(teamId);
                     TeamInfoLoader.getInstance().refresh();
-                    JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
                     SprinklrLaunchTeam.sendLog(teamId);
                 })
                 .subscribeOn(Schedulers.io())

@@ -11,16 +11,11 @@
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/action_file_detail_delete"
-                android:title="@string/jandi_file_delete" />
-
-            <item
                 android:id="@+id/action_file_detail_share"
                 android:title="@string/jandi_file_share_action" />
             <item
                 android:id="@+id/action_file_detail_unshare"
                 android:title="@string/jandi_action_unshare" />
-
             <item
                 android:id="@+id/action_file_detail_export"
                 android:title="@string/jandi_export" />
@@ -30,7 +25,9 @@
             <item
                 android:id="@+id/action_file_detail_disable_external_link"
                 android:title="@string/jandi_disable_external_link" />
-
+            <item
+                android:id="@+id/action_file_detail_delete"
+                android:title="@string/jandi_file_delete" />
         </menu>
     </item>
 </menu>

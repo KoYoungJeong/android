@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.domain.DisableDummyItem;
@@ -179,6 +180,8 @@ public class ChatChooseModel {
                 .isBot(true)
                 .entityId(bot.getId())
                 .name(bot.getName())
+                .myId(false)
+                .level(Level.Member)
                 .owner(false)
                 .photoUrl(bot.getPhotoUrl())
                 .starred(bot.isStarred());

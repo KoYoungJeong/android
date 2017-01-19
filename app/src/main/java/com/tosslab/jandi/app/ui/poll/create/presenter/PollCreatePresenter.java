@@ -25,6 +25,8 @@ public interface PollCreatePresenter {
 
     void onCreatePoll();
 
+    boolean isAvailablePoll();
+
     interface View {
 
         void showNotEnoughPollItemsToast();

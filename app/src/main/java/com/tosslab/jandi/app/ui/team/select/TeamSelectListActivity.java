@@ -69,6 +69,7 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
 
     ProgressWheel progressWheel;
 
+    @Nullable
     @InjectExtra
     boolean shouldRefreshAccountInfo = true;
 
@@ -76,27 +77,25 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_team_list);
+        ButterKnife.bind(this);
+        Dart.inject(this);
         TeamSelectListAdapter teamSelectListAdapter = new TeamSelectListAdapter();
         DaggerTeamSelectListComponent.builder()
                 .teamSelectListModule(
                         new TeamSelectListModule(this, teamSelectListAdapter))
                 .build()
                 .inject(this);
-        ButterKnife.bind(this);
-        Dart.inject(this);
-        lvTeamList.setLayoutManager(new LinearLayoutManager(this,
-                RecyclerView.VERTICAL, false));
+        lvTeamList.setLayoutManager(new LinearLayoutManager(this));
         lvTeamList.setAdapter(teamSelectListAdapter);
         bindListeners();
         teamSelectListPresenter.initTeamDatas(true, shouldRefreshAccountInfo);
-        teamSelectListPresenter.setUserEmailInfo();
         progressWheel = new ProgressWheel(this);
-        setEditButton();
         EventBus.getDefault().register(this);
         JandiSocketService.startServiceIfNeed(this);
     }
 
-    private void setEditButton() {
+    @Override
+    public void setEditButton() {
         tvLoginInfoEditButton.setPaintFlags(
                 tvLoginInfoEditButton.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvLoginInfoEditButton.setOnClickListener(v -> {
@@ -218,6 +217,16 @@ public class TeamSelectListActivity extends BaseAppCompatActivity implements Tea
     @Override
     public void showLoginEmail(String email) {
         tvLoginEmail.setText(email);
+    }
+
+    @Override
+    public void showToastNoDataError() {
+        showErrorToast(getString(R.string.jandi_err_unexpected));
+    }
+
+    @Override
+    public void exit() {
+        finish();
     }
 
     public void onEvent(TeamDeletedEvent event) {

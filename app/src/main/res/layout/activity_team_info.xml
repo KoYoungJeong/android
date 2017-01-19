@@ -64,7 +64,7 @@
 
 
     <TextView
-        android:id="@+id/btn_team_info_invite"
+        android:id="@+id/tv_team_leave"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_below="@+id/label_team_info_member_count"
@@ -73,7 +73,7 @@
         android:background="@drawable/bg_round_blue_rect"
         android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center"
-        android:text="@string/jandi_invite_to_team_for_member"
+        android:text="@string/team_teamleave"
         android:textColor="@color/white"
         android:textSize="@dimen/jandi_text_size_large" />
 

@@ -402,7 +402,7 @@
         <activity
             android:name=".ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_browse_other_topics"
+            android:label="@string/topic_menu_Browse_other_public_topics"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
 
@@ -535,8 +535,7 @@
         <activity
             android:name=".ui.search.filter.room.RoomFilterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.Transparent" />
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.search.main.SearchActivity"
@@ -609,6 +608,16 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="@string/jandi_file_authority"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/external_file_path" />
+        </provider>
 
         <!-- Google Play Analytics -->
         <receiver

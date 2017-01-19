@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.sign.signup.verify.exception;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
@@ -21,7 +21,7 @@ public class VerifyNetworkException extends Exception {
         errCode = e.getResponseCode();
         errReason = e.getResponseMessage();
         try {
-            ExceptionData exceptionData = JacksonMapper.getInstance().getObjectMapper().readValue(e.getRawBody(), ExceptionData.class);
+            ExceptionData exceptionData = JsonMapper.getInstance().getObjectMapper().readValue(e.getRawBody(), ExceptionData.class);
             LogUtil.d(e.getRawBody());
             ExceptionData.TryData tryData = exceptionData.getData();
             tryCount = tryData != null ? tryData.getTryCount() : NONE_TRY_COUNT;

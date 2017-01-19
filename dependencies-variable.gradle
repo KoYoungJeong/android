@@ -2,7 +2,7 @@ ext.dependecies = [
         libraries   : [
                 multidex                         : 'com.android.support:multidex:1.0.1',
 
-                sprinklrAndroid                  : 'com.tosslab.jandi.lib:sprinkler-android:1.5', // 로컬 : project(':sprinkler-android')
+                sprinklrAndroid                  : 'com.tosslab.jandi.lib:sprinkler-android:1.8', // 로컬 : project(':sprinkler-android')
                 photoView                        : 'com.tosslab.jandi.lib:photoview-expand:1.1',
                 imageZoomCrop                    : 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1',
 
@@ -56,13 +56,16 @@ ext.dependecies = [
                 //Retrofit
                 retrofit2                        : 'com.squareup.retrofit2:retrofit:2.1.0',
                 retrofit2_gson                   : 'com.squareup.retrofit2:converter-gson:2.1.0',
+                retrofit2_scalar                 : 'com.squareup.retrofit2:converter-scalars:2.1.0',
                 okhttp3                          : 'com.squareup.okhttp3:okhttp:3.4.1',
                 okhttp3_ws                       : 'com.squareup.okhttp3:okhttp-ws:3.4.1',
                 jackson                          : 'com.fasterxml.jackson.core:jackson-databind:2.7.2',
                 okhttp3_logging                  : 'com.squareup.okhttp3:logging-interceptor:3.4.1',
 
                 stetho_okhttp3                   : 'com.facebook.stetho:stetho-okhttp3:1.4.1',
-                stetho_realm                     : 'com.uphyca:stetho_realm:2.0.0',
+
+                gson_stag                        : 'com.vimeo.stag:stag-library:1.2.1',
+                gson_stag_apt                    : 'com.vimeo.stag:stag-library-compiler:1.2.1',
 
                 // newrelic
                 newrelic                         : 'com.newrelic.agent.android:android-agent:4.273.4',
@@ -87,8 +90,7 @@ ext.dependecies = [
                 assertj_android_recyclerview     : 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
                 assertj                          : 'org.assertj:assertj-core:1.7.1',
                 junit                            : 'junit:junit:4.12',
-                subsampling_scale_image_view     : 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0',
-                mockito                          : 'org.mockito:mockito-core:1.10.19'
+                subsampling_scale_image_view     : 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
         ],
 
         buildscripts: [
@@ -99,6 +101,5 @@ ext.dependecies = [
                 retrolambda         : 'me.tatarka:gradle-retrolambda:3.4.0',
                 android_maven_gradle: 'com.github.dcendents:android-maven-gradle-plugin:1.4',
                 dexcount_gradle     : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.5',
-                realm               : "io.realm:realm-gradle-plugin:2.2.1"
         ]
 ]

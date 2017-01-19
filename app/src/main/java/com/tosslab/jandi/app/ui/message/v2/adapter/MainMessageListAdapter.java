@@ -132,7 +132,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void addAll(int position, List<ResMessages.Link> links) {
-
         lock.lock();
         try {
             if (links == null || links.isEmpty()) {
@@ -198,7 +197,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void remove(int position) {
         lock.lock();
         try {
-
             ResMessages.Link removed = links.remove(position);
             itemTypes.remove(removed);
 
@@ -210,7 +208,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                 itemTypes.remove(getItem(position));
                 getItemViewType(position);
             }
-
         } catch (Exception e) {
             LogUtil.e(Log.getStackTraceString(e));
         } finally {
@@ -263,7 +260,9 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         for (int idx = count - 1; idx >= 0; idx--) {
             ResMessages.Link item = getItem(idx);
             if (item instanceof DummyMessageLink) {
-                if (item.id == linkId) { return idx; }
+                if (item.id == linkId) {
+                    return idx;
+                }
             } else {
                 return -1;
             }

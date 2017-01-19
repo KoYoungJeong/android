@@ -51,14 +51,14 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     TextView tvContentName;
     @Bind(R.id.tv_divide_bar)
     TextView tvDivideBar;
-
-    private int topMarginForIvProfile;
+    @Bind(R.id.v_full_divider)
+    View vFullDivider;
+    @Bind(R.id.v_half_divider)
+    View vHalfDivider;
 
     public MentionMessageViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-        topMarginForIvProfile = itemView.getContext().
-                getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
     }
 
     public static MentionMessageViewHolder newInstance(ViewGroup parent) {
@@ -70,14 +70,22 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     @Override
     public void onBindView(MentionMessage mentionMessage) {
         bindWriter(mentionMessage);
-
         bindContent(mentionMessage);
+    }
+
+    public void setHalfDivider(boolean isHalfDivider) {
+        if (isHalfDivider) {
+            vHalfDivider.setVisibility(View.VISIBLE);
+            vFullDivider.setVisibility(View.GONE);
+        } else {
+            vFullDivider.setVisibility(View.VISIBLE);
+            vHalfDivider.setVisibility(View.GONE);
+        }
     }
 
     private void bindContent(MentionMessage mentionMessage) {
         if ("comment".equals(mentionMessage.getContentType())) {
             tvTopicName.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-//            tvTopicName.setText(mentionMessage.getRoomName());
             tvTopicName.setVisibility(View.GONE);
             if ("poll".equals(mentionMessage.getFeedbackType())) {
                 ivContentIcon.setImageResource(R.drawable.icon_message_poll);
@@ -105,7 +113,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
                 MentionAnalysisInfo.newBuilder(myId, mentionMessage.getMentions())
                         .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
                         .forMeBackgroundColor(Color.parseColor("#FFCFF1FF"))
-                        .forMeTextColor(Color.parseColor("#FF333333"))
+                        .forMeTextColor(Color.parseColor("#FF00ACE9"))
                         .build();
 
         SpannableLookUp.text(ssb)
@@ -119,7 +127,9 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         tvMentionContent.setText(ssb);
 
         String updateTime = DateTransformator.getTimeString(mentionMessage.getMessageCreatedAt());
+
         tvDate.setText(updateTime);
+
     }
 
     private void bindWriter(MentionMessage mentionMessage) {

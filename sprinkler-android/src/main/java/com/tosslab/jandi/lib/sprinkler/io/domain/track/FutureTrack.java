@@ -20,6 +20,7 @@ public class FutureTrack implements Serializable {
     private String platform;
     private Map<String, Object> propertiesMap = new HashMap<>();
     private long time;
+    private String version;
 
     FutureTrack() {
     }
@@ -64,6 +65,26 @@ public class FutureTrack implements Serializable {
         this.time = time;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return "FutureTrack{" +
+                "event='" + event + '\'' +
+                ", identifiersMap=" + identifiersMap +
+                ", platform='" + platform + '\'' +
+                ", propertiesMap=" + propertiesMap +
+                ", time=" + time +
+                ", version='" + version + '\'' +
+                '}';
+    }
+
     public static final class Builder {
         private Event event;
         private Map<String, Object> identifiersMap = new HashMap<>();
@@ -80,6 +101,7 @@ public class FutureTrack implements Serializable {
             identifiersMap.put(IdentifierKey.DEVICE_ID, deviceId);
             return this;
         }
+
 
         public Builder accountId(String accountId) {
             identifiersMap.put(IdentifierKey.ACCOUNT_ID, accountId);
@@ -123,17 +145,6 @@ public class FutureTrack implements Serializable {
 
             return track;
         }
-    }
 
-    @Override
-    public String toString() {
-        return "FutureTrack{" +
-                "event='" + event + '\'' +
-                ", identifiersMap=" + identifiersMap +
-                ", platform='" + platform + '\'' +
-                ", propertiesMap=" + propertiesMap +
-                ", time=" + time +
-                '}';
     }
-
 }

@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.share.multi;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +11,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -20,18 +24,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbDivideItemDecorator;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
@@ -39,6 +49,7 @@ import com.tosslab.jandi.app.ui.share.multi.adapter.ShareAdapterDataView;
 import com.tosslab.jandi.app.ui.share.multi.adapter.ShareFragmentPageAdapter;
 import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
+import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -63,7 +74,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
 
-public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share {
+public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share, FileShareInteractor.Wrapper {
 
     private static final int REQ_SELECT_TEAM = 1001;
     private static final String EXTRA_URIS = "uris";
@@ -93,12 +104,21 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     TextView tvRoomName;
     @Bind(R.id.et_multi_share_comment)
     EditText etComment;
+    @Bind(R.id.lv_multi_share_thumbs)
+    RecyclerView lvFileThumbs;
+    @Bind(R.id.vg_multi_share_content)
+    View vgComment;
 
     @Inject
     ShareAdapterDataView shareAdapterDataView;
+    @Inject
+    FileShareInteractor fileShareInteractor;
 
-    private List<String> uris;
+    @InjectExtra
+    ArrayList<String> uris;
     private ProgressWheel progressWheel;
+    private FileUploadThumbAdapter fileUploadThumbAdapter;
+    private InputMethodManager inputMethodManager;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -124,17 +144,17 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         EventBus.getDefault().register(this);
+        Dart.inject(this, getArguments());
 
-        ShareFragmentPageAdapter adapter = new ShareFragmentPageAdapter(getFragmentManager());
+        ShareFragmentPageAdapter adapter = new ShareFragmentPageAdapter(getFragmentManager(), this);
 
         DaggerMultiShareComponent.builder()
                 .multiShareModule(new MultiShareModule(this, adapter))
                 .build()
                 .inject(this);
 
+        inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         vpShare.setAdapter(adapter);
-
-        uris = initUris(getArguments());
 
         multiSharePresenter.initShareTarget();
         multiSharePresenter.initShareData(uris);
@@ -158,18 +178,16 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         super.onDestroy();
     }
 
-    private List<String> initUris(Bundle arguments) {
-        List<String> uris = new ArrayList<>();
-        if (arguments != null && arguments.containsKey(EXTRA_URIS)) {
-            uris.addAll(arguments.getStringArrayList(EXTRA_URIS));
-        }
-        return uris;
-    }
-
     @OnPageChange(R.id.vp_multi_share)
     void onFilePageSelected(int position) {
         multiSharePresenter.onFilePageChanged(position, etComment.getText().toString());
         setActionbarTitle(position, vpShare.getAdapter().getCount());
+
+        int itemCount = fileUploadThumbAdapter.getItemCount();
+        for (int idx = 0; idx < itemCount; idx++) {
+            fileUploadThumbAdapter.getItem(idx).setSelected(idx == position);
+        }
+        fileUploadThumbAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -335,6 +353,10 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         multiSharePresenter.onSelectRoom(roomId);
     }
 
+    public void onEvent(FileUploadPreviewImageClickEvent event) {
+        inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+    }
+
     public void onEvent(SelectedMemberInfoForMentionEvent event) {
         if (mentionControlViewModel != null) {
             SearchedItemVO searchedItemVO = new SearchedItemVO();
@@ -418,6 +440,27 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         tvTitle.setText(filenameSp);
     }
 
+    @Override
+    public void setFileThumbInfos(List<FileUploadThumbAdapter.FileThumbInfo> fileThumbInfos) {
+        if (fileThumbInfos.size() > 1) {
+            lvFileThumbs.setVisibility(View.VISIBLE);
+
+            fileUploadThumbAdapter = new FileUploadThumbAdapter();
+            fileUploadThumbAdapter.setFileThumbInfo(fileThumbInfos);
+            fileUploadThumbAdapter.setItemClickListener((view, adapter, position) -> {
+                vpShare.setCurrentItem(position);
+            });
+
+            lvFileThumbs.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            lvFileThumbs.addItemDecoration(new FileUploadThumbDivideItemDecorator());
+            lvFileThumbs.setAdapter(fileUploadThumbAdapter);
+        } else {
+            lvFileThumbs.setVisibility(View.GONE);
+        }
+
+
+    }
+
     private String getFileExtension(String fileName) {
         String extension = "";
         int i = fileName.lastIndexOf('.');
@@ -427,4 +470,31 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         return extension;
     }
 
+    @Override
+    public void toggleContent() {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (vgComment.getVisibility() != View.VISIBLE) {
+            // 보이도록 하기, 배경 흰색
+            vgComment.setVisibility(View.VISIBLE);
+            if (fileUploadThumbAdapter != null && fileUploadThumbAdapter.getItemCount() > 1) {
+                lvFileThumbs.setVisibility(View.VISIBLE);
+            }
+            vpShare.setBackgroundColor(Color.WHITE);
+            if (actionBar != null) {
+                actionBar.show();
+            }
+            fileShareInteractor.onFocusContent(false);
+        } else {
+            // 안보이게 하기, 배경 검정
+            vgComment.setVisibility(View.GONE);
+            lvFileThumbs.setVisibility(View.GONE);
+            vpShare.setBackgroundColor(Color.BLACK);
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+            fileShareInteractor.onFocusContent(true);
+
+            inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+        }
+    }
 }

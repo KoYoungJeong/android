@@ -68,6 +68,7 @@ import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -100,16 +101,12 @@ public class MainTopicListFragment extends Fragment
 
     @Inject
     MainTopicListPresenter mainTopicListPresenter;
-
     private LinearLayoutManager layoutManager;
     private ExpandableTopicAdapter expandableTopicAdapter;
     private RecyclerViewExpandableItemManager expandableItemManager;
-
     private AlertDialog createFolderDialog;
     private RecyclerView.Adapter wrappedAdapter;
-
     private UpdatedTopicAdapter updatedTopicAdapter;
-
     private boolean isFirstLoadFragment = true;
 
     public static MainTopicListFragment create(long selectedEntity) {
@@ -140,6 +137,7 @@ public class MainTopicListFragment extends Fragment
 
         initViews(savedInstanceState);
         SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
+
     }
 
     void initViews(Bundle savedInstanceState) {
@@ -153,8 +151,9 @@ public class MainTopicListFragment extends Fragment
         expandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
 
         lvMainTopic.setLayoutManager(layoutManager);
+        initFolderTopicAdapter();
         initUpdatedTopicAdapter();
-        mainTopicListPresenter.onLoadList();
+        mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
         mainTopicListPresenter.onInitViewList();
         if (selectedEntity > 0) {
@@ -167,6 +166,30 @@ public class MainTopicListFragment extends Fragment
         }
 
         mainTopicListPresenter.checkFloatingActionMenu();
+
+        setListViewScroll();
+    }
+
+    private void setListViewScroll() {
+        MainTabActivity activity = (MainTabActivity) getActivity();
+
+        lvMainTopic.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0) {
+                    activity.setTabLayoutVisible(false);
+                } else {
+                    activity.setTabLayoutVisible(true);
+                }
+            }
+        });
+    }
+
+    private void initFolderTopicAdapter() {
+        expandableTopicAdapter = new ExpandableTopicAdapter(new TopicFolderListDataProvider(new ArrayList<>()));
+        wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
+        expandableItemManager.attachRecyclerView(lvMainTopic);
     }
 
     @Override
@@ -217,7 +240,7 @@ public class MainTopicListFragment extends Fragment
                 });
         if (showTopicMenus) {
             floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
-                    getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                    getResources().getString(R.string.topic_menu_Browse_other_public_topics), () -> {
                         if (floatingActionMenu.isOpened()) {
                             floatingActionMenu.close();
                         }
@@ -301,16 +324,16 @@ public class MainTopicListFragment extends Fragment
     @Override
     public void changeTopicSort(boolean currentFolder, boolean changeToFolder) {
         if (currentFolder && !changeToFolder) {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
             lvMainTopic.setAdapter(updatedTopicAdapter);
             tvSortTitle.setText(R.string.jandi_sort_updated);
             ivTopicOrder.setImageResource(R.drawable.topic_list_recent);
+//            mainTopicListPresenter.onRefreshUpdatedTopicList();
         } else if (!currentFolder && changeToFolder) {
-            mainTopicListPresenter.refreshList();
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             tvSortTitle.setText(R.string.jandi_sort_folder);
             ivTopicOrder.setImageResource(R.drawable.topic_list_folder);
+//            mainTopicListPresenter.refreshList();
         }
     }
 
@@ -345,12 +368,9 @@ public class MainTopicListFragment extends Fragment
     @Override
     public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
 
-        expandableTopicAdapter = new ExpandableTopicAdapter(topicFolderListDataProvider);
+        expandableTopicAdapter.setProvider(topicFolderListDataProvider);
+        expandableTopicAdapter.notifyDataSetChanged();
 
-        wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
-
-        // ListView를 Set함
-        expandableItemManager.attachRecyclerView(lvMainTopic);
         // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
         expandableItemManager.expandGroup(expandableTopicAdapter.getGroupCount() - 1);
 
@@ -392,6 +412,16 @@ public class MainTopicListFragment extends Fragment
                     EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
                 });
         setFolderExpansion();
+    }
+
+    @Override
+    public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
+        expandableTopicAdapter.setProvider(topicFolderListDataProvider);
+        notifyDatasetChangedForFolder();
+        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
+                .subscribe(unreadCount -> {
+                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
+                });
     }
 
     public void showGroupSettingPopupView(long folderId, String folderName, int seq) {
@@ -477,16 +507,6 @@ public class MainTopicListFragment extends Fragment
     public void showEntityMenuDialog(long entityId, long folderId) {
         EntityMenuDialogFragment.create(entityId, entityId, folderId)
                 .show(getFragmentManager(), "dialog");
-    }
-
-    @Override
-    public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
-        expandableTopicAdapter.setProvider(topicFolderListDataProvider);
-        notifyDatasetChangedForFolder();
-        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
     }
 
     public void setFolderExpansion() {

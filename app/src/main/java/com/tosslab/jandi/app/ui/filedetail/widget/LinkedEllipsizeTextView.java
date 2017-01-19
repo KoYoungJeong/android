@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.filedetail.widget;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -10,14 +11,14 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
+
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by tonyjs on 16. 1. 27..
  */
-public class LinkedEllipsizeTextView extends TextView {
+public class LinkedEllipsizeTextView extends AppCompatTextView {
     public static final String TAG = LinkedEllipsizeTextView.class.getSimpleName();
 
     private SpannableString moreSpannable;
@@ -101,7 +102,7 @@ public class LinkedEllipsizeTextView extends TextView {
         // ... 더보기 라는 글자를 추가하면 넘친다.
         if (breakPoint < length) {
             text = text.subSequence(0,
-                    lineEnd - moreSpannable.length() -1 - 1/* 여백을 위해 한렝스 더 줄인다 */);
+                    Math.max(0, lineEnd - moreSpannable.length() - 1 - 1)/* 여백을 위해 한렝스 더 줄인다 */);
             SpannableStringBuilder sb = new SpannableStringBuilder(text);
             sb.append(moreSpannable);
             setText(sb);

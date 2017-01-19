@@ -23,8 +23,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class MessageViewHolder extends BaseMessageViewHolder implements HighlightView {
 
     protected Context context;
@@ -157,23 +155,13 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
     }
 
     private void setBadge(long roomId, final ResMessages.Link link) {
-        tvMessageBadge.setTag(link.id);
-        UnreadCountUtil.getUnreadCount(roomId,
-                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    long linkId = getLinkIdFromTag(tvMessageBadge);
-                    if (linkId <= 0 || linkId != link.id) {
-                        return;
-                    }
 
-                    if (unreadCount > 0) {
-                        tvMessageBadge.setText(String.valueOf(unreadCount));
-                        tvMessageBadge.setVisibility(View.VISIBLE);
-                    } else {
-                        tvMessageBadge.setVisibility(View.GONE);
-                    }
-                });
+        if (link.unreadCnt > 0) {
+            tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
+        }
     }
 
     private long getLinkIdFromTag(View view) {

@@ -130,7 +130,6 @@ public class SignInPresenterImpl implements SignInPresenter {
                     ResAccessToken accessToken = TokenUtil.getTokenObject();
                     model.subscribePush(accessToken.getDeviceId());
                     JandiPreference.setFirstLogin(JandiApplication.getContext());
-                    JandiPreference.setRealmInitiateStamp();
 
                     SprinklrSignIn.sendLog(false, false);
                     AnalyticsUtil.flushSprinkler();

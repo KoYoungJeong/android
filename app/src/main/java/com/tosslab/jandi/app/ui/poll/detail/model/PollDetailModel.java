@@ -186,7 +186,6 @@ public class PollDetailModel {
 
     public void updateJoinedTopic(long id) {
         TopicRepository.getInstance().updateTopicJoin(id, true);
-        TeamInfoLoader.getInstance().refresh();
     }
 
     public Observable<ResStarredMessage> getCommentStarredObservable(long messageId) {

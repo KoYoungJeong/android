@@ -9,11 +9,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.queue.PushHandler;
@@ -82,23 +78,6 @@ public class JandiPushIntentService extends IntentService {
 
         if (basePushInfo instanceof MarkerPushInfo) {
 
-            MarkerPushInfo markerPushInfo = (MarkerPushInfo) basePushInfo;
-            long roomId = markerPushInfo.getRoomId();
-            long linkId = markerPushInfo.getLinkId();
-
-            long myId = -1;
-            if (ChatRepository.getInstance().isChat(roomId)) {
-                myId = InitialInfoRepository.getInstance().findMyIdFromChats(roomId);
-                ChatRepository.getInstance().updateReadLinkId(roomId, linkId);
-            } else if (TopicRepository.getInstance().isTopic(roomId)) {
-                myId = InitialInfoRepository.getInstance().findMyIdFromTopics(roomId);
-                TopicRepository.getInstance().updateReadLinkId(roomId, linkId);
-            }
-
-            if (myId > 0) {
-                RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, linkId);
-            }
-
             if (basePushInfo.getBadgeCount() == 0) {
                 PushHandler.getInstance().removeNotificationAll();
             }
@@ -163,7 +142,7 @@ public class JandiPushIntentService extends IntentService {
         }
 
         try {
-            return JacksonMapper.getInstance().getObjectMapper().readValue(content, BasePushInfo.class);
+            return JsonMapper.getInstance().getObjectMapper().readValue(content, BasePushInfo.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,7 +151,7 @@ public class JandiPushIntentService extends IntentService {
     }
 
     private boolean isPushForMyAccountId(BasePushInfo basePushInfo) {
-        return TextUtils.equals(basePushInfo.getAccountId(), AccountUtil.getAccountUUID(JandiApplication.getContext()));
+        return TextUtils.equals(basePushInfo.getAccountUuid(), AccountUtil.getAccountUUID(JandiApplication.getContext()));
     }
 
 

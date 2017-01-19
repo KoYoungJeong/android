@@ -1,76 +1,78 @@
 package com.tosslab.jandi.app.local.orm.repositories.info;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.realm.RealmRepository;
+import android.support.v4.util.LongSparseArray;
+
+import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
 import com.tosslab.jandi.app.network.models.start.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 
-/**
- * Created by tee on 2016. 8. 17..
- */
+public class InitialPollInfoRepository extends LockTemplate {
 
-public class InitialPollInfoRepository extends RealmRepository {
+    private static LongSparseArray<InitialPollInfoRepository> instance;
 
-    private static InitialPollInfoRepository instance;
+    private Poll poll;
 
-    synchronized public static InitialPollInfoRepository getInstance() {
-        if (instance == null) {
-            instance = new InitialPollInfoRepository();
-        }
-        return instance;
+    private InitialPollInfoRepository() {
+        super();
     }
 
-    public int getVotableCount() {
-        return execute(realm -> {
+    synchronized public static InitialPollInfoRepository getInstance(long teamId) {
+        if (instance == null) {
+            instance = new LongSparseArray<>();
+        }
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
-            if (poll != null) {
-                return poll.getVotableCount();
+        if (instance.indexOfKey(teamId) >= 0) {
+            return instance.get(teamId);
+        } else {
+            InitialPollInfoRepository value = new InitialPollInfoRepository();
+            instance.put(teamId, value);
+            return value;
+
+        }
+    }
+
+    public static InitialPollInfoRepository getInstance() {
+        return getInstance(TeamInfoLoader.getInstance().getTeamId());
+    }
+
+    private Poll getPoll() {
+        return execute(() -> {
+            if (poll == null) {
+                poll = new Poll();
             }
-
-            return 0;
+            return poll;
         });
     }
 
+    public int getVotableCount() {
+        return execute(() -> getPoll().getVotableCount());
+    }
+
     public boolean increaseVotableCount() {
-        return execute(realm -> {
+        return execute(() -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
-            if (poll != null) {
-                realm.executeTransaction(realm1 -> poll.setVotableCount(poll.getVotableCount() + 1));
-                return true;
-            }
+            Poll poll = getPoll();
+            poll.setVotableCount(poll.getVotableCount() + 1);
 
-            return false;
+            return true;
         });
     }
 
     public boolean decreaseVotableCount() {
-        return execute(realm -> {
+        return execute(() -> {
 
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
-            if (poll != null && poll.getVotableCount() > 0) {
-                realm.executeTransaction(realm1 -> poll.setVotableCount(poll.getVotableCount() - 1));
-                return true;
-            }
+            Poll poll = getPoll();
+            poll.setVotableCount(poll.getVotableCount() - 1);
 
-            return false;
+            return true;
         });
     }
 
     public boolean updateVotableCount(int votableCount) {
-        return execute(realm -> {
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        return execute(() -> {
+            getPoll().setVotableCount(votableCount);
 
-            Poll poll = realm.where(Poll.class).equalTo("id", selectedTeamId).findFirst();
-            if (poll != null) {
-                realm.executeTransaction(realm1 -> poll.setVotableCount(votableCount));
-                return true;
-            }
-
-            return false;
+            return true;
         });
     }
 }

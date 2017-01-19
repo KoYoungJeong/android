@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.ui.search.filter.room.adapter.model.RoomFilterDataModel;
 import com.tosslab.jandi.app.ui.search.filter.room.adapter.view.RoomFilterDataView;
@@ -61,7 +62,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
             case VIEW_TYPE_TOPIC:
                 return TopicRoomViewHolder.newInstance(parent);
             case VIEW_TYPE_USER:
-                MemberViewHolder memberViewHolder = MemberViewHolder.createForUserWithTeamId(parent, teamId);
+                MemberViewHolder memberViewHolder = MemberViewHolder.createForChatChooseItem(parent);
                 memberViewHolder.setIsTeamMemberList(true);
                 return memberViewHolder;
         }
@@ -88,17 +89,17 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
                         onTopicRoomClickListener.onTopicRoomClick(room.getId()));
             }
 
-        } else if (getItem(position) instanceof User) {
-            User user = getItem(position);
+        } else if (getItem(position) instanceof ChatChooseItem) {
+            ChatChooseItem user = getItem(position);
 
-            boolean isSelectedMember = user.getId() == selectedUserId;
+            boolean isSelectedMember = user.getEntityId() == selectedUserId;
             itemView.setBackgroundColor(isSelectedMember
                     ? resources.getColor(R.color.jandi_selected_member)
                     : resources.getColor(R.color.white));
 
             if (onMemberClickListener != null) {
                 itemView.setOnClickListener(v ->
-                        onMemberClickListener.onMemberClick(user.getId()));
+                        onMemberClickListener.onMemberClick(user.getEntityId()));
             }
         }
 
@@ -172,7 +173,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
     }
 
     @Override
-    public List<Row<?>> getUserRows(List<User> users) {
+    public List<Row<?>> getUserRows(List<User> users, long myId) {
         List<Row<?>> rows = new ArrayList<>();
 
         if (users == null || users.isEmpty()) {
@@ -180,7 +181,7 @@ public class RoomFilterAdapter extends MultiItemRecyclerAdapter
         }
 
         Observable.from(users)
-                .subscribe(user -> rows.add(Row.create(user, VIEW_TYPE_USER)));
+                .subscribe(user -> rows.add(Row.create(ChatChooseItem.create(user).myId(myId == user.getId()), VIEW_TYPE_USER)));
 
         return rows;
     }

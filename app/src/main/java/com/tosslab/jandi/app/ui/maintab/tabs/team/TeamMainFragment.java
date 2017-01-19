@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.team;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
+import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
@@ -38,7 +40,7 @@ import butterknife.ButterKnife;
 import rx.Completable;
 import rx.schedulers.Schedulers;
 
-public class TeamMainFragment extends Fragment implements TabFocusListener {
+public class TeamMainFragment extends Fragment implements TabFocusListener, FloatingActionBarDetector {
 
     @Bind(R.id.tabs_team_main)
     TabLayout tabLayout;
@@ -116,16 +118,25 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
         super.onPrepareOptionsMenu(menu);
         menu.clear();
         getActivity().getMenuInflater().inflate(R.menu.team_main, menu);
-        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
-            menu.removeItem(R.id.menu_team_add);
+        Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
+        if (myLevel != Level.Owner && myLevel != Level.Admin) {
+            menu.removeItem(R.id.menu_team_config);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_team_add:
-                InviteDialogExecutor.getInstance().executeInvite(getContext());
+            case R.id.menu_team_config:
+                long teamId = TeamInfoLoader.getInstance().getTeamId();
+                String url = "https://www.jandi.io/main/#/setting/" + teamId + "/admin/usage";
+                startActivity(Henson.with(getContext())
+                        .gotoInternalWebActivity()
+                        .url(url)
+                        .isAdminPage(true)
+                        .hasMenu(false)
+                        .build()
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.menu_team_info:
                 TeamInfoActivity.start(getActivity());
@@ -201,6 +212,16 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.Whoscall_Close);
             }).create().show();
 
+        }
+    }
+
+    @Override
+    public void onDetectFloatAction(View btnFab) {
+        if (btnFab != null) {
+            btnFab.setOnClickListener(v -> {
+                InviteDialogExecutor.getInstance().executeInvite(getContext());
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
+            });
         }
     }
 }

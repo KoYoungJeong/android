@@ -165,6 +165,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         Dart.inject(this);
         ButterKnife.bind(this);
 
+        if (!TeamInfoLoader.getInstance().isUser(memberId)
+                && !TeamInfoLoader.getInstance().isJandiBot(memberId)) {
+            finish();
+            return;
+        }
+
         DaggerMemberProfileComponent.create().inject(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -470,7 +476,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 entityClientManager.disableFavorite(memberId);
             }
             HumanRepository.getInstance().updateStarred(memberId, star);
-            TeamInfoLoader.getInstance().refresh();
             return true;
         }).subscribeOn(Schedulers.io()).subscribe(() -> {
         }, Throwable::printStackTrace);

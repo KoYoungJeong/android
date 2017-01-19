@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.model.MemberFilterableDataModel;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.vieholder.AllMemberViewHolder;
@@ -19,9 +20,6 @@ import java.util.List;
 
 import rx.Observable;
 
-/**
- * Created by tonyjs on 16. 3. 15..
- */
 public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
         implements MemberFilterableDataModel, MemberFilterableDataView {
 
@@ -54,7 +52,7 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
                 return AllMemberViewHolder.newInstance(parent);
             default:
             case VIEW_TYPE_MEMBER:
-                MemberViewHolder viewHolder = MemberViewHolder.createForUser(parent);
+                MemberViewHolder viewHolder = MemberViewHolder.createForChatChooseItem(parent);
                 viewHolder.setIsTeamMemberList(true);
                 return viewHolder;
         }
@@ -76,13 +74,13 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
         }
 
         if (itemViewType == VIEW_TYPE_MEMBER) {
-            final User user = getItem(position);
+            final ChatChooseItem user = getItem(position);
             if (onMemberClickListener != null) {
                 itemView.setOnClickListener(
                         v -> onMemberClickListener.onMemberClick(user));
             }
 
-            boolean isSelectedMember = user.getId() == selectedMemberId;
+            boolean isSelectedMember = user.getEntityId() == selectedMemberId;
             Resources resources = itemView.getResources();
             itemView.setBackgroundColor(isSelectedMember
                     ? resources.getColor(R.color.jandi_selected_member)
@@ -111,7 +109,7 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
     }
 
     @Override
-    public synchronized void addAll(List<User> members) {
+    public synchronized void addAll(List<User> members, long myId) {
 
         List<Row<?>> rows = new ArrayList<>();
 
@@ -126,7 +124,8 @@ public class SearchableMemberFilterAdapter extends MultiItemRecyclerAdapter
 
         Observable.from(members)
                 .map(member ->
-                        Row.create(member, SearchableMemberFilterAdapter.VIEW_TYPE_MEMBER))
+                        Row.create(ChatChooseItem.create(member).myId(member.getId() == myId),
+                                SearchableMemberFilterAdapter.VIEW_TYPE_MEMBER))
                 .subscribe(rows::add, Throwable::printStackTrace, () -> addRows(rows));
     }
 

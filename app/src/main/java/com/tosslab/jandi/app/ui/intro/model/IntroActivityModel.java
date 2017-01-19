@@ -14,11 +14,10 @@ import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrSignIn;
@@ -69,10 +68,11 @@ public class IntroActivityModel {
         }
         try {
             long selectedTeamId = selectedTeamInfo.getTeamId();
-            InitialInfo initialInfo = startApi.get().getInitializeInfo(selectedTeamId);
-            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
-            TeamInfoLoader.getInstance().refresh(initialInfo);
-            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
+            String initialInfo = startApi.get().getRawInitializeInfo(selectedTeamId);
+            InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(selectedTeamId, initialInfo));
+            if (!refreshRankIfNeeds()) {
+                TeamInfoLoader.getInstance().refresh();
+            }
             return true;
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -130,6 +130,7 @@ public class IntroActivityModel {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeam);
                 RankRepository.getInstance().addRanks(ranks.getRanks());
+                TeamInfoLoader.getInstance().refresh();
                 return true;
             } catch (RetrofitException e) {
                 e.printStackTrace();

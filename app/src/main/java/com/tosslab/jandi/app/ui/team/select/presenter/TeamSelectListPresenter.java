@@ -21,6 +21,8 @@ public interface TeamSelectListPresenter {
     void setUserEmailInfo();
 
     interface View {
+        void setEditButton();
+
         void justRefresh();
 
         void showEmptyList();
@@ -40,5 +42,9 @@ public interface TeamSelectListPresenter {
         void showErrorToast(String message);
 
         void showLoginEmail(String email);
+
+        void showToastNoDataError();
+
+        void exit();
     }
 }

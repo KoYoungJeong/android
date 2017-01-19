@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
-            android:text="@string/jandi_browse_other_topics"
+            android:text="@string/topic_menu_Browse_other_public_topics"
             android:textColor="#ffffff"
             android:textSize="15sp" />
     </LinearLayout>

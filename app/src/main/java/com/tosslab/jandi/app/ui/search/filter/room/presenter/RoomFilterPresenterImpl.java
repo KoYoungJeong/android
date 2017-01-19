@@ -28,10 +28,6 @@ import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by tonyjs on 2016. 7. 29..
- */
-
 public class RoomFilterPresenterImpl implements RoomFilterPresenter {
 
     private final RoomFilterModel roomFilterModel;
@@ -67,7 +63,10 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
         searchTopicQueue = PublishSubject.create();
         searchTopicQueueSubscription =
                 searchTopicQueue
+                        .onBackpressureBuffer()
                         .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .observeOn(Schedulers.computation())
+                        .distinctUntilChanged()
                         .map(query -> {
                             List<MultiItemRecyclerAdapter.Row<?>> rows = new ArrayList<>();
                             if (TextUtils.isEmpty(query)) {
@@ -83,7 +82,6 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(pair -> {
-                            String query = pair.first;
                             List<MultiItemRecyclerAdapter.Row<?>> rows = pair.second;
 
                             roomFilterDataModel.clearAllRows();
@@ -97,14 +95,17 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
         searchUserSearchQueue = PublishSubject.create();
         searchUserQueueSubscription =
                 searchUserSearchQueue
+                        .onBackpressureBuffer()
                         .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+                        .observeOn(Schedulers.computation())
+                        .distinctUntilChanged()
                         .map(query -> {
                             List<User> initializedUsers = roomFilterDataModel.getUsers();
                             List<User> searchedUsers =
                                     roomFilterModel.getSearchedDirectMessages(query, initializedUsers);
 
                             return Pair.create(query,
-                                    roomFilterDataModel.getUserRows(searchedUsers));
+                                    roomFilterDataModel.getUserRows(searchedUsers, roomFilterModel.getTeamInfoLoader().getMyId()));
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(pair -> {
@@ -272,7 +273,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                         return StringCompareUtil.compare(lhsName, rhsName);
                     })
                     .doOnNext(roomFilterDataModel::setUsers)
-                    .map(roomFilterDataModel::getUserRows)
+                    .map((users) -> roomFilterDataModel.getUserRows(users, roomFilterModel.getTeamInfoLoader().getMyId()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(rows -> {
@@ -301,7 +302,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
                             StringCompareUtil.compare(formattedEntity.getName(), formattedEntity2.getName()))
                     .doOnNext(users -> users.add(roomFilterModel.getTeamInfoLoader().getJandiBot()))
                     .doOnNext(roomFilterDataModel::setUsers)
-                    .map(roomFilterDataModel::getUserRows)
+                    .map((users1) -> roomFilterDataModel.getUserRows(users1, roomFilterModel.getTeamInfoLoader().getMyId()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(rows -> {
@@ -323,7 +324,7 @@ public class RoomFilterPresenterImpl implements RoomFilterPresenter {
     private void initializeUsersFromCache(List<User> initializedDirectMessages,
                                           @Nullable Action0 onCompeteAction) {
         Observable.just(initializedDirectMessages)
-                .map(roomFilterDataModel::getUserRows)
+                .map((users) -> roomFilterDataModel.getUserRows(users, roomFilterModel.getTeamInfoLoader().getMyId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(rows -> {

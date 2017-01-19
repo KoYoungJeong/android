@@ -32,7 +32,10 @@ public class SettingAccountProfilePresenterImpl implements SettingAccountProfile
 
     @Override
     public void onEmailChoose() {
-        view.showEmailChooseDialog(model.getAccountEmails());
+        String[] accountEmails = model.getAccountEmails();
+        if (accountEmails.length > 0) {
+            view.showEmailChooseDialog(accountEmails);
+        }
     }
 
     @Override

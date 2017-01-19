@@ -6,18 +6,13 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Bill Minwook Heo on 15. 4. 14..
- */
 public class FileExtensionsUtil {
 
-    public static int getFileTypeImageResource(String fileName) {
+    public static int getFileThumbWithBG(String fileName) {
         Extensions extensions = getExtensions(fileName);
-
-        return getTypeResourceId(extensions);
+        return getFileThumbByExtWithBG(extensions);
     }
 
     public static int getFileTypeImageResourceForFileExplorer(String fileName) {
@@ -25,7 +20,7 @@ public class FileExtensionsUtil {
         return getTypeResourceIdForFileExplorer(extensions);
     }
 
-    public static int getTypeResourceId(Extensions extensions) {
+    public static int getFileThumbByExt(Extensions extensions) {
         switch (extensions) {
             case IMAGE:
                 return R.drawable.file_detail_img;
@@ -53,7 +48,7 @@ public class FileExtensionsUtil {
         }
     }
 
-    public static int getTypeResourceIdForFileExplorer(Extensions extensions) {
+    private static int getTypeResourceIdForFileExplorer(Extensions extensions) {
         switch (extensions) {
             case IMAGE:
                 return R.drawable.file_icon_img_135;
@@ -78,6 +73,34 @@ public class FileExtensionsUtil {
             default:
             case ETC:
                 return R.drawable.file_icon_etc_135;
+        }
+    }
+
+    public static int getFileThumbByExtWithBG(Extensions extensions) {
+        switch (extensions) {
+            case IMAGE:
+                return R.drawable.file_icon_img_192;
+            case VIDEO:
+                return R.drawable.file_icon_video_192;
+            case AUDIO:
+                return R.drawable.file_icon_audio_192;
+            case PDF:
+                return R.drawable.file_icon_pdf_192;
+            case TXT:
+                return R.drawable.file_icon_text_192;
+            case HWP:
+                return R.drawable.file_icon_hwp_192;
+            case EXEL:
+                return R.drawable.file_icon_excel_192;
+            case DOC:
+                return R.drawable.file_icon_text_192;
+            case PPT:
+                return R.drawable.file_icon_ppt_192;
+            case ZIP:
+                return R.drawable.file_icon_zip_192;
+            default:
+            case ETC:
+                return R.drawable.file_icon_etc_192;
         }
     }
 
@@ -136,7 +159,7 @@ public class FileExtensionsUtil {
     public static int getFileTypeBigImageResource(String fileName) {
         Extensions extensions = getExtensions(fileName);
 
-        return getTypeResourceId(extensions);
+        return getFileThumbByExt(extensions);
     }
 
     // jpg, jpeg, gif, png, webp 만 서포트
@@ -150,45 +173,30 @@ public class FileExtensionsUtil {
                         || ext.contains("webp"));
     }
 
-    public static int getFileDetailBackground(Extensions extensions) {
-        int color = 0xffa7a7a7;
+    public static int getFileDetailBackground(FileExtensionsUtil.Extensions extensions) {
         switch (extensions) {
-
-            case IMAGE:
-                color = 0xff288064;
-                break;
-            case VIDEO:
-                color = 0xff8267c1;
-                break;
-            case AUDIO:
-                color = 0xffff992c;
-                break;
-            case PDF:
-                color = 0xffef5050;
-                break;
             case TXT:
-                color = 0xff426bb7;
-                break;
-            case HWP:
-                color = 0xff07adad;
-                break;
+                return 0xff426bb7;
+            case AUDIO:
+                return 0xffff992c;
+            case VIDEO:
+                return 0xff8267c1;
             case EXEL:
-                color = 0xff109d57;
-                break;
-            case DOC:
-                color = 0xff426bb7;
-                break;
+                return 0xff109d57;
             case PPT:
-                color = 0xffed6e3c;
-                break;
+                return 0xffed6e3c;
+            case PDF:
+                return 0xffef5050;
+            case IMAGE:
+                return 0xffe88064;
+            case HWP:
+                return 0xff07adad;
             case ZIP:
-                color = 0xff828282;
-                break;
+                return 0xff828282;
             default:
             case ETC:
-                color = 0xffa7a7a7;
+                return 0xffa7a7a7;
         }
-        return color;
     }
 
     public enum Extensions {
@@ -210,9 +218,6 @@ public class FileExtensionsUtil {
             extensionList = Arrays.asList(extensions);
         }
 
-        public List<String> getExtensionList() {
-            return Collections.unmodifiableList(extensionList);
-        }
     }
 
 }

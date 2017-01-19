@@ -1,9 +1,15 @@
 package com.tosslab.jandi.app.utils.file;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 
 import java.io.File;
 
@@ -91,5 +97,24 @@ public class FileUtil {
         } else {
             return "";
         }
+    }
+
+    public static Intent createFileIntent(File file, String mimeType) {
+        Context context = JandiApplication.getContext();
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        Uri data = FileProvider.getUriForFile(context, context.getString(R.string.jandi_file_authority), file);
+        intent.setDataAndType(data, mimeType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        if (context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() <= 0) {
+            Uri uri = FileProvider.getUriForFile(context,
+                    context.getString(R.string.jandi_file_authority), file);
+            intent.setDataAndType(uri, mimeType);
+            intent.setFlags(0);
+        }
+
+        return intent;
+
     }
 }

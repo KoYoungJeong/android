@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterDataModel;
 import com.tosslab.jandi.app.ui.invites.emails.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.emails.vo.InviteEmailVO;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationTeam;
 
 import java.util.List;
@@ -17,6 +19,8 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.tosslab.jandi.app.ui.invites.emails.InviteEmailActivity.EXTRA_INVITE_ASSOCIATE_MODE;
 
 /**
  * Created by tee on 2016. 12. 12..
@@ -41,7 +45,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     }
 
     @Override
-    public void addEmail(String email) {
+    public void addEmail(String email, int mode) {
         if (inviteEmailmodel.isValidEmailFormat(email) && !isAlreadyInsertedEmail(email)) {
             int availableCount = 0;
             for (InviteEmailVO inviteEmailVO : adapterDataModel.getItems()) {
@@ -55,7 +59,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
             }
 
             if (availableCount < 10) {
-                InviteEmailVO.Status status = getInviteEmailStatus(email);
+                InviteEmailVO.Status status = getInviteEmailStatus(email, mode);
                 if (status != null) {
                     InviteEmailVO item = new InviteEmailVO();
                     item.setEmail(email);
@@ -99,18 +103,29 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     }
 
 
-    private InviteEmailVO.Status getInviteEmailStatus(String email) {
+    private InviteEmailVO.Status getInviteEmailStatus(String email,int mode) {
+        AnalyticsValue.Screen screen;
+        if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
+            screen = AnalyticsValue.Screen.InviteAssociate;
+        } else {
+            screen = AnalyticsValue.Screen.InviteMember;
+        }
+
         if (!TextUtils.isEmpty(email)) {
             if (!inviteEmailmodel.isInvitedEmail(email)) {
                 if (inviteEmailmodel.isDisableMember(email)) {
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteEmailAddress, AnalyticsValue.Label.blockedEmail);
                     return InviteEmailVO.Status.BLOCKED;
                 } else {
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteEmailAddress, AnalyticsValue.Label.ValidEmail);
                     return InviteEmailVO.Status.AVAILABLE;
                 }
             } else {
                 if (inviteEmailmodel.isInactivedUser(email)) {
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteEmailAddress, AnalyticsValue.Label.InvitedEmail);
                     return InviteEmailVO.Status.DUMMY;
                 } else {
+                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.DeleteEmailAddress, AnalyticsValue.Label.JoinedEmail);
                     return InviteEmailVO.Status.JOINED;
                 }
             }

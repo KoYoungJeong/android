@@ -24,9 +24,6 @@ import java.util.List;
 import dagger.Lazy;
 import rx.Observable;
 
-/**
- * Created by tonyjs on 16. 3. 17..
- */
 public class MentionListModel {
 
     public static final int MENTION_LIST_LIMIT = 20;
@@ -107,18 +104,6 @@ public class MentionListModel {
         return mentions;
     }
 
-//    private String getRoomName(long roomId) {
-//        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-//        if (teamInfoLoader.isChat(roomId)) {
-//            String companionName =
-//                    teamInfoLoader.getMemberName(teamInfoLoader.getChat(roomId).getCompanionId());
-//            return companionName;
-//        } else if (teamInfoLoader.isTopic(roomId)) {
-//            return teamInfoLoader.getTopic(roomId).getName();
-//        }
-//        return "";
-//    }
-
     public long getLastReadMentionId() {
         Mention mention = TeamInfoLoader.getInstance().getMention();
         if (mention == null) {
@@ -135,7 +120,7 @@ public class MentionListModel {
     }
 
     public void increaseMentionUnreadCount() {
-        InitialMentionInfoRepository.getInstance().increaseUnreadCount();
+        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).increaseUnreadCount();
         TeamInfoLoader.getInstance().refreshMention();
     }
 
@@ -145,7 +130,7 @@ public class MentionListModel {
     }
 
     public void decreaseMentionCount() {
-        InitialMentionInfoRepository.getInstance().decreaseUnreadCount();
+        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).decreaseUnreadCount();
         TeamInfoLoader.getInstance().refreshMention();
     }
 }

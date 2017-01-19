@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.network.json.JacksonMapper;
+import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class JandiFileDatabaseManager {
         database.delete(Table.files.name(), where, whereArgs);
 
 
-        ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
+        ObjectMapper objectMapper = JsonMapper.getInstance().getObjectMapper();
         String messagesString = null;
         try {
             messagesString = objectMapper.writeValueAsString(fileMessages);
@@ -101,7 +101,7 @@ public class JandiFileDatabaseManager {
 
         closeCursor(cursor);
 
-        ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
+        ObjectMapper objectMapper = JsonMapper.getInstance().getObjectMapper();
         try {
             return objectMapper.readValue(messagesString, ResSearchFile.class);
         } catch (IOException e) {

@@ -27,13 +27,12 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -123,23 +122,22 @@ public class NavigationModel {
         return Observable.fromCallable(() -> {
 
             if (!InitialInfoRepository.getInstance().hasInitialInfo(teamId)) {
-                InitialInfo initializeInfo;
+                String initializeInfo;
                 try {
-                    initializeInfo = startApi.get().getInitializeInfo(teamId);
+                    initializeInfo = startApi.get().getRawInitializeInfo(teamId);
                 } catch (RetrofitException e) {
                     e.printStackTrace();
                     if (e.getStatusCode() == 403) {
                         ResAccessToken accessToken = loginApi.get().getAccessToken(ReqAccessToken.createRefreshReqToken(TokenUtil.getRefreshToken()));
                         TokenUtil.saveTokenInfoByRefresh(accessToken);
 
-                        initializeInfo = startApi.get().getInitializeInfo(teamId);
+                        initializeInfo = startApi.get().getRawInitializeInfo(teamId);
                     } else {
                         throw e;
                     }
 
                 }
-                InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-                JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+                InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
                 MessageRepository.getRepository().deleteAllLink();
             }
 

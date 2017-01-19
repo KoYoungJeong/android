@@ -17,11 +17,10 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
 import com.tosslab.jandi.app.utils.AccountUtil;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import java.util.ArrayList;
@@ -102,9 +101,8 @@ public class InsertTeamInfoModel {
     }
 
     public void updateEntityInfo(final long teamId) throws RetrofitException {
-        InitialInfo initializeInfo = startApi.get().getInitializeInfo(teamId);
-        InitialInfoRepository.getInstance().upsertInitialInfo(initializeInfo);
-        JandiPreference.setSocketConnectedLastTime(initializeInfo.getTs());
+        String initializeInfo = startApi.get().getRawInitializeInfo(teamId);
+        InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         MessageRepository.getRepository().deleteAllLink();
     }
 

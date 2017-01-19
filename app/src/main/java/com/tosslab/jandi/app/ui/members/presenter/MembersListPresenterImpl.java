@@ -174,7 +174,6 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
             TopicRepository.getInstance().addMember(entityId, invitedUsers);
 
-            TeamInfoLoader.getInstance().refresh();
             EventBus.getDefault().post(new InvitationSuccessEvent());
             SprinklrTopicMemberInvite.sendLog(entityId, invitedUsers.size());
 

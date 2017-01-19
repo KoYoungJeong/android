@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.search.filter.member.presenter;
 
 import android.util.Log;
 
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.search.filter.member.adapter.model.MemberFilterableDataModel;
 import com.tosslab.jandi.app.ui.search.filter.member.model.MemberSearchModel;
@@ -44,7 +45,7 @@ public class MemberFilterPresenter extends BaseMemberSearchPresenterImpl {
                     memberFilterableDataModel.clear();
 
                     memberFilterableDataModel.setInitializedMembers(members);
-                    memberFilterableDataModel.addAll(members);
+                    memberFilterableDataModel.addAll(members, TeamInfoLoader.getInstance().getMyId());
                 }, throwable -> {
                     LogUtil.e(Log.getStackTraceString(throwable));
                     memberFilterView.hideProgress();
@@ -55,7 +56,7 @@ public class MemberFilterPresenter extends BaseMemberSearchPresenterImpl {
     public void onMemberSearched(String query, List<User> members) {
         memberFilterableDataModel.clear();
 
-        memberFilterableDataModel.addAll(members);
+        memberFilterableDataModel.addAll(members, TeamInfoLoader.getInstance().getMyId());
 
         memberFilterView.notifyDataSetChanged();
     }

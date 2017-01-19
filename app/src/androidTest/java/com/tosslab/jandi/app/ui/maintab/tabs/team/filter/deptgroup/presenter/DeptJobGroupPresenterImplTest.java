@@ -42,7 +42,7 @@ public class DeptJobGroupPresenterImplTest {
 
     @Test
     public void onMemberClick_pick() throws Exception {
-        doReturn(new TeamMemberItem(TeamInfoLoader.getInstance().getJandiBot(), ""))
+        doReturn(new TeamMemberItem(TeamInfoLoader.getInstance().getJandiBot(), "", TeamInfoLoader.getInstance().getMyId()))
                 .when(teamMemberDataModel)
                 .getItem(eq(0));
         presenter.setPickMode(true);
@@ -53,7 +53,7 @@ public class DeptJobGroupPresenterImplTest {
 
     @Test
     public void onMemberClick_multi_not_checked() throws Exception {
-        doReturn(new TeamMemberItem(TeamInfoLoader.getInstance().getJandiBot(), ""))
+        doReturn(new TeamMemberItem(TeamInfoLoader.getInstance().getJandiBot(), "", TeamInfoLoader.getInstance().getMyId()))
                 .when(teamMemberDataModel)
                 .getItem(eq(0));
         doReturn(false).when(toggledUser).containsId(eq(TeamInfoLoader.getInstance().getJandiBot().getId()));
@@ -71,7 +71,7 @@ public class DeptJobGroupPresenterImplTest {
 
     @Test
     public void onMemberClick_multi_checked() throws Exception {
-        doReturn(new TeamMemberItem(TeamInfoLoader.getInstance().getJandiBot(), ""))
+        doReturn(new TeamMemberItem(TeamInfoLoader.getInstance().getJandiBot(), "", TeamInfoLoader.getInstance().getMyId()))
                 .when(teamMemberDataModel)
                 .getItem(eq(0));
         doReturn(true).when(toggledUser).containsId(eq(TeamInfoLoader.getInstance().getJandiBot().getId()));

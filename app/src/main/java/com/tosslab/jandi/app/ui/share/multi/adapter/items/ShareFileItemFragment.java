@@ -1,18 +1,25 @@
 package com.tosslab.jandi.app.ui.share.multi.adapter.items;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
@@ -22,8 +29,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ShareFileItemFragment extends Fragment {
-    public static final String EXTRA_FILE_PATH = "file_path";
+public class ShareFileItemFragment extends Fragment implements FileShareInteractor.Content {
+    public static final String EXTRA_FILE_PATH = "filePath";
     @Bind(R.id.iv_item_share_file_image)
     ImageView ivImageThumb;
     @Bind(R.id.vg_item_share_file_icon)
@@ -32,12 +39,18 @@ public class ShareFileItemFragment extends Fragment {
     ImageView ivFileType;
     @Bind(R.id.tv_item_share_file_type)
     TextView tvFileType;
-    private String filePath;
+    @InjectExtra
+    String filePath;
+    @InjectExtra
+    boolean needTopMargin;
 
-    public static ShareFileItemFragment create(String filePath) {
+    private FileShareInteractor fileInterator;
+
+    public static ShareFileItemFragment create(String filePath, boolean needTopMargin) {
         ShareFileItemFragment shareFileItemFragment = new ShareFileItemFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EXTRA_FILE_PATH, filePath);
+        bundle.putBoolean("needTopMargin", needTopMargin);
         shareFileItemFragment.setArguments(bundle);
         return shareFileItemFragment;
     }
@@ -50,35 +63,41 @@ public class ShareFileItemFragment extends Fragment {
         return view;
     }
 
-    @OnClick(value ={R.id.iv_item_share_file_image,
+    @OnClick(value = {R.id.iv_item_share_file_image,
             R.id.vg_item_share_file_icon})
     void onContentClick() {
-        ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                .hideSoftInputFromWindow(getActivity().getWindow().getDecorView().getWindowToken(), 0);
+        if (fileInterator != null) {
+            fileInterator.onClickContent();
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = getArguments();
-        if (bundle != null && bundle.containsKey(EXTRA_FILE_PATH)) {
-            filePath = bundle.getString(EXTRA_FILE_PATH);
-        }
+        Dart.inject(this, bundle);
 
         if (isImageFile(filePath)) {
             vgFileType.setVisibility(View.GONE);
             ivImageThumb.setVisibility(View.VISIBLE);
+            Uri uri = FileProvider.getUriForFile(getContext(),
+                    getString(R.string.jandi_file_authority), new File(filePath));
             ImageLoader.newInstance()
                     .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                    .uri(Uri.fromFile(new File(filePath)))
+                    .uri(uri)
                     .into(ivImageThumb);
         } else {
             ivImageThumb.setVisibility(View.GONE);
             tvFileType.setText(FileExtensionsUtil.getFileTypeText(filePath));
-            int resId = FileExtensionsUtil.getFileTypeBigImageResource(filePath);
+            FileExtensionsUtil.Extensions extensions = FileExtensionsUtil.getExtensions(filePath);
+            int resId = FileExtensionsUtil.getFileThumbByExt(extensions);
             ImageLoader.loadFromResources(ivFileType, resId);
+
+            vgFileType.setBackgroundColor(FileExtensionsUtil.getFileDetailBackground(extensions));
         }
+
+        onFocusContent(!(getActivity() != null && ((AppCompatActivity) getActivity()).getSupportActionBar().isShowing()));
 
     }
 
@@ -86,4 +105,37 @@ public class ShareFileItemFragment extends Fragment {
         return FileExtensionsUtil.getExtensions(filePath) == FileExtensionsUtil.Extensions.IMAGE;
     }
 
+    @Override
+    public void onFocusContent(boolean focus) {
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+        if (vgFileType.getVisibility() != View.VISIBLE) {
+            return;
+        }
+
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) vgFileType.getLayoutParams();
+
+        if (focus) {
+            lp.height = RelativeLayout.LayoutParams.MATCH_PARENT;
+            lp.topMargin = 0;
+            lp.bottomMargin = 0;
+        } else {
+            TypedValue typedValue = new TypedValue();
+            int actionBarSize = 0;
+            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+            if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
+                actionBarSize = TypedValue.complexToDimensionPixelSize(typedValue.data, displayMetrics);
+            }
+            lp.topMargin = (int) (actionBarSize + (needTopMargin? TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60f, displayMetrics) : 0));
+            lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 289f, displayMetrics);
+        }
+
+        vgFileType.setLayoutParams(lp);
+    }
+
+    public void setFileInterator(FileShareInteractor fileInterator) {
+        this.fileInterator = fileInterator;
+    }
 }

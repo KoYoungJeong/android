@@ -253,7 +253,7 @@ public class MainTopicModel {
                 .takeFirst(topicFolder -> topicFolder.getRooms().contains(topicId))
                 .map(TopicFolder::getId)
                 .toBlocking()
-                .firstOrDefault(-1l);
+                .firstOrDefault(-1L);
     }
 
     public List<TopicRoom> getJoinedTopics() {

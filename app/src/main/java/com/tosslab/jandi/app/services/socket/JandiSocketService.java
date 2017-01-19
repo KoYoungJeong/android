@@ -209,10 +209,6 @@ public class JandiSocketService extends Service {
 
         eventsHashMap.put("team_deleted", Arrays.asList(teamDeletedUpdateListener, teamDeletedListener));
 
-        EventListener teamNameUpdatedListener = objects -> jandiSocketServiceModel.onTeamNameUpdated(objects[0]);
-        eventHashMap.put("team_name_updated", teamNameUpdatedListener);
-        EventListener teamDomainUpdatedListener = objects -> jandiSocketServiceModel.onTeamDomainUpdated(objects[0]);
-        eventHashMap.put("team_domain_updated", teamDomainUpdatedListener);
         EventListener teamUpdatedListener = objects -> jandiSocketServiceModel.onTeamUpdated(objects[0]);
         eventHashMap.put("team_updated", teamUpdatedListener);
 

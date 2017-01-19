@@ -46,7 +46,8 @@ public class FileUploadStateViewModel {
     private Room room;
 
     @Inject
-    public FileUploadStateViewModel() { }
+    public FileUploadStateViewModel() {
+    }
 
     public void initView(View view) {
         ButterKnife.bind(this, view);
@@ -176,10 +177,11 @@ public class FileUploadStateViewModel {
                         .uri(uri)
                         .into(ivPhoto);
             } else {
-                int resId = FileExtensionsUtil.getTypeResourceId(fileExtType);
+                int resId = FileExtensionsUtil.getFileThumbByExt(fileExtType);
                 int paddingPx = (int) (4 * context.getResources().getDisplayMetrics().density);
                 ivPhoto.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
                 ivPhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                ivPhoto.setBackgroundColor(FileExtensionsUtil.getFileDetailBackground(fileExtType));
                 ImageLoader.loadFromResources(ivPhoto, resId);
             }
 

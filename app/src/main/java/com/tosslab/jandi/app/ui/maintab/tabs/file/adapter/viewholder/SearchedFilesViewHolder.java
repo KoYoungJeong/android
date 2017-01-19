@@ -95,7 +95,7 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
             vLineThrough.setVisibility(View.GONE);
         } else {
             tvFileOwner.setTextColor(JandiApplication.getContext().
-                    getResources().getColor(R.color.deactivate_text_color));
+                    getResources().getColor(R.color.rgb_999999));
             vLineThrough.setVisibility(View.VISIBLE);
         }
 

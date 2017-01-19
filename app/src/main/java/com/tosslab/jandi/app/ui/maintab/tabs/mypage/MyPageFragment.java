@@ -130,7 +130,6 @@ public class MyPageFragment extends Fragment implements TabFocusListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-
     }
 
     private void setMentionBadge() {
@@ -172,6 +171,7 @@ public class MyPageFragment extends Fragment implements TabFocusListener {
                 || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
+        setPollBadge();
     }
 
     public void onEventMainThread(RefreshMentionBadgeCountEvent event) {

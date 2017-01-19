@@ -19,13 +19,13 @@ import java.util.List;
 public class EmailChooseModel {
 
     public List<AccountEmail> getAccountEmails() {
-        List<AccountEmail> accountEmails = new ArrayList<AccountEmail>();
+        List<AccountEmail> accountEmails = new ArrayList<>();
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (!TextUtils.equals(userEmail.getStatus(), "confirmed")) {
                 continue;
             }
-            AccountEmail object = new AccountEmail(userEmail.getId(), TextUtils.equals(userEmail.getStatus(), "confirmed"));
+            AccountEmail object = new AccountEmail(userEmail.getEmail(), true);
             if (userEmail.isPrimary()) {
                 object.setSelected(true);
             }
@@ -43,7 +43,7 @@ public class EmailChooseModel {
     public boolean isConfirmedEmail(String email) {
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
-            if (TextUtils.equals(email, userEmail.getId())) {
+            if (TextUtils.equals(email, userEmail.getEmail())) {
                 return TextUtils.equals(userEmail.getStatus(), "confirmed");
             }
         }
@@ -54,7 +54,7 @@ public class EmailChooseModel {
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
-                return userEmail.getId();
+                return userEmail.getEmail();
             }
         }
         return "";

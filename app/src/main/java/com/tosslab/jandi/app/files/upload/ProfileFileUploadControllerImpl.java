@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
@@ -62,7 +64,9 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
-                    new FilePickerModel().openCameraForActivityResult(activity, Uri.fromFile(file));
+                    Uri uri = FileProvider.getUriForFile(JandiApplication.getContext(),
+                            JandiApplication.getContext().getString(R.string.jandi_file_authority), file);
+                    new FilePickerModel().openCameraForActivityResult(activity, uri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -71,7 +75,9 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
-                    new FilePickerModel().openCharacterActivityForActivityResult(activity, Uri.fromFile(file));
+                    Uri uri = FileProvider.getUriForFile(activity,
+                            activity.getString(R.string.jandi_file_authority), file);
+                    new FilePickerModel().openCharacterActivityForActivityResult(activity, uri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -93,7 +99,9 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
-                    new FilePickerModel().openCameraForActivityResult(fragment, Uri.fromFile(file));
+                    Uri uri = FileProvider.getUriForFile(fragment.getContext(),
+                            fragment.getContext().getString(R.string.jandi_file_authority), file);
+                    new FilePickerModel().openCameraForActivityResult(fragment, uri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -102,7 +110,9 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
-                    new FilePickerModel().openCharacterActivityForActivityResult(fragment, Uri.fromFile(file));
+                    Uri uri = FileProvider.getUriForFile(fragment.getContext(),
+                            fragment.getContext().getString(R.string.jandi_file_authority), file);
+                    new FilePickerModel().openCharacterActivityForActivityResult(fragment, uri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -171,7 +181,6 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
             }
         }).subscribeOn(Schedulers.io())
                 .doOnNext(it -> {
-                    TeamInfoLoader.getInstance().refresh();
                     EventBus.getDefault().post(new ProfileChangeEvent(it));
                 })
                 .observeOn(AndroidSchedulers.mainThread())

@@ -2,8 +2,11 @@ package com.tosslab.jandi.app.ui.profile.defaultimage.presenter;
 
 import android.net.Uri;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.content.FileProvider;
 
 import com.jayway.awaitility.Awaitility;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
@@ -89,8 +92,10 @@ public class ProfileImageSelectorPresenterTest {
             return invocationOnMock;
         }).when(mockView).finishProgress();
 
+        Uri uri = FileProvider.getUriForFile(JandiApplication.getContext(),
+                JandiApplication.getContext().getString(R.string.jandi_file_authority), tempFile);
         //when
-        profileImageSelectorPresenter.makeCustomProfileImageFile(Uri.fromFile(tempFile), Url, 0xff5EA879);
+        profileImageSelectorPresenter.makeCustomProfileImageFile(uri, Url, 0xff5EA879);
         Awaitility.await().until(() -> finish[0]);
 
         //then
