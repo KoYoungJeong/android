@@ -2,7 +2,7 @@ ext.dependecies = [
         libraries   : [
                 multidex                         : 'com.android.support:multidex:1.0.1',
 
-                sprinklrAndroid                  : 'com.tosslab.jandi.lib:sprinkler-android:1.5', // 로컬 : project(':sprinkler-android')
+                sprinklrAndroid                  : 'com.tosslab.jandi.lib:sprinkler-android:1.8', // 로컬 : project(':sprinkler-android')
                 photoView                        : 'com.tosslab.jandi.lib:photoview-expand:1.1',
                 imageZoomCrop                    : 'com.tosslab.jandi.lib:android-image-zoom-crop:1.1',
 

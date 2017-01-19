@@ -16,19 +16,8 @@ import com.tosslab.jandi.lib.sprinkler.util.Logger;
  */
 public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
     public static final String TAG = Logger.makeTag(SprinklerDatabaseHelper.class);
-
-    public interface TableColumns {
-        String _ID = "_id";
-        String EVENT = "ev";
-        String IDENTIFIERS = "id";
-        String PLATFORM = "pl";
-        String PROPERTIES = "pr";
-        String TIME = "time";
-
-        String[] COLUMNS = {_ID, EVENT, IDENTIFIERS, PLATFORM, PROPERTIES, TIME};
-    }
-
-    private static final int DATABASE_VERSION = 1;
+    public static final int QUERY_LIMIT = 500;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "sprinkler.db";
     private static final String TABLE_NAME_TRACK = "track";
 
@@ -38,9 +27,8 @@ public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
             + TableColumns.IDENTIFIERS + " TEXT, "
             + TableColumns.PLATFORM + " TEXT, "
             + TableColumns.PROPERTIES + " TEXT, "
-            + TableColumns.TIME + " INTEGER );";
-
-    public static final int QUERY_LIMIT = 500;
+            + TableColumns.TIME + " INTEGER, "
+            + TableColumns.VERSION + " TEXT );";
 
     private static SprinklerDatabaseHelper sInstance;
     private SQLiteDatabase database;
@@ -57,7 +45,7 @@ public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
         return sInstance;
     }
 
-    public boolean insert(String event, String identifiers, String platform, String properties, long time)
+    public boolean insert(String event, String identifiers, String platform, String properties, long time, String version)
             throws SQLiteException {
         Logger.d(TAG, "insert start");
         if (TextUtils.isEmpty(event)) {
@@ -71,6 +59,7 @@ public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
         cv.put(TableColumns.PLATFORM, platform);
         cv.put(TableColumns.PROPERTIES, properties);
         cv.put(TableColumns.TIME, time);
+        cv.put(TableColumns.VERSION, version);
 
         try {
             database.insertOrThrow(TABLE_NAME_TRACK, null, cv);
@@ -149,5 +138,17 @@ public final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_TRACK);
         db.execSQL(CREATE_TABLE);
+    }
+
+    public interface TableColumns {
+        String _ID = "_id";
+        String EVENT = "ev";
+        String IDENTIFIERS = "id";
+        String PLATFORM = "pl";
+        String PROPERTIES = "pr";
+        String TIME = "time";
+        String VERSION = "version";
+
+        String[] COLUMNS = {_ID, EVENT, IDENTIFIERS, PLATFORM, PROPERTIES, TIME, VERSION};
     }
 }

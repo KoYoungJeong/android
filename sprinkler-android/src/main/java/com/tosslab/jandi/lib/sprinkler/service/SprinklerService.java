@@ -87,8 +87,9 @@ public class SprinklerService extends IntentService {
         String platform = track.getPlatform();
         Map<String, Object> properties = track.getPropertiesMap();
         long time = track.getTime();
+        String version = track.getVersion();
 
-        boolean insert = tracker.insert(event, identifiers, platform, properties, time);
+        boolean insert = tracker.insert(event, identifiers, platform, properties, time, version);
 
         if (insert) {
             Logger.i(TAG, "Track insert Success.");
@@ -185,12 +186,13 @@ public class SprinklerService extends IntentService {
         Track firstTrack = data.get(0);
         Track lastTrack = data.get(data.size() - 1);
         long lastDate = lastTrack.getTime();
+        String lastVersion = lastTrack.getVersion();
 
         int startIndex = firstTrack.getIndex();
         int endIndex = lastTrack.getIndex();
 
         try {
-            ResponseBody response = flusher.flush(retry, num, deviceId, lastDate, data);
+            ResponseBody response = flusher.flush(retry, num, deviceId, lastDate, data, lastVersion);
             Logger.d(TAG, response.toString());
 
             if (response.isSuccess()) {

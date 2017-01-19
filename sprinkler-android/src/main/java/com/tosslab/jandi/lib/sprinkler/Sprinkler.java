@@ -75,6 +75,7 @@ public class Sprinkler {
             track.getIdentifiersMap().put(IdentifierKey.DEVICE_ID, getDefaultProperties().getDeviceId());
             track.setPlatform(getDefaultProperties().getPlatform());
             track.setTime(new Date().getTime());
+            track.setVersion(getDefaultProperties().getAppVersion());
 
             Logger.d(TAG, "track");
             Logger.i(TAG, track.toString());
