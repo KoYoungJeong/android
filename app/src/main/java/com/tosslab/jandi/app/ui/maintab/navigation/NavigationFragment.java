@@ -302,6 +302,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
                         .delay(300, TimeUnit.MILLISECONDS)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(this::showDeleteCacheDialog);
+                return true;
             case R.id.nav_sign_out:
                 Completable.fromAction(this::closeNavigation)
                         .subscribeOn(AndroidSchedulers.mainThread())

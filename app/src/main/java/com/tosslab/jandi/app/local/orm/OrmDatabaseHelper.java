@@ -469,24 +469,70 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         clearTable(connectionSource, ResAccessToken.class);
 
-        // exception.
-//        clearTable(getConnectionSource(), PushToken.class);
         clearTable(connectionSource, PushHistory.class);
 
-//        clearTable(getConnectionSource(), InitialInfo.class);
-//        clearTable(getConnectionSource(), InitialInfo.Self.class);
-//        clearTable(getConnectionSource(), InitialInfo.Poll.class);
-//        clearTable(getConnectionSource(), InitialInfo.Mention.class);
-//        clearTable(getConnectionSource(), Team.class);
-//        clearTable(getConnectionSource(), Folder.class);
-//        clearTable(getConnectionSource(), Topic.class);
-//        clearTable(getConnectionSource(), Topic.Announcement.class);
-//        clearTable(getConnectionSource(), Chat.class);
-//        clearTable(getConnectionSource(), Chat.LastMessage.class);
-//        clearTable(getConnectionSource(), Marker.class);
-//        clearTable(getConnectionSource(), Human.class);
-//        clearTable(getConnectionSource(), Human.Profile.class);
-//        clearTable(getConnectionSource(), Bot.class);
+        clearTable(connectionSource, RawInitialInfo.class);
+        clearTable(connectionSource, Rank.class);
+
+        clearTable(connectionSource, Poll.class);
+        clearTable(connectionSource, Poll.Item.class);
+        clearTable(connectionSource, ResMessages.PollMessage.class);
+        clearTable(connectionSource, ResMessages.PollContent.class);
+        clearTable(connectionSource, ResMessages.PollConnectInfo.class);
+
+        clearTable(connectionSource, ReadyCommentForPoll.class);
+        clearTable(connectionSource, SocketEvent.class);
+        clearTable(connectionSource, MemberRecentKeyword.class);
+    }
+
+    public void clearAllDataExceptLoginInfo() {
+        clearTable(connectionSource, ResMessages.Link.class);
+        clearTable(connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
+        clearTable(connectionSource, ResMessages.CreateEvent.class);
+        clearTable(connectionSource, ResMessages.PublicCreateInfo.class);
+        clearTable(connectionSource, ResMessages.PublicCreateInfo.IntegerWrapper.class);
+        clearTable(connectionSource, ResMessages.JoinEvent.class);
+        clearTable(connectionSource, ResMessages.InviteEvent.class);
+        clearTable(connectionSource, ResMessages.InviteEvent.IntegerWrapper.class);
+        clearTable(connectionSource, ResMessages.LeaveEvent.class);
+        clearTable(connectionSource, ResMessages.AnnouncementCreateEvent.class);
+        clearTable(connectionSource, ResMessages.AnnouncementCreateEvent.Info.class);
+        clearTable(connectionSource, ResMessages.AnnouncementUpdateEvent.class);
+        clearTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class);
+        clearTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
+
+        clearTable(connectionSource, ResMessages.TextMessage.class);
+        clearTable(connectionSource, ResMessages.TextContent.class);
+        clearTable(connectionSource, ResMessages.ConnectInfo.class);
+        clearTable(connectionSource, ResMessages.LinkPreview.class);
+        clearTable(connectionSource, ResMessages.FileMessage.class);
+        clearTable(connectionSource, ResMessages.FileContent.class);
+        clearTable(connectionSource, ResMessages.ThumbnailUrls.class);
+        clearTable(connectionSource, ResMessages.StickerMessage.class);
+        clearTable(connectionSource, RecentSticker.class);
+        clearTable(connectionSource, ResMessages.CommentStickerMessage.class);
+        clearTable(connectionSource, ResMessages.CommentStickerMessage.class);
+        clearTable(connectionSource, ResMessages.CommentMessage.class);
+
+        clearTable(connectionSource, RoomLinkRelation.class);
+
+        clearTable(connectionSource, ResRoomInfo.class);
+        clearTable(connectionSource, ResRoomInfo.MarkerInfo.class);
+
+
+        clearTable(connectionSource, FileDetail.class);
+
+        clearTable(connectionSource, UploadedFileInfo.class);
+
+
+        clearTable(connectionSource, FolderExpand.class);
+
+        // for parse
+        clearTable(connectionSource, BadgeCount.class);
+
+        clearTable(connectionSource, ResAccessToken.class);
+
+        clearTable(connectionSource, PushHistory.class);
 
         clearTable(connectionSource, RawInitialInfo.class);
         clearTable(connectionSource, Rank.class);

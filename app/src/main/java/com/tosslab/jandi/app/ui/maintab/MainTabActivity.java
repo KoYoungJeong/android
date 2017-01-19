@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -373,10 +372,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
 
                 isFABController = position == TopicTabInfo.INDEX ||
-                        (position == ChatTabInfo.INDEX &&
-                                TeamInfoLoader.getInstance().getMyLevel() != Level.Guest)
+                        (position == ChatTabInfo.INDEX && TeamInfoLoader.getInstance().getMyLevel() != Level.Guest)
                         || (position == TeamTabInfo.INDEX && TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
-                                TeamInfoLoader.getInstance().getMyLevel() != Level.Guest);
                 btnFab.clearAnimation();
                 btnFab.setVisibility(isFABController ? View.VISIBLE : View.GONE);
 

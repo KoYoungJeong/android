@@ -167,7 +167,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         Observable.from(teams)
                 .filter(team -> team.getStatus() == Team.Status.JOINED)
                 .map(Team::getUnread)
-                .map(Team::getUnread)
                 .defaultIfEmpty(0)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
@@ -404,7 +403,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
 
         }).subscribeOn(Schedulers.computation())
-                .subscribe(() -> {}, t -> {});
+                .subscribe(() -> {
+                }, t -> {
+                });
 
 
     }
