@@ -73,7 +73,7 @@
         android:background="@drawable/bg_round_blue_rect"
         android:foreground="?android:attr/selectableItemBackground"
         android:gravity="center"
-        android:text="팀 탈퇴하기"
+        android:text="@string/team_teamleave"
         android:textColor="@color/white"
         android:textSize="@dimen/jandi_text_size_large" />
 
