@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
 import com.tosslab.jandi.app.ui.share.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
@@ -96,7 +97,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void initShareData(List<String> uris) {
         view.showProgress();
-        Observable.create((Observable.OnSubscribe<FileShareData>) subscriber -> {
+        Observable<List<ShareData>> dataObservable = Observable.create((Observable.OnSubscribe<FileShareData>) subscriber -> {
             for (String uri : uris) {
                 Uri paredUri = Uri.parse(uri);
                 String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
@@ -124,10 +125,14 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                 .observeOn(Schedulers.computation())
                 .doOnNext(shareData -> comments.add(""))
                 .collect((Func0<List<ShareData>>) ArrayList::new, List::add)
-                .observeOn(AndroidSchedulers.mainThread())
+                .share();
+
+        dataObservable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(shareDatas -> {
                     shareAdapterDataModel.clear();
                     shareAdapterDataModel.addAll(shareDatas);
+                    view.updateFiles(shareAdapterDataModel.size());
+
                 }, t -> view.moveIntro(), () -> {
                     view.dismissProgress();
                     FileShareData item = (FileShareData) shareAdapterDataModel.getShareData(0);
@@ -136,8 +141,17 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     }
                     String fileName = item.getFileName();
                     view.setFileName(fileName);
-                    view.updateFiles(shareAdapterDataModel.size());
                 });
+
+        dataObservable
+                .observeOn(Schedulers.computation())
+                .filter(its -> its.size() > 1)
+                .concatMap(Observable::from)
+                .map(ShareData::getData)
+                .map(FileUploadThumbAdapter.FileThumbInfo::create)
+                .collect((Func0<ArrayList<FileUploadThumbAdapter.FileThumbInfo>>) ArrayList::new, List::add)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(view::setFileThumbInfos);
 
     }
 

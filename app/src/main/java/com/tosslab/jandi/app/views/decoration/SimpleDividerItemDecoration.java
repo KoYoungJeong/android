@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.views.decoration;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -8,9 +7,6 @@ import android.view.View;
 
 import com.tosslab.jandi.app.JandiApplication;
 
-/**
- * Created by Steve SeongUg Jung on 15. 5. 12..
- */
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 

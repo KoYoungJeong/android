@@ -7,22 +7,37 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.tosslab.jandi.app.ui.share.multi.adapter.items.ShareFileItemFragment;
 import com.tosslab.jandi.app.ui.share.multi.domain.FileShareData;
 import com.tosslab.jandi.app.ui.share.multi.domain.ShareData;
+import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
 import com.tosslab.jandi.app.ui.share.multi.model.ShareAdapterDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
-public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements ShareAdapterDataModel, ShareAdapterDataView {
+public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implements ShareAdapterDataModel, ShareAdapterDataView, FileShareInteractor {
 
+    private final FileShareInteractor.Wrapper contentWrapper;
     private List<ShareData> shareDatas;
+    private WeakHashMap<Integer, ShareFileItemFragment> contents;
 
-    public ShareFragmentPageAdapter(FragmentManager fm) {
+    public ShareFragmentPageAdapter(FragmentManager fm, FileShareInteractor.Wrapper contentWrapper) {
         super(fm);
+        this.contentWrapper = contentWrapper;
         shareDatas = new ArrayList<>();
+        contents = new WeakHashMap<>();
     }
 
     @Override
     public int getItemPosition(Object object) {
+
+        for (int idx = 0; idx < getCount(); idx++) {
+            if (contents.containsKey(idx)) {
+                if (contents.get(idx) == object) {
+                    return idx;
+                }
+            }
+        }
+
         return POSITION_NONE;
     }
 
@@ -32,7 +47,17 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implemen
         if (item == null || !(item instanceof FileShareData)) {
             return new Fragment();
         } else {
-            return ShareFileItemFragment.create(item.getData());
+            ShareFileItemFragment shareFileItemFragment;
+            if (contents.containsKey(position)) {
+                shareFileItemFragment = contents.get(position);
+            } else {
+                shareFileItemFragment = ShareFileItemFragment.create(item.getData(), getCount() > 1);
+                contents.put(position, shareFileItemFragment);
+            }
+
+            shareFileItemFragment.setFileInterator(this);
+
+            return shareFileItemFragment;
         }
     }
 
@@ -73,5 +98,17 @@ public class ShareFragmentPageAdapter extends FragmentStatePagerAdapter implemen
     @Override
     public void refresh() {
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClickContent() {
+        contentWrapper.toggleContent();
+    }
+
+    @Override
+    public void onFocusContent(boolean focus) {
+        for (Content content : contents.values()) {
+            content.onFocusContent(focus);
+        }
     }
 }

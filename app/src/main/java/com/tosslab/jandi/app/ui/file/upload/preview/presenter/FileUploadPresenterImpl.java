@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
 import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.file.FileUtil;
@@ -20,6 +21,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 public class FileUploadPresenterImpl implements FileUploadPresenter {
@@ -164,6 +166,19 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     @Override
     public void changeFileName(int position, String fileName) {
         fileUploadVOs.get(position).setFileName(fileName);
+    }
+
+    @Override
+    public void initThumbInfo(List<String> realFilePathList) {
+        Observable.from(realFilePathList)
+                .map(FileUploadThumbAdapter.FileThumbInfo::create)
+                .collect((Func0<ArrayList<FileUploadThumbAdapter.FileThumbInfo>>) ArrayList::new, List::add)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(fileThumbInfos -> {
+                    fileThumbInfos.get(0).setSelected(true);
+                    view.setFileThumbInfo(fileThumbInfos);
+                });
     }
 
 }

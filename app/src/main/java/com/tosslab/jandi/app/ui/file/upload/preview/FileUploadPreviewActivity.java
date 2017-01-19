@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.file.upload.preview;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.Spannable;
@@ -40,10 +41,11 @@ import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbDivideItemDecorator;
 import com.tosslab.jandi.app.ui.file.upload.preview.dagger.DaggerFileUploadComponent;
 import com.tosslab.jandi.app.ui.file.upload.preview.dagger.FileUploadModule;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
-import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
@@ -89,7 +91,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
     @Nullable
     @InjectExtra
-    ArrayList<String> realFilePathList;
+    ArrayList<String> realFilePathList = new ArrayList<>();
     @Inject
     FileUploadPresenter fileUploadPresenter;
 
@@ -109,10 +111,13 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     @Bind(R.id.layout_pricing_plan_warning)
     ViewGroup layoutPricingPlanWarning;
 
+    @Bind(R.id.lv_file_upload_thumbs)
+    RecyclerView lvthumb;
 
     private MentionControlViewModel mentionControlViewModel;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
+    private FileUploadThumbAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +171,23 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                 });
 
         fileUploadPresenter.onInitPricingInfo();
+
+        if (realFilePathList.size() > 1) {
+
+            lvthumb.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+            adapter = new FileUploadThumbAdapter();
+            adapter.setItemClickListener((view, adapter1, position) -> {
+                vpFilePreview.setCurrentItem(position);
+            });
+            lvthumb.setAdapter(adapter);
+            lvthumb.addItemDecoration(new FileUploadThumbDivideItemDecorator());
+
+            fileUploadPresenter.initThumbInfo(realFilePathList);
+
+        } else {
+            lvthumb.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -218,6 +240,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         if (vgFileInfo.getVisibility() != View.VISIBLE) {
             // 보이도록 하기, 배경 흰색
             vgFileInfo.setVisibility(View.VISIBLE);
+            lvthumb.setVisibility(View.VISIBLE);
             vpFilePreview.setBackgroundColor(Color.WHITE);
             if (actionBar != null) {
                 actionBar.show();
@@ -225,6 +248,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         } else {
             // 안보이게 하기, 배경 검정
             vgFileInfo.setVisibility(View.GONE);
+            lvthumb.setVisibility(View.GONE);
             vpFilePreview.setBackgroundColor(Color.BLACK);
             if (actionBar != null) {
                 actionBar.hide();
@@ -294,12 +318,21 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 
         vpFilePreview.setAdapter(fileUploadPagerAdapter);
 
-        vpFilePreview.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        vpFilePreview.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 fileUploadPresenter.onPagerSelect(position);
                 setVisibleScrollButton(position);
                 setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
+                if (adapter != null) {
+                    int itemCount = adapter.getItemCount();
+
+                    for (int idx = 0; idx < itemCount; idx++) {
+                        adapter.getItem(idx).setSelected(position == idx);
+                    }
+                    adapter.notifyDataSetChanged();
+                    lvthumb.getLayoutManager().scrollToPosition(position);
+                }
             }
 
             @Override
@@ -461,14 +494,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     }
 
     @Override
-    public void exitOnOk(FileUploadVO fileUploadVO) {
-        Intent intent = new Intent();
-        intent.putExtra(KEY_SINGLE_FILE_UPLOADVO, fileUploadVO);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    @Override
     public void exitOnFail() {
         finish();
     }
@@ -504,6 +529,12 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         } else {
             layoutPricingPlanWarning.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void setFileThumbInfo(List<FileUploadThumbAdapter.FileThumbInfo> files) {
+        adapter.setFileThumbInfo(files);
+        adapter.notifyDataSetChanged();
     }
 
 }
