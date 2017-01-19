@@ -165,7 +165,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         }
         Observable.from(teams)
                 .filter(team -> team.getStatus() == Team.Status.JOINED)
-                .map((team1) -> team1.getUnread())
+                .map(Team::getUnread)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
                     BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
@@ -373,17 +373,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             Completable.fromAction(navigationModel::refreshAccountInfo)
                     .subscribeOn(Schedulers.io())
                     .subscribe(() -> {
-                        navigationModel.getTeamsObservable()
-                                .flatMap(Observable::from)
-                                .subscribe(team -> {
-                                    Observable.from(navigationDataModel.getTeams())
-                                            .takeFirst(it -> it.getTeamId() == team.getTeamId())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(it -> {
-                                                it.setUnread(team.getUnread());
-                                                navigationView.notifyDataSetChanged();
-                                            });
-                                }, Throwable::printStackTrace, this::initBadgeCount);
+                        onReloadTeams();
 
                     });
         }
@@ -417,19 +407,17 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     @Override
-    public void onReloadTeams(boolean local) {
+    public void onReloadTeams() {
         navigationModel.getTeamsObservable()
                 .flatMap(Observable::from)
-                .subscribe(team -> {
-                    Observable.from(navigationDataModel.getTeams())
-                            .takeFirst(it -> it.getTeamId() == team.getTeamId())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(it -> {
-                                it.setUnread(team.getUnread());
-                                navigationView.notifyDataSetChanged();
-                            }, Throwable::printStackTrace, this::initBadgeCount);
-
-                });
+                .concatMap(team -> Observable.from(navigationDataModel.getTeams())
+                        .takeFirst(it -> it.getTeamId() == team.getTeamId())
+                        .doOnNext(it -> it.setUnread(team.getUnread())))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(team -> navigationView.notifyDataSetChanged(),
+                        Throwable::printStackTrace,
+                        this::initBadgeCount);
     }
 
     @Override

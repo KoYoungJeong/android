@@ -624,7 +624,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     }
 
     public void onEvent(TeamBadgeUpdateEvent event) {
-        navigationPresenter.onReloadTeams(event.isLocal());
+        navigationPresenter.onReloadTeams();
     }
 
     private void initUsageInformationKnockListener() {
