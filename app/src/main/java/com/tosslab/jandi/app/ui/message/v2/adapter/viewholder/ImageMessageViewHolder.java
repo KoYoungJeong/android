@@ -29,8 +29,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
     public static final String TAG = ImageMessageViewHolder.class.getSimpleName();
@@ -130,20 +128,12 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         long fromEntityId = link.fromEntity;
 
 
-        UnreadCountUtil.getUnreadCount(
-                roomId, link.id, fromEntityId, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-
-                    tvMessageBadge.setText(String.valueOf(unreadCount));
-
-                    if (unreadCount <= 0) {
-                        tvMessageBadge.setVisibility(View.GONE);
-                    } else {
-                        tvMessageBadge.setVisibility(View.VISIBLE);
-                    }
-                });
-
+        if (link.unreadCnt > 0) {
+            tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
+        }
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 

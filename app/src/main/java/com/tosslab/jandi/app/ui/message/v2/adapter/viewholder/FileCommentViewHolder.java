@@ -37,8 +37,6 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class FileCommentViewHolder extends BaseCommentViewHolder implements HighlightView {
 
     private ImageView ivMessageCommonFile;
@@ -242,22 +240,19 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
                 builderWithBadge.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
-            UnreadCountUtil.getUnreadCount(roomId, link.id, link.fromEntity, myId)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(unreadCount -> {
-                        if (unreadCount > 0) {
-                            NameSpannable unreadCountSpannable =
-                                    new NameSpannable(
-                                            (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
-                                            , context.getResources().getColor(R.color.jandi_accent_color));
-                            int beforeLength = builderWithBadge.length();
-                            builderWithBadge.append(" ");
-                            builderWithBadge.append(String.valueOf(unreadCount))
-                                    .setSpan(unreadCountSpannable, beforeLength, builderWithBadge.length(),
-                                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
-                        tvProfileNestedCommentContent.setText(builderWithBadge, TextView.BufferType.SPANNABLE);
-                    });
+            if (link.unreadCnt > 0) {
+                NameSpannable unreadCountSpannable =
+                        new NameSpannable(
+                                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 9f, context.getResources().getDisplayMetrics())
+                                , context.getResources().getColor(R.color.jandi_accent_color));
+                int beforeLength = builderWithBadge.length();
+                builderWithBadge.append(" ");
+                builderWithBadge.append(String.valueOf(link.unreadCnt))
+                        .setSpan(unreadCountSpannable, beforeLength, builderWithBadge.length(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+            tvProfileNestedCommentContent.setText(builderWithBadge, TextView.BufferType.SPANNABLE);
 
         }
     }

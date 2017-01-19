@@ -40,7 +40,7 @@ public class RoomMarkerRepository extends LockTemplate {
         return getInstance(TeamInfoLoader.getInstance().getTeamId());
     }
 
-    private List<Marker> getRoomMarkers(long roomId) {
+    public List<Marker> getRoomMarkers(long roomId) {
         return execute(() -> {
             if (ChatRepository.getInstance(teamId).hasChat(roomId)) {
                 Chat chat = ChatRepository.getInstance(teamId).getChat(roomId);
@@ -137,9 +137,7 @@ public class RoomMarkerRepository extends LockTemplate {
                 }
             }
             return count;
-
         });
-
     }
 
     public boolean deleteMarker(long roomId, long memberId) {

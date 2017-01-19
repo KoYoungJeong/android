@@ -19,7 +19,6 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HighlightView;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.UnreadCountUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util.IntegrationBotUtil;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
@@ -33,8 +32,6 @@ import com.tosslab.jandi.app.utils.image.transform.TransformConfig;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-
-import rx.android.schedulers.AndroidSchedulers;
 
 public class IntegrationBotViewHolder implements BodyViewHolder, HighlightView {
 
@@ -133,7 +130,6 @@ public class IntegrationBotViewHolder implements BodyViewHolder, HighlightView {
         }
 
 
-
         ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
         Context context = tvMessage.getContext();
@@ -157,18 +153,12 @@ public class IntegrationBotViewHolder implements BodyViewHolder, HighlightView {
 
         LinkifyUtil.setOnLinkClick(tvMessage);
 
-        UnreadCountUtil.getUnreadCount(roomId,
-                link.id, link.fromEntity, TeamInfoLoader.getInstance().getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    if (unreadCount > 0) {
-                        tvMessageBadge.setText(String.valueOf(unreadCount));
-                        tvMessageBadge.setVisibility(View.VISIBLE);
-                    } else {
-                        tvMessageBadge.setVisibility(View.GONE);
-                    }
-                });
-
+        if (link.unreadCnt > 0) {
+            tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
+        }
 
         if (!hasOnlyBadge) {
             tvMessageTime.setVisibility(View.VISIBLE);

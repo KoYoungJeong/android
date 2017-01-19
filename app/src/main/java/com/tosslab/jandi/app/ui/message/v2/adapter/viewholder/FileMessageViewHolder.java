@@ -28,8 +28,6 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import rx.android.schedulers.AndroidSchedulers;
-
 public class FileMessageViewHolder extends BaseMessageViewHolder {
 
     private ImageView ivProfile;
@@ -107,20 +105,12 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
 
         boolean isPublicTopic = room.isPublicTopic();
 
-        UnreadCountUtil.getUnreadCount(
-                roomId, link.id, fromEntityId, teamInfoLoader.getMyId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-
-                    tvMessageBadge.setText(String.valueOf(unreadCount));
-
-                    if (unreadCount <= 0) {
-                        tvMessageBadge.setVisibility(View.GONE);
-                    } else {
-                        tvMessageBadge.setVisibility(View.VISIBLE);
-                    }
-                });
-
+        if (link.unreadCnt > 0) {
+            tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
+        }
 
         tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.time));
 
@@ -235,8 +225,6 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                         serverUrl, fileType);
             }
         }
-
-
     }
 
     @Override
