@@ -429,32 +429,32 @@ public class MessageListV2Presenter {
         }
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
 
-        List<Long> memberLastLinks = new ArrayList<>();
+        List<Long> memberLastReadLinks = new ArrayList<>();
 
         for (Marker marker : markers) {
-            memberLastLinks.add(marker.getReadLinkId());
+            memberLastReadLinks.add(marker.getReadLinkId());
         }
 
-        Collections.sort(memberLastLinks);
+        Collections.sort(memberLastReadLinks);
 
-        int index = 0;
+        int unreadCnt = 0;
 
-        while ((index < memberLastLinks.size() - 1) && memberLastLinks.get(index) < 0) {
-            index++;
+        while ((unreadCnt < memberLastReadLinks.size() - 1) && memberLastReadLinks.get(unreadCnt) < 0) {
+            unreadCnt++;
         }
 
-        long linkCursor = memberLastLinks.get(index);
+        long linkCursor = memberLastReadLinks.get(unreadCnt);
 
         for (int j = 0; j < adapterModel.getCount(); j++) {
             if (adapterModel.getItem(j).id <= linkCursor) {
-                adapterModel.getItem(j).unreadCnt = index;
+                adapterModel.getItem(j).unreadCnt = unreadCnt;
             } else {
-                while (index < memberLastLinks.size() - 1 &&
-                        linkCursor == memberLastLinks.get(index)) {
-                    index++;
+                while (unreadCnt < memberLastReadLinks.size() - 1 &&
+                        linkCursor == memberLastReadLinks.get(unreadCnt)) {
+                    unreadCnt++;
                 }
-                linkCursor = memberLastLinks.get(index);
-                adapterModel.getItem(j).unreadCnt = index;
+                linkCursor = memberLastReadLinks.get(unreadCnt);
+                adapterModel.getItem(j).unreadCnt = unreadCnt;
             }
         }
     }
