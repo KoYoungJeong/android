@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.permissions.Check;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -329,9 +330,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             return true;
         }
 
-        long myId = TeamInfoLoader.getInstance().getMyId();
-        boolean teamOwner = TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
-        if (carouselFileInfo.getFileWriterId() == myId || teamOwner) {
+        if (carouselFileInfo.getFileWriterId() == TeamInfoLoader.getInstance().getMyId()
+                || (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin ||
+                TeamInfoLoader.getInstance().getMyLevel() == Level.Owner)) {
             getMenuInflater().inflate(R.menu.carousel_activity_my_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.carousel_activity_menu, menu);
