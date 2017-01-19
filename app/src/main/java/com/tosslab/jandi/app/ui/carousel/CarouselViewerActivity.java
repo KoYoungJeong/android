@@ -329,7 +329,9 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
             return true;
         }
 
-        if (carouselFileInfo.getFileWriterId() == TeamInfoLoader.getInstance().getMyId()) {
+        long myId = TeamInfoLoader.getInstance().getMyId();
+        boolean teamOwner = TeamInfoLoader.getInstance().getUser(myId).isTeamOwner();
+        if (carouselFileInfo.getFileWriterId() == myId || teamOwner) {
             getMenuInflater().inflate(R.menu.carousel_activity_my_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.carousel_activity_menu, menu);
