@@ -232,7 +232,7 @@ public class MainTopicListFragment extends Fragment
                 });
         if (showTopicMenus) {
             floatingActionMenu.addItem(R.drawable.btn_fab_item_go_unjoined,
-                    getResources().getString(R.string.jandi_browse_other_topics), () -> {
+                    getResources().getString(R.string.topic_menu_Browse_other_public_topics), () -> {
                         if (floatingActionMenu.isOpened()) {
                             floatingActionMenu.close();
                         }

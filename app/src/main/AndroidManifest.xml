@@ -402,7 +402,7 @@
         <activity
             android:name=".ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_browse_other_topics"
+            android:label="@string/topic_menu_Browse_other_public_topics"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
 
