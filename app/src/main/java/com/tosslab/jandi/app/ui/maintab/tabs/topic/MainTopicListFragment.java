@@ -507,7 +507,7 @@ public class MainTopicListFragment extends Fragment
             for (int idx = 0; idx < groupCount; idx++) {
                 TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(idx);
                 long folderId = topicFolderData.getFolderId();
-                if (folderExpandMap.get(folderId) != null) {
+                if (folderExpandMap.containsKey(folderId)) {
                     if (folderExpandMap.get(folderId)) {
                         if (!expandableItemManager.isGroupExpanded(idx)) {
                             expandableItemManager.expandGroup(idx);

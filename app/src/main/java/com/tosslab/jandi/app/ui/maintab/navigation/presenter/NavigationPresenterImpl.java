@@ -77,6 +77,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         teamInitializeQueueSubscription =
                 teamInitializeQueue.throttleWithTimeout(300, TimeUnit.MILLISECONDS)
                         .onBackpressureBuffer()
+                        .observeOn(Schedulers.io())
                         .doOnNext(o -> {
                             if (NetworkCheckUtil.isConnected()) {
                                 navigationModel.refreshAccountInfo();
@@ -104,7 +105,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .doOnNext(this::initBadgeCount)
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(navigationDataModel::getTeamRows)
-                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(teamRows -> {
                             navigationDataModel.removeAllTeamRows();
