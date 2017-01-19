@@ -130,7 +130,6 @@ public class MyPageFragment extends Fragment implements TabFocusListener {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-
     }
 
     private void setMentionBadge() {
