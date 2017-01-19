@@ -67,11 +67,11 @@ public class IntroActivityPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(config -> {
                     int installedAppVersion = model.getInstalledAppVersion();
-                    if (config.maintenance != null && config.maintenance.status) {
-                        view.showMaintenanceDialog();
-                        return false;
-                    } else if (installedAppVersion < config.versions.android) {
+                    if (installedAppVersion < config.versions.android) {
                         view.showUpdateDialog();
+                        return false;
+                    } else if (config.maintenance != null && config.maintenance.status) {
+                        view.showMaintenanceDialog();
                         return false;
                     } else {
                         return true;
