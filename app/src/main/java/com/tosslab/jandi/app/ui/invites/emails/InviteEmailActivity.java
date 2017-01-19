@@ -29,6 +29,8 @@ import com.tosslab.jandi.app.ui.invites.emails.presenter.InviteEmailPresenter;
 import com.tosslab.jandi.app.ui.search.filter.room.RoomFilterActivity;
 import com.tosslab.jandi.app.utils.ProgressWheelForInvitation;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
+import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import javax.inject.Inject;
@@ -146,6 +148,7 @@ public class InviteEmailActivity extends BaseAppCompatActivity
                 // keyboard is down
                 if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
                     vgSelectTopic.setVisibility(View.VISIBLE);
+                    AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate, AnalyticsValue.Action.EnterEmail);
                 }
                 tvSendInvitationEmailButton.setVisibility(View.VISIBLE);
             }
@@ -188,14 +191,20 @@ public class InviteEmailActivity extends BaseAppCompatActivity
     void onClickAddEmailButton() {
         String email = etInputEmail.getText().toString();
         if (!TextUtils.isEmpty(email)) {
-            inviteEmailPresenter.addEmail(email);
+            inviteEmailPresenter.addEmail(email, mode);
             etInputEmail.setText("");
+            if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate, AnalyticsValue.Action.AddEmail);
+            } else {
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember, AnalyticsValue.Action.AddEmail);
+            }
         }
     }
 
     @OnClick(R.id.vg_select_topic_for_associate)
     void onCLickSelectTopic() {
         RoomFilterActivity.startForResultForAssociateInvitation(this, REQ_SELECT_TOPIC);
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate, AnalyticsValue.Action.SelectTopic);
     }
 
     @Override
@@ -294,8 +303,10 @@ public class InviteEmailActivity extends BaseAppCompatActivity
 
         if (mode == EXTRA_INVITE_MEMBER_MODE) {
             inviteEmailPresenter.startInvitation();
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteMember, AnalyticsValue.Action.SendInvitation);
         } else if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
             inviteEmailPresenter.startInvitationForAssociate(selectedTopicId);
+            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.InviteAssociate, AnalyticsValue.Action.SendInvitation);
         }
     }
 

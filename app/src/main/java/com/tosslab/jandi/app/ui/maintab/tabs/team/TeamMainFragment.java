@@ -220,6 +220,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener, Floa
         if (btnFab != null) {
             btnFab.setOnClickListener(v -> {
                 InviteDialogExecutor.getInstance().executeInvite(getContext());
+                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
             });
         }
     }
