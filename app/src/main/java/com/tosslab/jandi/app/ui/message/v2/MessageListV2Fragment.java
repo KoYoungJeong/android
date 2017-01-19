@@ -2035,7 +2035,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void refreshMessages() {
         if (adapterView != null) {
             Completable.fromAction(() -> {
-                messageListPresenter.resetUnreadCnt();
+                if (!TeamInfoLoader.getInstance().isJandiBot(entityId)) {
+                    messageListPresenter.resetUnreadCnt();
+                }
                 adapterView.refresh();
             }).subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe();

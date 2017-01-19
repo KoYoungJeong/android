@@ -77,7 +77,7 @@
         android:layout_alignBottom="@+id/vg_dummy_message_content_wrapper"
         android:layout_gravity="bottom"
         android:layout_marginBottom="1dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="4.5dp"
         android:layout_toRightOf="@+id/iv_dummy_send_status"
         android:orientation="vertical">
 

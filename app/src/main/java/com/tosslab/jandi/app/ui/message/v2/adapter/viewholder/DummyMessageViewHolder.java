@@ -144,6 +144,9 @@ public class DummyMessageViewHolder implements BodyViewHolder {
                     tvTime.setVisibility(View.VISIBLE);
                 }
                 tvTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+                if (link.unreadCnt > 0) {
+                    tvUnreadCount.setText(link.unreadCnt + "");
+                }
                 break;
             case SENDING: {
                 ivStatus.setVisibility(View.VISIBLE);
