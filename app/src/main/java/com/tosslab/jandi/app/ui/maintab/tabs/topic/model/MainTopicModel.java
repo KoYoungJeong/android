@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.model;
 
+import android.support.v4.util.LongSparseArray;
 import android.support.v4.util.Pair;
 
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -16,11 +17,8 @@ import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -46,9 +44,9 @@ public class MainTopicModel {
     }
 
     // Join된 Topic에 관한 정보를 가져오기
-    private LinkedHashMap<Long, Topic> getJoinEntities(List<TopicRoom> topicRooms) {
+    private LongSparseArray<Topic> getJoinEntities(List<TopicRoom> topicRooms) {
 
-        LinkedHashMap<Long, Topic> topicHashMap = new LinkedHashMap<>();
+        LongSparseArray<Topic> topicHashMap = new LongSparseArray<>();
 
         Observable.from(topicRooms)
                 .map(topicRoom -> new Topic.Builder()
@@ -64,22 +62,8 @@ public class MainTopicModel {
                         .isPushOn(topicRoom.isPushSubscribe())
                         .readOnly(topicRoom.isReadOnly())
                         .build())
-                .toSortedList((lhs, rhs) -> {
-                    if (lhs.isStarred() && rhs.isStarred()) {
-                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-                    } else if (lhs.isStarred()) {
-                        return -1;
-                    } else if (rhs.isStarred()) {
-                        return 1;
-                    } else {
-                        return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-                    }
-
-                }).subscribe(topics -> {
-            for (Topic topic : topics) {
-                topicHashMap.put(topic.getEntityId(), topic);
-            }
-        }, Throwable::printStackTrace);
+                .collect(() -> topicHashMap, (array, topic) -> array.put(topic.getEntityId(), topic))
+                .subscribe(_1 -> {}, Throwable::printStackTrace);
 
         return topicHashMap;
 
@@ -100,22 +84,22 @@ public class MainTopicModel {
         List<Pair<TopicFolderData,
                 List<TopicItemData>>> datas = new LinkedList<>();
 
-        LinkedHashMap<Long, Topic> joinTopics = getJoinEntities(topicRooms);
+        LongSparseArray<Topic> joinTopics = getJoinEntities(topicRooms);
 
         long folderIndex = 0;
 
-        Map<Long, List<TopicItemData>> topicItemMap = new HashMap<>();
-        Map<Long, TopicFolderData> folderMap = new LinkedHashMap<>();
-        Map<Long, Integer> badgeCountMap = new HashMap<>();
+        LongSparseArray<List<TopicItemData>> topicItemMap = new LongSparseArray<>();
+        LongSparseArray<TopicFolderData> folderMap = new LongSparseArray<>();
+        LongSparseArray<Integer> badgeCountMap = new LongSparseArray<>();
 
         for (TopicFolder topicFolder : orderedFolders) {
-            if (!topicItemMap.containsKey(topicFolder.getId())) {
+            if (topicItemMap.indexOfKey(topicFolder.getId()) < 0) {
                 topicItemMap.put(topicFolder.getId(), new ArrayList<>());
             }
-            if (!badgeCountMap.containsKey(topicFolder.getId())) {
+            if (badgeCountMap.indexOfKey(topicFolder.getId()) < 0) {
                 badgeCountMap.put(topicFolder.getId(), 0);
             }
-            if (!folderMap.containsKey(topicFolder.getId())) {
+            if (folderMap.indexOfKey(topicFolder.getId()) < 0) {
                 TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.getName(), topicFolder.getId());
                 topicFolderData.setSeq(topicFolder.getSeq());
                 folderMap.put(topicFolder.getId(), topicFolderData);
@@ -125,12 +109,12 @@ public class MainTopicModel {
 
         Observable.from(topicFolders)
                 .subscribe(topicFolder -> {
-
                     Observable.from(topicFolder.getRooms())
-                            .filter(topicRoom -> joinTopics.containsKey(topicRoom.getId()))
+                            .filter(topicRoom -> joinTopics.indexOfKey(topicRoom.getId()) >= 0)
                             .subscribe(topicRoom -> {
 
-                                Topic topic = joinTopics.remove(topicRoom.getId());
+                                Topic topic = joinTopics.get(topicRoom.getId());
+                                joinTopics.remove(topicRoom.getId());
                                 long itemIndex = folderMap.get(topicFolder.getId()).generateNewChildId();
 
                                 TopicItemData topicItemData = TopicItemData.newInstance(
@@ -148,8 +132,9 @@ public class MainTopicModel {
 
                 }, Throwable::printStackTrace);
 
-        for (Long folderId : folderMap.keySet()) {
-
+        int size = folderMap.size();
+        for (int idx = 0; idx < size; idx++) {
+            long folderId = folderMap.keyAt(idx);
             List<TopicItemData> topicItemDatas = topicItemMap.get(folderId);
             List<TopicItemData> providerTopicItemDatas = new ArrayList<>();
 
@@ -180,7 +165,8 @@ public class MainTopicModel {
         // 폴더가 없는 토픽 데이터 셋팅
         TopicFolderData fakeFolder = getFakeFolder(folderIndex);
         List<TopicItemData> noFolderTopicItemDatas = new ArrayList<>();
-        Observable.from(joinTopics.keySet())
+        Observable.range(0, joinTopics.size())
+                .map(joinTopics::keyAt)
                 .map(topicId -> {
                     long itemIndex = fakeFolder.generateNewChildId();
                     Topic topic = joinTopics.get(topicId);
@@ -244,7 +230,7 @@ public class MainTopicModel {
         return Observable.from(TeamInfoLoader.getInstance().getTopicList())
                 .filter(TopicRoom::isJoined)
                 .map(TopicRoom::getUnreadCount)
-                .scan((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2);
+                .reduce((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2);
 
     }
 

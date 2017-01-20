@@ -41,12 +41,12 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         publishSubject
                 .onBackpressureBuffer()
+                .observeOn(Schedulers.computation())
                 .map(integer -> {
 
                     List<DirectMessageRoom> savedChatList = mainChatListModel.getSavedChatList();
                     return mainChatListModel.convertChatItems(savedChatList);
                 })
-                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(chatItems -> {
                     if (chatItems.isEmpty()) {

@@ -57,9 +57,8 @@ public class TeamMainFragment extends Fragment implements TabFocusListener, Floa
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new TeamViewPagerAdapter(getActivity(), getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);

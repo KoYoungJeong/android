@@ -60,17 +60,18 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_poll_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_poll_list, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         PollListAdapter pollListAdapter = new PollListAdapter();
         injectComponent(pollListAdapter);
 
-        ButterKnife.bind(this, view);
 
         initMoreLoadingProgress();
 
