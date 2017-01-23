@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
@@ -75,7 +76,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_MEMBER_AUTHORITY = 26;
     private static final int DATABASE_VERSION_ACCOUNT_UUID = 27;
     private static final int DATABASE_VERSION_ACCOUNT_EMAIL_ADD_EMAIL = 28;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_ACCOUNT_EMAIL_ADD_EMAIL;
+    private static final int DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL = 29;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -360,8 +362,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 //                        createTable(connectionSource, InitialInfo.Mention.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD, () -> {
-//                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-//                        dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
+                        Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
+                        dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN, () -> {
 //                        createTable(connectionSource, InitialInfo.TeamPlan.class);
@@ -383,6 +385,16 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_EMAIL_ADD_EMAIL, () -> {
                         Dao<ResAccountInfo.UserEmail, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserEmail.class);
                         dao.executeRawNoArgs("ALTER TABLE `account_emails` ADD COLUMN email VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL, () -> {
+
+                        try {
+                            database.rawQuery("SELECT email FROM `account_teams` LIMIT 1", null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
+                            dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
+                        }
                     }));
 
             Observable.from(upgradeCheckers)
