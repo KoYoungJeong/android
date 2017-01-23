@@ -220,12 +220,16 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
     }
 
     private void getAnnouncement() {
-        view.dismissProgressWheel();
-        if (TeamInfoLoader.getInstance().isTopic(roomId)) {
-            Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
-            view.setAnnouncement(announcement);
-        }
-
+        Completable.fromAction(() -> {
+            view.dismissProgressWheel();
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+                        Announcement announcement = TeamInfoLoader.getInstance().getTopic(roomId).getAnnouncement();
+                        view.setAnnouncement(announcement);
+                    }
+                });
     }
 
     @Override
@@ -234,7 +238,6 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
             announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, true);
         }).subscribeOn(Schedulers.newThread()).subscribe();
-
     }
 
     @Override
