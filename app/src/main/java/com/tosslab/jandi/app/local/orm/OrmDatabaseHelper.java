@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
@@ -77,7 +78,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_MEMBER_AUTHORITY = 26;
     private static final int DATABASE_VERSION_ACCOUNT_UUID = 27;
     private static final int DATABASE_VERSION_ACCOUNT_EMAIL_ADD_EMAIL = 28;
-    private static final int DATABASE_VERSION_RAW_INIT_INFO = 29;
+    private static final int DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL = 29;
+    private static final int DATABASE_VERSION_RAW_INIT_INFO = 30;
     private static final int DATABASE_VERSION = DATABASE_VERSION_RAW_INIT_INFO;
 
     public OrmLiteSqliteOpenHelper helper;
@@ -389,6 +391,16 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_EMAIL_ADD_EMAIL, () -> {
                         Dao<ResAccountInfo.UserEmail, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserEmail.class);
                         dao.executeRawNoArgs("ALTER TABLE `account_emails` ADD COLUMN email VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL, () -> {
+
+                        try {
+                            database.rawQuery("SELECT email FROM `account_teams` LIMIT 1", null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
+                            dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
+                        }
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_RAW_INIT_INFO, () -> {
                         createTable(connectionSource, RawInitialInfo.class);
