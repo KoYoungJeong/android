@@ -146,7 +146,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         EventBus.getDefault().register(this);
         Dart.inject(this, getArguments());
 
-        ShareFragmentPageAdapter adapter = new ShareFragmentPageAdapter(getFragmentManager(), this);
+        ShareFragmentPageAdapter adapter = new ShareFragmentPageAdapter(getChildFragmentManager(), this);
 
         DaggerMultiShareComponent.builder()
                 .multiShareModule(new MultiShareModule(this, adapter))
