@@ -115,10 +115,10 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String memberCount = context.getString(R.string.jandi_count_with_brace, item.getMemberCount());
         updatedHolder.tvTopicUserCnt.setText(memberCount);
         if (!TextUtils.isEmpty(item.getDescription())) {
-            updatedHolder.tvTopicDescription.setVisibility(View.VISIBLE);
+            updatedHolder.vgTopicDescription.setVisibility(View.VISIBLE);
             updatedHolder.tvTopicDescription.setText(item.getDescription());
         } else {
-            updatedHolder.tvTopicDescription.setVisibility(View.GONE);
+            updatedHolder.vgTopicDescription.setVisibility(View.GONE);
         }
 
         if (item.isPublic()) {
@@ -290,6 +290,8 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         View vAnimator;
         @Bind(R.id.tv_entity_listitem_read_only)
         View vReadOnly;
+        @Bind(R.id.vg_topic_description)
+        View vgTopicDescription;
 
         public UpdatedTopicItemViewHolder(View itemView) {
             super(itemView);

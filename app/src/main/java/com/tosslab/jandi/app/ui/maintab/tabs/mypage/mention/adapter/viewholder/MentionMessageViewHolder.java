@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.viewholder;
 
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
@@ -37,8 +37,6 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     View vProfileCover;
     @Bind(R.id.tv_mention_message_name)
     TextView tvWriter;
-    @Bind(R.id.v_mention_message_name_cover)
-    View vWriterCover;
     @Bind(R.id.tv_mention_message_date)
     TextView tvDate;
     @Bind(R.id.tv_mention_message_content)
@@ -138,29 +136,30 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         boolean isBot = TeamInfoLoader.getInstance().isBot(mentionMessage.getWriterId());
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(mentionMessage.getWriterId());
 
-        Resources resources = tvWriter.getResources();
         if (!isJandiBot && !isBot) {
             ImageUtil.loadProfileImage(ivProfile, mentionMessage.getWriterProfileUrl(), R.drawable.profile_img);
 
             User user = TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId());
+
             if (user != null && user.isEnabled()) {
                 vProfileCover.setBackgroundColor(Color.TRANSPARENT);
+                if ((tvWriter.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
+                    tvWriter.setPaintFlags(
+                            tvWriter.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+                tvWriter.setTextColor(0xff333333);
 
-                tvWriter.setTextColor(resources.getColor(R.color.jandi_star_mention_item_name_content_text));
-                vWriterCover.setVisibility(View.GONE);
             } else {
                 ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
                 foreground.getPaint().setColor(0x66FFFFFF);
                 vProfileCover.setBackgroundDrawable(foreground);
-
-                tvWriter.setTextColor(resources.getColor(R.color.deactivate_text_color));
-                vWriterCover.setVisibility(View.VISIBLE);
+                tvWriter.setTextColor(0xff999999);
+                tvWriter.setPaintFlags(tvWriter.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
             return;
         }
 
         vProfileCover.setVisibility(View.GONE);
-        vWriterCover.setVisibility(View.GONE);
 
         if (isJandiBot) {
 
