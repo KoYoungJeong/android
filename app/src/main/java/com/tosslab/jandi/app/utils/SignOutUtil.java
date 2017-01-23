@@ -16,10 +16,10 @@ public class SignOutUtil {
         Context context = JandiApplication.getContext();
         JandiPreference.signOut(context);
         BadgeUtils.clearBadge(context);
-        OpenHelperManager.getHelper(context, OrmDatabaseHelper.class)
-                .clearAllData();
         TeamInfoLoader instance = TeamInfoLoader.getInstance();
         instance = null;
+        OpenHelperManager.getHelper(context, OrmDatabaseHelper.class)
+                .clearAllData();
         TokenUtil.clearTokenInfo();
 
         Intercom.client().reset();
