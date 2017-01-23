@@ -2,11 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.presenter;
 
 import com.tosslab.jandi.app.network.models.ResConfig;
 
-import rx.functions.Action0;
-
-/**
- * Created by tonyjs on 2016. 8. 23..
- */
 public interface MainTabPresenter {
 
     void onInitTopicBadge();
@@ -15,7 +10,7 @@ public interface MainTabPresenter {
 
     void onInitMyPageBadge(boolean withUnreadMention);
 
-    void onCheckIfNotLatestVersion(Action0 completeAction);
+    void onCheckIfNotLatestVersion();
 
     void onCheckIfNotProfileSetUp();
 

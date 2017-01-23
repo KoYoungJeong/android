@@ -70,7 +70,9 @@ public class MainTopicListPresenter {
                 })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(view::showList, Throwable::printStackTrace);
+                .subscribe((provider) -> {
+                    view.showList(provider);
+                }, Throwable::printStackTrace);
     }
 
     public void initUpdatedTopicList() {
@@ -167,8 +169,8 @@ public class MainTopicListPresenter {
     public Observable<Integer> getUnreadCount(Observable<TopicItemData> joinEntities) {
         return joinEntities
                 .map(TopicItemData::getUnreadCount)
-                .scan((lhs, rhs) -> lhs + rhs)
-                .lastOrDefault(0);
+                .defaultIfEmpty(0)
+                .reduce((lhs, rhs) -> lhs + rhs);
     }
 
     public void onFolderExpand(TopicFolderData topicFolderData) {

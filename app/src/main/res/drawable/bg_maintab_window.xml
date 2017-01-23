@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/jandi_text_white" />
+    <item android:gravity="top">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorPrimary" />
+            <size android:height="80dp" />
+        </shape>
+    </item>
+    <item android:gravity="bottom">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/jandi_main_tab_background" />
+            <size android:height="?attr/actionBarSize" />
+        </shape>
+    </item>
+</layer-list>

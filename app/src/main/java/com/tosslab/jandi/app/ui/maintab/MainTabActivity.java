@@ -93,9 +93,6 @@ import rx.Completable;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by justinygchoi on 2014. 8. 11..
- */
 public class MainTabActivity extends BaseAppCompatActivity implements MainTabPresenter.View,
         NavigationFragment.NavigationOwner {
 
@@ -181,32 +178,19 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
         // Easter Egg
         initNavigationEasterEgg();
-
         initToolbars();
-
         initOffLineLayer();
-
-        mainTabPresenter.onCheckIfNotLatestVersion(() -> {
-            if (isFinishing()) {
-                return;
-            }
-
-            startSocketService();
-
-            initTabs();
-
-            initTabBadges();
-
-            checkIfNotProfileSetUp();
-
-            showInvitePopupIfNeed();
-
-            EventBus.getDefault().register(this);
-        });
+        startSocketService();
+        initTabs();
+        initTabBadges();
+        checkIfNotProfileSetUp();
+        showInvitePopupIfNeed();
+        mainTabPresenter.onCheckIfNotLatestVersion();
 
         KeepExecutedService.start(this);
         KeepAliveService.start(this);
         initFirebaseUserProperties();
+        EventBus.getDefault().register(this);
 
     }
 
@@ -290,11 +274,9 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     private void startSocketService() {
         JandiPreference.setSocketReconnectDelay(0L);
-        Observable.just(new Object())
-                .observeOn(Schedulers.computation())
-                .subscribe(it -> {
-                    sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
-                });
+        Completable.fromAction(() -> sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE)))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     private void initToolbars() {

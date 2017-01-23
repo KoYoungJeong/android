@@ -24,6 +24,8 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
     };
     private final Context context;
 
+    private String[] titles;
+
     List<Fragment> fragments;
 
     public TeamViewPagerAdapter(Context context, FragmentManager fm) {
@@ -31,6 +33,8 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
         initFragments(false, true, -1, TeamMemberSearchActivity.EXTRA_FROM_TEAM_TAB);
+        titles = new String[TEAM_TITLES.length];
+        initTitles(TEAM_TITLES, titles);
     }
 
     public TeamViewPagerAdapter(Context context, FragmentManager fm,
@@ -43,6 +47,8 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         this.context = context;
         fragments = new ArrayList<>(TEAM_TITLES.length);
         initFragments(isSelectMode, hasHeader, roomId, from);
+        titles = new String[TEAM_TITLES.length];
+        initTitles(TEAM_TITLES, titles);
 
         for (int idx = 0; idx < fragments.size(); idx++) {
             Fragment fragment = fragments.get(idx);
@@ -69,9 +75,15 @@ public class TeamViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    private void initTitles(int[] teamTitles, String[] titles) {
+        for (int idx = 0; idx < teamTitles.length; idx++) {
+            titles[idx] = context.getResources().getString(TEAM_TITLES[idx]);
+        }
+    }
+
     @Override
     public CharSequence getPageTitle(int position) {
-        return context.getResources().getString(TEAM_TITLES[position]);
+        return titles[position];
     }
 
     @Override

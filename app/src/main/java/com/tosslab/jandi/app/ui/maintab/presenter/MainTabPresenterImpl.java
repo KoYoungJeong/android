@@ -12,12 +12,8 @@ import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import javax.inject.Inject;
 
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tonyjs on 2016. 8. 23..
- */
 public class MainTabPresenterImpl implements MainTabPresenter {
 
     private final MainTabModel mainTabModel;
@@ -55,8 +51,7 @@ public class MainTabPresenterImpl implements MainTabPresenter {
     }
 
     @Override
-    public void onCheckIfNotLatestVersion(Action0 completeAction) {
-        completeAction.call();
+    public void onCheckIfNotLatestVersion() {
         if (!NetworkCheckUtil.isConnected()) {
             return;
         }
@@ -73,12 +68,9 @@ public class MainTabPresenterImpl implements MainTabPresenter {
                                 System.currentTimeMillis() - JandiPreference.getVersionPopupLastTime();
                         if (timeFromLastPopup > oneDayMillis) {
                             mainTabView.showUpdateVersionDialog(configInfo);
-                            return;
                         }
                     }
-                }, t -> {
-                    LogUtil.e(Log.getStackTraceString(t));
-                });
+                }, t -> LogUtil.e(Log.getStackTraceString(t)));
     }
 
     @Override

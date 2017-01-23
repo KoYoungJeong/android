@@ -224,9 +224,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
