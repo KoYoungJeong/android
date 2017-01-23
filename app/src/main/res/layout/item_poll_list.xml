@@ -9,7 +9,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_centerVertical="true"
-        android:paddingLeft="16dp"
+        android:layout_marginLeft="16dp"
         android:src="@drawable/poll_icon_normal_192" />
 
     <RelativeLayout
@@ -108,16 +108,6 @@
                     android:text="Justin"
                     android:textColor="@color/rgb_333333"
                     android:textSize="13dp" />
-
-                <ImageView
-                    android:id="@+id/v_poll_list_creator_line_through"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/tv_poll_list_creator"
-                    android:layout_alignLeft="@+id/tv_poll_list_creator"
-                    android:layout_alignRight="@+id/tv_poll_list_creator"
-                    android:layout_alignTop="@+id/tv_poll_list_creator"
-                    android:src="@drawable/line_gray" />
             </RelativeLayout>
 
             <TextView

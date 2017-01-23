@@ -246,7 +246,7 @@ public class ExpandableTopicAdapter
 
         holder.itemView.setClickable(true);
         holder.tvTopicName.setText(item.getName());
-        holder.vReadOnly.setVisibility(item.isReadOnly()? View.VISIBLE : View.GONE);
+        holder.vReadOnly.setVisibility(item.isReadOnly() ? View.VISIBLE : View.GONE);
 
         if (item.getUnreadCount() > 0) {
             holder.tvTopicBadge.setVisibility(View.VISIBLE);
@@ -267,10 +267,10 @@ public class ExpandableTopicAdapter
 
         holder.tvTopicUserCnt.setText("(" + item.getMemberCount() + ")");
         if (!TextUtils.isEmpty(item.getDescription())) {
-            holder.tvTopicDescription.setVisibility(View.VISIBLE);
+            holder.vgTopicDescription.setVisibility(View.VISIBLE);
             holder.tvTopicDescription.setText(item.getDescription());
         } else {
-            holder.tvTopicDescription.setVisibility(View.GONE);
+            holder.vgTopicDescription.setVisibility(View.GONE);
         }
 
         if (item.isPublic()) {

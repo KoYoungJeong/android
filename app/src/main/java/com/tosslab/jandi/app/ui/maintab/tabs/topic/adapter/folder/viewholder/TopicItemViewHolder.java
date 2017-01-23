@@ -45,6 +45,8 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
     public View vAnimator;
     @Bind(R.id.tv_entity_listitem_read_only)
     public View vReadOnly;
+    @Bind(R.id.vg_topic_description)
+    public View vgTopicDescription;
 
     public TopicItemViewHolder(View itemView, boolean bindView) {
         super(itemView);

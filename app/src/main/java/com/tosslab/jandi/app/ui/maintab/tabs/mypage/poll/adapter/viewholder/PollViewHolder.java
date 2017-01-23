@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.viewholder;
 
-import android.content.res.Resources;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +31,6 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
     TextView tvFinishedBadge;
     @Bind(R.id.tv_poll_list_creator)
     TextView tvCreator;
-    @Bind(R.id.v_poll_list_creator_line_through)
-    View vCreatorCovoer;
     @Bind(R.id.tv_poll_list_create_date)
     TextView tvCreateDate;
     @Bind(R.id.v_poll_list_icon)
@@ -102,13 +100,15 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
         if (TeamInfoLoader.getInstance().isUser(creatorId)) {
             tvCreator.setText(TeamInfoLoader.getInstance().getMemberName(creatorId));
 
-            Resources resources = tvCreator.getResources();
             if (TeamInfoLoader.getInstance().getUser(creatorId).isEnabled()) {
                 tvCreator.setTextColor(0xff333333);
-                vCreatorCovoer.setVisibility(View.GONE);
+                if ((tvCreator.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
+                    tvCreator.setPaintFlags(
+                            tvCreator.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
             } else {
                 tvCreator.setTextColor(0xff999999);
-                vCreatorCovoer.setVisibility(View.VISIBLE);
+                tvCreator.setPaintFlags(tvCreator.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
         }
     }
