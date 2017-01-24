@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -75,8 +76,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
-                    Uri uri = FileProvider.getUriForFile(activity,
-                            activity.getString(R.string.jandi_file_authority), file);
+                    Uri uri = Uri.fromFile(file);
                     new FilePickerModel().openCharacterActivityForActivityResult(activity, uri);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -110,8 +110,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getCacheDir("character"));
                     file = File.createTempFile("character", ".png", directory);
-                    Uri uri = FileProvider.getUriForFile(fragment.getContext(),
-                            fragment.getContext().getString(R.string.jandi_file_authority), file);
+                    Uri uri = Uri.fromFile(file);
                     new FilePickerModel().openCharacterActivityForActivityResult(fragment, uri);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -159,10 +158,12 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
     }
 
     void uploadProfileImage(Activity activity, File profileFile, long memberId) {
-        showProgressWheel(activity);
+
+        Completable.fromAction(() -> showProgressWheel(activity))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
 
         Observable.fromCallable(() -> {
-
             File convertedProfileFile = ImageUtil.convertProfileFile(profileFile);
             try {
                 long userId = memberId;
