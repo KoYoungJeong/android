@@ -10,7 +10,7 @@
         android:id="@+id/v_member_profile_button_icon"
         android:layout_width="27dp"
         android:layout_height="27dp"
-        android:layout_marginTop="2dp" />
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:id="@+id/tv_member_profile_button_title"

@@ -51,7 +51,7 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.GONE : View.VISIBLE);
@@ -77,8 +77,12 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setLevel(Level level, TextView tvTeamLevel) {
-        AccessLevelUtil.setTextOfLevel(level, tvTeamLevel);
+    public void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape) {
+        if (isLandscape) {
+            AccessLevelUtil.setTextOfLevelInNav(level, tvTeamLevel);
+        } else {
+            AccessLevelUtil.setTextOfLevel(level, tvTeamLevel);
+        }
     }
 
     private boolean isMe(long memberId) {

@@ -50,7 +50,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         btnProfileStar.setVisibility(View.VISIBLE);
         btnProfileStar.setEnabled(true);
@@ -73,7 +73,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setLevel(Level level, TextView tvTeamLevel) {
+    public void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape) {
         tvTeamLevel.setVisibility(View.INVISIBLE);
     }
 
