@@ -10,7 +10,7 @@ apply from: 'apk-copy.gradle'
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 apply from: 'ci-tasks.gradle'
-apply plugin: 'realm-android'
+//apply plugin: 'realm-android'
 //apply from: 'test-coverage.gradle'
 
 configurations {
