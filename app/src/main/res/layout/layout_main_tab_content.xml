@@ -7,7 +7,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/vg_main_tab_tabs_container">
+        android:layout_above="@+id/v_dummy_tab_view">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/vg_appbar"
@@ -104,6 +104,13 @@
     </android.support.design.widget.CoordinatorLayout>
 
     <View
+        android:id="@+id/v_dummy_tab_view"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="?attr/actionBarSize"/>
+
+    <View
+        android:id="@+id/v_tab_shadow"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_above="@+id/vg_main_tab_tabs_container"
