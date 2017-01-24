@@ -16,7 +16,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
@@ -130,6 +129,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     @Bind(R.id.vg_main_tab_navigation_wrapper)
     View vgNavigationWrapper;
+
+    @Bind(R.id.v_dummy_tab_view)
+    View vDummyTabView;
+
+    @Bind(R.id.v_tab_shadow)
+    View vTabShadow;
 
     @Inject
     MainTabPresenter mainTabPresenter;
@@ -765,39 +770,24 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     public void setTabLayoutVisible(boolean visible) {
         //FAB 버튼 위치 -> FAB 높이 + 탭 높이 + 마진
         int fabY = btnFab.getHeight() + tabLayout.getHeight() + (int) UiUtils.getPixelFromDp(20);
+        int shadowY = vTabShadow.getHeight() + tabLayout.getHeight();
 
         if (visible) {
-            if (tabLayout.getVisibility() != View.VISIBLE) {
-                tabLayout.clearAnimation();
-                TranslateAnimation animate = new TranslateAnimation(0, 0, tabLayout.getHeight(), 0);
-                animate.setDuration(200);
-                animate.setFillAfter(true);
-                tabLayout.startAnimation(animate);
-                tabLayout.setVisibility(View.VISIBLE);
+            if (vDummyTabView.getVisibility() != View.VISIBLE) {
+                vDummyTabView.setVisibility(View.VISIBLE);
+                vTabShadow.animate().setDuration(200).translationY(0);
+                tabLayout.animate().setDuration(200).translationY(0);
                 if (isFABController) {
-                    btnFab.clearAnimation();
-                    TranslateAnimation animate2 = new TranslateAnimation(0, 0, fabY, 0);
-                    animate2.setDuration(300);
-                    animate2.setFillAfter(true);
-                    btnFab.startAnimation(animate2);
-                    btnFab.setVisibility(View.VISIBLE);
+                    btnFab.animate().setDuration(300).translationY(0);
                 }
             }
         } else {
-            if (tabLayout.getVisibility() == View.VISIBLE) {
-                tabLayout.clearAnimation();
-                TranslateAnimation animate = new TranslateAnimation(0, 0, 0, tabLayout.getHeight());
-                animate.setDuration(200);
-                animate.setFillAfter(true);
-                tabLayout.startAnimation(animate);
-                tabLayout.setVisibility(View.GONE);
+            if (vDummyTabView.getVisibility() == View.VISIBLE) {
+                vDummyTabView.setVisibility(View.GONE);
+                vTabShadow.animate().setDuration(200).translationY(shadowY);
+                tabLayout.animate().setDuration(200).translationY(tabLayout.getHeight());
                 if (isFABController) {
-                    btnFab.clearAnimation();
-                    TranslateAnimation animate2 = new TranslateAnimation(0, 0, 0, fabY);
-                    animate2.setDuration(300);
-                    animate2.setFillAfter(true);
-                    btnFab.startAnimation(animate2);
-                    btnFab.setVisibility(View.GONE);
+                    btnFab.animate().setDuration(300).translationY(fabY);
                 }
             }
         }
