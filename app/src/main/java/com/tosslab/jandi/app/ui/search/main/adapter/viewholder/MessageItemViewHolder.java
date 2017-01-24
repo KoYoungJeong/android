@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.spannable.SpannableLookUp;
-import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.member.WebhookBot;
@@ -93,6 +91,8 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
     public void onBindView(SearchData searchData) {
         SearchMessageData searchMessageData = (SearchMessageData) searchData;
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+
+//        setHighlight(searchMessageData);
 
         if (TeamInfoLoader.getInstance().isBot(searchMessageData.getWriterId())) {
             WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(searchMessageData.getWriterId());
@@ -187,7 +187,7 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
 
         mesureRoomInfoArea();
 
-        setMentionAndHighlight(searchMessageData);
+        setHighlight(searchMessageData);
 
         if (onClickMessageListener != null) {
             itemView.setOnClickListener(v -> onClickMessageListener.onClickMessage(searchMessageData));
@@ -204,23 +204,8 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         return "";
     }
 
-    private void setMentionAndHighlight(SearchMessageData searchMessageData) {
-        long myId = TeamInfoLoader.getInstance().getMyId();
-
+    private void setHighlight(SearchMessageData searchMessageData) {
         SpannableStringBuilder ssb = new SpannableStringBuilder(searchMessageData.getText());
-
-        MentionAnalysisInfo mentionAnalysisInfo =
-                MentionAnalysisInfo.newBuilder(myId, searchMessageData.getMentions())
-                        .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
-                        .forMeBackgroundColor(Color.parseColor("#FFCFF1FF"))
-                        .forMeTextColor(Color.parseColor("#FF00ACE9"))
-                        .build();
-
-        SpannableLookUp.text(ssb)
-                .hyperLink(false)
-                .markdown(false)
-                .mention(mentionAnalysisInfo, false)
-                .lookUp(tvMessageContent.getContext());
 
         String[] tokens = searchMessageData.getKeyword().split(" ");
 
