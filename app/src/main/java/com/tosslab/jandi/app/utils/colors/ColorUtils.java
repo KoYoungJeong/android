@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.utils.colors;
 
 
-import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.v4.util.SimpleArrayMap;
 import android.text.TextUtils;
@@ -168,7 +167,7 @@ public class ColorUtils {
     @ColorInt
     public static int parseColor(String colorString) {
         if (TextUtils.isEmpty(colorString)) {
-            return Color.TRANSPARENT;
+            return 0xFF00A3E1;
         }
 
         if (colorString.startsWith("#")) {
@@ -185,12 +184,12 @@ public class ColorUtils {
                 }
                 return (int) parsingHexcode(builder.toString());
             } else {
-                return Color.TRANSPARENT;
+                return 0xFF00A3E1;
             }
         } else if (colorMap.containsKey(colorString.toLowerCase())) {
             return colorMap.get(colorString);
         } else {
-            return Color.TRANSPARENT;
+            return 0xFF00A3E1;
         }
     }
 
@@ -203,7 +202,7 @@ public class ColorUtils {
             }
             return color;
         } catch (NumberFormatException e) {
-            return Color.TRANSPARENT;
+            return 0xFF00A3E1;
         }
     }
 }
