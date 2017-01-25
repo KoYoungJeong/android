@@ -114,8 +114,7 @@ Please restart the app."</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"Associates can be invited to any other topic you are in, except for the default topic. Please join  an additional topic and try again. "</string>
 	<string name="invite_associate_invitoronlyindefault_title">"
 Currently, there is no topic where you could invite members to. "</string>
-	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in. 
-"</string>
+	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in."</string>
 	<string name="invite_associate_selecttopic_placeholder">"Select a topic"</string>
 	<string name="invite_associate_selecttopic_title">"Select the topic you want to invite to"</string>
 	<string name="invite_email_alreadyinteam">"This email address is already in the team."</string>
@@ -808,8 +807,8 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="mypage_editprofile_statusmessage">"Enter your status message"</string>
 	<string name="mypage_mention_newmentionalert">"New Mention"</string>
 	<string name="primary_email_info_msg">"Choose an email address where we should send all of your JANDI related emails. To assign email addresses to specific teams, please refer to the Profile menu."</string>
-	<string name="room_member_disabled_alert_body">""</string>
-	<string name="room_member_disabled_alert_title">""</string>
+	<string name="room_member_disabled_alert_body">"You are unable to send a message."</string>
+	<string name="room_member_disabled_alert_title">"This is a blocked member."</string>
 	<string name="sent_auth_email">"An email has been sent to your inbox. Please follow the link provided to verify your account and sign in."</string>
 	<string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
 	<string name="team_adminmenu_title">"Admin Menu"</string>

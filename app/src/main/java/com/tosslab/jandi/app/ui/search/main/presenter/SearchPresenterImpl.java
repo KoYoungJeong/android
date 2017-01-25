@@ -316,26 +316,15 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void onJoinTopic(long topicId, int topicType, long linkId) {
-        Observable.create(subscriber -> {
-            try {
-                searchModel.joinTopic(topicId);
-                subscriber.onNext(topicId);
-            } catch (RetrofitException e) {
-                e.printStackTrace();
-                subscriber.onError(e);
-            }
-            subscriber.onCompleted();
-        })
+        Observable
+                .fromCallable(() -> {
+                    searchModel.joinTopic(topicId);
+                    return topicId;
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(o -> {
-                    view.moveToMessageActivityFromSearch(topicId, topicType, linkId);
-                })
-                .subscribe(o -> {
-                        }, e -> {
-                            e.printStackTrace();
-                        }
-                );
+                .subscribe(o -> view.moveToMessageActivityFromSearch(topicId, topicId, topicType, linkId),
+                        Throwable::printStackTrace);
     }
 
     @Override
@@ -452,9 +441,9 @@ public class SearchPresenterImpl implements SearchPresenter {
         if (TeamInfoLoader.getInstance().isChat(searchMessageData.getRoomId())) {
             long memberId = TeamInfoLoader.getInstance()
                     .getChat(searchMessageData.getRoomId()).getCompanionId();
-            view.moveToMessageActivityFromSearch(memberId,
-                    JandiConstants.TYPE_DIRECT_MESSAGE,
-                    searchMessageData.getLinkId());
+            view.moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
+                    memberId,
+                    JandiConstants.TYPE_DIRECT_MESSAGE, searchMessageData.getLinkId());
         } else {
             int entityType =
                     TeamInfoLoader.getInstance().isPublicTopic(searchMessageData.getRoomId())
@@ -464,8 +453,8 @@ public class SearchPresenterImpl implements SearchPresenter {
                 view.showJoinRoomDialog(topicRoom, searchMessageData.getLinkId());
             } else {
                 view.moveToMessageActivityFromSearch(searchMessageData.getRoomId(),
-                        entityType,
-                        searchMessageData.getLinkId());
+                        searchMessageData.getRoomId(),
+                        entityType, searchMessageData.getLinkId());
             }
         }
     }

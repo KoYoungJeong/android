@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.search.presenter.MessageSearchListPresenter;
@@ -49,6 +50,16 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 view.dismissLoadingView();
                 return oldMessage;
+            }
+
+            if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+                for (int i = oldMessage.records.size() - 1; i >= 0; i--) {
+                    if (oldMessage.records.get(i).info instanceof ResMessages.InviteEvent
+                            || oldMessage.records.get(i).info instanceof ResMessages.LeaveEvent
+                            || oldMessage.records.get(i).info instanceof ResMessages.JoinEvent) {
+                        oldMessage.records.remove(i);
+                    }
+                }
             }
 
             long firstLinkId = oldMessage.records.get(0).id;

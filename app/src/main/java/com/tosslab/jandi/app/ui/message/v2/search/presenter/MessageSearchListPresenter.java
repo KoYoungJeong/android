@@ -101,5 +101,9 @@ public interface MessageSearchListPresenter {
         void dismissUserStatusLayout();
 
         void movePollDetailActivity(long pollId);
+
+        void setInavtiveUser();
+
+        void showReadOnly(boolean visible);
     }
 }

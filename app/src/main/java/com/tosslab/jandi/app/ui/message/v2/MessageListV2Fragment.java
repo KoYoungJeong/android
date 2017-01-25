@@ -269,8 +269,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Bind(R.id.vg_messages_input)
     View vgMessageInput;
 
-    @Bind(R.id.vg_messages_read_only)
+    @Bind(R.id.vg_messages_read_only_and_disable)
     View vgReadOnly;
+
+    @Bind(R.id.tv_messages_read_only_and_disable_title)
+    TextView tvReadOnlyTitle;
+    @Bind(R.id.tv_messages_read_only_and_disable_description)
+    TextView tvReadOnlyDescription;
+
     @Bind(R.id.tv_messages_date_divider)
     TextView tvMessageDate;
     @Bind(R.id.layout_messages_empty)
@@ -890,25 +896,32 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void showDisabledUserLayer() {
-        vgMessageInput.setVisibility(View.GONE);
-        vgMemberStatusAlert.setVisibility(View.VISIBLE);
-        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_b2));
-        ivMemberStatusAlert.setImageResource(R.drawable.icon_disabled_members_bar);
-        tvMemberStatusAlert.setText(R.string.jandi_disabled_user);
+
+        vgMessageInput.setVisibility(View.INVISIBLE);
+        vgMemberStatusAlert.setVisibility(View.GONE);
         setPreviewVisible(false);
         vgMemberStatusAlert.setOnClickListener(null);
+
+        vgReadOnly.setVisibility(View.VISIBLE);
+        tvReadOnlyTitle.setText(R.string.room_member_disabled_alert_title);
+        tvReadOnlyDescription.setText(R.string.room_member_disabled_alert_body);
     }
 
     @Override
     public void showInactivedUserLayer() {
+        vgReadOnly.setVisibility(View.GONE);
         vgMemberStatusAlert.setVisibility(View.VISIBLE);
-        vgMemberStatusAlert.setBackgroundColor(getResources().getColor(R.color.jandi_black_de));
-        ivMemberStatusAlert.setImageResource(R.drawable.bar_icon_info);
-        tvMemberStatusAlert.setText(R.string.jandi_this_member_is_pending_to_join);
         vgMemberStatusAlert.setOnClickListener(v -> {
             onEvent(new ShowProfileEvent(entityId, ShowProfileEvent.From.SystemMessage));
         });
     }
+
+    @Override
+    public void dismissUserStatusLayout() {
+        vgMemberStatusAlert.setVisibility(View.GONE);
+        vgReadOnly.setVisibility(View.GONE);
+    }
+
 
     @Override
     public void setAnnouncement(Announcement announcement) {
@@ -1370,6 +1383,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         oldProgressBar.startAnimation(inAnim);
     }
 
+
     @Override
     public void showEmptyView(boolean show) {
         vgEmptyLayout.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -1541,6 +1555,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
     }
 
+
     public void onEventMainThread(TopicKickedoutEvent event) {
         if (room.getRoomId() == event.getRoomId()) {
             finish();
@@ -1553,7 +1568,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             showToast(msg, true /* isError */);
         }
     }
-
 
     public void onEventMainThread(EventUpdateStart event) {
         if (vgSynchronize != null && tvSynchronize != null) {
@@ -2027,11 +2041,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     @Override
-    public void dismissUserStatusLayout() {
-        vgMemberStatusAlert.setVisibility(View.GONE);
-    }
-
-    @Override
     public void refreshMessages() {
         if (adapterView != null) {
             Completable.fromAction(() -> {
@@ -2054,8 +2063,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void showReadOnly(boolean readOnly) {
         vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
         if (readOnly) {
-            vgReadOnly.setOnClickListener(v -> {
-            });
+            vgReadOnly.setOnClickListener(v -> { });
         } else {
             vgReadOnly.setOnClickListener(null);
         }

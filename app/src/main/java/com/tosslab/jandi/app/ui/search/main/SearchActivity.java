@@ -407,9 +407,10 @@ public class SearchActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId) {
+    public void moveToMessageActivityFromSearch(long roomId, long entityId, int entityType, long linkId) {
         startActivity(Henson.with(this)
                 .gotoMessageListV2Activity()
+                .roomId(roomId)
                 .entityId(entityId)
                 .entityType(entityType)
                 .isFromSearch(true)
