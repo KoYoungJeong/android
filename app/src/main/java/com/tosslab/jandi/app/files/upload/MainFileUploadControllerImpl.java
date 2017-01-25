@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
@@ -48,9 +46,7 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
-                    Uri uri = FileProvider.getUriForFile(fragment.getContext(),
-                            fragment.getContext().getString(R.string.jandi_file_authority), filePath);
-                    filePickerModel.openCameraForActivityResult(fragment, uri);
+                    filePickerModel.openCameraForActivityResult(fragment, filePath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -77,9 +73,7 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
-                    Uri uri = FileProvider.getUriForFile(activity,
-                            activity.getString(R.string.jandi_file_authority), filePath);
-                    filePickerModel.openCameraForActivityResult(activity, uri);
+                    filePickerModel.openCameraForActivityResult(activity, filePath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -105,9 +99,7 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     filePath = File.createTempFile("camera", ".jpg", directory);
-                    Uri uri = FileProvider.getUriForFile(fragment.getContext(),
-                            fragment.getString(R.string.jandi_file_authority), filePath);
-                    filePickerModel.openCameraForActivityResult(fragment, uri);
+                    filePickerModel.openCameraForActivityResult(fragment, filePath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

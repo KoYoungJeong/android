@@ -113,7 +113,7 @@ public class StickerCommentViewHolder extends BaseViewHolder<ResMessages.Comment
         int rule;
         int parentRule;
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) vCellDivider.getLayoutParams();
-        if (SdkUtils.isJellyBeanMR1()) {
+        if (SdkUtils.isOverJellyBeanMR1()) {
             if (lp.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR) {
                 rule = RelativeLayout.ALIGN_LEFT;
                 parentRule = RelativeLayout.ALIGN_PARENT_LEFT;
