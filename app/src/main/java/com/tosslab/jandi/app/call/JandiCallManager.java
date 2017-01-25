@@ -56,7 +56,7 @@ public class JandiCallManager {
         subject.onBackpressureBuffer()
                 .filter(it -> JandiPreference.isShowCallPopup())
                 .filter(it -> {
-                    if (SdkUtils.isMarshmallow()) {
+                    if (SdkUtils.isOverMarshmallow()) {
                         if (Settings.canDrawOverlays(JandiApplication.getContext())) {
                             return true;
                         } else {
@@ -98,7 +98,7 @@ public class JandiCallManager {
     private Observable<? extends Object> ringingState(Observable<CallState> callStateObservable) {
         return callStateObservable
                 .filter(it -> {
-                    if (SdkUtils.isMarshmallow()) {
+                    if (SdkUtils.isOverMarshmallow()) {
                         return Settings.canDrawOverlays(JandiApplication.getContext());
                     } else {
                         return false;

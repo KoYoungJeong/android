@@ -160,7 +160,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener {
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.cb_call_preview_permission);
 
             boolean moveSettingBtn;
-            if (SdkUtils.isMarshmallow()) {
+            if (SdkUtils.isOverMarshmallow()) {
                 if (!SdkUtils.hasPermission(Manifest.permission.CALL_PHONE)
                         || !Settings.canDrawOverlays(activity)) {
                     moveSettingBtn = true;

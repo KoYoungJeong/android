@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.SdkUtils;
 
 import java.io.File;
 
@@ -108,7 +108,7 @@ public class FileUtil {
         intent.setDataAndType(data, mimeType)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         if (context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() <= 0) {
-            if (Build.VERSION.SDK_INT >= 24) {
+            if (SdkUtils.isOverNougat()) {
                 Uri uri = FileProvider.getUriForFile(context, context.getString(R.string.jandi_file_authority), file);
                 intent.setDataAndType(uri, mimeType)
                         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -122,4 +122,21 @@ public class FileUtil {
         return intent;
 
     }
+
+    public static Uri createOptimizedFileUri(File file) {
+
+        if (SdkUtils.isOverNougat()) {
+            Context context= JandiApplication.getContext();
+
+            Uri uri = FileProvider.getUriForFile(context, context.getString(R.string.jandi_file_authority), file);
+            context.revokeUriPermission(uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            return uri;
+        } else {
+            return Uri.fromFile(file);
+        }
+
+    }
+
 }

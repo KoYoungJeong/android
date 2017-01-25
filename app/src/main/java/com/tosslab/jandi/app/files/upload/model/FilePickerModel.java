@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.album.imagealbum.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.profile.defaultimage.ProfileImageSelectorActivity;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
+import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.file.ImageFilePath;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -83,17 +84,17 @@ public class FilePickerModel {
         activity.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_EXPLORER);
     }
 
-    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
+    public void openCameraForActivityResult(Fragment fragment, File file) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.createOptimizedFileUri(file));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
-    public void openCameraForActivityResult(Activity activity, Uri fileUri) {
+    public void openCameraForActivityResult(Activity activity, File file) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.createOptimizedFileUri(file));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         activity.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_PHOTO);

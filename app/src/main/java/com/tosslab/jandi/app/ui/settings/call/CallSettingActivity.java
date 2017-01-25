@@ -161,7 +161,7 @@ public class CallSettingActivity extends BaseAppCompatActivity {
         if (SdkUtils.hasCanvasPermission()) {
             return;
         }
-        if (SdkUtils.isMarshmallow()) {
+        if (SdkUtils.isOverMarshmallow()) {
             startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.fromParts("package", getPackageName(), null)));
         }
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamPhoneNumberSetting, AnalyticsValue.Action.DrawOverApps);
