@@ -57,14 +57,17 @@ import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Announcement;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListSearchAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog;
@@ -89,7 +92,9 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -525,11 +530,54 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     }
 
     private void justRefresh() {
-        int itemCount = messageAdapter.getItemCount();
-        if (itemCount > 0) {
-            messageAdapter.notifyItemRangeChanged(0, itemCount);
+        Completable.fromCallable(() -> {
+
+            int itemCount = messageAdapter.getItemCount();
+            if (itemCount > 0) {
+                messageAdapter.notifyItemRangeChanged(0, itemCount);
+            }
+            resetUnreadCnt();
+            return true;
+        }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
+    }
+
+    /**
+     * @see MessageListV2Presenter#resetUnreadCnt()
+     */
+    public void resetUnreadCnt() {
+        if (messageAdapter.getItemCount() <= 0) {
+            return;
+        }
+        List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(roomId);
+
+        List<Long> memberLastReadLinks = new ArrayList<>();
+
+        for (Marker marker : markers) {
+            memberLastReadLinks.add(marker.getReadLinkId());
         }
 
+        Collections.sort(memberLastReadLinks);
+
+        int unreadCnt = 0;
+
+        while ((unreadCnt < memberLastReadLinks.size() - 1) && memberLastReadLinks.get(unreadCnt) < 0) {
+            unreadCnt++;
+        }
+
+        long linkCursor = memberLastReadLinks.get(unreadCnt);
+
+        for (int j = 0; j < messageAdapter.getItemCount(); j++) {
+            if (messageAdapter.getItem(j).id <= linkCursor) {
+                messageAdapter.getItem(j).unreadCnt = unreadCnt;
+            } else {
+                while (unreadCnt < memberLastReadLinks.size() - 1 &&
+                        linkCursor == memberLastReadLinks.get(unreadCnt)) {
+                    unreadCnt++;
+                }
+                linkCursor = memberLastReadLinks.get(unreadCnt);
+                messageAdapter.getItem(j).unreadCnt = unreadCnt;
+            }
+        }
     }
 
     public void onEvent(MessageStarredEvent event) {
@@ -878,7 +926,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
             int lastItemPosition = messageAdapter.getItemCount();
 
             messageAdapter.addAll(lastItemPosition, newMessage.records);
-            messageAdapter.notifyDataSetChanged();
+            justRefresh();
             if (!firstLoad && firstVisibleItemLinkId > 0) {
                 moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
             }
@@ -943,7 +991,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
                                     int firstVisibleItemTop) {
         Completable.fromAction(() -> {
             messageAdapter.addAll(0, oldMessage.records);
-
+            justRefresh();
             if (latestVisibleMessageId > 0) {
                 moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
             } else {

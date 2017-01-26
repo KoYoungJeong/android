@@ -97,16 +97,19 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void initShareData(List<String> uris) {
         view.showProgress();
-        Observable<List<ShareData>> dataObservable = Observable.create((Observable.OnSubscribe<FileShareData>) subscriber -> {
-            for (String uri : uris) {
-                Uri paredUri = Uri.parse(uri);
-                String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
-                if (!TextUtils.isEmpty(path)) {
-                    subscriber.onNext(new FileShareData(path));
-                }
-            }
-            subscriber.onCompleted();
-        }).subscribeOn(Schedulers.io())
+        Observable<List<ShareData>> dataObservable = Observable
+                .create((Observable.OnSubscribe<FileShareData>) subscriber -> {
+                    for (String uri : uris) {
+                        Uri paredUri = Uri.parse(uri);
+                        String path = ImageFilePath.getPath(JandiApplication.getContext(), paredUri);
+                        if (!TextUtils.isEmpty(path)) {
+                            subscriber.onNext(new FileShareData(path));
+                        }
+                    }
+                    subscriber.onCompleted();
+                })
+                .onBackpressureBuffer()
+                .subscribeOn(Schedulers.io())
                 .map(fileShareData -> {
                     String path = fileShareData.getData();
                     if (path.startsWith("http")) {
