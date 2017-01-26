@@ -455,7 +455,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         }
     }
 
-    @OnClick(R.id.tv_file_rename_button)
+    @OnClick(R.id.vg_file_upload_preview_content_title)
     void onClickFileRename() {
         showRenameTitleDialog();
     }

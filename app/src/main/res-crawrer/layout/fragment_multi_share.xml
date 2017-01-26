@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/upload_bg"
+            android:background="@drawable/share_upload_bg"
             android:orientation="vertical">
 
             <View
@@ -62,6 +62,7 @@
                 android:background="@color/rgb_dadada" />
 
             <LinearLayout
+                android:id="@+id/vg_multi_share_image_title"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:orientation="horizontal">
@@ -71,7 +72,6 @@
                     style="@style/JandiMainShare.Content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/vg_viwer"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="13dp"
                     android:layout_weight="1"
@@ -80,14 +80,15 @@
                     android:hint="@string/jandi_topic_title_hint"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@color/rgb_999999"
-                    android:textSize="16dp" />
+                    android:textColor="@color/rgb_333333"
+                    android:textSize="@dimen/jandi_text_size_large" />
 
                 <TextView
                     android:id="@+id/tv_file_rename_button"
                     android:layout_width="wrap_content"
                     android:layout_height="24dp"
                     android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_marginTop="12dp"
                     android:background="@drawable/bg_round_rect_border_grey"
                     android:gravity="center"
@@ -97,7 +98,7 @@
                     android:paddingEnd="9dp"
                     android:text="@string/common_fileupload_rename"
                     android:textColor="@color/white"
-                    android:textSize="12dp" />
+                    android:textSize="@dimen/jandi_text_size_small" />
 
             </LinearLayout>
 
@@ -170,7 +171,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="8dp"
                     android:hint="@string/jandi_menu_room_selection"
-                    android:textColor="@color/black"
+                    android:textColor="@color/rgb_333333"
                     android:textSize="16sp" />
 
                 <ImageView

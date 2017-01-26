@@ -188,6 +188,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             fileUploadThumbAdapter.getItem(idx).setSelected(idx == position);
         }
         fileUploadThumbAdapter.notifyDataSetChanged();
+        lvFileThumbs.getLayoutManager().scrollToPosition(position);
     }
 
     @Override
@@ -367,7 +368,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         }
     }
 
-    @OnClick(R.id.tv_file_rename_button)
+    @OnClick(R.id.vg_multi_share_image_title)
     void onClickFileRename() {
         showRenameTitleDialog();
     }

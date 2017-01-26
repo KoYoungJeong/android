@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/upload_bg"
+        android:background="@drawable/share_upload_bg"
         android:minHeight="186dp"
         android:orientation="vertical">
 
@@ -59,7 +59,6 @@
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:paddingRight="16dp">
-
 
             <TextView
                 android:id="@+id/tv_file_upload_title"
@@ -95,7 +94,8 @@
         <LinearLayout
             android:id="@+id/vg_file_upload_preview_content_entity"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingLeft="16dp"
@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
                 android:text="@string/jandi_action_share"
                 android:textColor="@color/rgb_999999"
