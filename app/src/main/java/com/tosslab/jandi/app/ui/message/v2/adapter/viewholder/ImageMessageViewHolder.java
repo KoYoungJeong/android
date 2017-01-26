@@ -183,7 +183,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
 
             final ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
             String remoteFilePath =
-                    ImageUtil.getThumbnailUrl(fileContent);
+                    ImageUtil.getOnlyLargestThumbnail(fileContent);
 
             final ViewGroup.LayoutParams layoutParams = ivFileImage.getLayoutParams();
 
