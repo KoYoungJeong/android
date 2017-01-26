@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import javax.inject.Inject;
 
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -142,19 +143,15 @@ public class SignInPresenterImpl implements SignInPresenter {
 
     @Override
     public void forgotPassword(String email) {
-        Observable.defer(() -> {
-            try {
-                return Observable.just(model.requestPasswordReset(email));
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        }).subscribeOn(Schedulers.io())
+        Completable.fromCallable(() -> model.requestPasswordReset(email))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> view.showSuccessPasswordResetToast(),
+                .subscribe(() -> view.showSuccessPasswordResetToast(),
                         e -> {
                             if (e instanceof RetrofitException) {
                                 RetrofitException error = (RetrofitException) e;
-                                if (error.getResponseCode() == 40000) {
+                                if (error.getResponseCode() == 40000
+                                        || error.getResponseCode() == 40022) {
                                     view.showSuggestJoin(email);
                                 } else {
                                     view.showNetworkErrorToast();
