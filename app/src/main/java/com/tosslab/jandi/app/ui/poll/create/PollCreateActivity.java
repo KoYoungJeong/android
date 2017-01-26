@@ -76,6 +76,8 @@ public class PollCreateActivity extends BaseAppCompatActivity
 
     private ProgressWheel progressWheel;
 
+    private int currentItemPosition = 0;
+
     public static void start(Activity activity, long topicId) {
         Intent intent = new Intent(activity, PollCreateActivity.class);
         intent.putExtra(KEY_TOPIC_ID, topicId);
@@ -140,7 +142,8 @@ public class PollCreateActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.btn_create_poll_item_add)
     void addPollItem() {
-        final int position = vgPollItems.getChildCount();
+        final int position = currentItemPosition;
+        currentItemPosition++;
         if (position > 2) {
             sendAnalyticsEvent(AnalyticsValue.Action.AddChoice);
         }
@@ -176,6 +179,7 @@ public class PollCreateActivity extends BaseAppCompatActivity
             if (child != null) {
                 child.requestFocus();
             }
+            changePollButtonState();
         });
 
         vgPollItems.addView(itemView);
