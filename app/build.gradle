@@ -34,7 +34,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 268
-        versionName '2.7.0'
+        versionName '2.8.0'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
