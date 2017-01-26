@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +31,7 @@ import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.dagger.DaggerMainChatListComponent;
@@ -57,7 +57,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-public class MainChatListFragment extends Fragment
+public class MainChatListFragment extends BaseLazyFragment
         implements MainChatListPresenter.View, ListScroller, FloatingActionBarDetector {
 
     @Inject
@@ -93,9 +93,8 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
+        super.lazyLoadOnActivityCreated(savedInstanceState);
         Bundle arguments = getArguments();
         if (arguments != null) {
             Dart.inject(this, arguments);
@@ -108,11 +107,13 @@ public class MainChatListFragment extends Fragment
 
         initObject();
         initViews();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     void initObject() {
         mainChatListAdapter = new MainChatListAdapter(getActivity());
-
     }
 
     void initViews() {
@@ -148,14 +149,6 @@ public class MainChatListFragment extends Fragment
                 }
             }
         });
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     @Override

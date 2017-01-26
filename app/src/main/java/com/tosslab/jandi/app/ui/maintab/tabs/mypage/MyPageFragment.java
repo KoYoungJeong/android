@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -30,7 +31,7 @@ import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.schedulers.Schedulers;
 
-public class MyPageFragment extends Fragment implements TabFocusListener {
+public class MyPageFragment extends BaseLazyFragment implements TabFocusListener {
 
     @Bind(R.id.pager_mypage)
     ViewPager viewPager;
@@ -51,9 +52,8 @@ public class MyPageFragment extends Fragment implements TabFocusListener {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
+        super.lazyLoadOnActivityCreated(savedInstanceState);
         viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);

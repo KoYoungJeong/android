@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
@@ -86,7 +87,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 16. 6. 28..
  */
-public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
+public class FileListFragment extends BaseLazyFragment implements FileListPresenterImpl.View,
         FileSearchActivity.SearchSelectView, ListScroller {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
@@ -167,8 +168,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void lazyLoadOnViewCreated(Bundle savedInstanceState) {
+        super.lazyLoadOnViewCreated(savedInstanceState);
         Bundle bundle = this.getArguments();
         Dart.inject(this, bundle);
 
@@ -180,6 +181,42 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         filePickerViewModel = new MainFileUploadControllerImpl();
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
+        super.lazyLoadOnActivityCreated(savedInstanceState);
+        searchSelectorViewController = new SearchSelectorViewController(
+                getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
+
+        String entityName = TeamInfoLoader.getInstance().getName(entityId);
+
+        searchSelectorViewController.setCurrentEntityNameText(entityName);
+
+        setListView();
+
+        setHasOptionsMenu(true);
+
+        resetFilterLayoutPosition();
+
+        if (isInSearchActivity() && isSearchLayoutFirst) {
+            initSearchLayoutIfFirst();
+        }
+
+        if (entityId > 0) {
+            fileListPresenter.onEntitySelection(entityId, "");
+            searchSelectorViewController.setCurrentEntity(entityId);
+        }
+
+        if (writerId > 0) {
+            fileListPresenter.onMemberSelection(writerId, "");
+            searchSelectorViewController.setCurrentMember(writerId);
+        }
+
+        if (!TextUtils.equals(fileType, "all")) {
+            fileListPresenter.onFileTypeSelection(fileType, "");
+            searchSelectorViewController.setCurrentFileType(fileType);
         }
     }
 
@@ -222,44 +259,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         super.onDestroy();
     }
 
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        searchSelectorViewController = new SearchSelectorViewController(
-                getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
-
-        String entityName = TeamInfoLoader.getInstance().getName(entityId);
-
-        searchSelectorViewController.setCurrentEntityNameText(entityName);
-
-        setListView();
-
-        setHasOptionsMenu(true);
-
-        resetFilterLayoutPosition();
-
-        if (isInSearchActivity() && isSearchLayoutFirst) {
-            initSearchLayoutIfFirst();
-        }
-
-        if (entityId > 0) {
-            fileListPresenter.onEntitySelection(entityId, "");
-            searchSelectorViewController.setCurrentEntity(entityId);
-        }
-
-        if (writerId > 0) {
-            fileListPresenter.onMemberSelection(writerId, "");
-            searchSelectorViewController.setCurrentMember(writerId);
-        }
-
-        if (!TextUtils.equals(fileType, "all")) {
-            fileListPresenter.onFileTypeSelection(fileType, "");
-            searchSelectorViewController.setCurrentFileType(fileType);
-        }
-
-    }
 
     @OnClick(R.id.ly_file_list_where)
     void onEntityClick() {

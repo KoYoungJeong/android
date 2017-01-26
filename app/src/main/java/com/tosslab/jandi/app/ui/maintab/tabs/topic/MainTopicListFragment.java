@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +39,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
@@ -81,7 +81,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class MainTopicListFragment extends Fragment
+public class MainTopicListFragment extends BaseLazyFragment
         implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
@@ -126,9 +126,18 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected void lazyLoadOnViewCreated(Bundle savedInstanceState) {
+        super.lazyLoadOnViewCreated(savedInstanceState);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
 
+
+
+    @Override
+    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
+        super.lazyLoadOnActivityCreated(savedInstanceState);
         Dart.inject(this, getArguments());
         DaggerMainTopicListComponent.builder()
                 .mainTopicListModule(new MainTopicListModule(this))
@@ -137,7 +146,6 @@ public class MainTopicListFragment extends Fragment
 
         initViews(savedInstanceState);
         SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
-
     }
 
     void initViews(Bundle savedInstanceState) {
@@ -198,6 +206,11 @@ public class MainTopicListFragment extends Fragment
         if (isFirstLoadFragment) {
             isFirstLoadFragment = false;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     private void initUpdatedTopicAdapter() {
@@ -429,12 +442,10 @@ public class MainTopicListFragment extends Fragment
                 .show(getFragmentManager(), "dialog");
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     @Override
