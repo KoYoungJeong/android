@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.Henson;
@@ -76,13 +75,6 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
         setUpTeamAdmin();
         setUpMemberCount();
         setUpAppVersion();
-        setUpAuthority();
-    }
-
-    private void setUpAuthority() {
-        if (TeamInfoLoader.getInstance().getMyLevel() == Level.Guest) {
-            tvTeamLeave.setVisibility(View.GONE);
-        }
     }
 
     @Override
