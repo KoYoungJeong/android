@@ -33,6 +33,8 @@ import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 import java.util.Collection;
 import java.util.Date;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
@@ -45,56 +47,49 @@ import rx.Observable;
  */
 public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMessage> {
 
+    @Bind(R.id.tv_file_detail_user_name)
+    TextView tvUserName;
+    @Bind(R.id.iv_file_detail_user_profile)
+    ImageView ivUserProfile;
+    @Bind(R.id.v_file_detail_user_name_disable_indicator)
+    View vUserNameDisableIndicator;
+    @Bind(R.id.v_file_detail_user_profile_disable_indicator)
+    View vUserProfileDisableIndicator;
+    @Bind(R.id.tv_file_detail_create_date)
+    TextView tvCreatedDate;
+    @Bind(R.id.tv_file_detail_file_info)
+    TextView tvFileInfo;
+    @Bind(R.id.vg_file_detail_info)
+    ViewGroup vgFileInfo;
+    @Bind(R.id.btn_file_detail_star)
+    View btnStar;
+    @Bind(R.id.vg_file_detail_deleted)
+    View vDeleted;
+    @Bind(R.id.tv_file_detail_deleted_date)
+    TextView tvDeletedDate;
+    @Bind(R.id.tv_file_detail_shared_topics)
+    LinkedEllipsizeTextView tvSharedTopics;
     private Context context;
-    private TextView tvUserName;
-    private ImageView ivUserProfile;
-    private View vUserNameDisableIndicator;
-    private View vUserProfileDisableIndicator;
-    private TextView tvCreatedDate;
-    private TextView tvFileInfo;
-    private ViewGroup vgFileInfo;
-    private View btnStar;
     private ViewGroup vgFileContent;
-    private View vDeleted;
-    private TextView tvDeletedDate;
-    private LinkedEllipsizeTextView tvSharedTopics;
 
 
     protected FileViewHolder(View itemView) {
         super(itemView);
         context = itemView.getContext();
-
-        tvUserName = (TextView) itemView.findViewById(R.id.tv_file_detail_user_name);
-        ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_file_detail_user_profile);
-        tvCreatedDate = (TextView) itemView.findViewById(R.id.tv_file_detail_create_date);
-
-        vUserNameDisableIndicator =
-                itemView.findViewById(R.id.v_file_detail_user_name_disable_indicator);
-        vUserProfileDisableIndicator =
-                itemView.findViewById(R.id.v_file_detail_user_profile_disable_indicator);
-
-        vgFileInfo = (ViewGroup) itemView.findViewById(R.id.vg_file_detail_info);
-        tvFileInfo = (TextView) itemView.findViewById(R.id.tv_file_detail_file_info);
-
-        btnStar = itemView.findViewById(R.id.btn_file_detail_star);
-
-        vDeleted = itemView.findViewById(R.id.vg_file_detail_deleted);
-        tvDeletedDate = (TextView) itemView.findViewById(R.id.tv_file_detail_deleted_date);
-
         vgFileContent = (ViewGroup) itemView.findViewById(R.id.vg_file_detail_content);
-
-        tvSharedTopics =
-                (LinkedEllipsizeTextView) itemView.findViewById(R.id.tv_file_detail_shared_topics);
+        addContentView(vgFileContent);
+        ButterKnife.bind(this, itemView);
+        initView();
         tvSharedTopics.setOnRequestMoreClickListener(() ->
                 EventBus.getDefault().post(new ShowMoreSharedEntitiesEvent()));
-
-        addContentView(vgFileContent);
     }
 
     public static View getItemView(ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         return inflater.inflate(R.layout.layout_file_detail, parent, false);
     }
+
+    protected abstract void initView();
 
     public abstract void addContentView(ViewGroup parent);
 

@@ -169,12 +169,12 @@ public class PhotoViewFragment extends Fragment {
 
     void initView() {
         setupProgress();
+        hideProgress();
 
         boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(imageType);
         if (!shouldSupportImageExtensions
                 || (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl))) {
             LogUtil.e(TAG, "Url is empty.");
-            vgProgress.setVisibility(View.GONE);
             showError();
             ivPhotoView.setZoomEnabled(false);
             pvPhotoView.setZoomable(false);
@@ -189,7 +189,25 @@ public class PhotoViewFragment extends Fragment {
 
             // gif 인 경우 1MB 이상은 플레이 버튼 누르도록 함
             if (size < MB_1) {
-                loadImageForGif(Uri.parse(originalUrl));
+                ImageLoader.newInstance()
+                        // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                        .blockNetworking(true)
+                        .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                            @Override
+                            public boolean onException(Exception e, Uri model,
+                                                       Target<GlideDrawable> target,
+                                                       boolean isFirstResource) {
+                                // cache 가 되어 있지 않음
+                                vgPlayGif.setVisibility(View.VISIBLE);
+                                tvPlayGif.setText(getExt(imageType).toUpperCase() + ", " + FileUtil.formatFileSize(size));
+                                loadImageForGif(Uri.parse(originalUrl));
+                                return true;
+                            }
+                        })
+                        .fragment(this)
+                        .uri(Uri.parse(originalUrl))
+                        .into(pvPhotoView);
             } else {
                 hideProgress();
                 ImageLoader.newInstance()
@@ -215,10 +233,26 @@ public class PhotoViewFragment extends Fragment {
         } else if (!TextUtils.isEmpty(thumbUrl)) {
             pvPhotoView.setVisibility(View.GONE);
             ivPhotoView.setVisibility(View.VISIBLE);
-            loadImage(Uri.parse(thumbUrl));
+            ImageLoader.newInstance()
+                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                    .blockNetworking(true)
+                    .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                        @Override
+                        public boolean onException(Exception e, Uri model,
+                                                   Target<GlideDrawable> target,
+                                                   boolean isFirstResource) {
+                            // cache 가 되어 있지 않음
+                            loadImage(Uri.parse(thumbUrl));
+                            return true;
+                        }
+                    })
+                    .fragment(this)
+                    .uri(Uri.parse(thumbUrl))
+                    .into(ivPhotoView);
         } else {
-            pvPhotoView.setVisibility(View.VISIBLE);
-            ivPhotoView.setVisibility(View.GONE);
+            pvPhotoView.setVisibility(View.GONE);
+            ivPhotoView.setVisibility(View.VISIBLE);
 
             final Uri originalUri = Uri.parse(originalUrl);
 
@@ -238,23 +272,7 @@ public class PhotoViewFragment extends Fragment {
                     })
                     .fragment(this)
                     .uri(originalUri)
-                    .intoWithProgress(ivPhotoView,
-                            () -> Observable.just(0)
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(it -> {
-                                        progressBar.setMax(100);
-                                        progressBar.setProgress(it);
-                                        tvPercentage.setText("0 %");
-                                    }),
-                            progress -> Observable.just(progress)
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(it -> {
-                                        progressBar.setMax(100);
-                                        progressBar.setProgress(it);
-                                        tvPercentage.setText(String.format("%d %%", progress));
-                                    }),
-                            null,
-                            this::hideProgress);
+                    .into(ivPhotoView);
         }
 
         if (ivPhotoView.getVisibility() == View.VISIBLE) {

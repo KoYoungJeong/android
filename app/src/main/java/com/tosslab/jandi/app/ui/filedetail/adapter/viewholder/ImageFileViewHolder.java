@@ -24,25 +24,35 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
+import butterknife.Bind;
 import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.android.schedulers.AndroidSchedulers;
 
 public class ImageFileViewHolder extends FileViewHolder {
 
-    private ImageView ivFileThumb;
+    public static final int SIZE_1MB = 1024 * 1024;
+    @Bind(R.id.iv_file_detail_thumb)
+    ImageView ivFileThumb;
 
-    private View btnTapToView;
+    @Bind(R.id.vg_file_detail_tap_to_view)
+    View btnTapToView;
 
-    private View vUnavailableIndicator;
+    @Bind(R.id.vg_file_detail_no_image)
+    View vUnavailableIndicator;
+    @Bind(R.id.vg_photoview_play)
+    ViewGroup vGifPlay;
+    @Bind(R.id.btn_photoview_play)
+    View btnGifPlay;
+    @Bind(R.id.tv_photoview_play_size)
+    TextView tvGifPlay;
+    @Bind(R.id.progress_file_detail)
+    CircleProgressBar progressBar;
+    @Bind(R.id.tv_file_detail_percentage)
+    TextView tvProgress;
+    @Bind(R.id.vg_file_detail_progress)
+    ViewGroup vgProgress;
     private OnImageFileClickListener onImageFileClickListener;
-
-    private ViewGroup vGifPlay;
-    private View btnGifPlay;
-    private TextView tvGifPlay;
-    private CircleProgressBar progressBar;
-    private TextView tvProgress;
-    private ViewGroup vgProgress;
     private ImageLoader.ProgressStarted progressStarted;
     private ImageLoader.ProgressDownloading progressDownloading;
     private ImageLoader.ProgressPresent progressPresent;
@@ -58,20 +68,12 @@ public class ImageFileViewHolder extends FileViewHolder {
 
     @Override
     public void addContentView(ViewGroup parent) {
-        View contentView = LayoutInflater.from(getContext())
+        LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_file_detail_image_content, parent, true);
-        ivFileThumb = (ImageView) contentView.findViewById(R.id.iv_file_detail_thumb);
-        btnTapToView = contentView.findViewById(R.id.vg_file_detail_tap_to_view);
-        vUnavailableIndicator = contentView.findViewById(R.id.vg_file_detail_no_image);
+    }
 
-        vgProgress = ((ViewGroup) contentView.findViewById(R.id.vg_file_detail_progress));
-        progressBar = ((CircleProgressBar) contentView.findViewById(R.id.progress_file_detail));
-        tvProgress = ((TextView) contentView.findViewById(R.id.tv_file_detail_percentage));
-
-        vGifPlay = (ViewGroup) contentView.findViewById(R.id.vg_photoview_play);
-        btnGifPlay = contentView.findViewById(R.id.btn_photoview_play);
-        tvGifPlay = (TextView) contentView.findViewById(R.id.tv_photoview_play_size);
-
+    @Override
+    protected void initView() {
         int progressWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, progressBar.getResources().getDisplayMetrics());
         progressBar.setBgStrokeWidth(progressWidth);
         progressBar.setProgressStrokeWidth(progressWidth);
@@ -108,7 +110,6 @@ public class ImageFileViewHolder extends FileViewHolder {
             return;
         }
 
-
         progressStarted = () -> {
             Completable.fromAction(() -> {
                 if (vgProgress.getVisibility() != View.VISIBLE) {
@@ -135,7 +136,6 @@ public class ImageFileViewHolder extends FileViewHolder {
         };
         if (!TextUtils.isEmpty(localFilePath)) {
             ImageLoader.newInstance()
-                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                     .uri(UriUtil.getFileUri(localFilePath))
@@ -144,21 +144,11 @@ public class ImageFileViewHolder extends FileViewHolder {
         }
 
         if (content.type.contains("gif") && content.size > 0) {
-            if (content.size < 1024 * 1024) {
-                ImageLoader.newInstance()
-                        .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
-                        .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                        .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
-                        .uri(Uri.parse(ImageUtil.getOriginalUrl(content)))
-                        .into(ivFileThumb);
-            } else {
-                // progress 처리
-                Uri originalUri = Uri.parse(originalUrl);
+            if (content.size < SIZE_1MB) {
 
-                // 원본 요청. 실패하면 썸네일로 변경
+                // 캐시로드 할 때는 그냥 호출
                 ImageLoader.newInstance()
                         .blockNetworking(true)
-                        .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                         .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                         .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
 
@@ -166,6 +156,34 @@ public class ImageFileViewHolder extends FileViewHolder {
                             public boolean onException(Exception e, Uri model,
                                                        Target<GlideDrawable> target,
                                                        boolean isFirstResource) {
+
+                                // 캐시 없으면 프로그래스 노출 로딩
+                                ImageLoader.newInstance()
+                                        .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                                        .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
+                                        .uri(Uri.parse(ImageUtil.getOriginalUrl(content)))
+                                        .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+                                return true;
+                            }
+                        })
+                        .uri(Uri.parse(ImageUtil.getOriginalUrl(content)))
+                        .into(ivFileThumb);
+
+            } else {
+                // progress 처리
+                Uri originalUri = Uri.parse(originalUrl);
+
+                // 캐시로드.
+                ImageLoader.newInstance()
+                        .blockNetworking(true)
+                        .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                        .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                            @Override
+                            public boolean onException(Exception e, Uri model,
+                                                       Target<GlideDrawable> target,
+                                                       boolean isFirstResource) {
+                                // 썸네일 노출 + Play 버튼 노출
                                 setUpGifPlay(content);
                                 loadingThumb(content);
 
@@ -173,15 +191,27 @@ public class ImageFileViewHolder extends FileViewHolder {
                             }
                         })
                         .uri(originalUri)
-                        .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+                        .into(ivFileThumb);
             }
         } else if (hasThumbnailUrl) {
-            loadingThumb(content);
-        } else {
+            // 캐시 로드
             ImageLoader.newInstance()
-                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
                     .blockNetworking(true)
-                    .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
+                    .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                    .uri(Uri.parse(ImageUtil.getThumbnailUrl(content)))
+                    .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            // 캐시 없으면 프로그래스 노출 로딩
+                            loadingThumb(content);
+                            return true;
+                        }
+                    })
+                    .into(ivFileThumb);
+        } else {
+            // 캐시 로드
+            ImageLoader.newInstance()
+                    .blockNetworking(true)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                     .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
                         @Override
@@ -203,7 +233,7 @@ public class ImageFileViewHolder extends FileViewHolder {
                         }
                     })
                     .uri(Uri.parse(ImageUtil.getOriginalUrl(fileMessage.content)))
-                    .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+                    .into(ivFileThumb);
         }
 
     }
@@ -231,7 +261,6 @@ public class ImageFileViewHolder extends FileViewHolder {
 
     protected void loadingThumb(ResMessages.FileContent content) {
         ImageLoader.newInstance()
-                .placeHolder(R.drawable.preview_img, ImageView.ScaleType.CENTER)
                 .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
                 .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
                 .uri(Uri.parse(ImageUtil.getThumbnailUrl(content)))
