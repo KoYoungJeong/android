@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
@@ -31,6 +32,7 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
@@ -313,6 +315,8 @@ public class ImageUtil {
     }
 
     public static File convertProfileFile(File file) {
+
+
         int desired_width = 640;
         int desired_height = 640;
 
@@ -320,29 +324,70 @@ public class ImageUtil {
         options.inJustDecodeBounds = true;
 
         BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-
         options.inSampleSize = calculateInSampleSize(options, desired_width, desired_height);
         options.inJustDecodeBounds = false;
 
-        Bitmap smallerBm = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        Bitmap source = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        Bitmap finalBitmap;
+        int degree = findingDegreeOfImage(file);
+        if (degree != 0) {
+            // 회전을 위한 추가적인 가공 처리
+            int outWidth = options.outWidth;
+            int outHeight = options.outHeight;
 
-        FileOutputStream fOut;
+            Matrix matrix = new Matrix();
+            matrix.postRotate(degree);
+            // 회전복사
+            finalBitmap = Bitmap.createBitmap(source, 0, 0, outWidth, outHeight, matrix, true);
+        } else {
+            options.inJustDecodeBounds = false;
+            finalBitmap = source;
+        }
 
+        FileOutputStream fOut = null;
         File smallPictureFile = null;
 
         try {
             String newPath = file.getPath().replace(file.getName(), "converted-" + file.getName());
             smallPictureFile = new File(newPath);
             fOut = new FileOutputStream(smallPictureFile);
-            smallerBm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             fOut.flush();
-            fOut.close();
-            smallerBm.recycle();
+            finalBitmap.recycle();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (fOut != null) {
+                try {
+                    fOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         return smallPictureFile;
+    }
+
+    private static int findingDegreeOfImage(File file) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+            int rotate = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+            switch (rotate) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public static int calculateInSampleSize(

@@ -111,29 +111,17 @@ public class InsertProfileFirstPagePresenterImpl implements InsertProfileFirstPa
 
     @Override
     public void onRequestCropImage(Fragment fragment) {
-        Observable.just(1)
-                .observeOn(Schedulers.io())
-                .subscribe(i -> {
-                    fileUploadController.selectFileSelector(ModifyProfileActivity.REQUEST_CROP, fragment);
-                });
+        fileUploadController.selectFileSelector(ModifyProfileActivity.REQUEST_CROP, fragment);
     }
 
     @Override
     public void onRequestCamera(Fragment fragment) {
-        Observable.just(1)
-                .observeOn(Schedulers.io())
-                .subscribe(i -> {
-                    fileUploadController.selectFileSelector(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, fragment);
-                });
+        fileUploadController.selectFileSelector(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, fragment);
     }
 
     @Override
     public void onRequestCharacter(Fragment fragment) {
-        Observable.just(1)
-                .observeOn(Schedulers.io())
-                .subscribe(i -> {
-                    fileUploadController.selectFileSelector(ModifyProfileActivity.REQUEST_CHARACTER, fragment);
-                });
+        fileUploadController.selectFileSelector(ModifyProfileActivity.REQUEST_CHARACTER, fragment);
     }
 
     @Override
