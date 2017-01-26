@@ -813,8 +813,8 @@
 	<string name="mypage_editprofile_statusmessage">"ステータスメッセージを入力"</string>
 	<string name="mypage_mention_newmentionalert">"新しいメンション"</string>
 	<string name="primary_email_info_msg">"あなたのJANDIのアカウントに登録されたプライマリメールアドレスにメールが送られます。メールアドレスは先に認証される必要があります。"</string>
-	<string name="room_member_disabled_alert_body">""</string>
-	<string name="room_member_disabled_alert_title">""</string>
+	<string name="room_member_disabled_alert_body">"メッセージの作成ができません"</string>
+	<string name="room_member_disabled_alert_title">"ブロックされたメンバーです。"</string>
 	<string name="sent_auth_email">"メールを確認して、メールの中の登録ボタンから登録してください。"</string>
 	<string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
 	<string name="team_adminmenu_title">"管理者メニュー"</string>

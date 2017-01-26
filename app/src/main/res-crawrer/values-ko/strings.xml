@@ -144,8 +144,7 @@
 	<string name="invite_member_copyurl">"초대 URL 복사하기"</string>
 	<string name="invite_member_copyurl_title">"초대 URL"</string>
 	<string name="invite_member_email_desc">"이메일을 통해 다른 정회원을 잔디로 초대할 수 있습니다."</string>
-	<string name="invite_member_option_associate_desc">"
-지정된 토픽에만 접근할 수 있는 멤버입니다."</string>
+	<string name="invite_member_option_associate_desc">"지정된 토픽에만 접근할 수 있는 멤버입니다."</string>
 	<string name="invite_member_option_associate_title">"준회원 초대"</string>
 	<string name="invite_member_option_desc">"새로운 멤버의 권한을 선택해 주세요."</string>
 	<string name="invite_member_option_member_desc">"모든 토픽에 접근이 가능한 멤버입니다."</string>
@@ -826,7 +825,7 @@
 	<string name="mypage_editprofile_statusmessage">"상태 메시지를 입력하세요"</string>
 	<string name="mypage_mention_newmentionalert">"새로운 멘션"</string>
 	<string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
-	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능 합니다."</string>
+	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능합니다."</string>
 	<string name="room_member_disabled_alert_title">"이 멤버는 차단된 멤버입니다."</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
