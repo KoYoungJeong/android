@@ -427,6 +427,15 @@ public class MessageListV2Presenter {
         if (adapterModel.getCount() <= 0) {
             return;
         }
+
+        if (messageListModel.isDisabledUserChat(room.getRoomId())) {
+            int count = adapterModel.getCount();
+            for (int idx = 0; idx < count; idx++) {
+                adapterModel.getItem(idx).unreadCnt = 0;
+            }
+            return;
+        }
+
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
 
         List<Long> memberLastReadLinks = new ArrayList<>();
@@ -445,11 +454,13 @@ public class MessageListV2Presenter {
 
         long linkCursor = memberLastReadLinks.get(unreadCnt);
 
-        for (int j = 0; j < adapterModel.getCount(); j++) {
+        int messageCount = adapterModel.getCount();
+        for (int j = 0; j < messageCount; j++) {
             if (adapterModel.getItem(j).id <= linkCursor) {
                 adapterModel.getItem(j).unreadCnt = unreadCnt;
             } else {
-                while (unreadCnt < memberLastReadLinks.size() - 1 &&
+                int markerSize = memberLastReadLinks.size();
+                while (unreadCnt < markerSize - 1 &&
                         linkCursor == memberLastReadLinks.get(unreadCnt)) {
                     unreadCnt++;
                 }
