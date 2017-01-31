@@ -129,7 +129,7 @@ public class MainChatListFragment extends BaseLazyFragment
         });
         lvChat.setAdapter(mainChatListAdapter);
 
-//        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
+        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
         setListViewScroll();
     }
