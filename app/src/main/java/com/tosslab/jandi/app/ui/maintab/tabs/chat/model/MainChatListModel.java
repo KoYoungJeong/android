@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.chat.model;
 
+import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -10,6 +11,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,8 @@ public class MainChatListModel {
     public List<ChatItem> convertChatItems(List<DirectMessageRoom> rooms) {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
+
+        long start = SystemClock.currentThreadTimeMillis();
 
         Observable.from(rooms)
                 .filter(room -> TeamInfoLoader.getInstance().isUser(room.getCompanionId()))
@@ -58,6 +62,10 @@ public class MainChatListModel {
                 })
                 .toSortedList((lhs, rhs) -> ((int) (rhs.getLastLinkId() - lhs.getLastLinkId())))
                 .subscribe(chatItems::addAll, Throwable::printStackTrace);
+
+        long end = SystemClock.currentThreadTimeMillis();
+
+        LogUtil.e("haha : " + (end - start) + "");
 
         return chatItems;
     }

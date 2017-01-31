@@ -240,13 +240,17 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     @Override
     public void onResume() {
         super.onResume();
-        isForeground = true;
+        if (getUserVisibleHint()) {
+            isForeground = true;
+        }
     }
 
 
     @Override
     public void onPause() {
-        isForeground = false;
+        if (getUserVisibleHint()) {
+            isForeground = false;
+        }
         super.onPause();
     }
 
@@ -254,8 +258,8 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     public void onDestroy() {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
+            fileListPresenter.onDestory();
         }
-        fileListPresenter.onDestory();
         super.onDestroy();
     }
 

@@ -190,15 +190,19 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
     @Override
     public void onResume() {
         super.onResume();
-        setBadges();
+        if (getUserVisibleHint()) {
+            setBadges();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Completable.fromAction(() -> JandiPreference.setLastSelectedTabOfMyPage(viewPager.getCurrentItem()))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        if (getUserVisibleHint()) {
+            Completable.fromAction(() -> JandiPreference.setLastSelectedTabOfMyPage(viewPager.getCurrentItem()))
+                    .subscribeOn(Schedulers.computation())
+                    .subscribe();
+        }
     }
 
     @Override

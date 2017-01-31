@@ -23,17 +23,8 @@ public abstract class BaseLazyFragment extends Fragment {
         this.savedInstanceState = savedInstanceState;
         this.isViewCreated = true;
         if (getUserVisibleHint() && !isLoaded()) {
-            lazyLoadOnActivityCreated(savedInstanceState);
             lazyLoadOnViewCreated(savedInstanceState);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!isLoaded) {
             lazyLoadOnActivityCreated(savedInstanceState);
-            lazyLoadOnViewCreated(savedInstanceState);
         }
     }
 
@@ -47,8 +38,8 @@ public abstract class BaseLazyFragment extends Fragment {
         if (getUserVisibleHint()) {
             isVisible = true;
             if (isViewCreated && !isLoaded) {
-                lazyLoadOnActivityCreated(savedInstanceState);
                 lazyLoadOnViewCreated(savedInstanceState);
+                lazyLoadOnActivityCreated(savedInstanceState);
             }
         } else {
             isVisible = false;

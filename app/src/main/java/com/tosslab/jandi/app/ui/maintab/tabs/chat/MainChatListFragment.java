@@ -81,7 +81,6 @@ public class MainChatListFragment extends BaseLazyFragment
         MainChatListFragment frag = new MainChatListFragment();
         frag.setArguments(bundle);
         return frag;
-
     }
 
     @Nullable
@@ -130,7 +129,7 @@ public class MainChatListFragment extends BaseLazyFragment
         });
         lvChat.setAdapter(mainChatListAdapter);
 
-        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
+//        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
 
         setListViewScroll();
     }
@@ -154,9 +153,11 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void onResume() {
         super.onResume();
-        foreground = true;
-        mainChatListAdapter.startAnimation();
-        mainChatListPresenter.onReloadChatList();
+        if (getUserVisibleHint()) {
+            foreground = true;
+            mainChatListAdapter.startAnimation();
+            mainChatListPresenter.onReloadChatList();
+        }
     }
 
     @Override
@@ -170,7 +171,9 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void onPause() {
         super.onPause();
-        foreground = false;
+        if (getUserVisibleHint()) {
+            foreground = false;
+        }
     }
 
     @Override

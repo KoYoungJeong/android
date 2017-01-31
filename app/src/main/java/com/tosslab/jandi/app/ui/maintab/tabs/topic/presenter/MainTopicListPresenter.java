@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter;
 
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicF
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,10 +79,14 @@ public class MainTopicListPresenter {
 
     public void initUpdatedTopicList() {
         List<Topic> topicList = new ArrayList<>();
+        long startTi = SystemClock.currentThreadTimeMillis();
         mainTopicModel.getUpdatedTopicList()
                 .compose(addUnjoinedTopicForUpdated())
                 .subscribe(topicList::addAll, t -> {
                 }, () -> view.setUpdatedItems(topicList));
+        long endTi = SystemClock.currentThreadTimeMillis();
+
+        LogUtil.e("haha2 : " + (endTi - startTi) + "");
 
     }
 

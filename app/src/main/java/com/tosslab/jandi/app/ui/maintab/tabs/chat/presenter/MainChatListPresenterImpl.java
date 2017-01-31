@@ -43,7 +43,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.computation())
                 .map(integer -> {
-
                     List<DirectMessageRoom> savedChatList = mainChatListModel.getSavedChatList();
                     return mainChatListModel.convertChatItems(savedChatList);
                 })
