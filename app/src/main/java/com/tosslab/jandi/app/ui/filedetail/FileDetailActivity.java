@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.f2prateek.dart.Dart;
@@ -1118,14 +1117,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
-    public void startExportedFileViewerActivity(File file) {
-        String mimeType = getFileType(file);
+    public void startExportedFileViewerActivity(File file, String mimeType) {
         Intent target = FileUtil.createFileIntent(file, mimeType);
         target.setAction(Intent.ACTION_SEND);
 
         if (mimeType != null) {
             Bundle extras = new Bundle();
-            Uri uri = Uri.fromFile(file);
+            Uri uri = FileUtil.createOptimizedFileUri(file);
             extras.putParcelable(Intent.EXTRA_STREAM, uri);
             target.putExtras(extras);
         }
@@ -1140,9 +1138,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
-    public void startDownloadedFileViewerActivity(File file) {
+    public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
-            String mimeType = getFileType(file);
             if (mimeType != null) {
                 Intent intent = FileUtil.createFileIntent(file, mimeType);
                 startActivity(intent);
@@ -1153,18 +1150,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         } catch (SecurityException e) {
             showToast(getString(R.string.err_unsupported_file_type, file), true);
         }
-    }
-
-    private String getFileType(File file) {
-        String fileName = file.getName();
-        int idx = fileName.lastIndexOf(".");
-
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        if (idx >= 0) {
-            return mimeTypeMap.getMimeTypeFromExtension(
-                    fileName.substring(idx + 1, fileName.length()).toLowerCase());
-        }
-        return null;
     }
 
     @Override

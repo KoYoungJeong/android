@@ -817,7 +817,7 @@ public class CarouselViewerActivity extends BaseAppCompatActivity
         Intent target = FileUtil.createFileIntent(file, mimeType);
         target.setAction(Intent.ACTION_SEND);
         Bundle extras = new Bundle();
-        Uri uri = Uri.fromFile(file);
+        Uri uri = FileUtil.createOptimizedFileUri(file);
         extras.putParcelable(Intent.EXTRA_STREAM, uri);
         target.putExtras(extras);
         try {
