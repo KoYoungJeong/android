@@ -81,6 +81,8 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     private MentionMessageMoreRequestHandler moreRequestHandler;
 
+    private boolean isInitDatas = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,8 +105,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         initMentionListView(adapter);
         initSwipeRefreshLayout();
         initMoreLoadingProgress();
-
-        presenter.onInitializeMyPage(false);
+        onFocus();
     }
 
     private void setListViewScroll() {
@@ -193,9 +194,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-
-        }
     }
 
     /**
@@ -387,8 +385,11 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     @Override
     public void onFocus() {
-        if (presenter != null) {
+        if (isInitDatas) {
             presenter.onUpdateMentionMarker();
+        } else {
+            isInitDatas = true;
+            presenter.onInitializeMyPage(false);
         }
     }
 

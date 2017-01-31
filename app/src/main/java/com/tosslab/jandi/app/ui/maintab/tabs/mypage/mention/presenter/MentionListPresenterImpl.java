@@ -239,11 +239,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     }
                     return MentionMessage.createForMentions(link1, roomType, roomName, userName, photoUrl);
                 })
-                .doOnNext(mentionMessage -> {
-
-                    mentionListModel.increaseMentionUnreadCount();
-                    EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mentionMessage -> {
                     mentionListView.hideEmptyMentionView();
@@ -271,15 +266,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         Observable.just(linkId)
                 .map(mentionListDataModel::indexOfLink)
                 .filter(index -> index >= 0)
-                .doOnNext(index -> {
-                    MentionMessage item = mentionListDataModel.getItem(index);
-                    if (item != null
-                            && item.getMessageId() > actuallLastMarkerId) {
-                        mentionListModel.decreaseMentionCount();
-
-                        EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
-                    }
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(index -> {
                     mentionListDataModel.remove(index);
@@ -313,8 +299,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     @Override
     public void onUpdateMentionMarker() {
         MentionMessage item = mentionListDataModel.getItem(0);
-        if (item != null
-                && actuallLastMarkerId > 0
+        if (item != null && actuallLastMarkerId > 0
                 && item.getMessageId() > actuallLastMarkerId) {
             Completable.fromCallable(() -> {
                 mentionListModel.updateLastReadMessageId(item.getMessageId());
@@ -327,7 +312,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     }, Throwable::printStackTrace);
             actuallLastMarkerId = item.getMessageId();
         }
-
     }
 
 }

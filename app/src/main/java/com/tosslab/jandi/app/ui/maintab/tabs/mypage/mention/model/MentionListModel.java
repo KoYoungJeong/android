@@ -109,7 +109,6 @@ public class MentionListModel {
         if (mention == null) {
             return -1;
         }
-
         return mention.getLastMentionedMessageId() <= 0 ? -1 : mention.getLastMentionedMessageId();
     }
 
@@ -119,10 +118,10 @@ public class MentionListModel {
                 teamId, ReqMentionMarkerUpdate.create(lastReadMentionId));
     }
 
-    public void increaseMentionUnreadCount() {
-        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).increaseUnreadCount();
-        TeamInfoLoader.getInstance().refreshMention();
-    }
+//    public void increaseMentionUnreadCount() {
+//        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).increaseUnreadCount();
+//        TeamInfoLoader.getInstance().refreshMention();
+//    }
 
     public ResStarredMessage registerStarred(long messageId) throws RetrofitException {
         long teamId = TeamInfoLoader.getInstance().getTeamId();

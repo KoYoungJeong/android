@@ -42,18 +42,9 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
     private TextView tvPollbadge;
     private TextView tvMentionBadge;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mypage, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
-    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
-        super.lazyLoadOnActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
@@ -91,7 +82,7 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
                     ((TabFocusListener) fragment).onFocus();
                 }
 
-                setPollBadge();
+                setBadges();
             }
 
             @Override
@@ -127,6 +118,19 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+
+        setBadges();
+
+        onFocus();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_mypage, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     private void setMentionBadge() {
@@ -176,8 +180,7 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
-        setPollBadge();
-        setMentionBadge();
+        setBadges();
     }
 
     public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
@@ -215,8 +218,7 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
 
     @Override
     public void onFocus() {
-        if (tabPagerAdapter != null && viewPager != null) {
-
+        if (tabPagerAdapter != null || viewPager != null) {
             Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
 
             if (item != null && item instanceof TabFocusListener) {

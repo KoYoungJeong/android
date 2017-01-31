@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.events.NavigationBadgeEvent;
 import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
@@ -40,6 +41,7 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
@@ -206,13 +208,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
         Completable.defer(() -> {
-
             if ((System.currentTimeMillis() - JandiPreference.getLatestFcmTokenUpdate()) > 1000 * 60 * 60 * 6) {
                 return Completable.complete();
             } else {
                 return Completable.never();
             }
-
         }).subscribeOn(Schedulers.computation())
                 .subscribe(() -> {
                     try {
@@ -495,6 +495,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
+        mainTabPresenter.onInitMyPageBadge(true);
+    }
+
+    public void onEventMainThread(MentionMessageEvent event) {
+        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).increaseUnreadCount();
+        TeamInfoLoader.getInstance().refreshMention();
         mainTabPresenter.onInitMyPageBadge(true);
     }
 

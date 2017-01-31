@@ -91,4 +91,5 @@ public class MainTabPresenterImpl implements MainTabPresenter {
             mainTabView.showInvitePopup();
         }
     }
+
 }
