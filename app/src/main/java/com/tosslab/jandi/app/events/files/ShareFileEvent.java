@@ -1,12 +1,16 @@
 package com.tosslab.jandi.app.events.files;
 
+import java.util.List;
+
 public class ShareFileEvent {
     private final long teamId;
     private final long id;
+    private final List<Integer> shareEntities;
 
-    public ShareFileEvent(long teamId, long id) {
+    public ShareFileEvent(long teamId, long id, List<Integer> shareEntities) {
         this.teamId = teamId;
         this.id = id;
+        this.shareEntities = shareEntities;
     }
 
     public long getId() {
@@ -25,7 +29,8 @@ public class ShareFileEvent {
         ShareFileEvent that = (ShareFileEvent) o;
 
         if (teamId != that.teamId) return false;
-        return id == that.id;
+        if (id != that.id) return false;
+        return shareEntities != null ? shareEntities.equals(that.shareEntities) : that.shareEntities == null;
 
     }
 
@@ -33,6 +38,12 @@ public class ShareFileEvent {
     public int hashCode() {
         int result = (int) (teamId ^ (teamId >>> 32));
         result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + (shareEntities != null ? shareEntities.hashCode() : 0);
         return result;
     }
+
+    public List<Integer> getShareEntities() {
+        return shareEntities;
+    }
+
 }

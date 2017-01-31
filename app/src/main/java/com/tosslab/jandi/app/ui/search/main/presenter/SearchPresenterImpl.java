@@ -513,6 +513,33 @@ public class SearchPresenterImpl implements SearchPresenter {
         }
     }
 
+    @Override
+    public void addFileSharedEntity(long fileId, List<Integer> shareEntities) {
+        Observable.from(searchAdapterDataModel.getSearchMessageData())
+                .subscribeOn(Schedulers.computation())
+                .takeFirst(data -> data.getFile() != null && data.getFile().getId() == fileId)
+                .map(SearchMessageData::getFile)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(file -> {
+                    file.setSharedCount(shareEntities.size());
+                    view.refreshSearchedOnlyMessage();
+                });
+
+    }
+
+    @Override
+    public void removeFileSharedEntity(long fileId, long roomId) {
+        Observable.from(searchAdapterDataModel.getSearchMessageData())
+                .subscribeOn(Schedulers.computation())
+                .takeFirst(data -> data.getFile() != null && data.getFile().getId() == fileId)
+                .map(SearchMessageData::getFile)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(file -> {
+                    file.setSharedCount(file.getSharedCount() - 1);
+                    view.refreshSearchedOnlyMessage();
+                });
+    }
+
     public enum MoreState {
         Idle, Loading
     }

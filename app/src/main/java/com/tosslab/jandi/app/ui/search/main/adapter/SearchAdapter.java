@@ -74,6 +74,11 @@ public class SearchAdapter extends RecyclerView.Adapter<BaseViewHolder>
     }
 
     @Override
+    public List<SearchMessageData> getSearchMessageData() {
+        return searchMessageDatas;
+    }
+
+    @Override
     public void addSearchMessageDatas(List<SearchMessageData> searchMessageDatas) {
         this.searchMessageDatas.addAll(searchMessageDatas);
     }

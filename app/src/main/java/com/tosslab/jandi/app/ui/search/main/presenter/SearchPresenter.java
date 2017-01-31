@@ -48,6 +48,10 @@ public interface SearchPresenter {
 
     void onOneToOneRoomClick(long memberId);
 
+    void addFileSharedEntity(long fileId, List<Integer> shareEntities);
+
+    void removeFileSharedEntity(long fileId, long roomId);
+
     interface View {
 
         void refreshSearchedAll();
