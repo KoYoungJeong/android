@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.local.orm;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
@@ -16,6 +15,7 @@ import com.tosslab.jandi.app.local.orm.domain.DownloadInfo;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
+import com.tosslab.jandi.app.local.orm.domain.LoginId;
 import com.tosslab.jandi.app.local.orm.domain.MemberRecentKeyword;
 import com.tosslab.jandi.app.local.orm.domain.PushHistory;
 import com.tosslab.jandi.app.local.orm.domain.ReadyComment;
@@ -80,7 +80,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ACCOUNT_EMAIL_ADD_EMAIL = 28;
     private static final int DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL = 29;
     private static final int DATABASE_VERSION_RAW_INIT_INFO = 30;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_RAW_INIT_INFO;
+    private static final int DATABASE_VERSION_LOGIN_ID = 31;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_LOGIN_ID;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -99,6 +100,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResAccountInfo.UserEmail.class);
             createTable(connectionSource, ResAccountInfo.UserTeam.class);
             createTable(connectionSource, SelectedTeam.class);
+            createTable(connectionSource, LoginId.class);
 
             createTable(connectionSource, LeftSideMenu.class);
 
@@ -405,6 +407,21 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_RAW_INIT_INFO, () -> {
                         createTable(connectionSource, RawInitialInfo.class);
                         createTable(connectionSource, Rank.class);
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_LOGIN_ID, () -> {
+                        createTable(connectionSource, LoginId.class);
+                        Dao<ResAccountInfo.UserEmail, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserEmail.class);
+
+                        ResAccountInfo.UserEmail userEmail = dao.queryBuilder().selectColumns("email")
+                                .where()
+                                .eq("primary", true)
+                                .queryForFirst();
+
+                        if (userEmail != null) {
+                            Dao<LoginId, ?> loginIdDao = DaoManager.createDao(connectionSource, LoginId.class);
+                            loginIdDao.create(new LoginId(userEmail.getEmail()));
+                        }
+
                     }));
 
             Observable.from(upgradeCheckers)
@@ -432,6 +449,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(connectionSource, ResAccountInfo.UserTeam.class);
         clearTable(connectionSource, ResAccountInfo.class);
         clearTable(connectionSource, SelectedTeam.class);
+        clearTable(connectionSource, LoginId.class);
 
         clearTable(connectionSource, LeftSideMenu.class);
 

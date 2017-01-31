@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.tosslab.jandi.app.local.orm.domain.LoginId;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -397,6 +398,36 @@ public class AccountRepository extends LockExecutorTemplate {
             }
 
             return false;
+        });
+    }
+
+    public boolean upsertLoginId(String email) {
+        return execute(() -> {
+            try {
+                Dao<LoginId, Object> dao = getDao(LoginId.class);
+                dao.createOrUpdate(new LoginId(email));
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return false;
+        });
+    }
+
+    public String getLoginId() {
+        return execute(() -> {
+            try {
+                Dao<LoginId, Object> dao = getDao(LoginId.class);
+                LoginId loginId = dao.queryBuilder().queryForFirst();
+                if (loginId != null) {
+                    return loginId.getLoginId();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return "";
+
         });
     }
 }

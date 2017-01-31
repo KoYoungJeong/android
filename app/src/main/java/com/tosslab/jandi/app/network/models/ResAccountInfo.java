@@ -475,6 +475,7 @@ public class ResAccountInfo {
                     ", status='" + status + '\'' +
                     '}';
         }
+
     }
 
     @DatabaseTable(tableName = "account_thumbnail")
