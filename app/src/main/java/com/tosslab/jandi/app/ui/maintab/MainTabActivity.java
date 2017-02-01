@@ -198,7 +198,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         KeepAliveService.start(this);
         initFirebaseUserProperties();
         EventBus.getDefault().register(this);
-
     }
 
     private void initFirebaseUserProperties() {

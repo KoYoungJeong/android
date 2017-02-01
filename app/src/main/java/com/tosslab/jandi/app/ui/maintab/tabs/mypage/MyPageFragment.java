@@ -49,7 +49,6 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.getTabAt(0).setCustomView(R.layout.tab_mypage_mention);
