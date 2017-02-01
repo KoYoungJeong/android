@@ -40,22 +40,18 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by tee on 15. 8. 26..
- */
-
 public class MainTopicListPresenter {
 
-    MainTopicModel mainTopicModel;
-    View view;
-    TopicFolderSettingModel topicFolderChooseModel;
+    private MainTopicModel mainTopicModel;
+    private View view;
+    private TopicFolderSettingModel topicFolderChooseModel;
 
     private List<TopicFolder> topicFolders;
     private List<TopicRoom> topicFolderItems;
 
     @Inject
-    public MainTopicListPresenter(View view, MainTopicModel mainTopicModel,
-                                  TopicFolderSettingModel topicFolderChooseModel) {
+    MainTopicListPresenter(View view, MainTopicModel mainTopicModel,
+                           TopicFolderSettingModel topicFolderChooseModel) {
         this.view = view;
         this.mainTopicModel = mainTopicModel;
         this.topicFolderChooseModel = topicFolderChooseModel;
@@ -127,11 +123,13 @@ public class MainTopicListPresenter {
 
         TopicFolderData topicFolderData = topicAdapter.getTopicFolderData(groupPosition);
 
-        int itemsUnreadCount = item.getUnreadCount();
-        EventBus.getDefault().post(MessageReadEvent.fromSelf(teamId, itemsUnreadCount));
-        topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - itemsUnreadCount);
-        item.setUnreadCount(0);
-        adapter.notifyDataSetChanged();
+        if (topicFolderData != null) {
+            int itemsUnreadCount = item.getUnreadCount();
+            EventBus.getDefault().post(MessageReadEvent.fromSelf(teamId, itemsUnreadCount));
+            topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - itemsUnreadCount);
+            item.setUnreadCount(0);
+            adapter.notifyDataSetChanged();
+        }
 
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
@@ -162,8 +160,11 @@ public class MainTopicListPresenter {
             return;
         }
         long entityId = topicItemData.getEntityId();
-        long folderId = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition).getFolderId();
-        view.showEntityMenuDialog(entityId, folderId);
+        TopicFolderData topicFolderData = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition);
+        if (topicFolderData != null) {
+            long folderId = topicFolderData.getFolderId();
+            view.showEntityMenuDialog(entityId, folderId);
+        }
     }
 
     public Observable<Integer> getUnreadCount(Observable<TopicItemData> joinEntities) {
@@ -281,14 +282,6 @@ public class MainTopicListPresenter {
             view.changeTopicSort(false, true);
         } else {
             view.changeTopicSort(true, false);
-        }
-    }
-
-    public void updateLastTopicOrderType(boolean changeToFolder) {
-        if (changeToFolder) {
-            JandiPreference.setLastTopicOrderType(0);
-        } else {
-            JandiPreference.setLastTopicOrderType(1);
         }
     }
 
