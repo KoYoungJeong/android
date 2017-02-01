@@ -48,7 +48,7 @@ public class FileUploadThumbAdapter extends RecyclerView.Adapter<FileUploadThumb
                     .into(holder.ivThumb);
         }
 
-        holder.ivThumb.setSelected(item.selected);
+        holder.vSelector.setSelected(item.selected);
 
         holder.itemView.setOnClickListener(v -> {
             if (itemClickListener != null) {
@@ -79,6 +79,8 @@ public class FileUploadThumbAdapter extends RecyclerView.Adapter<FileUploadThumb
 
         @Bind(R.id.iv_file_upload_preview_thumb)
         ImageView ivThumb;
+        @Bind(R.id.v_file_upload_preview_thumb_selector)
+        View vSelector;
 
         ThumbViewHolder(View itemView) {
             super(itemView);

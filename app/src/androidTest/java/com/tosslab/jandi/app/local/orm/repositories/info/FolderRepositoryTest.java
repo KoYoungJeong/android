@@ -9,10 +9,12 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class FolderRepositoryTest {
 
     private static String initializeInfo;
     private static long teamId;
+    private List<TopicRoom> topicList;
 
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
@@ -40,6 +43,7 @@ public class FolderRepositoryTest {
         FolderRepository.getInstance().clear();
         InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
+        topicList = TeamInfoLoader.getInstance().getTopicList();
 
     }
 
@@ -81,6 +85,7 @@ public class FolderRepositoryTest {
         folder.setSeq(1);
         folder.setName("hello");
         folder.setOpened(true);
+        folder.setRooms(new ArrayList<>());
         return folder;
     }
 
@@ -127,13 +132,14 @@ public class FolderRepositoryTest {
     @Test
     public void testAddTopic() throws Exception {
         FolderRepository.getInstance().addFolder(getFolder());
-        FolderRepository.getInstance().addTopic(getFolder().getId(), 1);
+        long topicId = topicList.get(0).getId();
+        FolderRepository.getInstance().addTopic(getFolder().getId(), topicId);
 
         Folder folder = getFolderFromDatabase(getFolder().getId());
         boolean contains = false;
 
         for (Long roomId : folder.getRooms()) {
-            if (roomId == 1L) {
+            if (roomId == topicId) {
                 contains = true;
             }
         }
@@ -144,20 +150,22 @@ public class FolderRepositoryTest {
     @Test
     public void testRemoveTopic() throws Exception {
         FolderRepository.getInstance().addFolder(getFolder());
-        FolderRepository.getInstance().addTopic(getFolder().getId(), 1);
-        FolderRepository.getInstance().addTopic(getFolder().getId(), 2);
+        long topicId1 = topicList.get(0).getId();
+        long topicId2 = topicList.get(1).getId();
+        FolderRepository.getInstance().addTopic(getFolder().getId(), topicId1);
+        FolderRepository.getInstance().addTopic(getFolder().getId(), topicId2);
 
-        FolderRepository.getInstance().removeTopic(getFolder().getId(), 2);
+        FolderRepository.getInstance().removeTopic(getFolder().getId(), topicId2);
 
         List<Long> rooms = getFolderFromDatabase(getFolder().getId()).getRooms();
         boolean containValue = false;
         boolean notContainValue = false;
         for (Long roomId : rooms) {
-            if (roomId == 1L) {
+            if (roomId == topicId1) {
                 containValue = true;
             }
 
-            if (roomId == 2L) {
+            if (roomId == topicId2) {
                 notContainValue = true;
             }
         }
@@ -188,20 +196,22 @@ public class FolderRepositoryTest {
     @Test
     public void testRemoveTopicOfTeam() throws Exception {
         Folder folder = getFolder();
-        folder.getRooms().add(1L);
-        folder.getRooms().add(2L);
+        long topicId1 = topicList.get(0).getId();
+        long topicId2 = topicList.get(1).getId();
+        folder.getRooms().add(topicId1);
+        folder.getRooms().add(topicId2);
         FolderRepository.getInstance().addFolder(folder);
-        FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(2L));
+        FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(topicId2));
 
         List<Long> rooms = getFolderFromDatabase(getFolder().getId()).getRooms();
         boolean containValue = false;
         boolean notContainValue = false;
         for (Long roomId : rooms) {
-            if (roomId == 1L) {
+            if (roomId == topicId1) {
                 containValue = true;
             }
 
-            if (roomId == 2L) {
+            if (roomId == topicId2) {
                 notContainValue = true;
             }
         }

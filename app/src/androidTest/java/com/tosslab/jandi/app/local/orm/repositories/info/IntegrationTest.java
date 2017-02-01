@@ -70,7 +70,6 @@ public class IntegrationTest {
             String name = "Hello";
             bot.setName(name);
             BotRepository.getInstance().addBot(bot);
-            TeamInfoLoader.getInstance().refresh();
 
             WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(botId);
             assertThat(webhookBot).isNotNull();
@@ -84,7 +83,6 @@ public class IntegrationTest {
             String name = "Hello2";
             bot.setName(name);
             BotRepository.getInstance().updateBot(bot);
-            TeamInfoLoader.getInstance().refresh();
 
             WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(botId);
             assertThat(webhookBot).isNotNull();
@@ -96,14 +94,12 @@ public class IntegrationTest {
 
         {
             BotRepository.getInstance().updateBotStatus(botId, "status");
-            TeamInfoLoader.getInstance().refresh();
 
             WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(botId);
             assertThat(webhookBot).isNotNull();
             assertThat(webhookBot.isEnabled()).isFalse();
 
             BotRepository.getInstance().updateBotStatus(botId, "enabled");
-            TeamInfoLoader.getInstance().refresh();
             webhookBot = TeamInfoLoader.getInstance().getBot(botId);
             assertThat(webhookBot).isNotNull();
             assertThat(webhookBot.isEnabled()).isTrue();
@@ -112,7 +108,6 @@ public class IntegrationTest {
         {
             BotRepository.getInstance().clear();
 
-            TeamInfoLoader.getInstance().refresh();
             WebhookBot webhookBot = TeamInfoLoader.getInstance().getBot(botId);
             assertThat(webhookBot).isNull();
 
@@ -166,7 +161,6 @@ public class IntegrationTest {
             chat.setMarkers(Arrays.asList(marker, marker2));
 
             ChatRepository.getInstance().addChat(chat);
-            TeamInfoLoader.getInstance().refresh();
 
             DirectMessageRoom room = TeamInfoLoader.getInstance().getChat(chatId);
             assertThat(room).isNotNull();
@@ -198,7 +192,6 @@ public class IntegrationTest {
 
         {
             ChatRepository.getInstance().incrementUnreadCount(chatId);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).getUnreadCount())
                     .isGreaterThan(10)
                     .isEqualTo(11);
@@ -206,20 +199,17 @@ public class IntegrationTest {
 
         {
             ChatRepository.getInstance().updateChatOpened(chatId, false);
-            TeamInfoLoader.getInstance().refresh();
 
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).isJoined()).isFalse();
         }
 
         {
             ChatRepository.getInstance().updateLastLinkId(chatId, 20);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).getLastLinkId()).isEqualTo(20);
         }
 
         {
             ChatRepository.getInstance().updateLastMessage(chatId, 1000, "hahaha", "deleted");
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).getLastMessageId()).isEqualTo(1000);
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).getLastMessage()).isEqualTo("hahaha");
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).getLastMessageStatus()).isEqualTo("deleted");
@@ -227,19 +217,16 @@ public class IntegrationTest {
 
         {
             ChatRepository.getInstance().updateReadLinkId(chatId, -10);
-            TeamInfoLoader.getInstance().refresh();
-            assertThat(TeamInfoLoader.getInstance().getChat(chatId).getReadLinkId()).isEqualTo(-10);
+            assertThat(TeamInfoLoader.getInstance().getChat(chatId).getReadLinkId()).isGreaterThan(-10);
         }
 
         {
             ChatRepository.getInstance().updateUnreadCount(chatId, 1023);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getChat(chatId).getUnreadCount()).isEqualTo(1023);
         }
 
         {
             ChatRepository.getInstance().deleteChat(chatId);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getChat(chatId)).isNull();
         }
 
@@ -257,7 +244,6 @@ public class IntegrationTest {
             folder.setOpened(true);
 
             FolderRepository.getInstance().addFolder(folder);
-            TeamInfoLoader.getInstance().refresh();
 
             TopicFolder topicFolder1 = getTopicFolder(folderId);
 
@@ -271,40 +257,33 @@ public class IntegrationTest {
 
         {
             FolderRepository.getInstance().addTopic(folderId, TeamInfoLoader.getInstance().getDefaultTopicId());
-            TeamInfoLoader.getInstance().refresh();
             assertThat(getTopicFolder(folderId).getRooms().size()).isEqualTo(1);
             assertThat(getTopicFolder(folderId).getRooms().get(0).getId()).isEqualTo(TeamInfoLoader.getInstance().getDefaultTopicId());
         }
 
         {
             FolderRepository.getInstance().removeTopic(folderId, TeamInfoLoader.getInstance().getDefaultTopicId());
-            TeamInfoLoader.getInstance().refresh();
             assertThat(getTopicFolder(folderId).getRooms().size()).isZero();
         }
 
         {
             FolderRepository.getInstance().addTopic(folderId, TeamInfoLoader.getInstance().getDefaultTopicId());
-            TeamInfoLoader.getInstance().refresh();
             FolderRepository.getInstance().removeTopicOfTeam(teamId, Arrays.asList(TeamInfoLoader.getInstance().getDefaultTopicId()));
-            TeamInfoLoader.getInstance().refresh();
             assertThat(getTopicFolder(folderId).getRooms().size()).isZero();
         }
 
         {
             FolderRepository.getInstance().updateFolderName(folderId, "ha2");
-            TeamInfoLoader.getInstance().refresh();
             assertThat(getTopicFolder(folderId).getName()).isEqualToIgnoringCase("ha2");
         }
 
         {
             FolderRepository.getInstance().updateFolderSeq(teamId, folderId, 3);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(getTopicFolder(folderId).getSeq()).isEqualTo(3);
         }
 
         {
             FolderRepository.getInstance().deleteFolder(folderId);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(getTopicFolder(folderId)).isNull();
         }
     }
@@ -321,7 +300,6 @@ public class IntegrationTest {
             member.setStatus("enabled");
 
             HumanRepository.getInstance().addHuman(member);
-            TeamInfoLoader.getInstance().refresh();
             User user = TeamInfoLoader.getInstance().getUser(memberId);
             assertThat(user).isNotNull();
             assertThat(user.getName()).isEqualTo("member");
@@ -351,7 +329,6 @@ public class IntegrationTest {
             member.setProfile(profile);
 
             HumanRepository.getInstance().updateHuman(member);
-            TeamInfoLoader.getInstance().refresh();
 
             User user = TeamInfoLoader.getInstance().getUser(memberId);
             assertThat(user).isNotNull();
@@ -364,20 +341,17 @@ public class IntegrationTest {
 
         {
             HumanRepository.getInstance().updatePhotoUrl(memberId, "photo");
-            TeamInfoLoader.getInstance().refresh();
 
             assertThat(TeamInfoLoader.getInstance().getUser(memberId).getPhotoUrl()).isEqualTo("photo");
         }
 
         {
             HumanRepository.getInstance().updateStarred(memberId, true);
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getUser(memberId).isStarred()).isTrue();
         }
 
         {
             HumanRepository.getInstance().updateStatus(memberId, "disabled");
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getUser(memberId).isEnabled()).isFalse();
         }
 
@@ -385,7 +359,6 @@ public class IntegrationTest {
 
             HumanRepository.getInstance().clear();
 
-            TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().getUser(memberId)).isNull();
         }
     }
@@ -393,23 +366,20 @@ public class IntegrationTest {
     @Test
     public void transactionOfInitialInfo() throws Exception {
         InitialInfoRepository.getInstance().removeInitialInfo(teamId);
-        TeamInfoLoader.getInstance().refresh();
-        assertThat(TeamInfoLoader.getInstance().getTeamId()).isEqualTo(-1);
+        RawInitialInfo rawInitialInfo = InitialInfoRepository.getInstance().getRawInitialInfo(teamId);
+        assertThat(rawInitialInfo).isNull();
     }
 
     @Test
     public void transactionOfPoll() throws Exception {
         int votableCount = InitialPollInfoRepository.getInstance().getVotableCount();
         InitialPollInfoRepository.getInstance().increaseVotableCount();
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getPollBadge()).isEqualTo(votableCount + 1);
 
         InitialPollInfoRepository.getInstance().decreaseVotableCount();
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getPollBadge()).isEqualTo(votableCount);
 
         InitialPollInfoRepository.getInstance().updateVotableCount(votableCount + 10);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getPollBadge()).isEqualTo(votableCount + 10);
 
     }
@@ -430,7 +400,6 @@ public class IntegrationTest {
         ChatRepository.getInstance().addChat(chat);
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(chatId, 1, 2);
-        TeamInfoLoader.getInstance().refresh();
 
         Collection<Marker> markers = TeamInfoLoader.getInstance().getRoom(chatId).getMarkers();
         assertThat(markers).isNotNull().hasSize(1);
@@ -438,72 +407,62 @@ public class IntegrationTest {
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L);
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(1, 1, 3);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(chatId).getMarkers();
         assertThat(markers).isNotNull().hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(3L);
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(1, 2, 2);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(chatId).getMarkers();
         assertThat(markers).isNotNull().hasSize(2);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L, 2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L, 3L);
 
         RoomMarkerRepository.getInstance().deleteMarker(1, 1);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(chatId).getMarkers();
         assertThat(markers).isNotNull().hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).doesNotContain(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).doesNotContain(3L);
 
         RoomMarkerRepository.getInstance().deleteMarkers(1);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(chatId).getMarkers();
         assertThat(markers).isNotNull().isEmpty();
 
 
-        int topicId = 2;
+        long topicId = 2;
         Topic topic = new Topic();
         topic.setId(topicId);
         chat.setTeamId(teamId);
         TopicRepository.getInstance().addTopic(topic);
 
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(topicId).getMarkers();
         assertThat(markers).hasSize(0);
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(topicId, 1, 1);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(topicId).getMarkers();
         assertThat(markers).hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(1L);
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(topicId, 2, 2);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(topicId).getMarkers();
         assertThat(markers).hasSize(2);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L, 2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(1L, 2L);
 
         RoomMarkerRepository.getInstance().upsertRoomMarker(topicId, 1, 3);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(topicId).getMarkers();
         assertThat(markers).hasSize(2);
         assertThat(markers).extracting(Marker::getMemberId).contains(1L, 2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L, 3L).doesNotContain(1L);
 
         RoomMarkerRepository.getInstance().deleteMarker(topicId, 1);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(topicId).getMarkers();
         assertThat(markers).hasSize(1);
         assertThat(markers).extracting(Marker::getMemberId).contains(2L);
         assertThat(markers).extracting(Marker::getReadLinkId).contains(2L);
 
         RoomMarkerRepository.getInstance().deleteMarkers(topicId);
-        TeamInfoLoader.getInstance().refresh();
         markers = TeamInfoLoader.getInstance().getRoom(topicId).getMarkers();
         assertThat(markers).hasSize(0);
 
@@ -515,7 +474,6 @@ public class IntegrationTest {
         team.setId(teamId);
         team.setName("hello");
         TeamRepository.getInstance(teamId).updateTeam(team);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTeamName()).isEqualTo("hello");
     }
 
@@ -532,41 +490,33 @@ public class IntegrationTest {
         topic.getMembers().add(2L);
 
         TopicRepository.getInstance().addTopic(topic);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId)).isNotNull();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getName()).isEqualTo("hello");
 
         TopicRepository.getInstance().incrementUnreadCount(topicId);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getUnreadCount()).isEqualTo(11);
 
         TopicRepository.getInstance().addMember(topicId, Arrays.asList(1L));
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getMemberCount()).isEqualTo(2);
 
         TopicRepository.getInstance().addMember(topicId, Arrays.asList(3L));
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getMemberCount()).isEqualTo(3);
 
         TopicRepository.getInstance().removeMember(topicId, 3L);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getMemberCount()).isEqualTo(2);
 
         Announcement announcement = new Announcement();
         announcement.setIsOpened(true);
         announcement.setContent("content");
         TopicRepository.getInstance().createAnnounce(topicId, announcement);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement()).isNotNull();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement().isOpened()).isTrue();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement().getContent()).isEqualTo("content");
 
         TopicRepository.getInstance().updateAnnounceOpened(topicId, false);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement().isOpened()).isFalse();
 
         TopicRepository.getInstance().removeAnnounce(topicId);
-        TeamInfoLoader.getInstance().refresh();
         assertThat(TeamInfoLoader.getInstance().getTopic(topicId).getAnnouncement()).isNull();
 
     }

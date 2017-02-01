@@ -803,8 +803,8 @@
 	<string name="mypage_editprofile_statusmessage">"输入你的状态"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你"</string>
 	<string name="primary_email_info_msg">"所有与您JANDI帐号相关的电子邮件将寄送到主要电子邮件地址。您可以增加其它电子邮件地址到您的帐号并且指定为某个团队专属电子邮件地址。 (请注意电子邮件地址皆需事先被确认)"</string>
-	<string name="room_member_disabled_alert_body">""</string>
-	<string name="room_member_disabled_alert_title">""</string>
+	<string name="room_member_disabled_alert_body">"你无法发送信息给该成员"</string>
+	<string name="room_member_disabled_alert_title">"该成员已被关闭"</string>
 	<string name="sent_auth_email">"电子邮件已寄送至您的邮箱，请点击内建链接进行帐户验证。"</string>
 	<string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
 	<string name="team_adminmenu_title">"管理者选单"</string>
