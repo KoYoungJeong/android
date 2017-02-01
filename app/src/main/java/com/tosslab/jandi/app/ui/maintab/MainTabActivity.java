@@ -524,7 +524,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             // 네트워크가 재연결되면 소켓 서버에 접속하도록 함
             JandiPreference.setSocketReconnectDelay(0);
             sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
-
         } else {
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R
@@ -547,7 +546,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         } else {
             offlineLayer.showOfflineView();
         }
-
     }
 
     private void sendAnalyticsCurrentScreen() {

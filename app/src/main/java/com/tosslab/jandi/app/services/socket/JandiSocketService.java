@@ -65,12 +65,37 @@ public class JandiSocketService extends Service {
     public static void startServiceIfNeed(Context context) {
         SocketServiceCloser.getInstance().cancel();
 
-        if (isServiceRunning(context)) {
-            return;
-        }
+        /***************************************************************
+         *  다음 상태에서 서비스가 시작되거나 재시작 됨
+         *  1. 서비스가 Running 상태가 아닌 경우
+         *  2. 서비스는 Running 상태이지만 Socket이 Connection 연결되지 않은 상태인 경우
+         ****************************************************************/
 
-        Intent intent = new Intent(context, JandiSocketService.class);
-        context.startService(intent);
+        if (isServiceRunning(context)) {
+            JandiSocketManager jandiSocketManager = JandiSocketManager.getInstance();
+            if (jandiSocketManager != null
+                    && !jandiSocketManager.isConnectingOrConnected()) {
+                JandiSocketService.stopService(context);
+                Intent intent = new Intent(context, JandiSocketService.class);
+                context.startService(intent);
+            }
+        } else {
+            Intent intent = new Intent(context, JandiSocketService.class);
+            context.startService(intent);
+        }
+    }
+
+    public static boolean checkSocketConnection(Context context) {
+        if (isServiceRunning(context)) {
+            JandiSocketManager jandiSocketManager = JandiSocketManager.getInstance();
+            if (jandiSocketManager != null) {
+                return jandiSocketManager.isConnectingOrConnected();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -121,6 +146,7 @@ public class JandiSocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         if (intent == null) {
             logForCrashlytics(flags, startId);
             stopSelf();
@@ -464,6 +490,7 @@ public class JandiSocketService extends Service {
         if (!isActiveNetwork()) {
             LogUtil.e(TAG, "Unavailable networking");
             closeAll();
+            JandiSocketService.stopService(getBaseContext());
             return;
         }
 
