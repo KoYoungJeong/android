@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.team.room.TopicRoom;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class FolderRepositoryTest {
         folder.setSeq(1);
         folder.setName("hello");
         folder.setOpened(true);
+        folder.setRooms(new ArrayList<>());
         return folder;
     }
 
@@ -130,13 +132,14 @@ public class FolderRepositoryTest {
     @Test
     public void testAddTopic() throws Exception {
         FolderRepository.getInstance().addFolder(getFolder());
-        FolderRepository.getInstance().addTopic(getFolder().getId(), topicList.get(0).getId());
+        long topicId = topicList.get(0).getId();
+        FolderRepository.getInstance().addTopic(getFolder().getId(), topicId);
 
         Folder folder = getFolderFromDatabase(getFolder().getId());
         boolean contains = false;
 
         for (Long roomId : folder.getRooms()) {
-            if (roomId == 1L) {
+            if (roomId == topicId) {
                 contains = true;
             }
         }
