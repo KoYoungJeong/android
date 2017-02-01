@@ -118,7 +118,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
                 chatId = teamInfoLoader.getChatId(roomId);
                 if (chatId <= 0) {
                     try {
-                        chatId = new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).id;
+                        chatId = new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).getId();
                     } catch (RetrofitException e) {
                         e.printStackTrace();
                     }

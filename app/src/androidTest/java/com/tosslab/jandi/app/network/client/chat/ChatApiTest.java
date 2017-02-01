@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -56,16 +57,16 @@ public class ChatApiTest {
         User jandiBot = TeamInfoLoader.getInstance().getJandiBot();
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        ResCommon chat = chatApi.createChat(teamId, jandiBot.getId());
+        Chat chat = chatApi.createChat(teamId, jandiBot.getId());
 
         long chatId = TeamInfoLoader.getInstance().getChatId(jandiBot.getId());
         if (chatId > 0) {
-            assertThat(chat.id).isEqualTo(chatId);
+            assertThat(chat.getId()).isEqualTo(chatId);
         } else {
             String rawInitializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
             InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, rawInitializeInfo));
             TeamInfoLoader.getInstance().refresh();
-            assertThat(TeamInfoLoader.getInstance().isChat(chat.id)).isTrue();
+            assertThat(TeamInfoLoader.getInstance().isChat(chat.getId())).isTrue();
 
             assertThat(TeamInfoLoader.getInstance().isChat(jandiBot.getId())).isTrue();
         }

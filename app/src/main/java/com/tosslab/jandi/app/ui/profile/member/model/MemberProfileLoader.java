@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -99,7 +100,7 @@ public class MemberProfileLoader implements ProfileLoader {
     @Override
     public boolean hasChangedProfileImage(Member member) {
         String url = member.getPhotoUrl();
-        return !TextUtils.isEmpty(url) && url.contains("files-profile");
+        return ProfileUtil.isChangedPhoto(url);
     }
 
     @Override

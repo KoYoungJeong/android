@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -73,12 +74,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         ChatItem item = getItem(position);
 
-        if (!item.isInactive()) {
-            viewHolder.tvName.setText(item.getName());
-        } else {
-            viewHolder.tvName.setText(item.getEmail());
-        }
-
+        viewHolder.tvName.setText(item.getName());
 
         if (item.isStarred()) {
             viewHolder.ivFavorite.setVisibility(View.VISIBLE);
@@ -145,11 +141,16 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
 
         if (!isJandiBot) {
+            String photoUrl = item.getPhoto();
             if (!item.isInactive()) {
-                ImageUtil.loadProfileImage(ivIcon, item.getPhoto(), R.drawable.profile_img);
+                ImageUtil.loadProfileImage(ivIcon, photoUrl, R.drawable.profile_img);
             } else {
-                ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
+                if (ProfileUtil.isChangedPhoto(photoUrl)) {
+                    ImageUtil.loadProfileImage(ivIcon, photoUrl, R.drawable.profile_img);
+                } else {
+                    ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
+                }
             }
 
         } else {

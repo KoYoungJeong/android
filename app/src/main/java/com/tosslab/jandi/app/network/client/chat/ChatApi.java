@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.start.Chat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
         return call(() -> getApi().deleteChat(teamId, companionId));
     }
 
-    public ResCommon createChat(long teamId, long memberId) throws RetrofitException {
+    public Chat createChat(long teamId, long memberId) throws RetrofitException {
         Map<String, Long> map = new HashMap<>();
         map.put("memberId", memberId);
         return call(() -> getApi().createChat(teamId, map));
@@ -40,6 +41,6 @@ public class ChatApi extends ApiTemplate<ChatApi.Api> {
         Call<ResCommon> deleteChat(@Path("teamId") long teamId, @Path("companionId") long companionId);
 
         @POST("teams/{teamId}/chats")
-        Call<ResCommon> createChat(@Path("teamId") long teamId, @Body Map<String, Long> map);
+        Call<Chat> createChat(@Path("teamId") long teamId, @Body Map<String, Long> map);
     }
 }

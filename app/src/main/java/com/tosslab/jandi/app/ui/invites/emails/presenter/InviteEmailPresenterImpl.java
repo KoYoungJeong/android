@@ -212,6 +212,9 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     }
 
     private boolean checkSuccessSendingEmails(List<ResInvitationMembers> resInvitations) {
+        if (resInvitations == null) {
+            return false;
+        }
         boolean[] isSuccess = new boolean[1];
         isSuccess[0] = true;
         Observable.from(resInvitations)

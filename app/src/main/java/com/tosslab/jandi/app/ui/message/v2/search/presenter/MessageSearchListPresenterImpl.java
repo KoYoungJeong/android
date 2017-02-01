@@ -167,7 +167,7 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
                             roomId = entityId;
                         } else if (NetworkCheckUtil.isConnected()) {
 
-                            roomId = messageListModel.getRoomId();
+                            roomId = messageListModel.createChat(entityId);
 
 
                         }

@@ -1,8 +1,12 @@
 package com.tosslab.jandi.app.ui.profile.member.model;
 
 import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +16,10 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
+import com.tosslab.jandi.app.utils.image.ImageUtil;
+import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -25,7 +32,7 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
 
     @Override
     public void setName(TextView tvProfileName, Member member) {
-        tvProfileName.setText(member.getEmail());
+        tvProfileName.setText(member.getName());
     }
 
     @Override
@@ -37,17 +44,36 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
 
     @Override
     public void setProfileInfo(TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
-        tvProfileDivision.setVisibility(View.GONE);
-        tvProfilePosition.setVisibility(View.GONE);
+        User user = (User) member;
+        String userDivision = user.getDivision();
+        String userPosition = user.getPosition();
+        tvProfileDivision.setText(userDivision);
+        tvProfilePosition.setText(userPosition);
+        if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
+            tvProfileDivision.setVisibility(View.GONE);
+            tvProfilePosition.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
-        ivProfileImageSmall.setImageResource(R.drawable.profile_img_dummyaccount_80);
+        String profileImageUrl = member.getPhotoUrl();
+        if (ProfileUtil.isChangedPhoto(profileImageUrl)) {
+            ImageUtil.loadProfileImage(ivProfileImageSmall, profileImageUrl, R.drawable.profile_img);
+        } else {
+            ivProfileImageSmall.setImageResource(R.drawable.profile_img_dummyaccount_80);
+        }
     }
 
     @Override
     public void loadFullThumb(PhotoView ivProfileImageFull, String uriString) {
+        if (ProfileUtil.isChangedPhoto(uriString)) {
+
+            Uri uri = Uri.parse(uriString);
+            ImageLoader.newInstance()
+                    .uri(uri)
+                    .into(ivProfileImageFull);
+        }
     }
 
     @Override
@@ -56,6 +82,13 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.GONE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);
+
+        if (btnProfileStar.getVisibility() == View.GONE && !isLandscape) {
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tvTeamLevel.getLayoutParams();
+            DisplayMetrics displayMetrics = tvTeamLevel.getResources().getDisplayMetrics();
+            lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics);
+            tvTeamLevel.setLayoutParams(lp);
+        }
 
     }
 
@@ -67,7 +100,7 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     @Override
     public boolean hasChangedProfileImage(Member member) {
         String url = member.getPhotoUrl();
-        return !TextUtils.isEmpty(url) && url.contains("files-profile");
+        return ProfileUtil.isChangedPhoto(url);
     }
 
     @Override

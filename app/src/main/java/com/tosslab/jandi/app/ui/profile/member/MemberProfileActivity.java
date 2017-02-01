@@ -237,6 +237,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         if (!hasChangedProfileImage) {
             profileLoader.setBlurBackgroundColor(vProfileImageLargeOverlay);
+        } else {
+            vProfileImageLargeOverlay.setBackgroundColor(getResources().getColor(R.color.jandi_member_profile_img_overlay));
         }
 
         initLargeImageSize(profileImageUrl);

@@ -15,7 +15,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +49,7 @@ import com.tosslab.jandi.app.ui.maintab.navigation.adapter.view.NavigationDataVi
 import com.tosslab.jandi.app.ui.maintab.navigation.dagger.DaggerNavigationComponent;
 import com.tosslab.jandi.app.ui.maintab.navigation.dagger.NavigationModule;
 import com.tosslab.jandi.app.ui.maintab.navigation.presenter.NavigationPresenter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
@@ -542,7 +542,7 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
         Resources resources = ivProfile.getResources();
         int defaultColor = resources.getColor(R.color.jandi_member_profile_img_overlay_default);
-        if (!TextUtils.isEmpty(photoUrl) && photoUrl.contains("files-profile")) {
+        if (ProfileUtil.isChangedPhoto(photoUrl)) {
             Drawable placeHolder = new ColorDrawable(defaultColor);
             ImageLoader.newInstance()
                     .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
