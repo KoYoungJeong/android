@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.f2prateek.dart.Dart;
@@ -1140,17 +1141,32 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     @Override
     public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
-            if (mimeType != null) {
-                Intent intent = FileUtil.createFileIntent(file, mimeType);
-                startActivity(intent);
-                showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
+            String mimeFromFile = getFileType(file);
+            if (mimeFromFile == null) {
+                mimeFromFile = mimeType;
             }
+            Intent intent = FileUtil.createFileIntent(file, mimeFromFile);
+            startActivity(intent);
+            showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
         } catch (ActivityNotFoundException e) {
             showToast(getString(R.string.err_unsupported_file_type, file), true);
         } catch (SecurityException e) {
             showToast(getString(R.string.err_unsupported_file_type, file), true);
         }
     }
+
+    private String getFileType(File file) {
+        String fileName = file.getName();
+        int idx = fileName.lastIndexOf(".");
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        if (idx >= 0) {
+            return mimeTypeMap.getMimeTypeFromExtension(
+                    fileName.substring(idx + 1, fileName.length()).toLowerCase());
+        }
+        return null;
+    }
+
 
     @Override
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,
