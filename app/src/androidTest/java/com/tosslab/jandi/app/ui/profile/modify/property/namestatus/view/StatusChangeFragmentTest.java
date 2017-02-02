@@ -49,7 +49,7 @@ public class StatusChangeFragmentTest {
     public void updateStatus() throws Throwable {
         rule.runOnUiThread(() -> fragment.updateStatus());
 
-        verify(fragment.presenter).updateStatus(eq(fragment.etStatus.getText().toString()),  TeamInfoLoader.getInstance().getMyId());
+        verify(fragment.presenter).updateStatus(eq(fragment.etStatus.getText().toString()), eq(-1L));
     }
     @Test
     public void onNameTextChanged() throws Throwable {
