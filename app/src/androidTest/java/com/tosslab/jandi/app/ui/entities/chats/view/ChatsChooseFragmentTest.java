@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +64,8 @@ public class ChatsChooseFragmentTest {
     }
 
 
+    // activity 전환 테스트가 변동적이라 무시 처리
+    @Ignore
     @Test
     public void testMoveChatMessage() throws Throwable {
         Intents.init();
