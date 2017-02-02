@@ -38,20 +38,10 @@ public class MentionListModel {
     }
 
     public Observable<ResStarMentioned> getMentionsObservable(long offset, int limit) {
-        final long teamId = TeamInfoLoader.getInstance().getTeamId();
-        Observable.OnSubscribe<ResStarMentioned> requestMentionsSubscriber = subscriber -> {
-            try {
-                ResStarMentioned resStarMentioned =
-                        messageApi.get().getMentionedMessages(teamId, offset, limit);
-
-                subscriber.onNext(resStarMentioned);
-            } catch (RetrofitException error) {
-                subscriber.onError(error);
-            }
-            subscriber.onCompleted();
-        };
-
-        return Observable.create(requestMentionsSubscriber);
+        return Observable.fromCallable(() -> {
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            return messageApi.get().getMentionedMessages(teamId, offset, limit);
+        });
     }
 
     public Observable<Pair<Boolean, List<MentionMessage>>> getConvertedMentionObservable(
