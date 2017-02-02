@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +39,9 @@ public class ChatRepositoryTest {
         InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
 
-        chatObservable = Observable.from(ChatRepository.getInstance().getOpenedChats())
-                .takeFirst(chat -> true)
+        chatObservable = Observable.from(ChatRepository.getInstance().getDirectRooms())
+                .map(DirectMessageRoom::getRaw)
+                .first()
                 .replay()
                 .refCount();
 
