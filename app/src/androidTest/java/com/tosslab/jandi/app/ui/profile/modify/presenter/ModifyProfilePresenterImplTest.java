@@ -14,11 +14,19 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 
 import javax.inject.Inject;
 
 import setup.BaseInitUtil;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(AndroidJUnit4.class)
 public class ModifyProfilePresenterImplTest {
@@ -39,7 +47,7 @@ public class ModifyProfilePresenterImplTest {
 
     @Before
     public void setUp() throws Exception {
-        mockView = Mockito.mock(ModifyProfilePresenter.View.class);
+        mockView = mock(ModifyProfilePresenter.View.class);
         DaggerModifyProfileTestComponent.builder()
                 .modifyProfileModule(new ModifyProfileModule(mockView, TeamInfoLoader.getInstance().getMyId()))
                 .build()
@@ -50,7 +58,7 @@ public class ModifyProfilePresenterImplTest {
     @Test
     public void testOnRequestProfile() throws Exception {
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
@@ -59,15 +67,15 @@ public class ModifyProfilePresenterImplTest {
 
         Awaitility.await().until(() -> finish[0]);
 
-        Mockito.verify(mockView).showProgressWheel();
-        Mockito.verify(mockView).dismissProgressWheel();
-        Mockito.verify(mockView).displayProfile(Mockito.anyObject());
+        verify(mockView).showProgressWheel();
+        verify(mockView).dismissProgressWheel();
+        verify(mockView).displayProfile(anyObject());
     }
 
     @Test
     public void testOnUpdateProfileExtraInfo() throws Exception {
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
@@ -76,9 +84,9 @@ public class ModifyProfilePresenterImplTest {
 
         Awaitility.await().until(() -> finish[0]);
 
-        Mockito.verify(mockView).showProgressWheel();
-        Mockito.verify(mockView).updateProfileFailed();
-        Mockito.verify(mockView).dismissProgressWheel();
+        verify(mockView).showProgressWheel();
+        verify(mockView).updateProfileFailed();
+        verify(mockView).dismissProgressWheel();
     }
 
     @Test
@@ -86,7 +94,7 @@ public class ModifyProfilePresenterImplTest {
         String originName = TeamInfoLoader.getInstance().getName(TeamInfoLoader.getInstance().getMyId());
 
         final boolean[] finish = {false};
-        Mockito.doAnswer(invocationOnMock -> {
+        doAnswer(invocationOnMock -> {
             finish[0] = true;
             return invocationOnMock;
         }).when(mockView).dismissProgressWheel();
@@ -97,9 +105,9 @@ public class ModifyProfilePresenterImplTest {
 
         Awaitility.await().until(() -> finish[0]);
 
-        Mockito.verify(mockView).showProgressWheel();
-        Mockito.verify(mockView).updateProfileSucceed();
-        Mockito.verify(mockView).dismissProgressWheel();
+        verify(mockView).showProgressWheel();
+        verify(mockView).updateProfileSucceed();
+        verify(mockView).dismissProgressWheel();
 
         reqUpdateProfile.name = originName;
         presenter.onUpdateProfile(reqUpdateProfile);
@@ -110,7 +118,7 @@ public class ModifyProfilePresenterImplTest {
 
         {
             final boolean[] finish = {false};
-            Mockito.doAnswer(invocationOnMock -> {
+            doAnswer(invocationOnMock -> {
                 finish[0] = true;
                 return invocationOnMock;
             }).when(mockView).updateProfileFailed();
@@ -122,12 +130,12 @@ public class ModifyProfilePresenterImplTest {
 
             Awaitility.await().until(() -> finish[0]);
 
-            Mockito.verify(mockView).updateProfileFailed();
+            verify(mockView).updateProfileFailed();
         }
 
         {
             final boolean[] finish = {false};
-            Mockito.doAnswer(invocationOnMock -> {
+            doAnswer(invocationOnMock -> {
                 finish[0] = true;
                 return invocationOnMock;
             }).when(mockView).updateProfileSucceed();
@@ -139,7 +147,7 @@ public class ModifyProfilePresenterImplTest {
 
             Awaitility.await().until(() -> finish[0]);
 
-            Mockito.verify(mockView).updateProfileSucceed();
+            verify(mockView).updateProfileSucceed();
         }
 
     }
@@ -149,21 +157,16 @@ public class ModifyProfilePresenterImplTest {
 
         {
             presenter.onProfileChange(null);
-            Mockito.verifyZeroInteractions(mockView);
+            verifyZeroInteractions(mockView);
         }
 
         {
-            User user = Mockito.mock(User.class);
-            presenter.onProfileChange(user);
-            Mockito.verifyZeroInteractions(mockView);
-        }
-
-        {
+            reset(mockView);
             User user = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId());
             presenter.onProfileChange(user);
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-            Mockito.verify(mockView).displayProfile(Mockito.eq(user));
-            Mockito.verify(mockView).closeDialogFragment();
+            verify(mockView).displayProfile(eq(user));
+            verify(mockView).closeDialogFragment();
         }
     }
 
@@ -171,7 +174,7 @@ public class ModifyProfilePresenterImplTest {
     public void testOnEditEmailClick() throws Exception {
         presenter.onEditEmailClick();
 
-        Mockito.verify(mockView).showEmailChooseDialog(Mockito.any(), Mockito.any());
+        verify(mockView).showEmailChooseDialog(any(), any());
 
     }
 
