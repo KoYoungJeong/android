@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.client.start;
+package com.tosslab.jandi.app.network.client.member;
 
 import com.tosslab.jandi.app.OkHttpClientTestFactory;
 import com.tosslab.jandi.app.ValidationUtil;
@@ -9,9 +9,9 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StartApiDeprecatedTest {
+public class MemberApiDeprecatedTest {
 
-    private StartApi.Api api;
+    private MemberApi.Api api;
 
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
@@ -20,13 +20,12 @@ public class StartApiDeprecatedTest {
 
     @Before
     public void setUp() throws Exception {
-        api = RetrofitBuilder.getInstance().create(StartApi.Api.class);
+        api = RetrofitBuilder.getInstance().create(MemberApi.Api.class);
     }
 
     @Test
-    public void getInitializeInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getRawInitializeInfo(1).execute())).isFalse();
+    public void getMemberInfo() throws Exception {
+        assertThat(ValidationUtil.isDeprecated(api.getMemberInfo(1,1).execute())).isFalse();
+
     }
-
-
 }

@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class MessageApiDeprecatedTest {
 
@@ -47,12 +46,6 @@ public class MessageApiDeprecatedTest {
     @Test
     public void unshareMessage() throws Exception {
         assertThat(ValidationUtil.isDeprecated(api.unshareMessage(1, new ReqUnshareMessage(1, 1)).execute())).isFalse();
-    }
-
-    @Test
-    public void getRoomUpdateMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getRoomUpdateMessage(1, 1, 1).execute())).isFalse();
-        fail("It is deprecated");
     }
 
     @Test

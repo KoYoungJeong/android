@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ChatApiDeprecatedTest {
@@ -28,5 +30,8 @@ public class ChatApiDeprecatedTest {
         assertThat(ValidationUtil.isDeprecated(api.deleteChat(1, 1).execute())).isFalse();
     }
 
-
+    @Test
+    public void createChat() throws Exception {
+        assertThat(ValidationUtil.isDeprecated(api.createChat(1, new HashMap<>()).execute())).isFalse();
+    }
 }

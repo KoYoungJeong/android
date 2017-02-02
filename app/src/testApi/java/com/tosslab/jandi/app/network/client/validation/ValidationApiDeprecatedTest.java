@@ -28,5 +28,9 @@ public class ValidationApiDeprecatedTest {
         assertThat(ValidationUtil.isDeprecated(api.validDomain("asd").execute())).isFalse();
     }
 
+    @Test
+    public void getEmailTypo() throws Exception {
+        assertThat(ValidationUtil.isDeprecated(api.getEmailTypo().execute())).isFalse();
 
+    }
 }
