@@ -145,10 +145,11 @@ public class TeamInfoLoader {
             setUpTeamPlan();
             setUpMention();
 
+            setUpRanks();
             setUpMembers();
             setUpMe();
+
             setUpRooms();
-            setUpRanks();
             setUpTopicFolders();
 
         } else {
