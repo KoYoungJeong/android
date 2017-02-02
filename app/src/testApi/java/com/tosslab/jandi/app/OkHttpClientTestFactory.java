@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app;
 
+import android.content.Context;
+
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.LoggingAppender;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.StethoAppender;
@@ -28,6 +30,10 @@ import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+
 /**
  * Created by tonyjs on 16. 4. 19..
  */
@@ -38,6 +44,8 @@ public class OkHttpClientTestFactory {
     static String token = "";
 
     public static void init() {
+        JandiApplication.setContext(mock(Context.class));
+        doReturn("jandi.io").when(JandiApplication.getContext()).getSharedPreferences(eq("domain"), eq(Context.MODE_PRIVATE));
 
         if (JandiApplication.okHttpClient == null) {
 
