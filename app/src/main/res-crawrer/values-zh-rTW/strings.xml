@@ -131,6 +131,8 @@
 	<string name="invite_email_success">"所有邀請已成功寄送"</string>
 	<string name="invite_email_title">"輸入電子郵箱"</string>
 	<string name="invite_email_valid">"此為有效的電子郵箱"</string>
+	<string name="invite_member_adminonly_desc">""</string>
+	<string name="invite_member_adminonly_title">""</string>
 	<string name="invite_member_copyurl">"複製邀請連結"</string>
 	<string name="invite_member_copyurl_title">"邀請連結"</string>
 	<string name="invite_member_email_desc">"輸入欲邀請成員的電子郵箱"</string>
@@ -302,7 +304,7 @@
 	<string name="jandi_enter_name">"請輸入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"輸入新密碼"</string>
 	<string name="jandi_enter_passcode">"輸入密碼"</string>
-	<string name="jandi_enter_phone_number">"請輸入您的電話號碼"</string>
+	<string name="jandi_enter_phone_number">"輸入你的電話號碼"</string>
 	<string name="jandi_enter_your_dept">"輸入你的部門"</string>
 	<string name="jandi_enter_your_job_title">"輸入你的職位"</string>
 	<string name="jandi_enter_your_status_message">"輸入你的狀態"</string>
@@ -399,6 +401,8 @@
 	<string name="jandi_insert_team_domain">"請輸入團隊網域"</string>
 	<string name="jandi_insert_team_name">"請輸入團隊名稱"</string>
 	<string name="jandi_invitation">"邀請"</string>
+	<string name="jandi_invitation_adminonly_desc">"現在的設定只有管理員能邀請新成員到團隊裡，邀請連結將無法使用"</string>
+	<string name="jandi_invitation_adminonly_title">"僅能以電子郵件邀請新成員"</string>
 	<string name="jandi_invitation_for_admin">"你的團隊設定未允許非成員進入團隊，欲更改設定，請進入團隊設定 > 邀請設定"</string>
 	<string name="jandi_invitation_help">"邀請其他團隊成員加入JANDI!"</string>
 	<string name="jandi_invitation_succeed">"邀請成功"</string>
@@ -523,13 +527,13 @@
 	<string name="jandi_play_store">"Google Play"</string>
 	<string name="jandi_please_retry">"請重試一次"</string>
 	<string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
-	<string name="jandi_poll">"問卷調查"</string>
+	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"添加選項"</string>
 	<string name="jandi_poll_anonymous">"不記名"</string>
 	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已經刪除"</string>
-	<string name="jandi_poll_empty_1">"尚未建立投票"</string>
-	<string name="jandi_poll_empty_2">"回到議題，點擊訊息欄旁加號舉辦投票"</string>
+	<string name="jandi_poll_empty_1">"無進行中的問卷"</string>
+	<string name="jandi_poll_empty_2">"\n回到議題點擊[+]建立新投票"</string>
 	<string name="jandi_poll_finished_with_most">"問卷已完成，得票最高的是 \"%s\""</string>
 	<string name="jandi_poll_finished_without_participants">"問卷已完成，此問卷無投票人"</string>
 	<string name="jandi_poll_finishedat">"結束時間"</string>

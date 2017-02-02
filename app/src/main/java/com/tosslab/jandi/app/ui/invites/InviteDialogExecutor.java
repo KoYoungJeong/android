@@ -28,7 +28,6 @@ import rx.Observable;
 public class InviteDialogExecutor {
 
     private static InviteDialogExecutor inviteDialogExecutor;
-
     private InviteDialogExecutor() {
     }
 
@@ -112,8 +111,7 @@ public class InviteDialogExecutor {
         view.findViewById(R.id.vg_invite_member)
                 .setOnClickListener(v -> {
                     if (isNotAvailButTeamOwner) {
-                        ColoredToast.showGray(R.string.jandi_invitation_for_admin);
-                        InviteEmailActivity.startActivityForMember(context);
+                        showErrorAdminOnlyDialog(context);
                     } else {
                         Intent intent = new Intent(context, MemberInvitationActivity.class);
                         context.startActivity(intent);
@@ -123,6 +121,20 @@ public class InviteDialogExecutor {
                 });
 
         invitationDialog.show();
+    }
+
+    private void showErrorAdminOnlyDialog(Context context) {
+        new AlertDialog.Builder(context,
+                R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setCancelable(false)
+                .setTitle(R.string.jandi_invitation_adminonly_title)
+                .setMessage(R.string.jandi_invitation_adminonly_desc)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    InviteEmailActivity.startActivityForMember(context);
+                    dialog.dismiss();
+                })
+                .create()
+                .show();
     }
 
     private boolean hasNonDefaultTopic() {
