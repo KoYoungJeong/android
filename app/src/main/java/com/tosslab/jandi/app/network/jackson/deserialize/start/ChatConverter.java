@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Do use for JacksonParser
+ */
+@Deprecated
 public class ChatConverter implements Converter<Chat, Chat> {
     @Override
     public Chat convert(Chat chat) {

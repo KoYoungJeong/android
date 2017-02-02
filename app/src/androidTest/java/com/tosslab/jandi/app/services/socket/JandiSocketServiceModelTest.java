@@ -258,6 +258,8 @@ public class JandiSocketServiceModelTest {
         model.onChatClosed(event);
 
         assertThat(accept).isTrue();
+        assertThat(TeamInfoLoader.getInstance().getRoom(TeamInfoLoader.getInstance().getChatId(TeamInfoLoader.getInstance().getJandiBot().getId())).isJoined())
+                .isFalse();
 
     }
 

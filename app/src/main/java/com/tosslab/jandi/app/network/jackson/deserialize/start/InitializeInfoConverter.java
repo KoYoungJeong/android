@@ -9,6 +9,10 @@ import com.tosslab.jandi.app.network.models.start.InitialInfo;
 
 import java.util.List;
 
+/**
+ * Do use for JacksonParser
+ */
+@Deprecated
 public class InitializeInfoConverter implements Converter<InitialInfo, InitialInfo> {
     @Override
     public InitialInfo convert(InitialInfo value) {
