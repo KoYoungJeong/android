@@ -77,7 +77,11 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
         initPollListView(pollListAdapter);
 
-        onFocus();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
+        initPollList();
     }
 
     @Override
@@ -230,11 +234,6 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
     @Override
     public void onFocus() {
-        initPollList();
-
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     private class MorePollListRequestHandler implements PollListAdapter.OnLoadMoreCallback {

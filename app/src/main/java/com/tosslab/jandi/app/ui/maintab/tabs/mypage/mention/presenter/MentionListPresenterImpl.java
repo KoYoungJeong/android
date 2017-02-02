@@ -53,7 +53,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     }
 
     @Override
-    public void onInitializeMyPage(final boolean isRefreshAction) {
+    public void onInitializeMyPage(final boolean isRefreshAction, final boolean doUpdateLastMessage) {
         isInInitializing = true;
         mentionListView.clearLoadMoreOffset();
 
@@ -67,12 +67,14 @@ public class MentionListPresenterImpl implements MentionListPresenter {
 
         mentionListModel.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
                 .doOnNext(resStarMentioned -> {
-                    List<StarredMessage> records = resStarMentioned.getRecords();
-                    if (records != null && !(records.isEmpty())) {
-                        try {
-                            mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
-                        } catch (RetrofitException e) {
-                            e.printStackTrace();
+                    if (doUpdateLastMessage) {
+                        List<StarredMessage> records = resStarMentioned.getRecords();
+                        if (records != null && !(records.isEmpty())) {
+                            try {
+                                mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
+                            } catch (RetrofitException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 })
@@ -257,7 +259,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     public void reInitializeIfEmpty() {
         boolean isEmpty = mentionListDataModel.getItemCount() <= 0;
         if (isEmpty && !isInInitializing) {
-            onInitializeMyPage(false);
+            onInitializeMyPage(false, true);
         }
     }
 

@@ -100,7 +100,11 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
         setupTabs(starredType = StarredListPresenter.StarredType.All);
 
-        onFocus();
+        starredListPresenter.onInitializeStarredList(starredType);
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     private void initStarredListView(StarredListAdapter starredListAdapter) {
@@ -340,11 +344,6 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void onFocus() {
-        starredListPresenter.onInitializeStarredList(starredType);
-
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     private class StarredMessageLoadMoreRequestHandler implements StarredListAdapter.OnLoadMoreCallback {

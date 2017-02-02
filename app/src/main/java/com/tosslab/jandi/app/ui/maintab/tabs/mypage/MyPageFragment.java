@@ -13,9 +13,11 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
@@ -43,8 +45,9 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
     private TextView tvMentionBadge;
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onLazyLoad(Bundle savedInstanceState) {
+        super.onLazyLoad(savedInstanceState);
+
         viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
@@ -112,23 +115,21 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
             }
         });
 
-        viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfMyPage());
+//        viewPager.setCurrentItem(JandiPreference.getLastSelectedTabOfMyPage());
+
+        setBadges();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_mypage, container, false);
+        ButterKnife.bind(this, view);
 
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
 
-        setBadges();
-
-        onFocus();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mypage, container, false);
-        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -166,35 +167,62 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
     }
 
     public void onEventMainThread(SocketPollEvent event) {
+        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         Poll poll = event.getPoll();
-        if (poll == null
-                || poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
+        if (poll == null ||
+                poll.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
         setPollBadge();
     }
 
     public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
+        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         setMentionBadge();
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
+
         setBadges();
     }
 
     public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
+        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (event.getTeamId() != AccountRepository.getRepository().getSelectedTeamId()) {
             return;
         }
+
         setPollBadge();
+    }
+
+    public void onEventMainThread(MentionMessageEvent event) {
+        InitialMentionInfoRepository.getInstance(
+                TeamInfoLoader.getInstance().getTeamId()).increaseUnreadCount();
+        TeamInfoLoader.getInstance().refreshMention();
+        EventBus.getDefault().post(new RefreshMypageBadgeCountEvent());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserVisibleHint()) {
-            setBadges();
-        }
     }
 
     @Override

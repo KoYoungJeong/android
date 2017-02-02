@@ -126,26 +126,22 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     @Override
-    protected void lazyLoadOnViewCreated(Bundle savedInstanceState) {
-        super.lazyLoadOnViewCreated(savedInstanceState);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-    }
-
-
-
-    @Override
-    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
-        super.lazyLoadOnActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Dart.inject(this, getArguments());
         DaggerMainTopicListComponent.builder()
                 .mainTopicListModule(new MainTopicListModule(this))
                 .build()
                 .inject(this);
 
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void onLazyLoad(Bundle savedInstanceState) {
         initViews(savedInstanceState);
-        SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
     }
 
     void initViews(Bundle savedInstanceState) {
@@ -380,7 +376,6 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     @Override
     public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
-
         expandableTopicAdapter.setProvider(topicFolderListDataProvider);
         expandableTopicAdapter.notifyDataSetChanged();
 
@@ -420,10 +415,7 @@ public class MainTopicListFragment extends BaseLazyFragment
             showGroupSettingPopupView(folderId, folderName, topicFolderData.getSeq());
         });
 
-        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
+        EventBus.getDefault().post(new TopicBadgeEvent());
         setFolderExpansion();
     }
 
@@ -431,17 +423,12 @@ public class MainTopicListFragment extends BaseLazyFragment
     public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
         expandableTopicAdapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChangedForFolder();
-        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
     }
 
     public void showGroupSettingPopupView(long folderId, String folderName, int seq) {
         TopicFolderDialogFragment.create(folderId, folderName, seq)
                 .show(getFragmentManager(), "dialog");
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -548,11 +535,12 @@ public class MainTopicListFragment extends BaseLazyFragment
         }
     }
 
-    private List<TopicItemData> getJoinedTopics() {
-        return expandableTopicAdapter.getAllTopicItemData();
-    }
-
     public void onEvent(JoinableTopicCallEvent event) {
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         Intent intent = new Intent(getActivity(), JoinableTopicListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
@@ -561,6 +549,11 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEventMainThread(TopicFolderMoveCallEvent event) {
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         startActivity(Henson.with(getActivity())
                 .gotoTopicFolderSettingActivity()
                 .mode(TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
@@ -571,6 +564,12 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -579,20 +578,44 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainTopicListPresenter.refreshList();
     }
 
     public void onEvent(SocketTopicPushEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainTopicListPresenter.refreshList();
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainTopicListPresenter.refreshList();
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -601,6 +624,12 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEvent(RoomMarkerEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -609,6 +638,12 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -770,6 +805,7 @@ public class MainTopicListFragment extends BaseLazyFragment
                 floatingActionMenu.setVisibility(false);
             }
         } else {
+            SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicsTab);
         }
     }
@@ -783,7 +819,6 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     @Override
     public boolean consumeBackPress() {
-
         if (floatingActionMenu != null && floatingActionMenu.isOpened()) {
             floatingActionMenu.close();
             return true;

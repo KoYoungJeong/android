@@ -168,8 +168,8 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     }
 
     @Override
-    protected void lazyLoadOnViewCreated(Bundle savedInstanceState) {
-        super.lazyLoadOnViewCreated(savedInstanceState);
+    protected void onLazyLoad(Bundle savedInstanceState) {
+        super.onLazyLoad(savedInstanceState);
         Bundle bundle = this.getArguments();
         Dart.inject(this, bundle);
 
@@ -182,11 +182,9 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-    }
 
-    @Override
-    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
-        super.lazyLoadOnActivityCreated(savedInstanceState);
+        ///
+
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
 

@@ -12,38 +12,24 @@ import android.view.View;
 public abstract class BaseLazyFragment extends Fragment {
 
     protected boolean isVisible = false;
-    private boolean isLoaded = false;
-
-    private boolean isViewCreated = false;
+    private boolean isLoadedAllView = false;
+    private boolean isLoadedAllDatas = false;
     private Bundle savedInstanceState = null;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.savedInstanceState = savedInstanceState;
-        this.isViewCreated = true;
-        if (getUserVisibleHint() && !isLoaded()) {
-            lazyLoadOnViewCreated(savedInstanceState);
-            lazyLoadOnActivityCreated(savedInstanceState);
-        }
-    }
-
-    public boolean isLoaded() {
-        return isLoaded;
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (getUserVisibleHint()) {
-            isVisible = true;
-            if (isViewCreated && !isLoaded) {
-                lazyLoadOnViewCreated(savedInstanceState);
-                lazyLoadOnActivityCreated(savedInstanceState);
-            }
-        } else {
-            isVisible = false;
+    public void onResume() {
+        super.onResume();
+        if (isVisible && !isLoadedAllDatas) {
+            onLazyLoad(savedInstanceState);
+            isLoadedAllDatas = true;
         }
+        isLoadedAllView = true;
     }
 
     @Override
@@ -51,11 +37,25 @@ public abstract class BaseLazyFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    protected void lazyLoadOnViewCreated(Bundle savedInstanceState) {
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            isVisible = true;
+            if (isLoadedAllView && !isLoadedAllDatas) {
+                onLazyLoad(savedInstanceState);
+                isLoadedAllDatas = true;
+            }
+        } else {
+            isVisible = false;
+        }
     }
 
-    protected void lazyLoadOnActivityCreated(Bundle savedInstanceState) {
-        isLoaded = true;
+    protected boolean isLoadedAll() {
+        return isLoadedAllDatas;
+    }
+
+    protected void onLazyLoad(Bundle savedInstanceState) {
     }
 
 }

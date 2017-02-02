@@ -5,7 +5,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 
 public interface MentionListPresenter {
 
-    void onInitializeMyPage(boolean isRefreshAction);
+    void onInitializeMyPage(boolean isRefreshAction, final boolean doUpdateLastMessage);
 
     void loadMoreMentions(long offset);
 

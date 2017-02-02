@@ -26,14 +26,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
-import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
-import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
-import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
-import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
-import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
 import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
 import com.tosslab.jandi.app.events.socket.EventUpdateStart;
@@ -41,7 +36,6 @@ import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
@@ -50,6 +44,8 @@ import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
+import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.dagger.DaggerMainTabComponent;
@@ -366,7 +362,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 JandiPreference.setLastSelectedTab(position);
 
                 if (position == MypageTabInfo.INDEX) {
-                    mainTabPresenter.onInitMyPageBadge(true);
+//                    mainTabPresenter.onInitMyPageBadge(true);
                     Fragment fragment = getFragment(position);
                     if (fragment != null && fragment instanceof TabFocusListener) {
                         ((TabFocusListener) fragment).onFocus();
@@ -470,44 +466,16 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
-        int count = event.getCount();
-        if (count > 999) {
-            count = 999;
-        }
-        setTopicBadge(count);
+        int count = getTopicUnreadCount();
+        setTopicBadge(Math.min(count, 999));
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
-        int count = event.getCount();
-        if (count > 999) {
-            count = 999;
-        }
-        setChatBadge(count);
-    }
-
-    public void onEventMainThread(SocketPollEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
+        int count = getChatUnreadCount();
+        setChatBadge(Math.min(count, 999));
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(MentionMessageEvent event) {
-        InitialMentionInfoRepository.getInstance(TeamInfoLoader.getInstance().getTeamId()).increaseUnreadCount();
-        TeamInfoLoader.getInstance().refreshMention();
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(true);
     }
 
@@ -796,6 +764,24 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 }
             }
         }
+    }
+
+    public int getTopicUnreadCount() {
+        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
+                .filter(TopicRoom::isJoined)
+                .map(TopicRoom::getUnreadCount)
+                .reduce((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2)
+                .toBlocking()
+                .firstOrDefault(0);
+    }
+
+    public int getChatUnreadCount() {
+        return Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
+                .filter(DirectMessageRoom::isJoined)
+                .map(DirectMessageRoom::getUnreadCount)
+                .reduce((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2)
+                .toBlocking()
+                .firstOrDefault(0);
     }
 
 }
