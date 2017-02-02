@@ -50,7 +50,7 @@ public class IntroActivityPresenterTest {
     public void testCheckNewVersion() throws Exception {
         Context context = JandiApplication.getContext();
 
-        /** 잔디가 점검중인 경우 **/
+        /* 잔디가 점검중인 경우 */
         {
             // Given
 
@@ -59,9 +59,11 @@ public class IntroActivityPresenterTest {
             mockMaintenance.status = true;
 
             mockResConfig.maintenance = mockMaintenance;
-
+            mockResConfig.versions = mock(ResConfig.Versions.class);
+            mockResConfig.versions.android = 1;
             IntroActivityModel mockModel = mock(IntroActivityModel.class);
             when(mockModel.isNetworkConnected()).thenReturn(true);
+            when(mockModel.getInstalledAppVersion()).thenReturn(10);
 
             when(mockModel.getConfigInfo()).thenReturn(mockResConfig);
 
@@ -76,7 +78,7 @@ public class IntroActivityPresenterTest {
             reset(mockView);
         }
 
-        /** 업데이트가 필요한 경우 **/
+        /* 업데이트가 필요한 경우 */
         {
             // Given
             ResConfig mockResConfig2 = mock(ResConfig.class);
@@ -121,7 +123,7 @@ public class IntroActivityPresenterTest {
             reset(mockModel);
         }
 
-        /** 네트워킹이 되지 않는 경우, 로그인은 한 경우, 계정정보가 있는 경우 **/
+        /* 네트워킹이 되지 않는 경우, 로그인은 한 경우, 계정정보가 있는 경우 */
         {
 
             when(mockModel.hasMigration()).thenReturn(true);
@@ -141,6 +143,7 @@ public class IntroActivityPresenterTest {
             // Given
 
             when(mockModel.hasSelectedTeam()).thenReturn(true);
+            when(mockModel.hasRank()).thenReturn(true);
 
             presenter.model = mockModel;
 
