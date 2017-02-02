@@ -140,7 +140,6 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
     private FileSearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
-    private boolean isForeground;
     private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
     public static FileListFragment create(Context context, long entityId, long writerId, String fileType) {
@@ -182,8 +181,6 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-
-        ///
 
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
@@ -238,17 +235,11 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     @Override
     public void onResume() {
         super.onResume();
-        if (getUserVisibleHint()) {
-            isForeground = true;
-        }
     }
 
 
     @Override
     public void onPause() {
-        if (getUserVisibleHint()) {
-            isForeground = false;
-        }
         super.onPause();
     }
 
@@ -256,6 +247,8 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     public void onDestroy() {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
+        }
+        if (isLoadedAll()) {
             fileListPresenter.onDestory();
         }
         super.onDestroy();
@@ -547,7 +540,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
 
     @Override
     public void onSearchHeaderReset() {
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             return;
         }
         resetFilterLayoutPosition();
@@ -678,7 +671,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     }
 
     public void onEvent(RefreshOldFileEvent event) {
-        if (isForeground) {
+        if (getUserVisibleHint()) {
             fileListPresenter.getPreviousFile();
         }
     }
@@ -699,7 +692,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
                     event.getServerQuery(), null);
         }
 
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             searchSelectorViewController.setCurrentFileType(event.getServerQuery());
         }
 
@@ -714,7 +707,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
                     event.userId, null);
         }
 
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             searchSelectorViewController.setCurrentMember(event.userId);
         }
     }
@@ -728,7 +721,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
                     event.sharedEntityId, null);
         }
 
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             searchSelectorViewController.setCurrentEntity(event.sharedEntityId);
         }
 
@@ -739,7 +732,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     }
 
     public void onEvent(RequestFileUploadEvent event) {
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             return;
         }
         ((BaseAppCompatActivity) getActivity()).setNeedUnLockPassCode(false);
@@ -748,7 +741,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     }
 
     public void onEventMainThread(ConfirmFileUploadEvent event) {
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             return;
         }
         filePickerViewModel.startUpload(
