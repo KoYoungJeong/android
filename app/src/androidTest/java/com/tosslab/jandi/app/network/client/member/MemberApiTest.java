@@ -36,7 +36,7 @@ public class MemberApiTest {
         assertThat(memberInfo.getTeamId()).isEqualTo(TeamInfoLoader.getInstance().getTeamId());
         assertThat(memberInfo.getId()).isEqualTo(user.getId());
         assertThat(memberInfo.getName()).isEqualTo(user.getName());
-        assertThat(memberInfo.getPhotoUrl()).isEqualTo(user.getPhotoUrl());
+        assertThat(user.getPhotoUrl()).contains(memberInfo.getPhotoUrl());
         assertThat(memberInfo.getJoinTopics().size()).isGreaterThanOrEqualTo(1);
     }
 
