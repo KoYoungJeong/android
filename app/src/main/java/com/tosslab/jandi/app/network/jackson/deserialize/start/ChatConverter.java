@@ -16,16 +16,21 @@ public class ChatConverter implements Converter<Chat, Chat> {
         if (chat != null) {
             List<Marker> markers = chat.getMarkers();
 
+            long lastLinkId = chat.getLastLinkId() > 0 ? chat.getLastLinkId() : 0;
             if (markers == null || markers.isEmpty()) {
                 // marker 가 없으면 임의로 지정함
                 List<Marker> markers1 = new ArrayList<>();
                 for (Long id : chat.getMembers()) {
                     Marker marker = new Marker();
                     marker.setMemberId(id);
-                    marker.setReadLinkId(chat.getLastLinkId() > 0 ? chat.getLastLinkId() : 0);
+                    marker.setReadLinkId(lastLinkId);
                     markers1.add(marker);
                 }
                 chat.setMarkers(markers1);
+            }
+
+            if (!chat.isOpened()) {
+                chat.setReadLinkId(lastLinkId);
             }
         }
 

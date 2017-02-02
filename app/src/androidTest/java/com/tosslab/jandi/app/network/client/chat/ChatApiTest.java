@@ -67,7 +67,7 @@ public class ChatApiTest {
             TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().isChat(chat.id)).isTrue();
 
-            assertThat(TeamInfoLoader.getInstance().isChat(jandiBot.getId())).isTrue();
+            assertThat(TeamInfoLoader.getInstance().getChatId(jandiBot.getId())).isGreaterThan(0L);
         }
     }
 }
