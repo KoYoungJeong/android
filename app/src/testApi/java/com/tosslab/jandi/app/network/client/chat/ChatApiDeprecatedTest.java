@@ -27,11 +27,11 @@ public class ChatApiDeprecatedTest {
 
     @Test
     public void deleteChat() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteChat(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteChat(1, 1))).isFalse();
     }
 
     @Test
     public void createChat() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createChat(1, new HashMap<>()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createChat(1, new HashMap<>()))).isFalse();
     }
 }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.LoggingAppender;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.okhttp.StethoAppender;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
@@ -17,6 +16,8 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -25,7 +26,6 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -40,6 +40,7 @@ import static org.mockito.Mockito.mock;
  * Created by tonyjs on 16. 4. 19..
  */
 public class OkHttpClientTestFactory {
+    public static final Logger logger = Logger.getLogger("API_Deprecated_Logger");
 
     public static final String USERID = "ekuvekez-9240@yopmail.com";
     public static final String PASSWORD = "1234asdf";
@@ -69,11 +70,9 @@ public class OkHttpClientTestFactory {
                 e.printStackTrace();
             }
 
-            LoggingAppender.add(okhttpClientBuilder);
             StethoAppender.add(okhttpClientBuilder);
-            OkHttpClient okHttpClient = okhttpClientBuilder.build();
-            JandiApplication.okHttpClient = okHttpClient;
-            HttpLoggingInterceptor.Logger.DEFAULT.log("Set OkHttp!!!!");
+            JandiApplication.okHttpClient = okhttpClientBuilder.build();
+            logger.log(Level.INFO, "Set OkHttp!!!!");
 
             try {
                 HashMap<String, Object> body = new HashMap<>();

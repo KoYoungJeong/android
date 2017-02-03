@@ -25,28 +25,28 @@ public class DirectMessageApiDeprecatedTest {
 
     @Test
     public void getDirectMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getDirectMessages(1, 1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getDirectMessages(1, 1, 1, 1))).isFalse();
     }
 
     @Test
     public void getDirectMessagesUpdatedForMarker() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getDirectMessagesUpdatedForMarker(1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getDirectMessagesUpdatedForMarker(1, 1, 1))).isFalse();
     }
 
     @Test
     public void getDirectMessagesUpdatedForMarker1() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getDirectMessagesUpdatedForMarker(1, 1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getDirectMessagesUpdatedForMarker(1, 1, 1, 1))).isFalse();
 
     }
 
     @Test
     public void getDirectMarkerMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getDirectMarkerMessages(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getDirectMarkerMessages(1,1,1,1))).isFalse();
     }
 
     @Test
     public void deleteDirectMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteDirectMessage(1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteDirectMessage(1,1,1))).isFalse();
     }
 
 

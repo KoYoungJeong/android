@@ -26,12 +26,12 @@ public class StarredEntityApiDeprecatedTest {
 
     @Test
     public void enableFavorite() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.enableFavorite(1, new ReqTeam(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.enableFavorite(1, new ReqTeam(1)))).isFalse();
     }
 
     @Test
     public void disableFavorite() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.disableFavorite(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.disableFavorite(1, 1))).isFalse();
     }
 
 

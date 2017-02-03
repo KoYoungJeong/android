@@ -35,49 +35,49 @@ public class ChannelApiDeprecatedTest {
 
     @Test
     public void createChannel() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createChannel(1, new ReqCreateTopic()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createChannel(1, new ReqCreateTopic()))).isFalse();
     }
 
     @Test
     public void modifyPublicTopicName() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.modifyPublicTopicName(1,1, new ReqModifyTopicName()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyPublicTopicName(1,1, new ReqModifyTopicName()))).isFalse();
     }
 
     @Test
     public void modifyPublicTopicDescription() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.modifyPublicTopicDescription(1,1, new ReqModifyTopicDescription()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyPublicTopicDescription(1,1, new ReqModifyTopicDescription()))).isFalse();
     }
 
     @Test
     public void modifyPublicTopicAutoJoin() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.modifyPublicTopicAutoJoin(1,1, new ReqModifyTopicAutoJoin()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyPublicTopicAutoJoin(1,1, new ReqModifyTopicAutoJoin()))).isFalse();
     }
 
     @Test
     public void deleteTopic() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteTopic(1, new ReqDeleteTopic(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteTopic(1, new ReqDeleteTopic(1)))).isFalse();
     }
 
     @Test
     public void joinTopic() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.joinTopic(1, new ReqDeleteTopic(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.joinTopic(1, new ReqDeleteTopic(1)))).isFalse();
     }
 
     @Test
     public void leaveTopic() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.leaveTopic(1, new ReqDeleteTopic(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.leaveTopic(1, new ReqDeleteTopic(1)))).isFalse();
     }
 
     @Test
     public void invitePublicTopic() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.invitePublicTopic(1, new ReqInviteTopicUsers(new ArrayList<Long>(),1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.invitePublicTopic(1, new ReqInviteTopicUsers(new ArrayList<Long>(),1)))).isFalse();
     }
 
     @Test
     public void modifyReadOnly() throws Exception {
         Map<String, Object> map = new HashMap<>();
         map.put("isAnnouncement", true);
-        assertThat(ValidationUtil.isDeprecated(api.modifyReadOnly(1, 1,map).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyReadOnly(1, 1,map))).isFalse();
 
     }
 

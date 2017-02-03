@@ -27,7 +27,7 @@ public class AccountTeamsApiDeprecatedTest {
 
     @Test
     public void requestLeaveTeam() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.leaveTeam(1L).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.leaveTeam(1L))).isFalse();
 
     }
 

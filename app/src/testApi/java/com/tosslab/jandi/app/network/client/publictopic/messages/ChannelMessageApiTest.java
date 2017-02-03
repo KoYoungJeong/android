@@ -25,27 +25,27 @@ public class ChannelMessageApiTest {
 
     @Test
     public void getPublicTopicMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicMessages(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicMessages(1,1,1,1))).isFalse();
     }
 
     @Test
     public void getPublicTopicUpdatedMessagesForMarker() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicUpdatedMessagesForMarker(1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicUpdatedMessagesForMarker(1,1,1))).isFalse();
     }
 
     @Test
     public void getPublicTopicUpdatedMessagesForMarker1() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicUpdatedMessagesForMarker(1,1,1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicUpdatedMessagesForMarker(1,1,1, 1))).isFalse();
     }
 
     @Test
     public void getPublicTopicMarkerMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicMarkerMessages(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPublicTopicMarkerMessages(1,1,1,1))).isFalse();
     }
 
     @Test
     public void deletePublicTopicMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deletePublicTopicMessage(1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deletePublicTopicMessage(1,1,1))).isFalse();
     }
 
 

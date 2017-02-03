@@ -27,17 +27,17 @@ public class AnnounceApiDeprecatedTest {
 
     @Test
     public void createAnnouncement() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createAnnouncement(1, 1, new ReqCreateAnnouncement(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createAnnouncement(1, 1, new ReqCreateAnnouncement(1)))).isFalse();
     }
 
     @Test
     public void updateAnnouncementStatus() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateAnnouncementStatus(1, 1, new ReqUpdateAnnouncementStatus(1, true)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateAnnouncementStatus(1, 1, new ReqUpdateAnnouncementStatus(1, true)))).isFalse();
     }
 
     @Test
     public void deleteAnnouncement() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteAnnouncement(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteAnnouncement(1, 1))).isFalse();
     }
 
 

@@ -29,17 +29,17 @@ public class AccountApiDeprecatedTest {
 
     @Test
     public void getAccountInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getAccountInfo().execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getAccountInfo())).isFalse();
     }
 
     @Test
     public void updatePrimaryEmail() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo("djdskjd")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo("djdskjd")))).isFalse();
     }
 
     @Test
     public void updateName() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateName(new ReqProfileName("aslkdj")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateName(new ReqProfileName("aslkdj")))).isFalse();
     }
 
 

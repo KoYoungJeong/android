@@ -25,27 +25,27 @@ public class GroupMessageApiDeprecatedTest {
 
     @Test
     public void getGroupMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getGroupMessages(1, 1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getGroupMessages(1, 1, 1, 1))).isFalse();
     }
 
     @Test
     public void getGroupMessagesUpdatedForMarker() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getGroupMessagesUpdatedForMarker(1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getGroupMessagesUpdatedForMarker(1, 1, 1))).isFalse();
     }
 
     @Test
     public void getGroupMessagesUpdatedForMarker1() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getGroupMessagesUpdatedForMarker(1, 1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getGroupMessagesUpdatedForMarker(1, 1, 1, 1))).isFalse();
     }
 
     @Test
     public void getGroupMarkerMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getGroupMarkerMessages(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getGroupMarkerMessages(1,1,1,1))).isFalse();
     }
 
     @Test
     public void deletePrivateGroupMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deletePrivateGroupMessage(1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deletePrivateGroupMessage(1,1,1))).isFalse();
     }
 
 

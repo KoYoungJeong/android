@@ -28,27 +28,27 @@ public class FolderApiDeprecatedTest {
 
     @Test
     public void createFolder() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createFolder(1, new ReqCreateFolder()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createFolder(1, new ReqCreateFolder()))).isFalse();
     }
 
     @Test
     public void deleteFolder() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteFolder(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteFolder(1, 1))).isFalse();
     }
 
     @Test
     public void updateFolder() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateFolder(1, 1, new ReqUpdateFolder()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateFolder(1, 1, new ReqUpdateFolder()))).isFalse();
     }
 
     @Test
     public void registFolderItem() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.registFolderItem(1, 1, new ReqRegistFolderItem()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.registFolderItem(1, 1, new ReqRegistFolderItem()))).isFalse();
     }
 
     @Test
     public void deleteFolderItem() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteFolderItem(1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteFolderItem(1, 1, 1))).isFalse();
     }
 
 

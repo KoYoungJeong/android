@@ -32,22 +32,22 @@ public class RoomsApiDeprecatedTest {
 
     @Test
     public void updateTopicPushSubscribe() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateTopicPushSubscribe(1,1,new ReqUpdateTopicPushSubscribe(true)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateTopicPushSubscribe(1,1,new ReqUpdateTopicPushSubscribe(true)))).isFalse();
     }
 
     @Test
     public void kickUserFromTopic() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.kickUserFromTopic(1, 1, new ReqMember(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.kickUserFromTopic(1, 1, new ReqMember(1)))).isFalse();
     }
 
     @Test
     public void assignToTopicOwner() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.assignToTopicOwner(1,1,new ReqOwner(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.assignToTopicOwner(1,1,new ReqOwner(1)))).isFalse();
     }
 
     @Test
     public void sendMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.sendMessage(1,1,new ReqTextMessage("asd", new ArrayList<MentionObject>())).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.sendMessage(1,1,new ReqTextMessage("asd", new ArrayList<MentionObject>())))).isFalse();
     }
 
 

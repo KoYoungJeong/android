@@ -29,12 +29,12 @@ public class CommentApiDeprecatedTest {
 
     @Test
     public void sendMessageComment() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.sendMessageComment(1,1,new ReqSendComment("asd", new ArrayList<MentionObject>())).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.sendMessageComment(1,1,new ReqSendComment("asd", new ArrayList<MentionObject>())))).isFalse();
     }
 
     @Test
     public void deleteMessageComment() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteMessageComment(1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteMessageComment(1,1,1))).isFalse();
     }
 
 

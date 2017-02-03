@@ -28,17 +28,17 @@ public class SignUpApiDeprecatedTest {
 
     @Test
     public void signUpAccount() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.signUpAccount(new ReqSignUpInfo("", "", "", "")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.signUpAccount(new ReqSignUpInfo("", "", "", "")))).isFalse();
     }
 
     @Test
     public void activateAccount() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.activateAccount(new ReqAccountActivate("","")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.activateAccount(new ReqAccountActivate("","")))).isFalse();
     }
 
     @Test
     public void accountVerification() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.accountVerification(new ReqAccountVerification("")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.accountVerification(new ReqAccountVerification("")))).isFalse();
     }
 
 

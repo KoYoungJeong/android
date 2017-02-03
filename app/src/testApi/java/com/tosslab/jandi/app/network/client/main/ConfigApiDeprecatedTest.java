@@ -25,7 +25,7 @@ public class ConfigApiDeprecatedTest {
 
     @Test
     public void getConfig() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getConfig().execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getConfig())).isFalse();
     }
 
 

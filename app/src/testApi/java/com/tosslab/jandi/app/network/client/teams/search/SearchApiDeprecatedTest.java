@@ -27,7 +27,7 @@ public class SearchApiDeprecatedTest {
 
     @Test
     public void getSearch() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getSearchResults(1, new HashMap<>()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getSearchResults(1, new HashMap<>()))).isFalse();
     }
 
 

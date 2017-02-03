@@ -34,39 +34,39 @@ public class GroupApiDeprecatedTest {
 
     @Test
     public void createPrivateGroup() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createPrivateGroup(1, new ReqCreateTopic()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createPrivateGroup(1, new ReqCreateTopic()))).isFalse();
     }
 
     @Test
     public void modifyGroupName() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.modifyGroupName(1, 1, new ReqModifyTopicName()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyGroupName(1, 1, new ReqModifyTopicName()))).isFalse();
     }
 
     @Test
     public void modifyGroupDescription() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.modifyGroupDescription(1, 1, new ReqModifyTopicDescription()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyGroupDescription(1, 1, new ReqModifyTopicDescription()))).isFalse();
     }
 
     @Test
     public void deleteGroup() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteGroup(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteGroup(1, 1))).isFalse();
     }
 
     @Test
     public void leaveGroup() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.leaveGroup(1, new ReqTeam(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.leaveGroup(1, new ReqTeam(1)))).isFalse();
     }
 
     @Test
     public void inviteGroup() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.inviteGroup(1, new ReqInviteTopicUsers(new ArrayList<Long>(), 1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.inviteGroup(1, new ReqInviteTopicUsers(new ArrayList<Long>(), 1)))).isFalse();
     }
 
     @Test
     public void modifyReadOnly() throws Exception {
         Map<String, Object> map = new HashMap<>();
         map.put("isAnnouncement", true);
-        assertThat(ValidationUtil.isDeprecated(api.modifyReadOnly(1, 1,map).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.modifyReadOnly(1, 1,map))).isFalse();
 
     }
 }

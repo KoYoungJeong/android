@@ -34,17 +34,17 @@ public class ProfileApiDeprecatedTest {
 
     @Test
     public void updateMemberProfile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateMemberProfile(1, 1, new ReqUpdateProfile()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateMemberProfile(1, 1, new ReqUpdateProfile()))).isFalse();
     }
 
     @Test
     public void getAvartarsInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getAvartarsInfo().execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getAvartarsInfo())).isFalse();
     }
 
     @Test
     public void getMemberProfile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getMemberProfile(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getMemberProfile(1,1))).isFalse();
     }
 
     @Ignore
@@ -54,7 +54,7 @@ public class ProfileApiDeprecatedTest {
         File file = new File("asda");
         MediaType mediaType = MediaType.parse(URLConnection.guessContentTypeFromName(file.getAbsolutePath()));
         MultipartBody.Part userFilePart = MultipartBody.Part.createFormData(file.getName(), "asd", RequestBody.create(mediaType, file));
-        assertThat(ValidationUtil.isDeprecated(api.uploadProfilePhoto(1,1,userFilePart).execute()));
+        assertThat(ValidationUtil.isDeprecated(api.uploadProfilePhoto(1,1,userFilePart)));
     }
 
 

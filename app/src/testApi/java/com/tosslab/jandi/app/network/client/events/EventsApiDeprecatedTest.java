@@ -25,13 +25,13 @@ public class EventsApiDeprecatedTest {
 
     @Test
     public void getEventHistory() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getEventHistory(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getEventHistory(1, 1))).isFalse();
     }
 
     @Test
     public void getEventHistory1() throws Exception {
 
-        assertThat(ValidationUtil.isDeprecated(api.getEventHistory(1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getEventHistory(1, 1, 1))).isFalse();
     }
 
 }

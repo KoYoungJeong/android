@@ -28,7 +28,7 @@ public class StickerApiDeprecatedTest {
 
     @Test
     public void sendStickerComment() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.sendStickerComment(ReqSendSticker.create(1,"1",1,1,"","", new ArrayList<>())).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.sendStickerComment(ReqSendSticker.create(1,"1",1,1,"","", new ArrayList<>())))).isFalse();
     }
 
 

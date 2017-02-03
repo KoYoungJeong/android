@@ -26,32 +26,32 @@ public class FileApiDeprecatedTest {
 
     @Test
     public void deleteFile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteFile(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteFile(1,1))).isFalse();
     }
 
     @Test
     public void searchInitImageFile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.searchInitImageFile(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.searchInitImageFile(1,1,1,1))).isFalse();
     }
 
     @Test
     public void searchOldImageFile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.searchOldImageFile(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.searchOldImageFile(1,1,1,1))).isFalse();
     }
 
     @Test
     public void searchNewImageFile() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.searchNewImageFile(1,1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.searchNewImageFile(1,1,1,1))).isFalse();
     }
 
     @Test
     public void enableFileExternalLink() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.enableFileExternalLink(1,1,new ReqNull()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.enableFileExternalLink(1,1,new ReqNull()))).isFalse();
     }
 
     @Test
     public void disableFileExternalLink() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.disableFileExternalLink(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.disableFileExternalLink(1,1))).isFalse();
     }
 
 

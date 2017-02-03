@@ -30,52 +30,52 @@ public class MessageApiDeprecatedTest {
 
     @Test
     public void setMarker() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.setMarker(1, new ReqSetMarker(1, 1, "")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.setMarker(1, new ReqSetMarker(1, 1, "")))).isFalse();
     }
 
     @Test
     public void getFileDetail() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getFileDetail(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getFileDetail(1, 1))).isFalse();
     }
 
     @Test
     public void shareMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.shareMessage(1, new ReqShareMessage()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.shareMessage(1, new ReqShareMessage()))).isFalse();
     }
 
     @Test
     public void unshareMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.unshareMessage(1, new ReqUnshareMessage(1, 1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.unshareMessage(1, new ReqUnshareMessage(1, 1)))).isFalse();
     }
 
     @Test
     public void getMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getMessage(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getMessage(1, 1))).isFalse();
     }
 
     @Test
     public void getStarredMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getStarredMessages(1, 1, 1, "").execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getStarredMessages(1, 1, 1, ""))).isFalse();
     }
 
     @Test
     public void registStarredMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.registStarredMessage(1, 1, new ReqNull()).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.registStarredMessage(1, 1, new ReqNull()))).isFalse();
     }
 
     @Test
     public void unregistStarredMessage() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.unregistStarredMessage(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.unregistStarredMessage(1, 1))).isFalse();
     }
 
     @Test
     public void getMentionedMessages() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getMentionedMessages(1, 1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getMentionedMessages(1, 1, 1))).isFalse();
     }
 
     @Test
     public void updateMentionMarker() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateMentionMarker(1, ReqMentionMarkerUpdate.create(1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateMentionMarker(1, ReqMentionMarkerUpdate.create(1)))).isFalse();
     }
 
 

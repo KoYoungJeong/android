@@ -26,7 +26,7 @@ public class PlatformApiDeprecatedTest {
 
     @Test
     public void updatePlatformStatus() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updatePlatformStatus(new ReqUpdatePlatformStatus(true)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updatePlatformStatus(new ReqUpdatePlatformStatus(true)))).isFalse();
     }
 
 

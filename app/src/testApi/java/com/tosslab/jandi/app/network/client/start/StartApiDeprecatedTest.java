@@ -25,7 +25,7 @@ public class StartApiDeprecatedTest {
 
     @Test
     public void getInitializeInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getRawInitializeInfo(1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getRawInitializeInfo(1))).isFalse();
     }
 
 

@@ -26,12 +26,12 @@ public class AccountEmailsApiDeprecatedTest {
 
     @Test
     public void requestAddEmail() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.requestAddEmail(new ReqAccountEmail("steve@tosslab.com")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.requestAddEmail(new ReqAccountEmail("steve@tosslab.com")))).isFalse();
     }
 
     @Test
     public void deleteEmail() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteEmail(new ReqAccountEmail("steve@tosslab.com")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteEmail(new ReqAccountEmail("steve@tosslab.com")))).isFalse();
     }
 
 

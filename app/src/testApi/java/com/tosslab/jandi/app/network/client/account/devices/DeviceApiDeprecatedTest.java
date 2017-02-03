@@ -30,17 +30,17 @@ public class DeviceApiDeprecatedTest {
 
     @Test
     public void updatePushToken() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updatePushToken("asd", new ReqPushToken(Arrays.asList(new PushToken("as","askdj")))).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updatePushToken("asd", new ReqPushToken(Arrays.asList(new PushToken("as","askdj")))))).isFalse();
     }
 
     @Test
     public void updateSubscribe() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.updateSubScribe("asd", new ReqSubscribeToken(true)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.updateSubScribe("asd", new ReqSubscribeToken(true)))).isFalse();
     }
 
     @Test
     public void deleteDevice() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deleteDevice("adsjkhalskdjh").execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deleteDevice("adsjkhalskdjh"))).isFalse();
     }
 
 

@@ -33,57 +33,57 @@ public class PollApiDeprecatedTest {
 
     @Test
     public void getPollDetail() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPollDetail(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPollDetail(1,1))).isFalse();
     }
 
     @Test
     public void createPoll() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createPoll(1, ReqCreatePoll.create(1, "", false, false, new Date(), Arrays.asList("asd","asd12"))).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createPoll(1, ReqCreatePoll.create(1, "", false, false, new Date(), Arrays.asList("asd","asd12"))))).isFalse();
     }
 
     @Test
     public void deletePoll() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.deletePoll(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.deletePoll(1,1))).isFalse();
     }
 
     @Test
     public void votePoll() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.vote(1,1, ReqVotePoll.create(Arrays.asList(1,2))).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.vote(1,1, ReqVotePoll.create(Arrays.asList(1,2))))).isFalse();
     }
 
     @Test
     public void getPollComments() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPollComments(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPollComments(1,1))).isFalse();
     }
 
     @Test
     public void sendPollComment() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.sendPollComment(1,1, new ReqSendPollComment(1,"asd","asd", new ArrayList<MentionObject>())).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.sendPollComment(1,1, new ReqSendPollComment(1,"asd","asd", new ArrayList<MentionObject>())))).isFalse();
     }
 
     @Test
     public void finishPoll() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.finishPoll(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.finishPoll(1,1))).isFalse();
     }
 
     @Test
     public void getAllPollParticipants() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getAllPollParticipants(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getAllPollParticipants(1, 1))).isFalse();
     }
 
     @Test
     public void getPollParticipants() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPollParticipants(1,1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPollParticipants(1,1,1))).isFalse();
     }
 
     @Test
     public void getPollList() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPollList(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPollList(1,1))).isFalse();
     }
 
     @Test
     public void getPollList1() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPollList(1,1, "asd").execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPollList(1,1, "asd"))).isFalse();
     }
 
 

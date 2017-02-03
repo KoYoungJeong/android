@@ -25,7 +25,7 @@ public class MemberApiDeprecatedTest {
 
     @Test
     public void getMemberInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getMemberInfo(1,1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getMemberInfo(1,1))).isFalse();
 
     }
 }

@@ -27,7 +27,7 @@ public class AccountPasswordApiDeprecatedTest {
 
     @Test
     public void resetPassword() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.resetPassword(new ReqAccountEmail(OkHttpClientTestFactory.USERID)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.resetPassword(new ReqAccountEmail(OkHttpClientTestFactory.USERID)))).isFalse();
     }
 
 }

@@ -26,12 +26,12 @@ public class InvitationApiDeprecatedTest {
 
     @Test
     public void acceptOrDeclineInvitation() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.acceptOrDeclineInvitation("", new ReqInvitationAcceptOrIgnore("")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.acceptOrDeclineInvitation("", new ReqInvitationAcceptOrIgnore("")))).isFalse();
     }
 
     @Test
     public void getPedingTeamInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getPedingTeamInfo().execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getPedingTeamInfo())).isFalse();
     }
 
 

@@ -28,27 +28,27 @@ public class TeamApiDeprecatedTest {
 
     @Test
     public void createNewTeam() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.createNewTeam(new ReqCreateNewTeam("tosslab","tosslab")).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.createNewTeam(new ReqCreateNewTeam("tosslab","tosslab")))).isFalse();
     }
 
     @Test
     public void inviteToTeam() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.inviteToTeam(1, new ReqInvitationMembers(1, new ArrayList<>(), "asd",0, 1)).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.inviteToTeam(1, new ReqInvitationMembers(1, new ArrayList<>(), "asd",0, 1)))).isFalse();
     }
 
     @Test
     public void getTeamInfo() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getTeamInfo(1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getTeamInfo(1))).isFalse();
     }
 
     @Test
     public void cancelInviteTeam() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.cancelInviteTeam(1, 1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.cancelInviteTeam(1, 1))).isFalse();
     }
 
     @Test
     public void getRanks() throws Exception {
-        assertThat(ValidationUtil.isDeprecated(api.getRanks(1).execute())).isFalse();
+        assertThat(ValidationUtil.isDeprecated(api.getRanks(1))).isFalse();
     }
 
 
