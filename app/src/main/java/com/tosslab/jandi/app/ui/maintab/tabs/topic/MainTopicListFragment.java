@@ -548,7 +548,6 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEvent(JoinableTopicCallEvent event) {
-
         if (!isLoadedAll()) {
             return;
         }
@@ -561,11 +560,9 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEventMainThread(TopicFolderMoveCallEvent event) {
-
         if (!isLoadedAll()) {
             return;
         }
-
         startActivity(Henson.with(getActivity())
                 .gotoTopicFolderSettingActivity()
                 .mode(TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
@@ -590,8 +587,6 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
-        EventBus.getDefault().post(new TopicBadgeEvent());
-
         if (!isLoadedAll()) {
             return;
         }

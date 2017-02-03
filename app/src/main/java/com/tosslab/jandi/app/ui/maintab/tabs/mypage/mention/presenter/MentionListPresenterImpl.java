@@ -57,10 +57,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         isInInitializing = true;
         mentionListView.clearLoadMoreOffset();
 
-        if (!isRefreshAction) {
-            mentionListView.showProgress();
-        }
-
         long lastReadMentionId = mentionListModel.getLastReadMentionId();
         actuallLastMarkerId = lastReadMentionId;
         mentionListDataModel.setLastReadMessageId(lastReadMentionId);
@@ -88,8 +84,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .subscribe(pair -> {
                     if (isRefreshAction) {
                         mentionListView.hideRefreshProgress();
-                    } else {
-                        mentionListView.hideProgress();
                     }
 
                     ResStarMentioned resStarMentioned = pair.first;
@@ -107,7 +101,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     mentionListView.notifyDataSetChanged();
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
-                    mentionListView.hideProgress();
                     if (isRefreshAction) {
                         mentionListView.hideRefreshProgress();
                     } else {

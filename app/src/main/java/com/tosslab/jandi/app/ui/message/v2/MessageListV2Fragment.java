@@ -627,7 +627,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void initStickerViewModel() {
-
         stickerViewModel.setOnStickerClick((groupId, stickerId) -> {
             StickerInfo oldSticker = stickerInfo;
             if (oldSticker.getStickerGroupId() == groupId
@@ -945,7 +944,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void initRoomInfo(long roomId, String readyMessage) {
-
         EventBus.getDefault().post(new MainSelectTopicEvent(roomId));
 
         etMessage.setText(readyMessage);
@@ -1751,8 +1749,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (!isForeground) {
             return;
         }
-
-
         // 삭제된 메세지는 임의 처리
         Observable.just(event)
                 .filter(event2 -> !event2.isAdded())
@@ -2085,7 +2081,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public boolean onKey(int keyCode, KeyEvent event) {
-
         if ((keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_POUND)
                 || (keyCode >= KeyEvent.KEYCODE_A && keyCode <= KeyEvent.KEYCODE_PERIOD)
                 || (keyCode >= KeyEvent.KEYCODE_GRAVE && keyCode <= KeyEvent.KEYCODE_AT)) {

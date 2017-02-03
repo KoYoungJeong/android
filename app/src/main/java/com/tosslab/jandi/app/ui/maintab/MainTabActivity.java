@@ -44,8 +44,6 @@ import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
-import com.tosslab.jandi.app.team.room.DirectMessageRoom;
-import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.dagger.DaggerMainTabComponent;
@@ -116,6 +114,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     @Bind(R.id.vg_main_synchronize)
     View vgSynchronize;
+
     @Bind(R.id.tv_synchronize)
     TextView tvSynchronize;
 
@@ -466,13 +465,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
-        int count = getTopicUnreadCount();
-        setTopicBadge(Math.min(count, 999));
+        mainTabPresenter.onInitTopicBadge();
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
-        int count = getChatUnreadCount();
-        setChatBadge(Math.min(count, 999));
+        mainTabPresenter.onInitChatBadge();
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
@@ -764,24 +761,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 }
             }
         }
-    }
-
-    public int getTopicUnreadCount() {
-        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                .filter(TopicRoom::isJoined)
-                .map(TopicRoom::getUnreadCount)
-                .reduce((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2)
-                .toBlocking()
-                .firstOrDefault(0);
-    }
-
-    public int getChatUnreadCount() {
-        return Observable.from(TeamInfoLoader.getInstance().getDirectMessageRooms())
-                .filter(DirectMessageRoom::isJoined)
-                .map(DirectMessageRoom::getUnreadCount)
-                .reduce((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2)
-                .toBlocking()
-                .firstOrDefault(0);
     }
 
 }
