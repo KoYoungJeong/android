@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
@@ -128,7 +129,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener, Floa
         switch (item.getItemId()) {
             case R.id.menu_team_config:
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
-                String url = "https://www.jandi.io/main/#/setting/" + teamId + "/admin/usage";
+                String url = JandiConstantsForFlavors.getServiceBaseUrl() + "/main/#/setting/" + teamId + "/admin/usage";
                 startActivity(Henson.with(getContext())
                         .gotoInternalWebActivity()
                         .url(url)

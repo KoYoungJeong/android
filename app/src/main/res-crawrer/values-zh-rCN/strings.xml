@@ -131,6 +131,8 @@
 	<string name="invite_email_success">"所有邀请已成功寄送"</string>
 	<string name="invite_email_title">"输入电子邮箱"</string>
 	<string name="invite_email_valid">"此为有效的电子邮箱"</string>
+	<string name="invite_member_adminonly_desc">""</string>
+	<string name="invite_member_adminonly_title">""</string>
 	<string name="invite_member_copyurl">"复制邀请链接"</string>
 	<string name="invite_member_copyurl_title">"邀请链接"</string>
 	<string name="invite_member_email_desc">"输入欲邀请成员的电子邮箱"</string>
@@ -189,7 +191,7 @@
 	<string name="jandi_ask_join_topic">"你尚未加入此议题，要加入吗？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
 	<string name="jandi_ask_poll_delete">"确定要删除此次投票？ \n请注意留言的部分不会被删除。"</string>
-	<string name="jandi_ask_poll_finish">"你确定结束此投票？"</string>
+	<string name="jandi_ask_poll_finish">"你确定要结束此投票？"</string>
 	<string name="jandi_ask_to_leave_if_private_topic_owner">"欲离开此议题，请先将议题管理权限转移至其他成员"</string>
 	<string name="jandi_ask_to_leave_if_topic_owner">"你可于离开议题前转移管理权限"</string>
 	<string name="jandi_assign">"转移"</string>
@@ -302,7 +304,7 @@
 	<string name="jandi_enter_name">"请输入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
 	<string name="jandi_enter_passcode">"输入密码"</string>
-	<string name="jandi_enter_phone_number">"请输入您的电话号码"</string>
+	<string name="jandi_enter_phone_number">"输入你的电话号码"</string>
 	<string name="jandi_enter_your_dept">"输入你的部门"</string>
 	<string name="jandi_enter_your_job_title">"输入你的职位"</string>
 	<string name="jandi_enter_your_status_message">"输入你的状态"</string>
@@ -389,8 +391,8 @@
 	<string name="jandi_info">"JANDI版本"</string>
 	<string name="jandi_input_enough_items">"项目最少要2个以上"</string>
 	<string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
-	<string name="jandi_input_poll_item">"调查项目"</string>
-	<string name="jandi_input_poll_subject">"問卷名稱"</string>
+	<string name="jandi_input_poll_item">"项目"</string>
+	<string name="jandi_input_poll_subject">"投票名称"</string>
 	<string name="jandi_input_search_keyword">"按照关键词搜索您的信息"</string>
 	<string name="jandi_input_topic_name">"请输入议题群组名称"</string>
 	<string name="jandi_input_user_name">"输入您的名字"</string>
@@ -399,6 +401,8 @@
 	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
 	<string name="jandi_insert_team_name">"请输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
+	<string name="jandi_invitation_adminonly_desc">"现在的设置只有管理员能邀请新成员到团队里，邀请链接将无法使用"</string>
+	<string name="jandi_invitation_adminonly_title">"仅能以电子邮件邀请新成员"</string>
 	<string name="jandi_invitation_for_admin">"你的团队设定未允许非成员进入团队，欲更改设定，请进入团队设定 > 邀请设定"</string>
 	<string name="jandi_invitation_help">"邀请其他团队成员加入JANDI!"</string>
 	<string name="jandi_invitation_succeed">"邀请成功"</string>
@@ -523,13 +527,13 @@
 	<string name="jandi_play_store">"Google Play"</string>
 	<string name="jandi_please_retry">"请重试一次"</string>
 	<string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
-	<string name="jandi_poll">"问卷调查"</string>
+	<string name="jandi_poll">"投票"</string>
 	<string name="jandi_poll_add_item">"添加选项"</string>
 	<string name="jandi_poll_anonymous">"不记名"</string>
 	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
-	<string name="jandi_poll_empty_1">"尚未建立投票"</string>
-	<string name="jandi_poll_empty_2">"回到议题，点击信息栏旁加号举办投票"</string>
+	<string name="jandi_poll_empty_1">"无进行中的投票"</string>
+	<string name="jandi_poll_empty_2">"\n回到议题点击[+]建立新投票"</string>
 	<string name="jandi_poll_finished_with_most">"问卷已完成，得票最高的是 \"%s\""</string>
 	<string name="jandi_poll_finished_without_participants">"问卷已完成，此问卷无投票人"</string>
 	<string name="jandi_poll_finishedat">"结束时间"</string>
