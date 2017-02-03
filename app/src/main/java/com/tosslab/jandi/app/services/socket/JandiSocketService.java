@@ -120,7 +120,7 @@ public class JandiSocketService extends Service {
             String className = runningService.service.getClassName();
             if (TextUtils.equals(packageName, context.getPackageName())
                     && TextUtils.equals(className, JandiSocketService.class.getName())) {
-                LogUtil.e(TAG, "Service is running.");
+                LogUtil.e(TAG, "ServiceChecking - Service is running.");
                 return true;
             }
         }
@@ -166,7 +166,9 @@ public class JandiSocketService extends Service {
         }
 
         if (isRunning) {
-            checkTokenAndTrySocketConnect();
+            if (!checkSocketConnection(getBaseContext())) {
+                checkTokenAndTrySocketConnect();
+            }
             return START_NOT_STICKY;
         }
 
@@ -175,7 +177,9 @@ public class JandiSocketService extends Service {
         initEventMapper();
         setUpSocketListener();
 
-        checkTokenAndTrySocketConnect();
+        if (!checkSocketConnection(getBaseContext())) {
+            checkTokenAndTrySocketConnect();
+        }
 
         isRunning = true;
         return START_NOT_STICKY;
