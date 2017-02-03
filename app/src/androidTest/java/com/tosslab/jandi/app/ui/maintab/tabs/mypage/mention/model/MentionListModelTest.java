@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
@@ -34,10 +33,12 @@ public class MentionListModelTest {
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
     }
+
     @AfterClass
     public static void tearDownClass() throws Exception {
         BaseInitUtil.releaseDatabase();
     }
+
     @Before
     public void setup() throws Exception {
 
@@ -46,11 +47,13 @@ public class MentionListModelTest {
 
     @Test
     public void testGetMentionsObservable() throws Exception {
-        Observable<ResStarMentioned> mentionsObservable =
-                model.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT);
-
         TestSubscriber<ResStarMentioned> testSubscriber = new TestSubscriber<>();
-        mentionsObservable.subscribe(testSubscriber);
+        model.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
+                .subscribe(testSubscriber);
+
+        if (testSubscriber.getOnErrorEvents().size() > 0) {
+            return;
+        }
 
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
@@ -63,12 +66,14 @@ public class MentionListModelTest {
 
     @Test
     public void testGetConvertedMentionList() throws Exception {
-        Observable<Pair<Boolean, List<MentionMessage>>> pairObservable =
-                model.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
-                        .concatMap(model::getConvertedMentionObservable);
-
         TestSubscriber<Pair<Boolean, List<MentionMessage>>> testSubscriber = new TestSubscriber<>();
-        pairObservable.subscribe(testSubscriber);
+        model.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
+                .concatMap(model::getConvertedMentionObservable)
+                .subscribe(testSubscriber);
+
+        if (testSubscriber.getOnErrorEvents().size() > 0) {
+            return;
+        }
 
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();

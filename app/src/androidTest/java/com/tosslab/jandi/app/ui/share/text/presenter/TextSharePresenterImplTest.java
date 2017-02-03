@@ -112,6 +112,7 @@ public class TextSharePresenterImplTest {
 
         impl.teamId = TeamInfoLoader.getInstance().getTeamId();
         impl.roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
+        impl.entityId = TeamInfoLoader.getInstance().getDefaultTopicId();
         impl.sendMessage("hello", new ArrayList<>());
 
         await().until(() -> finish[0]);

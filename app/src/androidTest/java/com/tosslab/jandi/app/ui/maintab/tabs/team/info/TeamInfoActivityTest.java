@@ -4,6 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 
@@ -57,7 +58,7 @@ public class TeamInfoActivityTest {
 
         TestSubscriber<String> subscriber = new TestSubscriber<>();
         Observable.from(TeamInfoLoader.getInstance().getUserList())
-                .filter(User::isTeamOwner)
+                .filter(user -> user.getLevel() == Level.Owner)
                 .map(User::getName)
                 .subscribe(subscriber);
 
@@ -73,6 +74,7 @@ public class TeamInfoActivityTest {
         TestSubscriber<Integer> subscriber = new TestSubscriber<>();
         Observable.from(TeamInfoLoader.getInstance().getUserList())
                 .filter(User::isEnabled)
+                .filter(user -> !user.isBot())
                 .count()
                 .defaultIfEmpty(0)
                 .subscribe(subscriber);

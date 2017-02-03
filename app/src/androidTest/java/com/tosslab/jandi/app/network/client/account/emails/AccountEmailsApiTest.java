@@ -40,7 +40,7 @@ public class AccountEmailsApiTest {
     public void testRequestAddEmail() throws Exception {
         String email = "test.android@tosslab.com";
         ResAccountInfo resAccountInfo = accountEmailsApi.requestAddEmail(new ReqAccountEmail(email));
-        assertThat(resAccountInfo.getEmails()).extracting("id")
+        assertThat(resAccountInfo.getEmails()).extracting("email")
                 .contains(email);
         assertThat(resAccountInfo.getEmails()).extracting("status")
                 .contains("pending");

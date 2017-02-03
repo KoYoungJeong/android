@@ -384,6 +384,9 @@ public class MainTopicListFragment extends BaseLazyFragment
 
         expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
+            if (topicFolderData == null) {
+                return;
+            }
             mainTopicListPresenter.onFolderCollapse(topicFolderData);
             if (!isFirstLoadFragment) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderCollapse);
@@ -392,6 +395,9 @@ public class MainTopicListFragment extends BaseLazyFragment
 
         expandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
+            if (topicFolderData == null) {
+                return;
+            }
             mainTopicListPresenter.onFolderExpand(topicFolderData);
             if (!isFirstLoadFragment) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderExpand);
@@ -410,6 +416,9 @@ public class MainTopicListFragment extends BaseLazyFragment
         expandableTopicAdapter.setOnGroupItemClickListener((view, adapter, groupPosition) -> {
             ExpandableTopicAdapter expandableTopicAdapter = (ExpandableTopicAdapter) adapter;
             TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
+            if (topicFolderData == null) {
+                return;
+            }
             long folderId = topicFolderData.getFolderId();
             String folderName = topicFolderData.getTitle();
             showGroupSettingPopupView(folderId, folderName, topicFolderData.getSeq());
@@ -519,6 +528,9 @@ public class MainTopicListFragment extends BaseLazyFragment
 
             for (int idx = 0; idx < groupCount; idx++) {
                 TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(idx);
+                if (topicFolderData == null) {
+                    continue;
+                }
                 long folderId = topicFolderData.getFolderId();
                 if (folderExpandMap.containsKey(folderId)) {
                     if (folderExpandMap.get(folderId)) {
@@ -679,7 +691,7 @@ public class MainTopicListFragment extends BaseLazyFragment
                 int childCount = provider.getChildCount(i);
                 for (int j = 0; j < childCount; j++) {
                     TopicItemData childItem = provider.getChildItem(i, j);
-                    if (childItem.getEntityId() == selectedEntity) {
+                    if (childItem != null && childItem.getEntityId() == selectedEntity) {
                         groupPosition = i;
                         childPosition = j;
                         break;
@@ -687,14 +699,15 @@ public class MainTopicListFragment extends BaseLazyFragment
                 }
             }
         } else {
-            groupPosition = 0;
-            for (int i = 0; i < provider.getChildCount(0); i++) {
-                TopicItemData childItem = provider.getChildItem(0, i);
-                if (childItem.getEntityId() == selectedEntity) {
-                    childPosition = i;
-                    break;
-                }
-            }
+            groupPosition = -1;
+            // groupcount = 0 인데 왜 ??
+//            for (int i = 0; i < provider.getChildCount(0); i++) {
+//                TopicItemData childItem = provider.getChildItem(0, i);
+//                if (childItem.getEntityId() == selectedEntity) {
+//                    childPosition = i;
+//                    break;
+//                }
+//            }
         }
 
         if (groupPosition == -1) {

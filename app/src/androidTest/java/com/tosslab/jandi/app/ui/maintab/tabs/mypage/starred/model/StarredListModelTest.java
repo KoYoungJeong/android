@@ -12,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
@@ -22,9 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by tonyjs on 2016. 8. 9..
- */
 @RunWith(AndroidJUnit4.class)
 public class StarredListModelTest {
 
@@ -47,9 +43,13 @@ public class StarredListModelTest {
 
     @Test
     public void getStarredListObservable() throws Exception {
-        Observable<ResStarMentioned> starredListObservable = starredListModel.getStarredListObservable("", -1, 20);
         TestSubscriber<ResStarMentioned> testSubscriber = new TestSubscriber<>();
-        starredListObservable.subscribe(testSubscriber);
+        starredListModel.getStarredListObservable("", -1, 20)
+                .subscribe(testSubscriber);
+
+        if (testSubscriber.getOnErrorEvents().size() > 0) {
+            return;
+        }
 
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
@@ -59,16 +59,6 @@ public class StarredListModelTest {
         assertNotNull(resStarMentioned);
         assertTrue(resStarMentioned.getRecords() != null && !resStarMentioned.getRecords().isEmpty());
         assertThat(resStarMentioned.getRecords().size(), is(lessThan(20)));
-    }
-
-    @Test
-    public void unregistStarredMessage() throws Exception {
-
-    }
-
-    @Test
-    public void getTeamId() throws Exception {
-
     }
 
 }

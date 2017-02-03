@@ -7,6 +7,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -48,7 +49,7 @@ public class ExpandableTopicAdapter
 
     private TopicFolderListDataProvider provider;
 
-    private long selectedEntity;
+    private long selectedEntity = -1;
     private AnimStatus animStatus = AnimStatus.READY;
     private ValueAnimator colorAnimator;
 
@@ -79,20 +80,19 @@ public class ExpandableTopicAdapter
 
     @Override
     public long getGroupId(int groupPosition) {
-        return provider.getGroupItem(groupPosition).getGroupId();
+        TopicFolderData groupItem = provider.getGroupItem(groupPosition);
+        return groupItem != null ? groupItem.getGroupId() : -1;
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return provider.getChildItem(groupPosition, childPosition).getChildId();
+        TopicItemData childItem = provider.getChildItem(groupPosition, childPosition);
+        return childItem != null ? childItem.getChildId() : -1;
     }
 
+    @Nullable
     public TopicItemData getTopicItemData(int groupPosition, int childPosition) {
-        if (groupPosition < provider.getGroupCount() && childPosition < provider.getChildCount(groupPosition)) {
-            return provider.getChildItem(groupPosition, childPosition);
-        } else {
-            return null;
-        }
+        return provider.getChildItem(groupPosition, childPosition);
     }
 
     public List<TopicItemData> getAllTopicItemData() {
@@ -117,6 +117,7 @@ public class ExpandableTopicAdapter
         return topicItemDatas;
     }
 
+    @Nullable
     public TopicFolderData getTopicFolderData(int groupPosition) {
         return provider.getGroupItem(groupPosition);
     }
@@ -133,7 +134,7 @@ public class ExpandableTopicAdapter
     public int getChildItemViewType(int groupPosition, int childPosition) {
         TopicItemData topic = getTopicItemData(groupPosition, childPosition);
         // 더미인 경우에만 처리하도록 함
-        if (topic.getEntityId() <= 0 && groupPosition == getGroupCount() - 1 &&
+        if (topic != null && topic.getEntityId() <= 0 && groupPosition == getGroupCount() - 1 &&
                 childPosition == getChildCount(groupPosition) - 1) {
             return TYPE_FOR_JOIN_TOPIC_BUTTON;
         }
@@ -164,6 +165,10 @@ public class ExpandableTopicAdapter
     @Override
     public void onBindGroupViewHolder(TopicFolderViewHolder holder, int groupPosition, int viewType) {
         final TopicFolderData item = getTopicFolderData(groupPosition);
+
+        if (item == null) {
+            return;
+        }
 
         holder.container.setVisibility(View.VISIBLE);
         holder.tvTitle.setText(item.getTitle());
@@ -221,7 +226,10 @@ public class ExpandableTopicAdapter
             return;
         }
 
-        final TopicItemData item = provider.getChildItem(groupPosition, childPosition);
+        TopicItemData item = provider.getChildItem(groupPosition, childPosition);
+        if (item == null) {
+            return;
+        }
 
         if (getGroupItemViewType(groupPosition) != TYPE_NO_GROUP) {
             holder.container.setBackgroundResource(R.drawable.bg_list_innerfolder_item);
@@ -348,7 +356,8 @@ public class ExpandableTopicAdapter
 
     @Override
     public boolean onCheckCanExpandOrCollapseGroup(TopicFolderViewHolder holder, int groupPosition, int x, int y, boolean expand) {
-        if (getTopicFolderData(groupPosition).getItemCount() == 0) {
+        TopicFolderData topicFolderData = getTopicFolderData(groupPosition);
+        if (topicFolderData == null || topicFolderData.getItemCount() == 0) {
             return false;
         }
         // check is enabled
@@ -376,21 +385,6 @@ public class ExpandableTopicAdapter
 
     public void setOnGroupItemClickListener(OnExpandableGroupItemClickListener onExpandableGroupItemClickListener) {
         this.onExpandableGroupItemClickListener = onExpandableGroupItemClickListener;
-    }
-
-    public void updateGroupBadgeCount() {
-        int groupCount = getGroupCount();
-        for (int groupIdx = 0; groupIdx < groupCount; groupIdx++) {
-            int childCount = getChildCount(groupIdx);
-            int badgeCount = 0;
-            for (int childIdx = 0; childIdx < childCount; childIdx++) {
-                TopicItemData topicItemData = getTopicItemData(groupIdx, childIdx);
-                if (topicItemData != null) {
-                    badgeCount += topicItemData.getUnreadCount();
-                }
-            }
-            getTopicFolderData(groupIdx).setChildBadgeCnt(badgeCount);
-        }
     }
 
     public long getSelectedEntity() {

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.account;
 import com.tosslab.jandi.app.OkHttpClientTestFactory;
 import com.tosslab.jandi.app.ValidationUtil;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 
 import org.junit.Before;
@@ -35,6 +36,12 @@ public class AccountApiDeprecatedTest {
     public void updatePrimaryEmail() throws Exception {
         assertThat(ValidationUtil.isDeprecated(api.updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo("djdskjd")).execute())).isFalse();
     }
+
+    @Test
+    public void updateName() throws Exception {
+        assertThat(ValidationUtil.isDeprecated(api.updateName(new ReqProfileName("aslkdj")).execute())).isFalse();
+    }
+
 
 
 }

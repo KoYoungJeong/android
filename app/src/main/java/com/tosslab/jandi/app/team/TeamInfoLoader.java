@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Poll;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -144,10 +145,11 @@ public class TeamInfoLoader {
             setUpTeamPlan();
             setUpMention();
 
-            setUpRooms();
             setUpRanks();
             setUpMembers();
             setUpMe();
+
+            setUpRooms();
             setUpTopicFolders();
 
         } else {
@@ -194,6 +196,8 @@ public class TeamInfoLoader {
         long myId = initialInfo.getSelf().getId();
         if (users.hasUser(myId)) {
             this.me = users.getUser(myId);
+            // ref by InitializeInfoConverter.java
+            this.me.getRaw().setIsStarred(false);
         } else {
             getUserObservable()
                     .takeFirst(human -> human.getId() == myId)
@@ -205,10 +209,62 @@ public class TeamInfoLoader {
     private void setUpRooms() {
 
         getTopicObservable()
+                .doOnNext(topic -> {
+                    // ref by TopicConverter.java
+                    List<Marker> markers = topic.getMarkers();
+
+                    if (markers == null || markers.isEmpty()) {
+                        // marker 가 없으면 임의로 지정함
+                        List<Marker> markers1 = new ArrayList<>();
+                        for (Long id : topic.getMembers()) {
+                            Marker marker = new Marker();
+                            marker.setMemberId(id);
+                            marker.setReadLinkId(topic.getLastLinkId() > 0 ? topic.getLastLinkId() : -1);
+                            markers1.add(marker);
+                        }
+                        topic.setMarkers(markers1);
+                    }
+                })
                 .map(TopicRoom::new)
                 .subscribe(topic -> topicRooms.addTopicRoom(topic.getId(), topic));
 
+        final long myId = me.getId();
         getChatObservable()
+                .doOnNext(chat -> {
+                    // ref by : InitializeInfoConverter.java
+                    if (!chat.isOpened()) {
+                        // close 상태인 Chat 에 대해 최소 정보 추가
+                        List<Long> members = chat.getMembers();
+                        if (members != null && !members.isEmpty()) {
+                            for (Long memberId : members) {
+                                if (memberId != myId) {
+                                    chat.setCompanionId(memberId);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // ref by ChatConverter.java
+                    List<Marker> markers = chat.getMarkers();
+
+                    long lastLinkId = chat.getLastLinkId() > 0 ? chat.getLastLinkId() : 0;
+                    if (markers == null || markers.isEmpty()) {
+                        // marker 가 없으면 임의로 지정함
+                        List<Marker> markers1 = new ArrayList<>();
+                        for (Long id : chat.getMembers()) {
+                            Marker marker = new Marker();
+                            marker.setMemberId(id);
+                            marker.setReadLinkId(lastLinkId);
+                            markers1.add(marker);
+                        }
+                        chat.setMarkers(markers1);
+                    }
+
+                    if (!chat.isOpened()) {
+                        chat.setReadLinkId(lastLinkId);
+                    }
+                })
                 .map(DirectMessageRoom::new)
                 .subscribe(chatRoom -> chatRooms.addDirectRoom(chatRoom.getId(), chatRoom));
     }
@@ -575,6 +631,9 @@ public class TeamInfoLoader {
                 rooms = new ArrayList<>();
                 topicFolder = new TopicFolder(folder, rooms);
                 folders.add(topicFolder);
+                if (folder.getRooms() == null) {
+                    folder.setRooms(new ArrayList<>());
+                }
                 for (Long roomId : folder.getRooms()) {
                     rooms.add(topicRooms.getTopicRoom(roomId));
                 }

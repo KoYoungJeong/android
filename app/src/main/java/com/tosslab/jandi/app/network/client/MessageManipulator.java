@@ -88,11 +88,6 @@ public class MessageManipulator {
 
     }
 
-    public List<ResMessages.Link> updateMessages(final long fromCurrentId) throws RetrofitException {
-
-        return messageApi.get().getRoomUpdateMessage(selectedTeamId, roomId, fromCurrentId);
-    }
-
     public ResCommon setLastReadLinkId(final long lastLinkId) throws RetrofitException {
 
         String entityType;

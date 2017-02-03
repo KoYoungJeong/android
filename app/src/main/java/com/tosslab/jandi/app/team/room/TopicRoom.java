@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Topic;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class TopicRoom implements Room {
@@ -96,6 +97,9 @@ public class TopicRoom implements Room {
 
     @Override
     public Collection<Marker> getMarkers() {
+        if (topic.getMarkers() == null) {
+            topic.setMarkers(new ArrayList<>());
+        }
         return topic.getMarkers();
     }
 

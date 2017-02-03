@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +39,9 @@ public class ChatRepositoryTest {
         InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
         TeamInfoLoader.getInstance().refresh();
 
-        chatObservable = Observable.from(ChatRepository.getInstance().getOpenedChats())
-                .takeFirst(chat -> true)
+        chatObservable = Observable.from(ChatRepository.getInstance().getDirectRooms())
+                .map(DirectMessageRoom::getRaw)
+                .first()
                 .replay()
                 .refCount();
 
@@ -52,22 +54,23 @@ public class ChatRepositoryTest {
     @Test
     public void testIncrementUnreadCount() throws Exception {
         Chat chat = getChat();
-
+        int oldUnreadCount = chat.getUnreadCount();
         ChatRepository.getInstance().incrementUnreadCount(chat.getId());
 
         Chat chat1 = ChatRepository.getInstance().getChat(chat.getId());
 
-        assertThat(chat1.getUnreadCount()).isGreaterThan(chat.getUnreadCount());
-        assertThat(chat1.getUnreadCount()).isEqualTo(chat.getUnreadCount() + 1);
+        assertThat(chat1.getUnreadCount()).isGreaterThan(oldUnreadCount);
+        assertThat(chat1.getUnreadCount()).isEqualTo(oldUnreadCount + 1);
     }
 
     @Test
     public void testUpdateChatOpened() throws Exception {
         Chat chat = getChat();
-        ChatRepository.getInstance().updateChatOpened(chat.getId(), !chat.isOpened());
+        boolean oldOpened = chat.isOpened();
+        ChatRepository.getInstance().updateChatOpened(chat.getId(), !oldOpened);
 
         Chat chat1 = ChatRepository.getInstance().getChat(chat.getId());
-        assertThat(chat1.isOpened()).isEqualTo(!chat.isOpened());
+        assertThat(chat1.isOpened()).isEqualTo(!oldOpened);
     }
 
     @Test
@@ -121,30 +124,33 @@ public class ChatRepositoryTest {
     @Test
     public void testUpdateUnreadCount() throws Exception {
         Chat chat = getChat();
-        ChatRepository.getInstance().updateUnreadCount(chat.getId(), chat.getUnreadCount() + 1);
+        int oldUnreadCount1 = chat.getUnreadCount();
+        ChatRepository.getInstance().updateUnreadCount(chat.getId(), oldUnreadCount1 + 1);
 
         int unreadCount = ChatRepository.getInstance().getChat(chat.getId()).getUnreadCount();
 
-        assertThat(unreadCount).isEqualTo(chat.getUnreadCount() + 1);
+        assertThat(unreadCount).isEqualTo(oldUnreadCount1 + 1);
     }
 
     @Test
     public void testUpdateLastLinkId() throws Exception {
         Chat chat = getChat();
-        ChatRepository.getInstance().updateLastLinkId(chat.getId(), chat.getLastLinkId() + 1);
+        long oldLastLinkId = chat.getLastLinkId();
+        ChatRepository.getInstance().updateLastLinkId(chat.getId(), oldLastLinkId + 1);
 
         long lastLinkId = ChatRepository.getInstance().getChat(chat.getId()).getLastLinkId();
 
-        assertThat(lastLinkId).isEqualTo(chat.getLastLinkId() + 1);
+        assertThat(lastLinkId).isEqualTo(oldLastLinkId + 1);
 
     }
 
     @Test
     public void testUpdateReadLinkId() throws Exception {
         Chat chat = getChat();
-        ChatRepository.getInstance().updateReadLinkId(chat.getId(), chat.getReadLinkId() + 1);
+        long oldReadLinkId = chat.getReadLinkId();
+        ChatRepository.getInstance().updateReadLinkId(chat.getId(), oldReadLinkId + 1);
 
         long readLinkId = ChatRepository.getInstance().getChat(chat.getId()).getReadLinkId();
-        assertThat(readLinkId).isEqualTo(chat.getReadLinkId() + 1);
+        assertThat(readLinkId).isEqualTo(oldReadLinkId + 1);
     }
 }

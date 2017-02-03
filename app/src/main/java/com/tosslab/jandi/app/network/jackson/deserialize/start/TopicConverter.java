@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Do use for JacksonParser
+ */
+@Deprecated
 public class TopicConverter implements Converter<Topic, Topic> {
     @Override
     public Topic convert(Topic topic) {

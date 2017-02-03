@@ -41,9 +41,14 @@ public class ChatApiTest {
     public void testDeleteChat() throws Exception {
         List<DirectMessageRoom> rooms = TeamInfoLoader.getInstance().getDirectMessageRooms();
         if (rooms.size() <= 0) return;
-        Long targetUserId = Observable.from(rooms.get(0).getMembers()).takeFirst(memberId -> memberId != TeamInfoLoader.getInstance().getMyId()).toBlocking().firstOrDefault(-1L);
-        ResCommon resCommon = chatApi.deleteChat(TeamInfoLoader.getInstance().getMyId(), targetUserId);
-        assertThat(resCommon).isNotNull();
+        long targetUserId = Observable.from(rooms)
+                .takeFirst(DirectMessageRoom::isJoined)
+                .map(DirectMessageRoom::getCompanionId)
+                .toBlocking().firstOrDefault(-1L);
+        if (targetUserId > 0) {
+            ResCommon resCommon = chatApi.deleteChat(TeamInfoLoader.getInstance().getTeamId(), targetUserId);
+            assertThat(resCommon).isNotNull();
+        }
     }
 
     @Test
@@ -62,7 +67,7 @@ public class ChatApiTest {
             TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().isChat(chat.id)).isTrue();
 
-            assertThat(TeamInfoLoader.getInstance().isChat(jandiBot.getId())).isTrue();
+            assertThat(TeamInfoLoader.getInstance().getChatId(jandiBot.getId())).isGreaterThan(0L);
         }
     }
 }

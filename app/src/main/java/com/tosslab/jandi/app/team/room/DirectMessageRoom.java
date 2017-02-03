@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.Marker;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class DirectMessageRoom implements Room {
@@ -82,6 +83,9 @@ public class DirectMessageRoom implements Room {
 
     @Override
     public Collection<Marker> getMarkers() {
+        if (chat.getMarkers() == null) {
+            chat.setMarkers(new ArrayList<>());
+        }
         return chat.getMarkers();
     }
 

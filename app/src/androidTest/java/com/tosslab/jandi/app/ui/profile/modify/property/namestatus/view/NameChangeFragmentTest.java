@@ -39,7 +39,7 @@ public class NameChangeFragmentTest {
     @Test
     public void updateName() throws Throwable {
         rule.runOnUiThread(() -> fragment.updateName());
-        verify(fragment.presenter).updateName(eq(fragment.etName.getText().toString()), TeamInfoLoader.getInstance().getMyId());
+        verify(fragment.presenter).updateName(eq(fragment.etName.getText().toString()), eq(-1L));
     }
 
     @Test

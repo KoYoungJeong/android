@@ -9,10 +9,10 @@ import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RefreshConnectBotEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicKickedoutEvent;
+import com.tosslab.jandi.app.events.entities.TopicLeftEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
@@ -310,7 +310,7 @@ public class JandiSocketServiceModelTest {
     public void testOnTopicLeft() throws Exception {
         final long[] leftTopicId = new long[1];
         final long[] leftTeamId = new long[1];
-        register((TopicDeleteEvent event) -> {
+        register((TopicLeftEvent event) -> {
             accept = true;
             leftTopicId[0] = event.getTopicId();
             leftTeamId[0] = event.getTeamId();

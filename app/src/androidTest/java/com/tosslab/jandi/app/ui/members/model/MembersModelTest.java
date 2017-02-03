@@ -141,6 +141,7 @@ public class MembersModelTest {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
         Collection<Long> membersBefore = TeamInfoLoader.getInstance().getTopic(topicId).getMembers();
+        int beforeSize = membersBefore.size();
 
         //When
         membersModel.kickUser(teamId, topicId, BaseInitUtil.getUserIdByEmail(BaseInitUtil.TEST2_EMAIL));
@@ -151,7 +152,7 @@ public class MembersModelTest {
         BaseInitUtil.deleteDummyTopic();
 
         //Then
-        assertThat(membersBefore.size() - 1, is(equalTo(membersAfter.size())));
+        assertThat(beforeSize - 1, is(equalTo(membersAfter.size())));
     }
 
 

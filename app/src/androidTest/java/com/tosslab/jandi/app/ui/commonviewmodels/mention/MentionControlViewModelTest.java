@@ -83,6 +83,7 @@ public class MentionControlViewModelTest {
             rule.runOnUiThread(() -> {
                 mentionControlViewModel.refreshMembers(Arrays.asList(TeamInfoLoader.getInstance().getDefaultTopicId()));
                 Observable.from(TeamInfoLoader.getInstance().getUserList())
+                        .filter(user1 -> !user1.isBot())
                         .takeFirst(user1 -> user1.getId() != TeamInfoLoader.getInstance().getMyId())
                         .map(User::getId)
                         .subscribe(id -> {

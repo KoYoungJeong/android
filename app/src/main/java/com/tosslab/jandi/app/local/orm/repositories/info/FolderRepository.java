@@ -65,6 +65,9 @@ public class FolderRepository extends LockTemplate {
 
     public boolean addFolder(Folder folder) {
         return execute(() -> {
+            if (folder.getRooms() == null) {
+                folder.setRooms(new ArrayList<>());
+            }
             folders.put(folder.getId(), folder);
             return true;
         });

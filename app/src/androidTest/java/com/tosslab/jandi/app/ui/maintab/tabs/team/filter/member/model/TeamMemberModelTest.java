@@ -166,7 +166,7 @@ public class TeamMemberModelTest {
                     .are(new Condition<String>() {
                         @Override
                         public boolean matches(String s) {
-                            return s.contains(otherName);
+                            return s.toLowerCase().contains(otherName);
                         }
                     });
 
@@ -208,7 +208,7 @@ public class TeamMemberModelTest {
                     .are(new Condition<String>() {
                         @Override
                         public boolean matches(String s) {
-                            return s.contains(otherName);
+                            return s.toLowerCase().contains(otherName);
                         }
                     });
         }
@@ -217,6 +217,7 @@ public class TeamMemberModelTest {
 
     private String getOtherName(long topicId) {
         String otherName = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(it -> !it.isBot())
                 .map(User::getId)
                 .takeFirst(it -> !TeamInfoLoader.getInstance().getTopic(topicId).getMembers().contains(it))
                 .map(it -> TeamInfoLoader.getInstance().getUser(it))
@@ -233,12 +234,16 @@ public class TeamMemberModelTest {
 
     private TopicRoom getOtherTopicId() {
         return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                .takeFirst(it -> it.getId() != TeamInfoLoader.getInstance().getDefaultTopicId())
+                .takeFirst(it -> {
+                    return it.getId() != TeamInfoLoader.getInstance().getDefaultTopicId()
+                            && it.getMembers().size() < TeamInfoLoader.getInstance().getUserList().size() - 1;
+                })
                 .toBlocking().first();
     }
 
     private String getOtherName() {
         String otherName = Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(it -> !it.isBot())
                 .takeFirst(it -> it.isEnabled() && it.getId() != TeamInfoLoader.getInstance().getMyId())
                 .map((user) -> {
                     if (user.isInactive()) {

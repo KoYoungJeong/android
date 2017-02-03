@@ -174,6 +174,7 @@ public class TopicRepository extends LockTemplate {
 
             if (isTopic(topicId)) {
                 topics.get(topicId).getRaw().setUnreadCount(unreadCount);
+                return true;
             }
 
             return false;
@@ -360,8 +361,9 @@ public class TopicRepository extends LockTemplate {
                 Topic raw = topics.get(roomId).getRaw();
                 if (raw.getReadLinkId() < linkId) {
                     raw.setReadLinkId(linkId);
+                    return true;
                 }
-                return true;
+                return false;
             }
 
             return false;

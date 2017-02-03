@@ -15,8 +15,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.network.models.ResStarredMessage;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import retrofit2.Call;
@@ -55,17 +53,9 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         return call(() -> getApi().unshareMessage(messageId, share));
     }
 
-    @Deprecated
-    public List<ResMessages.Link> getRoomUpdateMessage(long teamId,
-                                                long roomId,
-                                                long currentLinkId) throws RetrofitException {
-        return call(() -> getApi().getRoomUpdateMessage(teamId, roomId, currentLinkId));
-    }
-
     public ResMessages.OriginalMessage getMessage(long teamId, long messageId) throws RetrofitException {
         return call(() -> getApi().getMessage(teamId, messageId));
     }
-
 
     public ResStarMentioned getStarredMessages(long teamId, long starredId,
                                         int count, String type) throws RetrofitException {
@@ -108,13 +98,6 @@ public class MessageApi extends ApiTemplate<MessageApi.Api> {
         @PUT("messages/{messageId}/unshare")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResCommon> unshareMessage(@Path("messageId") long messageId, @Body ReqUnshareMessage share);
-
-        @Deprecated
-        @GET("teams/{teamId}/rooms/{roomId}/messages/updatedList")
-        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-        Call<List<ResMessages.Link>> getRoomUpdateMessage(@Path("teamId") long teamId,
-                                                          @Path("roomId") long roomId,
-                                                          @Query("linkId") long currentLinkId);
 
         @GET("teams/{teamId}/messages/{messageId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,5 +73,12 @@ public class ChannelApiDeprecatedTest {
         assertThat(ValidationUtil.isDeprecated(api.invitePublicTopic(1, new ReqInviteTopicUsers(new ArrayList<Long>(),1)).execute())).isFalse();
     }
 
+    @Test
+    public void modifyReadOnly() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("isAnnouncement", true);
+        assertThat(ValidationUtil.isDeprecated(api.modifyReadOnly(1, 1,map).execute())).isFalse();
+
+    }
 
 }
