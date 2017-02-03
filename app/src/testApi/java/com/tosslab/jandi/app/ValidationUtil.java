@@ -32,7 +32,6 @@ public class ValidationUtil {
         builder.append(method).append(" - ").append(url)
                 .append("\nResponse Header : ").append(json);
 
-
         String deprecated = headers.get("X-API-Deprecated");
         boolean find = deprecated != null && deprecated.length() > 0;
 
