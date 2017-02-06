@@ -133,6 +133,8 @@
 	<string name="invite_email_success">"招待メールを全部送信しました。"</string>
 	<string name="invite_email_title">"メール入力"</string>
 	<string name="invite_email_valid">"有効なメールアドレスです。"</string>
+	<string name="invite_member_adminonly_desc">""</string>
+	<string name="invite_member_adminonly_title">""</string>
 	<string name="invite_member_copyurl">"招待URLコピー"</string>
 	<string name="invite_member_copyurl_title">"招待URL"</string>
 	<string name="invite_member_email_desc">"メールで正メンバーをJANDIに招待できます。"</string>
@@ -403,6 +405,8 @@
 	<string name="jandi_insert_team_domain">"チームドメインを入力"</string>
 	<string name="jandi_insert_team_name">"チーム名を入力"</string>
 	<string name="jandi_invitation">"招待"</string>
+	<string name="jandi_invitation_adminonly_desc">"現在の管理者のみ招待可能招待用リンクを使用することはできません。"</string>
+	<string name="jandi_invitation_adminonly_title">"メールのみのメンバーの招待が可能です。"</string>
 	<string name="jandi_invitation_for_admin">"現在の設定では、チーム管理者のみメンバーを招待することができます。"</string>
 	<string name="jandi_invitation_help">"あなたのメンバーをJANDIに招待しましょう"</string>
 	<string name="jandi_invitation_succeed">"招待しました"</string>

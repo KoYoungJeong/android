@@ -19,8 +19,8 @@ import okhttp3.OkHttpClient;
 final class OkConnectionClient {
     private static final String TAG = "OkConnectionClient";
 
-    private static final int CONNECTION_TIMEOUT = 7 * 1000;
-    private static final int READ_TIMEOUT = 7 * 1000;
+    private static final int CONNECTION_TIMEOUT = 60 * 1000;
+    private static final int READ_TIMEOUT = 60 * 1000;
 
     private OkConnectionClient() {
     }

@@ -10,8 +10,8 @@ import android.util.Pair;
 import com.tosslab.jandi.lib.sprinkler.io.database.SprinklerDatabaseHelper;
 import com.tosslab.jandi.lib.sprinkler.io.domain.flush.RequestBody;
 import com.tosslab.jandi.lib.sprinkler.io.domain.flush.ResponseBody;
-import com.tosslab.jandi.lib.sprinkler.util.Logger;
 import com.tosslab.jandi.lib.sprinkler.io.domain.track.Track;
+import com.tosslab.jandi.lib.sprinkler.util.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;

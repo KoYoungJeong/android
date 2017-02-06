@@ -602,15 +602,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver
-            android:name=".utils.network.NetworkStateBroadcastReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-
         <provider
             android:name=".providers.JandiFileProvider"
             android:authorities="@string/jandi_file_authority"
