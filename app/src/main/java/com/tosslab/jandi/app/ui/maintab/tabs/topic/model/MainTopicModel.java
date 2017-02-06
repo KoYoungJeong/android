@@ -40,7 +40,12 @@ public class MainTopicModel {
 
     // 폴더 정보 가져오기
     public List<TopicFolder> getTopicFolders() {
-        return TeamInfoLoader.getInstance().getTopicFolders();
+        List<TopicFolder> topicFolders = new ArrayList<>();
+        Observable.from(TeamInfoLoader.getInstance().getTopicFolders())
+                .sorted((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
+                .collect(() -> topicFolders, List::add)
+                .subscribe();
+        return topicFolders;
     }
 
     // Join된 Topic에 관한 정보를 가져오기
