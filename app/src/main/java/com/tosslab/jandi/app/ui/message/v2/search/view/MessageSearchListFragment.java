@@ -65,6 +65,7 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
@@ -541,6 +542,20 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         if (messageAdapter.getItemCount() <= 0) {
             return;
         }
+
+        if (TeamInfoLoader.getInstance().isChat(roomId)) {
+            long companionId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+            User user = TeamInfoLoader.getInstance().getUser(companionId);
+            if (user != null && user.isDisabled()) {
+
+                int count = messageAdapter.getItemCount();
+                for (int idx = 0; idx < count; idx++) {
+                    messageAdapter.getItem(idx).unreadCnt = 0;
+                }
+                return;
+            }
+        }
+
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(roomId);
 
         List<Long> memberLastReadLinks = new ArrayList<>();

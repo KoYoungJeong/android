@@ -580,4 +580,13 @@ public class MessageListModel {
         }
     }
 
+    public boolean isDisabledUserChat(long roomId) {
+        if (TeamInfoLoader.getInstance().isChat(roomId)) {
+            long companionId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+            User user = TeamInfoLoader.getInstance().getUser(companionId);
+            return user != null && user.isDisabled();
+        }
+
+        return false;
+    }
 }
