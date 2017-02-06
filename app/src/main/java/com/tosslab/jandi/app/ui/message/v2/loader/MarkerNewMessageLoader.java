@@ -43,6 +43,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
 
             if (newMessage.records != null) {
                 if (newMessage.records.size() > 0) {
+
                     isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
 
                     long lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
@@ -55,6 +56,17 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                         messageListModel.updateLastLinkId(messageState.getLastUpdateLinkId());
                         RoomMarkerRepository.getInstance().upsertRoomMarker(roomId, myId, messageState.getLastUpdateLinkId());
                     }
+
+                    if (TeamInfoLoader.getInstance().isDefaultTopic(roomId)) {
+                        for (int i = newMessage.records.size() - 1; i >= 0; i--) {
+                            if (newMessage.records.get(i).info instanceof ResMessages.InviteEvent
+                                    || newMessage.records.get(i).info instanceof ResMessages.LeaveEvent
+                                    || newMessage.records.get(i).info instanceof ResMessages.JoinEvent) {
+                                newMessage.records.remove(i);
+                            }
+                        }
+                    }
+
 
                 } else {
                     isLastLinkId = true;

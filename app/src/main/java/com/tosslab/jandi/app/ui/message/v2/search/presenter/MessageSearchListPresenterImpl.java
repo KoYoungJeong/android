@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementContainer;
@@ -146,10 +147,14 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
     @Override
     public void checkEnabledUser(long entityId) {
-        if (!messageListModel.isEnabledIfUser(entityId)) {
-            view.setDisabledUser();
-        } else {
-            view.dismissUserStatusLayout();
+        if (messageListModel.isUser(entityId)) {
+            if (messageListModel.isInactiveUser(entityId)) {
+                view.setInavtiveUser();
+            } else if (!messageListModel.isEnabledIfUser(entityId)) {
+                view.setDisabledUser();
+            } else {
+                view.dismissUserStatusLayout();
+            }
         }
     }
 
@@ -165,11 +170,10 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
 
                         if (!user) {
                             roomId = entityId;
+                            return roomId;
                         } else if (NetworkCheckUtil.isConnected()) {
-
                             roomId = messageListModel.getRoomId();
-
-
+                            return roomId;
                         }
                     }
 
@@ -183,6 +187,12 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
                         view.setRoomId(roomid);
                     }
                     messageListModel.setRoomId(roomid);
+                    Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
+                    if (TeamInfoLoader.getInstance().isTopic(roomid)) {
+                        view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
+                                && myLevel != Level.Owner
+                                && myLevel != Level.Admin);
+                    }
                 })
                 .observeOn(Schedulers.io())
                 .doOnNext(roomid -> {

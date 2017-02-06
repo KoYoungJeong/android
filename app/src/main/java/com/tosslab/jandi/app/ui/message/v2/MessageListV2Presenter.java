@@ -472,12 +472,14 @@ public class MessageListV2Presenter {
 
     public void onDetermineUserStatus() {
 
-        if (messageListModel.isInactiveUser(room.getEntityId())) {
-            view.showInactivedUserLayer();
-        } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
-            view.showDisabledUserLayer();
-        } else {
-            view.dismissUserStatusLayout();
+        if (messageListModel.isUser(room.getEntityId())) {
+            if (messageListModel.isInactiveUser(room.getEntityId())) {
+                view.showInactivedUserLayer();
+            } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
+                view.showDisabledUserLayer();
+            } else {
+                view.dismissUserStatusLayout();
+            }
         }
     }
 
@@ -644,9 +646,11 @@ public class MessageListV2Presenter {
                     String readyMessage = messageListModel.getReadyMessage(roomid);
                     view.initRoomInfo(roomid, readyMessage);
                     Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
-                    view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
-                            && myLevel != Level.Owner
-                            && myLevel != Level.Admin);
+                    if (TeamInfoLoader.getInstance().isTopic(roomid)) {
+                        view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
+                                && myLevel != Level.Owner
+                                && myLevel != Level.Admin);
+                    }
                 })
                 .observeOn(Schedulers.io())
                 .subscribe(roomid -> {

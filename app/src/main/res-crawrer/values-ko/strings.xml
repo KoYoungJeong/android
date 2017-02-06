@@ -9,10 +9,8 @@
 	<string name="common_accthome_joinedteamlist">"가입한 팀 리스트"</string>
 	<string name="common_accthome_loggedin">"로그인됨"</string>
 	<string name="common_authority_change_alert">"멤버 권한이 변경되었습니다. 
-앱 재시동이 필요합니다.
-"</string>
-	<string name="common_authority_change_relaunch">"재시동
-"</string>
+앱 재시동이 필요합니다."</string>
+	<string name="common_authority_change_relaunch">"재시동"</string>
 	<string name="common_authority_notauthorised_body">"자세한 내용은 관리자에게 문의하세요."</string>
 	<string name="common_authority_notauthorised_title">"해당 기능에 접근 권한이 없습니다. "</string>
 	<string name="common_authority_title_associate">"준회원"</string>
@@ -54,8 +52,7 @@
 	<string name="common_sharetojandi_choose_team">"팀 선택"</string>
 	<string name="common_sharetojandi_errormsg">"예상치 못한 문제가 발생했습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="common_signup_codeverification">"위 이메일로 인증번호를 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
-	<string name="common_signup_invalid_emaildomain">"이메일의 도메인 주소를 제대로 입력했는지 다시 확인해 주세요.
-"</string>
+	<string name="common_signup_invalid_emaildomain">"이메일의 도메인 주소를 제대로 입력했는지 다시 확인해 주세요."</string>
 	<string name="delete_cache">"캐시 삭제"</string>
 	<string name="delete_cache_confirm">"캐시 데이터를 삭제하시겠습니까?"</string>
 	<string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
@@ -110,10 +107,8 @@
 	<string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
 	<string name="file_detail_nopreview">"미리보기 할 수 없는 형식의 파일입니다."</string>
 	<string name="file_upload_comment">"댓글 (선택 사항)"</string>
-	<string name="invite_account_alreadyinteam">"이미 팀에 참여 중인 계정입니다.
-"</string>
-	<string name="invite_account_alreadyinvited">"이미 팀에 초대 중인 계정입니다.
-"</string>
+	<string name="invite_account_alreadyinteam">"이미 팀에 참여 중인 계정입니다."</string>
+	<string name="invite_account_alreadyinvited">"이미 팀에 초대 중인 계정입니다."</string>
 	<string name="invite_account_blocked">"팀에서 차단된 계정입니다."</string>
 	<string name="invite_associate_desc">"초대하려는 토픽과 이메일을 선택해주세요."</string>
 	<string name="invite_associate_email_desc">"이메일을 통해 다른 준회원을 잔디로 초대할 수 있습니다."</string>
