@@ -427,15 +427,6 @@ public class MessageListV2Presenter {
         if (adapterModel.getCount() <= 0) {
             return;
         }
-
-        if (messageListModel.isDisabledUserChat(room.getRoomId())) {
-            int count = adapterModel.getCount();
-            for (int idx = 0; idx < count; idx++) {
-                adapterModel.getItem(idx).unreadCnt = 0;
-            }
-            return;
-        }
-
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
 
         if (markers == null || markers.isEmpty()) {
@@ -458,13 +449,11 @@ public class MessageListV2Presenter {
 
         long linkCursor = memberLastReadLinks.get(unreadCnt);
 
-        int messageCount = adapterModel.getCount();
-        for (int j = 0; j < messageCount; j++) {
+        for (int j = 0; j < adapterModel.getCount(); j++) {
             if (adapterModel.getItem(j).id <= linkCursor) {
                 adapterModel.getItem(j).unreadCnt = unreadCnt;
             } else {
-                int markerSize = memberLastReadLinks.size();
-                while (unreadCnt < markerSize - 1 &&
+                while (unreadCnt < memberLastReadLinks.size() - 1 &&
                         linkCursor == memberLastReadLinks.get(unreadCnt)) {
                     unreadCnt++;
                 }
@@ -476,14 +465,12 @@ public class MessageListV2Presenter {
 
     public void onDetermineUserStatus() {
 
-        if (messageListModel.isUser(room.getEntityId())) {
-            if (messageListModel.isInactiveUser(room.getEntityId())) {
-                view.showInactivedUserLayer();
-            } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
-                view.showDisabledUserLayer();
-            } else {
-                view.dismissUserStatusLayout();
-            }
+        if (messageListModel.isInactiveUser(room.getEntityId())) {
+            view.showInactivedUserLayer();
+        } else if (!messageListModel.isEnabledIfUser(room.getEntityId())) {
+            view.showDisabledUserLayer();
+        } else {
+            view.dismissUserStatusLayout();
         }
     }
 
@@ -627,50 +614,50 @@ public class MessageListV2Presenter {
         LogUtil.i(TAG, "roomId = " + roomId);
 
         if (roomId <= 0) {
-            Observable.just(roomId)
+            roomId = Observable.just(roomId)
                     .observeOn(Schedulers.io())
                     .map(it -> getRoomId())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .concatMap(it -> {
-                        if (it <= Room.INVALID_ROOM_ID) {
-                            return Observable.defer(() -> {
-                                view.showInvalidEntityToast();
-                                view.finish();
-                                return Observable.empty();
-                            });
-                        } else {
-                            return Observable.just(it);
-                        }
-                    })
-                    .doOnNext(roomid -> {
-
-                        room.setRoomId(roomid);
-
-                        String readyMessage = messageListModel.getReadyMessage(roomid);
-                        view.initRoomInfo(roomid, readyMessage);
-                        Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
-                        if (TeamInfoLoader.getInstance().isTopic(roomid)) {
-                            view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
-                                    && myLevel != Level.Owner
-                                    && myLevel != Level.Admin);
-                        }
-                    })
-                    .observeOn(Schedulers.io())
-                    .subscribe(roomid -> {
-                        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
-
-                        long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
-                        messagePointer.setLastReadLinkId(lastReadLinkId);
-                        messageListModel.setRoomId(roomid);
-                        isInitialized = true;
-
-                        OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
-                        addQueue(oldMessageQueue);
-
-                        NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
-                        addQueue(newMessageQueue);
-                    }, Throwable::printStackTrace);
+                    .firstOrDefault(Room.INVALID_ROOM_ID)
+                    .toBlocking().first();
+            if (roomId <= Room.INVALID_ROOM_ID) {
+                Completable.fromAction(() -> {
+                    view.showInvalidEntityToast();
+                    view.finish();
+                }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
+                return;
+            }
         }
+
+        Observable.just(roomId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(roomid -> {
+
+                    room.setRoomId(roomid);
+
+                    String readyMessage = messageListModel.getReadyMessage(roomid);
+                    view.initRoomInfo(roomid, readyMessage);
+                    Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
+                    view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
+                            && myLevel != Level.Owner
+                            && myLevel != Level.Admin);
+                })
+                .observeOn(Schedulers.io())
+                .subscribe(roomid -> {
+                    SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
+
+                    long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
+                    messagePointer.setLastReadLinkId(lastReadLinkId);
+                    messageListModel.setRoomId(roomid);
+                    isInitialized = true;
+
+                    OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
+                    addQueue(oldMessageQueue);
+
+                    NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
+                    addQueue(newMessageQueue);
+                }, Throwable::printStackTrace);
+
+
     }
 
     private void addQueue(MessageContainer messageContainer) {
