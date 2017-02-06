@@ -536,7 +536,9 @@ public class JandiSocketServiceModel {
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             long teamId = event.getTeamId();
             long fileId = event.getFile().getId();
-            postEvent(new ShareFileEvent(teamId, fileId));
+            List<Integer> shareEntities = event.getFile().getShareEntities();
+
+            postEvent(new ShareFileEvent(teamId, fileId, shareEntities));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
         }

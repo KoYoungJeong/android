@@ -29,6 +29,8 @@ import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
+import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.view.TopicInfoDialog;
@@ -57,6 +59,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 /**
@@ -157,6 +160,8 @@ public class SearchActivity extends BaseAppCompatActivity
         }
 
         AnalyticsUtil.sendScreenName(screenMode);
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -570,6 +575,7 @@ public class SearchActivity extends BaseAppCompatActivity
     @Override
     protected void onDestroy() {
         searchPresenter.onDestroy();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -635,5 +641,15 @@ public class SearchActivity extends BaseAppCompatActivity
         } else {
             layoutPricingPlanWarning.setVisibility(View.GONE);
         }
+    }
+
+    public void onEvent(ShareFileEvent event) {
+        long fileId = event.getId();
+        searchPresenter.addFileSharedEntity(fileId, event.getShareEntities());
+    }
+    public void onEvent(UnshareFileEvent event) {
+        long fileId = event.getFileId();
+        long roomId = event.getRoomId();
+        searchPresenter.removeFileSharedEntity(fileId, roomId);
     }
 }

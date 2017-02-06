@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
+import java.util.List;
+
 /**
  * Created by tee on 16. 2. 5..
  */
@@ -93,13 +95,31 @@ public class SocketFileShareEvent implements EventHistoryInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class FileObject {
         private long id;
+        private int permission;
+        private List<Integer> shareEntities;
 
         public long getId() {
             return id;
         }
 
-        public void setWriter(long id) {
+        public void setId(long id) {
             this.id = id;
+        }
+
+        public int getPermission() {
+            return permission;
+        }
+
+        public void setPermission(int permission) {
+            this.permission = permission;
+        }
+
+        public List<Integer> getShareEntities() {
+            return shareEntities;
+        }
+
+        public void setShareEntities(List<Integer> shareEntities) {
+            this.shareEntities = shareEntities;
         }
     }
 }

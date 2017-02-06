@@ -16,6 +16,8 @@ public interface SearchAdapterDataModel {
 
     void setSearchMessageDatas(List<SearchMessageData> searchMessageDatas);
 
+    List<SearchMessageData> getSearchMessageData();
+
     void clearSearchMessageDatas();
 
     void setMessageHeaderData(SearchMessageHeaderData searchMessageHeaderData);
