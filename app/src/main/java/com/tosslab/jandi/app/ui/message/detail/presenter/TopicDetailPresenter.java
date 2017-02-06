@@ -84,6 +84,6 @@ public interface TopicDetailPresenter {
 
         void showDialogNeedToAssignMember();
 
-        void setReadOnly(boolean readOnly, boolean owner, boolean defaultTopic);
+        void setReadOnly(boolean readOnly, boolean teamOwner, boolean defaultTopic);
     }
 }

@@ -452,7 +452,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void setReadOnly(boolean readOnly, boolean owner, boolean defaultTopic) {
+    public void setReadOnly(boolean readOnly, boolean teamOwner, boolean defaultTopic) {
         if (!defaultTopic) {
             vgReadOnly.setVisibility(View.GONE);
             vReadOnlyDivider.setVisibility(View.GONE);
@@ -460,7 +460,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             vgReadOnly.setVisibility(View.VISIBLE);
             vReadOnlyDivider.setVisibility(View.VISIBLE);
 
-            if (owner) {
+            if (teamOwner) {
                 switchReadOnly.setVisibility(View.VISIBLE);
                 tvReadOnlyStatus.setVisibility(View.GONE);
             } else {
@@ -469,7 +469,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
             }
             switchReadOnly.setChecked(readOnly);
             tvReadOnlyStatus.setText(readOnly ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
-            vgReadOnly.setEnabled(owner);
+            vgReadOnly.setEnabled(teamOwner);
         }
 
     }

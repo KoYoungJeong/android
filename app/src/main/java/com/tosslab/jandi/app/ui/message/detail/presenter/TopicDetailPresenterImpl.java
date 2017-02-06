@@ -88,7 +88,8 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
         view.setTopicPushSwitch(isTopicPushSubscribe);
         view.setLeaveVisible(owner, defaultTopic, myLevel != Level.Guest);
         view.setAssignTopicOwnerVisible(owner);
-        view.setReadOnly(readOnly, owner, defaultTopic);
+        boolean teamOwner = topicDetailModel.isTeamOwner() || topicDetailModel.isTeamAdmin();
+        view.setReadOnly(readOnly, teamOwner, defaultTopic);
     }
 
     @Override
