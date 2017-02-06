@@ -76,7 +76,7 @@ public class ImageUtil {
         return getImageFileUrl(targetUrl);
     }
 
-    public static String getLargestThumbnail(ResMessages.FileContent fileContent) {
+    public static String getOnlyLargestThumbnail(ResMessages.FileContent fileContent) {
         if (fileContent == null || fileContent.extraInfo == null) {
             return null;
         }
@@ -85,11 +85,11 @@ public class ImageUtil {
 
         if (!TextUtils.isEmpty(fileContent.extraInfo.thumbnailUrl)) {
             targetUrl = fileContent.extraInfo.thumbnailUrl;
+            return getImageFileUrl(targetUrl);
         } else {
-            targetUrl = fileContent.fileUrl;
+            return "";
         }
 
-        return getImageFileUrl(targetUrl);
     }
 
     public static String getOriginalUrl(ResMessages.FileContent content) {
@@ -102,7 +102,7 @@ public class ImageUtil {
 
     }
 
-    public static String getLargeProfileUrl(ResSearch.File content) {
+    public static String getOnlyLargestThumbnail(ResSearch.File content) {
         if (!TextUtils.isEmpty(content.getThumbnailUrl())) {
             if (!TextUtils.isEmpty(content.getLargeThumbnailUrl())) {
                 return content.getLargeThumbnailUrl();
@@ -112,9 +112,8 @@ public class ImageUtil {
                 return content.getSmallThumbnailUrl();
             }
             return content.getThumbnailUrl();
-        } else {
-            return content.getFileUrl();
         }
+        return "";
     }
 
     public static boolean hasImageUrl(ResMessages.FileContent fileContent) {

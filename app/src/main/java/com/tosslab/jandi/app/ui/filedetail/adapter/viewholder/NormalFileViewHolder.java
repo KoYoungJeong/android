@@ -13,13 +13,17 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
+import butterknife.Bind;
+
 /**
  * Created by tonyjs on 16. 2. 1..
  */
 public class NormalFileViewHolder extends FileViewHolder {
+    @Bind(R.id.iv_file_detail_thumb)
+    ImageView ivFileThumb;
+    @Bind(R.id.vg_background)
+    ViewGroup vgBackground;
     private View vContent;
-    private ImageView ivFileThumb;
-    private ViewGroup vgBackground;
     private OnFileClickListener onFileClickListener;
 
     private NormalFileViewHolder(View itemView, OnFileClickListener onFileClickListener) {
@@ -35,9 +39,10 @@ public class NormalFileViewHolder extends FileViewHolder {
     public void addContentView(ViewGroup parent) {
         vContent = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_file_detail_file_content, parent, true);
-        ivFileThumb = (ImageView) vContent.findViewById(R.id.iv_file_detail_thumb);
-        vgBackground = (ViewGroup) vContent.findViewById(R.id.vg_background);
     }
+
+    @Override
+    protected void initView() { }
 
     @Override
     public void bindFileContent(ResMessages.FileMessage fileMessage) {
