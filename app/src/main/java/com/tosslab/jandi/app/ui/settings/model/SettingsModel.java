@@ -1,11 +1,15 @@
 package com.tosslab.jandi.app.ui.settings.model;
 
 import android.content.pm.ActivityInfo;
+import android.support.annotation.IntDef;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class SettingsModel {
 
@@ -15,6 +19,7 @@ public class SettingsModel {
     private static final String SUPPORT_URL_ZH_TW = "https://jandi.zendesk.com/hc/zh-tw";
     private static final String SUPPORT_URL_EN = "https://jandi.zendesk.com/hc/en-us";
 
+    @ScreenOrientation
     public static int getOrientationValue(String value) {
 
         if (TextUtils.isEmpty(value) || TextUtils.equals(value, "0")) {
@@ -73,4 +78,28 @@ public class SettingsModel {
 
         return SUPPORT_URL_EN;
     }
+
+    /**
+     * @see ActivityInfo#screenOrientation
+     */
+    @IntDef({
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_USER,
+            ActivityInfo.SCREEN_ORIENTATION_BEHIND,
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR,
+            ActivityInfo.SCREEN_ORIENTATION_NOSENSOR,
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR,
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE,
+            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT,
+            ActivityInfo.SCREEN_ORIENTATION_FULL_USER,
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ScreenOrientation {}
 }

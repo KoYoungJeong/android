@@ -166,8 +166,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 }
                 Human human = filePickerModel.uploadProfilePhoto(convertedProfileFile, userId);
                 String photoUrl = human.getPhotoUrl();
-                long myId = TeamInfoLoader.getInstance().getMyId();
-                HumanRepository.getInstance().updatePhotoUrl(myId, photoUrl);
+                HumanRepository.getInstance().updatePhotoUrl(userId, photoUrl);
                 return human;
             } finally {
                 if (convertedProfileFile != null && convertedProfileFile.exists()) {

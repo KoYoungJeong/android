@@ -18,11 +18,7 @@ public class TeamMemberItem {
         if (user != null) {
 
             chatChooseItem = ChatChooseItem.create(user).myId(myId == user.getId());
-            if (!chatChooseItem.isInactive()) {
-                name = chatChooseItem.getName();
-            } else {
-                name = chatChooseItem.getEmail();
-            }
+            name = chatChooseItem.getName();
             firstCharacter = FirstCharacterUtil.firstCharacter(name);
         } else {
             chatChooseItem = null;

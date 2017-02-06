@@ -71,7 +71,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
                             roomId = chatId;
                         } else {
                             try {
-                                roomId = new ChatApi(RetrofitBuilder.getInstance()).createChat(TeamInfoLoader.getInstance().getTeamId(), it).id;
+                                roomId = new ChatApi(RetrofitBuilder.getInstance()).createChat(TeamInfoLoader.getInstance().getTeamId(), it).getId();
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
                                 roomId = TeamInfoLoader.getInstance().getDefaultTopicId();

@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.RoomMarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
@@ -32,6 +33,7 @@ import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
 import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqStickerMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
+import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.spannable.analysis.mention.MentionAnalysisInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -59,12 +61,13 @@ import rx.Observable;
 
 public class MessageListModel {
 
-    MessageManipulator messageManipulator;
-    EntityClientManager entityClientManager;
-    Lazy<RoomsApi> roomsApi;
-    Lazy<StickerApi> stickerApi;
-    Lazy<MessageApi> messageApi;
-    Lazy<PollApi> pollApi;
+    private MessageManipulator messageManipulator;
+    private EntityClientManager entityClientManager;
+    private Lazy<RoomsApi> roomsApi;
+    private Lazy<StickerApi> stickerApi;
+    private Lazy<MessageApi> messageApi;
+    private Lazy<PollApi> pollApi;
+    private Lazy<ChatApi> chatApi;
 
     @Inject
     public MessageListModel(MessageManipulator messageManipulator,
@@ -72,12 +75,14 @@ public class MessageListModel {
                             Lazy<RoomsApi> roomsApi,
                             Lazy<StickerApi> stickerApi,
                             Lazy<MessageApi> messageApi,
+                            Lazy<ChatApi> chatApi,
                             Lazy<PollApi> pollApi) {
         this.messageManipulator = messageManipulator;
         this.entityClientManager = entityClientManager;
         this.roomsApi = roomsApi;
         this.stickerApi = stickerApi;
         this.messageApi = messageApi;
+        this.chatApi = chatApi;
         this.pollApi = pollApi;
     }
 
@@ -139,10 +144,15 @@ public class MessageListModel {
         return entityType == JandiConstants.TYPE_DIRECT_MESSAGE;
     }
 
-    public long getRoomId() {
+    public long createChat(long memberId) {
         try {
-            ResMessages oldMessage = getOldMessage(-1, 1);
-            return oldMessage.entityId;
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            Chat chat = chatApi.get().createChat(teamId, memberId);
+            chat.setIsOpened(false);
+            chat.setCompanionId(memberId);
+            chat.setReadLinkId(-1);
+            ChatRepository.getInstance(teamId).addChat(chat);
+            return chat.getId();
         } catch (RetrofitException e) {
             e.printStackTrace();
         }

@@ -438,6 +438,10 @@ public class MessageListV2Presenter {
 
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
 
+        if (markers == null || markers.isEmpty()) {
+            return;
+        }
+
         List<Long> memberLastReadLinks = new ArrayList<>();
 
         for (Marker marker : markers) {
@@ -598,7 +602,7 @@ public class MessageListV2Presenter {
         }
 
         if (NetworkCheckUtil.isConnected()) {
-            roomId = messageListModel.getRoomId();
+            roomId = messageListModel.createChat(entityId);
             if (roomId <= 0) {
                 return Room.INVALID_ROOM_ID;
             } else {
@@ -623,25 +627,24 @@ public class MessageListV2Presenter {
         LogUtil.i(TAG, "roomId = " + roomId);
 
         if (roomId <= 0) {
-            roomId = Observable.just(roomId)
+            Observable.just(roomId)
                     .observeOn(Schedulers.io())
                     .map(it -> getRoomId())
-                    .firstOrDefault(Room.INVALID_ROOM_ID)
-                    .toBlocking().first();
-            if (roomId <= Room.INVALID_ROOM_ID) {
-                Completable.fromAction(() -> {
-                    view.showInvalidEntityToast();
-                    view.finish();
-                }).subscribeOn(AndroidSchedulers.mainThread()).subscribe();
-                return;
-            }
-        }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .concatMap(it -> {
+                        if (it <= Room.INVALID_ROOM_ID) {
+                            return Observable.defer(() -> {
+                                view.showInvalidEntityToast();
+                                view.finish();
+                                return Observable.empty();
+                            });
+                        } else {
+                            return Observable.just(it);
+                        }
+                    })
+                    .doOnNext(roomid -> {
 
-        Observable.just(roomId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(roomid -> {
-
-                    room.setRoomId(roomid);
+                        room.setRoomId(roomid);
 
                     String readyMessage = messageListModel.getReadyMessage(roomid);
                     view.initRoomInfo(roomid, readyMessage);
@@ -656,19 +659,18 @@ public class MessageListV2Presenter {
                 .subscribe(roomid -> {
                     SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
 
-                    long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
-                    messagePointer.setLastReadLinkId(lastReadLinkId);
-                    messageListModel.setRoomId(roomid);
-                    isInitialized = true;
+                        long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
+                        messagePointer.setLastReadLinkId(lastReadLinkId);
+                        messageListModel.setRoomId(roomid);
+                        isInitialized = true;
 
-                    OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
-                    addQueue(oldMessageQueue);
+                        OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
+                        addQueue(oldMessageQueue);
 
-                    NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
-                    addQueue(newMessageQueue);
-                }, Throwable::printStackTrace);
-
-
+                        NewMessageContainer newMessageQueue = new NewMessageContainer(currentMessageState);
+                        addQueue(newMessageQueue);
+                    }, Throwable::printStackTrace);
+        }
     }
 
     private void addQueue(MessageContainer messageContainer) {

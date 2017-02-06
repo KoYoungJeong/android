@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -151,12 +152,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     }
 
     private void setUserInfo(ChatChooseItem item) {
-        String name;
-        if (!item.isInactive()) {
-            name = item.getName();
-        } else {
-            name = item.getEmail();
-        }
+        String name = item.getName();
         setName(name, item.isEnabled());
 
         String department = item.getDepartment();
@@ -208,8 +204,13 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             if (!item.isInactive()) {
                 ImageUtil.loadProfileImage(ivProfile, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
-                ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
+                String url = item.getPhotoUrl();
+                if (ProfileUtil.isChangedPhoto(url)) {
+                    ImageUtil.loadProfileImage(ivProfile, url, R.drawable.profile_img_dummyaccount_43);
+                } else {
+                    ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
+                }
             }
         } else {
             ivProfile.setImageResource(R.drawable.logotype_80);

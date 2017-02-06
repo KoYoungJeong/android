@@ -164,19 +164,16 @@ public class MessageSearchListPresenterImpl implements MessageSearchListPresente
         Observable.just(roomId)
                 .observeOn(Schedulers.io())
                 .map(roomid -> {
-
                     if (roomId <= 0) {
                         boolean user = TeamInfoLoader.getInstance().isUser(entityId);
-
                         if (!user) {
                             roomId = entityId;
                             return roomId;
                         } else if (NetworkCheckUtil.isConnected()) {
-                            roomId = messageListModel.getRoomId();
+                            roomId = messageListModel.createChat(entityId);
                             return roomId;
                         }
                     }
-
                     return roomid;
                 })
                 .observeOn(AndroidSchedulers.mainThread())

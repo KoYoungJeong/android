@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.DaggerModifyProfileComponent;
 import com.tosslab.jandi.app.ui.profile.modify.dagger.ModifyProfileModule;
 import com.tosslab.jandi.app.ui.profile.modify.presenter.ModifyProfilePresenter;
@@ -449,7 +450,7 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
     @Override
     public void displayProfile(User user) {
         // 프로필 사진
-        displayProfileImage(user.getPhotoUrl());
+        displayProfileImage(user.getPhotoUrl(), user.isInactive());
         // 프로필 이름
         tvProfileRealName.setTextContent(user.getName());
         // 상태 메시지
@@ -466,9 +467,23 @@ public class ModifyProfileActivity extends BaseAppCompatActivity implements Modi
         tvProfileUserPosition.setTextContent(user.getPosition());
     }
 
-    void displayProfileImage(String profileImageUrlPath) {
-        if (!TextUtils.isEmpty(profileImageUrlPath) && !isFinishing()) {
-            ImageUtil.loadProfileImage(ivProfilePhoto, profileImageUrlPath, R.drawable.profile_img);
+    void displayProfileImage(String profileImageUrlPath, boolean inactive) {
+        if (!isFinishing()) {
+            if (!inactive) {
+                if (ProfileUtil.isChangedPhoto(profileImageUrlPath)) {
+                    ImageUtil.loadProfileImage(ivProfilePhoto, profileImageUrlPath, R.drawable.profile_img);
+                } else {
+                    ivProfilePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    ivProfilePhoto.setImageResource(R.drawable.profile_img);
+                }
+            } else {
+                if (ProfileUtil.isChangedPhoto(profileImageUrlPath)) {
+                    ImageUtil.loadProfileImage(ivProfilePhoto, profileImageUrlPath, R.drawable.profile_img_dummyaccount_80);
+                } else {
+                    ivProfilePhoto.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    ivProfilePhoto.setImageResource(R.drawable.profile_img_dummyaccount_80);
+                }
+            }
         }
     }
 

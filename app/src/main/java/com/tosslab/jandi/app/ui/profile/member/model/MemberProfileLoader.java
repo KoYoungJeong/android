@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -77,16 +78,17 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.GONE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);
 
-        if (btnProfileStar.getVisibility() == View.GONE) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tvTeamLevel.getLayoutParams();
+        if (btnProfileStar.getVisibility() == View.GONE && !isLandscape) {
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tvTeamLevel.getLayoutParams();
             DisplayMetrics displayMetrics = tvTeamLevel.getResources().getDisplayMetrics();
-            params.setMarginEnd((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics));
+            lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics);
+            tvTeamLevel.setLayoutParams(lp);
         }
     }
 
@@ -98,7 +100,7 @@ public class MemberProfileLoader implements ProfileLoader {
     @Override
     public boolean hasChangedProfileImage(Member member) {
         String url = member.getPhotoUrl();
-        return !TextUtils.isEmpty(url) && url.contains("files-profile");
+        return ProfileUtil.isChangedPhoto(url);
     }
 
     @Override
@@ -108,8 +110,12 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setLevel(Level level, TextView tvTeamLevel) {
-        AccessLevelUtil.setTextOfLevel(level, tvTeamLevel);
+    public void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape) {
+        if (isLandscape) {
+            AccessLevelUtil.setTextOfLevelInNav(level, tvTeamLevel);
+        } else {
+            AccessLevelUtil.setTextOfLevel(level, tvTeamLevel);
+        }
     }
 
     private boolean isMe(long memberId) {
