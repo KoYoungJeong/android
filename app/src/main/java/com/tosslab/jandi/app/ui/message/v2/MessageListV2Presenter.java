@@ -429,6 +429,10 @@ public class MessageListV2Presenter {
         }
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
 
+        if (markers == null || markers.isEmpty()) {
+            return;
+        }
+
         List<Long> memberLastReadLinks = new ArrayList<>();
 
         for (Marker marker : markers) {
@@ -585,7 +589,7 @@ public class MessageListV2Presenter {
         }
 
         if (NetworkCheckUtil.isConnected()) {
-            roomId = messageListModel.getRoomId();
+            roomId = messageListModel.createChat(entityId);
             if (roomId <= 0) {
                 return Room.INVALID_ROOM_ID;
             } else {

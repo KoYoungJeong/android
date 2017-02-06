@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_toLeftOf="@+id/tv_dept_job_count"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/iv_dept_job_cnt"
         android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="1"
@@ -18,24 +19,32 @@
         android:textColor="@color/jandi_profile_text"
         android:textSize="@dimen/jandi_text_size_large" />
 
+    <ImageView
+        android:id="@+id/iv_dept_job_cnt"
+        android:layout_width="11dp"
+        android:layout_height="10dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/tv_dept_job_count"
+        android:src="@drawable/icon_team_member_count" />
+
     <TextView
         android:id="@+id/tv_dept_job_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:text="0"
-        android:textSize="@dimen/jandi_text_size_medium"
-        android:textColor="@color/jandi_text_medium"
-        android:layout_toLeftOf="@+id/v_dept_job_arrow" />
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@+id/v_dept_job_arrow"
+        android:text="16"
+        android:textColor="@color/rgb_999999"
+        android:textSize="14dp" />
 
     <ImageView
         android:id="@+id/v_dept_job_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="6dp"
+        android:layout_height="11dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="6dp"
+        android:layout_marginLeft="13dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/icon_arrow_right" />
 

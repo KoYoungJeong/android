@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <external-path
-        name="jandi_external_file"
-        path="." />
+        name="file"
+        path="/" />
 </paths>

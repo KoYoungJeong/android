@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.photo;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,6 +37,8 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -151,13 +154,30 @@ public class PhotoViewFragment extends Fragment {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Completable.complete()
+                .delay(300, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (ivPhotoView.getVisibility() == View.VISIBLE) {
+                        ivPhotoView.resetScaleAndCenter();
+                    } else if (pvPhotoView.getVisibility() == View.VISIBLE) {
+                        pvPhotoView.setScale(1f);
+                    }
+                });
+    }
+
+    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
     public void onEvent(GifReadyEvent event) {
-        if (imageType.toLowerCase().contains("gif")
+        if (imageType != null
+                && imageType.toLowerCase().contains("gif")
                 && size > MB_1
                 && TextUtils.equals(event.getOriginalUrl(), originalUrl)) {
             Completable.fromAction(() -> {
@@ -169,12 +189,12 @@ public class PhotoViewFragment extends Fragment {
 
     void initView() {
         setupProgress();
+        hideProgress();
 
         boolean shouldSupportImageExtensions = FileExtensionsUtil.shouldSupportImageExtensions(imageType);
         if (!shouldSupportImageExtensions
                 || (TextUtils.isEmpty(thumbUrl) && TextUtils.isEmpty(originalUrl))) {
             LogUtil.e(TAG, "Url is empty.");
-            vgProgress.setVisibility(View.GONE);
             showError();
             ivPhotoView.setZoomEnabled(false);
             pvPhotoView.setZoomable(false);
@@ -189,7 +209,25 @@ public class PhotoViewFragment extends Fragment {
 
             // gif 인 경우 1MB 이상은 플레이 버튼 누르도록 함
             if (size < MB_1) {
-                loadImageForGif(Uri.parse(originalUrl));
+                ImageLoader.newInstance()
+                        // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                        .blockNetworking(true)
+                        .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                            @Override
+                            public boolean onException(Exception e, Uri model,
+                                                       Target<GlideDrawable> target,
+                                                       boolean isFirstResource) {
+                                // cache 가 되어 있지 않음
+                                vgPlayGif.setVisibility(View.VISIBLE);
+                                tvPlayGif.setText(getExt(imageType).toUpperCase() + ", " + FileUtil.formatFileSize(size));
+                                loadImageForGif(Uri.parse(originalUrl));
+                                return true;
+                            }
+                        })
+                        .fragment(this)
+                        .uri(Uri.parse(originalUrl))
+                        .into(pvPhotoView);
             } else {
                 hideProgress();
                 ImageLoader.newInstance()
@@ -215,10 +253,26 @@ public class PhotoViewFragment extends Fragment {
         } else if (!TextUtils.isEmpty(thumbUrl)) {
             pvPhotoView.setVisibility(View.GONE);
             ivPhotoView.setVisibility(View.VISIBLE);
-            loadImage(Uri.parse(thumbUrl));
+            ImageLoader.newInstance()
+                    // cache 되어 있는지 확인하기 위해 네트워킹 작업이 실행되면 exception 발생시킨다.
+                    .blockNetworking(true)
+                    .listener(new SimpleRequestListener<Uri, GlideDrawable>() {
+
+                        @Override
+                        public boolean onException(Exception e, Uri model,
+                                                   Target<GlideDrawable> target,
+                                                   boolean isFirstResource) {
+                            // cache 가 되어 있지 않음
+                            loadImage(Uri.parse(thumbUrl));
+                            return true;
+                        }
+                    })
+                    .fragment(this)
+                    .uri(Uri.parse(thumbUrl))
+                    .into(ivPhotoView);
         } else {
-            pvPhotoView.setVisibility(View.VISIBLE);
-            ivPhotoView.setVisibility(View.GONE);
+            pvPhotoView.setVisibility(View.GONE);
+            ivPhotoView.setVisibility(View.VISIBLE);
 
             final Uri originalUri = Uri.parse(originalUrl);
 
@@ -238,23 +292,7 @@ public class PhotoViewFragment extends Fragment {
                     })
                     .fragment(this)
                     .uri(originalUri)
-                    .intoWithProgress(ivPhotoView,
-                            () -> Observable.just(0)
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(it -> {
-                                        progressBar.setMax(100);
-                                        progressBar.setProgress(it);
-                                        tvPercentage.setText("0 %");
-                                    }),
-                            progress -> Observable.just(progress)
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(it -> {
-                                        progressBar.setMax(100);
-                                        progressBar.setProgress(it);
-                                        tvPercentage.setText(String.format("%d %%", progress));
-                                    }),
-                            null,
-                            this::hideProgress);
+                    .into(ivPhotoView);
         }
 
         if (ivPhotoView.getVisibility() == View.VISIBLE) {

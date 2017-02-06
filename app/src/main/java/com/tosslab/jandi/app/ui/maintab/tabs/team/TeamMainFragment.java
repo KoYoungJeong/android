@@ -19,9 +19,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
@@ -40,7 +42,7 @@ import butterknife.ButterKnife;
 import rx.Completable;
 import rx.schedulers.Schedulers;
 
-public class TeamMainFragment extends Fragment implements TabFocusListener, FloatingActionBarDetector {
+public class TeamMainFragment extends BaseLazyFragment implements TabFocusListener, FloatingActionBarDetector {
 
     @Bind(R.id.tabs_team_main)
     TabLayout tabLayout;
@@ -57,8 +59,8 @@ public class TeamMainFragment extends Fragment implements TabFocusListener, Floa
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected void onLazyLoad(Bundle savedInstanceState) {
+        super.onLazyLoad(savedInstanceState);
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new TeamViewPagerAdapter(getActivity(), getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
@@ -128,7 +130,7 @@ public class TeamMainFragment extends Fragment implements TabFocusListener, Floa
         switch (item.getItemId()) {
             case R.id.menu_team_config:
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
-                String url = "https://www.jandi.io/main/#/setting/" + teamId + "/admin/usage";
+                String url = JandiConstantsForFlavors.getServiceBaseUrl() + "/main/#/setting/" + teamId + "/admin/usage";
                 startActivity(Henson.with(getContext())
                         .gotoInternalWebActivity()
                         .url(url)
@@ -223,4 +225,5 @@ public class TeamMainFragment extends Fragment implements TabFocusListener, Floa
             });
         }
     }
+
 }

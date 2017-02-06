@@ -181,7 +181,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         long chatId = teamInfoLoader.getChatId(roomId);
                         if (chatId <= 0) {
                             try {
-                                return new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).id;
+                                return new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).getId();
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
                             }

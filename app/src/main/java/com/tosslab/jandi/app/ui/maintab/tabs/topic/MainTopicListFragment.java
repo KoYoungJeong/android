@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +39,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
@@ -81,7 +81,7 @@ import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 
-public class MainTopicListFragment extends Fragment
+public class MainTopicListFragment extends BaseLazyFragment
         implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
 
     private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
@@ -126,18 +126,22 @@ public class MainTopicListFragment extends Fragment
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Dart.inject(this, getArguments());
         DaggerMainTopicListComponent.builder()
                 .mainTopicListModule(new MainTopicListModule(this))
                 .build()
                 .inject(this);
 
-        initViews(savedInstanceState);
-        SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
 
+    @Override
+    protected void onLazyLoad(Bundle savedInstanceState) {
+        initViews(savedInstanceState);
     }
 
     void initViews(Bundle savedInstanceState) {
@@ -198,6 +202,11 @@ public class MainTopicListFragment extends Fragment
         if (isFirstLoadFragment) {
             isFirstLoadFragment = false;
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     private void initUpdatedTopicAdapter() {
@@ -367,7 +376,6 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
-
         expandableTopicAdapter.setProvider(topicFolderListDataProvider);
         expandableTopicAdapter.notifyDataSetChanged();
 
@@ -416,10 +424,7 @@ public class MainTopicListFragment extends Fragment
             showGroupSettingPopupView(folderId, folderName, topicFolderData.getSeq());
         });
 
-        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
+        EventBus.getDefault().post(new TopicBadgeEvent());
         setFolderExpansion();
     }
 
@@ -427,10 +432,6 @@ public class MainTopicListFragment extends Fragment
     public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
         expandableTopicAdapter.setProvider(topicFolderListDataProvider);
         notifyDatasetChangedForFolder();
-        mainTopicListPresenter.getUnreadCount(Observable.from(getJoinedTopics()))
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
     }
 
     public void showGroupSettingPopupView(long folderId, String folderName, int seq) {
@@ -441,9 +442,6 @@ public class MainTopicListFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     @Override
@@ -549,11 +547,11 @@ public class MainTopicListFragment extends Fragment
         }
     }
 
-    private List<TopicItemData> getJoinedTopics() {
-        return expandableTopicAdapter.getAllTopicItemData();
-    }
-
     public void onEvent(JoinableTopicCallEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
+
         Intent intent = new Intent(getActivity(), JoinableTopicListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
@@ -562,6 +560,9 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEventMainThread(TopicFolderMoveCallEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
         startActivity(Henson.with(getActivity())
                 .gotoTopicFolderSettingActivity()
                 .mode(TopicFolderSettingActivity.ITEM_FOLDER_CHOOSE)
@@ -572,6 +573,12 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -580,20 +587,42 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainTopicListPresenter.refreshList();
     }
 
     public void onEvent(SocketTopicPushEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainTopicListPresenter.refreshList();
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainTopicListPresenter.refreshList();
         mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -602,6 +631,12 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(RoomMarkerEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -610,6 +645,12 @@ public class MainTopicListFragment extends Fragment
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
+        EventBus.getDefault().post(new TopicBadgeEvent());
+
+        if (!isLoadedAll()) {
+            return;
+        }
+
         if (isCurrentFolder()) {
             mainTopicListPresenter.refreshList();
         } else {
@@ -772,6 +813,7 @@ public class MainTopicListFragment extends Fragment
                 floatingActionMenu.setVisibility(false);
             }
         } else {
+            SprinklrScreenView.sendLog(ScreenViewProperty.MESSAGE_PANEL);
             AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.TopicsTab);
         }
     }
@@ -785,7 +827,6 @@ public class MainTopicListFragment extends Fragment
 
     @Override
     public boolean consumeBackPress() {
-
         if (floatingActionMenu != null && floatingActionMenu.isOpened()) {
             floatingActionMenu.close();
             return true;

@@ -26,13 +26,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.NavigationBadgeEvent;
-import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
-import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
-import com.tosslab.jandi.app.events.poll.RefreshPollBadgeCountEvent;
-import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
 import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
 import com.tosslab.jandi.app.events.socket.EventUpdateStart;
@@ -118,6 +114,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     @Bind(R.id.vg_main_synchronize)
     View vgSynchronize;
+
     @Bind(R.id.tv_synchronize)
     TextView tvSynchronize;
 
@@ -196,7 +193,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         KeepAliveService.start(this);
         initFirebaseUserProperties();
         EventBus.getDefault().register(this);
-
     }
 
     private void initFirebaseUserProperties() {
@@ -206,13 +202,11 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 .setUserProperty("memberId", String.valueOf(AccountUtil.getMemberId(this)));
 
         Completable.defer(() -> {
-
             if ((System.currentTimeMillis() - JandiPreference.getLatestFcmTokenUpdate()) > 1000 * 60 * 60 * 6) {
                 return Completable.complete();
             } else {
                 return Completable.never();
             }
-
         }).subscribeOn(Schedulers.computation())
                 .subscribe(() -> {
                     try {
@@ -367,7 +361,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 JandiPreference.setLastSelectedTab(position);
 
                 if (position == MypageTabInfo.INDEX) {
-                    mainTabPresenter.onInitMyPageBadge(true);
+//                    mainTabPresenter.onInitMyPageBadge(true);
                     Fragment fragment = getFragment(position);
                     if (fragment != null && fragment instanceof TabFocusListener) {
                         ((TabFocusListener) fragment).onFocus();
@@ -471,38 +465,14 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     }
 
     public void onEventMainThread(TopicBadgeEvent event) {
-        int count = event.getCount();
-        if (count > 999) {
-            count = 999;
-        }
-        setTopicBadge(count);
+        mainTabPresenter.onInitTopicBadge();
     }
 
     public void onEventMainThread(ChatBadgeEvent event) {
-        int count = event.getCount();
-        if (count > 999) {
-            count = 999;
-        }
-        setChatBadge(count);
-    }
-
-    public void onEventMainThread(SocketPollEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
+        mainTabPresenter.onInitChatBadge();
     }
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(RefreshMentionBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(RequestRefreshPollBadgeCountEvent event) {
-        mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(RefreshPollBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(true);
     }
 
@@ -524,7 +494,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             // 네트워크가 재연결되면 소켓 서버에 접속하도록 함
             JandiPreference.setSocketReconnectDelay(0);
             sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
-
         } else {
             offlineLayer.showOfflineView();
             ColoredToast.showGray(JandiApplication.getContext().getString(R
@@ -547,7 +516,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         } else {
             offlineLayer.showOfflineView();
         }
-
     }
 
     private void sendAnalyticsCurrentScreen() {

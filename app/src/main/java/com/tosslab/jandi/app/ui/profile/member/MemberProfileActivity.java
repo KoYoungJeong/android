@@ -20,6 +20,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -28,6 +30,7 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -162,6 +165,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_profile);
 
+        setShouldSetOrientation(BuildConfig.DEBUG);
+
         Dart.inject(this);
         ButterKnife.bind(this);
 
@@ -232,6 +237,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         if (!hasChangedProfileImage) {
             profileLoader.setBlurBackgroundColor(vProfileImageLargeOverlay);
+        } else {
+            vProfileImageLargeOverlay.setBackgroundColor(getResources().getColor(R.color.jandi_member_profile_img_overlay));
         }
 
         initLargeImageSize(profileImageUrl);
@@ -239,7 +246,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         boolean isDisableUser = !profileLoader.isEnabled(member);
         vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
 
-        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel);
+        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel, isLandscape());
         profileLoader.setName(tvProfileName, member);
         profileLoader.setDescription(tvProfileDescription, member);
         profileLoader.setProfileInfo(tvProfileDivision, tvProfilePosition, member);
@@ -288,7 +295,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
         }
 
-        profileLoader.setStarButton(btnProfileStar, member, tvTeamLevel);
+        profileLoader.setStarButton(btnProfileStar, member, tvTeamLevel, isLandscape());
 
         boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
 
@@ -477,22 +484,28 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
             HumanRepository.getInstance().updateStarred(memberId, star);
             return true;
-        }).subscribeOn(Schedulers.io()).subscribe(() -> {
-        }, Throwable::printStackTrace);
+        }).subscribeOn(Schedulers.io()).subscribe(() -> {}, Throwable::printStackTrace);
 
     }
 
     private void addButtons(Member member) {
         vgProfileTeamButtons.removeAllViews();
 
-        if (isMe()) {
+
+        if (!isJandiBot(member)
+                && (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin
+                || TeamInfoLoader.getInstance().getMyLevel() == Level.Owner
+                || isMe())) {
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_edit,
                             getString(R.string.jandi_member_profile_edit), (v) -> {
-                                startModifyProfileActivity();
-                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.EditProfile);
-                            }));
+                                startModifyProfileActivityForAdmin(memberId);
+                            }
+                    )
+            );
+        }
 
+        if (isMe()) {
             vgProfileTeamButtons.addView(
                     getButton(R.drawable.icon_profile_mention,
                             getString(R.string.jandi_mention_mentions), (v) -> {
@@ -524,17 +537,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                             }));
         } else {
             if (!isJandiBot(member)) {
-                if (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin
-                        || TeamInfoLoader.getInstance().getMyLevel() == Level.Owner) {
-                    vgProfileTeamButtons.addView(
-                            getButton(R.drawable.icon_profile_edit,
-                                    getString(R.string.jandi_member_profile_edit), (v) -> {
-                                        startModifyProfileActivityForAdmin(memberId);
-                                    }
-                            )
-                    );
-                }
-
                 User user = (User) member;
                 String phoneNumber = user.getPhoneNumber();
                 if (!TextUtils.isEmpty(phoneNumber)) {
@@ -563,6 +565,39 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                                 AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
                             }));
         }
+
+
+        if (isLandscape()) {
+            int width;
+            int childCount = vgProfileTeamButtons.getChildCount();
+            if (childCount >= 4) {
+                width = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width_1);
+            } else {
+                width = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width_2);
+            }
+
+            int topMargin;
+            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+            if (childCount >= 4 || member.isInactive()) {
+                topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, displayMetrics);
+            } else {
+                topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 13f, displayMetrics);
+            }
+
+
+            for (int idx = 0; idx < childCount; idx++) {
+                ViewGroup view = (ViewGroup) vgProfileTeamButtons.getChildAt(idx);
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
+                lp.width = width;
+                view.setLayoutParams(lp);
+
+                View textView = view.getChildAt(1);
+                LinearLayout.LayoutParams childLp = (LinearLayout.LayoutParams) textView.getLayoutParams();
+                childLp.topMargin = topMargin;
+                textView.setLayoutParams(childLp);
+            }
+        }
+
     }
 
     private void showRejectInvitationAlert() {
@@ -784,9 +819,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         buttonView.setOnClickListener(onClickListener);
 
         boolean landscape = isLandscape();
-        int width = landscape
-                ? getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width)
-                : 0;
+        int width = landscape ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
 
         LinearLayout.LayoutParams params =
                 new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);

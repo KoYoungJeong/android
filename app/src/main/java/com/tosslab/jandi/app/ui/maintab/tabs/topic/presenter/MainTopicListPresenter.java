@@ -6,13 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.start.Folder;
-import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.TopicFolder;
@@ -34,7 +32,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -77,17 +74,14 @@ public class MainTopicListPresenter {
                 .compose(addUnjoinedTopicForUpdated())
                 .subscribe(topicList::addAll, t -> {
                 }, () -> view.setUpdatedItems(topicList));
-
     }
 
     public void refreshList() {
-        Observable
-                .fromCallable(() -> {
-                    topicFolders = mainTopicModel.getTopicFolders();
-                    topicFolderItems = mainTopicModel.getJoinedTopics();
-                    return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
-                })
-                .subscribeOn(Schedulers.computation())
+        Observable.fromCallable(() -> {
+            topicFolders = mainTopicModel.getTopicFolders();
+            topicFolderItems = mainTopicModel.getJoinedTopics();
+            return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
+        }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(dataProvider -> {
                     view.refreshList(dataProvider);
@@ -99,15 +93,7 @@ public class MainTopicListPresenter {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
         long teamId = TeamInfoLoader.getInstance().getTeamId();
-        EventBus.getDefault().post(MessageReadEvent.fromSelf(teamId, item.getUnreadCount()));
-        item.setUnreadCount(0);
 
-        mainTopicModel.getUnreadCount()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
@@ -121,24 +107,8 @@ public class MainTopicListPresenter {
         }
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        TopicFolderData topicFolderData = topicAdapter.getTopicFolderData(groupPosition);
-
-        if (topicFolderData != null) {
-            int itemsUnreadCount = item.getUnreadCount();
-            EventBus.getDefault().post(MessageReadEvent.fromSelf(teamId, itemsUnreadCount));
-            topicFolderData.setChildBadgeCnt(topicFolderData.getChildBadgeCnt() - itemsUnreadCount);
-            item.setUnreadCount(0);
-            adapter.notifyDataSetChanged();
-        }
-
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
-
-
-        getUnreadCount(Observable.from(topicAdapter.getAllTopicItemData()))
-                .subscribe(unreadCount -> {
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
-                });
 
         int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
@@ -220,7 +190,6 @@ public class MainTopicListPresenter {
 
     public void createNewFolder(String title) {
         Completable.fromCallable(() -> {
-
             ResCreateFolder folder = topicFolderChooseModel.createFolder(title);
             Folder folder1 = new Folder();
             folder1.setOpened(false);
@@ -248,11 +217,7 @@ public class MainTopicListPresenter {
                 .subscribe(topicList::addAll, t -> {
                 }, () -> {
                     view.setUpdatedItems(topicList);
-
-                    int unreadCount = getUnreadCountFromUpdatedList(Observable.from(topicList));
-                    EventBus.getDefault().post(new TopicBadgeEvent(unreadCount > 0, unreadCount));
                 });
-
     }
 
     @NonNull
@@ -267,13 +232,6 @@ public class MainTopicListPresenter {
                         return Observable.empty();
                     }
                 }));
-    }
-
-    private int getUnreadCountFromUpdatedList(Observable<Topic> topicList) {
-        final int[] value = {0};
-        topicList.filter(topic -> topic.getUnreadCount() > 0)
-                .subscribe(topic -> value[0] += topic.getUnreadCount());
-        return value[0];
     }
 
     public void onInitViewList() {
@@ -313,7 +271,6 @@ public class MainTopicListPresenter {
         void setFolderExpansion();
 
         void showAlreadyHasFolderToast();
-
     }
 
 }

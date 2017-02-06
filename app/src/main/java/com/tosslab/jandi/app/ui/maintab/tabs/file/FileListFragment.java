@@ -51,6 +51,7 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
@@ -86,7 +87,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 16. 6. 28..
  */
-public class FileListFragment extends Fragment implements FileListPresenterImpl.View,
+public class FileListFragment extends BaseLazyFragment implements FileListPresenterImpl.View,
         FileSearchActivity.SearchSelectView, ListScroller {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
@@ -139,7 +140,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     private FileSearchActivity.OnSearchItemSelect onSearchItemSelect;
     private FileSearchActivity.OnSearchText onSearchText;
     private boolean isSearchLayoutFirst = true;
-    private boolean isForeground;
     private boolean focused = true; // maintab 에서 현재 화면인지 체크하기 위함
 
     public static FileListFragment create(Context context, long entityId, long writerId, String fileType) {
@@ -167,8 +167,8 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onLazyLoad(Bundle savedInstanceState) {
+        super.onLazyLoad(savedInstanceState);
         Bundle bundle = this.getArguments();
         Dart.inject(this, bundle);
 
@@ -181,51 +181,6 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-    }
-
-    private void setListViewScroll() {
-        if (getActivity() instanceof MainTabActivity) {
-            MainTabActivity activity = (MainTabActivity) getActivity();
-            lvSearchFiles.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    if (dy > 0) {
-                        activity.setTabLayoutVisible(false);
-                    } else {
-                        activity.setTabLayoutVisible(true);
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        isForeground = true;
-    }
-
-
-    @Override
-    public void onPause() {
-        isForeground = false;
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
-        fileListPresenter.onDestory();
-        super.onDestroy();
-    }
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
@@ -258,8 +213,47 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
             fileListPresenter.onFileTypeSelection(fileType, "");
             searchSelectorViewController.setCurrentFileType(fileType);
         }
-
     }
+
+    private void setListViewScroll() {
+        if (getActivity() instanceof MainTabActivity) {
+            MainTabActivity activity = (MainTabActivity) getActivity();
+            lvSearchFiles.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+        if (isLoadedAll()) {
+            fileListPresenter.onDestory();
+        }
+        super.onDestroy();
+    }
+
 
     @OnClick(R.id.ly_file_list_where)
     void onEntityClick() {
@@ -546,7 +540,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
 
     @Override
     public void onSearchHeaderReset() {
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             return;
         }
         resetFilterLayoutPosition();
@@ -677,7 +671,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     public void onEvent(RefreshOldFileEvent event) {
-        if (isForeground) {
+        if (getUserVisibleHint()) {
             fileListPresenter.getPreviousFile();
         }
     }
@@ -698,7 +692,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                     event.getServerQuery(), null);
         }
 
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             searchSelectorViewController.setCurrentFileType(event.getServerQuery());
         }
 
@@ -713,7 +707,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                     event.userId, null);
         }
 
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             searchSelectorViewController.setCurrentMember(event.userId);
         }
     }
@@ -727,7 +721,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
                     event.sharedEntityId, null);
         }
 
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             searchSelectorViewController.setCurrentEntity(event.sharedEntityId);
         }
 
@@ -738,7 +732,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     public void onEvent(RequestFileUploadEvent event) {
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             return;
         }
         ((BaseAppCompatActivity) getActivity()).setNeedUnLockPassCode(false);
@@ -747,7 +741,7 @@ public class FileListFragment extends Fragment implements FileListPresenterImpl.
     }
 
     public void onEventMainThread(ConfirmFileUploadEvent event) {
-        if (!isForeground) {
+        if (!getUserVisibleHint()) {
             return;
         }
         filePickerViewModel.startUpload(

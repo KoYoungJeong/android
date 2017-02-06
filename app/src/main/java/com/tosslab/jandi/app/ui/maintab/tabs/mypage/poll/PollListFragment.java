@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import java.util.Date;
 
@@ -38,7 +39,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tonyjs on 16. 6. 27..
  */
-public class PollListFragment extends Fragment implements PollListPresenter.View, ListScroller {
+public class PollListFragment extends Fragment implements PollListPresenter.View, ListScroller, TabFocusListener {
 
     @Inject
     PollListPresenter pollListPresenter;
@@ -72,16 +73,15 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
         PollListAdapter pollListAdapter = new PollListAdapter();
         injectComponent(pollListAdapter);
 
-
         initMoreLoadingProgress();
 
         initPollListView(pollListAdapter);
 
-        initPollList();
-
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+
+        initPollList();
     }
 
     @Override
@@ -232,6 +232,10 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
         lvPollList.scrollToPosition(0);
     }
 
+    @Override
+    public void onFocus() {
+    }
+
     private class MorePollListRequestHandler implements PollListAdapter.OnLoadMoreCallback {
 
         private boolean shouldRequestMore = true;
@@ -249,4 +253,5 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
             pollListPresenter.onLoadMorePollList(date);
         }
     }
+
 }

@@ -392,9 +392,9 @@ public class FileDetailPresenter {
                             }
                             File file = new File(fileDetailModel.getDownloadFilePath(fileMessage.content.title));
                             if (type == FileDetailPresenter.FileManageType.EXPORT) {
-                                view.startExportedFileViewerActivity(file);
+                                view.startExportedFileViewerActivity(file, fileMessage.content.type);
                             } else if (type == FileDetailPresenter.FileManageType.OPEN) {
-                                view.startDownloadedFileViewerActivity(file);
+                                view.startDownloadedFileViewerActivity(file, fileMessage.content.type);
                             }
                         }));
     }
@@ -715,9 +715,9 @@ public class FileDetailPresenter {
 
         void requestPermission(int requestCode, String... permissions);
 
-        void startExportedFileViewerActivity(File file);
+        void startExportedFileViewerActivity(File file, String mimeType);
 
-        void startDownloadedFileViewerActivity(File file);
+        void startDownloadedFileViewerActivity(File file, String mimeType);
 
         void moveToMessageListActivity(long entityId, int entityType, long roomId, boolean isStarred);
 

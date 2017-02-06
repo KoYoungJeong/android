@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +18,7 @@ import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.dagger.DaggerMainChatListComponent;
@@ -57,7 +58,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
-public class MainChatListFragment extends Fragment
+public class MainChatListFragment extends BaseLazyFragment
         implements MainChatListPresenter.View, ListScroller, FloatingActionBarDetector {
 
     @Inject
@@ -73,7 +74,6 @@ public class MainChatListFragment extends Fragment
     View emptyView;
 
     MainChatListAdapter mainChatListAdapter;
-    private boolean foreground;
 
     public static MainChatListFragment create(long selectedEntity) {
         Bundle bundle = new Bundle();
@@ -81,7 +81,6 @@ public class MainChatListFragment extends Fragment
         MainChatListFragment frag = new MainChatListFragment();
         frag.setArguments(bundle);
         return frag;
-
     }
 
     @Nullable
@@ -93,9 +92,8 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Bundle arguments = getArguments();
         if (arguments != null) {
             Dart.inject(this, arguments);
@@ -106,16 +104,24 @@ public class MainChatListFragment extends Fragment
                 .build()
                 .inject(this);
 
-        initObject();
-        initViews();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
+        initObjects();
     }
 
-    void initObject() {
+    @Override
+    protected void onLazyLoad(Bundle savedInstanceState) {
+        super.onLazyLoad(savedInstanceState);
+        mainChatListPresenter.onReloadChatList();
+        setListViewScroll();
+    }
+
+    void initObjects() {
+
         mainChatListAdapter = new MainChatListAdapter(getActivity());
 
-    }
-
-    void initViews() {
         setHasOptionsMenu(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
@@ -128,10 +134,6 @@ public class MainChatListFragment extends Fragment
             return true;
         });
         lvChat.setAdapter(mainChatListAdapter);
-
-        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
-
-        setListViewScroll();
     }
 
     private void setListViewScroll() {
@@ -151,19 +153,12 @@ public class MainChatListFragment extends Fragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        foreground = true;
-        mainChatListAdapter.startAnimation();
-        mainChatListPresenter.onReloadChatList();
+        if (getUserVisibleHint()) {
+            mainChatListAdapter.startAnimation();
+            mainChatListPresenter.onReloadChatList();
+        }
     }
 
     @Override
@@ -177,7 +172,6 @@ public class MainChatListFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        foreground = false;
     }
 
     @Override
@@ -266,7 +260,7 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEventMainThread(ShowProfileEvent event) {
-        if (foreground) {
+        if (isLoadedAll()) {
             if (AccessLevelUtil.hasAccessLevel(event.userId)) {
                 startActivity(Henson.with(getActivity())
                         .gotoMemberProfileActivity()
@@ -281,35 +275,46 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEvent(SocketMessageDeletedEvent event) {
-        if (!foreground) {
+        EventBus.getDefault().post(new ChatBadgeEvent());
+
+        if (!isLoadedAll()) {
             return;
         }
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(RoomMarkerEvent event) {
-        if (!foreground) {
+        EventBus.getDefault().post(new ChatBadgeEvent());
+
+        if (!isLoadedAll()) {
             return;
         }
+
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
-        if (!foreground) {
+        EventBus.getDefault().post(new ChatBadgeEvent());
+
+        if (!isLoadedAll()) {
             return;
         }
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(ChatListRefreshEvent event) {
-        if (!foreground) {
+        EventBus.getDefault().post(new ChatBadgeEvent());
+
+        if (!isLoadedAll()) {
             return;
         }
         mainChatListPresenter.onReloadChatList();
     }
 
     public void onEvent(MessagePushEvent event) {
-        if (!foreground) {
+        EventBus.getDefault().post(new ChatBadgeEvent());
+
+        if (!isLoadedAll()) {
             return;
         }
 
@@ -319,22 +324,29 @@ public class MainChatListFragment extends Fragment
     }
 
     public void onEvent(RequestMoveDirectMessageEvent event) {
-
-        if (foreground) {
+        if (!isLoadedAll()) {
             mainChatListPresenter.onMoveDirectMessage(getActivity(), event.userId);
         }
     }
 
     public void onEvent(TopicInfoUpdateEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainChatListPresenter.onEntityStarredUpdate(event.getId());
     }
 
     public void onEvent(MemberStarredEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
+
         mainChatListPresenter.onEntityStarredUpdate(event.getId());
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        if (!foreground) {
+        if (!isLoadedAll()) {
             return;
         }
         mainChatListPresenter.onReloadChatList();
@@ -365,16 +377,17 @@ public class MainChatListFragment extends Fragment
         startActivity(new Intent(getActivity(), SearchActivity.class));
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.Search);
-
     }
 
     public void onEvent(MainSelectTopicEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
         setSelectedItem(event.getSelectedEntity());
     }
 
     //TODO 메세지 진입시 네트워크 체킹 ?
     void onEntityItemClick(int position) {
-
         mainChatListPresenter.onEntityItemClick(getActivity(), position);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.ChooseDM);
         ChatItem chatItem = getChatItem(position);
@@ -419,4 +432,5 @@ public class MainChatListFragment extends Fragment
             });
         }
     }
+
 }

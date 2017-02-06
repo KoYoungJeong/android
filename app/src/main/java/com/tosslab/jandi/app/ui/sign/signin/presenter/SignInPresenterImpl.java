@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.utils.parse.PushUtil;
 
 import javax.inject.Inject;
 
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -72,16 +73,11 @@ public class SignInPresenterImpl implements SignInPresenter {
 
         view.showProgressDialog();
 
-        Observable.defer(() -> {
-            try {
-                return Observable.just(model.login(email, password));
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        })
+        Observable.fromCallable(() -> model.login(email, password))
                 .subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
                     SignOutUtil.initSignData();
+                    model.updateLoginId(email);
                     model.saveTokenInfo(accessToken);
                     PushUtil.registPush();
                 })
@@ -117,13 +113,7 @@ public class SignInPresenterImpl implements SignInPresenter {
     }
 
     private void getAccountInfo(String email) {
-        Observable.defer(() -> {
-            try {
-                return Observable.just(model.getAccountInfo());
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        })
+        Observable.fromCallable(() -> model.getAccountInfo())
                 .subscribeOn(Schedulers.io())
                 .doOnNext(accountInfo -> {
                     model.saveAccountInfo(accountInfo);
@@ -131,9 +121,10 @@ public class SignInPresenterImpl implements SignInPresenter {
                     model.subscribePush(accessToken.getDeviceId());
                     JandiPreference.setFirstLogin(JandiApplication.getContext());
 
-                    SprinklrSignIn.sendLog(false, false);
+                    SprinklrSignIn.sendLog(false, false, email);
                     AnalyticsUtil.flushSprinkler();
-                }).observeOn(AndroidSchedulers.mainThread())
+                })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressDialog();
                     view.moveToTeamSelectionActivity(email);
@@ -142,19 +133,15 @@ public class SignInPresenterImpl implements SignInPresenter {
 
     @Override
     public void forgotPassword(String email) {
-        Observable.defer(() -> {
-            try {
-                return Observable.just(model.requestPasswordReset(email));
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        }).subscribeOn(Schedulers.io())
+        Completable.fromCallable(() -> model.requestPasswordReset(email))
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> view.showSuccessPasswordResetToast(),
+                .subscribe(() -> view.showSuccessPasswordResetToast(),
                         e -> {
                             if (e instanceof RetrofitException) {
                                 RetrofitException error = (RetrofitException) e;
-                                if (error.getResponseCode() == 40000) {
+                                if (error.getResponseCode() == 40000
+                                        || error.getResponseCode() == 40022) {
                                     view.showSuggestJoin(email);
                                 } else {
                                     view.showNetworkErrorToast();

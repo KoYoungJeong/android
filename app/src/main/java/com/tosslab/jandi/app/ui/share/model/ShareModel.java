@@ -94,8 +94,4 @@ public class ShareModel {
             retrofitError.printStackTrace();
         }
     }
-
-    public long createChat(long teamId, long entityId) throws RetrofitException {
-        return chatApi.get().createChat(teamId, entityId).id;
-    }
 }

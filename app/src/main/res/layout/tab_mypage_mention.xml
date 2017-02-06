@@ -20,6 +20,6 @@
         android:layout_alignTop="@+id/tv_title"
         android:layout_marginTop="-8.5dp"
         android:layout_toRightOf="@id/tv_title"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.util;
 
-import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.support.v7.view.ContextThemeWrapper;
@@ -17,7 +16,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.colors.ColorUtils;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -46,17 +45,12 @@ public class IntegrationBotUtil {
     }
 
     private static void updateSubInfoSideLine(String connectColor, View vConnectLine) {
-        try {
-            float v = UiUtils.getPixelFromDp(2f);
-            int color = Color.parseColor(connectColor);
-            RoundRectShape shape = new RoundRectShape(new float[]{v, v, 0, 0, 0, 0, v, v}, null, null);
-            ShapeDrawable shapeDrawable = new ShapeDrawable(shape);
-            shapeDrawable.getPaint().setColor(color);
-            vConnectLine.setBackgroundDrawable(shapeDrawable);
-        } catch (Exception e) {
-            LogUtil.d(TAG, "updateSubInfoSideLine" + e.getMessage());
-            vConnectLine.setBackgroundColor(Color.TRANSPARENT);
-        }
+        float v = UiUtils.getPixelFromDp(2f);
+        int color = ColorUtils.parseColor(connectColor);
+        RoundRectShape shape = new RoundRectShape(new float[]{v, v, 0, 0, 0, 0, v, v}, null, null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(shape);
+        shapeDrawable.getPaint().setColor(color);
+        vConnectLine.setBackgroundDrawable(shapeDrawable);
     }
 
     private static void updateSubInfo(Collection<ResMessages.ConnectInfo> connectInfo, ViewGroup vgConnectInfo) {

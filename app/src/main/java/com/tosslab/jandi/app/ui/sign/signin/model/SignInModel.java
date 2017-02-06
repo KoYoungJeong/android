@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
@@ -20,24 +19,25 @@ import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import dagger.Lazy;
+import javax.inject.Inject;
 
-/**
- * Created by tee on 16. 5. 25..
- */
+import dagger.Lazy;
 
 public class SignInModel {
 
-    Lazy<LoginApi> loginApi;
+    private Lazy<LoginApi> loginApi;
 
-    Lazy<AccountApi> accountApi;
+    private Lazy<AccountApi> accountApi;
 
-    Lazy<DeviceApi> deviceApi;
+    private Lazy<DeviceApi> deviceApi;
+    private Lazy<AccountPasswordApi> accountPasswordApi;
 
-    public SignInModel(Lazy<LoginApi> loginApi, Lazy<AccountApi> accountApi, Lazy<DeviceApi> deviceApi) {
+    @Inject
+    public SignInModel(Lazy<LoginApi> loginApi, Lazy<AccountApi> accountApi, Lazy<DeviceApi> deviceApi, Lazy<AccountPasswordApi> accountPasswordApi) {
         this.loginApi = loginApi;
         this.accountApi = accountApi;
         this.deviceApi = deviceApi;
+        this.accountPasswordApi = accountPasswordApi;
     }
 
     public ResAccessToken login(String myEmailId, String password) throws RetrofitException {
@@ -46,8 +46,7 @@ public class SignInModel {
     }
 
     public ResCommon requestPasswordReset(String email) throws RetrofitException {
-        return new AccountPasswordApi(RetrofitBuilder.getInstance())
-                .resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
+        return accountPasswordApi.get().resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
     }
 
     public boolean saveTokenInfo(ResAccessToken accessToken) {
@@ -88,4 +87,7 @@ public class SignInModel {
         return password.length() >= 8;
     }
 
+    public void updateLoginId(String email) {
+        AccountRepository.getRepository().upsertLoginId(email);
+    }
 }

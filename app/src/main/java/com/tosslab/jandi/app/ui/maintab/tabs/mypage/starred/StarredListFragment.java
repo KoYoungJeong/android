@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
 
 import javax.inject.Inject;
 
@@ -45,7 +46,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 15. 7. 29..
  */
-public class StarredListFragment extends Fragment implements StarredListPresenter.View, ListScroller {
+public class StarredListFragment extends Fragment implements StarredListPresenter.View, ListScroller, TabFocusListener {
 
     @Bind(R.id.btn_starred_list_all)
     View btnTabAll;
@@ -341,6 +342,10 @@ public class StarredListFragment extends Fragment implements StarredListPresente
         lvStarredList.scrollToPosition(0);
     }
 
+    @Override
+    public void onFocus() {
+    }
+
     private class StarredMessageLoadMoreRequestHandler implements StarredListAdapter.OnLoadMoreCallback {
 
         private boolean shouldRequestMore = true;
@@ -357,6 +362,5 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
             starredListPresenter.onLoadMoreAction(starredType, starredId);
         }
-
     }
 }

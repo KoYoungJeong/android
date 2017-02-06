@@ -65,6 +65,7 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Presenter;
@@ -158,6 +159,13 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @Bind(R.id.vg_messages_member_status_alert)
     View vDisabledUser;
 
+    @Bind(R.id.vg_messages_read_only_and_disable)
+    View vgReadOnly;
+    @Bind(R.id.tv_messages_read_only_and_disable_title)
+    TextView tvReadOnlyTitle;
+    @Bind(R.id.tv_messages_read_only_and_disable_description)
+    TextView tvReadOnlyDescription;
+
     @Bind(R.id.layout_messages_empty)
     LinearLayout layoutEmpty;
 
@@ -239,7 +247,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
         setUpActionbar();
         setHasOptionsMenu(true);
-
+        sendLayoutInvisible();
         showGotoLatestView();
         setPreviewVisibleGone();
 
@@ -541,6 +549,20 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
         if (messageAdapter.getItemCount() <= 0) {
             return;
         }
+
+        if (TeamInfoLoader.getInstance().isChat(roomId)) {
+            long companionId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+            User user = TeamInfoLoader.getInstance().getUser(companionId);
+            if (user != null && user.isDisabled()) {
+
+                int count = messageAdapter.getItemCount();
+                for (int idx = 0; idx < count; idx++) {
+                    messageAdapter.getItem(idx).unreadCnt = 0;
+                }
+                return;
+            }
+        }
+
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(roomId);
 
         List<Long> memberLastReadLinks = new ArrayList<>();
@@ -826,18 +848,38 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     @Override
     public void dismissUserStatusLayout() {
         vDisabledUser.setVisibility(View.GONE);
+        vgReadOnly.setVisibility(View.GONE);
     }
+
+    @Override
+    public void setInavtiveUser() {
+        vDisabledUser.setVisibility(View.VISIBLE);
+        vgReadOnly.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showReadOnly(boolean readOnly) {
+        vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
+        if (readOnly) {
+            vgReadOnly.setOnClickListener(v -> { });
+        } else {
+            vgReadOnly.setOnClickListener(null);
+        }
+    }
+
+    @Override
+    public void setDisabledUser() {
+        vDisabledUser.setVisibility(View.GONE);
+        vgReadOnly.setVisibility(View.VISIBLE);
+        tvReadOnlyTitle.setText(R.string.room_member_disabled_alert_title);
+        tvReadOnlyDescription.setText(R.string.room_member_disabled_alert_body);
+    }
+
 
     @Override
     public void movePollDetailActivity(long pollId) {
         PollDetailActivity.start(getActivity(), pollId);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-    }
-
-    @Override
-    public void setDisabledUser() {
-        sendLayoutInvisible();
-        vDisabledUser.setVisibility(View.VISIBLE);
     }
 
     @Override

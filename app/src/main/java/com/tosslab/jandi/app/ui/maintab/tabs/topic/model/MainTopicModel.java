@@ -225,15 +225,6 @@ public class MainTopicModel {
                 });
     }
 
-    public Observable<Integer> getUnreadCount() {
-
-        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                .filter(TopicRoom::isJoined)
-                .map(TopicRoom::getUnreadCount)
-                .reduce((unreadCount1, unreadCount2) -> unreadCount1 + unreadCount2);
-
-    }
-
     public long findFolderId(long topicId) {
         return Observable.from(TeamInfoLoader.getInstance().getTopicFolders())
                 .takeFirst(topicFolder -> topicFolder.getRooms().contains(topicId))

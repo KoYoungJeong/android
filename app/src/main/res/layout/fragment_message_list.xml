@@ -108,27 +108,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/layout_search_bar"
-            android:background="@color/jandi_black_b2"
+            android:background="@color/jandi_black_de"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingBottom="14dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="14dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_messages_member_status_alert"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_disabled_members_bar" />
+                android:src="@drawable/bar_icon_info" />
 
             <TextView
                 android:id="@+id/tv_messages_member_status_alert"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="@string/jandi_disabled_user"
+                android:text="@string/jandi_this_member_is_pending_to_join"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="14sp" />
 
@@ -279,20 +279,21 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/vg_messages_read_only"
+            android:id="@+id/vg_messages_read_only_and_disable"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_alignBottom="@+id/vg_messages_input"
-            android:layout_alignWithParentIfMissing="false"
+            android:layout_alignParentBottom="true"
+            android:layout_alignWithParentIfMissing="true"
             android:background="@drawable/bg_message_read_only"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
 
             <TextView
+                android:id="@+id/tv_messages_read_only_and_disable_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -302,6 +303,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_messages_read_only_and_disable_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -318,12 +320,13 @@
             android:id="@+id/vg_messages_go_to_latest"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_alignBottom="@+id/vg_messages_input"
-            android:layout_alignTop="@+id/vg_messages_input"
-            android:layout_alignWithParentIfMissing="false"
-            android:background="#FF696969"
+            android:layout_above="@+id/vg_messages_read_only_and_disable"
+            android:layout_alignWithParentIfMissing="true"
+            android:background="@color/jandi_transparent_black_70p"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
+            android:paddingStart="24dp"
+            android:paddingRight="15dp"
+            android:paddingEnd="15dp"
             android:visibility="gone">
 
             <TextView
@@ -332,7 +335,8 @@
                 android:layout_centerVertical="true"
                 android:text="@string/jandi_go_to_latest"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textStyle="bold"
+                android:textSize="@dimen/jandi_text_size_medium" />
 
             <ImageView
                 android:id="@+id/iv_go_to_latest"

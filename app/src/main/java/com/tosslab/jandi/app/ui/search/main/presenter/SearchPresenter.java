@@ -70,7 +70,7 @@ public interface SearchPresenter {
 
         void moveToPollActivity(long pollId);
 
-        void moveToMessageActivityFromSearch(long entityId, int entityType, long linkId);
+        void moveToMessageActivityFromSearch(long roomId, long entityId, int entityType, long linkId);
 
         void hideKeyboard();
 

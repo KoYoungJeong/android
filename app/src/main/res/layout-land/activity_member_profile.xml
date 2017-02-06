@@ -53,13 +53,27 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="20dp"
                     android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_toLeftOf="@+id/tv_member_profile_description"
+                    android:layout_marginRight="8dp"
+                    android:layout_toLeftOf="@+id/tv_member_profile_team_level"
+                    android:layout_toStartOf="@+id/tv_member_profile_team_level"
                     android:lineSpacingExtra="2dp"
                     android:maxLines="2"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="@dimen/jandi_text_size_larger_3"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_member_profile_team_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="17dp"
+                    android:layout_alignBottom="@+id/tv_member_profile_name"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_toLeftOf="@+id/tv_member_profile_description"
+                    android:layout_toStartOf="@+id/tv_member_profile_description"
+                    android:background="@drawable/bg_user_level_team_admin"
+                    android:gravity="center"
+                    android:textSize="@dimen/jandi_text_size_11sp" />
 
                 <TextView
                     android:id="@+id/tv_member_profile_description"
@@ -89,9 +103,10 @@
                     android:id="@+id/vg_member_profile_team_info"
                     android:layout_width="274dp"
                     android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="20dp"
-                    android:layout_toLeftOf="@+id/vg_profile_star_and_level"
+                    android:layout_toLeftOf="@+id/btn_member_profile_star"
                     android:orientation="vertical">
 
                     <TextView
@@ -115,31 +130,17 @@
                         android:textSize="13dp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/vg_profile_star_and_level"
-                    android:layout_width="wrap_content"
-                    android:layout_height="46dp"
+
+                <ImageView
+                    android:id="@+id/btn_member_profile_star"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/tv_member_profile_team_level"
-                        android:layout_width="wrap_content"
-                        android:layout_height="17dp"
-                        android:background="@drawable/bg_user_level_team_admin"
-                        android:gravity="center"
-                        android:textSize="@dimen/jandi_text_size_11sp" />
-
-                    <ImageView
-                        android:id="@+id/btn_member_profile_star"
-                        android:layout_width="40dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:paddingBottom="16dp"
-                        android:paddingTop="16dp"
-                        android:src="@drawable/jandi_member_profile_star_selector" />
-                </LinearLayout>
+                    android:layout_gravity="center"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:src="@drawable/jandi_member_profile_star_selector" />
 
             </RelativeLayout>
 

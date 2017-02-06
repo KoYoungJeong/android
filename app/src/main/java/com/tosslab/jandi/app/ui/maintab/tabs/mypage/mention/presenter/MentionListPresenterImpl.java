@@ -53,13 +53,9 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     }
 
     @Override
-    public void onInitializeMyPage(final boolean isRefreshAction) {
+    public void onInitializeMyPage(final boolean isRefreshAction, final boolean doUpdateLastMessage) {
         isInInitializing = true;
         mentionListView.clearLoadMoreOffset();
-
-        if (!isRefreshAction) {
-            mentionListView.showProgress();
-        }
 
         long lastReadMentionId = mentionListModel.getLastReadMentionId();
         actuallLastMarkerId = lastReadMentionId;
@@ -67,12 +63,14 @@ public class MentionListPresenterImpl implements MentionListPresenter {
 
         mentionListModel.getMentionsObservable(-1, MentionListModel.MENTION_LIST_LIMIT)
                 .doOnNext(resStarMentioned -> {
-                    List<StarredMessage> records = resStarMentioned.getRecords();
-                    if (records != null && !(records.isEmpty())) {
-                        try {
-                            mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
-                        } catch (RetrofitException e) {
-                            e.printStackTrace();
+                    if (doUpdateLastMessage) {
+                        List<StarredMessage> records = resStarMentioned.getRecords();
+                        if (records != null && !(records.isEmpty())) {
+                            try {
+                                mentionListModel.updateLastReadMessageId(records.get(0).getMessage().id);
+                            } catch (RetrofitException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 })
@@ -86,8 +84,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                 .subscribe(pair -> {
                     if (isRefreshAction) {
                         mentionListView.hideRefreshProgress();
-                    } else {
-                        mentionListView.hideProgress();
                     }
 
                     ResStarMentioned resStarMentioned = pair.first;
@@ -105,7 +101,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     mentionListView.notifyDataSetChanged();
                 }, throwable -> {
                     LogUtil.e(TAG, Log.getStackTraceString(throwable));
-                    mentionListView.hideProgress();
                     if (isRefreshAction) {
                         mentionListView.hideRefreshProgress();
                     } else {
@@ -239,11 +234,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     }
                     return MentionMessage.createForMentions(link1, roomType, roomName, userName, photoUrl);
                 })
-                .doOnNext(mentionMessage -> {
-
-                    mentionListModel.increaseMentionUnreadCount();
-                    EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mentionMessage -> {
                     mentionListView.hideEmptyMentionView();
@@ -262,7 +252,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     public void reInitializeIfEmpty() {
         boolean isEmpty = mentionListDataModel.getItemCount() <= 0;
         if (isEmpty && !isInInitializing) {
-            onInitializeMyPage(false);
+            onInitializeMyPage(false, true);
         }
     }
 
@@ -271,15 +261,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
         Observable.just(linkId)
                 .map(mentionListDataModel::indexOfLink)
                 .filter(index -> index >= 0)
-                .doOnNext(index -> {
-                    MentionMessage item = mentionListDataModel.getItem(index);
-                    if (item != null
-                            && item.getMessageId() > actuallLastMarkerId) {
-                        mentionListModel.decreaseMentionCount();
-
-                        EventBus.getDefault().post(new RefreshMentionBadgeCountEvent());
-                    }
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(index -> {
                     mentionListDataModel.remove(index);
@@ -313,8 +294,7 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     @Override
     public void onUpdateMentionMarker() {
         MentionMessage item = mentionListDataModel.getItem(0);
-        if (item != null
-                && actuallLastMarkerId > 0
+        if (item != null && actuallLastMarkerId > 0
                 && item.getMessageId() > actuallLastMarkerId) {
             Completable.fromCallable(() -> {
                 mentionListModel.updateLastReadMessageId(item.getMessageId());
@@ -327,7 +307,6 @@ public class MentionListPresenterImpl implements MentionListPresenter {
                     }, Throwable::printStackTrace);
             actuallLastMarkerId = item.getMessageId();
         }
-
     }
 
 }

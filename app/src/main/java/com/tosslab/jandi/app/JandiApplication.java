@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkStateBroadcastReceiver;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 import java.io.ByteArrayInputStream;
@@ -54,6 +55,8 @@ public class JandiApplication extends MultiDexApplication {
     static boolean isApplicationDeactive = true;
 
     Map<TrackerName, Tracker> mTrackers = new HashMap<>();
+
+    private NetworkStateBroadcastReceiver networkStateBroadcastReceiver;
 
     public static Context getContext() {
         return context;
@@ -125,7 +128,25 @@ public class JandiApplication extends MultiDexApplication {
         initRetrofitBuilder();
 
         logBaidu();
+
+        registerNetworkStateBroadcastReceiver();
     }
+
+    private void registerNetworkStateBroadcastReceiver() {
+        IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+
+        networkStateBroadcastReceiver = new NetworkStateBroadcastReceiver();
+
+        registerReceiver(networkStateBroadcastReceiver, filter);
+    }
+
+    private void unNetworkStateBroadcastReceiver() {
+        if (networkStateBroadcastReceiver != null) {
+            unregisterReceiver(networkStateBroadcastReceiver);
+            networkStateBroadcastReceiver = null;
+        }
+    }
+
 
     protected void initIntercom() {
         Intercom.initialize(this, JandiConstantsForFlavors.INTERCOM_API_KEY, JandiConstantsForFlavors.INTERCOM_API_ID);
@@ -220,15 +241,18 @@ public class JandiApplication extends MultiDexApplication {
 
     private void handleApplicationDeactive() {
         LogUtil.e(TAG_LIFECYCLE, "Deactvie !!");
+
         setIsApplicationDeactive(true);
 
         UnLockPassCodeManager.getInstance().setUnLocked(false);
+
         updatePlatformStatus(false);
 
         Sprinkler.with(this).stopAll();
 
         SocketServiceCloser.getInstance().close();
     }
+
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {

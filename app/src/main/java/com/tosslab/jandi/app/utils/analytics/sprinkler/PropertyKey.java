@@ -22,4 +22,5 @@ public class PropertyKey {
     public static final String MentionCount = "p49";
     public static final String StickerId = "p53";
     public static final String RankdId = "p55";
+    public static final String LoginId = "p57";
 }

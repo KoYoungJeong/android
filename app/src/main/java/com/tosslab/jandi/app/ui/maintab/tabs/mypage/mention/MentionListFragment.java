@@ -81,6 +81,8 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     private MentionMessageMoreRequestHandler moreRequestHandler;
 
+    private boolean isVisible = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,11 +93,16 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         MentionListAdapter adapter = new MentionListAdapter();
         injectComponent(adapter);
@@ -104,7 +111,9 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         initSwipeRefreshLayout();
         initMoreLoadingProgress();
 
-        presenter.onInitializeMyPage(false);
+        if (getUserVisibleHint()) {
+            onFocus();
+        }
     }
 
     private void setListViewScroll() {
@@ -135,7 +144,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         vgRefresh.setColorSchemeResources(R.color.jandi_accent_color);
 
         vgRefresh.setOnRefreshListener(() -> {
-            presenter.onInitializeMyPage(true);
+            presenter.onInitializeMyPage(true, true);
         });
 
         vgRefresh.post(() -> {
@@ -190,14 +199,6 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         setListViewScroll();
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-
-        }
-    }
-
     /**
      * 멘션목록을 더 불러올 떄 보여지는 프로그레스바의 VISIBLE 처리를
      * animation 으로 하기 위함.
@@ -214,6 +215,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
 
     public void onEvent(MentionMessageEvent event) {
         ResMessages.Link link = event.getLink();
+
         if (link.message == null) {
             return;
         }
@@ -389,6 +391,7 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     public void onFocus() {
         if (presenter != null) {
             presenter.onUpdateMentionMarker();
+            presenter.onInitializeMyPage(false, true);
         }
     }
 

@@ -114,8 +114,7 @@ Please restart the app."</string>
 	<string name="invite_associate_invitoronlyindefault_desc">"Associates can be invited to any other topic you are in, except for the default topic. Please join  an additional topic and try again. "</string>
 	<string name="invite_associate_invitoronlyindefault_title">"
 Currently, there is no topic where you could invite members to. "</string>
-	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in. 
-"</string>
+	<string name="invite_associate_selecttopic_desc">"You can invite Associates into only the topics that you are currently in."</string>
 	<string name="invite_associate_selecttopic_placeholder">"Select a topic"</string>
 	<string name="invite_associate_selecttopic_title">"Select the topic you want to invite to"</string>
 	<string name="invite_email_alreadyinteam">"This email address is already in the team."</string>
@@ -133,6 +132,8 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="invite_email_success">"All intivations have been sent. "</string>
 	<string name="invite_email_title">"Enter email address"</string>
 	<string name="invite_email_valid">"This is a valid email address."</string>
+	<string name="invite_member_adminonly_desc">""</string>
+	<string name="invite_member_adminonly_title">""</string>
 	<string name="invite_member_copyurl">"Copy invitation URL"</string>
 	<string name="invite_member_copyurl_title">"Invitation URL"</string>
 	<string name="invite_member_email_desc">"You can invite Members to JANDI by entering their email address."</string>
@@ -401,6 +402,8 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_insert_team_domain">"Set up your Team Domain"</string>
 	<string name="jandi_insert_team_name">"Set up your Team Name"</string>
 	<string name="jandi_invitation">"Invite"</string>
+	<string name="jandi_invitation_adminonly_desc">"Your current settings only allow Admins to invite members. Invitation link is disabled in this setting."</string>
+	<string name="jandi_invitation_adminonly_title">"Invite new members through email."</string>
 	<string name="jandi_invitation_for_admin">"Currently your Administrator Settings disallow other members from inviting non-members into the team. To change this setting, go to Team Settings > Invitation Settings."</string>
 	<string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
 	<string name="jandi_invitation_succeed">"Invitation has been sent"</string>

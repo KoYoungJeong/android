@@ -51,6 +51,7 @@
         </android.support.design.widget.AppBarLayout>
 
         <FrameLayout
+            android:id="@+id/vg_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -106,8 +107,8 @@
     <View
         android:id="@+id/v_dummy_tab_view"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_height="?attr/actionBarSize"/>
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true" />
 
     <View
         android:id="@+id/v_tab_shadow"
