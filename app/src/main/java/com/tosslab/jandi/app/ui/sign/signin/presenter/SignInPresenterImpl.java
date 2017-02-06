@@ -73,16 +73,11 @@ public class SignInPresenterImpl implements SignInPresenter {
 
         view.showProgressDialog();
 
-        Observable.defer(() -> {
-            try {
-                return Observable.just(model.login(email, password));
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        })
+        Observable.fromCallable(() -> model.login(email, password))
                 .subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
                     SignOutUtil.initSignData();
+                    model.updateLoginId(email);
                     model.saveTokenInfo(accessToken);
                     PushUtil.registPush();
                 })
@@ -118,13 +113,7 @@ public class SignInPresenterImpl implements SignInPresenter {
     }
 
     private void getAccountInfo(String email) {
-        Observable.defer(() -> {
-            try {
-                return Observable.just(model.getAccountInfo());
-            } catch (RetrofitException e) {
-                return Observable.error(e);
-            }
-        })
+        Observable.fromCallable(() -> model.getAccountInfo())
                 .subscribeOn(Schedulers.io())
                 .doOnNext(accountInfo -> {
                     model.saveAccountInfo(accountInfo);
@@ -132,9 +121,10 @@ public class SignInPresenterImpl implements SignInPresenter {
                     model.subscribePush(accessToken.getDeviceId());
                     JandiPreference.setFirstLogin(JandiApplication.getContext());
 
-                    SprinklrSignIn.sendLog(false, false);
+                    SprinklrSignIn.sendLog(false, false, email);
                     AnalyticsUtil.flushSprinkler();
-                }).observeOn(AndroidSchedulers.mainThread())
+                })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     view.dismissProgressDialog();
                     view.moveToTeamSelectionActivity(email);

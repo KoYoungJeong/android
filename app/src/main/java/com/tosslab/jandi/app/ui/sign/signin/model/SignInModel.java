@@ -87,4 +87,7 @@ public class SignInModel {
         return password.length() >= 8;
     }
 
+    public void updateLoginId(String email) {
+        AccountRepository.getRepository().upsertLoginId(email);
+    }
 }

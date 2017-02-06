@@ -5,6 +5,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
@@ -173,7 +174,8 @@ public class IntroActivityPresenter {
                     }
                 })
                 .doOnNext(it -> {
-                    SprinklrSignIn.sendLog(true, true);
+                    String loginId = AccountRepository.getRepository().getLoginId();
+                    SprinklrSignIn.sendLog(true, true, loginId);
                     AnalyticsUtil.flushSprinkler();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -193,7 +195,8 @@ public class IntroActivityPresenter {
         hasTeamObservable.filter(it -> !it)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(it -> {
-                    SprinklrSignIn.sendLog(false, true);
+                    String loginId = AccountRepository.getRepository().getLoginId();
+                    SprinklrSignIn.sendLog(false, true, loginId);
                     AnalyticsUtil.flushSprinkler();
                     view.moveTeamSelectActivity();
                 });

@@ -6,7 +6,7 @@ public class SprinklerEvents {
 
     public static final Event SignIn = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e6",
-            new String[]{PropertyKey.ResponseSuccess, PropertyKey.AutoSignIn, PropertyKey.ErrorCode});
+            new String[]{PropertyKey.ResponseSuccess, PropertyKey.AutoSignIn, PropertyKey.LoginId,PropertyKey.ErrorCode});
 
     public static final Event SendAccountVerificationMail = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e9",
