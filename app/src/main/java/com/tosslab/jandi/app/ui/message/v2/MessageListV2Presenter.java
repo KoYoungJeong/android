@@ -646,18 +646,18 @@ public class MessageListV2Presenter {
 
                         room.setRoomId(roomid);
 
-                    String readyMessage = messageListModel.getReadyMessage(roomid);
-                    view.initRoomInfo(roomid, readyMessage);
-                    Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
-                    if (TeamInfoLoader.getInstance().isTopic(roomid)) {
-                        view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
-                                && myLevel != Level.Owner
-                                && myLevel != Level.Admin);
-                    }
-                })
-                .observeOn(Schedulers.io())
-                .subscribe(roomid -> {
-                    SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
+                        String readyMessage = messageListModel.getReadyMessage(roomid);
+                        view.initRoomInfo(roomid, readyMessage);
+                        Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
+                        if (TeamInfoLoader.getInstance().isTopic(roomid)) {
+                            view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
+                                    && myLevel != Level.Owner
+                                    && myLevel != Level.Admin);
+                        }
+                    })
+                    .observeOn(Schedulers.io())
+                    .subscribe(roomid -> {
+                        SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
 
                         long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
                         messagePointer.setLastReadLinkId(lastReadLinkId);

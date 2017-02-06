@@ -114,8 +114,6 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     protected void onLazyLoad(Bundle savedInstanceState) {
         super.onLazyLoad(savedInstanceState);
-
-        mainChatListAdapter.startAnimation();
         mainChatListPresenter.onReloadChatList();
         setListViewScroll();
     }
@@ -136,10 +134,6 @@ public class MainChatListFragment extends BaseLazyFragment
             return true;
         });
         lvChat.setAdapter(mainChatListAdapter);
-
-//        mainChatListPresenter.initChatList(getActivity(), selectedEntity);
-
-
     }
 
     private void setListViewScroll() {
@@ -161,6 +155,10 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void onResume() {
         super.onResume();
+        if (getUserVisibleHint()) {
+            mainChatListAdapter.startAnimation();
+            mainChatListPresenter.onReloadChatList();
+        }
     }
 
     @Override

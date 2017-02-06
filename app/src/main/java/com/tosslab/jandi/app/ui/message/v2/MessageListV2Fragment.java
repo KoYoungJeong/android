@@ -2059,7 +2059,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     public void showReadOnly(boolean readOnly) {
         vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
         if (readOnly) {
-            vgReadOnly.setOnClickListener(v -> { });
+            vgReadOnly.setOnClickListener(v -> {
+            });
         } else {
             vgReadOnly.setOnClickListener(null);
         }
