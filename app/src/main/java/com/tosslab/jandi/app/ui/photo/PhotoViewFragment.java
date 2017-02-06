@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.photo;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,6 +37,8 @@ import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.listener.SimpleRequestListener;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -151,13 +154,30 @@ public class PhotoViewFragment extends Fragment {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        Completable.complete()
+                .delay(300, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (ivPhotoView.getVisibility() == View.VISIBLE) {
+                        ivPhotoView.resetScaleAndCenter();
+                    } else if (pvPhotoView.getVisibility() == View.VISIBLE) {
+                        pvPhotoView.setScale(1f);
+                    }
+                });
+    }
+
+    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
     public void onEvent(GifReadyEvent event) {
-        if (imageType.toLowerCase().contains("gif")
+        if (imageType != null
+                && imageType.toLowerCase().contains("gif")
                 && size > MB_1
                 && TextUtils.equals(event.getOriginalUrl(), originalUrl)) {
             Completable.fromAction(() -> {
