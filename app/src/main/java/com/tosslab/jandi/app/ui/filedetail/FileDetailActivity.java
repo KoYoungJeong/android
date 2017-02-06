@@ -1118,14 +1118,13 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
-    public void startExportedFileViewerActivity(File file) {
-        String mimeType = getFileType(file);
+    public void startExportedFileViewerActivity(File file, String mimeType) {
         Intent target = FileUtil.createFileIntent(file, mimeType);
         target.setAction(Intent.ACTION_SEND);
 
         if (mimeType != null) {
             Bundle extras = new Bundle();
-            Uri uri = Uri.fromFile(file);
+            Uri uri = FileUtil.createOptimizedFileUri(file);
             extras.putParcelable(Intent.EXTRA_STREAM, uri);
             target.putExtras(extras);
         }
@@ -1140,14 +1139,15 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     @Override
-    public void startDownloadedFileViewerActivity(File file) {
+    public void startDownloadedFileViewerActivity(File file, String mimeType) {
         try {
-            String mimeType = getFileType(file);
-            if (mimeType != null) {
-                Intent intent = FileUtil.createFileIntent(file, mimeType);
-                startActivity(intent);
-                showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
+            String mimeFromFile = getFileType(file);
+            if (mimeFromFile == null) {
+                mimeFromFile = mimeType;
             }
+            Intent intent = FileUtil.createFileIntent(file, mimeFromFile);
+            startActivity(intent);
+            showToast(getString(R.string.jandi_file_downloaded_into, file.getPath()), false);
         } catch (ActivityNotFoundException e) {
             showToast(getString(R.string.err_unsupported_file_type, file), true);
         } catch (SecurityException e) {
@@ -1166,6 +1166,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         }
         return null;
     }
+
 
     @Override
     public void moveToMessageListActivity(long entityId, int entityType, long roomId,

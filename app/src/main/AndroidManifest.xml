@@ -612,7 +612,7 @@
         </receiver>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name=".providers.JandiFileProvider"
             android:authorities="@string/jandi_file_authority"
             android:exported="false"
             android:grantUriPermissions="true">
