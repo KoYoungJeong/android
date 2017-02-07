@@ -161,7 +161,6 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
                 .map(User::getName)
                 .defaultIfEmpty("")
                 .subscribe(it -> labelTeamAdmin.setTextContent(it));
-
     }
 
     private void setUpTeamUrl() {

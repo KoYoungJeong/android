@@ -21,6 +21,7 @@ import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -247,6 +248,10 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     }
 
     public void onEvent(TeamInfoChangeEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEvent(MemberRankUpdatedEvent event) {
         presenter.onRefresh();
     }
 

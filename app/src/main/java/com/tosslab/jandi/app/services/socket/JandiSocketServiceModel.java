@@ -7,6 +7,7 @@ import com.jakewharton.rxrelay.PublishRelay;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
@@ -1523,6 +1524,7 @@ public class JandiSocketServiceModel {
                 for (Long memberId : memberIds) {
                     HumanRepository.getInstance(event.getTeamId()).updateRank(memberId, rankId);
                 }
+                postEvent(new MemberRankUpdatedEvent());
             }
 
         } catch (Exception e) {

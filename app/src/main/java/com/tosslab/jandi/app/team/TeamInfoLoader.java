@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
+import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Poll;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -144,10 +145,11 @@ public class TeamInfoLoader {
             setUpTeamPlan();
             setUpMention();
 
-            setUpRooms();
             setUpRanks();
             setUpMembers();
             setUpMe();
+            setUpRooms();
+
             setUpTopicFolders();
 
         } else {

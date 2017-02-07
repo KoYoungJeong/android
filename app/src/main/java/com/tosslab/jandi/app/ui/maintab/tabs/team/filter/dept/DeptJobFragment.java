@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -264,6 +265,10 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
     }
 
     public void onEvent(ProfileChangeEvent event) {
+        deptJobPresenter.onRefresh();
+    }
+
+    public void onEvent(MemberRankUpdatedEvent event) {
         deptJobPresenter.onRefresh();
     }
 
