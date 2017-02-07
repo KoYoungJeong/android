@@ -49,7 +49,7 @@ public class TopicFolderSettingPresenter {
                 .flatMap(Observable::from)
                 .toSortedList((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
                 .subscribe(topicFolders -> {
-                    // 리턴하는 folder의 length=0이더라도 폴더가 1개이고 속해져있는 폴더인 케이스를 식별해야 한다.
+//                    // 리턴하는 folder의 length=0이더라도 폴더가 1개이고 속해져있는 폴더인 케이스를 식별해야 한다.
                     view.showFolderList(topicFolders, topicFolders.size() > 0);
                 });
 
@@ -169,13 +169,9 @@ public class TopicFolderSettingPresenter {
     public void modifySeqFolder(long folderId, int seq) {
         Completable.fromCallable(() -> {
             topicFolderSettingModel.modifySeqFolder(folderId, seq);
-            FolderRepository.getInstance().updateFolderSeq(TeamInfoLoader.getInstance().getTeamId(), folderId, seq);
             return true;
         }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    EventBus.getDefault().post(new TopicFolderRefreshEvent());
-                }, Throwable::printStackTrace);
+                .subscribe();
     }
 
     public void removeFolder(long folderId) {
