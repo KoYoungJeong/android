@@ -228,15 +228,17 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
     }
 
     @Override
-    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
-        if (!vgFileContent.hasOnClickListeners()) {
+    public void setOnItemClickListener(final View.OnClickListener itemClickListener) {
+        if (vgFileContent != null) {
             vgFileContent.setOnClickListener(itemClickListener);
         }
     }
 
     @Override
-    public void setOnItemLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        vgFileContent.setOnLongClickListener(itemLongClickListener);
+    public void setOnItemLongClickListener(final View.OnLongClickListener itemLongClickListener) {
+        if (vgFileContent != null) {
+            vgFileContent.setOnLongClickListener(itemLongClickListener);
+        }
     }
 
     public void setHasBottomMargin(boolean hasBottomMargin) {
