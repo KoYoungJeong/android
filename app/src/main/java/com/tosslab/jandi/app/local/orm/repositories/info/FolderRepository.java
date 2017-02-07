@@ -92,16 +92,29 @@ public class FolderRepository extends LockTemplate {
 
             Folder changedFolder = folders.get(folderId);
 
+            if (changedFolder.getSeq() == newSeq) {
+                return true;
+            }
+
             int diffSeq;
-            if (changedFolder.getSeq() > newSeq) {
+            int originSeq = changedFolder.getSeq();
+            int rangeStart;
+            int rangeEnd;
+            if (originSeq > newSeq) {
                 diffSeq = 1;
+                rangeStart = newSeq;
+                rangeEnd = originSeq;
             } else {
                 diffSeq = -1;
+                rangeStart = originSeq;
+                rangeEnd = newSeq;
             }
+
 
             Observable.range(0, folders.size())
                     .map(idx -> folders.valueAt(idx))
-                    .filter(raw -> raw.getSeq() >= newSeq)
+                    .filter(raw -> raw.getId() != folderId)
+                    .filter(raw -> raw.getSeq() >= rangeStart && raw.getSeq() <= rangeEnd)
                     .subscribe(raw -> raw.setSeq(raw.getSeq() + diffSeq));
 
             changedFolder.setSeq(newSeq);

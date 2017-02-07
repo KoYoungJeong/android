@@ -575,8 +575,11 @@ public class TeamInfoLoader {
                 rooms = new ArrayList<>();
                 topicFolder = new TopicFolder(folder, rooms);
                 folders.add(topicFolder);
-                for (Long roomId : folder.getRooms()) {
-                    rooms.add(topicRooms.getTopicRoom(roomId));
+                List<Long> roomsOfFolder = folder.getRooms();
+                if (roomsOfFolder != null && !roomsOfFolder.isEmpty()) {
+                    for (Long roomId : roomsOfFolder) {
+                        rooms.add(topicRooms.getTopicRoom(roomId));
+                    }
                 }
             }
             return folders;
