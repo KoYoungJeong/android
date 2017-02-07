@@ -93,9 +93,12 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             EventBus.getDefault().post(new RefreshOldMessageEvent());
         }
 
-        bodyViewHolder.setOnItemClickListener(v -> {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(MainMessageListAdapter.this, position);
+        bodyViewHolder.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(MainMessageListAdapter.this, position);
+                }
             }
         });
 

@@ -689,6 +689,15 @@ public class TeamInfoLoader {
         return null;
     }
 
+    public void updateUser(long memberId) {
+        execute(() -> {
+            Human human = users.getHuman(memberId);
+            if (human != null) {
+                users.addUser(new User(human, ranks.get(human.getRankId())));
+            }
+        });
+    }
+
     interface Call0<T> {
         T execute();
     }

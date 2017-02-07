@@ -1523,6 +1523,7 @@ public class JandiSocketServiceModel {
                 long rankId = data.getRankId();
                 for (Long memberId : memberIds) {
                     HumanRepository.getInstance(event.getTeamId()).updateRank(memberId, rankId);
+                    TeamInfoLoader.getInstance().updateUser(memberId);
                 }
                 postEvent(new MemberRankUpdatedEvent());
             }
