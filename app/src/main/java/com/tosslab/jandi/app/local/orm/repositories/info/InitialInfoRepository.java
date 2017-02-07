@@ -99,9 +99,11 @@ public class InitialInfoRepository extends LockExecutorTemplate {
             File teamDir = getTeamDir();
             File teamJson = new File(teamDir, getTeamJsonFileName(teamId));
             if (teamJson.exists()) {
+                FileReader fileReader = null;
+                BufferedReader br = null;
                 try {
-                    FileReader fileReader = new FileReader(teamJson);
-                    BufferedReader br = new BufferedReader(fileReader);
+                    fileReader = new FileReader(teamJson);
+                    br = new BufferedReader(fileReader);
                     String temp = null;
                     StringBuilder sb = new StringBuilder();
                     while ((temp = br.readLine()) != null) {
@@ -111,6 +113,22 @@ public class InitialInfoRepository extends LockExecutorTemplate {
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
+                } finally {
+                    if (fileReader != null) {
+                        try {
+                            fileReader.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (br != null) {
+                        try {
+                            br.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             } else {
                 return null;
