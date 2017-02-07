@@ -37,6 +37,8 @@ public class InitialInfoRepository extends LockExecutorTemplate {
                 fileWriter = new FileWriter(teamJson);
                 bw = new BufferedWriter(fileWriter);
                 bw.write(info.getRawValue());
+                fileWriter.flush();
+                bw.flush();
                 return true;
             } catch (IOException e) {
                 return false;
