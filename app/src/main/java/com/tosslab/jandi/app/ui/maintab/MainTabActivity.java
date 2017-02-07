@@ -32,11 +32,9 @@ import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.socket.EventUpdateFinish;
 import com.tosslab.jandi.app.events.socket.EventUpdateInProgress;
 import com.tosslab.jandi.app.events.socket.EventUpdateStart;
-import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.keep.KeepAliveService;
@@ -474,13 +472,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
     public void onEventMainThread(RefreshMypageBadgeCountEvent event) {
         mainTabPresenter.onInitMyPageBadge(true);
-    }
-
-    public void onEventMainThread(TeamInfoChangeEvent event) {
-        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
-        if (selectedTeamInfo != null) {
-            tvTitle.setText(selectedTeamInfo.getName());
-        }
     }
 
     @OnClick(R.id.vg_main_offline)
