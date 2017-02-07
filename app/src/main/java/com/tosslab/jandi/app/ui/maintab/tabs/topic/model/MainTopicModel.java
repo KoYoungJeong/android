@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +41,12 @@ public class MainTopicModel {
 
     // 폴더 정보 가져오기
     public List<TopicFolder> getTopicFolders() {
-        return TeamInfoLoader.getInstance().getTopicFolders();
+        List<TopicFolder> topicFolders = new ArrayList<>();
+        Observable.from(TeamInfoLoader.getInstance().getTopicFolders())
+                .sorted((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
+                .collect(() -> topicFolders, List::add)
+                .subscribe();
+        return topicFolders;
     }
 
     // Join된 Topic에 관한 정보를 가져오기
@@ -63,7 +69,8 @@ public class MainTopicModel {
                         .readOnly(topicRoom.isReadOnly())
                         .build())
                 .collect(() -> topicHashMap, (array, topic) -> array.put(topic.getEntityId(), topic))
-                .subscribe(_1 -> {}, Throwable::printStackTrace);
+                .subscribe(_1 -> {
+                }, Throwable::printStackTrace);
 
         return topicHashMap;
 
@@ -75,12 +82,6 @@ public class MainTopicModel {
             return new TopicFolderListDataProvider(new LinkedList<>());
         }
 
-        final List<TopicFolder> orderedFolders = new ArrayList<>();
-
-        Observable.from(topicFolders)
-                .toSortedList((lhs, rhs) -> lhs.getSeq() - rhs.getSeq())
-                .subscribe(orderedFolders::addAll, Throwable::printStackTrace);
-
         List<Pair<TopicFolderData,
                 List<TopicItemData>>> datas = new LinkedList<>();
 
@@ -89,17 +90,17 @@ public class MainTopicModel {
         long folderIndex = 0;
 
         LongSparseArray<List<TopicItemData>> topicItemMap = new LongSparseArray<>();
-        LongSparseArray<TopicFolderData> folderMap = new LongSparseArray<>();
+        LinkedHashMap<Long, TopicFolderData> folderMap = new LinkedHashMap<>();
         LongSparseArray<Integer> badgeCountMap = new LongSparseArray<>();
 
-        for (TopicFolder topicFolder : orderedFolders) {
+        for (TopicFolder topicFolder : topicFolders) {
             if (topicItemMap.indexOfKey(topicFolder.getId()) < 0) {
                 topicItemMap.put(topicFolder.getId(), new ArrayList<>());
             }
             if (badgeCountMap.indexOfKey(topicFolder.getId()) < 0) {
                 badgeCountMap.put(topicFolder.getId(), 0);
             }
-            if (folderMap.indexOfKey(topicFolder.getId()) < 0) {
+            if (!folderMap.containsKey(topicFolder.getId())) {
                 TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.getName(), topicFolder.getId());
                 topicFolderData.setSeq(topicFolder.getSeq());
                 folderMap.put(topicFolder.getId(), topicFolderData);
@@ -112,7 +113,6 @@ public class MainTopicModel {
                     Observable.from(topicFolder.getRooms())
                             .filter(topicRoom -> joinTopics.indexOfKey(topicRoom.getId()) >= 0)
                             .subscribe(topicRoom -> {
-
                                 Topic topic = joinTopics.get(topicRoom.getId());
                                 joinTopics.remove(topicRoom.getId());
                                 long itemIndex = folderMap.get(topicFolder.getId()).generateNewChildId();
@@ -132,9 +132,8 @@ public class MainTopicModel {
 
                 }, Throwable::printStackTrace);
 
-        int size = folderMap.size();
-        for (int idx = 0; idx < size; idx++) {
-            long folderId = folderMap.keyAt(idx);
+
+        for (Long folderId : folderMap.keySet()) {
             List<TopicItemData> topicItemDatas = topicItemMap.get(folderId);
             List<TopicItemData> providerTopicItemDatas = new ArrayList<>();
 

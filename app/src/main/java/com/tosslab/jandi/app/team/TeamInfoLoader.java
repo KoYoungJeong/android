@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
-import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Poll;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -145,11 +144,10 @@ public class TeamInfoLoader {
             setUpTeamPlan();
             setUpMention();
 
+            setUpRooms();
             setUpRanks();
             setUpMembers();
             setUpMe();
-
-            setUpRooms();
             setUpTopicFolders();
 
         } else {
@@ -631,11 +629,11 @@ public class TeamInfoLoader {
                 rooms = new ArrayList<>();
                 topicFolder = new TopicFolder(folder, rooms);
                 folders.add(topicFolder);
-                if (folder.getRooms() == null) {
-                    folder.setRooms(new ArrayList<>());
-                }
-                for (Long roomId : folder.getRooms()) {
-                    rooms.add(topicRooms.getTopicRoom(roomId));
+                List<Long> roomsOfFolder = folder.getRooms();
+                if (roomsOfFolder != null && !roomsOfFolder.isEmpty()) {
+                    for (Long roomId : roomsOfFolder) {
+                        rooms.add(topicRooms.getTopicRoom(roomId));
+                    }
                 }
             }
             return folders;
