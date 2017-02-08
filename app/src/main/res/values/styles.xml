@@ -52,6 +52,7 @@
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
+        <item name="android:background">@drawable/bg_file_list_filters</item>
     </style>
     <!-- 타이틀 텍스트 -->
     <style name="JandiFileListCategoryTab.Text" parent="JandiFileListCategoryTab">
@@ -59,8 +60,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textColor">@color/jandi_text_light</item>
-        <item name="android:drawableRight">@drawable/file_arrow_down_gray</item>
+        <item name="android:textColor">@color/jandi_text_white</item>
+        <item name="android:drawableRight">@drawable/file_arrow_down</item>
         <item name="android:drawablePadding">3dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">13sp</item>

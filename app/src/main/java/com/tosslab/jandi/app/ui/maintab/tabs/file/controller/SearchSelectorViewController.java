@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.file.controller;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.View;
@@ -299,20 +298,11 @@ public class SearchSelectorViewController {
     private void setUpTypeTextView(TextView textVew, boolean isFocused) {
         Drawable rightDrawable;
         if (isFocused) {
-            if (context instanceof FileSearchActivity) {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up);
-                ((View) textVew.getParent()).setBackgroundColor(context.getResources().getColor(R.color.jandi_primary_color_focus));
-            } else {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up_gray);
-                ((View) textVew.getParent()).setBackgroundColor(Color.WHITE);
-            }
+            rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_up);
+            ((View) textVew.getParent()).setSelected(true);
         } else {
-            if (context instanceof FileSearchActivity) {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down);
-            } else {
-                rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down_gray);
-            }
-            ((View) textVew.getParent()).setBackgroundColor(Color.TRANSPARENT);
+            rightDrawable = textVew.getResources().getDrawable(R.drawable.file_arrow_down);
+            ((View) textVew.getParent()).setSelected(false);
         }
         textVew.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
     }
