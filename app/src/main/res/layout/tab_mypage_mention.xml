@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="40dp">
 
     <TextView
         android:id="@+id/tv_title"
@@ -10,15 +10,14 @@
         android:layout_centerInParent="true"
         android:text="@string/jandi_mention_mentions"
         android:textColor="@color/text_color_mypage_tab"
-        android:textSize="14sp" />
+        android:textSize="@dimen/jandi_text_size_medium" />
 
     <TextView
         android:id="@+id/tv_badge"
         style="@style/JandiMainTabBadge.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tv_title"
-        android:layout_marginTop="-8.5dp"
+        android:layout_marginTop="4dp"
         android:layout_toRightOf="@id/tv_title"
         android:visibility="gone" />
 
