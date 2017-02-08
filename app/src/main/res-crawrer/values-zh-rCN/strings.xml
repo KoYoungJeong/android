@@ -131,8 +131,8 @@
 	<string name="invite_email_success">"所有邀请已成功寄送"</string>
 	<string name="invite_email_title">"输入电子邮箱"</string>
 	<string name="invite_email_valid">"此为有效的电子邮箱"</string>
-	<string name="invite_member_adminonly_desc">""</string>
-	<string name="invite_member_adminonly_title">""</string>
+	<string name="invite_member_adminonly_desc">"现在的设置只有管理员能邀请新成员到团队里，邀请链接将无法使用"</string>
+	<string name="invite_member_adminonly_title">"仅能以电子邮件邀请新成员"</string>
 	<string name="invite_member_copyurl">"复制邀请链接"</string>
 	<string name="invite_member_copyurl_title">"邀请链接"</string>
 	<string name="invite_member_email_desc">"输入欲邀请成员的电子邮箱"</string>

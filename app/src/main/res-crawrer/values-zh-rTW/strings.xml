@@ -131,8 +131,8 @@
 	<string name="invite_email_success">"所有邀請已成功寄送"</string>
 	<string name="invite_email_title">"輸入電子郵箱"</string>
 	<string name="invite_email_valid">"此為有效的電子郵箱"</string>
-	<string name="invite_member_adminonly_desc">""</string>
-	<string name="invite_member_adminonly_title">""</string>
+	<string name="invite_member_adminonly_desc">"現在的設定只有管理員能邀請新成員到團隊裡，邀請連結將無法使用"</string>
+	<string name="invite_member_adminonly_title">"僅能以電子郵件邀請新成員"</string>
 	<string name="invite_member_copyurl">"複製邀請連結"</string>
 	<string name="invite_member_copyurl_title">"邀請連結"</string>
 	<string name="invite_member_email_desc">"輸入欲邀請成員的電子郵箱"</string>
