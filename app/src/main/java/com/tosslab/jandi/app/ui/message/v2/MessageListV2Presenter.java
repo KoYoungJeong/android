@@ -385,18 +385,12 @@ public class MessageListV2Presenter {
                         adapterModel.removeAllDummy();
                     }
 
-                    boolean isFirstMessage = pair.second.size() < MessageRepositoryModel.MAX_COUNT;
                     adapterModel.addAll(0, pair.second);
                     view.refreshMessages();
-                    if (!isFirstMessage) {
-                        adapterModel.setOldLoadingComplete();
-                    } else {
-                        adapterModel.setOldNoMoreLoading();
-                    }
+                    adapterModel.setOldLoadingComplete();
                     view.setUpOldMessage(isFirstLoad);
 
                     currentMessageState.setIsFirstLoadOldMessage(false);
-                    currentMessageState.setIsFirstMessage(isFirstMessage);
                 })
                 .doOnNext(pair -> {
                     if (pair.second.isEmpty()) {
