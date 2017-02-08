@@ -206,10 +206,10 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             } else {
                 String url = item.getPhotoUrl();
                 if (ProfileUtil.isChangedPhoto(url)) {
-                    ImageUtil.loadProfileImage(ivProfile, url, R.drawable.profile_img_dummyaccount_43);
+                    ImageUtil.loadProfileImage(ivProfile, url, R.drawable.profile_img_dummyaccount_40);
                 } else {
                     ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
+                    ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_40);
                 }
             }
         } else {
