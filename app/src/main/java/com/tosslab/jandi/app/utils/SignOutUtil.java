@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
@@ -20,6 +21,7 @@ public class SignOutUtil {
         instance = null;
         OpenHelperManager.getHelper(context, OrmDatabaseHelper.class)
                 .clearAllData();
+        InitialInfoRepository.getInstance().clear();
         TokenUtil.clearTokenInfo();
 
         Intercom.client().reset();
@@ -32,6 +34,7 @@ public class SignOutUtil {
         BadgeUtils.clearBadge(JandiApplication.getContext());
         OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class)
                 .clearAllData();
+        InitialInfoRepository.getInstance().clear();
         TokenUtil.clearTokenInfo();
     }
 

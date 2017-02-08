@@ -105,11 +105,15 @@ public class TeamInfoLoader {
     private void refresh(long teamId) {
         execute(() -> {
             RawInitialInfo rawInitialInfo = InitialInfoRepository.getInstance().getRawInitialInfo(teamId);
-            try {
-                initialInfo = JsonMapper.getInstance().getGson()
-                        .fromJson(rawInitialInfo.getRawValue(), InitialInfo.class);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (rawInitialInfo != null) {
+                try {
+                    initialInfo = JsonMapper.getInstance().getGson()
+                            .fromJson(rawInitialInfo.getRawValue(), InitialInfo.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    initialInfo = null;
+                }
+            } else {
                 initialInfo = null;
             }
             setUp(teamId);
