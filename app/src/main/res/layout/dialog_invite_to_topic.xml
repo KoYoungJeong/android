@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="56dp"
         android:padding="8dp">
 
         <EditText
@@ -25,13 +25,12 @@
             android:textColorHint="@color/jandi_text_hint" />
 
         <ImageView
-            android:layout_width="@dimen/jandi_search_default_size"
-            android:layout_height="@dimen/jandi_search_default_size"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
             android:background="?android:attr/selectableItemBackground"
-            android:paddingLeft="13.5dp"
-            android:paddingRight="13.5dp"
-            android:scaleType="centerInside"
+            android:scaleType="fitCenter"
             android:src="@drawable/icon_contact_search" />
 
 

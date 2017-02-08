@@ -24,17 +24,16 @@
             android:paddingLeft="64dp"
             android:paddingRight="64dp"
             android:textColor="#333333"
-            android:textSize="18dp" />
+            android:textSize="@dimen/jandi_text_size_larger_2" />
 
         <ImageView
             android:id="@+id/iv_search_backkey"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginRight="11dp"
             android:background="?android:attr/selectableItemBackground"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingRight="24dp"
             android:scaleType="centerInside"
             android:src="@drawable/btn_search_back" />
 
