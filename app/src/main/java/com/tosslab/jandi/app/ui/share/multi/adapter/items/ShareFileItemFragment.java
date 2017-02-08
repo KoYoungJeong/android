@@ -1,10 +1,8 @@
 package com.tosslab.jandi.app.ui.share.multi.adapter.items;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -20,10 +18,9 @@ import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
+import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
-
-import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -80,12 +77,10 @@ public class ShareFileItemFragment extends Fragment implements FileShareInteract
         if (isImageFile(filePath)) {
             vgFileType.setVisibility(View.GONE);
             ivImageThumb.setVisibility(View.VISIBLE);
-            Uri uri = FileProvider.getUriForFile(getContext(),
-                    getString(R.string.jandi_file_authority), new File(filePath));
             ImageLoader.newInstance()
                     .fragment(this)
                     .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                    .uri(uri)
+                    .uri(UriUtil.getFileUri(filePath))
                     .into(ivImageThumb);
         } else {
             ivImageThumb.setVisibility(View.GONE);
