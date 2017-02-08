@@ -72,12 +72,13 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs_team_member_search"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="40dp"
         android:layout_marginTop="?attr/actionBarSize"
         android:fillViewport="true"
+        android:textSize="@dimen/jandi_text_size_medium"
         app:tabBackground="@color/jandi_primary_color"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorColor="@color/rgb_e5e5e5"
         app:tabIndicatorHeight="2dp"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"
@@ -85,7 +86,7 @@
         app:tabPaddingStart="0dp"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TeamTabTextApprearance"
-        app:tabTextColor="@color/jandi_transparent_white_20p"/>
+        app:tabTextColor="@color/jandi_transparent_white_30p"/>
 
     <View
         android:layout_width="match_parent"
