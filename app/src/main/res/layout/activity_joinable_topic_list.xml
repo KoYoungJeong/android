@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:visibility="visible"
-            app:layout_scrollFlags="scroll" />
+            app:layout_scrollFlags="scroll|snap|enterAlways" />
 
         <RelativeLayout
             android:layout_width="match_parent"
