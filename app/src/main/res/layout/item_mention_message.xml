@@ -12,12 +12,12 @@
         android:paddingBottom="19dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="18dp">
+        android:paddingTop="16dp">
 
         <ImageView
             android:id="@+id/iv_mention_message_profile"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginRight="16dp" />
 
         <View
@@ -140,13 +140,13 @@
         android:id="@+id/v_full_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/jandi_starred_list_line" />
+        android:background="@color/rgb_e5e5e5" />
 
     <View
         android:id="@+id/v_half_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginLeft="72dp"
-        android:background="@color/jandi_starred_list_line" />
+        android:background="@color/rgb_e5e5e5" />
 
 </LinearLayout>
