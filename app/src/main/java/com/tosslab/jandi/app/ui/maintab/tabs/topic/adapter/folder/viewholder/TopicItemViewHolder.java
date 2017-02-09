@@ -37,8 +37,6 @@ public class TopicItemViewHolder extends AbstractExpandableItemViewHolder {
     public ImageView ivDefaultUnderline;
     @Bind(R.id.iv_folder_item_underline)
     public ImageView ivFolderItemUnderline;
-    @Bind(R.id.iv_shadow_underline)
-    public ImageView ivShadowUnderline;
     @Bind(R.id.vg_entity_listitem_badge)
     public RelativeLayout vgTopicBadge;
     @Bind(R.id.v_topic_item_animator)

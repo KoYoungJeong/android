@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -172,7 +171,7 @@ public class ExpandableTopicAdapter
 
         holder.container.setVisibility(View.VISIBLE);
         holder.tvTitle.setText(item.getTitle());
-        holder.tvTopicCnt.setText(String.valueOf(item.getItemCount()));
+        holder.tvChildCount.setText(String.format(" (%d)", item.getItemCount()));
 
         holder.itemView.setClickable(true);
 
@@ -181,28 +180,23 @@ public class ExpandableTopicAdapter
         }
 
         final int expandState = holder.getExpandStateFlags();
-        Resources resources = holder.container.getContext().getResources();
 
         if ((item.getItemCount() > 0) && (expandState & RecyclerViewExpandableItemManager.STATE_FLAG_IS_EXPANDED) != 0) {
-            holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder_open);
-            holder.tvTopicCnt.setTextColor(resources.getColor(R.color.jandi_topic_folder_expand));
-            holder.tvTitle.setTextColor(resources.getColor(R.color.jandi_topic_folder_expand));
+            holder.container.setBackgroundResource(R.drawable.bg_list_innerfolder_item);
             holder.ivDefaultUnderline.setVisibility(View.GONE);
-            holder.vgChildBadgeCnt.setVisibility(View.GONE);
+            holder.tvChildBadgeCnt.setVisibility(View.GONE);
         } else {
-            holder.tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder);
-            holder.tvTopicCnt.setTextColor(resources.getColor(R.color.jandi_topic_folder_collapse));
-            holder.tvTitle.setTextColor(resources.getColor(R.color.jandi_topic_folder_collapse));
+            holder.container.setBackgroundResource(R.drawable.bg_list_item);
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
             if (item.getChildBadgeCnt() > 0) {
-                holder.vgChildBadgeCnt.setVisibility(View.VISIBLE);
+                holder.tvChildBadgeCnt.setVisibility(View.VISIBLE);
                 if (item.getChildBadgeCnt() > 999) {
                     holder.tvChildBadgeCnt.setText(String.valueOf(999));
                 } else {
                     holder.tvChildBadgeCnt.setText(String.valueOf(item.getChildBadgeCnt()));
                 }
             } else {
-                holder.vgChildBadgeCnt.setVisibility(View.GONE);
+                holder.tvChildBadgeCnt.setVisibility(View.GONE);
             }
         }
 
@@ -240,16 +234,10 @@ public class ExpandableTopicAdapter
                 holder.ivFolderItemUnderline.setVisibility(View.GONE);
                 holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
             }
-            if (childPosition == 0) {
-                holder.ivShadowUnderline.setVisibility(View.VISIBLE);
-            } else {
-                holder.ivShadowUnderline.setVisibility(View.GONE);
-            }
         } else {
             holder.container.setBackgroundResource(R.drawable.bg_list_item);
             holder.ivFolderItemUnderline.setVisibility(View.GONE);
             holder.ivDefaultUnderline.setVisibility(View.VISIBLE);
-            holder.ivShadowUnderline.setVisibility(View.GONE);
         }
 
         holder.itemView.setClickable(true);

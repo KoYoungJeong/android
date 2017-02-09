@@ -341,7 +341,7 @@ public class MainTopicListFragment extends BaseLazyFragment
             lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
             lvMainTopic.setHasFixedSize(false);
             tvSortTitle.setText(R.string.jandi_sort_folder);
-            ivTopicOrder.setImageResource(R.drawable.topic_list_folder);
+            ivTopicOrder.setImageResource(R.drawable.topic_list_default);
 //            mainTopicListPresenter.refreshList();
         }
     }

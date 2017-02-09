@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_topic_item_container"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
-    android:background="@drawable/bg_topic_selector"
+    android:layout_height="60dp"
     android:clickable="true"
     android:focusable="true">
 
@@ -13,19 +12,12 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/iv_shadow_underline"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/folder_shadow" />
-
-        <ImageView
             android:id="@+id/iv_entity_listitem_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="19dp"
-            android:layout_marginRight="19dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
             android:src="@drawable/topiclist_icon_topic" />
 
         <LinearLayout
@@ -56,7 +48,7 @@
                     android:singleLine="true"
                     android:text="Topic Name4231412341234123412341234"
                     android:textColor="@color/jandi_text"
-                    android:textSize="@dimen/jandi_entity_item_title_font"
+                    android:textSize="@dimen/jandi_text_size_15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -68,7 +60,7 @@
                     android:maxLines="1"
                     android:text="(11)"
                     android:textColor="@color/jandi_text"
-                    android:textSize="@dimen/jandi_entity_item_title_font"
+                    android:textSize="@dimen/jandi_text_size_15sp"
                     android:textStyle="bold" />
 
                 <View
@@ -110,7 +102,7 @@
                     android:maxWidth="210dp"
                     android:singleLine="true"
                     android:text="Descroption"
-                    android:textColor="@color/jandi_text_medium"
+                    android:textColor="@color/jandi_text_light"
                     android:textSize="@dimen/jandi_text_size_small" />
             </LinearLayout>
 
@@ -142,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="#ffe5e5e5"
+            android:background="@color/rgb_e5e5e5"
             android:visibility="gone" />
 
         <ImageView
@@ -151,7 +143,7 @@
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="62dp"
-            android:background="#ffe5e5e5" />
+            android:background="@color/rgb_e5e5e5" />
     </RelativeLayout>
 
     <View

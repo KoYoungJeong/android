@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!-- NOTE: should use FrameLayout or RelativeLayout for parent of the "@id/container" view (for Android 2.3 compatibility) -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:id="@+id/rl_folder_container"
@@ -12,79 +11,57 @@
         android:clickable="true">
 
         <TextView
-            android:id="@+id/tv_topic_cnt"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:background="@drawable/topiclist_icon_folder"
-            android:gravity="center"
-            android:paddingTop="3dp"
-            android:text="1"
-            android:textColor="#a6a6a6"
-            android:textSize="12sp" />
-
-        <TextView
             android:id="@+id/tv_topic_folder_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="13dp"
-            android:layout_toRightOf="@id/tv_topic_cnt"
             android:ellipsize="end"
+            android:layout_marginLeft="16dp"
             android:maxLines="1"
+            android:singleLine="true"
             android:maxWidth="200dp"
             android:text="Design Topic"
-            android:textColor="#a6a6a6"
-            android:textSize="16sp"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="@dimen/jandi_text_size_medium"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tv_topic_folder_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_topic_folder_title"
+            android:layout_marginRight="13dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text=" (10)"
+            android:textColor="@color/jandi_text_light"
+            android:textSize="@dimen/jandi_text_size_medium"
             android:textStyle="bold" />
 
-        <RelativeLayout
-            android:id="@+id/rl_folder_listitem_badge"
+
+        <TextView
+            android:id="@+id/tv_folder_listitem_badge"
             android:layout_width="wrap_content"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/tv_topic_folder_title">
+            android:layout_toRightOf="@+id/tv_topic_folder_count"
+            android:background="@drawable/topiclist_unread_badge"
+            android:gravity="center"
+            android:text="121"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="11sp" />
 
-
-            <ImageView
-                android:id="@+id/iv_folder_listitem_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/topiclist_unread_badge" />
-
-            <TextView
-                android:id="@+id/tv_folder_listitem_badge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@drawable/topiclist_unread_badge"
-                android:gravity="center"
-                android:text="121"
-                android:textColor="@color/jandi_text_white"
-                android:textSize="11sp" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_folder_setting"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:clickable="true"
-            android:orientation="vertical"></LinearLayout>
 
         <ImageView
             android:id="@+id/iv_folder_setting"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
             android:clickable="false"
+            android:scaleType="centerInside"
             android:src="@drawable/topiclist_icon_folder_setting" />
 
         <ImageView
@@ -92,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="#ffe5e5e5"></ImageView>
+            android:background="@color/rgb_e5e5e5" />
 
     </RelativeLayout>
 
