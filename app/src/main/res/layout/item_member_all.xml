@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="57dp">
+    android:layout_height="56dp">
 
     <View
         android:id="@+id/v_member_filter_all"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginLeft="25.5dp"
-        android:layout_marginRight="25.5dp"
-        android:layout_marginTop="16dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
         android:background="@drawable/icon_search_all_members" />
 
     <TextView
@@ -19,8 +19,8 @@
         android:layout_alignTop="@id/v_member_filter_all"
         android:layout_toRightOf="@id/v_member_filter_all"
         android:gravity="center_vertical"
-        android:minHeight="24dp"
         android:maxLines="1"
+        android:minHeight="24dp"
         android:singleLine="true"
         android:text="@string/jandi_search_category_everyone"
         android:textColor="@color/jandi_text"
