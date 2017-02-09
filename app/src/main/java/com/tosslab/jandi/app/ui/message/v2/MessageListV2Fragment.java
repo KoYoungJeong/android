@@ -895,7 +895,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void showDisabledUserLayer() {
-
         vgMessageInput.setVisibility(View.INVISIBLE);
         vgMemberStatusAlert.setVisibility(View.GONE);
         setPreviewVisible(false);
@@ -2057,7 +2056,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void showReadOnly(boolean readOnly) {
-        vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
+        if (vgReadOnly.getVisibility() != View.VISIBLE) {
+            vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
+        }
         if (readOnly) {
             vgReadOnly.setOnClickListener(v -> {
             });

@@ -242,7 +242,6 @@ public class ExpandableTopicAdapter
 
         holder.itemView.setClickable(true);
         holder.tvTopicName.setText(item.getName());
-        holder.vReadOnly.setVisibility(item.isReadOnly() ? View.VISIBLE : View.GONE);
 
         if (item.getUnreadCount() > 0) {
             holder.tvTopicBadge.setVisibility(View.VISIBLE);
@@ -264,9 +263,20 @@ public class ExpandableTopicAdapter
         holder.tvTopicUserCnt.setText("(" + item.getMemberCount() + ")");
         if (!TextUtils.isEmpty(item.getDescription())) {
             holder.vgTopicDescription.setVisibility(View.VISIBLE);
+            holder.tvTopicDescription.setVisibility(View.VISIBLE);
             holder.tvTopicDescription.setText(item.getDescription());
         } else {
             holder.vgTopicDescription.setVisibility(View.GONE);
+            holder.tvTopicDescription.setVisibility(View.GONE);
+        }
+
+        if (item.isReadOnly()) {
+            if (holder.vgTopicDescription.getVisibility() == View.GONE) {
+                holder.vgTopicDescription.setVisibility(View.VISIBLE);
+            }
+            holder.vReadOnly.setVisibility(View.VISIBLE);
+        } else {
+            holder.vReadOnly.setVisibility(View.GONE);
         }
 
         if (item.isPublic()) {

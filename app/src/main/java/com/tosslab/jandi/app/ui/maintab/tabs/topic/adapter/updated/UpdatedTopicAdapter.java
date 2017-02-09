@@ -113,11 +113,23 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         String memberCount = context.getString(R.string.jandi_count_with_brace, item.getMemberCount());
         updatedHolder.tvTopicUserCnt.setText(memberCount);
+
         if (!TextUtils.isEmpty(item.getDescription())) {
             updatedHolder.vgTopicDescription.setVisibility(View.VISIBLE);
+            updatedHolder.tvTopicDescription.setVisibility(View.VISIBLE);
             updatedHolder.tvTopicDescription.setText(item.getDescription());
         } else {
             updatedHolder.vgTopicDescription.setVisibility(View.GONE);
+            updatedHolder.tvTopicDescription.setVisibility(View.GONE);
+        }
+
+        if (item.isReadOnly()) {
+            if (updatedHolder.vgTopicDescription.getVisibility() == View.GONE) {
+                updatedHolder.vgTopicDescription.setVisibility(View.VISIBLE);
+            }
+            updatedHolder.vReadOnly.setVisibility(View.VISIBLE);
+        } else {
+            updatedHolder.vReadOnly.setVisibility(View.GONE);
         }
 
         if (item.isPublic()) {
@@ -155,14 +167,11 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return false;
         });
 
-        updatedHolder.vReadOnly.setVisibility(item.isReadOnly() ? View.VISIBLE : View.GONE);
-
         if (item.getUnreadCount() <= 0 && !item.isReadOnly()) {
             updatedHolder.vgTopicBadge.setVisibility(View.GONE);
         } else {
             updatedHolder.vgTopicBadge.setVisibility(View.VISIBLE);
         }
-
 
         boolean isSelectedEntity = item.getEntityId() == selectedEntity;
         if (isSelectedEntity && animStatus == AnimStatus.READY) {

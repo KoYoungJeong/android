@@ -160,6 +160,14 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (isInSearchActivity()) {
+            onLazyLoad(savedInstanceState);
+        }
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
