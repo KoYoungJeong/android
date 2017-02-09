@@ -323,10 +323,10 @@
             android:layout_above="@+id/vg_messages_read_only_and_disable"
             android:layout_alignWithParentIfMissing="true"
             android:background="@color/jandi_transparent_black_70p"
-            android:paddingLeft="24dp"
-            android:paddingStart="24dp"
-            android:paddingRight="15dp"
             android:paddingEnd="15dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="15dp"
+            android:paddingStart="24dp"
             android:visibility="gone">
 
             <TextView
@@ -335,8 +335,8 @@
                 android:layout_centerVertical="true"
                 android:text="@string/jandi_go_to_latest"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/jandi_text_size_medium" />
+                android:textSize="@dimen/jandi_text_size_medium"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/iv_go_to_latest"

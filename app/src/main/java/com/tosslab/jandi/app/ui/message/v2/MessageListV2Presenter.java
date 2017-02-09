@@ -418,14 +418,38 @@ public class MessageListV2Presenter {
     }
 
     public void resetUnreadCnt() {
+
         if (adapterModel.getCount() <= 0) {
             return;
         }
+
         List<Marker> markers = RoomMarkerRepository.getInstance().getRoomMarkers(getRoomId());
 
         if (markers == null || markers.isEmpty()) {
             return;
         }
+
+        // direct room 일 경우 파일 댓글에 제 3자가 끼어들면 marker에도 그 제 3자가 나타나는 문제점이 있다.
+        // 그것을 해결하기 위한 코드
+        if (TeamInfoLoader.getInstance().isChat(getRoomId())) {
+            long compainonReadLink = 0;
+
+            for (Marker marker : markers) {
+                if (TeamInfoLoader.getInstance().getChat(getRoomId()).getCompanionId() == marker.getMemberId()) {
+                    compainonReadLink = marker.getReadLinkId();
+                }
+            }
+
+            for (int i = 0; i < adapterModel.getCount(); i++) {
+                if (adapterModel.getItem(i).id <= compainonReadLink) {
+                    adapterModel.getItem(i).unreadCnt = 0;
+                } else {
+                    adapterModel.getItem(i).unreadCnt = 1;
+                }
+            }
+            return;
+        }
+        //
 
         List<Long> memberLastReadLinks = new ArrayList<>();
 
@@ -625,7 +649,6 @@ public class MessageListV2Presenter {
         Observable.just(roomId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(roomid -> {
-
                     room.setRoomId(roomid);
 
                     String readyMessage = messageListModel.getReadyMessage(roomid);
@@ -633,7 +656,8 @@ public class MessageListV2Presenter {
                     Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
                     view.showReadOnly(TeamInfoLoader.getInstance().getRoom(roomid).isReadOnly()
                             && myLevel != Level.Owner
-                            && myLevel != Level.Admin);
+                            && myLevel != Level.Admin
+                            && !messageListModel.isTopicOwner(roomid));
                 })
                 .observeOn(Schedulers.io())
                 .subscribe(roomid -> {
@@ -1181,7 +1205,8 @@ public class MessageListV2Presenter {
             Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
             view.showReadOnly(topic.isReadOnly()
                     && myLevel != Level.Owner
-                    && myLevel != Level.Admin);
+                    && myLevel != Level.Admin
+                    && !messageListModel.isTopicOwner(topic.getId()));
         }).subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                 }, Throwable::printStackTrace);

@@ -159,6 +159,12 @@ public class MessageListModel {
         return -1;
     }
 
+    public boolean isTopicOwner(long entityId) {
+        return TeamInfoLoader.getInstance().getTopic(entityId).getCreatorId()
+                == TeamInfoLoader.getInstance().getMyId();
+
+    }
+
     public void setRoomId(long roomId) {
         messageManipulator.setRoomId(roomId);
     }
