@@ -457,6 +457,10 @@ public class MessageListV2Presenter {
             memberLastReadLinks.add(marker.getReadLinkId());
         }
 
+        if (memberLastReadLinks.size() <= 0) {
+            return;
+        }
+
         Collections.sort(memberLastReadLinks);
 
         int unreadCnt = 0;
