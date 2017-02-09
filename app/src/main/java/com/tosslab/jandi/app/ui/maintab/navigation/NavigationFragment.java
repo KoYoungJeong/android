@@ -116,7 +116,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     NavigationDataView navigationDataView;
 
     private ProgressWheel progressWheel;
-    private KnockListener usageInformationKnockListener;
     private UnreadConversationCountListener intercomUnreadCountListener;
 
     @Nullable
@@ -142,8 +141,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         initProgressWheel();
 
         initNavigations();
-
-        initUsageInformationKnockListener();
 
         navigationPresenter.onInitIntercom();
 
@@ -194,7 +191,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
             AnalyticsUtil.sendEvent(
                     AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.ChooseTeam);
         });
-        navigationDataView.setOnVersionClickListener(() -> usageInformationKnockListener.knock());
+        navigationDataView.setOnVersionClickListener(() -> {
+            showBugReportDialog();
+            AnalyticsUtil.sendEvent(
+                    AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.VersionInfo);
+        });
     }
 
     private void joinToTeam(Team team) {
@@ -626,18 +627,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     public void onEvent(TeamBadgeUpdateEvent event) {
         navigationPresenter.onReloadTeams();
-    }
-
-    private void initUsageInformationKnockListener() {
-        usageInformationKnockListener = KnockListener.create()
-                .expectKnockCount(10)
-                .expectKnockedIn(5000)
-                .onKnocked(() -> {
-                    showBugReportDialog();
-
-                    AnalyticsUtil.sendEvent(
-                            AnalyticsValue.Screen.HamburgerMenu, AnalyticsValue.Action.VersionInfo);
-                });
     }
 
     private void showBugReportDialog() {
