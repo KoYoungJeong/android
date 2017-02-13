@@ -30,7 +30,6 @@ public class TopicFolderViewHolder extends AbstractExpandableItemViewHolder {
 
     public TopicFolderViewHolder(View itemView) {
         super(itemView);
-
         container = (RelativeLayout) itemView.findViewById(R.id.rl_folder_container);
         ivFolderSetting = (ImageView) itemView.findViewById(R.id.iv_folder_setting);
         vgFolderSetting = (LinearLayout) itemView.findViewById(R.id.ll_folder_setting);
@@ -39,7 +38,6 @@ public class TopicFolderViewHolder extends AbstractExpandableItemViewHolder {
         tvChildBadgeCnt = (TextView) itemView.findViewById(R.id.tv_folder_listitem_badge);
         vgChildBadgeCnt = (RelativeLayout) itemView.findViewById(R.id.rl_folder_listitem_badge);
         ivDefaultUnderline = (ImageView) itemView.findViewById(R.id.iv_folder_default_underline);
-
     }
 
 }

@@ -7,10 +7,28 @@ import java.util.List;
 public class TopicFolder implements Cloneable {
     private Folder folder;
     private List<TopicRoom> rooms;
+    private boolean isDummy = false;
 
     public TopicFolder(Folder folder, List<TopicRoom> rooms) {
         this.folder = folder;
         this.rooms = rooms;
+    }
+
+    public TopicFolder() {
+    }
+
+    public static TopicFolder makeDummyFolder() {
+        TopicFolder topicFolder = new TopicFolder();
+        topicFolder.setDummy(true);
+        return topicFolder;
+    }
+
+    public boolean isDummy() {
+        return isDummy;
+    }
+
+    public void setDummy(boolean dummy) {
+        isDummy = dummy;
     }
 
     public Folder getRaw() {
@@ -43,6 +61,15 @@ public class TopicFolder implements Cloneable {
 
     public void setFolder(Folder folder) {
         this.folder = folder;
+    }
+
+    @Override
+    public String toString() {
+        return "TopicFolder{" +
+                "folder=" + folder +
+                ", rooms=" + rooms +
+                ", isDummy=" + isDummy +
+                '}';
     }
 
     @Override
