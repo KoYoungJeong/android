@@ -105,8 +105,7 @@ public class MemberProfileLoader implements ProfileLoader {
 
     @Override
     public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
-        int defaultColor = context.getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
-        vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+        vProfileImageLargeOverlay.setBackgroundResource(R.drawable.bg_profile_default_user);
     }
 
     @Override

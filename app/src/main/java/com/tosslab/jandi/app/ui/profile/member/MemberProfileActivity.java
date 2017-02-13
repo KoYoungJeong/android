@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -165,7 +163,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member_profile);
 
-        setShouldSetOrientation(BuildConfig.DEBUG);
+        setShouldSetOrientation(!BuildConfig.DEBUG);
 
         Dart.inject(this);
         ButterKnife.bind(this);
@@ -385,11 +383,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return;
         }
 
-        int defaultColor = getResources().getColor(R.color.jandi_member_profile_img_overlay_default);
-        Drawable placeHolder = new ColorDrawable(defaultColor);
-
         ImageLoader.newInstance()
-                .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
+                .placeHolder(R.drawable.bg_profile_default_user, ImageView.ScaleType.FIT_XY)
                 .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                 .transformation(new BlurTransformation(getApplicationContext(), 10))
                 .uri(Uri.parse(profileImageUrlLarge))
