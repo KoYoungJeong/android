@@ -89,7 +89,7 @@
                 android:layout_gravity="center_vertical"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="fewfq fefwpefewfweffweqfewfr423142134"
+                android:text="asdjh asd"
                 android:textColor="@color/dark_gray"
                 android:textSize="@dimen/jandi_text_size_small" />
         </com.tosslab.jandi.app.views.viewgroup.RateLinearLayout>
@@ -122,9 +122,9 @@
             android:id="@+id/tv_authority_badge"
             android:layout_width="wrap_content"
             android:layout_height="17dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="12dp"
             android:layout_marginStart="16dp"
             android:background="@drawable/bg_user_level_team_admin"
             android:gravity="center_vertical"

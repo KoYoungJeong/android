@@ -85,8 +85,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="잔디의 모바일 안드로이드 디자인 가이드를 공.."
-                    android:textColor="@color/dark_gray"
+                    android:text="adjhalksjdhlk jahldk jh"
+                    android:textColor="@color/jandi_text_light"
                     android:textSize="12sp"
                     android:visibility="visible" />
 

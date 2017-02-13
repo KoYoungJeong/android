@@ -16,7 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:visibility="visible"
-            app:layout_scrollFlags="scroll|snap|enterAlways" />
+            app:layout_scrollFlags="scroll|snap|enterAlways"
+            app:navigationIcon="@drawable/actionbar_icon_back"
+            app:title="@string/topic_menu_Browse_other_public_topics" />
 
         <RelativeLayout
             android:layout_width="match_parent"

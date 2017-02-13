@@ -36,7 +36,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
+import com.tosslab.jandi.app.views.decoration.SimpleColorDividerItemDecoration;
 
 import javax.inject.Inject;
 
@@ -124,7 +124,8 @@ public class JoinableTopicListActivity extends BaseAppCompatActivity
     void initJoinableTopicListView(final JoinableTopicListAdapter joinableTopicListAdapter) {
         layoutManager = new LinearLayoutManager(getBaseContext());
         lvJoinableTopics.setLayoutManager(layoutManager);
-        lvJoinableTopics.addItemDecoration(new SimpleDividerItemDecoration());
+        int color = lvJoinableTopics.getResources().getColor(R.color.rgb_e5e5e5);
+        lvJoinableTopics.addItemDecoration(new SimpleColorDividerItemDecoration(color));
         lvJoinableTopics.setAdapter(joinableTopicListAdapter);
 
         joinableTopicDataView.setOnTopicClickListener((view, adapter, position) -> {

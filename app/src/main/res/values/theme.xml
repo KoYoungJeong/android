@@ -24,7 +24,9 @@
 
     </style>
 
-    <style name="JandiTheme.NavigationDrawer"></style>
+    <style name="JandiTheme.NavigationDrawer" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">68dp</item>
+    </style>
 
     <style name="JandiTheme.Widget" />
 

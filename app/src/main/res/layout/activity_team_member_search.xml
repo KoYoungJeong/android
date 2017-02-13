@@ -96,7 +96,7 @@
             android:textSize="@dimen/jandi_text_size_medium"
             app:tabBackground="@color/jandi_primary_color"
             app:tabGravity="fill"
-            app:tabIndicatorColor="@color/rgb_e5e5e5"
+            app:tabIndicatorColor="@color/white"
             app:tabIndicatorHeight="2dp"
             app:tabMaxWidth="0dp"
             app:tabMode="fixed"
@@ -108,7 +108,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:layout_alignBottom="@+id/tabs_team_member_search"
             android:background="@color/jandi_tab_underline" />
 
