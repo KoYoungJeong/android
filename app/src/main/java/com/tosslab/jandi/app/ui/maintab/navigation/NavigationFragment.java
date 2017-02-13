@@ -4,9 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -540,18 +537,15 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         String photoUrl = user.getPhotoUrl();
         ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
 
-        Resources resources = ivProfile.getResources();
-        int defaultColor = resources.getColor(R.color.jandi_member_profile_img_overlay_default);
         if (ProfileUtil.isChangedPhoto(photoUrl)) {
-            Drawable placeHolder = new ColorDrawable(defaultColor);
             ImageLoader.newInstance()
-                    .placeHolder(placeHolder, ImageView.ScaleType.FIT_XY)
+                    .placeHolder(R.drawable.bg_profile_default_user, ImageView.ScaleType.FIT_XY)
                     .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
                     .transformation(new BlurTransformation(ivProfile.getContext(), 50))
                     .uri(Uri.parse(photoUrl))
                     .into(ivProfileLarge);
         } else {
-            vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+            vProfileImageLargeOverlay.setBackgroundResource(R.drawable.bg_profile_default_user);
         }
 
         ivProfile.setOnClickListener(v -> {
