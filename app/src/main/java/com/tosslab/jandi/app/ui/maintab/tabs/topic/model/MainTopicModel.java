@@ -1,24 +1,19 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.model;
 
-import android.support.v4.util.LongSparseArray;
-import android.support.v4.util.Pair;
-
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.teams.folder.FolderApi;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
-import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,149 +42,6 @@ public class MainTopicModel {
                 .collect(() -> topicFolders, List::add)
                 .subscribe();
         return topicFolders;
-    }
-
-    // Join된 Topic에 관한 정보를 가져오기
-    private LongSparseArray<Topic> getJoinEntities(List<TopicRoom> topicRooms) {
-
-        LongSparseArray<Topic> topicHashMap = new LongSparseArray<>();
-
-        Observable.from(topicRooms)
-                .map(topicRoom -> new Topic.Builder()
-                        .entityId(topicRoom.getId())
-                        .description(topicRoom.getDescription())
-                        .isJoined(true)
-                        .isPublic(topicRoom.isPublicTopic())
-                        .isStarred(topicRoom.isStarred())
-                        .memberCount(topicRoom.getMemberCount())
-                        .name(topicRoom.getName())
-                        .unreadCount(topicRoom.getUnreadCount())
-                        .markerLinkId(topicRoom.getLastLinkId())
-                        .isPushOn(topicRoom.isPushSubscribe())
-                        .readOnly(topicRoom.isReadOnly())
-                        .build())
-                .collect(() -> topicHashMap, (array, topic) -> array.put(topic.getEntityId(), topic))
-                .subscribe(_1 -> {
-                }, Throwable::printStackTrace);
-
-        return topicHashMap;
-
-    }
-
-    // 리스트에 보여 줄 Data Provider 가져오기
-    public TopicFolderListDataProvider getDataProvider(List<TopicFolder> topicFolders, List<TopicRoom> topicRooms) {
-        if (topicFolders == null || topicRooms == null) {
-            return new TopicFolderListDataProvider(new LinkedList<>());
-        }
-
-        List<Pair<TopicFolderData,
-                List<TopicItemData>>> datas = new LinkedList<>();
-
-        LongSparseArray<Topic> joinTopics = getJoinEntities(topicRooms);
-
-        long folderIndex = 0;
-
-        LongSparseArray<List<TopicItemData>> topicItemMap = new LongSparseArray<>();
-        LinkedHashMap<Long, TopicFolderData> folderMap = new LinkedHashMap<>();
-        LongSparseArray<Integer> badgeCountMap = new LongSparseArray<>();
-
-        for (TopicFolder topicFolder : topicFolders) {
-            if (topicItemMap.indexOfKey(topicFolder.getId()) < 0) {
-                topicItemMap.put(topicFolder.getId(), new ArrayList<>());
-            }
-            if (badgeCountMap.indexOfKey(topicFolder.getId()) < 0) {
-                badgeCountMap.put(topicFolder.getId(), 0);
-            }
-            if (!folderMap.containsKey(topicFolder.getId())) {
-                TopicFolderData topicFolderData = new TopicFolderData(folderIndex, topicFolder.getName(), topicFolder.getId());
-                topicFolderData.setSeq(topicFolder.getSeq());
-                folderMap.put(topicFolder.getId(), topicFolderData);
-            }
-            folderIndex++;
-        }
-
-        Observable.from(topicFolders)
-                .subscribe(topicFolder -> {
-                    Observable.from(topicFolder.getRooms())
-                            .filter(topicRoom -> joinTopics.indexOfKey(topicRoom.getId()) >= 0)
-                            .subscribe(topicRoom -> {
-                                Topic topic = joinTopics.get(topicRoom.getId());
-                                joinTopics.remove(topicRoom.getId());
-                                long itemIndex = folderMap.get(topicFolder.getId()).generateNewChildId();
-
-                                TopicItemData topicItemData = TopicItemData.newInstance(
-                                        itemIndex, topic.getCreatorId(), topic.getName(),
-                                        topic.isStarred(), topic.isJoined(), topic.getEntityId(),
-                                        topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
-                                        topic.isSelected(), topic.getDescription(), topic.isPublic(),
-                                        topic.getMemberCount(), topic.isReadOnly());
-                                topicItemMap.get(topicFolder.getId()).add(topicItemData);
-
-                                int badgeCount = badgeCountMap.get(topicFolder.getId());
-                                badgeCountMap.put(topicFolder.getId(), badgeCount + topicItemData
-                                        .getUnreadCount());
-                            });
-
-                }, Throwable::printStackTrace);
-
-
-        for (Long folderId : folderMap.keySet()) {
-            List<TopicItemData> topicItemDatas = topicItemMap.get(folderId);
-            List<TopicItemData> providerTopicItemDatas = new ArrayList<>();
-
-            Collections.sort(topicItemDatas, (lhs, rhs) -> {
-                if (lhs.isStarred() && rhs.isStarred()) {
-                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-
-                } else if (lhs.isStarred()) {
-                    return -1;
-                } else if (rhs.isStarred()) {
-                    return 1;
-                } else {
-                    return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-                }
-            });
-
-            providerTopicItemDatas.addAll(topicItemDatas);
-
-            TopicFolderData topicFolderData = folderMap.get(folderId);
-            topicFolderData.setItemCount(topicItemDatas.size());
-            topicFolderData.setChildBadgeCnt(badgeCountMap.get(folderId));
-
-            datas.add(new Pair<>(topicFolderData, providerTopicItemDatas));
-        }
-
-        folderIndex = folderMap.size();
-
-        // 폴더가 없는 토픽 데이터 셋팅
-        TopicFolderData fakeFolder = getFakeFolder(folderIndex);
-        List<TopicItemData> noFolderTopicItemDatas = new ArrayList<>();
-        Observable.range(0, joinTopics.size())
-                .map(joinTopics::keyAt)
-                .map(topicId -> {
-                    long itemIndex = fakeFolder.generateNewChildId();
-                    Topic topic = joinTopics.get(topicId);
-                    return TopicItemData.newInstance(
-                            itemIndex, topic.getCreatorId(), topic.getName(),
-                            topic.isStarred(), topic.isJoined(), topic.getEntityId(),
-                            topic.getUnreadCount(), topic.getMarkerLinkId(), topic.isPushOn(),
-                            topic.isSelected(), topic.getDescription(), topic.isPublic(), topic.getMemberCount(), topic.isReadOnly());
-                })
-                .subscribe(noFolderTopicItemDatas::add);
-
-        // Topic join button을 위한 더미 인스턴스 추가
-        if (TeamInfoLoader.getInstance().getMyLevel() != Level.Guest) {
-            noFolderTopicItemDatas.add(TopicItemData.getDummyInstance());
-        }
-        datas.add(new Pair<>(fakeFolder, noFolderTopicItemDatas));
-        return new TopicFolderListDataProvider(datas);
-    }
-
-    // 그룹이 없는 Topic 들을 담아낼 더미 그룹 생성
-    public TopicFolderData getFakeFolder(long lastFolderIndex) {
-        TopicFolderData topicFolderData = new TopicFolderData(lastFolderIndex, "fakeFolder", -1);
-        topicFolderData.setIsFakeFolder(true);
-        return topicFolderData;
     }
 
     public Observable<List<Topic>> getUpdatedTopicList() {
@@ -239,5 +91,99 @@ public class MainTopicModel {
                 .toBlocking()
                 .firstOrDefault(new ArrayList<>());
 
+    }
+
+    public List<IMarkerTopicFolderItem> getTopicFolderDatas() {
+
+        List<TopicFolder> topicFolders = new ArrayList<>();
+        topicFolders.addAll(getTopicFolders());
+
+        List<TopicRoom> joinedTopics = getJoinedTopics();
+        LinkedHashMap<Long, TopicRoom> joinedTopicsHashMap = new LinkedHashMap<>();
+
+        for (TopicRoom topicRoom : joinedTopics) {
+            joinedTopicsHashMap.put(topicRoom.getId(), topicRoom);
+        }
+
+        for (TopicFolder topicFolder : topicFolders) {
+            for (TopicRoom topicRoom : topicFolder.getRooms()) {
+                joinedTopicsHashMap.remove(topicRoom.getId());
+            }
+        }
+
+        TopicFolder dummyFolder = TopicFolder.makeDummyFolder();
+
+        List<TopicRoom> noFolderTopics = new ArrayList<>();
+
+        for (Long id : joinedTopicsHashMap.keySet()) {
+            noFolderTopics.add(joinedTopicsHashMap.get(id));
+        }
+
+        if (noFolderTopics.size() > 0) {
+            dummyFolder.setRooms(noFolderTopics);
+            topicFolders.add(dummyFolder);
+        }
+
+        List<IMarkerTopicFolderItem> TopicFolderItems = new ArrayList<>();
+
+        Observable.from(topicFolders)
+                .map(topicFolder -> {
+                    if (!topicFolder.isDummy()) {
+                        TopicFolderData topicFolderData = new TopicFolderData();
+                        topicFolderData.setFolderId(topicFolder.getId());
+                        topicFolderData.setItemCount(topicFolder.getRooms().size());
+                        topicFolderData.setSeq(topicFolder.getSeq());
+                        topicFolderData.setTitle(topicFolder.getName());
+                        long childBadgeCnt = 0;
+                        for (TopicRoom room : topicFolder.getRooms()) {
+                            childBadgeCnt += room.getUnreadCount();
+                        }
+                        topicFolderData.setChildBadgeCnt(childBadgeCnt);
+                        TopicFolderItems.add(topicFolderData);
+                    }
+
+                    int index = -1;
+
+                    Collections.sort(topicFolder.getRooms(), (lhs, rhs) -> {
+                        if (lhs.isStarred() && rhs.isStarred()) {
+                            return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                        } else if (lhs.isStarred()) {
+                            return -1;
+                        } else if (rhs.isStarred()) {
+                            return 1;
+                        } else {
+                            return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                        }
+                    });
+
+                    for (TopicRoom room : topicFolder.getRooms()) {
+                        index++;
+                        TopicItemData topicItemData = new TopicItemData();
+                        topicItemData.setName(room.getName());
+                        topicItemData.setStarred(room.isStarred());
+                        topicItemData.setJoined(true);
+                        topicItemData.setEntityId(room.getId());
+                        topicItemData.setMemberCount(room.getMemberCount());
+                        topicItemData.setUnreadCount(room.getUnreadCount());
+                        topicItemData.setPublic(room.getType().equals("channel"));
+                        topicItemData.setDescription(room.getDescription());
+                        topicItemData.setCreatorId(room.getCreatorId());
+                        topicItemData.setMarkerLinkId(room.getReadLinkId());
+                        topicItemData.setPushOn(room.isPushSubscribe());
+                        topicItemData.setReadOnly(room.isReadOnly());
+                        topicItemData.setChildIndex(index);
+                        topicItemData.setParentChildCnt(topicFolder.getRooms().size());
+                        topicItemData.setInnerFolder(!topicFolder.isDummy());
+                        if (!topicFolder.isDummy()) {
+                            topicItemData.setParentId(topicFolder.getId());
+                        } else {
+                            topicItemData.setParentId(-1);
+                        }
+                        TopicFolderItems.add(topicItemData);
+                    }
+                    return topicFolder;
+                }).subscribe();
+
+        return TopicFolderItems;
     }
 }

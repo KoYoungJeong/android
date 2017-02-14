@@ -1,24 +1,18 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter;
 
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResCreateFolder;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
-import com.tosslab.jandi.app.team.room.TopicFolder;
-import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
@@ -43,9 +37,6 @@ public class MainTopicListPresenter {
     private View view;
     private TopicFolderSettingModel topicFolderChooseModel;
 
-    private List<TopicFolder> topicFolders;
-    private List<TopicRoom> topicFolderItems;
-
     @Inject
     MainTopicListPresenter(View view, MainTopicModel mainTopicModel,
                            TopicFolderSettingModel topicFolderChooseModel) {
@@ -56,15 +47,11 @@ public class MainTopicListPresenter {
 
     public void onLoadFolderList() {
         Observable
-                .fromCallable(() -> {
-                    topicFolders = mainTopicModel.getTopicFolders();
-                    topicFolderItems = mainTopicModel.getJoinedTopics();
-                    return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
-                })
+                .fromCallable(() -> mainTopicModel.getTopicFolderDatas())
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((provider) -> {
-                    view.showList(provider);
+                .subscribe((datas) -> {
+                    view.showList(datas);
                 }, Throwable::printStackTrace);
     }
 
@@ -77,14 +64,11 @@ public class MainTopicListPresenter {
     }
 
     public void refreshList() {
-        Observable.fromCallable(() -> {
-            topicFolders = mainTopicModel.getTopicFolders();
-            topicFolderItems = mainTopicModel.getJoinedTopics();
-            return mainTopicModel.getDataProvider(topicFolders, topicFolderItems);
-        }).subscribeOn(Schedulers.computation())
+        Observable.fromCallable(() -> mainTopicModel.getTopicFolderDatas())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(dataProvider -> {
-                    view.refreshList(dataProvider);
+                .subscribe(datas -> {
+                    view.refreshList(datas);
                 }, Throwable::printStackTrace);
     }
 
@@ -99,22 +83,21 @@ public class MainTopicListPresenter {
                 item.getMarkerLinkId());
     }
 
-    public void onChildItemClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
-        ExpandableTopicAdapter topicAdapter = (ExpandableTopicAdapter) adapter;
-        TopicItemData item = topicAdapter.getTopicItemData(groupPosition, childPosition);
+    public void onChildItemClick(TopicItemData item) {
         if (item == null) {
             return;
         }
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
+        AnalyticsValue.Action action = item.isPublic() ?
+                AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 
-        int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+        int entityType = item.isPublic() ?
+                JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
         view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
                 item.getMarkerLinkId());
         view.setSelectedItem(item.getEntityId());
-        view.notifyDatasetChangedForFolder();
     }
 
 
@@ -124,68 +107,11 @@ public class MainTopicListPresenter {
         view.showEntityMenuDialog(entityId, folderId);
     }
 
-    public void onChildItemLongClick(RecyclerView.Adapter adapter, int groupPosition, int childPosition) {
-        TopicItemData topicItemData = ((ExpandableTopicAdapter) adapter).getTopicItemData(groupPosition, childPosition);
+    public void onChildItemLongClick(TopicItemData topicItemData) {
         if (topicItemData == null) {
             return;
         }
-        long entityId = topicItemData.getEntityId();
-        TopicFolderData topicFolderData = ((ExpandableTopicAdapter) adapter).getTopicFolderData(groupPosition);
-        if (topicFolderData != null) {
-            long folderId = topicFolderData.getFolderId();
-            view.showEntityMenuDialog(entityId, folderId);
-        }
-    }
-
-    public Observable<Integer> getUnreadCount(Observable<TopicItemData> joinEntities) {
-        return joinEntities
-                .map(TopicItemData::getUnreadCount)
-                .defaultIfEmpty(0)
-                .reduce((lhs, rhs) -> lhs + rhs);
-    }
-
-    public void onFolderExpand(TopicFolderData topicFolderData) {
-        FolderRepository.getInstance()
-                .upsertFolderExpands(topicFolderData.getFolderId(), true);
-    }
-
-    public void onFolderCollapse(TopicFolderData topicFolderData) {
-        FolderRepository.getInstance()
-                .upsertFolderExpands(topicFolderData.getFolderId(), false);
-    }
-
-
-    public List<FolderExpand> onGetFolderExpands() {
-        List<FolderExpand> folderExpands = FolderRepository.getInstance().getFolderExpands();
-        if (folderExpands == null || folderExpands.isEmpty()) {
-            List<TopicFolder> topicFolders = TeamInfoLoader.getInstance().getTopicFolders();
-            if (topicFolders != null && topicFolders.size() == 1) {
-                List<TopicRoom> rooms = topicFolders.get(0).getRooms();
-                if (rooms != null && rooms.size() == 1) {
-                    if (rooms.get(0).getId() == TeamInfoLoader.getInstance().getDefaultTopicId()
-                            && TeamInfoLoader.getInstance().getTopicList().size() <= 4) {
-                        /*
-                        폴더 설정이 없고
-                        폴더가 1개
-                        폴더 내 토픽이 1개
-                        토픽이 Default 토픽
-                        토픽이 총 4개이하 인 경우
-                        folderExpands 가 open 으로 설정
-                         */
-                        FolderExpand folderExpand = new FolderExpand();
-                        folderExpand.setExpand(true);
-                        long folderId = topicFolders.get(0).getId();
-                        folderExpand.setFolderId(folderId);
-                        folderExpand.setTeamId(TeamInfoLoader.getInstance().getTeamId());
-                        folderExpands = Arrays.asList(folderExpand);
-
-                        FolderRepository.getInstance().upsertFolderExpands(folderId, true);
-
-                    }
-                }
-            }
-        }
-        return folderExpands;
+        view.showEntityMenuDialog(topicItemData.getEntityId(), topicItemData.getParentId());
     }
 
     public void createNewFolder(String title) {
@@ -254,21 +180,15 @@ public class MainTopicListPresenter {
 
         void setUpdatedItems(List<Topic> topics);
 
-        void showList(TopicFolderListDataProvider topicFolderListDataProvider);
+        void showList(List<IMarkerTopicFolderItem> topicFolderItems);
 
-        void refreshList(TopicFolderListDataProvider topicFolderListDataProvider);
+        void refreshList(List<IMarkerTopicFolderItem> topicFolderItems);
 
         void moveToMessageActivity(long entityId, int entityType, boolean starred, long teamId, long markerLinkId);
-
-        void notifyDatasetChangedForFolder();
 
         void showEntityMenuDialog(long entityId, long folderId);
 
         void setSelectedItem(long selectedEntity);
-
-        void scrollAndAnimateForSelectedItem();
-
-        void setFolderExpansion();
 
         void showAlreadyHasFolderToast();
     }

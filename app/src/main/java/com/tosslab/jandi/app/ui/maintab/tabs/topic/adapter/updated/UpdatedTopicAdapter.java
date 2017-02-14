@@ -233,10 +233,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public boolean isIdleOfAnim() {
-        return animStatus == AnimStatus.IDLE;
-    }
-
     public long getSelectedEntity() {
         return selectedEntity;
     }

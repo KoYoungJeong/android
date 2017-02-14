@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import com.tosslab.jandi.app.JandiApplication;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by justinygchoi on 2014. 7. 8..
@@ -69,6 +71,8 @@ public class JandiPreference {
     private static final String PREF_CALL_PERMISSION_POPUP_TODAY = "call_preview_permission_popup_today";
 
     private static final String PREF_PUSH_LAST_SENT_AT = "push_last_sent_at";
+
+    private static final String PREF_FOLDER_CLOSED_SET = "push_folder_closed_set";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -495,4 +499,13 @@ public class JandiPreference {
     public static void setPushLastSentAt(long time) {
         getSharedPreferences().edit().putLong(PREF_PUSH_LAST_SENT_AT, time).commit();
     }
+
+    public static Set<String> getFolderClosedStatus() {
+        return getSharedPreferences().getStringSet(PREF_FOLDER_CLOSED_SET, new HashSet<String>());
+    }
+
+    public static void setFolderClosedStatus(Set<String> folderClosedStatusSet) {
+        getSharedPreferences().edit().putStringSet(PREF_FOLDER_CLOSED_SET, folderClosedStatusSet).commit();
+    }
+
 }

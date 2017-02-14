@@ -3,13 +3,12 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,24 +32,20 @@ import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
-import com.tosslab.jandi.app.libraries.advancerecyclerview.expandable.RecyclerViewExpandableItemManager;
-import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.ExpandableTopicAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.TopicFolderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dagger.DaggerMainTopicListComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dagger.MainTopicListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.EntityMenuDialogFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dialog.TopicFolderDialogFragment;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderListDataProvider;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.presenter.MainTopicListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.TopicFolderSettingActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.joinabletopiclist.JoinableTopicListActivity;
@@ -68,8 +63,6 @@ import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +77,6 @@ import rx.Observable;
 public class MainTopicListFragment extends BaseLazyFragment
         implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
 
-    private static final String SAVED_STATE_EXPANDABLE_ITEM_MANAGER = "RecyclerViewExpandableItemManager";
     private static final int MOVE_MESSAGE_ACTIVITY = 702;
 
     @Nullable
@@ -101,13 +93,12 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     @Inject
     MainTopicListPresenter mainTopicListPresenter;
+
     private LinearLayoutManager layoutManager;
-    private ExpandableTopicAdapter expandableTopicAdapter;
-    private RecyclerViewExpandableItemManager expandableItemManager;
     private AlertDialog createFolderDialog;
-    private RecyclerView.Adapter wrappedAdapter;
     private UpdatedTopicAdapter updatedTopicAdapter;
     private boolean isFirstLoadFragment = true;
+    private TopicFolderAdapter topicFolderAdapter;
 
     public static MainTopicListFragment create(long selectedEntity) {
         Bundle args = new Bundle();
@@ -147,15 +138,7 @@ public class MainTopicListFragment extends BaseLazyFragment
     void initViews(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        layoutManager = new LinearLayoutManager(getActivity());
-
-        final Parcelable eimSavedState = (savedInstanceState != null) ?
-                savedInstanceState.getParcelable(SAVED_STATE_EXPANDABLE_ITEM_MANAGER) : null;
-
-        expandableItemManager = new RecyclerViewExpandableItemManager(eimSavedState);
-
-        lvMainTopic.setLayoutManager(layoutManager);
-        initFolderTopicAdapter();
+        initTopicFolderAdapter();
         initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
@@ -163,7 +146,7 @@ public class MainTopicListFragment extends BaseLazyFragment
         if (selectedEntity > 0) {
             setSelectedItem(selectedEntity);
             if (isCurrentFolder()) {
-                scrollAndAnimateForSelectedItem();
+                scrollForFolder();
             } else {
                 scrollForUpdate();
             }
@@ -172,6 +155,25 @@ public class MainTopicListFragment extends BaseLazyFragment
         mainTopicListPresenter.checkFloatingActionMenu();
 
         setListViewScroll();
+    }
+
+    private void initTopicFolderAdapter() {
+        layoutManager = new LinearLayoutManager(getActivity());
+        lvMainTopic.setLayoutManager(layoutManager);
+        lvMainTopic.setItemAnimator(new DefaultItemAnimator());
+        topicFolderAdapter = new TopicFolderAdapter();
+        topicFolderAdapter.setOnFolderSettingClickListener(
+                (folderId, folderName, folderSeq) -> showGroupSettingPopupView(folderId, folderName, folderSeq));
+
+        topicFolderAdapter.setOnItemLongClickListener(topicItemData -> {
+            mainTopicListPresenter.onChildItemLongClick(topicItemData);
+        });
+
+        topicFolderAdapter.setOnItemClickListener(topicItemData -> {
+            topicFolderAdapter.stopAnimation();
+            mainTopicListPresenter.onChildItemClick(topicItemData);
+            topicFolderAdapter.notifyDataSetChanged();
+        });
     }
 
     private void setListViewScroll() {
@@ -188,12 +190,6 @@ public class MainTopicListFragment extends BaseLazyFragment
                 }
             }
         });
-    }
-
-    private void initFolderTopicAdapter() {
-        expandableTopicAdapter = new ExpandableTopicAdapter(new TopicFolderListDataProvider(new ArrayList<>()));
-        wrappedAdapter = expandableItemManager.createWrappedAdapter(expandableTopicAdapter);
-        expandableItemManager.attachRecyclerView(lvMainTopic);
     }
 
     @Override
@@ -326,7 +322,6 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     void onSearchOptionSelect() {
         startActivity(new Intent(getActivity(), SearchActivity.class));
-
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.Search);
     }
 
@@ -336,13 +331,10 @@ public class MainTopicListFragment extends BaseLazyFragment
             lvMainTopic.setAdapter(updatedTopicAdapter);
             tvSortTitle.setText(R.string.jandi_sort_updated);
             ivTopicOrder.setImageResource(R.drawable.topic_list_recent);
-//            mainTopicListPresenter.onRefreshUpdatedTopicList();
         } else if (!currentFolder && changeToFolder) {
-            lvMainTopic.setAdapter(wrappedAdapter);  // requires *wrapped* expandableTopicAdapter
-            lvMainTopic.setHasFixedSize(false);
+            lvMainTopic.setAdapter(topicFolderAdapter);
             tvSortTitle.setText(R.string.jandi_sort_folder);
-            ivTopicOrder.setImageResource(R.drawable.topic_list_default);
-//            mainTopicListPresenter.refreshList();
+            ivTopicOrder.setImageResource(R.drawable.topic_list_folder);
         }
     }
 
@@ -375,63 +367,16 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     @Override
-    public void showList(TopicFolderListDataProvider topicFolderListDataProvider) {
-        expandableTopicAdapter.setProvider(topicFolderListDataProvider);
-        expandableTopicAdapter.notifyDataSetChanged();
-
-        // 어떤 폴더에도 속하지 않는 토픽들을 expand된 상태에서 보여주기 위하여
-        expandableItemManager.expandGroup(expandableTopicAdapter.getGroupCount() - 1);
-
-        expandableItemManager.setOnGroupCollapseListener((groupPosition, fromUser) -> {
-            TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
-            if (topicFolderData == null) {
-                return;
-            }
-            mainTopicListPresenter.onFolderCollapse(topicFolderData);
-            if (!isFirstLoadFragment) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderCollapse);
-            }
-        });
-
-        expandableItemManager.setOnGroupExpandListener((groupPosition, fromUser) -> {
-            TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
-            if (topicFolderData == null) {
-                return;
-            }
-            mainTopicListPresenter.onFolderExpand(topicFolderData);
-            if (!isFirstLoadFragment) {
-                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicFolderExpand);
-            }
-        });
-
-        expandableTopicAdapter.setOnChildItemClickListener((view, adapter, groupPosition, childPosition)
-                -> mainTopicListPresenter.onChildItemClick(adapter, groupPosition, childPosition));
-
-        expandableTopicAdapter.setOnChildItemLongClickListener((view, adapter, groupPosition, childPosition) -> {
-            mainTopicListPresenter.onChildItemLongClick(adapter, groupPosition, childPosition);
-            AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, AnalyticsValue.Action.TopicSubMenu);
-            return true;
-        });
-
-        expandableTopicAdapter.setOnGroupItemClickListener((view, adapter, groupPosition) -> {
-            ExpandableTopicAdapter expandableTopicAdapter = (ExpandableTopicAdapter) adapter;
-            TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(groupPosition);
-            if (topicFolderData == null) {
-                return;
-            }
-            long folderId = topicFolderData.getFolderId();
-            String folderName = topicFolderData.getTitle();
-            showGroupSettingPopupView(folderId, folderName, topicFolderData.getSeq());
-        });
-
+    public void showList(List<IMarkerTopicFolderItem> topicFolderItems) {
+        topicFolderAdapter.setItems(topicFolderItems);
+        topicFolderAdapter.notifyDataSetChanged();
         EventBus.getDefault().post(new TopicBadgeEvent());
-        setFolderExpansion();
     }
 
     @Override
-    public void refreshList(TopicFolderListDataProvider topicFolderListDataProvider) {
-        expandableTopicAdapter.setProvider(topicFolderListDataProvider);
-        notifyDatasetChangedForFolder();
+    public void refreshList(List<IMarkerTopicFolderItem> topicFolderItems) {
+        topicFolderAdapter.setItems(topicFolderItems);
+        topicFolderAdapter.notifyDataSetChanged();
     }
 
     public void showGroupSettingPopupView(long folderId, String folderName, int seq) {
@@ -475,12 +420,11 @@ public class MainTopicListFragment extends BaseLazyFragment
                 if (selectedEntity <= -2) {
                     return;
                 }
-
                 setSelectedItem(selectedEntity);
                 if (isCurrentFolder()) {
                     mainTopicListPresenter.refreshList();
-                    expandableTopicAdapter.startAnimation();
-                    expandableTopicAdapter.notifyDataSetChanged();
+                    topicFolderAdapter.startAnimation();
+                    topicFolderAdapter.notifyDataSetChanged();
                 } else {
                     if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
                         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
@@ -501,50 +445,9 @@ public class MainTopicListFragment extends BaseLazyFragment
     }
 
     @Override
-    public void notifyDatasetChangedForFolder() {
-        expandableTopicAdapter.notifyDataSetChanged();
-        //빼먹지 말아야 함.
-        int groupPosition = expandableTopicAdapter.getGroupCount() - 1;
-        if (groupPosition >= 0) {
-            expandableItemManager.expandGroup(groupPosition);
-        }
-    }
-
-    @Override
     public void showEntityMenuDialog(long entityId, long folderId) {
         EntityMenuDialogFragment.create(entityId, entityId, folderId)
                 .show(getFragmentManager(), "dialog");
-    }
-
-    public void setFolderExpansion() {
-        List<FolderExpand> folderExpands = mainTopicListPresenter.onGetFolderExpands();
-        if (expandableTopicAdapter.getGroupCount() > 1 && folderExpands != null && !folderExpands.isEmpty()) {
-            int groupCount = expandableTopicAdapter.getGroupCount();
-            HashMap<Long, Boolean> folderExpandMap = new HashMap<>();
-
-            for (FolderExpand folderExpand : folderExpands) {
-                folderExpandMap.put(folderExpand.getFolderId(), folderExpand.isExpand());
-            }
-
-            for (int idx = 0; idx < groupCount; idx++) {
-                TopicFolderData topicFolderData = expandableTopicAdapter.getTopicFolderData(idx);
-                if (topicFolderData == null) {
-                    continue;
-                }
-                long folderId = topicFolderData.getFolderId();
-                if (folderExpandMap.containsKey(folderId)) {
-                    if (folderExpandMap.get(folderId)) {
-                        if (!expandableItemManager.isGroupExpanded(idx)) {
-                            expandableItemManager.expandGroup(idx);
-                        }
-                    } else {
-                        if (expandableItemManager.isGroupExpanded(idx)) {
-                            expandableItemManager.collapseGroup(idx);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public void onEvent(JoinableTopicCallEvent event) {
@@ -660,8 +563,9 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     public void setSelectedItem(long selectedEntity) {
         this.selectedEntity = selectedEntity;
-        if (expandableTopicAdapter != null) {
-            expandableTopicAdapter.setSelectedEntity(selectedEntity);
+
+        if (topicFolderAdapter != null) {
+            topicFolderAdapter.setSelectedEntity(selectedEntity);
         }
 
         if (updatedTopicAdapter != null) {
@@ -669,74 +573,28 @@ public class MainTopicListFragment extends BaseLazyFragment
         }
     }
 
-    @Override
-    public void scrollAndAnimateForSelectedItem() {
-        long selectedEntity = expandableTopicAdapter.getSelectedEntity();
-        if (selectedEntity <= 0) {
+    private void scrollForFolder() {
+        int position = topicFolderAdapter.indexOfEntity(selectedEntity);
+        if (position < 0) {
             return;
         }
-
-        int groupPosition = -1;
-        int childPosition = 0;
-        TopicFolderListDataProvider provider = expandableTopicAdapter.getProvider();
-
-        int groupCount = provider.getGroupCount();
-        if (groupCount > 0) {
-            for (int i = 0; i < groupCount; i++) {
-                int childCount = provider.getChildCount(i);
-                for (int j = 0; j < childCount; j++) {
-                    TopicItemData childItem = provider.getChildItem(i, j);
-                    if (childItem != null && childItem.getEntityId() == selectedEntity) {
-                        groupPosition = i;
-                        childPosition = j;
-                        break;
-                    }
-                }
-            }
-        } else {
-            groupPosition = -1;
-            // groupcount = 0 인데 왜 ??
-//            for (int i = 0; i < provider.getChildCount(0); i++) {
-//                TopicItemData childItem = provider.getChildItem(0, i);
-//                if (childItem.getEntityId() == selectedEntity) {
-//                    childPosition = i;
-//                    break;
-//                }
-//            }
-        }
-
-        if (groupPosition == -1) {
-            expandableTopicAdapter.startAnimation();
-            expandableTopicAdapter.notifyDataSetChanged();
-            return;
-        }
-
-        if (!expandableItemManager.isGroupExpanded(groupPosition)) {
-            expandableItemManager.expandGroup(groupPosition);
-        }
-
-        long packedPositionForChild =
-                RecyclerViewExpandableItemManager.getPackedPositionForChild(groupPosition, childPosition);
-
-        int flatPosition = expandableItemManager.getFlatPosition(packedPositionForChild);
-
         int offset = lvMainTopic.getMeasuredHeight() / 3;
         if (offset <= 0) {
-            offset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    100f,
-                    JandiApplication.getContext().getResources().getDisplayMetrics());
+            offset = JandiApplication.getContext()
+                    .getResources()
+                    .getDisplayMetrics()
+                    .heightPixels / 3;
         }
 
-        layoutManager.scrollToPositionWithOffset(flatPosition, offset);
+
+        layoutManager.scrollToPositionWithOffset(position, offset);
 
         lvMainTopic.postDelayed(() -> {
-            expandableTopicAdapter.startAnimation();
-            expandableTopicAdapter.notifyDataSetChanged();
+            topicFolderAdapter.startAnimation();
         }, 300);
     }
 
     private void scrollForUpdate() {
-
         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
         if (position < 0) {
             return;
@@ -849,4 +707,5 @@ public class MainTopicListFragment extends BaseLazyFragment
             });
         }
     }
+
 }
