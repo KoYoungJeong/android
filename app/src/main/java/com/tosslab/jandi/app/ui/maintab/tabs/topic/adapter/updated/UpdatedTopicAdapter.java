@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicJoinButtonViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder.TopicJoinButtonViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
 import com.tosslab.jandi.app.views.FixedLinearLayout;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;

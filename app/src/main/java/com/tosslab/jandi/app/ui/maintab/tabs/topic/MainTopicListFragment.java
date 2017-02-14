@@ -412,9 +412,7 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (requestCode == MOVE_MESSAGE_ACTIVITY) {
-
             if (resultCode == Activity.RESULT_OK && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
                 long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
                 if (selectedEntity <= -2) {
@@ -422,9 +420,8 @@ public class MainTopicListFragment extends BaseLazyFragment
                 }
                 setSelectedItem(selectedEntity);
                 if (isCurrentFolder()) {
-                    mainTopicListPresenter.refreshList();
                     topicFolderAdapter.startAnimation();
-                    topicFolderAdapter.notifyDataSetChanged();
+                    mainTopicListPresenter.refreshList();
                 } else {
                     if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
                         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
@@ -439,9 +436,7 @@ public class MainTopicListFragment extends BaseLazyFragment
                     updatedTopicAdapter.notifyDataSetChanged();
                 }
             }
-
         }
-
     }
 
     @Override

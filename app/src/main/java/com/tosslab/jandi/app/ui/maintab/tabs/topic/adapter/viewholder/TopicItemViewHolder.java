@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder;
+package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder;
 
 import android.text.TextUtils;
 import android.view.View;
@@ -19,6 +19,8 @@ import butterknife.ButterKnife;
 
 public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
 
+    @Bind(R.id.v_topic_item_animator)
+    public View vAnimator;
     @Bind(R.id.rl_topic_item_container)
     RelativeLayout container;
     @Bind(R.id.iv_entity_listitem_icon)
@@ -43,8 +45,6 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
 //    ImageView ivShadowUnderline;
     @Bind(R.id.vg_entity_listitem_badge)
     RelativeLayout vgTopicBadge;
-    @Bind(R.id.v_topic_item_animator)
-    View vAnimator;
     @Bind(R.id.tv_entity_listitem_read_only)
     View vReadOnly;
     @Bind(R.id.vg_topic_description)
@@ -164,10 +164,6 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
             }
             return false;
         });
-    }
-
-    public View getvAnimator() {
-        return vAnimator;
     }
 
     public interface OnItemLongClickListener {
