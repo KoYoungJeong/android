@@ -7,8 +7,8 @@ import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain._TopicFolderData;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain._TopicItemData;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
@@ -129,7 +129,7 @@ public class MainTopicModel {
         Observable.from(topicFolders)
                 .map(topicFolder -> {
                     if (!topicFolder.isDummy()) {
-                        _TopicFolderData topicFolderData = new _TopicFolderData();
+                        TopicFolderData topicFolderData = new TopicFolderData();
                         topicFolderData.setFolderId(topicFolder.getId());
                         topicFolderData.setItemCount(topicFolder.getRooms().size());
                         topicFolderData.setSeq(topicFolder.getSeq());
@@ -158,7 +158,7 @@ public class MainTopicModel {
 
                     for (TopicRoom room : topicFolder.getRooms()) {
                         index++;
-                        _TopicItemData topicItemData = new _TopicItemData();
+                        TopicItemData topicItemData = new TopicItemData();
                         topicItemData.setName(room.getName());
                         topicItemData.setStarred(room.isStarred());
                         topicItemData.setJoined(true);

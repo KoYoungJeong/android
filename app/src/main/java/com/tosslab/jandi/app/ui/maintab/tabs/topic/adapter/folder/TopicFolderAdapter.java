@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder_modify;
+package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -12,18 +12,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.MainTopicViewHolder;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder._TopicFolderViewHolder;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder._TopicItemViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicFolderViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicItemViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicJoinButtonViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain._TopicFolderData;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain._TopicItemData;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicJoinButtonData;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by tee on 2017. 2. 10..
@@ -33,6 +38,7 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
 
     private final int VIEW_TYPE_FOLDER = 0x01;
     private final int VIEW_TYPE_ITEM = 0x02;
+    private final int VIEW_TYPE_JOIN_BUTTON = 0x03;
 
     private List<IMarkerTopicFolderItem> items = new ArrayList<>();
 
@@ -62,35 +68,40 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
 
         if (viewType == VIEW_TYPE_FOLDER) {
             v = inflater.inflate(R.layout.item_topic_folder_list, parent, false);
-            return new _TopicFolderViewHolder(v);
-        } else {
+            return new TopicFolderViewHolder(v);
+        } else if (viewType == VIEW_TYPE_ITEM) {
             v = inflater.inflate(R.layout.item_topic_list, parent, false);
-            return new _TopicItemViewHolder(v);
+            return new TopicItemViewHolder(v);
+        } else {
+            v = inflater.inflate(R.layout.item_join_topic, parent, false);
+            return new TopicJoinButtonViewHolder(v);
         }
     }
 
     @Override
     public void onBindViewHolder(MainTopicViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_FOLDER) {
-            final _TopicFolderData topicFolderData = ((_TopicFolderData) cloneItems.get(position));
+            final TopicFolderData topicFolderData = ((TopicFolderData) cloneItems.get(position));
             holder.setOnItemClickListener(() -> {
                 long folderId = topicFolderData.getFolderId();
                 changeFolderStatus(folderId);
             });
-            ((_TopicFolderViewHolder) holder).setOnFolderSettingClickListener(() -> {
+            ((TopicFolderViewHolder) holder).setOnFolderSettingClickListener(() -> {
                 if (onFolderSettingClickListener != null) {
                     onFolderSettingClickListener.onClick(
-                            topicFolderData.getFolderId(), topicFolderData.getTitle(), topicFolderData.getSeq());
+                            topicFolderData.getFolderId(),
+                            topicFolderData.getTitle(),
+                            topicFolderData.getSeq());
                 }
             });
-        } else {
-            final _TopicItemData topicItemData = ((_TopicItemData) cloneItems.get(position));
+        } else if (getItemViewType(position) == VIEW_TYPE_ITEM) {
+            final TopicItemData topicItemData = ((TopicItemData) cloneItems.get(position));
             holder.setOnItemClickListener(() -> {
                 if (onItemClickListener != null) {
                     onItemClickListener.onClick(topicItemData);
                 }
             });
-            _TopicItemViewHolder topicItemViewHolder = (_TopicItemViewHolder) holder;
+            TopicItemViewHolder topicItemViewHolder = (TopicItemViewHolder) holder;
             topicItemViewHolder.setOnItemLongClickListener(() -> {
                 if (onItemLongClickListener != null) {
                     onItemLongClickListener.onLongClick(topicItemData);
@@ -98,18 +109,28 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
             });
             boolean isSelectedEntity = topicItemData.getEntityId() == selectedEntity;
             if (isSelectedEntity && animStatus == AnimStatus.READY) {
-                animateForSelectedEntity(topicItemViewHolder.getvAnimator());
+                animateForSelectedEntity(holder.itemView);
             }
         }
-        holder.bind(cloneItems.get(position));
+
+        if (getItemViewType(position) != VIEW_TYPE_JOIN_BUTTON) {
+            holder.bind(cloneItems.get(position));
+        } else {
+            holder.itemView.setOnClickListener(v -> {
+                EventBus.getDefault().post(new JoinableTopicCallEvent());
+            });
+        }
+
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (cloneItems.get(position) instanceof _TopicFolderData) {
+        if (cloneItems.get(position) instanceof TopicFolderData) {
             return VIEW_TYPE_FOLDER;
-        } else {
+        } else if (cloneItems.get(position) instanceof TopicItemData) {
             return VIEW_TYPE_ITEM;
+        } else {
+            return VIEW_TYPE_JOIN_BUTTON;
         }
     }
 
@@ -139,20 +160,21 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
         for (int i = cloneItems.size() - 1; i >= 0; i--) {
             final IMarkerTopicFolderItem item = cloneItems.get(i);
 
-            if (item instanceof _TopicFolderData) {
-                _TopicFolderData topicFolderData = ((_TopicFolderData) item);
+            if (item instanceof TopicFolderData) {
+                TopicFolderData topicFolderData = ((TopicFolderData) item);
                 boolean isClosed = isFolderClosed(topicFolderData.getFolderId());
                 topicFolderData.setOpened(!isClosed);
             }
 
-            if (item instanceof _TopicItemData) {
-                _TopicItemData topicItemData = ((_TopicItemData) item);
+            if (item instanceof TopicItemData) {
+                TopicItemData topicItemData = ((TopicItemData) item);
                 boolean isClosed = isFolderClosed(topicItemData.getParentId());
                 if (isClosed) {
                     cloneItems.remove(i);
                 }
             }
         }
+        cloneItems.add(new TopicJoinButtonData());
     }
 
     private void changeFolderStatus(long folderId) {
@@ -164,8 +186,8 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
         // 폴더 오픈 정보 변경
         for (int i = 0; i < cloneItems.size(); i++) {
             final IMarkerTopicFolderItem item = cloneItems.get(i);
-            if (item instanceof _TopicFolderData) {
-                _TopicFolderData folderData = ((_TopicFolderData) item);
+            if (item instanceof TopicFolderData) {
+                TopicFolderData folderData = ((TopicFolderData) item);
                 if (folderData.getFolderId() == folderId) {
                     boolean isPreviousOpened = !isFolderClosed(folderId);
                     isOpened = !isPreviousOpened;
@@ -182,8 +204,8 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
         // 리스트 뷰 부분 변경을 위한 변수 셋팅
         for (int i = 0; i < cloneItems.size(); i++) {
             final IMarkerTopicFolderItem item = cloneItems.get(i);
-            if (item instanceof _TopicFolderData) {
-                _TopicFolderData folderData = ((_TopicFolderData) item);
+            if (item instanceof TopicFolderData) {
+                TopicFolderData folderData = ((TopicFolderData) item);
                 if (folderData.getFolderId() == folderId) {
                     folderIndex = i;
                     itemStartIndex = i + 1;
@@ -242,8 +264,8 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
         for (int idx = 0; idx < itemCount; idx++) {
             IMarkerTopicFolderItem item = items.get(idx);
             if (item != null
-                    && (item instanceof _TopicItemData)
-                    && (((_TopicItemData) item).getEntityId() == entityId)) {
+                    && (item instanceof TopicItemData)
+                    && (((TopicItemData) item).getEntityId() == entityId)) {
                 return idx;
             }
         }
@@ -283,11 +305,11 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
     }
 
     public interface OnItemClickListener {
-        void onClick(_TopicItemData topicItemData);
+        void onClick(TopicItemData topicItemData);
     }
 
     public interface OnItemLongClickListener {
-        void onLongClick(_TopicItemData topicItemData);
+        void onLongClick(TopicItemData topicItemData);
     }
 
 }

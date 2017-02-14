@@ -6,9 +6,13 @@ import android.view.View;
  * Created by tee on 15. 8. 31..
  */
 
-public class TopicJoinButtonViewHolder extends TopicItemViewHolder {
+public class TopicJoinButtonViewHolder extends MainTopicViewHolder {
 
     public TopicJoinButtonViewHolder(View itemView) {
-        super(itemView, false);
+        super(itemView);
+    }
+
+    @Override
+    public void bind(Object o) {
     }
 }

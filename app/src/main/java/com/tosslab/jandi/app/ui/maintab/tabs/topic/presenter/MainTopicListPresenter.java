@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain._TopicItemData;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -83,7 +83,7 @@ public class MainTopicListPresenter {
                 item.getMarkerLinkId());
     }
 
-    public void onChildItemClick(_TopicItemData item) {
+    public void onChildItemClick(TopicItemData item) {
         if (item == null) {
             return;
         }
@@ -107,7 +107,7 @@ public class MainTopicListPresenter {
         view.showEntityMenuDialog(entityId, folderId);
     }
 
-    public void onChildItemLongClick(_TopicItemData topicItemData) {
+    public void onChildItemLongClick(TopicItemData topicItemData) {
         if (topicItemData == null) {
             return;
         }

@@ -38,7 +38,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder_modify.TopicFolderAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.TopicFolderAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dagger.DaggerMainTopicListComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.dagger.MainTopicListModule;
@@ -138,21 +138,7 @@ public class MainTopicListFragment extends BaseLazyFragment
     void initViews(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        layoutManager = new LinearLayoutManager(getActivity());
-        lvMainTopic.setLayoutManager(layoutManager);
-        lvMainTopic.setItemAnimator(new DefaultItemAnimator());
-        topicFolderAdapter = new TopicFolderAdapter();
-        topicFolderAdapter.setOnFolderSettingClickListener(
-                (folderId, folderName, folderSeq) -> showGroupSettingPopupView(folderId, folderName, folderSeq));
-
-        topicFolderAdapter.setOnItemLongClickListener(topicItemData -> {
-            mainTopicListPresenter.onChildItemLongClick(topicItemData);
-        });
-
-        topicFolderAdapter.setOnItemClickListener(topicItemData -> {
-            mainTopicListPresenter.onChildItemClick(topicItemData);
-        });
-
+        initTopicFolderAdapter();
         initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
@@ -169,6 +155,25 @@ public class MainTopicListFragment extends BaseLazyFragment
         mainTopicListPresenter.checkFloatingActionMenu();
 
         setListViewScroll();
+    }
+
+    private void initTopicFolderAdapter() {
+        layoutManager = new LinearLayoutManager(getActivity());
+        lvMainTopic.setLayoutManager(layoutManager);
+        lvMainTopic.setItemAnimator(new DefaultItemAnimator());
+        topicFolderAdapter = new TopicFolderAdapter();
+        topicFolderAdapter.setOnFolderSettingClickListener(
+                (folderId, folderName, folderSeq) -> showGroupSettingPopupView(folderId, folderName, folderSeq));
+
+        topicFolderAdapter.setOnItemLongClickListener(topicItemData -> {
+            mainTopicListPresenter.onChildItemLongClick(topicItemData);
+        });
+
+        topicFolderAdapter.setOnItemClickListener(topicItemData -> {
+            topicFolderAdapter.stopAnimation();
+            mainTopicListPresenter.onChildItemClick(topicItemData);
+            topicFolderAdapter.notifyDataSetChanged();
+        });
     }
 
     private void setListViewScroll() {
@@ -415,7 +420,6 @@ public class MainTopicListFragment extends BaseLazyFragment
                 if (selectedEntity <= -2) {
                     return;
                 }
-
                 setSelectedItem(selectedEntity);
                 if (isCurrentFolder()) {
                     mainTopicListPresenter.refreshList();
