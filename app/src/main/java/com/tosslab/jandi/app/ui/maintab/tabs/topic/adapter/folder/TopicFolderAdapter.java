@@ -107,10 +107,6 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
                     onItemLongClickListener.onLongClick(topicItemData);
                 }
             });
-            boolean isSelectedEntity = topicItemData.getEntityId() == selectedEntity;
-            if (isSelectedEntity && animStatus == AnimStatus.READY) {
-                animateForSelectedEntity(holder.itemView);
-            }
         }
 
         if (getItemViewType(position) != VIEW_TYPE_JOIN_BUTTON) {
@@ -119,6 +115,14 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
             holder.itemView.setOnClickListener(v -> {
                 EventBus.getDefault().post(new JoinableTopicCallEvent());
             });
+        }
+
+        if (holder instanceof TopicItemViewHolder) {
+            final TopicItemData topicItemData = ((TopicItemData) cloneItems.get(position));
+            boolean isSelectedEntity = topicItemData.getEntityId() == selectedEntity;
+            if (isSelectedEntity && animStatus == AnimStatus.READY) {
+                animateForSelectedEntity(((TopicItemViewHolder) holder).vAnimator);
+            }
         }
 
     }
