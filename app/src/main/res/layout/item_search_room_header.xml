@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:background="#fffafafa"
+    android:background="@color/rgb_fafafa"
     android:orientation="vertical">
 
     <android.support.v7.widget.AppCompatCheckBox
@@ -12,9 +12,9 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="13dp"
-        android:theme="@style/Jandi.Default.CheckBox"
         android:layout_marginRight="13dp"
-        android:button="@drawable/checkbox_selector" />
+        android:button="@drawable/checkbox_selector"
+        android:theme="@style/Jandi.Default.CheckBox" />
 
     <TextView
         android:layout_width="match_parent"
