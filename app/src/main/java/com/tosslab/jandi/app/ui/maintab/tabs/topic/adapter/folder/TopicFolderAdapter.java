@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.MainTopicViewHolder;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicFolderViewHolder;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicItemViewHolder;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicJoinButtonViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder.MainTopicViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder.TopicFolderViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder.TopicItemViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder.TopicJoinButtonViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.IMarkerTopicFolderItem;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;

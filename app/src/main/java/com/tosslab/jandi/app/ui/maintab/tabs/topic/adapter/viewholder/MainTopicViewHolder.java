@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder;
+package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
