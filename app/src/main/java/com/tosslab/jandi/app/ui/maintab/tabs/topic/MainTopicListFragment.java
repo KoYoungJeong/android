@@ -334,7 +334,7 @@ public class MainTopicListFragment extends BaseLazyFragment
         } else if (!currentFolder && changeToFolder) {
             lvMainTopic.setAdapter(topicFolderAdapter);
             tvSortTitle.setText(R.string.jandi_sort_folder);
-            ivTopicOrder.setImageResource(R.drawable.topic_list_folder);
+            ivTopicOrder.setImageResource(R.drawable.topic_list_default);
         }
     }
 

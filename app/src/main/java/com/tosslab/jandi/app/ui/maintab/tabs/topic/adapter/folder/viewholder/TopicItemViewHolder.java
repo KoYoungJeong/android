@@ -39,8 +39,8 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
     ImageView ivDefaultUnderline;
     @Bind(R.id.iv_folder_item_underline)
     ImageView ivFolderItemUnderline;
-    @Bind(R.id.iv_shadow_underline)
-    ImageView ivShadowUnderline;
+    //    @Bind(R.id.iv_shadow_underline)
+//    ImageView ivShadowUnderline;
     @Bind(R.id.vg_entity_listitem_badge)
     RelativeLayout vgTopicBadge;
     @Bind(R.id.v_topic_item_animator)
@@ -83,16 +83,10 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
                 ivFolderItemUnderline.setVisibility(View.GONE);
                 ivDefaultUnderline.setVisibility(View.VISIBLE);
             }
-            if (item.getChildIndex() == 0) {
-                ivShadowUnderline.setVisibility(View.VISIBLE);
-            } else {
-                ivShadowUnderline.setVisibility(View.GONE);
-            }
         } else {
             container.setBackgroundResource(R.drawable.bg_list_item);
             ivFolderItemUnderline.setVisibility(View.GONE);
             ivDefaultUnderline.setVisibility(View.VISIBLE);
-            ivShadowUnderline.setVisibility(View.GONE);
         }
 
 
