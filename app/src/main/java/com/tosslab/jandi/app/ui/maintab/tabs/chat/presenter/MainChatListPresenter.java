@@ -11,8 +11,6 @@ import java.util.List;
  */
 public interface MainChatListPresenter {
 
-    void initChatList(Context context, long selectedEntity);
-
     void onReloadChatList();
 
     void onMoveDirectMessage(Context context, long userId);

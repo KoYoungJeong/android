@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import rx.Completable;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -54,44 +53,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                     }
                     view.setChatItems(chatItems);
                 }, Throwable::printStackTrace);
-    }
-
-    @Override
-    public void initChatList(Context context, long selectedEntity) {
-        long memberId = mainChatListModel.getMemberId();
-        long teamId = mainChatListModel.getTeamId();
-
-        if (memberId < 0 || teamId < 0) {
-            return;
-        }
-
-        if (!view.hasChatItems()) {
-            Observable.fromCallable(() -> mainChatListModel.getSavedChatList())
-                    .subscribeOn(Schedulers.computation())
-                    .map(savedChatList -> mainChatListModel.convertChatItems(savedChatList))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(chatItems -> {
-                        if (chatItems == null || chatItems.isEmpty()) {
-                            view.showEmptyLayout();
-                        } else {
-                            view.hideEmptyLayout();
-                            view.setChatItems(chatItems);
-                        }
-                        view.setSelectedItem(selectedEntity);
-                        view.startSelectedItemAnimation();
-
-                        int selectedEntityPosition = 0;
-                        int size = chatItems.size();
-                        for (int idx = 0; idx < size; idx++) {
-                            if (chatItems.get(idx).getRoomId() == selectedEntity) {
-                                selectedEntityPosition = idx;
-                                break;
-                            }
-                        }
-
-                        view.scrollToPosition(selectedEntityPosition);
-                    });
-        }
     }
 
     @Override
