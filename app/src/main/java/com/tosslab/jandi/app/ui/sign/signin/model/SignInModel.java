@@ -40,8 +40,11 @@ public class SignInModel {
         this.accountPasswordApi = accountPasswordApi;
     }
 
-    public ResAccessToken login(String myEmailId, String password) throws RetrofitException {
+    public ResAccessToken login(String myEmailId, String password, String captchaResponse) throws RetrofitException {
         ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
+        if (captchaResponse != null) {
+            passwordReqToken.setReCaptchaResponse(captchaResponse);
+        }
         return loginApi.get().getAccessToken(passwordReqToken);
     }
 

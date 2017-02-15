@@ -43,7 +43,6 @@ public class SignHomeActivity extends BaseAppCompatActivity {
         SignUpActivity.startActivity(SignHomeActivity.this, null);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignUp);
         AnalyticsUtil.sendConversion("Android_Register", "957512006", "l9F-CIeql2MQxvLJyAM");
-
     }
 
     @OnClick(R.id.iv_jandi_icon)
@@ -56,9 +55,7 @@ public class SignHomeActivity extends BaseAppCompatActivity {
         if (clickCount >= 5) {
             DomainUtil.showDomainDialog(this);
         }
-
         clickCount = 0;
-
         return true;
     }
 
@@ -74,4 +71,5 @@ public class SignHomeActivity extends BaseAppCompatActivity {
         startActivity(intent);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.StartPage, AnalyticsValue.Action.SignIn);
     }
+
 }
