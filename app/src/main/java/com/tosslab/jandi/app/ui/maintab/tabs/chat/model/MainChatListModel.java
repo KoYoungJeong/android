@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.chat.model;
 
-import android.os.SystemClock;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -72,7 +71,6 @@ public class MainChatListModel {
                         .toList()
                         .toBlocking()
                         .firstOrDefault(new ArrayList<>());
-        long postTime = SystemClock.currentThreadTimeMillis();
         return listDirectMessageRoom;
     }
 
