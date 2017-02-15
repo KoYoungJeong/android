@@ -331,6 +331,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
 
     @Override
     public void moveToCaptchaActivity() {
+        // 재 로그인 시도시에도 실패했을 경우 다시 캡챠로 넘어가서는 아니된다.
         if (moveCaptcha) {
             Intent intent = new Intent(SignInActivity.this, CaptchaActivity.class);
             startActivityForResult(intent, REQUEST_CAPTCHAR);
