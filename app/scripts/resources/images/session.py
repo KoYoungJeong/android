@@ -5,11 +5,11 @@ import urllib2
 __author__ = 'jsuch2362'
 
 AUTH_URL = "http://jandidesign.myds.me:5000//webapi/auth.cgi"
-ACCOUNT = 'steve'
+ACCOUNT = 'tee'
 PASSWORD = '1234qwer'
 
-def getSessionId():
 
+def getSessionId():
     authParams = {}
 
     authParams['api'] = 'SYNO.API.Auth'
@@ -24,4 +24,3 @@ def getSessionId():
     response = urllib2.urlopen(authurl)
     data = json.load(response)
     return data['data']['sid']
-
