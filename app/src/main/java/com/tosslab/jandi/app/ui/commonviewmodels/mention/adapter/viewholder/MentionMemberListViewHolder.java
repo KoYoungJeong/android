@@ -64,7 +64,7 @@ public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
                 ImageUtil.loadProfileImage(ivIcon,
                         itemVO.getSmallProfileImageUrl(), R.drawable.profile_img);
             } else {
-                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
+                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_40);
             }
 
             tvName.setText(itemVO.getName());

@@ -28,8 +28,8 @@
     <LinearLayout
         android:id="@+id/layout_file_list_header"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="@color/jandi_background_default"
+        android:layout_height="40dp"
+        android:background="@color/jandi_primary_color"
         android:orientation="vertical">
 
         <LinearLayout
@@ -85,7 +85,8 @@
 
     <include
         android:id="@+id/vg_file_list_loading"
-        layout="@layout/progress_wheel" />
+        layout="@layout/progress_wheel"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progress_file_list"

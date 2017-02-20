@@ -16,7 +16,7 @@
     <RelativeLayout
         android:id="@+id/vg_team_member_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="56dp"
         android:background="?attr/colorPrimary"
         android:padding="8dp"
         android:visibility="visible">
@@ -41,11 +41,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginRight="11dp"
             android:background="?android:attr/selectableItemBackground"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:scaleType="centerInside"
+            android:paddingRight="24dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/btn_search_back"/>
 
         <ImageView
@@ -72,12 +71,13 @@
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs_team_member_search"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="40dp"
         android:layout_marginTop="?attr/actionBarSize"
         android:fillViewport="true"
+        android:textSize="@dimen/jandi_text_size_medium"
         app:tabBackground="@color/jandi_primary_color"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorColor="@color/rgb_e5e5e5"
         app:tabIndicatorHeight="2dp"
         app:tabMaxWidth="0dp"
         app:tabMode="fixed"
@@ -85,7 +85,7 @@
         app:tabPaddingStart="0dp"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TeamTabTextApprearance"
-        app:tabTextColor="@color/jandi_transparent_white_20p"/>
+        app:tabTextColor="@color/jandi_transparent_white_30p"/>
 
     <View
         android:layout_width="match_parent"

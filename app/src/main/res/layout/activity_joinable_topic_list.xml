@@ -16,11 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:visibility="visible"
-            app:layout_scrollFlags="scroll"/>
+            app:layout_scrollFlags="scroll" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="56dp"
             android:layout_below="@+id/layout_search_bar"
             android:padding="8dp"
             android:visibility="visible">
@@ -35,17 +35,16 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:paddingLeft="64dp"
-                android:paddingRight="64dp"/>
+                android:paddingRight="64dp" />
 
             <ImageView
-                android:layout_width="@dimen/jandi_search_default_size"
-                android:layout_height="@dimen/jandi_search_default_size"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:paddingLeft="13.5dp"
-                android:paddingRight="13.5dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/icon_contact_search"/>
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_contact_search" />
         </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -55,7 +54,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <FrameLayout
         android:id="@+id/vg_joinable_topic_list_empty"
@@ -72,7 +71,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="26dp"
             android:gravity="center"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
         <LinearLayout
             android:id="@+id/btn_joinable_list_create_topic"
@@ -87,7 +86,7 @@
             <View
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/icon_add_newtopic"/>
+                android:background="@drawable/icon_add_newtopic" />
 
             <TextView
                 android:id="@+id/tv_joinable_topic_list_create_topic"
@@ -97,7 +96,7 @@
                 android:gravity="center"
                 android:lineSpacingExtra="7dp"
                 android:textColor="@color/jandi_create_topic"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 

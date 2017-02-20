@@ -149,7 +149,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ImageUtil.loadProfileImage(ivIcon, photoUrl, R.drawable.profile_img);
                 } else {
                     ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_43);
+                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_40);
                 }
             }
 

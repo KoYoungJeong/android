@@ -138,24 +138,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         memberListView.setAdapter(topicModdableMemberListAdapter);
         initProgressWheel();
 
-        memberListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            private boolean initialize = true;
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (initialize) {
-                    initialize = false;
-                    return;
-                }
-
-                final float translateY = vgSearchbar.getTranslationY() - dy;
-
-                float futureTranslateY = Math.max(-vgSearchbar.getMeasuredHeight(), translateY);
-                vgSearchbar.setTranslationY(Math.min(0, futureTranslateY));
-            }
-        });
-
         if (type == TYPE_MEMBERS_LIST_TOPIC) {
             membersListPresenter.initKickableMode(entityId);
         }
