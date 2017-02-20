@@ -844,6 +844,8 @@ public class MessageListV2Presenter {
                         } else {
                             view.clearEmptyMessageLayout();
                         }
+                    }, t -> {
+                        t.printStackTrace();
                     });
 
 

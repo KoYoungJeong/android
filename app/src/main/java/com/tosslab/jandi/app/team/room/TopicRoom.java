@@ -129,6 +129,13 @@ public class TopicRoom implements Room {
     }
 
     @Override
+    public String toString() {
+        return "TopicRoom{" +
+                "topic=" + topic +
+                '}';
+    }
+
+    @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
