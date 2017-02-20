@@ -126,9 +126,9 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         setUserInfo(item);
 
         if (isKickMode && !item.isMyId() && !item.isBot()) {
-            ivUserKick.setVisibility(View.VISIBLE);
+            vgUserKick.setVisibility(View.VISIBLE);
         } else {
-            ivUserKick.setVisibility(View.GONE);
+            vgUserKick.setVisibility(View.GONE);
             setKickClickListener(null);
         }
 
@@ -163,16 +163,17 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
-            tvUserDepartment.setText(department);
         }
+        tvUserDepartment.setText(department);
 
         String jobTitle = item.getJobTitle();
         if (TextUtils.isEmpty(jobTitle)) {
             tvUserJobTitle.setVisibility(View.GONE);
         } else {
             tvUserJobTitle.setVisibility(View.VISIBLE);
-            tvUserJobTitle.setText(jobTitle);
         }
+        tvUserJobTitle.setText(jobTitle);
+
     }
 
     private void measureContentWidth(ChatChooseItem item) {

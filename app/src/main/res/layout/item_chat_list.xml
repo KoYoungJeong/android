@@ -99,6 +99,13 @@
         android:textSize="11sp" />
 
     <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="62dp"
+        android:background="@color/rgb_e5e5e5"/>
+
+    <View
         android:id="@+id/v_name_warning"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"

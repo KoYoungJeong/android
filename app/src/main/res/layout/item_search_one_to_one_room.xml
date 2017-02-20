@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="75dp"
+    android:layout_height="60dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:orientation="vertical">
 
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/iv_profile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/tv_room_name"
         android:layout_width="match_parent"
-        android:layout_height="74dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toEndOf="@+id/iv_profile"
+        android:layout_toRightOf="@+id/iv_profile"
+        android:text="Tee Kim"
+        android:textColor="@color/jandi_text"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/iv_profile"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_margin="15dp" />
-
-        <TextView
-            android:id="@+id/tv_room_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="16dp"
-            android:text="Tee Kim"
-            android:textColor="#333333"
-            android:textSize="16dp" />
-
-    </LinearLayout>
 
     <View
         android:id="@+id/v_half_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginLeft="75dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="72dp"
         android:background="#ffeeeeee" />
 
     <View
         android:id="@+id/v_full_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
         android:background="#ffeeeeee"
         android:visibility="visible" />
 
-</LinearLayout>
+</RelativeLayout>

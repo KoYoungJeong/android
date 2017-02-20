@@ -341,7 +341,8 @@
     <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub</item>
+        <item name="android:textColorHint">@color/jandi_message_search_item_topic_txt_color_sub
+        </item>
         <item name="android:theme">@style/FloatingEditTextTheme</item>
         <item name="android:layout_marginStart">12dp</item>
         <item name="android:layout_marginEnd">12dp</item>
@@ -430,6 +431,7 @@
         <item name="android:background">?attr/colorPrimary</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="titleTextAppearance">@style/ToolbarText</item>
+        <item name="titleMargin">16dp</item>
     </style>
 
 

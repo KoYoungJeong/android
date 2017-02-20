@@ -37,7 +37,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="4dp"
         android:layout_toLeftOf="@+id/tv_team_list_accept_button"
-        android:background="@drawable/bg_rect_border_gray"
+        android:background="@drawable/bg_rect_border_gray_with_radius"
         android:gravity="center_vertical"
         android:paddingBottom="4dp"
         android:paddingLeft="8dp"

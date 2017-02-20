@@ -69,8 +69,6 @@ public interface FileListPresenter {
 
         void dismissMoreProgressBar();
 
-        void onSearchHeaderReset();
-
         void justRefresh();
 
         void showProgress();

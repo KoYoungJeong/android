@@ -79,18 +79,10 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             item.getChatChooseItem().setIsChooseItem(containsId(item.getChatChooseItem().getEntityId()));
             holder.onBindView(item);
             if (!hasHeader) {
-                if (position >= getItemCount() - 1) {
-                    holder.showFullDivider();
-                } else {
-                    holder.showHalfDivider();
-                }
+                holder.showHalfDivider();
             } else {
                 if (isSameFirstCharacterToNext(position)) {
-                    if (position >= getItemCount() - 1) {
-                        holder.showFullDivider();
-                    } else {
-                        holder.showHalfDivider();
-                    }
+                    holder.showHalfDivider();
                 } else {
                     if (isSameStarredToNext(position)) {
                         holder.showHalfDivider();
