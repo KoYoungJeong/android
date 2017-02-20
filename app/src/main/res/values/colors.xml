@@ -385,4 +385,6 @@
 
     <color name="jandi_poll_create_button_normal">@color/rgb_b3b3b3</color>
 
+    <color name="jandi_link">#FF4081</color>
+
 </resources>
