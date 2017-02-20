@@ -35,6 +35,7 @@
             android:layout_alignTop="@+id/iv_starred_profile"
             android:layout_centerVertical="true"
             android:background="#66FFFFFF" />
+
         <TextView
             android:id="@+id/tv_starred_name"
             android:layout_width="wrap_content"
@@ -46,7 +47,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Tee1234432144231431421341234123"
+            android:text="Tee1234432144231431421341234123fdsafsda"
             android:textColor="@color/rgb_333333"
             android:textSize="15dp"
             android:textStyle="bold" />
@@ -68,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_below="@id/tv_starred_name"
-            android:layout_marginLeft="14.5dp"
+            android:layout_marginLeft="15.5dp"
             android:layout_marginTop="15dp"
             android:layout_toRightOf="@id/iv_starred_profile"
             android:gravity="center_vertical"
@@ -110,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_starred_name"
-            android:layout_marginLeft="14.5dp"
+            android:layout_marginLeft="15.5dp"
             android:layout_marginTop="15dp"
             android:layout_toRightOf="@id/iv_starred_profile"
             android:background="@color/jandi_transparent_black_50p"
