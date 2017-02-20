@@ -105,8 +105,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
         startOn();
 
         delayStartTime = System.currentTimeMillis();
-        if (loadAnimation) {
 
+        if (loadAnimation) {
             splashDrawable = ((AnimationDrawable) ivJandiIcon.getDrawable());
             Completable.fromAction(Completable::complete)
                     .delay(ANIM_DELAY, TimeUnit.MILLISECONDS)
@@ -114,9 +114,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                     .subscribe(() -> {
                         splashDrawable.start();
                     });
-
         }
-
     }
 
     @Override
@@ -204,7 +202,8 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     private void startActivityWithAnimationAndFinish(final Intent intent) {
 
-        Completable.fromAction(() -> {})
+        Completable.fromAction(() -> {
+        })
                 .delay(loadAnimation ? NO_ANIM_DELAY_TIME + delayStartTime - System.currentTimeMillis() : ANIM_TIME + ANIM_DELAY + delayStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
