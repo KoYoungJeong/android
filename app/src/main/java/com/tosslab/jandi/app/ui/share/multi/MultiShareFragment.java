@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.util.ArrayList;
@@ -120,6 +121,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     private FileUploadThumbAdapter fileUploadThumbAdapter;
     private InputMethodManager inputMethodManager;
 
+    private FileAccessLimitUtil fileAccessLimitUtil;
+    private long teamId = -1;
+
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
         Bundle bundle = new Bundle();
@@ -160,6 +164,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         multiSharePresenter.initShareData(uris);
 
         setHasOptionsMenu(true);
+
+        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
+
     }
 
     @Override
@@ -339,14 +346,19 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void startShare() {
-        multiSharePresenter.updateComment(vpShare.getCurrentItem(), etComment.getText().toString());
-        multiSharePresenter.startShare();
-
+        if (teamId != -1) {
+            fileAccessLimitUtil.execute(getContext(), teamId, () -> {
+                multiSharePresenter.updateComment(vpShare.getCurrentItem(), etComment.getText().toString());
+                multiSharePresenter.startShare();
+            });
+        }
     }
 
     public void onEvent(ShareSelectTeamEvent event) {
         long teamId = event.getTeamId();
+        this.teamId = teamId;
         multiSharePresenter.onSelectTeam(teamId);
+        fileAccessLimitUtil.execute(getContext(), teamId, null);
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
