@@ -27,7 +27,7 @@
 	<string name="common_calleridnotifier_guide2">"To enable this feature, you must turn on the following menu."</string>
 	<string name="common_calleridnotifier_member_view">"View Members’ Contacts"</string>
 	<string name="common_calleridnotifier_route1">"How to activate ‘View Members’ Contacts"</string>
-	<string name="common_calleridnotifier_route2">"On your iPhone, go to [Settings>Phone>Call Blocking & Identification] and activate JANDI."</string>
+	<string name="common_calleridnotifier_route2">"<![CDATA[On your iPhone, go to [Settings>Phone>Call Blocking & Identification] and activate JANDI.]]>"</string>
 	<string name="common_calleridnotifier_settings">"View Members’ Contacts"</string>
 	<string name="common_calleridnotifier_status_allow">"Allow"</string>
 	<string name="common_calleridnotifier_status_allowed">"Allowed"</string>
