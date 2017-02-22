@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.multi;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,11 +31,13 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -51,12 +52,11 @@ import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
 import java.util.ArrayList;
@@ -225,7 +225,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @OnClick(R.id.vg_multi_share_team)
     void onTeamNameClick() {
-        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
+        if (teamId == -1) {
+            teamId = AccountRepository.getRepository().getSelectedTeamId();
+        }
+
+        startActivity(Henson.with(getContext())
+                .gotoShareSelectTeamActivity()
+                .selectedTeamId(teamId)
+                .build());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }

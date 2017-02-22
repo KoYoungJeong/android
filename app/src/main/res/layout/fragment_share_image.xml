@@ -81,6 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/vg_viwer"
                     android:layout_marginBottom="8dp"
+                    android:layout_marginRight="0dp"
                     android:layout_marginTop="13dp"
                     android:layout_weight="6"
                     android:ellipsize="middle"
@@ -89,7 +90,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="@color/rgb_999999"
-                    android:textSize="16dp" android:layout_marginRight="0dp"/>
+                    android:textSize="16dp" />
 
                 <TextView
                     android:id="@+id/tv_file_rename_button"
@@ -160,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/vg_team"
                 android:layout_marginTop="16dp"
-                android:text="Topic or message"
+                android:text="@string/jandi_shared_in_room"
                 android:textColor="@color/jandi_text_light"
                 android:textSize="12sp" />
 

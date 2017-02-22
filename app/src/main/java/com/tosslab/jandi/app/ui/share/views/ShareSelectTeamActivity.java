@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -45,6 +47,9 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     @Bind(R.id.lv_select_team)
     RecyclerView lvSelectTeam;
 
+    @InjectExtra
+    long selectedTeamId = -1;
+
     @Inject
     Lazy<StartApi> startApi;
     @Inject
@@ -59,6 +64,7 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_team);
         ButterKnife.bind(this);
+        Dart.inject(this);
 
         DaggerShareSelectTeamComponent
                 .builder().build()
@@ -88,12 +94,13 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     }
 
     void initTeams() {
-        long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
         Observable.from(AccountRepository.getRepository().getAccountTeams())
                 .filter(userTeam -> !TextUtils.equals(userTeam.getStatus(), "pending"))
                 .map((userTeam1) -> {
                     Team team = Team.createTeam(userTeam1);
-                    team.setSelected(userTeam1.getTeamId() == selectedTeamId);
+                    if (selectedTeamId != -1) {
+                        team.setSelected(userTeam1.getTeamId() == selectedTeamId);
+                    }
                     return team;
                 })
                 .collect((Func0<ArrayList<Team>>) ArrayList::new, ArrayList::add)
