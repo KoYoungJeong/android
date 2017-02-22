@@ -289,6 +289,9 @@ public class JandiSocketServiceModel {
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             MessageRepository.getRepository().updateStatus(event.getFile().getId(), "archived");
+            ResMessages.FileMessage fileMessage = MessageRepository.getRepository()
+                    .getFileMessage(event.getFile().getId());
+            doAfterFileDeleted(fileMessage);
             postEvent(new DeleteFileEvent(event.getTeamId(), event.getFile().getId()));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1078,6 +1081,23 @@ public class JandiSocketServiceModel {
                 }
             }
         }
+    }
+
+    // 특정 룸의 마지막 메세지이면 룸 리스트 정보를 갱신하기 위해 호출 create->archived
+    private void doAfterFileDeleted(ResMessages.FileMessage fileMessage) {
+
+        ChatRepository chatRepository = ChatRepository.getInstance(fileMessage.teamId);
+
+        for (ResMessages.OriginalMessage.IntegerWrapper e : fileMessage.shareEntities) {
+            long roomId = e.getShareEntity();
+            ResMessages.Link lastLink = MessageRepository.getRepository().getLastMessage(roomId);
+            if (TeamInfoLoader.getInstance().isChat(roomId)) {
+                if (lastLink.message.id == fileMessage.id) {
+                    chatRepository.updateLastMessage(roomId, lastLink.messageId, fileMessage.content.title, "archived");
+                }
+            }
+        }
+
     }
 
     private String getContentText(ResMessages.OriginalMessage message) {
