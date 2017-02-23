@@ -27,6 +27,8 @@ public interface MessageListAdapterModel {
 
     int getDummyMessagePositionByLocalId(long localId);
 
+    boolean isLimited();
+
     int getCount();
 
     int getDummyMessageCount();

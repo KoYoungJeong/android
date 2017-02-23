@@ -69,6 +69,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
                         | Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
+
     public static void startActivitySkipAnimation(Context context, boolean skipAnimation) {
         context.startActivity(Henson.with(context)
                 .gotoIntroActivity()

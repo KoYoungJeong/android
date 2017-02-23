@@ -1369,7 +1369,7 @@ public class JandiSocketServiceModel {
         }, () -> {
             MessageRepository.getRepository().deleteAllLink();
             JandiPreference.setSocketConnectedLastTime(-1);
-            IntroActivity.startActivity(JandiApplication.getContext(), false);
+            IntroActivity.startActivitySkipAnimation(JandiApplication.getContext(), false);
         });
     }
 

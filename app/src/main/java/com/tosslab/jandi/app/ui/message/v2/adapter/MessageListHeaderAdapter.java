@@ -22,6 +22,7 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     private final Context context;
     private final MessageItemDate originAdapter;
+    private int savedHeight = -1;
 
     public MessageListHeaderAdapter(Context context, MessageItemDate originAdapter) {
         this.context = context;
@@ -39,6 +40,22 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
         long headerId = getHeaderId(position);
 
+        ViewGroup.LayoutParams params = viewHolder.itemView.getLayoutParams();
+
+        if (headerId == -1) {
+            params.height = 0;
+            viewHolder.itemView.setLayoutParams(params);
+            return;
+        } else {
+            if (savedHeight == -1) {
+                savedHeight = params.height;
+            }
+            if (params.height == 0) {
+                params.height = savedHeight;
+                viewHolder.itemView.setLayoutParams(params);
+            }
+        }
+
         if (DateUtils.isToday(headerId)) {
             viewHolder.dateTextView.setText(R.string.today);
         } else {
@@ -48,9 +65,12 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     @Override
     public long getHeaderId(int position) {
+
         Calendar instance = Calendar.getInstance();
         if (originAdapter.getItemDate(position) != null) {
             instance.setTime(originAdapter.getItemDate(position));
+        } else {
+            return -1;
         }
 
         instance.set(Calendar.HOUR_OF_DAY, 0);

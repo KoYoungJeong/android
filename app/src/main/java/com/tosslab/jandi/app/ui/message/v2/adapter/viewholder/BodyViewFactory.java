@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.queue.LimitMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.integration.IntegrationBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.bot.jandi.JandiBotViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
@@ -72,6 +73,8 @@ public class BodyViewFactory {
 
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
             builder = new IntegrationBotViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_LIMIT_MESSAGE)) {
+            builder = new LimitMessageViewHolder.Builder();
         } else {
             builder = new EmptyViewHolder.Builder();
         }
@@ -154,8 +157,18 @@ public class BodyViewFactory {
 
             type = getCommentMessageType(previousLink, currentLink, nextLink);
 
+        } else if (isLimitMessage(currentLink)) {
+            type = TypeUtil.TYPE_VIEW_LIMIT_MESSAGE;
         }
         return type;
+    }
+
+    private static boolean isLimitMessage(ResMessages.Link currentLink) {
+        if (currentLink == null) {
+            return false;
+        }
+
+        return currentLink instanceof LimitMessageLink;
     }
 
     private static boolean isPollMessage(ResMessages.Link currentLink) {
