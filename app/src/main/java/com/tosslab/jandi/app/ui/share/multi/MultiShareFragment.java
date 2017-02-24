@@ -170,6 +170,11 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     }
 
     @Override
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         if (menu != null) {
             MenuItem item = menu.findItem(R.id.action_share);

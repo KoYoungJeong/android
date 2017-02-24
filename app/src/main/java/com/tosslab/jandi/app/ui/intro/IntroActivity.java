@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.StartApiCalledEvent;
 import com.tosslab.jandi.app.services.keep.KeepExecutedService;
@@ -169,7 +171,6 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void moveToMainActivity(boolean needDelay) {
-
         if (needDelay) {
             startActivityWithAnimationAndFinish(Henson.with(this)
                     .gotoMainTabActivity()
@@ -202,10 +203,10 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     }
 
     private void startActivityWithAnimationAndFinish(final Intent intent) {
-
         Completable.fromAction(() -> {
         })
-                .delay(loadAnimation ? NO_ANIM_DELAY_TIME + delayStartTime - System.currentTimeMillis() : ANIM_TIME + ANIM_DELAY + delayStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .delay(loadAnimation ? NO_ANIM_DELAY_TIME + delayStartTime - System.currentTimeMillis()
+                        : ANIM_TIME + ANIM_DELAY + delayStartTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     if (!ApplicationUtil.isActivityDestroyed(IntroActivity.this)) {
@@ -218,10 +219,19 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     }
 
     @Override
-    public void showMaintenanceDialog() {
+    public void showMaintenanceDialog(String message) {
+        if (TextUtils.isEmpty(message)) {
+            message = JandiApplication.getContext().getString(R.string.jandi_service_maintenance);
+        }
         AlertUtil.showConfirmDialog(IntroActivity.this,
-                R.string.jandi_service_maintenance, (dialog, which) -> finish(),
-                false);
+                message, (dialog, which) -> finish(), false);
+    }
+
+    @Override
+    public void show503Dialog() {
+        String message = JandiApplication.getContext().getString(R.string.common_launch_503);
+        AlertUtil.showConfirmDialog(IntroActivity.this, message,
+                (dialog, which) -> finish(), false);
     }
 
     @Override
