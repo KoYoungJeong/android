@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.SignOutUtil;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationAccept;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
@@ -213,6 +214,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     onTeamCreated();
+                    SprinklrInvitationAccept.sendLog(team.getTeamId());
                 }, error -> {
                     LogUtil.e(TAG, Log.getStackTraceString(error));
                     navigationView.dismissProgressWheel();
@@ -222,7 +224,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         String errorMessage =
                                 navigationModel.getTeamInviteErrorMessage(e, team.getName());
                         navigationView.showTeamInviteAcceptFailDialog(errorMessage, team);
+                        SprinklrInvitationAccept.sendFailLog(((RetrofitException) error).getResponseCode());
                     }
+
                 });
     }
 

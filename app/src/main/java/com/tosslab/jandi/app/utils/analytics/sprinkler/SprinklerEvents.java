@@ -6,7 +6,7 @@ public class SprinklerEvents {
 
     public static final Event SignIn = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e6",
-            new String[]{PropertyKey.ResponseSuccess, PropertyKey.AutoSignIn, PropertyKey.LoginId,PropertyKey.ErrorCode});
+            new String[]{PropertyKey.ResponseSuccess, PropertyKey.AutoSignIn, PropertyKey.LoginId, PropertyKey.ErrorCode});
 
     public static final Event SendAccountVerificationMail = Event.create(EventCategory.AccountRelatedEvent.name(),
             "e9",
@@ -123,6 +123,10 @@ public class SprinklerEvents {
     public static final Event TopicDelete = Event.create(EventCategory.TopicRelatedEvent.name(),
             "e37",
             new String[]{PropertyKey.ResponseSuccess, PropertyKey.TopicId, PropertyKey.ErrorCode});
+
+    public static final Event TeamInvitationAccept = Event.create(EventCategory.TeamRelatedEvent.name(),
+            "e55",
+            new String[]{PropertyKey.ResponseSuccess, PropertyKey.ErrorCode, PropertyKey.TeamId, PropertyKey.MemberId});
 
     public static final Event PollCreated = Event.create(EventCategory.PollEvent.name(),
             "e60",
