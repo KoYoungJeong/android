@@ -57,7 +57,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:logo="@drawable/jandi_symbol_launcher"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -575,6 +576,12 @@
 
         <activity
             android:name=".ui.invites.emails.InviteEmailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
+            android:name=".ui.sign.signin.CaptchaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />

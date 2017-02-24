@@ -10,7 +10,7 @@ public interface SignInPresenter {
 
     boolean checkPasswordValidation(String password);
 
-    void trySignIn(String email, String password);
+    void trySignIn(String email, String password, String captchaResponse);
 
     void forgotPassword(String email);
 
@@ -43,6 +43,8 @@ public interface SignInPresenter {
         void showFailPasswordResetToast();
 
         void showSuggestJoin(String email);
+
+        void moveToCaptchaActivity();
     }
 
 }
