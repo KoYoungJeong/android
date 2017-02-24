@@ -298,6 +298,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Bind(R.id.btn_show_mention)
     ImageView btnShowMention;
+
     @Bind(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
 
@@ -313,7 +314,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Bind(R.id.tv_messages_member_status_alert)
     TextView tvMemberStatusAlert;
-
 
     @Bind(R.id.vg_main_synchronize)
     View vgSynchronize;
