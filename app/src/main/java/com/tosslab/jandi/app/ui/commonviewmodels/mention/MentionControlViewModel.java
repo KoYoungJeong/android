@@ -432,8 +432,8 @@ public class MentionControlViewModel {
         MentionMessageSpannable spannable = new MentionMessageSpannable(
                 searchedItemVO.getName(),
                 etMessage.getTextSize(),
-                0xFFfefefe,
-                0xFF01a4e7
+                0xFF00ace9,
+                0xFFCFF1FF
         );
 
         float maginDp = 50;

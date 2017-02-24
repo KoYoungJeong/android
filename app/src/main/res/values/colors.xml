@@ -255,8 +255,8 @@
     <color name="jandi_message_search_item_highlight">#FFFFFD38</color>
     <color name="jandi_pressed_gray_light_alpha">#4CE5E5E5</color>
 
-    <color name="jandi_view_pager_indicator_selector">#FF4D738A</color>
-    <color name="jandi_view_pager_indicator_unselector">#FFDDE4E9</color>
+    <color name="jandi_view_pager_indicator_selector">#FF999999</color>
+    <color name="jandi_view_pager_indicator_unselector">#FFE5E5E5</color>
 
     <color name="jandi_sticker_view_background">#FFEFF2F6</color>
     <color name="jandi_sticker_view_selector">#FFE6E6E6</color>
