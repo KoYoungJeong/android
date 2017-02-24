@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
-import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.share.MainShareActivity;
 
@@ -55,8 +54,7 @@ public class MainShareModel {
     public boolean hasEntityInfo() {
 
         try {
-            long selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            return InitialInfoRepository.getInstance().hasInitialInfo(selectedTeamId);
+            return AccountRepository.getRepository().getAccountInfo() != null;
         } catch (Exception e) {
             return false;
         }

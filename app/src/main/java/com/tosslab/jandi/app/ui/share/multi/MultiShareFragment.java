@@ -38,7 +38,6 @@ import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -226,8 +225,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @OnClick(R.id.vg_multi_share_team)
     void onTeamNameClick() {
-        if (teamId == -1) {
-            teamId = AccountRepository.getRepository().getSelectedTeamId();
+        if (teamId <= 0) {
+            teamId = -1;
         }
 
         startActivity(Henson.with(getContext())

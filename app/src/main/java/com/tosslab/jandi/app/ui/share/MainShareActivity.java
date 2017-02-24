@@ -76,13 +76,13 @@ public class MainShareActivity extends BaseAppCompatActivity {
             return;
         }
 
-//        if (!mainShareModel.hasEntityInfo()) {
-//            // Check Login Info
-//            ColoredToast.show(getString(R.string.err_profile_get_info));
-//            startIntro();
-//            finish();
-//            return;
-//        }
+        if (!mainShareModel.hasEntityInfo()) {
+            // Check Login Info
+            ColoredToast.show(getString(R.string.err_profile_get_info));
+            startIntro();
+            finish();
+            return;
+        }
 
         if (intentType == IntentType.Text && intent.getParcelableExtra(Intent.EXTRA_STREAM) == null) {
             setUpFragment(intent, intentType);
