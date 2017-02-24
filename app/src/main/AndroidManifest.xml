@@ -57,8 +57,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:logo="@drawable/jandi_symbol_launcher"
-            android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.Intro">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
