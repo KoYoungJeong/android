@@ -81,13 +81,14 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (!hasHeader) {
                 holder.showHalfDivider();
             } else {
-                if (isSameFirstCharacterToNext(position)) {
+
+                if (position == getItemCount() - 1) {
+                    holder.showFullDivider();
+                } else if (isSameFirstCharacterToNext(position)) {
                     holder.showHalfDivider();
                 } else {
                     if (isSameStarredToNext(position)) {
                         holder.showHalfDivider();
-                    } else {
-                        holder.showFullDivider();
                     }
                 }
             }

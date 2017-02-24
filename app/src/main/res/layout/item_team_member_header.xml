@@ -5,6 +5,12 @@
     android:background="@color/jandi_text_white"
     android:orientation="vertical">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignTop="@+id/tv_team_member_header_message"
+        android:background="@color/rgb_e5e5e5" />
+
     <TextView
         android:id="@+id/tv_team_member_header_message"
         android:layout_width="match_parent"

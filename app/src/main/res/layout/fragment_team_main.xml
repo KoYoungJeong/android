@@ -36,5 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignBottom="@+id/tabs_team_main"
-        android:background="@color/rgb_e5e5e5" />
+        android:background="@color/rgb_e5e5e5"
+        android:visibility="invisible" />
 </RelativeLayout>
