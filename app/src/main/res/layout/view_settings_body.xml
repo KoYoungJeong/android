@@ -13,14 +13,12 @@
 
         <TextView
             android:id="@+id/tv_view_settings_body_title"
-            style="@style/JandiSettings.Body.Text.Title"
-            android:duplicateParentState="true"/>
+            style="@style/JandiSettings.Body.Text.Title" />
 
         <TextView
             android:id="@+id/tv_view_settings_body_summary"
             style="@style/JandiSettings.Body.Text.Summary"
-            android:layout_marginTop="4dp"
-            android:duplicateParentState="true"/>
+            android:layout_marginTop="4dp" />
     </LinearLayout>
 
 </merge>

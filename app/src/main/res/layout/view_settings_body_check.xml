@@ -14,23 +14,20 @@
 
         <TextView
             android:id="@+id/tv_view_settings_body_check_title"
-            style="@style/JandiSettings.Body.Text.Title"
-            android:duplicateParentState="true" />
+            style="@style/JandiSettings.Body.Text.Title" />
 
         <TextView
             android:id="@+id/tv_view_settings_body_check_summary"
             style="@style/JandiSettings.Body.Text.Summary"
-            android:layout_marginTop="4dp"
-            android:duplicateParentState="true" />
+            android:layout_marginTop="4dp" />
     </LinearLayout>
 
     <CheckBox
         android:id="@+id/tv_view_settings_body_check_checkbox"
-        android:theme="@style/Jandi.Default.CheckBox"
         style="@style/JandiSettings.Body.Check"
-        android:background="@null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:duplicateParentState="true" />
+        android:background="@null"
+        android:theme="@style/Jandi.Default.CheckBox" />
 
 </LinearLayout>
