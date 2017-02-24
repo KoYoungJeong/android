@@ -22,7 +22,6 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     private final Context context;
     private final MessageItemDate originAdapter;
-    private int savedHeight = -1;
 
     public MessageListHeaderAdapter(Context context, MessageItemDate originAdapter) {
         this.context = context;
@@ -37,23 +36,12 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     @Override
     public void onBindViewHolder(HeaderViewHolder viewHolder, int position) {
-
         long headerId = getHeaderId(position);
 
-        ViewGroup.LayoutParams params = viewHolder.itemView.getLayoutParams();
-
-        if (headerId == -1) {
-            params.height = 0;
-            viewHolder.itemView.setLayoutParams(params);
-            return;
+        if (headerId == 1) {
+            viewHolder.itemView.setVisibility(View.GONE);
         } else {
-            if (savedHeight == -1) {
-                savedHeight = params.height;
-            }
-            if (params.height == 0) {
-                params.height = savedHeight;
-                viewHolder.itemView.setLayoutParams(params);
-            }
+            viewHolder.itemView.setVisibility(View.VISIBLE);
         }
 
         if (DateUtils.isToday(headerId)) {
@@ -65,14 +53,19 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageLis
 
     @Override
     public long getHeaderId(int position) {
-
         Calendar instance = Calendar.getInstance();
-        if (originAdapter.getItemDate(position) != null) {
-            instance.setTime(originAdapter.getItemDate(position));
-        } else {
-            return -1;
+        Date time = originAdapter.getItemDate(position);
+
+        if (time == null) {
+            return 1;
         }
 
+        // 아이템이 메세지 제한 뷰일 경우
+        if (time.getTime() == 1) {
+            return 1;
+        }
+
+        instance.setTime(time);
         instance.set(Calendar.HOUR_OF_DAY, 0);
         instance.set(Calendar.MINUTE, 0);
         instance.set(Calendar.SECOND, 0);

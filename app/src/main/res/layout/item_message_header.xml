@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/ly_message_date_devider"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_message_date_devider"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/txt_message_date_devider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/bg_round_for_message_header"
-        android:paddingBottom="6dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="6dp"
-        android:text="When"
-        android:textColor="@color/white"
-        android:textSize="11sp" />
-
-
-    <View
-        android:layout_below="@+id/txt_message_date_devider"
+    <LinearLayout
+        android:id="@+id/vg_date_divider"
         android:layout_width="match_parent"
-        android:layout_height="25dp" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/txt_message_date_devider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/bg_round_for_message_header"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="6dp"
+            android:text="When"
+            android:textColor="@color/white"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_below="@+id/txt_message_date_devider" />
+
+    </LinearLayout>
+</LinearLayout>

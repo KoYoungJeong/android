@@ -16,6 +16,10 @@
 	<string name="common_authority_title_manager">"Manager"</string>
 	<string name="common_authority_title_member">"Member"</string>
 	<string name="common_authority_title_owner">"Owner"</string>
+	<string name="common_btn_close">"Close"</string>
+	<string name="common_btn_restart">""</string>
+	<string name="common_btn_seedetail">"See details"</string>
+	<string name="common_btn_seedetail_underline">"<u>See details</u>"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"Allow calls"</string>
 	<string name="common_calleridnotifier_authorizedrawover1">"Draw over other apps"</string>
 	<string name="common_calleridnotifier_authorizedrawover2">"Turning on this feature will move you to the ’Draw over other apps’ settings."</string>
@@ -34,6 +38,8 @@
 	<string name="common_calleridnotifier_suggestmodal">"Try 'View Members' Contacts'"</string>
 	<string name="common_calleridnotifier_tosettings">" Move to Settings"</string>
 	<string name="common_calleridnotifier_use">"Enable"</string>
+	<string name="common_changedplan_restart_desc">""</string>
+	<string name="common_changedplan_restart_title">""</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_createteam_welcome">"Welcome!"</string>
 	<string name="common_creatteam_done">"Done"</string>
@@ -817,6 +823,12 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="mypage_editprofile_phonenumber">"Please enter your phone number"</string>
 	<string name="mypage_editprofile_statusmessage">"Enter your status message"</string>
 	<string name="mypage_mention_newmentionalert">"New Mention"</string>
+	<string name="pricingplan_restrictions_fileupload_popup_close">"Close"</string>
+	<string name="pricingplan_restrictions_fileupload_popup_desc">"Please upgrade your plan for more storage in JANDI."</string>
+	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"See details"</string>
+	<string name="pricingplan_restrictions_fileupload_popup_title">"This team’s storage is full"</string>
+	<string name="pricingplan_restrictions_view_message_alert_body">"You are able to view the most recent 15,000 messages in Free Plan."</string>
+	<string name="pricingplan_restrictions_view_message_alert_title">"You have exceeded the free usage limit for viewing messages."</string>
 	<string name="primary_email_info_msg">"Choose an email address where we should send all of your JANDI related emails. To assign email addresses to specific teams, please refer to the Profile menu."</string>
 	<string name="room_member_disabled_alert_body">"You are unable to send a message."</string>
 	<string name="room_member_disabled_alert_title">"This is a blocked member."</string>

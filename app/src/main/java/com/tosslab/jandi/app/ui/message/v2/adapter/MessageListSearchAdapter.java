@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.queue.LimitMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HighlightView;
@@ -46,6 +47,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
     long entityId;
     long lastReadLinkId = -1;
     List<ResMessages.Link> links;
+    private boolean isLimited = false;
 
     public MessageListSearchAdapter(Context context) {
         this.context = context;
@@ -55,6 +57,26 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
     }
 
     public void addAll(int position, List<ResMessages.Link> messages) {
+
+        long targetLinkId = 89869288;
+
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            if (targetLinkId >= links.get(i).id) {
+                if (i != messages.size() - 1) {
+                    messages = messages.subList(i + 1, links.size());
+                } else {
+                    messages.clear();
+                    messages.add(0, new LimitMessageLink());
+                }
+                if (messages.size() > 0 &&
+                        !(messages.get(0) instanceof LimitMessageLink)) {
+                    messages.add(0, new LimitMessageLink());
+                }
+                isLimited = true;
+                break;
+            }
+        }
+
         // delete dummy message by same messageId
         for (int idx = messages.size() - 1; idx >= 0; --idx) {
             int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
@@ -219,7 +241,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MoreState.Idle) {
+        if (position <= getItemCount() / 10 && oldMoreState == MoreState.Idle && !isLimited) {
             oldMoreState = MoreState.Loading;
             synchronized (this) {
                 if (oldMoreState != MoreState.Idle) {

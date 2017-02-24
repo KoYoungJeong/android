@@ -26,9 +26,7 @@ public interface MessageListAdapterModel {
     List<Integer> indexByFeedbackId(long messageId);
 
     int getDummyMessagePositionByLocalId(long localId);
-
-    boolean isLimited();
-
+    
     int getCount();
 
     int getDummyMessageCount();

@@ -763,13 +763,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         });
         dateAnimator = new DateAnimator(tvMessageDate);
         RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
-        recyclerScrollStateListener.setListener(scrolling -> {
-            if (scrolling) {
-                dateAnimator.show();
-            } else {
-                dateAnimator.hide();
-            }
-        });
+
         // 스크롤 했을 때 동작
         lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -784,6 +778,23 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
                 Date date = ((MainMessageListAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
+
+                if (date.getTime() == 1) {
+                    recyclerScrollStateListener.setListener(null);
+                    tvMessageDate.setVisibility(View.GONE);
+                } else {
+                    tvMessageDate.setVisibility(View.VISIBLE);
+                    if (!recyclerScrollStateListener.hasListener()) {
+                        recyclerScrollStateListener.setListener(scrolling -> {
+                            if (scrolling) {
+                                dateAnimator.show();
+                            } else {
+                                dateAnimator.hide();
+                            }
+                        });
+                    }
+                }
+
                 if (date != null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
@@ -793,11 +804,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     calendar.set(Calendar.MILLISECOND, 0);
 
                     long timeInMillis = calendar.getTimeInMillis();
+
                     if (DateUtils.isToday(timeInMillis)) {
                         tvMessageDate.setText(R.string.today);
                     } else {
                         tvMessageDate.setText(DateTransformator.getTimeStringForDivider(timeInMillis));
                     }
+                } else {
+                    tvMessageDate.setText(R.string.today);
                 }
             }
 

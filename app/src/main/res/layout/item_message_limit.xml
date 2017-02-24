@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="32dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/upload_image_error" />
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="testtesttest"
-        android:textSize="20dp" />
+        android:lineSpacingExtra="1dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="무료 사용량을 초과하여 메시지 확인이 불가능합니다.\nFree 플랜은 최신 15,000개의 메시지까지만 열람 가능합니다."
+        android:textColor="@color/rgb_fc4e39"
+        android:textSize="11dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="@string/common_btn_seedetail_underline"
+        android:textColor="@color/rgb_fc4e39"
+        android:textSize="11dp" />
 
 </LinearLayout>

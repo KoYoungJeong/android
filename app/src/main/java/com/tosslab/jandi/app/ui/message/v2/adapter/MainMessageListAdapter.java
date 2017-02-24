@@ -138,22 +138,27 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void addAll(int position, List<ResMessages.Link> links) {
         lock.lock();
 
-        long targetLinkId = 124521588;
+        long targetLinkId = 89869288;
 
-        for (int i = 0; i < links.size(); i++) {
-            if (targetLinkId > links.get(i).id) {
-                if (i > 0) {
-                    links = links.subList(0, i - 1);
+        for (int i = links.size() - 1; i >= 0; i--) {
+            if (targetLinkId >= links.get(i).id) {
+                if (i != links.size() - 1) {
+                    links = links.subList(i + 1, links.size());
                 } else {
                     links.clear();
+                    links.add(0, new LimitMessageLink());
                 }
-                links.add(0, new LimitMessageLink());
+                if (links.size() > 0 &&
+                        !(links.get(0) instanceof LimitMessageLink)) {
+                    links.add(0, new LimitMessageLink());
+                }
                 isLimited = true;
                 break;
             }
         }
 
         try {
+
             if (links == null || links.isEmpty()) {
                 return;
             }
@@ -289,11 +294,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             }
         }
         return -1;
-    }
-
-    @Override
-    public boolean isLimited() {
-        return isLimited;
     }
 
     @Override
@@ -479,12 +479,13 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public Date getItemDate(int position) {
-        if (getItemViewType(position) == TypeUtil.TYPE_VIEW_LIMIT_MESSAGE) {
-            return null;
-        }
 
         if (position >= getItemCount()) {
             return null;
+        }
+
+        if (getItemViewType(position) == TypeUtil.TYPE_VIEW_LIMIT_MESSAGE) {
+            return new Date(1);
         }
 
         ResMessages.Link item = getItem(position);

@@ -7,4 +7,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
  */
 
 public class LimitMessageLink extends ResMessages.Link {
+
+
 }
