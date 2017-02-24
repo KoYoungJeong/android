@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
@@ -280,6 +281,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setTeamName(String teamName) {
         tvTeamName.setText(teamName);
+    }
+
+    @Override
+    public void setTeamDefaultName() {
+        tvTeamName.setHint(
+                JandiApplication.getContext().getString(R.string.common_sharetojandi_choose_team));
     }
 
     @Override

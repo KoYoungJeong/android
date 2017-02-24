@@ -66,6 +66,10 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
     @Override
     public void initShareTarget() {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
+        if (teamId <= 0) {
+            view.setTeamDefaultName();
+            return;
+        }
         onSelectTeam(teamId);
     }
 

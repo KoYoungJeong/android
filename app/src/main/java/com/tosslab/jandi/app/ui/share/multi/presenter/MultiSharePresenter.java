@@ -38,6 +38,8 @@ public interface MultiSharePresenter {
 
         void setTeamName(String teamName);
 
+        void setTeamDefaultName();
+
         void setRoomName(String roomName);
 
         void setMentionInfo(long teamId, long roomId);
