@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/iv_profile"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginRight="16dp" />
 
         <ImageView
@@ -149,7 +149,7 @@
         android:id="@+id/v_half_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginLeft="75dp"
+        android:layout_marginLeft="72dp"
         android:background="#ffeeeeee"
         android:visibility="gone" />
 </LinearLayout>

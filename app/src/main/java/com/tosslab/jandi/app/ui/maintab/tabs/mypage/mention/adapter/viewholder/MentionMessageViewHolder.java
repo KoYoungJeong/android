@@ -110,8 +110,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         MentionAnalysisInfo mentionAnalysisInfo =
                 MentionAnalysisInfo.newBuilder(myId, mentionMessage.getMentions())
                         .textSizeFromResource(R.dimen.jandi_mention_star_list_item_font_size)
-                        .forMeBackgroundColor(Color.parseColor("#FFCFF1FF"))
-                        .forMeTextColor(Color.parseColor("#FF00ACE9"))
+                        .forMeBackgroundColor(0xFFCFF1FF)
+                        .forMeTextColor(0xFF00ACE9)
                         .build();
 
         SpannableLookUp.text(ssb)

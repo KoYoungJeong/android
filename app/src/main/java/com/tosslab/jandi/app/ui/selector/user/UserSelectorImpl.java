@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.selector.user;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
@@ -80,7 +82,14 @@ public class UserSelectorImpl implements UserSelector {
                 onUserDismissListener.onUserDismiss();
             }
         });
-        PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);
+
+        if (SdkUtils.isOverNougat()) {
+            int[] a = new int[2];
+            roomView.getLocationInWindow(a);
+            popupWindow.showAtLocation(((Activity) roomView.getContext()).getWindow().getDecorView(), Gravity.NO_GRAVITY, 0, a[1] + roomView.getHeight());
+        } else {
+            PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.LEFT);
+        }
 
     }
 

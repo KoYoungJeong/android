@@ -3,14 +3,12 @@ package com.tosslab.jandi.app.ui.search.file.view;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,7 +19,6 @@ import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.FileListFragment;
 import com.tosslab.jandi.app.ui.search.file.adapter.SearchQueryAdapter;
@@ -41,7 +38,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
-import de.greenrobot.event.EventBus;
 
 public class FileSearchActivity extends BaseAppCompatActivity implements FileSearchPresenter.View {
 
@@ -72,12 +68,7 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
     InputMethodManager inputMethodManager;
 
-    private int searchMaxY = 0;
-    private int searchMinY;
-
     private SearchSelectView searchSelectView;
-
-    private boolean isForeground;
 
     public static void start(Context context, long entityId) {
         context.startActivity(Henson.with(context)
@@ -116,16 +107,9 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
         searchQueryAdapter = new SearchQueryAdapter(FileSearchActivity.this);
         etSearch.setAdapter(searchQueryAdapter);
-        Resources resources = etSearch.getResources();
         etSearch.setOnItemClickListener((parent, view, position, id) -> onSearchTextAction());
 
-        searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                64,
-                resources.getDisplayMetrics());
-
-
         addFragments();
-        initSearchSelectView();
         hideSoftInput();
 
     }
@@ -151,49 +135,8 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         searchSelectView = fileListFragment;
         searchSelectView.setOnSearchItemSelect(this::finish);
         searchSelectView.setOnSearchText(() -> etSearch.getText().toString().trim());
-    }
 
-    private void initSearchSelectView() {
-        searchLayout.setY(searchMaxY);
-        searchSelectView.onSearchHeaderReset();
-        searchSelectView.initSearchLayoutIfFirst();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isForeground = true;
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        EventBus.getDefault().unregister(this);
-        isForeground = false;
-        super.onPause();
-    }
-
-    public void onEvent(SearchResultScrollEvent event) {
-
-        if (!isForeground) {
-            return;
-        }
-
-        if (event.getFrom() != searchSelectView.getClass()) {
-            return;
-        }
-
-        int offset = event.getOffset();
-
-        float futureLayoutY = searchLayout.getY() - offset;
-
-        if (futureLayoutY <= searchMinY) {
-            searchLayout.setY(searchMinY);
-        } else if (futureLayoutY >= searchMaxY) {
-            searchLayout.setY(searchMaxY);
-        } else {
-            searchLayout.setY(futureLayoutY);
-        }
+        fileListFragment.setUserVisibleHint(true);
     }
 
     @OnClick(R.id.img_search_backkey)
@@ -329,10 +272,6 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
     public interface SearchSelectView {
         void onNewQuery(String query);
-
-        void onSearchHeaderReset();
-
-        void initSearchLayoutIfFirst();
 
         void setOnSearchItemSelect(OnSearchItemSelect onSearchItemSelect);
 

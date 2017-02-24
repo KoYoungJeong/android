@@ -126,9 +126,9 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         setUserInfo(item);
 
         if (isKickMode && !item.isMyId() && !item.isBot()) {
-            ivUserKick.setVisibility(View.VISIBLE);
+            vgUserKick.setVisibility(View.VISIBLE);
         } else {
-            ivUserKick.setVisibility(View.GONE);
+            vgUserKick.setVisibility(View.GONE);
             setKickClickListener(null);
         }
 
@@ -163,16 +163,17 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             LinearLayout.LayoutParams departmentLP = (LinearLayout.LayoutParams) tvUserDepartment.getLayoutParams();
             departmentLP.width = vgContent.getLayoutParams().width;
             tvUserDepartment.setLayoutParams(departmentLP);
-            tvUserDepartment.setText(department);
         }
+        tvUserDepartment.setText(department);
 
         String jobTitle = item.getJobTitle();
         if (TextUtils.isEmpty(jobTitle)) {
             tvUserJobTitle.setVisibility(View.GONE);
         } else {
             tvUserJobTitle.setVisibility(View.VISIBLE);
-            tvUserJobTitle.setText(jobTitle);
         }
+        tvUserJobTitle.setText(jobTitle);
+
     }
 
     private void measureContentWidth(ChatChooseItem item) {
@@ -206,10 +207,10 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
             } else {
                 String url = item.getPhotoUrl();
                 if (ProfileUtil.isChangedPhoto(url)) {
-                    ImageUtil.loadProfileImage(ivProfile, url, R.drawable.profile_img_dummyaccount_43);
+                    ImageUtil.loadProfileImage(ivProfile, url, R.drawable.profile_img_dummyaccount_40);
                 } else {
                     ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_43);
+                    ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_40);
                 }
             }
         } else {

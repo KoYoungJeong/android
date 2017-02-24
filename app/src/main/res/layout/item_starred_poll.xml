@@ -8,24 +8,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="19dp"
-        android:paddingLeft="14.5dp"
+        android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="19dp">
+        android:paddingTop="16dp">
 
         <ImageView
             android:id="@+id/iv_starred_poll_profile"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true" />
 
         <View
             android:id="@+id/v_starred_profile_cover"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/iv_starred_poll_profile"
+            android:layout_alignEnd="@+id/iv_starred_poll_profile"
+            android:layout_alignLeft="@+id/iv_starred_poll_profile"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/iv_starred_poll_profile"
+            android:layout_alignStart="@+id/iv_starred_poll_profile"
+            android:layout_alignTop="@+id/iv_starred_poll_profile"
             android:layout_centerVertical="true"
             android:background="#66FFFFFF" />
 
@@ -34,6 +41,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/iv_starred_poll_profile"
             android:layout_toRightOf="@id/iv_starred_poll_profile"
             android:ellipsize="end"
             android:maxLines="1"
@@ -61,7 +70,9 @@
             android:layout_height="64dp"
             android:layout_below="@id/tv_starred_poll_writer"
             android:layout_marginLeft="14.5dp"
+            android:layout_marginStart="14.5dp"
             android:layout_marginTop="15dp"
+            android:layout_toEndOf="@id/iv_starred_poll_profile"
             android:layout_toRightOf="@id/iv_starred_poll_profile"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -76,6 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:ellipsize="middle"
                 android:lineSpacingExtra="3dp"
                 android:maxLines="3"
@@ -93,7 +105,7 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/rgb_e9e9e9"
+        android:background="@color/rgb_e5e5e5"
         android:visibility="visible" />
 
     <View
@@ -102,6 +114,7 @@
         android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="72dp"
-        android:background="@color/rgb_e9e9e9"
+        android:layout_marginStart="72dp"
+        android:background="@color/rgb_e5e5e5"
         android:visibility="visible" />
 </RelativeLayout>

@@ -1,58 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <RelativeLayout
+            android:id="@+id/layout_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="?attr/colorPrimary"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:layout_scrollFlags="scroll|snap|enterAlways">
+
+            <AutoCompleteTextView
+                android:id="@+id/tv_search_keyword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_round_rect_white"
+                android:completionThreshold="1"
+                android:gravity="center_vertical"
+                android:hint="@string/jandi_input_search_keyword"
+                android:imeOptions="actionSearch|flagNoExtractUi"
+                android:inputType="text"
+                android:paddingLeft="64dp"
+                android:paddingRight="64dp" />
+
+            <ImageView
+                android:id="@+id/img_search_backkey"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:paddingLeft="16dp"
+                android:paddingRight="24dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_search_back" />
+
+            <ImageView
+                android:id="@+id/iv_search_mic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/btn_search_voice" />
+
+        </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/layout_search_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jandi_background_default" />
+        android:background="@color/jandi_background_default"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <RelativeLayout
-        android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="?attr/colorPrimary"
-        android:padding="8dp"
-        android:visibility="visible">
 
-        <AutoCompleteTextView
-            android:id="@+id/tv_search_keyword"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_round_rect_white"
-            android:completionThreshold="1"
-            android:gravity="center_vertical"
-            android:hint="@string/jandi_input_search_keyword"
-            android:imeOptions="actionSearch|flagNoExtractUi"
-            android:inputType="text"
-            android:paddingLeft="64dp"
-            android:paddingRight="64dp" />
-
-        <ImageView
-            android:id="@+id/img_search_backkey"
-            android:layout_width="@dimen/jandi_search_default_size"
-            android:layout_height="@dimen/jandi_search_default_size"
-            android:layout_centerVertical="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingLeft="13.5dp"
-            android:paddingRight="13.5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/btn_search_back" />
-
-        <ImageView
-            android:id="@+id/iv_search_mic"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/btn_search_voice" />
-
-    </RelativeLayout>
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -101,7 +101,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         updatedHolder.container.setBackgroundResource(R.drawable.bg_list_item);
         updatedHolder.ivFolderItemUnderline.setVisibility(View.GONE);
         updatedHolder.ivDefaultUnderline.setVisibility(View.VISIBLE);
-        updatedHolder.ivShadowUnderline.setVisibility(View.GONE);
 
         updatedHolder.itemView.setClickable(true);
         updatedHolder.tvTopicName.setText(item.getName());
@@ -287,8 +286,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView ivDefaultUnderline;
         @Bind(R.id.iv_folder_item_underline)
         ImageView ivFolderItemUnderline;
-        @Bind(R.id.iv_shadow_underline)
-        ImageView ivShadowUnderline;
         @Bind(R.id.vg_entity_listitem_badge)
         RelativeLayout vgTopicBadge;
         @Bind(R.id.v_topic_item_animator)

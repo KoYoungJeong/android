@@ -47,7 +47,6 @@ import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.decoration.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
 import java.util.List;
@@ -125,7 +124,6 @@ public class MainChatListFragment extends BaseLazyFragment
         setHasOptionsMenu(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
-        lvChat.addItemDecoration(new SimpleDividerItemDecoration());
         mainChatListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
             onEntityItemClick(position);
         });

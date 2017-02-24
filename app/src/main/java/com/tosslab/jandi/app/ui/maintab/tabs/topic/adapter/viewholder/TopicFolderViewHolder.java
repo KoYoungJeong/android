@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,10 +12,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicFolderData;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by tee on 2017. 2. 10..
- */
-
 public class TopicFolderViewHolder extends MainTopicViewHolder<TopicFolderData> {
 
     @Bind(R.id.rl_folder_container)
@@ -25,28 +20,24 @@ public class TopicFolderViewHolder extends MainTopicViewHolder<TopicFolderData> 
     @Bind(R.id.iv_folder_setting)
     ImageView ivFolderSetting;
 
-    @Bind(R.id.ll_folder_setting)
-    LinearLayout vgFolderSetting;
-
     @Bind(R.id.tv_topic_folder_title)
     TextView tvTitle;
 
-    @Bind(R.id.tv_topic_cnt)
+    @Bind(R.id.tv_topic_folder_count)
     TextView tvTopicCnt;
 
     @Bind(R.id.tv_folder_listitem_badge)
     TextView tvChildBadgeCnt;
 
-    @Bind(R.id.rl_folder_listitem_badge)
-    RelativeLayout vgChildBadgeCnt;
-
     @Bind(R.id.iv_folder_default_underline)
     ImageView ivDefaultUnderline;
 
     private OnFolderSettingClickListener onFolderSettingClickListener;
+    private View itemView;
 
     public TopicFolderViewHolder(View itemView) {
         super(itemView);
+        this.itemView = itemView;
         ButterKnife.bind(this, itemView);
     }
 
@@ -62,7 +53,7 @@ public class TopicFolderViewHolder extends MainTopicViewHolder<TopicFolderData> 
 
         container.setVisibility(View.VISIBLE);
         tvTitle.setText(item.getTitle());
-        tvTopicCnt.setText(String.valueOf(item.getItemCount()));
+        tvTopicCnt.setText(String.format("(%d)", item.getItemCount()));
         itemView.setClickable(true);
         container.setOnClickListener(v -> {
             if (onItemClickListener != null) {
@@ -73,30 +64,26 @@ public class TopicFolderViewHolder extends MainTopicViewHolder<TopicFolderData> 
         Resources resources = container.getContext().getResources();
 
         if ((item.getItemCount() > 0) && (item.isOpened())) {
-            tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder_open);
-            tvTopicCnt.setTextColor(resources.getColor(R.color.jandi_topic_folder_expand));
-            tvTitle.setTextColor(resources.getColor(R.color.jandi_topic_folder_expand));
             ivDefaultUnderline.setVisibility(View.GONE);
-            vgChildBadgeCnt.setVisibility(View.GONE);
+            tvChildBadgeCnt.setVisibility(View.GONE);
+            itemView.setBackgroundColor(resources.getColor(R.color.rgb_f5f5f5));
         } else {
-            tvTopicCnt.setBackgroundResource(R.drawable.topiclist_icon_folder);
-            tvTopicCnt.setTextColor(resources.getColor(R.color.jandi_topic_folder_collapse));
-            tvTitle.setTextColor(resources.getColor(R.color.jandi_topic_folder_collapse));
             ivDefaultUnderline.setVisibility(View.VISIBLE);
+            itemView.setBackgroundColor(resources.getColor(R.color.white));
             if (item.getChildBadgeCnt() > 0) {
-                vgChildBadgeCnt.setVisibility(View.VISIBLE);
+                tvChildBadgeCnt.setVisibility(View.VISIBLE);
                 if (item.getChildBadgeCnt() > 999) {
                     tvChildBadgeCnt.setText(String.valueOf(999));
                 } else {
                     tvChildBadgeCnt.setText(String.valueOf(item.getChildBadgeCnt()));
                 }
             } else {
-                vgChildBadgeCnt.setVisibility(View.GONE);
+                tvChildBadgeCnt.setVisibility(View.GONE);
             }
         }
 
-        vgFolderSetting.setClickable(true);
-        vgFolderSetting.setOnClickListener(v -> {
+        ivFolderSetting.setClickable(true);
+        ivFolderSetting.setOnClickListener(v -> {
             onFolderSettingClickListener.onClick();
         });
     }

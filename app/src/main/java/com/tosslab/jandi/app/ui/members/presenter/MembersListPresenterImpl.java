@@ -34,8 +34,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-import static com.tosslab.jandi.app.ui.members.MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER;
-import static com.tosslab.jandi.app.ui.members.MembersListActivity.TYPE_MEMBERS_LIST_TEAM;
 
 /**
  * Created by Tee on 15. x. x..
@@ -74,7 +72,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
                     return getFilteredChatChooseItems(s, members);
                 }).concatMap(chatChooseItems -> Observable.from(chatChooseItems)
                         .filter(item -> {
-                            if (view.getType() == TYPE_ASSIGN_TOPIC_OWNER) {
+                            if (view.getType() == MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER) {
                                 if (TeamInfoLoader.getInstance().getUser(item.getEntityId()).getLevel() != Level.Guest) {
                                     return true;
                                 } else {
@@ -122,10 +120,10 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         long entityId = view.getEntityId();
         int type = view.getType();
         List<ChatChooseItem> members;
-        if (type == TYPE_MEMBERS_LIST_TEAM) {
+        if (type == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
             members = memberModel.getTeamMembers();
         } else if (type == MembersListActivity.TYPE_MEMBERS_LIST_TOPIC
-                || type == TYPE_ASSIGN_TOPIC_OWNER) {
+                || type == MembersListActivity.TYPE_ASSIGN_TOPIC_OWNER) {
             members = memberModel.getTopicMembers(entityId);
         } else {
             members = memberModel.getTeamMembers();

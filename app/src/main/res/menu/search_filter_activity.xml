@@ -5,6 +5,7 @@
     <item
         android:id="@+id/action_voice"
         android:icon="@drawable/account_icon_mic"
+        android:title="@string/jandi_action_search"
         android:orderInCategory="99"
         app:showAsAction="always"/>
     <item

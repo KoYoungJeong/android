@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.selector.room;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
 import com.tosslab.jandi.app.ui.selector.room.adapter.RoomRecyclerAdapter;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
+import com.tosslab.jandi.app.utils.SdkUtils;
 import com.tosslab.jandi.app.utils.StringCompareUtil;
 
 import java.util.ArrayList;
@@ -121,8 +123,13 @@ public class RoomSelectorImpl implements RoomSelector {
                 }
             });
             popupWindow.setAnimationStyle(R.style.PopupAnimation);
-            PopupWindowCompat.showAsDropDown(popupWindow,
-                    roomView, 0, 0, Gravity.TOP | Gravity.START);
+            if (SdkUtils.isOverNougat()) {
+                int[] a = new int[2];
+                roomView.getLocationInWindow(a);
+                popupWindow.showAtLocation(((Activity) roomView.getContext()).getWindow().getDecorView(), Gravity.NO_GRAVITY, 0, a[1] + roomView.getHeight());
+            } else {
+                PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.LEFT);
+            }
         } else if (type == TYPE_VIEW) {
             if (roomView instanceof ViewGroup) {
                 ViewGroup rootViewGroup = (ViewGroup) roomView;
