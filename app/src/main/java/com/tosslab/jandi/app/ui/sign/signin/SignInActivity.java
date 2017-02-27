@@ -337,6 +337,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             startActivityForResult(intent, REQUEST_CAPTCHAR);
             moveCaptcha = false;
         } else {
+            showErrorInvalidEmailOrPassword();
             moveCaptcha = true;
         }
     }
