@@ -89,6 +89,8 @@ public class TeamMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 } else {
                     if (isSameStarredToNext(position)) {
                         holder.showHalfDivider();
+                    } else {
+                        holder.dismissDividers();
                     }
                 }
             }
