@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.Mention;
+import com.tosslab.jandi.app.network.models.start.TeamUsage;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
@@ -107,7 +108,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamPlanUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamUsageUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderCreatedEvent;
@@ -126,6 +129,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.restart.RankResetActivity;
+import com.tosslab.jandi.app.ui.restart.TeamPlanResetActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -1551,7 +1555,30 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void onTeamPlanUpdated(Object object) {
+        try {
+            SocketTeamPlanUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamPlanUpdatedEvent.class);
+            saveEvent(event);
+            Intent intent = new Intent(JandiApplication.getContext(), TeamPlanResetActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            JandiApplication.getContext().startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void onTeamUsageUpdated(Object object) {
+        try {
+            SocketTeamUsageUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamUsageUpdatedEvent.class);
+            saveEvent(event);
+            TeamUsage data = event.getData();
+            TeamInfoLoader.getInstance().updateTeamUsage(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface Command {

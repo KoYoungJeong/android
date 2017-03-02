@@ -717,6 +717,14 @@ public class TeamInfoLoader {
         });
     }
 
+    public void updateTeamUsage(TeamUsage usage) {
+        execute(() -> {
+            initialInfo.setTeamUsage(usage);
+            setUpTeamUsage();
+            InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
+        });
+    }
+
     interface Call0<T> {
         T execute();
     }

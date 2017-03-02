@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.Gson;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.InitializeInfoConverter;
 import com.vimeo.stag.GsonAdapterKey;
 
@@ -145,5 +146,11 @@ public class InitialInfo {
 
     public void setTeamUsage(TeamUsage teamUsage) {
         this.teamUsage = teamUsage;
+    }
+
+    public RawInitialInfo convertRawInitialInfo() {
+        Gson gson = new Gson();
+        String rawInitialInfo = gson.toJson(this);
+        return new RawInitialInfo(getTeam().id, rawInitialInfo);
     }
 }
