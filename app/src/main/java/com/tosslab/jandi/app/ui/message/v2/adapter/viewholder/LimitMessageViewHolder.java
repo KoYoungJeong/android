@@ -1,10 +1,16 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
+
+import java.util.Locale;
 
 /**
  * Created by tee on 2017. 2. 22..
@@ -12,9 +18,36 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHo
 
 public class LimitMessageViewHolder implements BodyViewHolder {
 
+    private TextView tvSeeDetailButton;
+
     @Override
     public void initView(View rootView) {
+        tvSeeDetailButton = (TextView) rootView.findViewById(R.id.tv_see_detail_button);
+        tvSeeDetailButton.setOnClickListener(v -> {
+            onClickShowPricePlan(rootView.getContext());
+        });
+    }
 
+    private void onClickShowPricePlan(Context context) {
+        if (context != null) {
+            Locale locale = context.getResources().getConfiguration().locale;
+            String lang = locale.getLanguage();
+            String url = "https://www.jandi.com/landing/ko/pricing";
+
+            if (TextUtils.equals(lang, "en")) {
+                url = "www.jandi.com/landing/en/pricing";
+            } else if (TextUtils.equals(lang, "ja")) {
+                url = "www.jandi.com/landing/ja/pricing";
+            } else if (TextUtils.equals(lang, "ko")) {
+                url = "www.jandi.com/landing/ko/pricing";
+            } else if (TextUtils.equals(lang, "zh-cn")) {
+                url = "www.jandi.com/landing/zh-cn/pricing";
+            } else if (TextUtils.equals(lang, "zh-tw")) {
+                url = "www.jandi.com/landing/zh-tw/pricing";
+            }
+
+            ApplicationUtil.startWebBrowser(context, url);
+        }
     }
 
     @Override

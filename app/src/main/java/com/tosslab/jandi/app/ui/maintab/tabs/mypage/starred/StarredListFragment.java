@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.StarredListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.adapter.view.StarredListDataView;
@@ -30,11 +32,14 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.dagger.StarredListMo
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.starred.presentor.StarredListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Fragment;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -233,6 +238,14 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     @Override
     public void moveToMessageList(long teamId, long entityId, long roomId, int entityType, long linkId) {
+
+        long limitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
+
+        if (limitedLinkId != -1 && linkId < limitedLinkId) {
+            showUsageLimitDialog();
+            return;
+        }
+
         startActivity(Henson.with(getActivity())
                 .gotoMessageListV2Activity()
                 .teamId(teamId)
@@ -243,6 +256,41 @@ public class StarredListFragment extends Fragment implements StarredListPresente
                 .lastReadLinkId(linkId)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
+    public void showUsageLimitDialog() {
+        new AlertDialog.Builder(getContext(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.pricingplan_restrictions_view_message_alert_title)
+                .setMessage(R.string.pricingplan_restrictions_view_message_alert_body)
+                .setNegativeButton(this.getText(R.string.intercom_close), (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton(R.string.pricingplan_restrictions_fileupload_popup_seedetail,
+                        (dialog, which) -> {
+                            movePricePlan(getContext());
+                        }).show();
+    }
+
+    private void movePricePlan(Context context) {
+        if (context != null) {
+            Locale locale = context.getResources().getConfiguration().locale;
+            String lang = locale.getLanguage();
+            String url = "https://www.jandi.com/landing/ko/pricing";
+
+            if (TextUtils.equals(lang, "en")) {
+                url = "www.jandi.com/landing/en/pricing";
+            } else if (TextUtils.equals(lang, "ja")) {
+                url = "www.jandi.com/landing/ja/pricing";
+            } else if (TextUtils.equals(lang, "ko")) {
+                url = "www.jandi.com/landing/ko/pricing";
+            } else if (TextUtils.equals(lang, "zh-cn")) {
+                url = "www.jandi.com/landing/zh-cn/pricing";
+            } else if (TextUtils.equals(lang, "zh-tw")) {
+                url = "www.jandi.com/landing/zh-tw/pricing";
+            }
+
+            ApplicationUtil.startWebBrowser(context, url);
+        }
     }
 
     @Override
@@ -363,4 +411,5 @@ public class StarredListFragment extends Fragment implements StarredListPresente
             starredListPresenter.onLoadMoreAction(starredType, starredId);
         }
     }
+
 }

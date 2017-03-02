@@ -17,7 +17,7 @@
 	<string name="common_authority_title_member">"正成員"</string>
 	<string name="common_authority_title_owner">"所有者"</string>
 	<string name="common_btn_close">"關閉"</string>
-	<string name="common_btn_restart">""</string>
+	<string name="common_btn_restart">"重啟"</string>
 	<string name="common_btn_seedetail">"瞭解更多"</string>
 	<string name="common_btn_seedetail_underline">"<u>瞭解更多</u>"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"允許通話權限"</string>
@@ -38,8 +38,8 @@
 	<string name="common_calleridnotifier_suggestmodal">"試試成員通話設定"</string>
 	<string name="common_calleridnotifier_tosettings">"前往設定"</string>
 	<string name="common_calleridnotifier_use">"啟用"</string>
-	<string name="common_changedplan_restart_desc">""</string>
-	<string name="common_changedplan_restart_title">""</string>
+	<string name="common_changedplan_restart_desc">"請重新啟動 JANDI"</string>
+	<string name="common_changedplan_restart_title">"你現在使用 JANDI 的新方案"</string>
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
 	<string name="common_createteam_welcome">"歡迎！"</string>
 	<string name="common_creatteam_done">"確認"</string>
@@ -53,8 +53,8 @@
 	<string name="common_launch_503">"抱歉！JANDI 伺服器暫時出現異常。建議您再嘗試操作，造成不便敬請見諒"</string>
 	<string name="common_launch_fail">"暫時無法讀取啟動資訊
 請重新啟動 app"</string>
-	<string name="common_launch_maintenance_description">""</string>
-	<string name="common_launch_maintenance_title">""</string>
+	<string name="common_launch_maintenance_description">"若造成您的不便敬請見諒"</string>
+	<string name="common_launch_maintenance_title">"伺服器正在維護中"</string>
 	<string name="common_pricingplan_fileupload">""</string>
 	<string name="common_pricingplan_livesupport">"線上客服"</string>
 	<string name="common_pricingplan_moreinfo">"瞭解更多"</string>

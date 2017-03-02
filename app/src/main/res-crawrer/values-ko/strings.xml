@@ -571,7 +571,7 @@
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"종료 시각"</string>
 	<string name="jandi_poll_is_anonymous">"이 투표는 익명투표입니다."</string>
-	<string name="jandi_poll_multiple">"복수선택"</string>
+	<string name="jandi_poll_multiple">"복수 선택 가능"</string>
 	<string name="jandi_poll_multiple_available">"복수 선택 가능"</string>
 	<string name="jandi_poll_participants_ing">"명 참여"</string>
 	<string name="jandi_poll_voted">"투표 완료"</string>
@@ -850,8 +850,8 @@
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"자세히 보기"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_title">"해당 팀의 무료 파일 저장공간이 가득 찼습니다.
 "</string>
-	<string name="pricingplan_restrictions_view_message_alert_body">"이전 메시지를 확인하시려면 플랜을 업그레이드하세요."</string>
-	<string name="pricingplan_restrictions_view_message_alert_title">"이 팀에서 15,000개의 메시지를 모두 사용하셨습니다"</string>
+	<string name="pricingplan_restrictions_view_message_alert_body">"Free 플랜은 최신15,000개의 메시지까지만 열람 가능합니다."</string>
+	<string name="pricingplan_restrictions_view_message_alert_title">"무료 사용량을 초과하여 메시지 확인이 불가능합니다."</string>
 	<string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
 	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능합니다."</string>
 	<string name="room_member_disabled_alert_title">"이 멤버는 차단된 멤버입니다."</string>

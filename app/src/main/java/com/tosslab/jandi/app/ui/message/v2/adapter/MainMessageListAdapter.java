@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.queue.LimitMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
@@ -39,8 +40,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     MoreState oldMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
-    List<ResMessages.Link> links;
-    // 소켓으로 데이터를 받지 않은 경우에 저장하기 위한 정보
+    List<ResMessages.Link> links; // 소켓으로 데이터를 받지 않은 경우에 저장하기 위한 정보
     private Room room;
     private MessagePointer messagePointer;
 
@@ -138,25 +138,27 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public void addAll(int position, List<ResMessages.Link> links) {
         lock.lock();
 
-        long targetLinkId = 89869288;
+        long LimitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
 
-        for (int i = links.size() - 1; i >= 0; i--) {
-            if (targetLinkId >= links.get(i).id) {
-                if (i != links.size() - 1) {
-                    links = links.subList(i + 1, links.size());
-                } else {
-                    links.clear();
-                    links.add(0, new LimitMessageLink());
+        // limitedLinkId가 존재할 경우 제한 로직 동작.
+        if (LimitedLinkId != -1) {
+            for (int i = links.size() - 1; i >= 0; i--) {
+                if (LimitedLinkId >= links.get(i).id) {
+                    if (i != links.size() - 1) {
+                        links = links.subList(i + 1, links.size());
+                    } else {
+                        links.clear();
+                        links.add(0, new LimitMessageLink());
+                    }
+                    if (links.size() > 0 &&
+                            !(links.get(0) instanceof LimitMessageLink)) {
+                        links.add(0, new LimitMessageLink());
+                    }
+                    isLimited = true;
+                    break;
                 }
-                if (links.size() > 0 &&
-                        !(links.get(0) instanceof LimitMessageLink)) {
-                    links.add(0, new LimitMessageLink());
-                }
-                isLimited = true;
-                break;
             }
         }
-
         try {
 
             if (links == null || links.isEmpty()) {

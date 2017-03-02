@@ -45,14 +45,15 @@ public class FileAccessLimitUtil {
     private void showFileAccessLimitDialog(Context context) {
 
         new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle("해당 팀의 무료 파일 저장공간이 가득 찼습니다.")
-                .setMessage("해당 팀의 플랜을 업그레이드 하시면 더욱 자유롭게 서비스를 사용하실 수 있습니다.")
+                .setTitle(R.string.pricingplan_restrictions_fileupload_popup_title)
+                .setMessage(R.string.pricingplan_restrictions_fileupload_popup_desc)
                 .setNegativeButton(context.getText(R.string.intercom_close), (dialog, which) -> {
                     dialog.dismiss();
                 })
-                .setPositiveButton("자세히 보기", (dialog, which) -> {
-                    onClickShowPricePlan(context);
-                }).show();
+                .setPositiveButton(R.string.pricingplan_restrictions_fileupload_popup_seedetail,
+                        (dialog, which) -> {
+                            onClickShowPricePlan(context);
+                        }).show();
 
 
     }

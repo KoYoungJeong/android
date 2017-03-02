@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -43,6 +44,7 @@ import com.tosslab.jandi.app.ui.search.main.adapter.SearchAdapterViewModel;
 import com.tosslab.jandi.app.ui.search.main.dagger.DaggerSearchComponent;
 import com.tosslab.jandi.app.ui.search.main.dagger.SearchModule;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -50,6 +52,7 @@ import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -567,7 +570,7 @@ public class SearchActivity extends BaseAppCompatActivity
     public void showShouldOpenedUser() {
         new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(R.string.topic_search_1on1_unable)
-                .setPositiveButton(R.string.jandi_confirm,null)
+                .setPositiveButton(R.string.jandi_confirm, null)
                 .create()
                 .show();
     }
@@ -643,10 +646,47 @@ public class SearchActivity extends BaseAppCompatActivity
         }
     }
 
+    @Override
+    public void showUsageLimitDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.pricingplan_restrictions_view_message_alert_title)
+                .setMessage(R.string.pricingplan_restrictions_view_message_alert_body)
+                .setNegativeButton(this.getText(R.string.intercom_close), (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton(R.string.pricingplan_restrictions_fileupload_popup_seedetail,
+                        (dialog, which) -> {
+                            movePricePlan(this);
+                        }).show();
+    }
+
+    private void movePricePlan(Context context) {
+        if (context != null) {
+            Locale locale = context.getResources().getConfiguration().locale;
+            String lang = locale.getLanguage();
+            String url = "https://www.jandi.com/landing/ko/pricing";
+
+            if (TextUtils.equals(lang, "en")) {
+                url = "www.jandi.com/landing/en/pricing";
+            } else if (TextUtils.equals(lang, "ja")) {
+                url = "www.jandi.com/landing/ja/pricing";
+            } else if (TextUtils.equals(lang, "ko")) {
+                url = "www.jandi.com/landing/ko/pricing";
+            } else if (TextUtils.equals(lang, "zh-cn")) {
+                url = "www.jandi.com/landing/zh-cn/pricing";
+            } else if (TextUtils.equals(lang, "zh-tw")) {
+                url = "www.jandi.com/landing/zh-tw/pricing";
+            }
+
+            ApplicationUtil.startWebBrowser(context, url);
+        }
+    }
+
     public void onEvent(ShareFileEvent event) {
         long fileId = event.getId();
         searchPresenter.addFileSharedEntity(fileId, event.getShareEntities());
     }
+
     public void onEvent(UnshareFileEvent event) {
         long fileId = event.getFileId();
         long roomId = event.getRoomId();

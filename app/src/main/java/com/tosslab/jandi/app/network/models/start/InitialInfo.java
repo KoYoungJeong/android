@@ -23,6 +23,8 @@ public class InitialInfo {
     Mention mention;
     @GsonAdapterKey
     TeamPlan teamPlan;
+    @GsonAdapterKey
+    TeamUsage teamUsage;
 
     @GsonAdapterKey
     List<Folder> folders;
@@ -137,4 +139,11 @@ public class InitialInfo {
         this.teamPlan = teamPlan;
     }
 
+    public TeamUsage getTeamUsage() {
+        return teamUsage;
+    }
+
+    public void setTeamUsage(TeamUsage teamUsage) {
+        this.teamUsage = teamUsage;
+    }
 }

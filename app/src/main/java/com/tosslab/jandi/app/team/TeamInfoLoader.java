@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoReposito
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamPlanRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TeamUsageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.start.Bot;
@@ -27,6 +28,7 @@ import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.Poll;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.TeamPlan;
+import com.tosslab.jandi.app.network.models.start.TeamUsage;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.team.authority.Level;
@@ -66,11 +68,13 @@ public class TeamInfoLoader {
     private TeamRepository teamRepository;
     private InitialMentionInfoRepository mention;
     private TeamPlanRepository teamPlan;
+    private TeamUsageRepository teamUsage;
 
     private User me;
     private User jandiBot;
 
     private InitialPollInfoRepository poll;
+
 
     private TeamInfoLoader(long teamId) {
         this.teamId = teamId;
@@ -128,6 +132,7 @@ public class TeamInfoLoader {
         topicFolders = FolderRepository.getInstance(teamId);
         poll = InitialPollInfoRepository.getInstance(teamId);
         teamPlan = TeamPlanRepository.getInstance(teamId);
+        teamUsage = TeamUsageRepository.getInstance(teamId);
         mention = InitialMentionInfoRepository.getInstance(teamId);
         teamRepository = TeamRepository.getInstance(teamId);
 
@@ -147,6 +152,8 @@ public class TeamInfoLoader {
             setUpTeam();
             setUpPollBadge();
             setUpTeamPlan();
+            setUpTeamUsage();
+
             setUpMention();
 
             setUpRanks();
@@ -160,6 +167,10 @@ public class TeamInfoLoader {
             jandiBot = null;
             me = null;
         }
+    }
+
+    private void setUpTeamUsage() {
+        this.teamUsage.updateTeamUsage(initialInfo.getTeamUsage());
     }
 
     private void setUpRanks() {
@@ -673,6 +684,10 @@ public class TeamInfoLoader {
 
     public TeamPlan getTeamPlan() {
         return execute(() -> teamPlan.getTeamPlan());
+    }
+
+    public TeamUsage getTeamUsage() {
+        return execute(() -> teamUsage.getTeamUsage());
     }
 
     public Rank getRankOfGuest() {

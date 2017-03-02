@@ -17,7 +17,7 @@
 	<string name="common_authority_title_member">"正成员"</string>
 	<string name="common_authority_title_owner">"所有者"</string>
 	<string name="common_btn_close">"关闭"</string>
-	<string name="common_btn_restart">""</string>
+	<string name="common_btn_restart">"重启"</string>
 	<string name="common_btn_seedetail">"了解更多"</string>
 	<string name="common_btn_seedetail_underline">"<u>了解更多</u>"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"允许通话权限"</string>
@@ -38,8 +38,8 @@
 	<string name="common_calleridnotifier_suggestmodal">"试试成员通话设置"</string>
 	<string name="common_calleridnotifier_tosettings">"前往設定"</string>
 	<string name="common_calleridnotifier_use">"启用"</string>
-	<string name="common_changedplan_restart_desc">""</string>
-	<string name="common_changedplan_restart_title">""</string>
+	<string name="common_changedplan_restart_desc">"请重新启动 JANDI"</string>
+	<string name="common_changedplan_restart_title">"你现在使用 JANDI 的新方案"</string>
 	<string name="common_createteam_toaccthome">"前往帐户首页"</string>
 	<string name="common_createteam_welcome">"欢迎！"</string>
 	<string name="common_creatteam_done">"确认"</string>
@@ -53,8 +53,8 @@
 	<string name="common_launch_503">"抱歉！JANDI 服务器暂时出现异常。建议您再尝试操作，造成不便敬请见谅"</string>
 	<string name="common_launch_fail">"暂时无法加载初始数据
 请重新启动 app"</string>
-	<string name="common_launch_maintenance_description">""</string>
-	<string name="common_launch_maintenance_title">""</string>
+	<string name="common_launch_maintenance_description">"若造成您的不便敬请见谅"</string>
+	<string name="common_launch_maintenance_title">"服务器正在维修中"</string>
 	<string name="common_pricingplan_fileupload">"空间使用量已超过上限，上传即将受到限制。 \n  现在升级成标准版， \n  拥有无上限的高效体验。"</string>
 	<string name="common_pricingplan_livesupport">"线上客服"</string>
 	<string name="common_pricingplan_moreinfo">"了解更多"</string>

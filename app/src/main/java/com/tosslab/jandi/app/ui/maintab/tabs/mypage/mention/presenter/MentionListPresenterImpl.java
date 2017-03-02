@@ -146,10 +146,9 @@ public class MentionListPresenterImpl implements MentionListPresenter {
     @Override
     public void onClickMention(MentionMessage mention) {
         String contentType = mention.getContentType();
+
         if (TextUtils.equals("text", contentType)) {
-
             onClickTextTypeMessage(mention);
-
         } else if (TextUtils.equals("file", contentType)) {
             mentionListView.moveToFileDetailActivity(mention.getMessageId(), mention.getMessageId());
         } else if (TextUtils.equals("comment", contentType)) {
