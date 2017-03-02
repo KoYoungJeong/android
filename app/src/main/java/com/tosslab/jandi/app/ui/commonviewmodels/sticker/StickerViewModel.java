@@ -94,8 +94,8 @@ public class StickerViewModel {
             onStickerLayoutShowListener.onStickerLayoutShow(isShow = true);
         }
 
-        if (TeamInfoLoader.getInstance().getTeamId() != 11254668
-                || TeamInfoLoader.getInstance().getTeamId() != 279) {
+        if (!(TeamInfoLoader.getInstance().getTeamId() == 11254668
+                || TeamInfoLoader.getInstance().getTeamId() == 279)) {
             hideTmonSticker();
         }
     }
