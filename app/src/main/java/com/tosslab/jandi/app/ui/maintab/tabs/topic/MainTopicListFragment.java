@@ -420,9 +420,15 @@ public class MainTopicListFragment extends BaseLazyFragment
                 }
                 setSelectedItem(selectedEntity);
                 if (isCurrentFolder()) {
+                    if (topicFolderAdapter == null) {
+                        return;
+                    }
                     topicFolderAdapter.startAnimation();
                     mainTopicListPresenter.refreshList();
                 } else {
+                    if (updatedTopicAdapter == null) {
+                        return;
+                    }
                     if (TeamInfoLoader.getInstance().isTopic(selectedEntity)) {
                         int position = updatedTopicAdapter.indexOfEntity(selectedEntity);
                         if (position >= 0) {
