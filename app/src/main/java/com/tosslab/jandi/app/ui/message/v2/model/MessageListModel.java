@@ -57,7 +57,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import rx.Completable;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class MessageListModel {
 
@@ -416,17 +418,21 @@ public class MessageListModel {
                     // sending 메세지 삭제
                     SendMessageRepository.getRepository().deleteCompletedMessages(messageIds);
 
-                    MessageRepository.getRepository().upsertMessages(links);
+                    Completable.complete()
+                            .observeOn(Schedulers.newThread())
+                            .subscribe(() -> {
+                                MessageRepository.getRepository().upsertMessages(links);
 
-                    Observable<Long> linkIdReplayable = Observable.from(links).map(link -> link.id)
-                            .replay()
-                            .refCount();
-                    Observable.combineLatest(
-                            linkIdReplayable.reduce(Math::min),
-                            linkIdReplayable.reduce(Math::max),
-                            Pair::create)
-                            .subscribe(pair -> {
-                                MessageRepository.getRepository().updateDirty(roomId, pair.first, pair.second);
+                                Observable<Long> linkIdReplayable = Observable.from(links).map(link -> link.id)
+                                        .replay()
+                                        .refCount();
+                                Observable.combineLatest(
+                                        linkIdReplayable.reduce(Math::min),
+                                        linkIdReplayable.reduce(Math::max),
+                                        Pair::create)
+                                        .subscribe(pair -> {
+                                            MessageRepository.getRepository().updateDirty(roomId, pair.first, pair.second);
+                                        });
                             });
                 });
 

@@ -80,6 +80,7 @@ import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
+import com.tosslab.jandi.app.events.messages.ShowMessageListProgressViewEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -956,6 +957,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void showProgressView() {
+        vgProgressForMessageList.setVisibility(View.VISIBLE);
         vgProgressForMessageList.animate()
                 .alpha(1.0f)
                 .setDuration(150);
@@ -963,6 +965,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void dismissProgressView() {
+        vgProgressForMessageList.setVisibility(View.GONE);
         vgProgressForMessageList.animate()
                 .alpha(0.0f)
                 .setDuration(250);
@@ -1452,7 +1455,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 messageListPresenter.addNewMessageOfLocalQueue(event.getData().getLinkMessage());
             }
         }
-
     }
 
     public void onEventMainThread(TopicInfoUpdateEvent event) {
@@ -1493,6 +1495,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     void setMentionButtonVisibility(boolean show) {
         btnShowMention.setVisibility(show
                 ? View.VISIBLE : View.GONE);
+    }
+
+    public void onEventMainThread(ShowMessageListProgressViewEvent event) {
+        showProgressView();
     }
 
     public void onEvent(SocketPollEvent event) {

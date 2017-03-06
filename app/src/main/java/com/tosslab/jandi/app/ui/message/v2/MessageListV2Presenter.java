@@ -290,7 +290,7 @@ public class MessageListV2Presenter {
                             }
                         }
                     }
-                    messageListModel.presetTextContent(messages);
+//                    messageListModel.presetTextContent(messages);
                     return messages;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -363,7 +363,7 @@ public class MessageListV2Presenter {
                         return;
                     }
                     messageListModel.sortByTime(pair.second);
-                    messageListModel.presetTextContent(pair.second);
+//                    messageListModel.presetTextContent(pair.second);
 
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -756,7 +756,7 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> saveMessages(List<ResMessages.Link> links) {
         messageListModel.upsertMessages(room.getRoomId(), links);
-        List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), links.get(0).id, Long.MAX_VALUE);
+//        List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), links.get(0).id, Long.MAX_VALUE);
         Observable.from(links)
                 .map(it -> it.id)
                 .collect((Func0<ArrayList<Long>>) ArrayList::new, ArrayList::add)
@@ -764,10 +764,10 @@ public class MessageListV2Presenter {
                     SendMessageRepository.getRepository().deleteCompletedMessages(its);
                 });
 
-        messageListModel.sortByTime(messages);
-        messageListModel.presetTextContent(messages);
+        messageListModel.sortByTime(links);
+//        messageListModel.presetTextContent(messages);
 
-        return messages;
+        return links;
     }
 
     void addMessages(List<ResMessages.Link> newMessages, boolean firstLoadNewMessage,

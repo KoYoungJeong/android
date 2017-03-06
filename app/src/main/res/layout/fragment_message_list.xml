@@ -392,7 +392,8 @@
 
         <include
             android:id="@+id/layout_messages_loading"
-            layout="@layout/progress_wheel" />
+            layout="@layout/progress_wheel"
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/progress_message"
