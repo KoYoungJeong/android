@@ -17,7 +17,7 @@
     <item
         android:id="@+id/action_unselect_all"
         android:orderInCategory="100"
-        android:title="전체 해제"
+        android:title="@string/jandi_cancel_all"
         app:showAsAction="always" />
 
 </menu>

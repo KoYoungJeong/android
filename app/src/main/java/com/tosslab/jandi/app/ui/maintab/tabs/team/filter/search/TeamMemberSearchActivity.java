@@ -503,11 +503,18 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
     }
 
     @Override
-    public void toggle(int count) {
+    public void toggle(int count, int totalCnt) {
         if (count <= 0) {
             vgToggled.setVisibility(View.GONE);
         } else {
             vgToggled.setVisibility(View.VISIBLE);
+            if (count == totalCnt) {
+                menu.findItem(R.id.action_unselect_all).setVisible(true);
+                menu.findItem(R.id.action_select_all).setVisible(false);
+            } else {
+                menu.findItem(R.id.action_unselect_all).setVisible(false);
+                menu.findItem(R.id.action_select_all).setVisible(true);
+            }
         }
 
         tvInvite.setText(getString(R.string.jandi_invite_member_count, count));
