@@ -5,6 +5,9 @@
     android:visible="true">
 
     <item
+        android:drawable="@drawable/indicator_00"
+        android:duration="60" />
+    <item
         android:drawable="@drawable/indicator_01"
         android:duration="10" />
     <item
