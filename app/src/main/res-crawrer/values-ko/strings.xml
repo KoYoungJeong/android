@@ -842,6 +842,9 @@
 	<string name="mypage_editprofile_phonenumber">"전화번호를 입력하세요"</string>
 	<string name="mypage_editprofile_statusmessage">"상태 메시지를 입력하세요"</string>
 	<string name="mypage_mention_newmentionalert">"새로운 멘션"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">"무료 팀의 경우 팀당 최대 500명까지 초대하실 수 있습니다."</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">"초대 가능한 멤버 수를 초과하였습니다.
+"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"닫기"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"해당 팀의 플랜을 업그레이드 
 하시면 더욱 자유롭게 서비스를 

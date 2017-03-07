@@ -820,6 +820,8 @@
 	<string name="mypage_editprofile_phonenumber">"請輸入您的電話號碼"</string>
 	<string name="mypage_editprofile_statusmessage">"輸入你的狀態"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你\"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">""</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">""</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"關閉"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"升級獲得更多的 JANDI 空間"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"瞭解更多"</string>

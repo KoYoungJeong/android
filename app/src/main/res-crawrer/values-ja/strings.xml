@@ -830,6 +830,8 @@
 	<string name="mypage_editprofile_phonenumber">"電話番号を入力してください"</string>
 	<string name="mypage_editprofile_statusmessage">"ステータスメッセージを入力"</string>
 	<string name="mypage_mention_newmentionalert">"新しいメンション"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">""</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">""</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"閉じる"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"そのチームのプランをアップグレードすると、さらに自由にサービスを使用することができます。"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"詳細はこちら"</string>
