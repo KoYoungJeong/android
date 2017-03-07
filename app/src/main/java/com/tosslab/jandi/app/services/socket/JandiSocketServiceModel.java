@@ -221,6 +221,8 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketTeamJoinEvent.class, this::onTeamJoin);
         messageEventActorMapper.put(SocketTeamLeaveEvent.class, this::onTeamLeft);
         messageEventActorMapper.put(SocketTeamDeletedEvent.class, this::onTeamDeleted);
+        messageEventActorMapper.put(SocketTeamPlanUpdatedEvent.class, this::onTeamPlanUpdated);
+        messageEventActorMapper.put(SocketTeamUsageUpdatedEvent.class, this::onTeamUsageUpdated);
         messageEventActorMapper.put(SocketChatCloseEvent.class, this::onChatClosed);
         messageEventActorMapper.put(SocketChatCreatedEvent.class, this::onChatCreated);
         messageEventActorMapper.put(SocketConnectBotCreatedEvent.class, this::onConnectBotCreated);

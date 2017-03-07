@@ -41,7 +41,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamNameUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamPlanUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamUsageUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderCreatedEvent;
@@ -75,6 +77,8 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "team_domain_updated", value = SocketTeamDomainUpdatedEvent.class),
         @JsonSubTypes.Type(name = "team_updated", value = SocketTeamUpdatedEvent.class),
         @JsonSubTypes.Type(name = "chat_closed", value = SocketChatCloseEvent.class),
+        @JsonSubTypes.Type(name = "team_plan_updated", value = SocketTeamPlanUpdatedEvent.class),
+        @JsonSubTypes.Type(name = "team_usage_updated", value = SocketTeamUsageUpdatedEvent.class),
         @JsonSubTypes.Type(name = "chat_created", value = SocketChatCreatedEvent.class),
         @JsonSubTypes.Type(name = "connect_created", value = SocketConnectBotCreatedEvent.class),
         @JsonSubTypes.Type(name = "connect_deleted", value = SocketConnectBotDeletedEvent.class),

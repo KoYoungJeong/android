@@ -22,8 +22,9 @@ public class TeamPlanResetActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
         super.onCreate(savedInstanceState);
         new AlertDialog.Builder(this)
-                .setMessage(R.string.common_changedplan_restart_title)
-                .setPositiveButton(R.string.common_changedplan_restart_desc, null)
+                .setTitle(R.string.common_changedplan_restart_title)
+                .setMessage(R.string.common_changedplan_restart_desc)
+                .setPositiveButton(R.string.jandi_confirm, null)
                 .setOnDismissListener(dialog -> {
                     // 기존 정보 삭제
                     InitialInfoRepository.getInstance().clear();
