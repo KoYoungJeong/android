@@ -113,6 +113,8 @@ public class MainTopicListFragment extends BaseLazyFragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_joined_topic_list, container, false);
         ButterKnife.bind(this, view);
+        initTopicFolderAdapter();
+        initUpdatedTopicAdapter();
         return view;
     }
 
@@ -137,9 +139,6 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     void initViews(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
-        initTopicFolderAdapter();
-        initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
         mainTopicListPresenter.onInitViewList();
