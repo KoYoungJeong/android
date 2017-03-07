@@ -163,7 +163,8 @@ public class MainTopicListFragment extends BaseLazyFragment
         lvMainTopic.setItemAnimator(new DefaultItemAnimator());
         topicFolderAdapter = new TopicFolderAdapter();
         topicFolderAdapter.setOnFolderSettingClickListener(
-                (folderId, folderName, folderSeq) -> showGroupSettingPopupView(folderId, folderName, folderSeq));
+                (folderId, folderName, folderSeq) ->
+                        showGroupSettingPopupView(folderId, folderName, folderSeq));
 
         topicFolderAdapter.setOnItemLongClickListener(topicItemData -> {
             mainTopicListPresenter.onChildItemLongClick(topicItemData);
