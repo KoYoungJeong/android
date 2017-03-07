@@ -403,6 +403,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             attr.put("email", user.getEmail());
             attr.put("create_at", accountInfo.getCreatedAt());
             attr.put("language_override", Locale.getDefault().getDisplayLanguage());
+            attr.put("company.id", TeamInfoLoader.getInstance().getTeamId());
 
             Intercom.client().updateUser(attr);
             Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
