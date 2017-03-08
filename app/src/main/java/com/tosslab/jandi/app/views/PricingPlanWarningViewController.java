@@ -101,7 +101,7 @@ public class PricingPlanWarningViewController {
         if (context != null) {
             Locale locale = context.getResources().getConfiguration().locale;
             String lang = locale.getLanguage();
-            String url = "https://www.jandi.com/landing/ko/pricing";
+            String url = "https://www.jandi.com/landing/kr/pricing";
 
             if (TextUtils.equals(lang, "en")) {
                 url = "www.jandi.com/landing/en/pricing";
