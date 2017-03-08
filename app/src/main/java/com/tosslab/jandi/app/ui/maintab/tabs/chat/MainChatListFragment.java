@@ -45,6 +45,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.AccessLevelUtil;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
@@ -125,6 +126,7 @@ public class MainChatListFragment extends BaseLazyFragment
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
         mainChatListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
+            SpeedEstimationUtil.sendAnalyticsTopicEnteredEndIfStarted();
             onEntityItemClick(position);
         });
         mainChatListAdapter.setOnRecyclerItemLongClickListener((view, adapter, position) -> {

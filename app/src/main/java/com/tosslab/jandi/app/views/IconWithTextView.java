@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.R;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 22..
  */
+@SuppressWarnings("ResourceType")
 public class IconWithTextView extends RelativeLayout {
 
     public static final int UNDEFINED_VALUE = -1;

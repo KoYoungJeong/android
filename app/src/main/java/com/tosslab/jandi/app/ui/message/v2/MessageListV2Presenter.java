@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageRepositoryModel;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDelete;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -169,6 +170,7 @@ public class MessageListV2Presenter {
                             EventBus.getDefault().post(new RoomMarkerEvent(room.getRoomId()));
                         }
                     }
+                    SpeedEstimationUtil.sendAnalyticsMessageSendingEndIfStarted();
                 }, Throwable::printStackTrace);
     }
 
@@ -404,6 +406,8 @@ public class MessageListV2Presenter {
                     if (myMarker == null || myMarker.getReadLinkId() < lastLink.id) {
                         addMarkerQueue();
                     }
+                    SpeedEstimationUtil.sendAnalyticsTopicEnteredEndIfStarted();
+                    SpeedEstimationUtil.sendAnalyticsPushEnteredEndIfStarted();
                 })
                 .doOnError(t -> {
                     view.dismissProgressWheel();

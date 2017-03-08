@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.ChatTabInfo;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.TopicTabInfo;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -89,7 +90,7 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
+        SpeedEstimationUtil.sendAnalyticsPushEnteredStart();
         DaggerPushInterfaceComponent.create().inject(this);
 
         initObject();
@@ -97,7 +98,6 @@ public class PushInterfaceActivity extends BaseAppCompatActivity {
 
         AnalyticsUtil.sendScreenName(AnalyticsValue.Screen.PushNotification);
         setNeedUnLockPassCode(false);
-
     }
 
     void initObject() {

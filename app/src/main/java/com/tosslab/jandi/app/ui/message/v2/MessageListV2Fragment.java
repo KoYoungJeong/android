@@ -149,6 +149,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -1264,6 +1265,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @OnClick(R.id.btn_send_message)
     void sendMessage() {
+        SpeedEstimationUtil.sendAnalyticsMessageSendingStart();
         String message = etMessage.getText().toString();
 
         List<MentionObject> mentions = new ArrayList<>();

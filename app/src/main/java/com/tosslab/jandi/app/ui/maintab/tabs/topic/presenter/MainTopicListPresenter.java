@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.TopicItemData;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.folderlist.model.TopicFolderSettingModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -73,6 +74,7 @@ public class MainTopicListPresenter {
     }
 
     public void onUpdatedTopicClick(Topic item) {
+        SpeedEstimationUtil.sendAnalyticsTopicEnteredEndIfStarted();
         AnalyticsValue.Action action = item.isPublic() ? AnalyticsValue.Action.ChoosePublicTopic : AnalyticsValue.Action.ChoosePrivateTopic;
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicsTab, action);
 

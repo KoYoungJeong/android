@@ -55,6 +55,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
@@ -171,6 +172,7 @@ public class MainTopicListFragment extends BaseLazyFragment
         });
 
         topicFolderAdapter.setOnItemClickListener(topicItemData -> {
+            SpeedEstimationUtil.sendAnalyticsTopicEnteredStart();
             topicFolderAdapter.stopAnimation();
             mainTopicListPresenter.onChildItemClick(topicItemData);
             topicFolderAdapter.notifyDataSetChanged();
