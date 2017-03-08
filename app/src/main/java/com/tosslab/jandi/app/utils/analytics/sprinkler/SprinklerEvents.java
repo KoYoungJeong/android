@@ -209,4 +209,13 @@ public class SprinklerEvents {
                     PropertyKey.FileId
             });
 
+    public static final Event SpeedEstimation = Event.create(EventCategory.SpeedEstimation.name(),
+            "e82",
+            new String[]{
+                    PropertyKey.ResponseSuccess,
+                    PropertyKey.ErrorCode,
+                    PropertyKey.PerformanceTarget,
+                    PropertyKey.StartFinishFlag
+            });
+
 }

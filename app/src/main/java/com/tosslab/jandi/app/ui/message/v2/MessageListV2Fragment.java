@@ -359,7 +359,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         super.onActivityCreated(savedInstanceState);
         Dart.inject(this, getArguments());
         DaggerMessageListComponent.builder()
-                .messageListModule(new MessageListModule(this, Room.create(entityId, isFromPush), MessagePointer.create(lastReadLinkId)))
+                .messageListModule(new MessageListModule(this,
+                        Room.create(entityId, isFromPush),
+                        MessagePointer.create(lastReadLinkId)))
                 .build()
                 .inject(this);
         initViews();

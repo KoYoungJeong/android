@@ -418,8 +418,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .subscribe(() -> {
                 }, t -> {
                 });
-
-
     }
 
     @Override
