@@ -362,14 +362,14 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
         if (context != null) {
             Locale locale = context.getResources().getConfiguration().locale;
             String lang = locale.getLanguage();
-            String url = "https://www.jandi.com/landing/ko/pricing";
+            String url = "https://www.jandi.com/landing/kr/pricing";
 
             if (TextUtils.equals(lang, "en")) {
                 url = "www.jandi.com/landing/en/pricing";
             } else if (TextUtils.equals(lang, "ja")) {
-                url = "www.jandi.com/landing/ja/pricing";
+                url = "www.jandi.com/landing/jp/pricing";
             } else if (TextUtils.equals(lang, "ko")) {
-                url = "www.jandi.com/landing/ko/pricing";
+                url = "www.jandi.com/landing/kr/pricing";
             } else if (TextUtils.equals(lang, "zh-cn")) {
                 url = "www.jandi.com/landing/zh-cn/pricing";
             } else if (TextUtils.equals(lang, "zh-tw")) {
