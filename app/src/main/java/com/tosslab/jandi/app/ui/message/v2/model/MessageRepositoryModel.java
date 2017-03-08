@@ -23,7 +23,7 @@ import rx.schedulers.Schedulers;
 
 public class MessageRepositoryModel {
 
-    public static final int MAX_COUNT = 50;
+    public static final int MAX_COUNT = 20;
     MessageManipulator messageManipulator;
 
     @Inject
