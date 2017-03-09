@@ -60,7 +60,7 @@ public class FileUploadPannelDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fileupload_pannel);
+        setContentView(R.layout.dialog_message_file_upload_pannel);
         ButterKnife.bind(this);
         Animation fadeInAnimation = new AlphaAnimation(0.0f, 1.0f);
         fadeInAnimation.setDuration(300);
