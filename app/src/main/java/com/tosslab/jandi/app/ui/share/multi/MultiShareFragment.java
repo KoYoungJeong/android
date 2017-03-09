@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
@@ -160,12 +161,18 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         vpShare.setAdapter(adapter);
 
-        multiSharePresenter.initShareTarget();
+        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
+
+        setTeamDefaultName();
+
+        fileAccessLimitUtil.execute(getContext(), TeamInfoLoader.getInstance().getTeamId(), () -> {
+            multiSharePresenter.initShareTarget();
+        });
+
         multiSharePresenter.initShareData(uris);
 
         setHasOptionsMenu(true);
 
-        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
 
     }
 
@@ -374,9 +381,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     public void onEvent(ShareSelectTeamEvent event) {
         long teamId = event.getTeamId();
-        this.teamId = teamId;
-        multiSharePresenter.onSelectTeam(teamId);
-        fileAccessLimitUtil.execute(getContext(), teamId, null);
+        if (teamId != -1) {
+            fileAccessLimitUtil.execute(getContext(), teamId, () -> {
+                this.teamId = teamId;
+                multiSharePresenter.onSelectTeam(teamId);
+            });
+        }
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
