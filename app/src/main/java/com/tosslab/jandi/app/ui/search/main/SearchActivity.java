@@ -248,7 +248,7 @@ public class SearchActivity extends BaseAppCompatActivity
             if (flagFirstSearch) {
                 setStickyHeaderAdapter();
                 removeHistoryListeners();
-                searchPresenter.onInitPricingInfo();
+//                searchPresenter.onInitPricingInfo();
                 flagFirstSearch = false;
             }
             searchPresenter.sendSearchQuery(searchKeyword, isOnlyMessageMode);
