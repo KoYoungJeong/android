@@ -651,8 +651,7 @@
         <item name="textColorError">@color/jandi_red</item>
     </style>
 
-    <style name="CreatePollEditText" parent="@style/FloatingEditTextTheme">
-    </style>
+    <style name="CreatePollEditText" parent="@style/FloatingEditTextTheme"></style>
 
     <style name="DayTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@drawable/text_color_day</item>
@@ -661,6 +660,14 @@
 
     <style name="TeamTabTextApprearance" parent="@android:style/TextAppearance">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>

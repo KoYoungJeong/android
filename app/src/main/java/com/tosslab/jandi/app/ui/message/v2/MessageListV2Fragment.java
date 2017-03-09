@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -126,6 +127,7 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.upload.FileUploadPannelDialog;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
@@ -551,9 +553,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 stickerViewModel, uploadMenuViewModel,
                 vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
                 etMessage);
-        softInputAreaController.setOnUploadButtonClickListener(() -> {
-            sendAnalyticsEvent(AnalyticsValue.Action.Upload);
-        });
+//        softInputAreaController.setOnUploadButtonClickListener(() -> {
+//            sendAnalyticsEvent(AnalyticsValue.Action.Upload);
+//        });
         softInputAreaController.setOnStickerButtonClickListener(() -> {
             sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
         });
@@ -2123,4 +2125,34 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         return false;
     }
+
+    @OnClick(R.id.btn_message_action_button_1)
+    void onClickButton1() {
+        boolean isShowSoftInputArea = false;
+
+        if (softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputArea(true, true);
+            isShowSoftInputArea = true;
+        } else if (softInputAreaController.isShowSoftInput()) {
+            softInputAreaController.hideSoftInput();
+            isShowSoftInputArea = true;
+        }
+
+        if (isShowSoftInputArea) {
+            Completable.complete()
+                    .delay(100, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        showFileUploadPannel();
+                    });
+        } else {
+            showFileUploadPannel();
+        }
+    }
+
+    public void showFileUploadPannel() {
+        Dialog dialog = new FileUploadPannelDialog(getContext());
+        dialog.show();
+    }
+
 }
