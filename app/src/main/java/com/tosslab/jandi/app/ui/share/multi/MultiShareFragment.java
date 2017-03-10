@@ -165,15 +165,17 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
         setTeamDefaultName();
 
-        fileAccessLimitUtil.execute(getContext(), TeamInfoLoader.getInstance().getTeamId(), () -> {
-            multiSharePresenter.initShareTarget();
-        });
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+
+        if (teamId > 0) {
+            fileAccessLimitUtil.execute(getContext(), teamId, () -> {
+                multiSharePresenter.initShareTarget();
+            });
+        }
 
         multiSharePresenter.initShareData(uris);
 
         setHasOptionsMenu(true);
-
-
     }
 
     @Override
@@ -538,4 +540,5 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
     }
+
 }
