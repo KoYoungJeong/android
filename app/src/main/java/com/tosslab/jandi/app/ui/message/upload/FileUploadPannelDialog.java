@@ -63,6 +63,34 @@ public class FileUploadPannelDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_message_file_upload_pannel);
         ButterKnife.bind(this);
+        ShowItemsAnimation();
+    }
+
+    @Override
+    public void onBackPressed() {
+        dismissDialog();
+    }
+
+    @OnClick(R.id.iv_cancel)
+    public void onClickCancel() {
+        dismissDialog();
+    }
+
+    @OnClick(R.id.vg_background)
+    public void onClickBackground() {
+        dismissDialog();
+    }
+
+    private void dismissDialog() {
+        // 중복 방지를 위해
+        if (processDismiss) {
+            return;
+        }
+        processDismiss = true;
+        DismissItemsAnimation();
+    }
+
+    private void ShowItemsAnimation() {
         Animation fadeInAnimation = new AlphaAnimation(0.0f, 1.0f);
         fadeInAnimation.setDuration(300);
         background.startAnimation(fadeInAnimation);
@@ -168,29 +196,7 @@ public class FileUploadPannelDialog extends Dialog {
                 .subscribe();
     }
 
-    @Override
-    public void onBackPressed() {
-        dismissDialog();
-    }
-
-    @OnClick(R.id.iv_cancel)
-    public void onClickCancel() {
-        dismissDialog();
-    }
-
-    @OnClick(R.id.vg_background)
-    public void onClickBackground() {
-        dismissDialog();
-    }
-
-    private void dismissDialog() {
-        // 중복 방지를 위해
-        if (processDismiss) {
-            return;
-        }
-        processDismiss = true;
-
-
+    private void DismissItemsAnimation() {
         Observable.just(1)
                 .doOnNext(i -> {
                     Animation translationAnimation = new TranslateAnimation(0, 0, 0, 200);

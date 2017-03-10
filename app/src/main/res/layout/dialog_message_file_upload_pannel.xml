@@ -8,12 +8,12 @@
         android:id="@+id/vg_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jandi_transparent_black_85p" />
+        android:background="@color/jandi_transparent_black_85p"
+        android:orientation="vertical" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:orientation="vertical">
 
         <LinearLayout
@@ -190,5 +190,7 @@
             android:visibility="invisible" />
 
     </LinearLayout>
+
+
 </RelativeLayout>
 
