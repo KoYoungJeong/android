@@ -63,6 +63,7 @@ import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -438,8 +439,21 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                             vpShare.getCurrentItem(), renamedFileName);
                     setFileName(renamedFileName);
                     tvTitle.requestFocus();
+                    Completable.complete()
+                            .delay(100, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
                 })
-                .setNegativeButton(getString(R.string.jandi_cancel), null);
+                .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
+                    Completable.complete()
+                            .delay(100, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
+                });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
