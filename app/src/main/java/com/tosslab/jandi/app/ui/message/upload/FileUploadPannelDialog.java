@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -188,11 +189,7 @@ public class FileUploadPannelDialog extends Dialog {
             return;
         }
         processDismiss = true;
-        Animation fadeInAnimation = new AlphaAnimation(1.0f, 0.0f);
-        fadeInAnimation.setDuration(550);
-        fadeInAnimation.setFillAfter(true);
-        fadeInAnimation.setFillEnabled(true);
-        background.startAnimation(fadeInAnimation);
+
 
         Observable.just(1)
                 .doOnNext(i -> {
@@ -248,7 +245,6 @@ public class FileUploadPannelDialog extends Dialog {
                     translationAnimation.setDuration(200);
                     Animation fadeInAnimation1 = new AlphaAnimation(1.0f, 0.0f);
                     fadeInAnimation1.setDuration(200);
-
                     AnimationSet animationSet = new AnimationSet(true);
                     animationSet.addAnimation(translationAnimation);
                     animationSet.addAnimation(fadeInAnimation1);
@@ -256,6 +252,7 @@ public class FileUploadPannelDialog extends Dialog {
                     animationSet.setFillEnabled(true);
                     vgFile.clearAnimation();
                     vgFile.startAnimation(animationSet);
+
                 }).subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -301,7 +298,21 @@ public class FileUploadPannelDialog extends Dialog {
                     animationSet.addAnimation(fadeInAnimation1);
                     animationSet.setFillAfter(true);
                     animationSet.setFillEnabled(true);
-                    animationSet.setAnimationListener(new Animation.AnimationListener() {
+                    vgPicture.clearAnimation();
+                    vgPicture.startAnimation(animationSet);
+                })
+                .subscribe();
+
+        Completable.complete()
+                .delay(200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    Animation fadeInAnimation = new AlphaAnimation(1.0f, 0.0f);
+                    fadeInAnimation.setDuration(300);
+                    fadeInAnimation.setFillAfter(true);
+                    fadeInAnimation.setFillEnabled(true);
+                    background.startAnimation(fadeInAnimation);
+                    fadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
 
@@ -317,10 +328,7 @@ public class FileUploadPannelDialog extends Dialog {
 
                         }
                     });
-                    vgPicture.clearAnimation();
-                    vgPicture.startAnimation(animationSet);
-                })
-                .subscribe();
+                });
     }
 
 }
