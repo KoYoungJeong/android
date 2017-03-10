@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/jandi_entity_item_title_margin_left">
+    android:layout_height="72dp">
 
     <View
         android:id="@+id/v_entity_listitem_selector"
@@ -16,11 +16,11 @@
 
     <ImageView
         android:id="@+id/iv_entity_listitem_icon"
-        android:layout_width="@dimen/jandi_entity_item_icon"
-        android:layout_height="@dimen/jandi_entity_item_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="17dp" />
+        android:layout_marginRight="16dp" />
 
     <ImageView
         android:id="@+id/iv_favorite"
@@ -95,9 +95,16 @@
         android:gravity="center"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:text="9"
         android:textColor="@color/jandi_text_white"
         android:textSize="11sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
+        android:background="@color/rgb_e5e5e5" />
 
     <View
         android:id="@+id/v_name_warning"

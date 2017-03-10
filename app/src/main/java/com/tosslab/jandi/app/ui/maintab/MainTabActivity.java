@@ -347,7 +347,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 }
 
                 tvTitle.setText(tab.getText());
-                boolean withoutShadow = position == MypageTabInfo.INDEX || position == TeamTabInfo.INDEX;
+                boolean withoutShadow = position != ChatTabInfo.INDEX && position != TopicTabInfo.INDEX;
                 vTopShadow.setVisibility(withoutShadow ? View.GONE : View.VISIBLE);
 
                 isFABController = position == TopicTabInfo.INDEX ||

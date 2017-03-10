@@ -42,7 +42,6 @@ import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
-import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -61,7 +60,6 @@ import com.tosslab.jandi.app.ui.maintab.tabs.file.controller.SearchSelectorViewC
 import com.tosslab.jandi.app.ui.maintab.tabs.file.dagger.DaggerFileListComponent;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenter;
-import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenterImpl;
 import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -87,7 +85,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by tee on 16. 6. 28..
  */
-public class FileListFragment extends BaseLazyFragment implements FileListPresenterImpl.View,
+public class FileListFragment extends BaseLazyFragment implements FileListPresenter.View,
         FileSearchActivity.SearchSelectView, ListScroller {
 
     public static final String KEY_COMMENT_COUNT = "comment_count";
@@ -201,10 +199,8 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
 
         setHasOptionsMenu(true);
 
-        resetFilterLayoutPosition();
-
         if (isInSearchActivity() && isSearchLayoutFirst) {
-            initSearchLayoutIfFirst();
+//            initSearchLayoutIfFirst();
         }
 
         if (entityId > 0) {
@@ -432,21 +428,6 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         return super.onOptionsItemSelected(item);
     }
 
-    private void resetFilterLayoutPosition() {
-        if (!isInSearchActivity()) {
-            return;
-        }
-        if (headerView == null) {
-            return;
-        }
-        int offset = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
-        headerView.setY(offset);
-
-        EventBus.getDefault().post(
-                new SearchResultScrollEvent(FileListFragment.this.getClass(), -offset));
-    }
-
     private boolean isInSearchActivity() {
         return getActivity() instanceof FileSearchActivity;
     }
@@ -486,27 +467,6 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         loadingView.setLayoutParams(loadingLayoutParams);
         loadingView.setVisibility(View.GONE);
 
-        lvSearchFiles.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                final int offset = (int) (dy * .66f);
-
-                final float futureScropViewPosY = headerView.getY() - offset;
-
-                if (futureScropViewPosY <= headerMinY) {
-                    headerView.setY(headerMinY);
-                } else if (futureScropViewPosY >= headerMaxY) {
-                    headerView.setY(headerMaxY);
-                } else {
-                    headerView.setY(futureScropViewPosY);
-                }
-
-                EventBus.getDefault().post(new SearchResultScrollEvent(FileListFragment.this.getClass(),
-                        offset));
-            }
-        });
     }
 
     private void setHeaderTextViewColor(ViewGroup parentView, int color) {
@@ -544,14 +504,6 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
                 ((TextView) child).setCompoundDrawablesWithIntrinsicBounds(0, 0, imageResourceId, 0);
             }
         }
-    }
-
-    @Override
-    public void onSearchHeaderReset() {
-        if (!getUserVisibleHint()) {
-            return;
-        }
-        resetFilterLayoutPosition();
     }
 
     @Override

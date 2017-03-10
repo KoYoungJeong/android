@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.adapter.datamodel.TeamSelectListAdapterDataModel;
 import com.tosslab.jandi.app.ui.team.select.model.TeamSelectListModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationAccept;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrLaunchTeam;
 
 import javax.inject.Inject;
@@ -123,6 +124,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
             try {
                 model.acceptOrDeclineInvite(
                         selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
+                SprinklrInvitationAccept.sendLog(selectedTeam.getTeamId());
                 return Observable.just(selectedTeam);
             } catch (RetrofitException e) {
                 return Observable.error(e);
@@ -142,7 +144,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                 }, t -> {
                     if (t instanceof RetrofitException) {
                         RetrofitException e = (RetrofitException) t;
-
+                        SprinklrInvitationAccept.sendFailLog(e.getResponseCode());
                         String alertText = getJoinErrorMessage(selectedTeam, e);
                         view.showTextAlertDialog(alertText, (dialog, which) -> {
                             onRequestIgnoreJoin(selectedTeam, false);

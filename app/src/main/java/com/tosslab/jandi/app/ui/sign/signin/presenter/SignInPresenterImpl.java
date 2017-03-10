@@ -62,7 +62,7 @@ public class SignInPresenterImpl implements SignInPresenter {
     }
 
     @Override
-    public void trySignIn(String email, String password) {
+    public void trySignIn(String email, String password, String captchaResponse) {
 
         final boolean emailValidation = checkEmailValidation(email);
         final boolean passwordValidation = checkPasswordValidation(password);
@@ -73,7 +73,7 @@ public class SignInPresenterImpl implements SignInPresenter {
 
         view.showProgressDialog();
 
-        Observable.fromCallable(() -> model.login(email, password))
+        Observable.fromCallable(() -> model.login(email, password, captchaResponse))
                 .subscribeOn(Schedulers.io())
                 .doOnNext(accessToken -> {
                     SignOutUtil.initSignData();
@@ -99,11 +99,19 @@ public class SignInPresenterImpl implements SignInPresenter {
                                 case 40019: // 인증된 계정이 아닌 경우(연결된 다른 계정이 있는 경우)
                                     view.showErrorInvalidEmailOrPassword();
                                     break;
+                                case 40100:
+                                case 40101:
+                                    view.moveToCaptchaActivity();
+                                    break;
                             }
                             SprinklrSignIn.sendFailLog(JandiConstants.NetworkError.DATA_NOT_FOUND);
                         } catch (Exception e) {
                             view.showNetworkErrorToast();
                             SprinklrSignIn.sendFailLog(JandiConstants.NetworkError.BAD_REQUEST);
+                        }
+                    } else if (error.getStatusCode() == 503) {
+                        if (error.getResponseCode() == 50302) {
+                            // 구글에 문제가 있어 reCaptcha에 대한 검증이 불가능 한 경우
                         }
                     } else {
                         view.showNetworkErrorToast();

@@ -1,12 +1,12 @@
+import collections
 import os
+import sys
 import urllib2
 import warnings
-import collections
 from openpyxl import load_workbook
-import sys
 
 DOWNLOAD_FILE_NAME = "string-resource.xlsx"
-DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/u/1/d/1vLJ_T-FV_-1kf0Ga1Rt3XqpKfXmhqjJsvZPnWhkHzQA/export?format=xlsx&id=1vLJ_T-FV_-1kf0Ga1Rt3XqpKfXmhqjJsvZPnWhkHzQA'
+DOWNLOAD_URL = 'https://docs.google.com/spreadsheets/d/1wbXYVmoA5PlRL298Z6V942nYK26cIhnQgPXOCSnj_mg/pub?output=xlsx'
 
 __author__ = 'jsuch2362'
 
@@ -30,7 +30,6 @@ def download(url):
 
 
 def parsing(filePath):
-
     warnings.simplefilter("ignore")
 
     workbook = load_workbook(filePath)
@@ -92,7 +91,8 @@ def makeXml(dic, absResourcePath):
             if dic[languageKey][resourceKey] is None:
                 dic[languageKey][resourceKey] = ""
             output += "\n"
-            output +="\t<string name=\"%s\">\"%s\"</string>" % (resourceKey, dic[languageKey][resourceKey])
+            output += "\t<string name=\"%s\">\"%s\"</string>" % (
+            resourceKey, dic[languageKey][resourceKey])
 
         output += "\n</resources>"
 

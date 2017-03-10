@@ -999,9 +999,11 @@ public class JandiSocketServiceModel {
             }
 
             if (link.message != null) {
-                long teamId = event.getData().getLinkMessage().teamId;
-                AccountRepository.getRepository().increaseUnread(teamId);
-                postEvent(TeamBadgeUpdateEvent.fromLocal());
+                if (event.getData().getLinkMessage().fromEntity != TeamInfoLoader.getInstance().getMyId()) {
+                    long teamId = event.getData().getLinkMessage().teamId;
+                    AccountRepository.getRepository().increaseUnread(teamId);
+                    postEvent(TeamBadgeUpdateEvent.fromLocal());
+                }
             }
 
         } catch (Exception e) {

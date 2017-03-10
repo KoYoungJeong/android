@@ -1,52 +1,31 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.domain;
 
 /**
- * Created by tee on 15. 8. 27..
+ * Created by tee on 2017. 2. 10..
  */
-public class TopicFolderData {
 
-    private final long id;
-    private long nextChildId;
+public class TopicFolderData implements IMarkerTopicFolderItem {
     private long childBadgeCnt = 0;
     private int itemCount = 0;
     private int seq;
     private String title;
     private long folderId;
-    private boolean isFakeFolder = false;
+    private boolean isOpened;
 
-    public TopicFolderData(long id, String title, long folderId) {
-        this.id = id;
-        this.title = title;
-        this.folderId = folderId;
-        nextChildId = 0;
+    public boolean isOpened() {
+        return isOpened;
     }
 
-    public long getGroupId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public long getFolderId() {
-        return folderId;
+    public void setOpened(boolean opened) {
+        isOpened = opened;
     }
 
     public long getChildBadgeCnt() {
         return childBadgeCnt;
     }
 
-    public void setChildBadgeCnt(long count) {
-        this.childBadgeCnt = count;
-    }
-
-    public void setIsFakeFolder(boolean isFakeFolder) {
-        this.isFakeFolder = isFakeFolder;
-    }
-
-    public boolean isFakeFolder() {
-        return isFakeFolder;
+    public void setChildBadgeCnt(long childBadgeCnt) {
+        this.childBadgeCnt = childBadgeCnt;
     }
 
     public int getItemCount() {
@@ -65,10 +44,30 @@ public class TopicFolderData {
         this.seq = seq;
     }
 
-    public long generateNewChildId() {
-        final long id = nextChildId;
-        nextChildId += 1;
-        return id;
+    public String getTitle() {
+        return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(long folderId) {
+        this.folderId = folderId;
+    }
+
+    @Override
+    public String toString() {
+        return "TopicFolderData{" +
+                "childBadgeCnt=" + childBadgeCnt +
+                ", itemCount=" + itemCount +
+                ", seq=" + seq +
+                ", title='" + title + '\'' +
+                ", folderId=" + folderId +
+                '}';
+    }
 }

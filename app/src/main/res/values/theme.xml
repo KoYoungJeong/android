@@ -24,7 +24,9 @@
 
     </style>
 
-    <style name="JandiTheme.NavigationDrawer"></style>
+    <style name="JandiTheme.NavigationDrawer" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">68dp</item>
+    </style>
 
     <style name="JandiTheme.Widget" />
 
@@ -72,12 +74,8 @@
         <item name="windowFixedWidthMinor">@dimen/jandi_dialog_min_width</item>
     </style>
 
-    <!-- Intro 화면은 어둡기 때문에 -->
-    <style name="JandiTheme.Intro" parent="@style/JandiTheme">
-        <item name="android:windowBackground">@drawable/bg_intro_window</item>
-    </style>
-    <style name="JandiTheme.MainTab" parent="@style/JandiTheme">
-    </style>
+
+    <style name="JandiTheme.MainTab" parent="@style/JandiTheme"></style>
 
     <style name="JandiTheme.PushIntro" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowContentOverlay">@null</item>

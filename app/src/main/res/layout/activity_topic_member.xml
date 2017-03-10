@@ -1,62 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/white">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:visibility="visible"
+            app:layout_scrollFlags="scroll|snap|enterAlways" />
+
+        <RelativeLayout
+            android:id="@+id/vg_topic_member_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_below="@+id/layout_search_bar"
+            android:background="?attr/colorPrimary"
+            android:padding="8dp"
+            android:visibility="visible">
+
+            <EditText
+                android:id="@+id/et_topic_member_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_round_rect_white"
+                android:gravity="center_vertical"
+                android:hint="@string/jandi_action_search"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingLeft="64dp"
+                android:paddingRight="64dp" />
+
+            <ImageView
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:src="@drawable/icon_contact_search" />
+
+        </RelativeLayout>
+
+
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_topic_member"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/layout_search_bar"
-        android:clipToPadding="false"
-        android:paddingTop="?attr/actionBarSize"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <RelativeLayout
-        android:id="@+id/vg_topic_member_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_below="@+id/layout_search_bar"
-        android:background="?attr/colorPrimary"
-        android:padding="8dp"
-        android:visibility="visible">
-
-        <EditText
-            android:id="@+id/et_topic_member_search"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_round_rect_white"
-            android:gravity="center_vertical"
-            android:hint="@string/jandi_action_search"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:paddingLeft="64dp"
-            android:paddingRight="64dp" />
-
-        <ImageView
-            android:layout_width="@dimen/jandi_search_default_size"
-            android:layout_height="@dimen/jandi_search_default_size"
-            android:layout_centerVertical="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingLeft="13.5dp"
-            android:paddingRight="13.5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/icon_contact_search" />
-
-    </RelativeLayout>
 
     <include
         android:id="@+id/vg_team_member_empty"
         layout="@layout/view_team_member_empty"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:visibility="visible" />
-
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

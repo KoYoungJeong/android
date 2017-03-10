@@ -11,13 +11,14 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/divider_team_main"
         android:background="@color/jandi_text_white"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs_team_main"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="40dp"
         android:fillViewport="true"
+        android:textSize="@dimen/jandi_text_size_medium"
         app:tabBackground="@color/jandi_primary_color"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/white"
@@ -28,14 +29,13 @@
         app:tabPaddingStart="0dp"
         app:tabSelectedTextColor="@color/white"
         app:tabTextAppearance="@style/TeamTabTextApprearance"
-        app:tabTextColor="@color/jandi_transparent_white_20p"/>
+        app:tabTextColor="@color/jandi_transparent_white_30p" />
 
     <View
         android:id="@+id/divider_team_main"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignBottom="@+id/tabs_team_main"
-        android:background="@color/rgb_e5e5e5"/>
-
-
+        android:background="@color/rgb_e5e5e5"
+        android:visibility="invisible" />
 </RelativeLayout>

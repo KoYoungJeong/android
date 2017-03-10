@@ -56,7 +56,6 @@
             android:name=".ui.intro.IntroActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/JandiTheme.Intro"
             android:logo="@drawable/jandi_symbol_launcher"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -64,7 +63,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-
             </intent-filter>
         </activity>
 
@@ -86,8 +84,8 @@
             android:name=".ui.maintab.MainTabActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/JandiTheme.MainTab"
             android:screenOrientation="fullUser"
+            android:theme="@style/JandiTheme.MainTab"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
         <activity
@@ -577,6 +575,12 @@
 
         <activity
             android:name=".ui.invites.emails.InviteEmailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
+            android:name=".ui.sign.signin.CaptchaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />

@@ -50,6 +50,10 @@ import de.greenrobot.event.EventBus;
  */
 public class SignInActivity extends BaseAppCompatActivity implements SignInPresenter.View {
 
+
+    public static final String RESULT_CAPTCHAR = "result_captchar";
+    private final int REQUEST_CAPTCHAR = 0x10;
+
     @Inject
     SignInPresenter signInPresenter;
 
@@ -74,6 +78,8 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     ProgressWheel progressWheel;
     private boolean isFirstFocus = true;
 
+    private boolean moveCaptcha = true;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +101,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 if (btnSignIn.isEnabled()) {
                     signInPresenter.trySignIn(
-                            etEmail.getText().toString(), etPassword.getText().toString());
+                            etEmail.getText().toString(), etPassword.getText().toString(), null);
                 }
                 return true;
             }
@@ -118,7 +124,6 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     }
 
     private void setUpActionBar() {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
@@ -160,7 +165,7 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
     void onClickSignInButton() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SignIn, AnalyticsValue.Action.Submit);
         if (NetworkCheckUtil.isConnected()) {
-            signInPresenter.trySignIn(etEmail.getText().toString(), etPassword.getText().toString());
+            signInPresenter.trySignIn(etEmail.getText().toString(), etPassword.getText().toString(), null);
         } else {
             showNetworkErrorToast();
         }
@@ -324,6 +329,19 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
         finish();
     }
 
+    @Override
+    public void moveToCaptchaActivity() {
+        // 재 로그인 시도시에도 실패했을 경우 다시 캡챠로 넘어가서는 아니된다.
+        if (moveCaptcha) {
+            Intent intent = new Intent(SignInActivity.this, CaptchaActivity.class);
+            startActivityForResult(intent, REQUEST_CAPTCHAR);
+            moveCaptcha = false;
+        } else {
+            showErrorInvalidEmailOrPassword();
+            moveCaptcha = true;
+        }
+    }
+
     public void onEvent(ForgotPasswordEvent event) {
         String email = event.getEmail();
         signInPresenter.forgotPassword(email);
@@ -337,6 +355,21 @@ public class SignInActivity extends BaseAppCompatActivity implements SignInPrese
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CAPTCHAR && resultCode == RESULT_OK) {
+            String resultCaptchar = data.getStringExtra(RESULT_CAPTCHAR);
+            if (NetworkCheckUtil.isConnected()) {
+                signInPresenter.trySignIn(etEmail.getText().toString(),
+                        etPassword.getText().toString(),
+                        resultCaptchar);
+            } else {
+                showNetworkErrorToast();
+            }
+        }
     }
 
     private class TextInputWatcher extends SimpleTextWatcher {

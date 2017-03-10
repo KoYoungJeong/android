@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.topic.domain;
 
 /**
- * Created by tee on 15. 8. 27..
+ * Created by tee on 2017. 2. 10..
  */
-public class TopicItemData {
 
-    private long id;
-
+public class TopicItemData implements IMarkerTopicFolderItem {
     private long creatorId;
+    private long parentId;
     private String name;
     private boolean isStarred;
     private boolean isJoined;
@@ -20,51 +19,40 @@ public class TopicItemData {
     private long markerLinkId;
     private boolean isPushOn;
     private boolean isReadOnly;
+    private int childIndex;
+    private int parentChildCnt;
+    private boolean isInnerFolder;
 
-    private TopicItemData() {
+    public long getParentId() {
+        return parentId;
     }
 
-    private TopicItemData(long id, long creatorId, String name, boolean isStarred,
-                          boolean isJoined, long entityId, int unreadCount, long markerLinkId, boolean isPushOn,
-                          boolean selected, String description, boolean isPublic, int memberCount, boolean isReadOnly) {
-        this.id = id;
-        this.creatorId = creatorId;
-        this.name = name;
-        this.isStarred = isStarred;
-        this.isJoined = isJoined;
-        this.entityId = entityId;
-        this.unreadCount = unreadCount;
-        this.markerLinkId = markerLinkId;
-        this.isPushOn = isPushOn;
-        this.selected = selected;
-        this.description = description;
-        this.isPublic = isPublic;
-        this.memberCount = memberCount;
-        this.isReadOnly = isReadOnly;
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
     }
 
-    public static TopicItemData newInstance(long id, long creatorId, String name,
-                                            boolean isStarred, boolean isJoined, long entityId,
-                                            int unreadCount, long markerLinkId, boolean isPushOn,
-                                            boolean selected, String description, boolean isPublic,
-                                            int memberCount, boolean isReadOnly) {
-
-        return new TopicItemData(id, creatorId, name, isStarred, isJoined, entityId,
-                unreadCount, markerLinkId, isPushOn, selected, description, isPublic, memberCount, isReadOnly);
-
+    public boolean isInnerFolder() {
+        return isInnerFolder;
     }
 
-    // Topic Join Button 추가를 위한 더미 데이터
-    public static TopicItemData getDummyInstance() {
-        return new TopicItemData();
+    public void setInnerFolder(boolean innerFolder) {
+        isInnerFolder = innerFolder;
     }
 
-    public long getChildId() {
-        return id;
+    public int getParentChildCnt() {
+        return parentChildCnt;
     }
 
-    public void setChildId(long id) {
-        this.id = id;
+    public void setParentChildCnt(int parentChildCnt) {
+        this.parentChildCnt = parentChildCnt;
+    }
+
+    public int getChildIndex() {
+        return childIndex;
+    }
+
+    public void setChildIndex(int childIndex) {
+        this.childIndex = childIndex;
     }
 
     public long getCreatorId() {
@@ -87,16 +75,16 @@ public class TopicItemData {
         return isStarred;
     }
 
-    public void setIsStarred(boolean isStarred) {
-        this.isStarred = isStarred;
+    public void setStarred(boolean starred) {
+        isStarred = starred;
     }
 
     public boolean isJoined() {
         return isJoined;
     }
 
-    public void setIsJoined(boolean isJoined) {
-        this.isJoined = isJoined;
+    public void setJoined(boolean joined) {
+        isJoined = joined;
     }
 
     public long getEntityId() {
@@ -127,8 +115,8 @@ public class TopicItemData {
         return isPublic;
     }
 
-    public void setIsPublic(boolean isPublic) {
-        this.isPublic = isPublic;
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getDescription() {
@@ -159,8 +147,8 @@ public class TopicItemData {
         return isPushOn;
     }
 
-    public void setIsPushOn(boolean isPushOn) {
-        this.isPushOn = isPushOn;
+    public void setPushOn(boolean pushOn) {
+        isPushOn = pushOn;
     }
 
     public boolean isReadOnly() {
@@ -169,5 +157,24 @@ public class TopicItemData {
 
     public void setReadOnly(boolean readOnly) {
         isReadOnly = readOnly;
+    }
+
+    @Override
+    public String toString() {
+        return "TopicItemData{" +
+                "creatorId=" + creatorId +
+                ", name='" + name + '\'' +
+                ", isStarred=" + isStarred +
+                ", isJoined=" + isJoined +
+                ", entityId=" + entityId +
+                ", memberCount=" + memberCount +
+                ", unreadCount=" + unreadCount +
+                ", isPublic=" + isPublic +
+                ", description='" + description + '\'' +
+                ", selected=" + selected +
+                ", markerLinkId=" + markerLinkId +
+                ", isPushOn=" + isPushOn +
+                ", isReadOnly=" + isReadOnly +
+                '}';
     }
 }

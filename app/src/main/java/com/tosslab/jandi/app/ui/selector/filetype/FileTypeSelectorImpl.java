@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.selector.filetype;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.widget.PopupWindowCompat;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
+import com.tosslab.jandi.app.utils.SdkUtils;
 
 public class FileTypeSelectorImpl implements FileTypeSelector {
 
@@ -55,7 +57,13 @@ public class FileTypeSelectorImpl implements FileTypeSelector {
                 }
             }
         });
-        PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.START);
+        if (SdkUtils.isOverNougat()) {
+            int[] a = new int[2];
+            roomView.getLocationInWindow(a);
+            popupWindow.showAtLocation(((Activity) roomView.getContext()).getWindow().getDecorView(), Gravity.NO_GRAVITY, 0, a[1] + roomView.getHeight());
+        } else {
+            PopupWindowCompat.showAsDropDown(popupWindow, roomView, 0, 0, Gravity.TOP | Gravity.LEFT);
+        }
 
     }
 

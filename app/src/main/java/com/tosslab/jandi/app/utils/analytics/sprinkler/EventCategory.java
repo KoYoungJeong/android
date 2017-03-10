@@ -11,4 +11,5 @@ public enum EventCategory {
     PollEvent,
     StarredEvent,
     PublicLinkEvent,
+    TeamRelatedEvent
 }

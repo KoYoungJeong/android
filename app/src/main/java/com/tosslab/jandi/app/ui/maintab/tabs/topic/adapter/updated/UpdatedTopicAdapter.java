@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
-import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.viewholder.TopicJoinButtonViewHolder;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.viewholder.TopicJoinButtonViewHolder;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.domain.Topic;
 import com.tosslab.jandi.app.views.FixedLinearLayout;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -101,7 +101,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         updatedHolder.container.setBackgroundResource(R.drawable.bg_list_item);
         updatedHolder.ivFolderItemUnderline.setVisibility(View.GONE);
         updatedHolder.ivDefaultUnderline.setVisibility(View.VISIBLE);
-        updatedHolder.ivShadowUnderline.setVisibility(View.GONE);
 
         updatedHolder.itemView.setClickable(true);
         updatedHolder.tvTopicName.setText(item.getName());
@@ -234,10 +233,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public boolean isIdleOfAnim() {
-        return animStatus == AnimStatus.IDLE;
-    }
-
     public long getSelectedEntity() {
         return selectedEntity;
     }
@@ -291,8 +286,6 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ImageView ivDefaultUnderline;
         @Bind(R.id.iv_folder_item_underline)
         ImageView ivFolderItemUnderline;
-        @Bind(R.id.iv_shadow_underline)
-        ImageView ivShadowUnderline;
         @Bind(R.id.vg_entity_listitem_badge)
         RelativeLayout vgTopicBadge;
         @Bind(R.id.v_topic_item_animator)

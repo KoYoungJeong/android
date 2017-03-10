@@ -1,119 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="75dp"
+    android:layout_height="60dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="74dp">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/iv_icon"
-            android:layout_width="75dp"
-            android:layout_height="74dp"
-            android:padding="25dp"
+            android:layout_width="72dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
             android:src="@drawable/topiclist_icon_topic_fav" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/iv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/icon_information"
+            android:visibility="visible" />
 
-            <ImageView
-                android:id="@+id/iv_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="16dp"
-                android:src="@drawable/icon_information"
-                android:visibility="visible" />
+        <LinearLayout
+            android:id="@+id/vg_topic_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@id/iv_info"
+            android:layout_toRightOf="@+id/iv_icon">
 
             <LinearLayout
-                android:id="@+id/vg_topic_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginRight="16dp"
-                android:layout_toLeftOf="@id/iv_info">
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-
-                        <TextView
-                            android:id="@+id/tv_room_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_marginRight="4dp"
-                            android:ellipsize="end"
-                            android:maxWidth="250dp"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:text="Design Guide - android topic"
-                            android:textColor="@color/dark_gray"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_member_cnt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/tv_room_name"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:text="(14)"
-                            android:textColor="@color/dark_gray"
-                            android:textSize="16dp"
-                            android:textStyle="bold" />
-
-                    </RelativeLayout>
 
                     <TextView
-                        android:id="@+id/tv_room_description"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tv_room_name"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginRight="4dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:maxWidth="250dp"
+                        android:singleLine="true"
+                        android:text="Design Guide - android topic"
+                        android:textColor="@color/jandi_text"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_member_cnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/tv_room_name"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="잔디의 모바일 안드로이드 디자인 가이드를 공.."
-                        android:textColor="@color/dark_gray"
-                        android:textSize="12dp"
-                        android:visibility="visible" />
+                        android:text="(14)"
+                        android:textColor="@color/jandi_text"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                </LinearLayout>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_room_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="adjhalksjdhlk jahldk jh"
+                    android:textColor="@color/jandi_text_light"
+                    android:textSize="12sp"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
 
-    </LinearLayout>
+
+    </RelativeLayout>
 
     <View
         android:id="@+id/v_full_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ffeeeeee"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/rgb_e5e5e5"
         android:visibility="visible" />
 
     <View
         android:id="@+id/v_half_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginLeft="75dp"
-        android:background="#ffeeeeee"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp"
+        android:background="@color/rgb_e5e5e5"
         android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.navigation.adapter.viewholder;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class VersionViewHolder extends BaseViewHolder<String> {
     @Override
     public void onBindView(String version) {
         tvName.setText(new StringBuilder("Ver ").append(version));
+        tvName.setPaintFlags(tvName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
 }
