@@ -63,7 +63,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
-                    new FilePickerModel().openCameraForActivityResult(activity, file);
+                    new FilePickerModel().openCameraImageForActivityResult(activity, file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -95,7 +95,7 @@ public class ProfileFileUploadControllerImpl implements FileUploadController {
                 try {
                     File directory = new File(FileUtil.getDownloadPath());
                     file = File.createTempFile("camera", ".jpg", directory);
-                    new FilePickerModel().openCameraForActivityResult(fragment, file);
+                    new FilePickerModel().openCameraImageForActivityResult(fragment, file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

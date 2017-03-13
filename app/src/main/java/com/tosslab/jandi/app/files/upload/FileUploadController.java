@@ -14,7 +14,9 @@ import java.util.List;
 public interface FileUploadController {
     int TYPE_UPLOAD_GALLERY = 0;
     int TYPE_UPLOAD_TAKE_PHOTO = 1;
-    int TYPE_UPLOAD_EXPLORER = 2;
+    int TYPE_UPLOAD_TAKE_VIDEO = 2;
+    int TYPE_UPLOAD_EXPLORER = 3;
+    int TYPE_UPLOAD_CONTACT = 4;
 
     void selectFileSelector(int type, Fragment fragment, long entityId);
 

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 
@@ -39,7 +40,6 @@ public class FilePickerModel {
         String realFilePath;
         switch (requestCode) {
             case FileUploadController.TYPE_UPLOAD_GALLERY:
-
                 if (intent == null) {
                     return "";
                 }
@@ -54,6 +54,7 @@ public class FilePickerModel {
                 }
 
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_VIDEO:
                 if (filePath == null) {
                     LogUtil.e("filePath object is null...");
                     return "";
@@ -62,13 +63,13 @@ public class FilePickerModel {
                     LogUtil.e("filePath is not exists");
                     return "";
                 }
-
                 return filePath.getAbsolutePath();
 
             case FileUploadController.TYPE_UPLOAD_EXPLORER:
+                Uri uri = intent.getData();
+                String realPath = ImageFilePath.getPath(context, uri);
+                return realPath;
 
-                realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-                return realFilePath;
             default:
                 return "";
         }
@@ -84,7 +85,7 @@ public class FilePickerModel {
         activity.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_EXPLORER);
     }
 
-    public void openCameraForActivityResult(Fragment fragment, File file) {
+    public void openCameraImageForActivityResult(Fragment fragment, File file) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.createOptimizedFileUri(file));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -92,12 +93,33 @@ public class FilePickerModel {
         fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
-    public void openCameraForActivityResult(Activity activity, File file) {
+    public void openCameraVideoForActivityResult(Fragment fragment, File file) {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.createOptimizedFileUri(file));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_VIDEO);
+    }
+
+    public void openContactActivityResult(Fragment fragment) {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_CONTACT);
+    }
+
+    public void openCameraImageForActivityResult(Activity activity, File file) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.createOptimizedFileUri(file));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         activity.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_PHOTO);
+    }
+
+    public void openCameraVideoForActivityResult(Activity activity, File file) {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileUtil.createOptimizedFileUri(file));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        activity.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_TAKE_VIDEO);
     }
 
     public void openCharacterActivityForActivityResult(Activity activity, Uri fileUri) {

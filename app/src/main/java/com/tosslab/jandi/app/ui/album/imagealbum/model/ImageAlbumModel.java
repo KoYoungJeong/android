@@ -22,7 +22,8 @@ public class ImageAlbumModel {
     public static final int LIMIT = 60;
 
     @Inject
-    public ImageAlbumModel() { }
+    public ImageAlbumModel() {
+    }
 
     public List<ImageAlbum> getDefaultAlbumList(Context context) {
         // which image properties are we querying
@@ -142,67 +143,14 @@ public class ImageAlbumModel {
 
     }
 
-//    private String getImageThumbPath(ContentResolver contentResolver, int id) {
-//        String[] thumbProjection = {MediaStore.Images.Thumbnails.DATA};
-//
-//        Cursor thumbCursor = contentResolver.query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
-//                thumbProjection,
-//                String.format("%s = ?", MediaStore.Images.Thumbnails.IMAGE_ID),
-//                new String[]{String.valueOf(id)},
-//                null);
-//
-//        String imageThumbPath = "";
-//        if (thumbCursor != null) {
-//            if (thumbCursor.getCount() > 0) {
-//                thumbCursor.moveToFirst();
-//                imageThumbPath = thumbCursor.getString(
-//                        thumbCursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
-//            }
-//            thumbCursor.close();
-//        }
-//
-//        return imageThumbPath;
-//    }
-
     public boolean isFirstAlbumPage(int buckerId) {
         return buckerId == -1;
     }
-
-//    public String getBucketTitle(Context context, int buckerId) {
-//
-//        String[] projection = {MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME};
-//
-//        // Get the base URI for the People table in the Contacts content provider.
-//        Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-//
-//        // Make the query.
-//        String selection = String.format("%s = ?", MediaStore.Images.ImageColumns.BUCKET_ID);
-//        String[] selectionArgs = {String.valueOf(buckerId)};
-//        Cursor cursor = context.getContentResolver().query(images,
-//                projection, // Which columns to return
-//                selection,       // Which rows to return (all rows)
-//                selectionArgs,       // Selection arguments (none)
-//                null        // Ordering
-//        );
-//
-//        if (cursor == null || cursor.getCount() <= 0) {
-//            return "Unknown";
-//        }
-//
-//        cursor.moveToFirst();
-//
-//        String title = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME));
-//        cursor.close();
-//
-//        return title;
-//
-//    }
 
     public boolean isSelectedPicture(ImagePicture imagePicture) {
         SelectPictures selectPictures = SelectPictures.getSelectPictures();
         return selectPictures.contains(imagePicture.getImagePath());
     }
-
 
     public int getSelectedImages() {
 

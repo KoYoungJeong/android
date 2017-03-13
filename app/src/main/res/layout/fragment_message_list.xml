@@ -228,7 +228,7 @@
                 android:layout_gravity="bottom">
 
                 <ImageView
-                    android:id="@+id/btn_message_action_button_1"
+                    android:id="@+id/btn_message_action_button_upload"
                     style="@style/JandiChat.ActionButton.Upload" />
             </FrameLayout>
 
@@ -237,7 +237,7 @@
                 android:layout_gravity="bottom">
 
                 <ImageView
-                    android:id="@+id/btn_message_action_button_2"
+                    android:id="@+id/btn_message_action_button_sticker_keyboard"
                     style="@style/JandiChat.ActionButton.Sticker" />
             </FrameLayout>
 

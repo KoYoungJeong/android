@@ -12,12 +12,17 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
+import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -32,30 +37,35 @@ public class FileUploadPannelDialog extends Dialog {
     ViewGroup background;
 
     @Bind(R.id.vg_picture)
-    ViewGroup vgPicture;
+    ViewGroup vgUploadPicture;
 
     @Bind(R.id.vg_video)
-    ViewGroup vgVideo;
+    ViewGroup vgUploadVideo;
 
     @Bind(R.id.vg_camera)
-    ViewGroup vgCamera;
+    ViewGroup vgUploadCamera;
 
     @Bind(R.id.vg_file)
-    ViewGroup vgFile;
+    ViewGroup vgUploadFile;
 
     @Bind(R.id.vg_poll)
-    ViewGroup vgPoll;
+    ViewGroup vgUploadPoll;
 
-    @Bind(R.id.vg_contract)
-    ViewGroup vgContract;
+    @Bind(R.id.vg_contact)
+    ViewGroup vgUploadContact;
 
     @Bind(R.id.iv_cancel)
     ImageView ivCancel;
 
     private boolean processDismiss = false;
 
-    public FileUploadPannelDialog(Context context) {
+    private boolean hasPoll = true;
+
+    private FileAccessLimitUtil fileAccessLimitUtil;
+
+    public FileUploadPannelDialog(Context context, boolean hasPoll) {
         super(context, R.style.Theme_AppCompat_Translucent);
+        this.hasPoll = hasPoll;
     }
 
     @Override
@@ -63,7 +73,70 @@ public class FileUploadPannelDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_message_file_upload_pannel);
         ButterKnife.bind(this);
+        if (!hasPoll) {
+            vgUploadPoll.setVisibility(View.GONE);
+        }
         ShowItemsAnimation();
+        initItemButtons();
+    }
+
+    private void initItemButtons() {
+        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
+
+        vgUploadPicture.setOnClickListener(v -> {
+            fileAccessLimitUtil.execute(getContext(), () -> {
+                dismissDialog();
+                Completable.complete()
+                        .delay(400, TimeUnit.MILLISECONDS)
+                        .subscribe(() -> {
+                            EventBus.getDefault().post(
+                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_GALLERY));
+                        });
+
+            });
+        });
+        vgUploadCamera.setOnClickListener(v -> {
+            fileAccessLimitUtil.execute(getContext(), () -> {
+                dismissDialog();
+                Completable.complete()
+                        .delay(400, TimeUnit.MILLISECONDS)
+                        .subscribe(() -> {
+                            EventBus.getDefault().post(
+                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_VIDEO));
+
+                        });
+            });
+        });
+        vgUploadFile.setOnClickListener(v -> {
+            fileAccessLimitUtil.execute(getContext(), () -> {
+                dismissDialog();
+                Completable.complete()
+                        .delay(400, TimeUnit.MILLISECONDS)
+                        .subscribe(() -> {
+                            EventBus.getDefault().post(
+                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_EXPLORER));
+                        });
+            });
+
+        });
+        vgUploadPoll.setOnClickListener(v -> {
+            dismissDialog();
+            Completable.complete()
+                    .delay(400, TimeUnit.MILLISECONDS)
+                    .subscribe(() -> {
+                        EventBus.getDefault().post(new RequestCreatePollEvent());
+                    });
+        });
+
+        vgUploadContact.setOnClickListener(v -> {
+            dismissDialog();
+            Completable.complete()
+                    .delay(400, TimeUnit.MILLISECONDS)
+                    .subscribe(() -> {
+                        EventBus.getDefault().post(
+                                new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_CONTACT));
+                    });
+        });
     }
 
     @Override
@@ -105,8 +178,8 @@ public class FileUploadPannelDialog extends Dialog {
                     AnimationSet animationSet = new AnimationSet(true);
                     animationSet.addAnimation(translationAnimation);
                     animationSet.addAnimation(fadeInAnimation1);
-                    vgPicture.setVisibility(View.VISIBLE);
-                    vgPicture.startAnimation(animationSet);
+                    vgUploadPicture.setVisibility(View.VISIBLE);
+                    vgUploadPicture.startAnimation(animationSet);
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
@@ -120,8 +193,8 @@ public class FileUploadPannelDialog extends Dialog {
                     AnimationSet animationSet = new AnimationSet(true);
                     animationSet.addAnimation(translationAnimation);
                     animationSet.addAnimation(fadeInAnimation1);
-                    vgVideo.setVisibility(View.VISIBLE);
-                    vgVideo.startAnimation(animationSet);
+                    vgUploadVideo.setVisibility(View.VISIBLE);
+                    vgUploadVideo.startAnimation(animationSet);
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
@@ -135,8 +208,8 @@ public class FileUploadPannelDialog extends Dialog {
                     AnimationSet animationSet = new AnimationSet(true);
                     animationSet.addAnimation(translationAnimation);
                     animationSet.addAnimation(fadeInAnimation1);
-                    vgCamera.setVisibility(View.VISIBLE);
-                    vgCamera.startAnimation(animationSet);
+                    vgUploadCamera.setVisibility(View.VISIBLE);
+                    vgUploadCamera.startAnimation(animationSet);
                 }).subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -149,8 +222,24 @@ public class FileUploadPannelDialog extends Dialog {
                     AnimationSet animationSet = new AnimationSet(true);
                     animationSet.addAnimation(translationAnimation);
                     animationSet.addAnimation(fadeInAnimation1);
-                    vgFile.setVisibility(View.VISIBLE);
-                    vgFile.startAnimation(animationSet);
+                    vgUploadFile.setVisibility(View.VISIBLE);
+                    vgUploadFile.startAnimation(animationSet);
+                }).subscribeOn(AndroidSchedulers.mainThread())
+                .delay(10, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(i -> {
+                    if (hasPoll) {
+                        Animation translationAnimation = new TranslateAnimation(0, 0, 100, 0);
+                        translationAnimation.setDuration(200);
+                        Animation fadeInAnimation1 = new AlphaAnimation(0.0f, 1.0f);
+                        fadeInAnimation1.setDuration(200);
+
+                        AnimationSet animationSet = new AnimationSet(true);
+                        animationSet.addAnimation(translationAnimation);
+                        animationSet.addAnimation(fadeInAnimation1);
+                        vgUploadPoll.setVisibility(View.VISIBLE);
+                        vgUploadPoll.startAnimation(animationSet);
+                    }
                 }).subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -163,22 +252,8 @@ public class FileUploadPannelDialog extends Dialog {
                     AnimationSet animationSet = new AnimationSet(true);
                     animationSet.addAnimation(translationAnimation);
                     animationSet.addAnimation(fadeInAnimation1);
-                    vgPoll.setVisibility(View.VISIBLE);
-                    vgPoll.startAnimation(animationSet);
-                }).subscribeOn(AndroidSchedulers.mainThread())
-                .delay(10, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(i -> {
-                    Animation translationAnimation = new TranslateAnimation(0, 0, 100, 0);
-                    translationAnimation.setDuration(200);
-                    Animation fadeInAnimation1 = new AlphaAnimation(0.0f, 1.0f);
-                    fadeInAnimation1.setDuration(200);
-
-                    AnimationSet animationSet = new AnimationSet(true);
-                    animationSet.addAnimation(translationAnimation);
-                    animationSet.addAnimation(fadeInAnimation1);
-                    vgContract.setVisibility(View.VISIBLE);
-                    vgContract.startAnimation(animationSet);
+                    vgUploadContact.setVisibility(View.VISIBLE);
+                    vgUploadContact.startAnimation(animationSet);
                 }).delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(i -> {
@@ -224,25 +299,27 @@ public class FileUploadPannelDialog extends Dialog {
                     animationSet.addAnimation(fadeInAnimation1);
                     animationSet.setFillAfter(true);
                     animationSet.setFillEnabled(true);
-                    vgContract.clearAnimation();
-                    vgContract.startAnimation(animationSet);
+                    vgUploadContact.clearAnimation();
+                    vgUploadContact.startAnimation(animationSet);
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(i -> {
-                    Animation translationAnimation = new TranslateAnimation(0, 0, 0, 200);
-                    translationAnimation.setDuration(200);
-                    Animation fadeInAnimation1 = new AlphaAnimation(1.0f, 0.0f);
-                    fadeInAnimation1.setDuration(200);
+                    if (hasPoll) {
+                        Animation translationAnimation = new TranslateAnimation(0, 0, 0, 200);
+                        translationAnimation.setDuration(200);
+                        Animation fadeInAnimation1 = new AlphaAnimation(1.0f, 0.0f);
+                        fadeInAnimation1.setDuration(200);
 
-                    AnimationSet animationSet = new AnimationSet(true);
-                    animationSet.addAnimation(translationAnimation);
-                    animationSet.addAnimation(fadeInAnimation1);
-                    animationSet.setFillAfter(true);
-                    animationSet.setFillEnabled(true);
-                    vgPoll.clearAnimation();
-                    vgPoll.startAnimation(animationSet);
+                        AnimationSet animationSet = new AnimationSet(true);
+                        animationSet.addAnimation(translationAnimation);
+                        animationSet.addAnimation(fadeInAnimation1);
+                        animationSet.setFillAfter(true);
+                        animationSet.setFillEnabled(true);
+                        vgUploadPoll.clearAnimation();
+                        vgUploadPoll.startAnimation(animationSet);
+                    }
                 }).subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -256,25 +333,9 @@ public class FileUploadPannelDialog extends Dialog {
                     animationSet.addAnimation(fadeInAnimation1);
                     animationSet.setFillAfter(true);
                     animationSet.setFillEnabled(true);
-                    vgFile.clearAnimation();
-                    vgFile.startAnimation(animationSet);
+                    vgUploadFile.clearAnimation();
+                    vgUploadFile.startAnimation(animationSet);
 
-                }).subscribeOn(AndroidSchedulers.mainThread())
-                .delay(10, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(i -> {
-                    Animation translationAnimation = new TranslateAnimation(0, 0, 0, 200);
-                    translationAnimation.setDuration(200);
-                    Animation fadeInAnimation1 = new AlphaAnimation(1.0f, 0.0f);
-                    fadeInAnimation1.setDuration(200);
-
-                    AnimationSet animationSet = new AnimationSet(true);
-                    animationSet.addAnimation(translationAnimation);
-                    animationSet.addAnimation(fadeInAnimation1);
-                    animationSet.setFillAfter(true);
-                    animationSet.setFillEnabled(true);
-                    vgCamera.clearAnimation();
-                    vgCamera.startAnimation(animationSet);
                 }).subscribeOn(AndroidSchedulers.mainThread())
                 .delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -289,8 +350,24 @@ public class FileUploadPannelDialog extends Dialog {
                     animationSet.addAnimation(fadeInAnimation1);
                     animationSet.setFillAfter(true);
                     animationSet.setFillEnabled(true);
-                    vgVideo.clearAnimation();
-                    vgVideo.startAnimation(animationSet);
+                    vgUploadCamera.clearAnimation();
+                    vgUploadCamera.startAnimation(animationSet);
+                }).subscribeOn(AndroidSchedulers.mainThread())
+                .delay(10, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(i -> {
+                    Animation translationAnimation = new TranslateAnimation(0, 0, 0, 200);
+                    translationAnimation.setDuration(200);
+                    Animation fadeInAnimation1 = new AlphaAnimation(1.0f, 0.0f);
+                    fadeInAnimation1.setDuration(200);
+
+                    AnimationSet animationSet = new AnimationSet(true);
+                    animationSet.addAnimation(translationAnimation);
+                    animationSet.addAnimation(fadeInAnimation1);
+                    animationSet.setFillAfter(true);
+                    animationSet.setFillEnabled(true);
+                    vgUploadVideo.clearAnimation();
+                    vgUploadVideo.startAnimation(animationSet);
                 }).delay(10, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(i -> {
@@ -304,8 +381,8 @@ public class FileUploadPannelDialog extends Dialog {
                     animationSet.addAnimation(fadeInAnimation1);
                     animationSet.setFillAfter(true);
                     animationSet.setFillEnabled(true);
-                    vgPicture.clearAnimation();
-                    vgPicture.startAnimation(animationSet);
+                    vgUploadPicture.clearAnimation();
+                    vgUploadPicture.startAnimation(animationSet);
                 })
                 .subscribe();
 
@@ -314,7 +391,7 @@ public class FileUploadPannelDialog extends Dialog {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                     Animation fadeInAnimation = new AlphaAnimation(1.0f, 0.0f);
-                    fadeInAnimation.setDuration(300);
+                    fadeInAnimation.setDuration(200);
                     fadeInAnimation.setFillAfter(true);
                     fadeInAnimation.setFillEnabled(true);
                     background.startAnimation(fadeInAnimation);

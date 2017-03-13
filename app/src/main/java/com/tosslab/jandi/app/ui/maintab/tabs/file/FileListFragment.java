@@ -557,7 +557,10 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
                 // Do Nothing
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
-                onCameraActivityResult(resultCode, data);
+                onCameraImageActivityResult(resultCode, data);
+                break;
+            case FileUploadController.TYPE_UPLOAD_TAKE_VIDEO:
+                onCameraVideoActivityResult(resultCode, data);
                 break;
             case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 onExplorerActivityResult(resultCode, data);
@@ -586,11 +589,27 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
 
     }
 
-    private void onCameraActivityResult(int resultCode, Intent intent) {
+    private void onCameraImageActivityResult(int resultCode, Intent intent) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(),
+                FileUploadController.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        if (filePath != null && filePath.size() > 0) {
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
+                    .realFilePathList(new ArrayList<>(filePath))
+                    .singleUpload(true)
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
+        }
+    }
+
+    private void onCameraVideoActivityResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(),
+                FileUploadController.TYPE_UPLOAD_TAKE_VIDEO, intent);
         if (filePath != null && filePath.size() > 0) {
             startActivityForResult(Henson.with(getActivity())
                     .gotoFileUploadPreviewActivity()
@@ -605,7 +624,8 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
             return;
         }
 
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FileUploadController.TYPE_UPLOAD_EXPLORER, intent);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(),
+                FileUploadController.TYPE_UPLOAD_EXPLORER, intent);
         if (filePath != null && filePath.size() > 0) {
             startActivityForResult(Henson.with(getActivity())
                     .gotoFileUploadPreviewActivity()

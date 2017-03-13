@@ -267,8 +267,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     private void initSoftInputAreaController() {
         softInputAreaController = new SoftInputAreaController(
-                stickerViewModel, null,
-                vgSoftInputDetector, vgSoftInputArea, null, btnAction,
+                stickerViewModel,
+                vgSoftInputDetector, vgSoftInputArea, btnAction,
                 etComment);
         softInputAreaController.setOnStickerButtonClickListener(() -> {
             sendAnalyticsEvent(AnalyticsValue.Action.Sticker);

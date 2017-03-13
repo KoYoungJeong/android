@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
@@ -22,7 +21,6 @@ public class SoftInputAreaController {
 
     private InputMethodManager inputMethodManager;
     private StickerViewModel stickerViewModel;
-    private UploadMenuViewModel uploadMenuViewModel;
 
     private SoftInputDetectLinearLayout softInputDetector;
     private ViewGroup vgSoftInputArea;
@@ -37,17 +35,14 @@ public class SoftInputAreaController {
     private boolean isShowKeyboard = false;
 
     public SoftInputAreaController(StickerViewModel stickerViewModel,
-                                   UploadMenuViewModel uploadMenuViewModel,
                                    SoftInputDetectLinearLayout softInputDetector,
                                    ViewGroup vgSoftInputArea,
-                                   ImageView btnAction1,
                                    ImageView btnAction2,
                                    EditText editText) {
         this.softInputDetector = softInputDetector;
         this.vgSoftInputArea = vgSoftInputArea;
         this.btnAction2 = btnAction2;
         this.stickerViewModel = stickerViewModel;
-        this.uploadMenuViewModel = uploadMenuViewModel;
         this.editText = editText;
     }
 
