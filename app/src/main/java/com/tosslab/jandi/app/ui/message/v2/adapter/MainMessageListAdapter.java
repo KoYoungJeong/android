@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.queue.LimitMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
@@ -29,6 +31,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder>
         implements MessageListHeaderAdapter.MessageItemDate, MessageListAdapterView, MessageListAdapterModel {
@@ -38,13 +41,15 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     MoreState oldMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
-    List<ResMessages.Link> links;
-    // 소켓으로 데이터를 받지 않은 경우에 저장하기 위한 정보
+    List<ResMessages.Link> links; // 소켓으로 데이터를 받지 않은 경우에 저장하기 위한 정보
     private Room room;
     private MessagePointer messagePointer;
 
     private Map<ResMessages.Link, Integer> itemTypes;
     private Lock lock;
+
+    // pricing plan 메세지 제한
+    private boolean isLimited = false;
 
     public MainMessageListAdapter(Context context, Room room) {
         this.context = context;
@@ -88,7 +93,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= 2 && oldMoreState == MoreState.Idle) {
+        if (position <= 4 && oldMoreState == MoreState.Idle && !isLimited) {
             oldMoreState = MainMessageListAdapter.MoreState.Loading;
             EventBus.getDefault().post(new RefreshOldMessageEvent());
         }
@@ -131,9 +136,45 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     @Override
-    public void addAll(int position, List<ResMessages.Link> links) {
+    public void addAll(int position, List<ResMessages.Link> messages) {
         lock.lock();
+
+        long LimitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
+
+        final List<ResMessages.Link> links = new ArrayList<>();
+
+        List<ResMessages.Link> tempLinks = new ArrayList<>();
+
+        Observable.from(messages)
+                .subscribe(link -> {
+                    links.add(link);
+                });
+
+        // limitedLinkId가 존재할 경우 제한 로직 동작.
+        if (LimitedLinkId != -1) {
+            for (int i = links.size() - 1; i >= 0; i--) {
+                if (LimitedLinkId >= links.get(i).id) {
+                    if (i != links.size() - 1) {
+                        tempLinks.addAll(links.subList(i + 1, links.size()));
+                    } else {
+                        tempLinks.add(0, new LimitMessageLink());
+                    }
+                    if (tempLinks.size() > 0 && !(tempLinks.get(0) instanceof LimitMessageLink)) {
+                        tempLinks.add(0, new LimitMessageLink());
+                    }
+                    isLimited = true;
+                    break;
+                }
+            }
+        }
+
+        if (isLimited && tempLinks.size() > 0) {
+            links.clear();
+            links.addAll(tempLinks);
+        }
+
         try {
+
             if (links == null || links.isEmpty()) {
                 return;
             }
@@ -188,6 +229,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                 itemTypes.remove(getItem(beforePosition + links.size() + 1));
                 getItemViewType(beforePosition + links.size() + 1);
             }
+
         } finally {
             lock.unlock();
         }
@@ -453,12 +495,18 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public Date getItemDate(int position) {
+
         if (position >= getItemCount()) {
             return null;
         }
 
+        if (getItemViewType(position) == TypeUtil.TYPE_VIEW_LIMIT_MESSAGE) {
+            return new Date(1);
+        }
+
         ResMessages.Link item = getItem(position);
         return item != null ? item.time : null;
+
     }
 
     public void setMessagePointer(MessagePointer messagPointer) {

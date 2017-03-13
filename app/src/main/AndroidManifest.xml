@@ -247,6 +247,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.Transparent" />
 
+        <activity
+            android:name=".ui.restart.TeamPlanResetActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Transparent" />
+
         <service
             android:name=".services.keep.KeepExecutedService"
             android:label="@string/app_name" />
@@ -428,17 +434,6 @@
             android:name=".ui.share.views.ShareSelectTeamActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_share_to_jandi"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="andorid.intent.action.VIEW" />
-                <action android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.filedetail.views.FileShareActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_title_cdp_to_be_shared"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />

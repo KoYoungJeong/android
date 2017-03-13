@@ -133,9 +133,12 @@ public class MessageRepository extends LockExecutorTemplate {
         });
     }
 
-    public boolean upsertMessages(List<ResMessages.Link> messages) {
+    public boolean upsertMessages(List<ResMessages.Link> newMessages) {
         return execute(() -> {
             try {
+
+                List<ResMessages.Link> messages = new ArrayList<>();
+                messages.addAll(newMessages);
 
                 Dao<ResMessages.Link, ?> dao = getHelper().getDao(ResMessages.Link.class);
 

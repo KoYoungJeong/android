@@ -45,7 +45,7 @@ public class MainChatListModel {
                             .roomId(room.getId())
                             .lastLinkId(room.getLastLinkId())
                             .lastMessage(!TextUtils.equals(room.getLastMessageStatus(), "archived") ?
-                                    room.getLastMessage() : JandiApplication.getContext().getString(R.string.jandi_deleted_message))
+                                    room.getLastMessage() : "(" + JandiApplication.getContext().getString(R.string.jandi_deleted_file) + ")")
                             .lastMessageId(room.getLastMessageId())
                             .name(member.getName())
                             .starred(TeamInfoLoader.getInstance().isStarredUser(companionId))

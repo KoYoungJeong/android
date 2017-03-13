@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
+import com.tosslab.jandi.app.network.models.start.InitialInfo;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 
 import java.io.BufferedReader;
@@ -59,6 +60,13 @@ public class InitialInfoRepository extends LockExecutorTemplate {
                 }
             }
         });
+    }
+
+    public boolean upsertInitialInfo(InitialInfo initialInfo) {
+        if (initialInfo != null) {
+            return upsertRawInitialInfo(initialInfo.convertRawInitialInfo());
+        }
+        return false;
     }
 
     private File getTeamDir() {
@@ -139,7 +147,9 @@ public class InitialInfoRepository extends LockExecutorTemplate {
     }
 
     @NonNull
-    private String getTeamJsonFileName(long teamId) {return teamId + ".json";}
+    private String getTeamJsonFileName(long teamId) {
+        return teamId + ".json";
+    }
 
     public boolean hasInitialInfo(long teamId) {
         return execute(() -> {

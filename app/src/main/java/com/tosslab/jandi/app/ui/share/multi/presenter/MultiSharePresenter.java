@@ -38,6 +38,8 @@ public interface MultiSharePresenter {
 
         void setTeamName(String teamName);
 
+        void setTeamDefaultName();
+
         void setRoomName(String roomName);
 
         void setMentionInfo(long teamId, long roomId);
@@ -55,5 +57,7 @@ public interface MultiSharePresenter {
         void setFileName(String fileName);
 
         void setFileThumbInfos(List<FileUploadThumbAdapter.FileThumbInfo> fileThumbInfos);
+
+        void setTeamId(long teamId);
     }
 }

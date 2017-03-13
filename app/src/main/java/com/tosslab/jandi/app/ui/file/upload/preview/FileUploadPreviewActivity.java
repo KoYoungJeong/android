@@ -64,6 +64,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -374,8 +375,22 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                             vpFilePreview.getCurrentItem(), renamedFileName);
                     setFileName(renamedFileName);
                     tvFileTitle.requestFocus();
+                    Completable.fromAction(() -> {
+                    }).delay(200, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
+
                 })
-                .setNegativeButton(getString(R.string.jandi_cancel), null);
+                .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
+                    Completable.fromAction(() -> {
+                    }).delay(200, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
+                });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);

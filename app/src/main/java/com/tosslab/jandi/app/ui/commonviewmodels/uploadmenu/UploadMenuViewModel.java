@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
+import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 
 import javax.inject.Inject;
 
@@ -26,8 +28,11 @@ public class UploadMenuViewModel {
 
     private OnClickUploadEventListener onClickUploadEventListener;
 
+    private FileAccessLimitUtil fileAccessLimitUtil;
+
     @Inject
-    public UploadMenuViewModel() { }
+    public UploadMenuViewModel() {
+    }
 
     public void showUploadPanel(ViewGroup root) {
         vgUploadMenuSelector =
@@ -41,27 +46,35 @@ public class UploadMenuViewModel {
             btnCreatePoll.setVisibility(View.GONE);
         }
 
-        initClickEvent();
+        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
+
+        initClickEvent(root.getContext());
     }
 
-    void initClickEvent() {
+    void initClickEvent(Context context) {
         btnUploadImage.setOnClickListener(v -> {
-            EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_GALLERY));
-            if (onClickUploadEventListener != null) {
-                onClickUploadEventListener.onClick();
-            }
+            fileAccessLimitUtil.execute(context, () -> {
+                EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_GALLERY));
+                if (onClickUploadEventListener != null) {
+                    onClickUploadEventListener.onClick();
+                }
+            });
         });
         btnShowCamera.setOnClickListener(v -> {
-            EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO));
-            if (onClickUploadEventListener != null) {
-                onClickUploadEventListener.onClick();
-            }
+            fileAccessLimitUtil.execute(context, () -> {
+                EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO));
+                if (onClickUploadEventListener != null) {
+                    onClickUploadEventListener.onClick();
+                }
+            });
         });
         btnUploadFile.setOnClickListener(v -> {
-            EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_EXPLORER));
-            if (onClickUploadEventListener != null) {
-                onClickUploadEventListener.onClick();
-            }
+            fileAccessLimitUtil.execute(context, () -> {
+                EventBus.getDefault().post(new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_EXPLORER));
+                if (onClickUploadEventListener != null) {
+                    onClickUploadEventListener.onClick();
+                }
+            });
         });
         btnCreatePoll.setOnClickListener(v -> {
             EventBus.getDefault().post(new RequestCreatePollEvent());

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.multi;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,12 +31,15 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.tosslab.jandi.app.Henson;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectTeamEvent;
 import com.tosslab.jandi.app.services.upload.UploadNotificationActivity;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapter;
@@ -51,8 +53,8 @@ import com.tosslab.jandi.app.ui.share.multi.dagger.DaggerMultiShareComponent;
 import com.tosslab.jandi.app.ui.share.multi.dagger.MultiShareModule;
 import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -61,6 +63,7 @@ import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -120,6 +123,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     private FileUploadThumbAdapter fileUploadThumbAdapter;
     private InputMethodManager inputMethodManager;
 
+    private FileAccessLimitUtil fileAccessLimitUtil;
+    private long teamId = -1;
+
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
         Bundle bundle = new Bundle();
@@ -156,10 +162,26 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         vpShare.setAdapter(adapter);
 
-        multiSharePresenter.initShareTarget();
+        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
+
+        setTeamDefaultName();
+
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+
+        if (teamId > 0) {
+            fileAccessLimitUtil.execute(getContext(), teamId, () -> {
+                multiSharePresenter.initShareTarget();
+            });
+        }
+
         multiSharePresenter.initShareData(uris);
 
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void setTeamId(long teamId) {
+        this.teamId = teamId;
     }
 
     @Override
@@ -218,7 +240,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @OnClick(R.id.vg_multi_share_team)
     void onTeamNameClick() {
-        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
+        if (teamId <= 0) {
+            teamId = -1;
+        }
+
+        startActivity(Henson.with(getContext())
+                .gotoShareSelectTeamActivity()
+                .selectedTeamId(teamId)
+                .build());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }
@@ -266,6 +295,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setTeamName(String teamName) {
         tvTeamName.setText(teamName);
+    }
+
+    @Override
+    public void setTeamDefaultName() {
+        tvTeamName.setHint(
+                JandiApplication.getContext().getString(R.string.common_sharetojandi_choose_team));
     }
 
     @Override
@@ -339,14 +374,22 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void startShare() {
-        multiSharePresenter.updateComment(vpShare.getCurrentItem(), etComment.getText().toString());
-        multiSharePresenter.startShare();
-
+        if (teamId != -1) {
+            fileAccessLimitUtil.execute(getContext(), teamId, () -> {
+                multiSharePresenter.updateComment(vpShare.getCurrentItem(), etComment.getText().toString());
+                multiSharePresenter.startShare();
+            });
+        }
     }
 
     public void onEvent(ShareSelectTeamEvent event) {
         long teamId = event.getTeamId();
-        multiSharePresenter.onSelectTeam(teamId);
+        if (teamId != -1) {
+            fileAccessLimitUtil.execute(getContext(), teamId, () -> {
+                this.teamId = teamId;
+                multiSharePresenter.onSelectTeam(teamId);
+            });
+        }
     }
 
     public void onEvent(ShareSelectRoomEvent event) {
@@ -396,8 +439,21 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                             vpShare.getCurrentItem(), renamedFileName);
                     setFileName(renamedFileName);
                     tvTitle.requestFocus();
+                    Completable.complete()
+                            .delay(100, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
                 })
-                .setNegativeButton(getString(R.string.jandi_cancel), null);
+                .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
+                    Completable.complete()
+                            .delay(100, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
+                });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -498,4 +554,5 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
     }
+
 }

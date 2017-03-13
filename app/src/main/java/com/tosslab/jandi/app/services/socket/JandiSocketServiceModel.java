@@ -66,6 +66,7 @@ import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.Mention;
+import com.tosslab.jandi.app.network.models.start.TeamUsage;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
@@ -107,7 +108,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamPlanUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamUsageUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderCreatedEvent;
@@ -126,6 +129,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketTopicUpdatedEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.restart.RankResetActivity;
+import com.tosslab.jandi.app.ui.restart.TeamPlanResetActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -217,6 +221,8 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketTeamJoinEvent.class, this::onTeamJoin);
         messageEventActorMapper.put(SocketTeamLeaveEvent.class, this::onTeamLeft);
         messageEventActorMapper.put(SocketTeamDeletedEvent.class, this::onTeamDeleted);
+        messageEventActorMapper.put(SocketTeamPlanUpdatedEvent.class, this::onTeamPlanUpdated);
+        messageEventActorMapper.put(SocketTeamUsageUpdatedEvent.class, this::onTeamUsageUpdated);
         messageEventActorMapper.put(SocketChatCloseEvent.class, this::onChatClosed);
         messageEventActorMapper.put(SocketChatCreatedEvent.class, this::onChatCreated);
         messageEventActorMapper.put(SocketConnectBotCreatedEvent.class, this::onConnectBotCreated);
@@ -289,6 +295,9 @@ public class JandiSocketServiceModel {
 
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             MessageRepository.getRepository().updateStatus(event.getFile().getId(), "archived");
+            ResMessages.FileMessage fileMessage = MessageRepository.getRepository()
+                    .getFileMessage(event.getFile().getId());
+            doAfterFileDeleted(fileMessage);
             postEvent(new DeleteFileEvent(event.getTeamId(), event.getFile().getId()));
         } catch (Exception e) {
             LogUtil.d(TAG, e.getMessage());
@@ -1082,6 +1091,23 @@ public class JandiSocketServiceModel {
         }
     }
 
+    // 특정 룸의 마지막 메세지이면 룸 리스트 정보를 갱신하기 위해 호출 create->archived
+    private void doAfterFileDeleted(ResMessages.FileMessage fileMessage) {
+
+        ChatRepository chatRepository = ChatRepository.getInstance(fileMessage.teamId);
+
+        for (ResMessages.OriginalMessage.IntegerWrapper e : fileMessage.shareEntities) {
+            long roomId = e.getShareEntity();
+            ResMessages.Link lastLink = MessageRepository.getRepository().getLastMessage(roomId);
+            if (TeamInfoLoader.getInstance().isChat(roomId)) {
+                if (lastLink.message.id == fileMessage.id) {
+                    chatRepository.updateLastMessage(roomId, lastLink.messageId, fileMessage.content.title, "archived");
+                }
+            }
+        }
+
+    }
+
     private String getContentText(ResMessages.OriginalMessage message) {
         String text;
         if (message instanceof ResMessages.TextMessage) {
@@ -1351,7 +1377,7 @@ public class JandiSocketServiceModel {
         }, () -> {
             MessageRepository.getRepository().deleteAllLink();
             JandiPreference.setSocketConnectedLastTime(-1);
-            IntroActivity.startActivity(JandiApplication.getContext(), false);
+            IntroActivity.startActivitySkipAnimation(JandiApplication.getContext(), false);
         });
     }
 
@@ -1533,7 +1559,30 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void onTeamPlanUpdated(Object object) {
+        try {
+            SocketTeamPlanUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamPlanUpdatedEvent.class);
+            saveEvent(event);
+            Intent intent = new Intent(JandiApplication.getContext(), TeamPlanResetActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            JandiApplication.getContext().startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void onTeamUsageUpdated(Object object) {
+        try {
+            SocketTeamUsageUpdatedEvent event = SocketModelExtractor.getObject(object, SocketTeamUsageUpdatedEvent.class);
+            saveEvent(event);
+            TeamUsage data = event.getData();
+            TeamInfoLoader.getInstance().updateTeamUsage(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface Command {

@@ -40,7 +40,9 @@ import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamNameUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamPlanUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamUsageUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicFolderCreatedEvent;
@@ -114,6 +116,8 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         TeamCreated("team_created", SocketTeamCreatedEvent.class),
         TeamJoined("team_joined", SocketTeamJoinEvent.class),
         TeamLeft("team_left", SocketTeamLeaveEvent.class),
+        TeamPlanUpdated("team_plan_updated", SocketTeamPlanUpdatedEvent.class),
+        TeamUsageUpdated("team_usage_updated", SocketTeamUsageUpdatedEvent.class),
         TeamDeleted("team_deleted", SocketTeamDeletedEvent.class),
         TeamNameUpdated("team_name_updated", SocketTeamNameUpdatedEvent.class),
         TeamDomainUpdated("team_domain_updated", SocketTeamDomainUpdatedEvent.class),

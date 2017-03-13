@@ -46,7 +46,6 @@ public class IntroActivityPresenter {
             JandiPreference.putVersionCodeStamp();
         }
 
-
         if (!model.isNetworkConnected()) {
             // 네트워크 연결 상태 아니면 로그인 여부만 확인하고 넘어감
             if (!model.isNeedLogin()) {
@@ -55,7 +54,6 @@ public class IntroActivityPresenter {
                 // 디자인 요청사항 처음에 딜레이가 있어달라는..
                 view.moveToSignHomeActivity();
             }
-
             return;
         }
 
@@ -68,7 +66,7 @@ public class IntroActivityPresenter {
                         view.showUpdateDialog();
                         return false;
                     } else if (config.maintenance != null && config.maintenance.status) {
-                        view.showMaintenanceDialog();
+                        view.showMaintenanceDialog(config.maintenance.msg);
                         return false;
                     } else {
                         return true;
@@ -92,7 +90,7 @@ public class IntroActivityPresenter {
                                 int statusCode = e.getStatusCode();
                                 model.trackSignInFailAndFlush(statusCode);
                                 if (statusCode == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
-                                    view.showMaintenanceDialog();
+                                    view.show503Dialog();
                                 } else {
                                     moveNextActivity(startForInvite);
                                 }
@@ -109,7 +107,6 @@ public class IntroActivityPresenter {
     }
 
     private void moveNextActivityWithAccountRefresh(boolean startForInvite) {
-
         Observable<Boolean> loginObservable = Observable.just(!model.isNeedLogin())
                 .share();
 
@@ -209,7 +206,7 @@ public class IntroActivityPresenter {
 
         void moveTeamSelectActivity();
 
-        void showMaintenanceDialog();
+        void showMaintenanceDialog(String message);
 
         void showUpdateDialog();
 
@@ -218,6 +215,8 @@ public class IntroActivityPresenter {
         void showDialogNoRank();
 
         void restartIntroActivity();
+
+        void show503Dialog();
     }
 
 }

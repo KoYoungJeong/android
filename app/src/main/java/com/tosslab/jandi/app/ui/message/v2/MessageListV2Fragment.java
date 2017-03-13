@@ -80,6 +80,7 @@ import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
+import com.tosslab.jandi.app.events.messages.ShowMessageListProgressViewEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
@@ -298,6 +299,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Bind(R.id.btn_show_mention)
     ImageView btnShowMention;
+
     @Bind(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
 
@@ -313,7 +315,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Bind(R.id.tv_messages_member_status_alert)
     TextView tvMemberStatusAlert;
-
 
     @Bind(R.id.vg_main_synchronize)
     View vgSynchronize;
@@ -763,13 +764,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         });
         dateAnimator = new DateAnimator(tvMessageDate);
         RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
-        recyclerScrollStateListener.setListener(scrolling -> {
-            if (scrolling) {
-                dateAnimator.show();
-            } else {
-                dateAnimator.hide();
-            }
-        });
+
         // 스크롤 했을 때 동작
         lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -784,6 +779,23 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
                 Date date = ((MainMessageListAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
+
+                if (date.getTime() == 1) {
+                    recyclerScrollStateListener.setListener(null);
+                    tvMessageDate.setVisibility(View.GONE);
+                } else {
+                    tvMessageDate.setVisibility(View.VISIBLE);
+                    if (!recyclerScrollStateListener.hasListener()) {
+                        recyclerScrollStateListener.setListener(scrolling -> {
+                            if (scrolling) {
+                                dateAnimator.show();
+                            } else {
+                                dateAnimator.hide();
+                            }
+                        });
+                    }
+                }
+
                 if (date != null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
@@ -793,11 +805,14 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     calendar.set(Calendar.MILLISECOND, 0);
 
                     long timeInMillis = calendar.getTimeInMillis();
+
                     if (DateUtils.isToday(timeInMillis)) {
                         tvMessageDate.setText(R.string.today);
                     } else {
                         tvMessageDate.setText(DateTransformator.getTimeStringForDivider(timeInMillis));
                     }
+                } else {
+                    tvMessageDate.setText(R.string.today);
                 }
             }
 
@@ -942,6 +957,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void showProgressView() {
+        vgProgressForMessageList.setVisibility(View.VISIBLE);
         vgProgressForMessageList.animate()
                 .alpha(1.0f)
                 .setDuration(150);
@@ -949,6 +965,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void dismissProgressView() {
+        vgProgressForMessageList.setVisibility(View.GONE);
         vgProgressForMessageList.animate()
                 .alpha(0.0f)
                 .setDuration(250);
@@ -1438,7 +1455,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 messageListPresenter.addNewMessageOfLocalQueue(event.getData().getLinkMessage());
             }
         }
-
     }
 
     public void onEventMainThread(TopicInfoUpdateEvent event) {
@@ -1479,6 +1495,10 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     void setMentionButtonVisibility(boolean show) {
         btnShowMention.setVisibility(show
                 ? View.VISIBLE : View.GONE);
+    }
+
+    public void onEventMainThread(ShowMessageListProgressViewEvent event) {
+        showProgressView();
     }
 
     public void onEvent(SocketPollEvent event) {

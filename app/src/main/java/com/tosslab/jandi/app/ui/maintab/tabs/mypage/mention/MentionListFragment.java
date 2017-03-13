@@ -9,8 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.adapter.MentionListHeaderAdapter;
@@ -36,11 +39,14 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dagger.MentionListMo
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.presenter.MentionListPresenter;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.view.MentionListView;
 import com.tosslab.jandi.app.ui.poll.detail.PollDetailActivity;
+import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -319,6 +325,13 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
     public void moveToMessageListActivity(
             long teamId, long entityId, int entityType, long roomId, long linkId) {
 
+        long limitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
+
+        if (limitedLinkId != -1 && linkId < limitedLinkId) {
+            showUsageLimitDialog();
+            return;
+        }
+
         startActivity(Henson.with(getActivity())
                 .gotoMessageListV2Activity()
                 .teamId(teamId)
@@ -331,6 +344,42 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
     }
+
+    public void showUsageLimitDialog() {
+        new AlertDialog.Builder(getContext(), R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(R.string.pricingplan_restrictions_view_message_alert_title)
+                .setMessage(R.string.pricingplan_restrictions_view_message_alert_body)
+                .setNegativeButton(this.getText(R.string.intercom_close), (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton(R.string.pricingplan_restrictions_fileupload_popup_seedetail,
+                        (dialog, which) -> {
+                            movePricePlan(getContext());
+                        }).show();
+    }
+
+    private void movePricePlan(Context context) {
+        if (context != null) {
+            Locale locale = context.getResources().getConfiguration().locale;
+            String lang = locale.getLanguage();
+            String url = "https://www.jandi.com/landing/kr/pricing";
+
+            if (TextUtils.equals(lang, "en")) {
+                url = "www.jandi.com/landing/en/pricing";
+            } else if (TextUtils.equals(lang, "ja")) {
+                url = "www.jandi.com/landing/jp/pricing";
+            } else if (TextUtils.equals(lang, "ko")) {
+                url = "www.jandi.com/landing/kr/pricing";
+            } else if (TextUtils.equals(lang, "zh-cn")) {
+                url = "www.jandi.com/landing/zh-cn/pricing";
+            } else if (TextUtils.equals(lang, "zh-tw")) {
+                url = "www.jandi.com/landing/zh-tw/pricing";
+            }
+
+            ApplicationUtil.startWebBrowser(context, url);
+        }
+    }
+
 
     @Override
     public void notifyDataSetChanged() {

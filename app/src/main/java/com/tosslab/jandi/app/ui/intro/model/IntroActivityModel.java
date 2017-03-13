@@ -29,11 +29,11 @@ import dagger.Lazy;
 
 public class IntroActivityModel {
 
+    private final Lazy<TeamApi> teamApi;
     Lazy<AccountApi> accountApi;
     Lazy<StartApi> startApi;
     Lazy<ConfigApi> configApi;
     Lazy<EventsApi> eventApi;
-    private final Lazy<TeamApi> teamApi;
 
     @Inject
     public IntroActivityModel(Lazy<AccountApi> accountApi,
@@ -124,8 +124,8 @@ public class IntroActivityModel {
     }
 
     public boolean refreshRankIfNeeds() {
-
         long selectedTeam = TeamInfoLoader.getInstance().getTeamId();
+
         if (!RankRepository.getInstance().hasRanks(selectedTeam)) {
             try {
                 Ranks ranks = teamApi.get().getRanks(selectedTeam);
@@ -145,4 +145,5 @@ public class IntroActivityModel {
     public boolean hasRank() {
         return RankRepository.getInstance().hasRanks(TeamInfoLoader.getInstance().getTeamId());
     }
+
 }

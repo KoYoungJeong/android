@@ -78,6 +78,11 @@
                 android:src="@drawable/btn_sticker_group_recent" />
 
             <ImageView
+                android:id="@+id/btn_sticker_group_default_tmon"
+                style="@style/JandiSticker.Group"
+                android:src="@drawable/btn_sticker_group_tmon" />
+
+            <ImageView
                 android:id="@+id/btn_stciker_group_default_stamp_107"
                 style="@style/JandiSticker.Group"
                 android:src="@drawable/btn_sticker_group_stamp_107" />

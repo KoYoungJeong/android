@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/upload_image_error" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:lineSpacingExtra="1dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="@string/pricingplan_restrictions_view_message_alert_title"
+        android:textColor="@color/rgb_fc4e39"
+        android:textSize="11dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="1dp"
+        android:gravity="center"
+        android:lineSpacingExtra="1dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="@string/pricingplan_restrictions_view_message_alert_body"
+        android:textColor="@color/rgb_fc4e39"
+        android:textSize="11dp" />
+
+    <TextView
+        android:id="@+id/tv_see_detail_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text="@string/common_btn_seedetail_underline"
+        android:textColor="@color/rgb_fc4e39"
+        android:textSize="11dp" />
+
+</LinearLayout>

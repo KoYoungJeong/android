@@ -72,6 +72,7 @@ public interface TopicDetailPresenter {
         void setAssignTopicOwnerVisible(boolean owner);
 
         void moveToAssignTopicOwner();
+
         void showGlobalPushSetupDialog();
 
         void setTopicInviteEnabled(boolean enabled);
@@ -84,6 +85,6 @@ public interface TopicDetailPresenter {
 
         void showDialogNeedToAssignMember();
 
-        void setReadOnly(boolean readOnly, boolean teamOwner, boolean defaultTopic);
+        void setReadOnly(boolean readOnly, boolean teamOwner);
     }
 }

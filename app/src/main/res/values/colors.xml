@@ -304,6 +304,7 @@
     <color name="button_text_color">#ff00abe8</color>
     <color name="button_text_color_dim">#7600abe8</color>
 
+    <color name="rgb_fc4e39">#FFfc4e39</color>
     <color name="rgb_989898">#FF989898</color>
     <color name="rgb_808080">#FF808080</color>
     <color name="rgb_000000_20">#33000000</color>

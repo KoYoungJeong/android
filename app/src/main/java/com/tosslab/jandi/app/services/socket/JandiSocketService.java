@@ -307,6 +307,10 @@ public class JandiSocketService extends Service {
         eventHashMap.put("member_updated", memberUpdatedListener);
         EventListener memberRankUpdateListener = objects -> jandiSocketServiceModel.onMemberRankUpdated(objects[0]);
         eventHashMap.put("member_rank_updated", memberRankUpdateListener);
+        EventListener teamPlanUpdatedListener = objects -> jandiSocketServiceModel.onTeamPlanUpdated(objects[0]);
+        eventHashMap.put("team_plan_updated", teamPlanUpdatedListener);
+        EventListener teamUsageUpdatedListener = objects -> jandiSocketServiceModel.onTeamUsageUpdated(objects[0]);
+        eventHashMap.put("team_usage_updated", teamUsageUpdatedListener);
 
         EventListener fileCreatedListener = objects -> jandiSocketServiceModel.onFileCreated(objects[0]);
         eventHashMap.put("file_created", fileCreatedListener);

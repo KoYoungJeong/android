@@ -11,7 +11,8 @@ public class FileUploadModel {
     public static final String FILE_SAPERATOR = "/";
 
     @Inject
-    public FileUploadModel() { }
+    public FileUploadModel() {
+    }
 
     public String getFileName(String path) {
         int separatorIndex = path.lastIndexOf(FILE_SAPERATOR);
@@ -22,17 +23,7 @@ public class FileUploadModel {
 
         String originEntityName = TeamInfoLoader.getInstance().getName(entityId);
 
-        String prefix;
-
-        if (TeamInfoLoader.getInstance().isUser(entityId)
-                || TeamInfoLoader.getInstance().isJandiBot(entityId)) {
-            prefix = "@";
-        } else {
-            prefix = "#";
-
-        }
-
-        return String.format("%s%s", prefix, originEntityName);
+        return String.format("%s", originEntityName);
     }
 
     public boolean isValid(long entityId) {

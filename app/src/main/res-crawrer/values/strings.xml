@@ -17,7 +17,7 @@
 	<string name="common_authority_title_member">"Member"</string>
 	<string name="common_authority_title_owner">"Owner"</string>
 	<string name="common_btn_close">"Close"</string>
-	<string name="common_btn_restart">""</string>
+	<string name="common_btn_restart">"Relaunch"</string>
 	<string name="common_btn_seedetail">"See details"</string>
 	<string name="common_btn_seedetail_underline">"<u>See details</u>"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"Allow calls"</string>
@@ -38,8 +38,8 @@
 	<string name="common_calleridnotifier_suggestmodal">"Try 'View Members' Contacts'"</string>
 	<string name="common_calleridnotifier_tosettings">" Move to Settings"</string>
 	<string name="common_calleridnotifier_use">"Enable"</string>
-	<string name="common_changedplan_restart_desc">""</string>
-	<string name="common_changedplan_restart_title">""</string>
+	<string name="common_changedplan_restart_desc">"Please relaunch JANDI."</string>
+	<string name="common_changedplan_restart_title">"You are now using a new JANDI Plan."</string>
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_createteam_welcome">"Welcome!"</string>
 	<string name="common_creatteam_done">"Done"</string>
@@ -825,6 +825,8 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="mypage_editprofile_phonenumber">"Please enter your phone number"</string>
 	<string name="mypage_editprofile_statusmessage">"Enter your status message"</string>
 	<string name="mypage_mention_newmentionalert">"New Mention"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">""</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">""</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"Close"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"Please upgrade your plan for more storage in JANDI."</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"See details"</string>

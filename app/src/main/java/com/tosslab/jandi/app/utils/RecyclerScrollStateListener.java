@@ -29,6 +29,10 @@ public class RecyclerScrollStateListener {
         this.call = call;
     }
 
+    public boolean hasListener() {
+        return call != null ? true : false;
+    }
+
     public interface Call {
         void changedScrollState(boolean scrolling);
     }

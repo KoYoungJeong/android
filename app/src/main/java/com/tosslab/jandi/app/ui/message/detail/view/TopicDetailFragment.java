@@ -452,26 +452,20 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
-    public void setReadOnly(boolean readOnly, boolean teamOwner, boolean defaultTopic) {
-        if (!defaultTopic) {
-            vgReadOnly.setVisibility(View.GONE);
-            vReadOnlyDivider.setVisibility(View.GONE);
+    public void setReadOnly(boolean readOnly, boolean teamOwner) {
+        vgReadOnly.setVisibility(View.VISIBLE);
+        vReadOnlyDivider.setVisibility(View.VISIBLE);
+
+        if (teamOwner) {
+            switchReadOnly.setVisibility(View.VISIBLE);
+            tvReadOnlyStatus.setVisibility(View.GONE);
         } else {
-            vgReadOnly.setVisibility(View.VISIBLE);
-            vReadOnlyDivider.setVisibility(View.VISIBLE);
-
-            if (teamOwner) {
-                switchReadOnly.setVisibility(View.VISIBLE);
-                tvReadOnlyStatus.setVisibility(View.GONE);
-            } else {
-                switchReadOnly.setVisibility(View.GONE);
-                tvReadOnlyStatus.setVisibility(View.VISIBLE);
-            }
-            switchReadOnly.setChecked(readOnly);
-            tvReadOnlyStatus.setText(readOnly ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
-            vgReadOnly.setEnabled(teamOwner);
+            switchReadOnly.setVisibility(View.GONE);
+            tvReadOnlyStatus.setVisibility(View.VISIBLE);
         }
-
+        switchReadOnly.setChecked(readOnly);
+        tvReadOnlyStatus.setText(readOnly ? R.string.jandi_auto_join_on : R.string.jandi_auto_join_off);
+        vgReadOnly.setEnabled(teamOwner);
     }
 
     @Override
