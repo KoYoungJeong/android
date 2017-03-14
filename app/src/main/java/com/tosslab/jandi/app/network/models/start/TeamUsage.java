@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.models.start;
 
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.vimeo.stag.GsonAdapterKey;
 
 import java.util.Date;
@@ -43,6 +44,9 @@ public class TeamUsage {
     }
 
     public long getLimitedLinkId() {
+        if (!TeamInfoLoader.getInstance().getTeamPlan().isExceedMessage()) {
+            return -1;
+        }
         return limitedLinkId;
     }
 
