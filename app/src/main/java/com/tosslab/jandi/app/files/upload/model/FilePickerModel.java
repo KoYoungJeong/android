@@ -39,7 +39,7 @@ public class FilePickerModel {
     public String getFilePath(Context context, int requestCode, Intent intent, File filePath) {
         String realFilePath;
         switch (requestCode) {
-            case FileUploadController.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY:
                 if (intent == null) {
                     return "";
                 }
@@ -138,7 +138,7 @@ public class FilePickerModel {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_GALLERY);
+        fragment.startActivityForResult(intent, FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY);
     }
 
     public void openAlbumForActivityResult(Activity activity, int requestCode) {

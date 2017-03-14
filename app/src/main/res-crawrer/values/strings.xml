@@ -825,8 +825,8 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="mypage_editprofile_phonenumber">"Please enter your phone number"</string>
 	<string name="mypage_editprofile_statusmessage">"Enter your status message"</string>
 	<string name="mypage_mention_newmentionalert">"New Mention"</string>
-	<string name="pricingplan_restrictions_exceedmember_invite_desc">""</string>
-	<string name="pricingplan_restrictions_exceedmember_invite_title">""</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">"You can invite up to 500 members in a Free Plan."</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">"You have exceeded the number of members you can invite."</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"Close"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"Please upgrade your plan for more storage in JANDI."</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"See details"</string>

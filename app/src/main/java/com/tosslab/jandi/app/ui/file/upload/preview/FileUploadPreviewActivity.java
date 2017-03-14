@@ -77,6 +77,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public static final int FROM_SELECT_IMAGE = 0x01;
     public static final int FROM_TAKE_PHOTO = 0x02;
     public static final int FROM_SELECT_FILE = 0x03;
+    public static final int FROM_SELECT_VIDEO = 0x04;
 
     @Nullable
     @InjectExtra

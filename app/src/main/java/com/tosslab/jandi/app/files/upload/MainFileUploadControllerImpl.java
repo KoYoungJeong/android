@@ -42,11 +42,17 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     @Override
     public void selectFileSelector(int type, Fragment fragment, long entityId) {
         switch (type) {
-            case TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_IMAGE_GALLERY:
                 fragment.startActivityForResult(Henson.with(fragment.getActivity())
                         .gotoImageAlbumActivity()
                         .entityId(entityId)
-                        .build(), TYPE_UPLOAD_GALLERY);
+                        .build(), TYPE_UPLOAD_IMAGE_GALLERY);
+                break;
+            case TYPE_UPLOAD_VIDEO_GALARY:
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoVideoAlbumActivity()
+                        .entityId(entityId)
+                        .build(), TYPE_UPLOAD_VIDEO_GALARY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
                 try {
@@ -82,10 +88,16 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     @Override
     public void selectFileSelector(int type, Activity activity) {
         switch (type) {
-            case TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_IMAGE_GALLERY:
                 activity.startActivityForResult(Henson.with(activity)
                         .gotoImageAlbumActivity()
-                        .build(), TYPE_UPLOAD_GALLERY);
+                        .build(), TYPE_UPLOAD_IMAGE_GALLERY);
+                break;
+
+            case TYPE_UPLOAD_VIDEO_GALARY:
+                activity.startActivityForResult(Henson.with(activity)
+                        .gotoVideoAlbumActivity()
+                        .build(), TYPE_UPLOAD_VIDEO_GALARY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
                 try {
@@ -118,10 +130,15 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     @Override
     public void selectFileSelector(int type, Fragment fragment) {
         switch (type) {
-            case TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_IMAGE_GALLERY:
                 fragment.startActivityForResult(Henson.with(fragment.getActivity())
                         .gotoImageAlbumActivity()
-                        .build(), TYPE_UPLOAD_GALLERY);
+                        .build(), TYPE_UPLOAD_IMAGE_GALLERY);
+                break;
+            case TYPE_UPLOAD_VIDEO_GALARY:
+                fragment.startActivityForResult(Henson.with(fragment.getActivity())
+                        .gotoVideoAlbumActivity()
+                        .build(), TYPE_UPLOAD_VIDEO_GALARY);
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
                 try {
@@ -156,7 +173,7 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     public List<String> getFilePath(Context context, int requestCode, Intent intent) {
         ArrayList<String> filePaths = new ArrayList<>();
         switch (requestCode) {
-            case TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_IMAGE_GALLERY:
                 filePaths.addAll(filePickerModel.getFilePathsFromInnerGallery(intent));
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:

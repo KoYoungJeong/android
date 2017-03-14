@@ -346,6 +346,10 @@ public class MessageListV2Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(pair -> {
                     List<ResMessages.Link> messages = pair.second;
+                    if (pair.first.getData().isFirstLoadOldMessage() &&
+                            messages.size() < MessageRepositoryModel.MAX_COUNT) {
+                        adapterModel.setOldNoMoreLoading();
+                    }
                     if (messages == null
                             || messages.isEmpty()) {
 

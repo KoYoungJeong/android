@@ -553,7 +553,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case FileUploadController.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY:
                 // Do Nothing
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:

@@ -61,7 +61,7 @@
 	<string name="common_pricingplan_msgsearch">"信息传送量已超过上限，搜索即将受到限制。 \n  现在升级成标准版， \n  拥有无上限的高效体验。"</string>
 	<string name="common_profilemodal_jandi_botstatus">"你好，我是JANDI！"</string>
 	<string name="common_settings_lostpasscodedesc">"忘记密码了么？请卸载后重新安装"</string>
-	<string name="common_sharetojandi_choose_room">"选择讨论空间"</string>
+	<string name="common_sharetojandi_choose_room">"选择任一个讨论"</string>
 	<string name="common_sharetojandi_choose_team">"选择您的团队"</string>
 	<string name="common_sharetojandi_errormsg">"发生错误！请重试一次"</string>
 	<string name="common_signup_codeverification">"验证码已寄送到以上的电子邮箱，\n请输入验证码完成认证"</string>
@@ -173,8 +173,8 @@
 	<string name="jandi_action_login">"登入"</string>
 	<string name="jandi_action_menu_message_copy">"复制"</string>
 	<string name="jandi_action_more">"更多"</string>
-	<string name="jandi_action_poll_delete">"删除问卷"</string>
-	<string name="jandi_action_poll_finish">"停止问卷"</string>
+	<string name="jandi_action_poll_delete">"删除投票"</string>
+	<string name="jandi_action_poll_finish">"结束投票"</string>
 	<string name="jandi_action_rename">"重新命名"</string>
 	<string name="jandi_action_search">"搜索"</string>
 	<string name="jandi_action_share">"分享"</string>
@@ -201,7 +201,7 @@
 	<string name="jandi_another_invitation_sent">"新的邀请信已寄出"</string>
 	<string name="jandi_are_you_sure_disable_external_link">"若移除共享链接，访问至该文件的权限将被撤销。 你确定要移除共享链接？"</string>
 	<string name="jandi_ask_assign_topic_owner">"你确定将议题管理权限转移至此成员？"</string>
-	<string name="jandi_ask_delete_all_history">"你确定要清除所有的搜寻纪录？"</string>
+	<string name="jandi_ask_delete_all_history">"你确定要清除所有的搜索记录?"</string>
 	<string name="jandi_ask_join_topic">"你尚未加入此议题，要加入吗？"</string>
 	<string name="jandi_ask_kick_user_from_topic">"你确定将此成员剔除议题？"</string>
 	<string name="jandi_ask_poll_delete">"确定要删除此次投票？ \n请注意留言的部分不会被删除。"</string>
@@ -309,11 +309,11 @@
 	<string name="jandi_disabled_user">"此成员权限已被暂时关闭"</string>
 	<string name="jandi_domain_is_already_taken">"网域为无效或已被使用"</string>
 	<string name="jandi_duedate">"结束时间"</string>
-	<string name="jandi_duedate_cannotbe_past_time">"问卷结束时间"</string>
+	<string name="jandi_duedate_cannotbe_past_time">"投票结束时间"</string>
 	<string name="jandi_duplicate_email">"这电子邮件已被注冊"</string>
 	<string name="jandi_empty">"""</string>
 	<string name="jandi_empty_participants">"无人参与投票"</string>
-	<string name="jandi_empty_subject">"问卷名称为必填字段"</string>
+	<string name="jandi_empty_subject">"投票名称为必填字段"</string>
 	<string name="jandi_enable_external_link">"建立共享链接"</string>
 	<string name="jandi_enter_name">"请输入您的名字"</string>
 	<string name="jandi_enter_new_passcode">"输入新密码"</string>
@@ -413,7 +413,7 @@
 	<string name="jandi_insert_new_department">"新部门"</string>
 	<string name="jandi_insert_new_job_title">"新职称"</string>
 	<string name="jandi_insert_team_domain">"请输入团队网域"</string>
-	<string name="jandi_insert_team_name">"请输入团队名称"</string>
+	<string name="jandi_insert_team_name">"输入团队名称"</string>
 	<string name="jandi_invitation">"邀请"</string>
 	<string name="jandi_invitation_adminonly_desc">"现在的设置只有管理员能邀请新成员到团队里，邀请链接将无法使用"</string>
 	<string name="jandi_invitation_adminonly_title">"仅能以电子邮件邀请新成员"</string>
@@ -472,7 +472,7 @@
 	<string name="jandi_mention_push_message">"%s 提及你"</string>
 	<string name="jandi_mentions_are_empty">"你尚未被其他成员提及。
  欲提及其他成员？输入"@"后成员名单跳出，选取成员完成提及。"</string>
-	<string name="jandi_menu_room_selection">"选择讨论空间"</string>
+	<string name="jandi_menu_room_selection">"选择任一个讨论"</string>
 	<string name="jandi_message_ask_about_delete_comment">"您确定要永久删除这留言吗？删除的留言将无法复原。"</string>
 	<string name="jandi_message_ask_about_deleting">"您确定要删除此信息吗？删除的信息将无法复原。"</string>
 	<string name="jandi_message_create_entity">"已建立 %1$s"</string>
@@ -548,10 +548,10 @@
 	<string name="jandi_poll_deleted">"投票已经删除"</string>
 	<string name="jandi_poll_empty_1">"无进行中的投票"</string>
 	<string name="jandi_poll_empty_2">"\n回到议题点击[+]建立新投票"</string>
-	<string name="jandi_poll_finished_with_most">"问卷已完成，得票最高的是 \"%s\""</string>
-	<string name="jandi_poll_finished_without_participants">"问卷已完成，此问卷无投票人"</string>
+	<string name="jandi_poll_finished_with_most">"投票已完成，得票最高的是 \"%s\""</string>
+	<string name="jandi_poll_finished_without_participants">"投票已完成，此次投票无人参与"</string>
 	<string name="jandi_poll_finishedat">"结束时间"</string>
-	<string name="jandi_poll_is_anonymous">"此问卷为不记名投票"</string>
+	<string name="jandi_poll_is_anonymous">"此为不记名投票"</string>
 	<string name="jandi_poll_multiple">"可复选"</string>
 	<string name="jandi_poll_multiple_available">"可复选"</string>
 	<string name="jandi_poll_participants_ing">"投票人"</string>
@@ -608,12 +608,12 @@
 	<string name="jandi_search_available_length_of_keyword">"输入的关键词需一个字符以上"</string>
 	<string name="jandi_search_category_everyone">"<b>所有成员</b>"</string>
 	<string name="jandi_search_category_everywhere">"<b>所有讨论空间</b>"</string>
-	<string name="jandi_search_history">"最近搜寻纪录"</string>
+	<string name="jandi_search_history">"最近搜索纪录"</string>
 	<string name="jandi_search_ing">"<![CDATA[搜索 <b><font color=#404040>%s</font></b>...]]>"</string>
 	<string name="jandi_search_loading">"搜索中"</string>
 	<string name="jandi_search_member_name_or_division">"输入姓名或部门搜寻成员"</string>
 	<string name="jandi_search_no_topic_room">"无相关数据"</string>
-	<string name="jandi_search_result_count">"总共 <b>%s</b> 笔搜寻结果"</string>
+	<string name="jandi_search_result_count">"总共 <b>%s</b> 笔搜索结果"</string>
 	<string name="jandi_search_result_summary">"<![CDATA[<b><font color=#404040>%1$s</font></b>与 <b><font color=#404040>%2$d</font></b>符合]]>"</string>
 	<string name="jandi_search_roomsearch">"搜索议题"</string>
 	<string name="jandi_select_character">"选择人物"</string>
@@ -712,10 +712,10 @@
 	<string name="jandi_tab_tos_and_pp">"点击「下一步」即表示您同意%1$s和%2$s。"</string>
 	<string name="jandi_team">"团队"</string>
 	<string name="jandi_team_admin">"团队管理员"</string>
-	<string name="jandi_team_create_domain_info">"想要给您的JANDI\n团队设定什么网址？"</string>
-	<string name="jandi_team_create_domain_invalid">"仅限英文字母、数字和连字符(-)"</string>
+	<string name="jandi_team_create_domain_info">"想要给你的JANDI\n团队设定什么网址？"</string>
+	<string name="jandi_team_create_domain_invalid">"仅限英文字母、数字和连字符"</string>
 	<string name="jandi_team_create_domain_length_invalid">"至少使用3个字元"</string>
-	<string name="jandi_team_create_input_info">"想要怎么称呼您的团队？"</string>
+	<string name="jandi_team_create_input_info">"想要怎么称呼你的JANDI团队？"</string>
 	<string name="jandi_team_create_name_length_invalid">"团队名称最多为20个字元"</string>
 	<string name="jandi_team_creation_succeed">"团队建立成功！请查看您的电子邮件。"</string>
 	<string name="jandi_team_domain">"团队网域"</string>
@@ -741,7 +741,7 @@
 	<string name="jandi_title_message">"信息"</string>
 	<string name="jandi_title_name">"名字"</string>
 	<string name="jandi_title_name_required">"名字*"</string>
-	<string name="jandi_title_topic_room">"对话"</string>
+	<string name="jandi_title_topic_room">"讨论"</string>
 	<string name="jandi_topic_ask_about_deleting">"您确定您要删除这个议题？"</string>
 	<string name="jandi_topic_delete">"删除议题"</string>
 	<string name="jandi_topic_description">"议题内容"</string>
@@ -749,7 +749,7 @@
 	<string name="jandi_topic_inside_alone">"此为一人议题，你无法转移权限"</string>
 	<string name="jandi_topic_invitation">"邀请"</string>
 	<string name="jandi_topic_leave">"离开议题"</string>
-	<string name="jandi_topic_message_search">"搜寻议题和信息"</string>
+	<string name="jandi_topic_message_search">"输入关键词搜索信息"</string>
 	<string name="jandi_topic_no_member_1">"此议题目前只有你一人"</string>
 	<string name="jandi_topic_no_member_2">"轻触以下按钮邀请其他成员加入对话。"</string>
 	<string name="jandi_topic_notification">"通知"</string>
@@ -820,8 +820,8 @@
 	<string name="mypage_editprofile_phonenumber">"请输入您的电话号码"</string>
 	<string name="mypage_editprofile_statusmessage">"输入你的状态"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你"</string>
-	<string name="pricingplan_restrictions_exceedmember_invite_desc">""</string>
-	<string name="pricingplan_restrictions_exceedmember_invite_title">""</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">"免费版本最多可邀请 500 位成员"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">"已超过邀请成员数量上限"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"关闭"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"升级获得更多的 JANDI 空间"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"了解更多"</string>

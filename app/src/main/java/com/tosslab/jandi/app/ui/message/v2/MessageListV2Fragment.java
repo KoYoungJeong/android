@@ -487,7 +487,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
         switch (requestCode) {
-            case FileUploadController.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_VIDEO:
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
             case FileUploadController.TYPE_UPLOAD_TAKE_VIDEO:
@@ -1918,8 +1919,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         AnalyticsValue.Action action;
         switch (requestFileUploadEventType) {
             default:
-            case FileUploadController.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY:
                 action = AnalyticsValue.Action.Upload_Photo;
+                break;
+            case FileUploadController.TYPE_UPLOAD_IMAGE_VIDEO:
+                action = AnalyticsValue.Action.Upload_Video;
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
                 action = AnalyticsValue.Action.Upload_Camera_image;

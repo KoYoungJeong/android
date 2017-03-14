@@ -151,7 +151,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                 });
 
         // limitedLinkId가 존재할 경우 제한 로직 동작.
-        if (LimitedLinkId != -1) {
+        if (isLimited && (LimitedLinkId != -1)) {
             for (int i = links.size() - 1; i >= 0; i--) {
                 if (LimitedLinkId >= links.get(i).id) {
                     if (i != links.size() - 1) {
@@ -278,7 +278,9 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void setOldLoadingComplete() {
-        oldMoreState = MoreState.Idle;
+        if (oldMoreState != MoreState.Nope) {
+            oldMoreState = MoreState.Idle;
+        }
     }
 
     @Override

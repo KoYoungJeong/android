@@ -194,6 +194,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.album.videoalbum.VideoAlbumActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.search.file.view.FileSearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
@@ -411,18 +416,6 @@
             android:label="@string/topic_menu_Browse_other_public_topics"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
-
-            <intent-filter>
-                <action android:name="andorid.intent.action.VIEW" />
-                <action android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.share.views.ShareSelectRoomActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_share_to_jandi"
-            android:screenOrientation="portrait">
 
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />

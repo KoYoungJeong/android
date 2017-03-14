@@ -90,11 +90,24 @@ public class FileUploadPannelDialog extends Dialog {
                         .delay(400, TimeUnit.MILLISECONDS)
                         .subscribe(() -> {
                             EventBus.getDefault().post(
-                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_GALLERY));
+                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY));
                         });
 
             });
         });
+
+        vgUploadVideo.setOnClickListener(v -> {
+            fileAccessLimitUtil.execute(getContext(), () -> {
+                dismissDialog();
+                Completable.complete()
+                        .delay(400, TimeUnit.MILLISECONDS)
+                        .subscribe(() -> {
+                            EventBus.getDefault().post(
+                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_VIDEO_GALARY));
+                        });
+            });
+        });
+
         vgUploadCamera.setOnClickListener(v -> {
             fileAccessLimitUtil.execute(getContext(), () -> {
                 dismissDialog();
@@ -129,13 +142,15 @@ public class FileUploadPannelDialog extends Dialog {
         });
 
         vgUploadContact.setOnClickListener(v -> {
-            dismissDialog();
-            Completable.complete()
-                    .delay(400, TimeUnit.MILLISECONDS)
-                    .subscribe(() -> {
-                        EventBus.getDefault().post(
-                                new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_CONTACT));
-                    });
+            fileAccessLimitUtil.execute(getContext(), () -> {
+                dismissDialog();
+                Completable.complete()
+                        .delay(400, TimeUnit.MILLISECONDS)
+                        .subscribe(() -> {
+                            EventBus.getDefault().post(
+                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_CONTACT));
+                        });
+            });
         });
     }
 
