@@ -137,6 +137,8 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     void initViews(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        initTopicFolderAdapter();
+        initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
         mainTopicListPresenter.onInitViewList();

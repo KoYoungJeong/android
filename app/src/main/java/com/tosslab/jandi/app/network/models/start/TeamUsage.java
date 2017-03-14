@@ -44,7 +44,7 @@ public class TeamUsage {
     }
 
     public long getLimitedLinkId() {
-        if (!TeamInfoLoader.getInstance().getTeamPlan().isExceedMessage()) {
+        if (!TeamInfoLoader.getInstance().getTeamPlan().getPricing().equals("free")) {
             return -1;
         }
         return limitedLinkId;
