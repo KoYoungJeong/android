@@ -15,6 +15,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +53,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
+import com.tosslab.jandi.app.events.entities.ChooseCameraEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -2230,4 +2232,31 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         dialog.show();
     }
 
+    public void onEventMainThread(ChooseCameraEvent event) {
+        showChooseCameraDialog();
+    }
+
+    private void showChooseCameraDialog() {
+        View mainView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_camera, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
+        builder.setView(mainView);
+        AlertDialog dialog = builder.create();
+        mainView.findViewById(R.id.tv_action_photo).setOnClickListener(v -> {
+            EventBus.getDefault().post(
+                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO));
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        });
+
+        mainView.findViewById(R.id.tv_action_video).setOnClickListener(v -> {
+            EventBus.getDefault().post(
+                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_VIDEO));
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 }

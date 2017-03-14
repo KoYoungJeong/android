@@ -346,10 +346,6 @@ public class MessageListV2Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(pair -> {
                     List<ResMessages.Link> messages = pair.second;
-                    if (pair.first.getData().isFirstLoadOldMessage() &&
-                            messages.size() < MessageRepositoryModel.MAX_COUNT) {
-                        adapterModel.setOldNoMoreLoading();
-                    }
                     if (messages == null
                             || messages.isEmpty()) {
 
@@ -393,10 +389,8 @@ public class MessageListV2Presenter {
 
                     adapterModel.addAll(0, pair.second);
                     view.refreshMessages();
-                    adapterModel.setOldLoadingComplete();
-                    view.setUpOldMessage(isFirstLoad);
-
                     currentMessageState.setIsFirstLoadOldMessage(false);
+                    view.setUpOldMessage(isFirstLoad);
                 })
                 .doOnNext(pair -> {
                     if (pair.second.isEmpty()) {
@@ -421,6 +415,13 @@ public class MessageListV2Presenter {
                     if (currentMessageState.isFirstMessage()) {
                         view.showEmptyView(true);
                     }
+                }).doOnCompleted(() -> {
+                    // 메세지 리스트가 모두 갱신 된 후에 more loading 플래그를 변경해야 시간차로 인한 오류가 없다.
+                    Completable.complete()
+                            .delay(300, TimeUnit.MILLISECONDS)
+                            .subscribe(() -> {
+                                adapterModel.setOldLoadingComplete();
+                            });
                 })
                 .map(pair -> pair.first);
     }

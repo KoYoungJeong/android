@@ -219,7 +219,6 @@
 
     <style name="JandiChat.Wrapper">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:paddingRight">5dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">44dp</item>
         <item name="android:background">@android:color/white</item>
@@ -259,6 +258,14 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/input_message</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="JandiChat.InputWrapper.NoInputArea">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginBottom">4dp</item>
     </style>

@@ -12,6 +12,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.ChooseCameraEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.poll.RequestCreatePollEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
@@ -114,9 +115,7 @@ public class FileUploadPannelDialog extends Dialog {
                 Completable.complete()
                         .delay(400, TimeUnit.MILLISECONDS)
                         .subscribe(() -> {
-                            EventBus.getDefault().post(
-                                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_VIDEO));
-
+                            EventBus.getDefault().post(new ChooseCameraEvent());
                         });
             });
         });

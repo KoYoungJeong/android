@@ -54,7 +54,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public MainMessageListAdapter(Context context, Room room) {
         this.context = context;
         this.room = room;
-        oldMoreState = MoreState.Idle;
+        oldMoreState = MoreState.FirstLoading;
         links = new ArrayList<>();
         setHasStableIds(true);
         itemTypes = new WeakHashMap<>();
@@ -521,7 +521,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     enum MoreState {
-        Idle, Loading, Nope
+        FirstLoading, Idle, Loading, Nope
     }
 
     enum AnimState {

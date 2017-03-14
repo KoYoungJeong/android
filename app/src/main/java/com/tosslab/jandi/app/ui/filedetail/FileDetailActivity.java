@@ -203,6 +203,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         initViews();
 
         EventBus.getDefault().register(this);
+
+        btnSend.setEnabled(false);
     }
 
     void initViews() {
