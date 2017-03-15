@@ -169,6 +169,8 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         initStickers();
 
         initPollDetails();
+
+        btnSend.setEnabled(false);
     }
 
     private void injectComponent(PollDetailAdapter pollDetailAdapter) {

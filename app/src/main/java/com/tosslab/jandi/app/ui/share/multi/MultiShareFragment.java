@@ -2,9 +2,11 @@ package com.tosslab.jandi.app.ui.share.multi;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -62,6 +64,7 @@ import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -109,6 +112,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     RecyclerView lvFileThumbs;
     @Bind(R.id.vg_multi_share_content)
     View vgComment;
+    @Bind(R.id.vg_coordinator)
+    ViewGroup vgCoordinator;
 
     @Inject
     ShareAdapterDataView shareAdapterDataView;
@@ -123,6 +128,8 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     private FileAccessLimitUtil fileAccessLimitUtil;
     private long teamId = -1;
+
+    private BottomSheetBehavior bottomSheetBehavior;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -167,6 +174,38 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
         fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
 
+        bottomSheetBehavior = BottomSheetBehavior.from(vgComment);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        setKeyboardStatusChangeListener();
+
+    }
+
+    private void setKeyboardStatusChangeListener() {
+        vgCoordinator.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect r = new Rect();
+            vgCoordinator.getWindowVisibleDisplayFrame(r);
+
+            int heightDiff = vgCoordinator.getRootView().getHeight() - (r.bottom - r.top);
+            if (heightDiff > 500) {
+                int selection = etComment.getSelectionEnd();
+                Observable.just(1)
+                        .delay(200, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnNext(i -> {
+                            if (!TextUtils.isEmpty(etComment.getText().toString())) {
+                                etComment.setSelection(etComment.getText().length());
+                            }
+                        })
+                        .delay(50, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(i -> {
+                            if (selection > 0)
+                                etComment.setSelection(selection);
+                        });
+            }
+
+        });
     }
 
     @Override

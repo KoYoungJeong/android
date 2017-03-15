@@ -26,7 +26,7 @@ ext.dependecies = [
                 support_v13                      : 'com.android.support:support-v13:24.2.1',
                 support_recyclerview             : 'com.android.support:recyclerview-v7:24.2.1',
                 support_annotation               : 'com.android.support:support-annotations:24.2.1',
-                support_design                   : 'com.android.support:design:24.2.1',
+                support_design                   : 'com.android.support:design:25.1.0',
 
                 supertoast                       : 'com.github.johnpersano:supertoasts:1.3.4@aar',
                 recyclerview_stickyheader        : 'com.eowise:recyclerview-stickyheaders:0.5.2@aar',

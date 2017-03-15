@@ -1,169 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_file_upload_preview"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_file_upload_preview_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:padding="12dp"
-        android:src="@drawable/upload_arrow_left" />
-
-    <ImageView
-        android:id="@+id/iv_file_upload_preview_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:padding="12dp"
-        android:src="@drawable/upload_arrow_right" />
-
-    <LinearLayout
-        android:id="@+id/vg_file_upload_preview_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/share_upload_bg"
-        android:minHeight="186dp"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/layout_pricing_plan_warning"
-            layout="@layout/layout_pricing_plan_restrict_warning"
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_file_upload_preview"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white" />
+
+        <ImageView
+            android:id="@+id/iv_file_upload_preview_previous"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:padding="12dp"
+            android:src="@drawable/upload_arrow_left" />
 
-        <View
-            android:id="@+id/v_file_upload_preview_content_divider_1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/jandi_file_upload_divider" />
-
-        <LinearLayout
-            android:id="@+id/vg_file_upload_preview_content_title"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <TextView
-                android:id="@+id/tv_file_upload_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/transparent"
-                android:ellipsize="middle"
-                android:enabled="false"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@color/rgb_333333"
-                android:textSize="@dimen/jandi_text_size_large" />
-
-            <TextView
-                android:id="@+id/tv_file_rename_button"
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/bg_round_rect_border_grey"
-                android:gravity="center"
-                android:paddingLeft="9dp"
-                android:paddingRight="9dp"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                android:text="@string/common_fileupload_rename"
-                android:textColor="@color/white"
-                android:textSize="@dimen/jandi_text_size_small" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/vg_file_upload_preview_content_entity"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/iv_file_upload_preview_next"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="12dp"
+            android:src="@drawable/upload_arrow_right" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:text="@string/jandi_action_share"
-                android:textColor="@color/rgb_999999"
-                android:textSize="@dimen/jandi_text_size_small" />
-
-            <TextView
-                android:id="@+id/tv_file_upload_entity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:clickable="true"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="@string/jandi_topic_title"
-                android:textColor="@color/rgb_333333"
-                android:textSize="@dimen/jandi_text_size_large" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/actionbar_file_upload"
             android:layout_width="match_parent"
-            android:layout_height="104dp"
-            android:paddingEnd="12dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingStart="12dp">
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true" />
 
-            <AutoCompleteTextView
-                android:id="@+id/et_file_upload_comment"
-                android:theme="@style/FloatingEditTextTheme"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="top|start|left"
-                android:hint="@string/file_upload_comment"
-                android:imeOptions="flagNoExtractUi"
-                android:inputType="textMultiLine"
-                android:textColor="@color/rgb_333333" />
-        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lv_file_upload_thumbs"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/actionbar_file_upload"
+            android:background="@color/jandi_primary_color"
+            android:overScrollMode="never" />
+    </RelativeLayout>
 
-    </LinearLayout>
+    <include layout="@layout/activity_upload_preview_bottom_sheet" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/actionbar_file_upload"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_file_upload_thumbs"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@+id/actionbar_file_upload"
-        android:background="@color/jandi_primary_color"
-        android:overScrollMode="never" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
