@@ -112,7 +112,7 @@ public class AnalyticsValue {
         Search,
         Upload,
         Upload_Photo,
-        Upload_Camera,
+        Upload_Camera_image,
         Upload_File,
         Upload_Video,
         Upload_Poll,
@@ -258,7 +258,7 @@ public class AnalyticsValue {
         CancelSelect, ChooseDepartment, ChooseJobTitle, ChooseDepartment_Undefined, ChooseJobTitle_Undefined,
         UnselectMember, InviteMembers, SubmitSearch, MembersTab_CancelSelect, ViewVoteCreator, StarVote, SubmitVote,
         CommentLongTap_Copy, CommentLongTap_Delete, MessageInputField, ChooseJANDI, SearchSelectTeamMember,
-        InviteMember_InviteDisabled, TeamInformation, MentionTab, StarTab, PollTab, MentionTab_ChooseTopicMsg, MentionTab_ChooseFileComment, StarTab_ChooseMsg, StarTab_ChooseFile, StarTab_ChoosePoll, StarTab_ChooseFileComment, PollTab_ChooseOngoingVoted, PollTab_ChooseOngoingUnvoted, PollTab_ChooseCompleted, HamburgerIcon, HamburgerSwipe, HamburgerLongTap, NotificationSetting, PasscodeLock, AccountSetting, LiveSupport, TermsofService, FAQ, VersionInfo, VersionInfo_Close, VersionInfo_Email, Sounds_Topic, Sounds_DM, Sounds_Mention, PreviewMsgContents, UseFingerPrint, Members_ChooseMember, EditFolder_Rename, CallPreview, UpgradePlan_More, UpgradePlan_LiveSupport, UpgradePlan_Cancel, Whoscall_MoveToSetting, Whoscall_Close, Whoscall_DontShowAgain, MentionLongTap, MentionLongTap_Copy, MentionLongTap_Star, TeamPhoneNumberSetting, AllowPhoneCalls, DrawOverApps, Delete_AssociateAlert, SelectTopic, EnterEmail, AddEmail, DeleteEmailAddress, SendInvitation,
+        InviteMember_InviteDisabled, TeamInformation, MentionTab, StarTab, PollTab, MentionTab_ChooseTopicMsg, MentionTab_ChooseFileComment, StarTab_ChooseMsg, StarTab_ChooseFile, StarTab_ChoosePoll, StarTab_ChooseFileComment, PollTab_ChooseOngoingVoted, PollTab_ChooseOngoingUnvoted, PollTab_ChooseCompleted, HamburgerIcon, HamburgerSwipe, HamburgerLongTap, NotificationSetting, PasscodeLock, AccountSetting, LiveSupport, TermsofService, FAQ, VersionInfo, VersionInfo_Close, VersionInfo_Email, Sounds_Topic, Sounds_DM, Sounds_Mention, PreviewMsgContents, UseFingerPrint, Members_ChooseMember, EditFolder_Rename, CallPreview, UpgradePlan_More, UpgradePlan_LiveSupport, UpgradePlan_Cancel, Whoscall_MoveToSetting, Whoscall_Close, Whoscall_DontShowAgain, MentionLongTap, MentionLongTap_Copy, MentionLongTap_Star, TeamPhoneNumberSetting, AllowPhoneCalls, DrawOverApps, Delete_AssociateAlert, SelectTopic, EnterEmail, AddEmail, DeleteEmailAddress, SendInvitation, Upload_Camera_video,
 
     }
 

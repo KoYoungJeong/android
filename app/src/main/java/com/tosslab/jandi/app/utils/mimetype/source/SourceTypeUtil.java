@@ -97,6 +97,10 @@ public class SourceTypeUtil {
         value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_spreadsheet_192);
         resourceMapperForTypeA.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, value);
 
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_contact_192);
+        resourceMapperForTypeA.put(MimeTypeUtil.FilterType.Contact, value);
+
         resourceMapperForTypeC = new HashMap<MimeTypeUtil.FilterType, Map<MimeTypeUtil.SourceType, Source>>();
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
@@ -170,6 +174,10 @@ public class SourceTypeUtil {
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
         value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.file_icon_google_spreadsheet_135);
         resourceMapperForTypeC.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, value);
+
+        value = new HashMap<MimeTypeUtil.SourceType, Source>();
+        value.put(MimeTypeUtil.SourceType.S3, () -> R.drawable.file_icon_contact_135);
+        resourceMapperForTypeC.put(MimeTypeUtil.FilterType.Contact, value);
 
 
     }

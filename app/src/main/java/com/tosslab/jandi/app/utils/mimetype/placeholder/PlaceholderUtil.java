@@ -30,6 +30,7 @@ public class PlaceholderUtil {
         filterMapper.put(MimeTypeUtil.PlaceholderType.Document, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "document"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.SpreadSheet, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "spreadsheet"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Presentation, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "presentation"));
+        filterMapper.put(MimeTypeUtil.PlaceholderType.Contact, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "s3") && TextUtils.equals(iconType, "contact"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Google, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "google"));
         filterMapper.put(MimeTypeUtil.PlaceholderType.Dropbox, (serverUrl, iconType) -> TextUtils.equals(serverUrl, "dropbox"));
     }

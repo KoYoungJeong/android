@@ -170,9 +170,10 @@ public class ImageUtil {
                                                   final String fileUrl,
                                                   final String thumbnailUrl,
                                                   final String serverUrl,
-                                                  final String fileType) {
+                                                  final String fileType,
+                                                  boolean isContact) {
 
-        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType, SourceTypeUtil.TYPE_A);
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType, SourceTypeUtil.TYPE_A, isContact);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
 
@@ -232,13 +233,15 @@ public class ImageUtil {
                                                             final String fileUrl,
                                                             final String thumbnailUrl,
                                                             final String serverUrl,
-                                                            final String fileType) {
+                                                            final String fileType,
+                                                            final boolean isContact) {
 
         if (vOutLine != null) {
             vOutLine.setVisibility(View.GONE);
         }
 
-        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType, SourceTypeUtil.TYPE_C);
+
+        int mimeTypeIconImage = MimeTypeUtil.getMimeTypeIconImage(serverUrl, fileType, SourceTypeUtil.TYPE_C, isContact);
 
         boolean hasImageUrl = !TextUtils.isEmpty(fileUrl) || !TextUtils.isEmpty(thumbnailUrl);
         if (!TextUtils.equals(fileType, "image") || !hasImageUrl) {

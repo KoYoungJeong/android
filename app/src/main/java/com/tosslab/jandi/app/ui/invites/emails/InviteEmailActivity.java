@@ -387,4 +387,16 @@ public class InviteEmailActivity extends BaseAppCompatActivity
                 }).create().show();
     }
 
+    @Override
+    public void showErrorExceedFreeMembersDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(getString(R.string.pricingplan_restrictions_exceedmember_invite_title))
+                .setMessage(getString(R.string.pricingplan_restrictions_exceedmember_invite_desc))
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
+                        })
+                .create().show();
+    }
+
 }

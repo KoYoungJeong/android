@@ -15,6 +15,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +53,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
+import com.tosslab.jandi.app.events.entities.ChooseCameraEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MentionableMembersRefreshEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -117,7 +119,6 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.ResultMentionsVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 import com.tosslab.jandi.app.ui.invites.InviteDialogExecutor;
@@ -126,6 +127,7 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.upload.FileUploadPannelDialog;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MainMessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapterView;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
@@ -149,6 +151,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.RecyclerScrollStateListener;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -199,6 +202,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     public static final int REQ_STORAGE_PERMISSION = 101;
     public static final int REQ_WINDOW_PERMISSION = 102;
+    public static final int REQ_CONTACTS_PERMISSION = 103;
+
     public static final String REQUEST_FILE_UPLOAD_EVENT_TYPE = "request_file_upload_event_type";
     private static final StickerInfo NULL_STICKER = new StickerInfo();
 
@@ -231,8 +236,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     MessageListV2Presenter messageListPresenter;
     @Inject
     StickerViewModel stickerViewModel;
-    @Inject
-    UploadMenuViewModel uploadMenuViewModel;
     @Inject
     FileUploadController fileUploadController;
     @Inject
@@ -303,10 +306,15 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Bind(R.id.vg_easteregg_snow)
     FrameLayout vgEasterEggSnow;
 
-    @Bind(R.id.btn_message_action_button_1)
-    ImageView btnAction1;
-    @Bind(R.id.btn_message_action_button_2)
-    ImageView btnAction2;
+    @Bind(R.id.btn_message_action_button_upload)
+    ImageView btnActionUpload;
+    @Bind(R.id.btn_message_action_button_sticker_keyboard)
+    ImageView btnActionStickerKeyboard;
+    @Bind(R.id.vg_button_upload)
+    ViewGroup vgButtonUpload;
+    @Bind(R.id.vg_button_sticker)
+    ViewGroup vgButtonSticker;
+
     @Bind(R.id.vg_messages_member_status_alert)
     View vgMemberStatusAlert;
 
@@ -359,7 +367,9 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         super.onActivityCreated(savedInstanceState);
         Dart.inject(this, getArguments());
         DaggerMessageListComponent.builder()
-                .messageListModule(new MessageListModule(this, Room.create(entityId, isFromPush), MessagePointer.create(lastReadLinkId)))
+                .messageListModule(new MessageListModule(this,
+                        Room.create(entityId, isFromPush),
+                        MessagePointer.create(lastReadLinkId)))
                 .build()
                 .inject(this);
         initViews();
@@ -430,11 +440,46 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQ_STORAGE_PERMISSION:
+                Permissions.getResult()
+                        .activity(getActivity())
+                        .addRequestCode(REQ_STORAGE_PERMISSION)
+                        .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                () -> handleFileUpload())
+                        .neverAskAgain(() -> {
+                            PermissionRetryDialog.showExternalPermissionDialog(getActivity());
+                        })
+                        .resultPermission(new OnRequestPermissionsResult(requestCode, permissions, grantResults));
+                break;
+            case REQ_CONTACTS_PERMISSION:
+                Permissions.getResult()
+                        .activity(getActivity())
+                        .addRequestCode(REQ_CONTACTS_PERMISSION)
+                        .addPermission(Manifest.permission.READ_CONTACTS, () -> {
+                            Permissions.getChecker()
+                                    .activity(getActivity())
+                                    .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    .hasPermission(this::handleFileUpload)
+                                    .noPermission(() -> {
+                                        String[] permissions1 = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                                        requestPermissions(permissions1, REQ_STORAGE_PERMISSION);
+                                    })
+                                    .check();
+                        })
+                        .neverAskAgain(() -> {
+                            PermissionRetryDialog.showExternalPermissionDialog(getActivity());
+                        })
+                        .resultPermission(
+                                new OnRequestPermissionsResult(requestCode, permissions, grantResults));
+                break;
+        }
         Permissions.getResult()
                 .activity(getActivity())
                 .addRequestCode(REQ_STORAGE_PERMISSION)
                 .addPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         () -> handleFileUpload())
+                .addPermission(Manifest.permission.READ_CONTACTS, () -> handleFileUpload())
                 .neverAskAgain(() -> {
                     PermissionRetryDialog.showExternalPermissionDialog(getActivity());
                 })
@@ -449,14 +494,22 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
         switch (requestCode) {
-            case FileUploadController.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_VIDEO:
                 break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
+            case FileUploadController.TYPE_UPLOAD_TAKE_VIDEO:
                 showPreviewForUploadPhoto(requestCode, intent);
                 break;
+
             case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 showPreviewForUploadFiles(requestCode, intent);
                 break;
+
+            case FileUploadController.TYPE_UPLOAD_CONTACT:
+                showPreviewForContactFile(requestCode, intent);
+                break;
+
             case FileUploadPreviewActivity.REQUEST_CODE:
                 upload(intent);
                 break;
@@ -493,7 +546,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         if (fileUploadController.getUploadedFile() != null) {
             outState.putSerializable(EXTRA_NEW_PHOTO_FILE, fileUploadController.getUploadedFile());
         }
-
         outState.putInt(REQUEST_FILE_UPLOAD_EVENT_TYPE, requestFileUploadEventType);
     }
 
@@ -536,8 +588,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         initAnnouncement();
 
-        initUploadMenuViewModel();
-
         initSoftInputAreaController();
 
         initActionListeners();
@@ -548,21 +598,12 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     private void initSoftInputAreaController() {
         softInputAreaController = new SoftInputAreaController(
-                stickerViewModel, uploadMenuViewModel,
-                vgSoftInputDetector, vgSoftInputArea, btnAction1, btnAction2,
+                stickerViewModel, vgSoftInputDetector, vgSoftInputArea, btnActionStickerKeyboard, vgButtonSticker,
                 etMessage);
-        softInputAreaController.setOnUploadButtonClickListener(() -> {
-            sendAnalyticsEvent(AnalyticsValue.Action.Upload);
-        });
         softInputAreaController.setOnStickerButtonClickListener(() -> {
             sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
         });
         softInputAreaController.init();
-    }
-
-    private void initUploadMenuViewModel() {
-        uploadMenuViewModel.setRoomType(isInDirectMessage()
-                ? UploadMenuViewModel.RoomType.DM : UploadMenuViewModel.RoomType.TOPIC);
     }
 
     private void initEmptyLayout() {
@@ -690,12 +731,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     private void initActionListeners() {
         softInputAreaController.setOnSoftInputAreaShowingListener((isShowing, softInputAreaHeight) -> {
             announcementViewModel.setAnnouncementViewVisibility(!isShowing);
-        });
-
-        uploadMenuViewModel.setOnClickUploadEventListener(() -> {
-            if (softInputAreaController.isSoftInputAreaShowing()) {
-                softInputAreaController.hideSoftInputArea(true, true);
-            }
         });
     }
 
@@ -1177,8 +1212,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void showPreviewForUploadPhoto(int requestCode, Intent intent) {
-        List<String> filePaths =
-                fileUploadController.getFilePath(getActivity(), requestCode, intent);
+        List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
         if (filePaths == null || filePaths.size() == 0) {
             filePaths = new ArrayList<>();
             String filePath = photoFileByCamera.getPath();
@@ -1202,6 +1236,20 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     .singleUpload(true)
                     .realFilePathList(new ArrayList<>(filePaths))
                     .selectedEntityIdToBeShared(entityId)
+                    .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
+                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
+        }
+    }
+
+    private void showPreviewForContactFile(int requestCode, Intent intent) {
+        List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
+
+        if (filePaths != null && filePaths.size() > 0) {
+            startActivityForResult(Henson.with(getActivity())
+                    .gotoFileUploadPreviewActivity()
+                    .singleUpload(true)
+                    .selectedEntityIdToBeShared(entityId)
+                    .realFilePathList(new ArrayList<>(filePaths))
                     .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
                     .build(), FileUploadPreviewActivity.REQUEST_CODE);
         }
@@ -1262,6 +1310,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     @OnClick(R.id.btn_send_message)
     void sendMessage() {
+        SpeedEstimationUtil.sendAnalyticsMessageSendingStart();
         String message = etMessage.getText().toString();
 
         List<MentionObject> mentions = new ArrayList<>();
@@ -1833,15 +1882,37 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         requestFileUploadEventType = event.type;
 
-        Permissions.getChecker()
-                .activity(getActivity())
-                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .hasPermission(this::handleFileUpload)
-                .noPermission(() -> {
-                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
-                })
-                .check();
+        if (requestFileUploadEventType == FileUploadController.TYPE_UPLOAD_CONTACT) {
+            Permissions.getChecker()
+                    .activity(getActivity())
+                    .permission(() -> Manifest.permission.READ_CONTACTS)
+                    .hasPermission(() -> {
+                        Permissions.getChecker()
+                                .activity(getActivity())
+                                .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .hasPermission(this::handleFileUpload)
+                                .noPermission(() -> {
+                                    String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                                    requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                                })
+                                .check();
+                    })
+                    .noPermission(() -> {
+                        String[] permissions = {Manifest.permission.READ_CONTACTS};
+                        requestPermissions(permissions, REQ_CONTACTS_PERMISSION);
+                    })
+                    .check();
+        } else {
+            Permissions.getChecker()
+                    .activity(getActivity())
+                    .permission(() -> Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .hasPermission(this::handleFileUpload)
+                    .noPermission(() -> {
+                        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permissions, REQ_STORAGE_PERMISSION);
+                    })
+                    .check();
+        }
 
     }
 
@@ -1855,11 +1926,17 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         AnalyticsValue.Action action;
         switch (requestFileUploadEventType) {
             default:
-            case FileUploadController.TYPE_UPLOAD_GALLERY:
+            case FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY:
                 action = AnalyticsValue.Action.Upload_Photo;
                 break;
+            case FileUploadController.TYPE_UPLOAD_IMAGE_VIDEO:
+                action = AnalyticsValue.Action.Upload_Video;
+                break;
             case FileUploadController.TYPE_UPLOAD_TAKE_PHOTO:
-                action = AnalyticsValue.Action.Upload_Camera;
+                action = AnalyticsValue.Action.Upload_Camera_image;
+                break;
+            case FileUploadController.TYPE_UPLOAD_TAKE_VIDEO:
+                action = AnalyticsValue.Action.Upload_Camera_video;
                 break;
             case FileUploadController.TYPE_UPLOAD_EXPLORER:
                 action = AnalyticsValue.Action.Upload_File;
@@ -2122,5 +2199,69 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         }
 
         return false;
+    }
+
+    @OnClick(R.id.vg_button_upload)
+    void onClickUploadButton() {
+        boolean isShowSoftInputArea = false;
+
+        if (softInputAreaController.isSoftInputAreaShowing()) {
+            softInputAreaController.hideSoftInputArea(true, true);
+            isShowSoftInputArea = true;
+        } else if (softInputAreaController.isShowSoftInput()) {
+            softInputAreaController.hideSoftInput();
+            isShowSoftInputArea = true;
+        }
+
+        if (isShowSoftInputArea) {
+            Completable.complete()
+                    .delay(100, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        showFileUploadPannel();
+                    });
+        } else {
+            showFileUploadPannel();
+        }
+    }
+
+    public void showFileUploadPannel() {
+        FileUploadPannelDialog dialog;
+        sendAnalyticsEvent(AnalyticsValue.Action.Upload);
+        if (isInDirectMessage()) {
+            dialog = new FileUploadPannelDialog(getContext(), false);
+        } else {
+            dialog = new FileUploadPannelDialog(getContext(), true);
+        }
+
+        dialog.show();
+    }
+
+    public void onEventMainThread(ChooseCameraEvent event) {
+        showChooseCameraDialog();
+    }
+
+    private void showChooseCameraDialog() {
+        View mainView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_camera, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                R.style.JandiTheme_AlertDialog_FixWidth_280);
+        builder.setView(mainView);
+        AlertDialog dialog = builder.create();
+        mainView.findViewById(R.id.tv_action_photo).setOnClickListener(v -> {
+            EventBus.getDefault().post(
+                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_PHOTO));
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        });
+
+        mainView.findViewById(R.id.tv_action_video).setOnClickListener(v -> {
+            EventBus.getDefault().post(
+                    new RequestFileUploadEvent(FileUploadController.TYPE_UPLOAD_TAKE_VIDEO));
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

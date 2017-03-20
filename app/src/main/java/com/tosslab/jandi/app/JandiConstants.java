@@ -20,8 +20,8 @@ public class JandiConstants {
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
     public static final int TYPE_PRIVATE_TOPIC = 0x02;
 
-    public static final int TYPE_FILE_DETAIL_REFRESH = 0x03;
-    public static final int TYPE_FILE_IMAGE_VIEW_REFRESH = 0X04;
+    public static final int TYPE_FILE_DETAIL_REFRESH = 0x13;
+    public static final int TYPE_FILE_IMAGE_VIEW_REFRESH = 0X14;
 
     public static final int NOTIFICATION_ID = 100;
     public static final int NETWORK_SUCCESS = 200;

@@ -73,10 +73,12 @@ public class StarredFileViewHolder extends BaseViewHolder<StarredMessage> {
         String thumbnailUrl = content.extraInfo != null ?
                 content.extraInfo.smallThumbnailUrl : null;
 
+        boolean isContact = content.ext.equals("vcf");
+
         ImageUtil.setResourceIconOrLoadImage(
                 ivFile, vFileRound,
                 fileUrl, thumbnailUrl,
-                serverUrl, fileType);
+                serverUrl, fileType, isContact);
 
         tvFileSize.setText(FileUtil.formatFileSize(Integer.parseInt(content.size)));
 

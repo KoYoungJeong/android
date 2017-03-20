@@ -42,6 +42,8 @@ public class FileExtensionsUtil {
                 return R.drawable.file_detail_ppt;
             case ZIP:
                 return R.drawable.file_detail_zip;
+            case CONTACT:
+                return R.drawable.file_detail_contact;
             default:
             case ETC:
                 return R.drawable.file_detail_etc;
@@ -70,6 +72,8 @@ public class FileExtensionsUtil {
                 return R.drawable.file_icon_ppt_135;
             case ZIP:
                 return R.drawable.file_icon_zip_135;
+            case CONTACT:
+                return R.drawable.file_icon_contact_135;
             default:
             case ETC:
                 return R.drawable.file_icon_etc_135;
@@ -98,6 +102,8 @@ public class FileExtensionsUtil {
                 return R.drawable.file_icon_ppt_192;
             case ZIP:
                 return R.drawable.file_icon_zip_192;
+            case CONTACT:
+                return R.drawable.file_icon_contact_192;
             default:
             case ETC:
                 return R.drawable.file_icon_etc_192;
@@ -129,6 +135,8 @@ public class FileExtensionsUtil {
                 return JandiApplication.getContext().getString(R.string.jandi_file_category_presentation);
             case ZIP:
                 return JandiApplication.getContext().getString(R.string.jandi_file_category_zip);
+            case CONTACT:
+                return JandiApplication.getContext().getString(R.string.common_file_contacts);
             default:
             case ETC:
                 return "ETC";
@@ -193,6 +201,8 @@ public class FileExtensionsUtil {
                 return 0xff07adad;
             case ZIP:
                 return 0xff828282;
+            case CONTACT:
+                return 0xff288ae6;
             default:
             case ETC:
                 return 0xffa7a7a7;
@@ -210,6 +220,7 @@ public class FileExtensionsUtil {
         DOC("doc", "docx", "pages", "rtf", "gui"),
         PPT("ppt", "pptx", "key", "show", "pps", "hpt"),
         ZIP("zip", "zipx", "alz", "rar", "egg", "7z", "tar", "tgz", "tar.gz", "tar.bz2", "tar.z"),
+        CONTACT("vcf"),
         ETC("");
 
         private final List<String> extensionList;
@@ -217,7 +228,6 @@ public class FileExtensionsUtil {
         Extensions(String... extensions) {
             extensionList = Arrays.asList(extensions);
         }
-
     }
 
 }

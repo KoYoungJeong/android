@@ -149,7 +149,9 @@ public class JandiApplication extends MultiDexApplication {
 
 
     protected void initIntercom() {
-        Intercom.initialize(this, JandiConstantsForFlavors.INTERCOM_API_KEY, JandiConstantsForFlavors.INTERCOM_API_ID);
+        Intercom.initialize(this,
+                JandiConstantsForFlavors.INTERCOM_API_KEY,
+                JandiConstantsForFlavors.INTERCOM_API_ID);
 
         Intercom.client().reset();
 

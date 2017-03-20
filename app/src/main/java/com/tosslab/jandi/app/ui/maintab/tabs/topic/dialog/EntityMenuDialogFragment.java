@@ -185,6 +185,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
         btnMoveFolder.setOnClickListener(v -> onMoveFolderClick());
 
         view.findViewById(R.id.btn_entity_popup_cancel).setOnClickListener(v -> dismiss());
+        if (TeamInfoLoader.getInstance().isChat(roomId)) {
+            btnLeave.setText(R.string.menu_hide_1_1);
+        } else {
+            btnLeave.setText(R.string.menu_entity_leave);
+        }
 
         return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_280)
                 .setView(view)

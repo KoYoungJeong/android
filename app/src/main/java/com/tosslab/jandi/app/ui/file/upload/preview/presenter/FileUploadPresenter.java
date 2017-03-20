@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadThumbAdapt
 import java.util.List;
 
 public interface FileUploadPresenter {
-
     void setView(View view);
 
     void onPagerSelect(int position);
@@ -15,7 +14,7 @@ public interface FileUploadPresenter {
 
     void onCommentTextChange(String text, int currentItemPosition);
 
-    void onInitPricingInfo();
+//    void onInitPricingInfo();
 
     void onMultiFileUpload(MentionControlViewModel mentionControlViewModel);
 
@@ -26,7 +25,6 @@ public interface FileUploadPresenter {
     void initThumbInfo(List<String> realFilePathList);
 
     interface View {
-
         void initViewPager(List<String> realFilePathList);
 
         void setFileName(String fileName);
@@ -40,8 +38,6 @@ public interface FileUploadPresenter {
         void exitOnFail();
 
         void setShareEntity(long entityId, boolean isUser);
-
-        void setPricingLimitView(Boolean isLimited);
 
         void setFileThumbInfo(List<FileUploadThumbAdapter.FileThumbInfo> files);
     }

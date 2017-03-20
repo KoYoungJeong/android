@@ -71,7 +71,7 @@ public class ImageAlbumModelTest {
     public void testIsSelectedPicture() {
         SelectPictures.getSelectPictures().clear();
         SelectPictures imagePicture = SelectPictures.getSelectPictures();
-        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         imagePicture.addPicture(imagePicture1);
         if (imageAlbumModel.isSelectedPicture(imagePicture1)) {
             assertTrue(true);
@@ -84,10 +84,10 @@ public class ImageAlbumModelTest {
     public void testGetSelectedImages() {
         SelectPictures.getSelectPictures().clear();
         SelectPictures imagePicture = SelectPictures.getSelectPictures();
-        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         imagePicture.addPicture(imagePicture1);
 
-        ImagePicture imagePicture2 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture2 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         imagePicture.addPicture(imagePicture2);
 
         assertThat(imageAlbumModel.getSelectedImages(), is(2));
@@ -120,10 +120,10 @@ public class ImageAlbumModelTest {
     @Test
     public void testRemoveSelectedPicture() {
         SelectPictures selectedPictures = SelectPictures.getSelectPictures();
-        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         selectedPictures.addPicture(imagePicture1);
 
-        ImagePicture imagePicture2 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture2 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         selectedPictures.addPicture(imagePicture2);
 
         imageAlbumModel.removeSelectedPicture(imagePicture2);
@@ -134,10 +134,10 @@ public class ImageAlbumModelTest {
     public void testAddSelectedPicture() {
         SelectPictures.getSelectPictures().clear();
         SelectPictures selectedPictures = SelectPictures.getSelectPictures();
-        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture1 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         selectedPictures.addPicture(imagePicture1);
 
-        ImagePicture imagePicture2 = new ImagePicture.ImagePictureBuilder().imagePath("imagePath").createImagePicture();
+        ImagePicture imagePicture2 = new ImagePicture.ImagePictureBuilder().imagePath("videoPath").createImagePicture();
         imageAlbumModel.addSelectedPicture(imagePicture2);
         assertThat(selectedPictures.getPictures().size(), is(2));
     }

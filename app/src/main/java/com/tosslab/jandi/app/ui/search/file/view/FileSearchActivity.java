@@ -128,9 +128,9 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         }
         fileListFragment = FileListFragment.create(this, entityId, writerId, fileType);
 
-        fragmentTransaction.add(R.id.layout_search_content,
+        fragmentTransaction.replace(R.id.layout_search_content,
                 fileListFragment, FileListFragment.class.getName());
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
 
         searchSelectView = fileListFragment;
         searchSelectView.setOnSearchItemSelect(this::finish);

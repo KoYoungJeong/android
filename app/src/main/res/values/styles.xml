@@ -219,7 +219,6 @@
 
     <style name="JandiChat.Wrapper">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:paddingRight">5dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">44dp</item>
         <item name="android:background">@android:color/white</item>
@@ -259,6 +258,14 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/input_message</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="JandiChat.InputWrapper.NoInputArea">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginBottom">4dp</item>
     </style>
@@ -651,8 +658,7 @@
         <item name="textColorError">@color/jandi_red</item>
     </style>
 
-    <style name="CreatePollEditText" parent="@style/FloatingEditTextTheme">
-    </style>
+    <style name="CreatePollEditText" parent="@style/FloatingEditTextTheme"></style>
 
     <style name="DayTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@drawable/text_color_day</item>
@@ -661,6 +667,14 @@
 
     <style name="TeamTabTextApprearance" parent="@android:style/TextAppearance">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>
