@@ -112,6 +112,8 @@ rootProject.allprojects { project ->
 
                 compile rootProject.ext.dependecies.libraries.subsampling_scale_image_view
 
+                compile rootProject.ext.dependecies.libraries.keyboard_visible_event
+
                 debugCompile rootProject.ext.dependecies.libraries.okhttp3_logging
 
                 debugCompile rootProject.ext.dependecies.libraries.stetho_okhttp3

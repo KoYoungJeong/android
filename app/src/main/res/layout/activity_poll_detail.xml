@@ -81,6 +81,7 @@
                     style="@style/JandiChat.EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:hint="@string/common_inputfield_placeholder"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:lineSpacingExtra="2dp"

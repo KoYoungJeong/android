@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -76,9 +77,14 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 filePickerModel.openContactActivityResult(fragment);
                 break;
             case TYPE_UPLOAD_EXPLORER:
-                Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileintent.setType("gagt/sdf");
-                fragment.startActivityForResult(fileintent, FileUploadController.TYPE_UPLOAD_EXPLORER);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    filePickerModel.openExplorerForActivityResult(fragment);
+                } else {
+                    Intent fileintent = new Intent();
+                    fileintent.setAction(Intent.ACTION_GET_CONTENT);
+                    fileintent.setType("*/*");
+                    fragment.startActivityForResult(fileintent, FileUploadController.TYPE_UPLOAD_EXPLORER);
+                }
                 break;
             default:
                 break;
@@ -118,9 +124,14 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 }
                 break;
             case TYPE_UPLOAD_EXPLORER:
-                Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileintent.setType("gagt/sdf");
-                activity.startActivityForResult(fileintent, FileUploadController.TYPE_UPLOAD_EXPLORER);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    filePickerModel.openExplorerForActivityResult(activity);
+                } else {
+                    Intent fileintent = new Intent();
+                    fileintent.setAction(Intent.ACTION_GET_CONTENT);
+                    fileintent.setType("*/*");
+                    activity.startActivityForResult(fileintent, FileUploadController.TYPE_UPLOAD_EXPLORER);
+                }
                 break;
             default:
                 break;
@@ -159,9 +170,14 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 }
                 break;
             case TYPE_UPLOAD_EXPLORER:
-                Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileintent.setType("gagt/sdf");
-                fragment.startActivityForResult(fileintent, FileUploadController.TYPE_UPLOAD_EXPLORER);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    filePickerModel.openExplorerForActivityResult(fragment);
+                } else {
+                    Intent fileintent = new Intent();
+                    fileintent.setAction(Intent.ACTION_GET_CONTENT);
+                    fileintent.setType("*/*");
+                    fragment.startActivityForResult(fileintent, FileUploadController.TYPE_UPLOAD_EXPLORER);
+                }
                 break;
             default:
                 break;
@@ -178,13 +194,11 @@ public class MainFileUploadControllerImpl implements FileUploadController {
                 break;
             case TYPE_UPLOAD_TAKE_PHOTO:
             case TYPE_UPLOAD_TAKE_VIDEO:
+            case TYPE_UPLOAD_EXPLORER:
                 filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
                 break;
             case TYPE_UPLOAD_CONTACT:
                 filePaths.add(getVcfFilePath(context, intent));
-                break;
-            case TYPE_UPLOAD_EXPLORER:
-                filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
                 break;
         }
         return filePaths;
@@ -230,16 +244,19 @@ public class MainFileUploadControllerImpl implements FileUploadController {
     }
 
     @Override
-    public void startUpload(Activity activity, String title, long entityId, String realFilePath, String comment) {
+    public void startUpload(Activity activity,
+                            String title, long entityId, String realFilePath, String comment) {
         ProgressDialog uploadProgress = getUploadProgress(activity, realFilePath);
-
-        uploadFile(activity.getApplicationContext(), title, entityId, realFilePath, comment, uploadProgress);
+        uploadFile(activity.getApplicationContext(),
+                title, entityId, realFilePath, comment, uploadProgress);
     }
 
-    void uploadFile(Context context, String title, long entityId, String realFilePath, String comment, ProgressDialog uploadProgress) {
-
+    void uploadFile(Context context,
+                    String title, long entityId, String realFilePath, String comment,
+                    ProgressDialog uploadProgress) {
         Completable.fromCallable(() -> {
-            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress, realFilePath, title, entityId, comment);
+            ResUploadedFile result = filePickerModel.uploadFile(uploadProgress,
+                    realFilePath, title, entityId, comment);
             SprinklrFileUpload.sendLog(entityId, result.getMessageId());
             return true;
         }).subscribeOn(Schedulers.io())
@@ -263,16 +280,13 @@ public class MainFileUploadControllerImpl implements FileUploadController {
         ColoredToast.show(message);
     }
 
-
     public ProgressDialog getUploadProgress(Activity activity, String realFilePath) {
         final ProgressDialog progressDialog = new ProgressDialog(activity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(activity.getString(R.string.jandi_file_uploading) + " " + realFilePath);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
-
         return progressDialog;
-
     }
 
     void dismissProgressDialog(ProgressDialog uploadProgressDialog) {

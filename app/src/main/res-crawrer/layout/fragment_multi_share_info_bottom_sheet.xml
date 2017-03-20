@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:background="@drawable/share_upload_bg"
+    android:background="@color/white"
     android:minHeight="249.5dp"
     android:orientation="vertical"
     app:behavior_hideable="false"
@@ -29,7 +29,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-
             android:layout_weight="1"
             android:ellipsize="middle"
             android:gravity="center_vertical"

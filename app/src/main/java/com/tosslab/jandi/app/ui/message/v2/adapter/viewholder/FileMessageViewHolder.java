@@ -22,8 +22,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
-import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -196,10 +194,6 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 tvCommonFileSize.setText(fileSize);
                 vFileIconBorder.setVisibility(View.VISIBLE);
 
-                int mimeTypeIconImage =
-                        MimeTypeUtil.getMimeTypeIconImage(
-                                fileMessage.content.serverUrl, fileMessage.content.icon, SourceTypeUtil.TYPE_C);
-                ivFileImage.setImageResource(mimeTypeIconImage);
                 tvCommonFileSize.setVisibility(View.VISIBLE);
                 if (fileContent.size > 0) {
                     tvFileInfoDivider.setVisibility(View.VISIBLE);
@@ -212,8 +206,10 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 tvFileUploaderName.setTextColor(resources.getColor(R.color.jandi_text));
             }
 
+
             if (loadIcon) {
                 ResMessages.FileContent content = fileMessage.content;
+                boolean isContact = TextUtils.equals(content.ext, "vcf");
                 String serverUrl = content.serverUrl;
                 String fileType = content.icon;
                 String fileUrl = content.fileUrl;
@@ -222,7 +218,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
                 ImageUtil.setResourceIconOrLoadImageForComment(
                         ivFileImage, vFileIconBorder,
                         fileUrl, thumbnailUrl,
-                        serverUrl, fileType);
+                        serverUrl, fileType, isContact);
             }
         }
     }

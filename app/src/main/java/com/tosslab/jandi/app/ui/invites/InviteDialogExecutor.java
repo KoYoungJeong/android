@@ -56,7 +56,7 @@ public class InviteDialogExecutor {
     public void executeInvite(Context context) {
         try {
             TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-            if (teamInfoLoader.getTopicMemberCount(teamInfoLoader.getTeamId()) > 500) {
+            if (teamInfoLoader.getUserList().size() > 500) {
                 showErrorExceedFreeMembersDialog(context);
                 return;
             }

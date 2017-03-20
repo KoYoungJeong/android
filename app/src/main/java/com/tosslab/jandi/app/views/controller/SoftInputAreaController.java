@@ -26,6 +26,7 @@ public class SoftInputAreaController {
     private ViewGroup vgSoftInputArea;
     private EditText editText;
     private ImageView btnAction2;
+    private ViewGroup vgBtnAction2;
 
     private OnSoftInputAreaShowingListener onSoftInputAreaShowingListener;
 
@@ -38,12 +39,14 @@ public class SoftInputAreaController {
                                    SoftInputDetectLinearLayout softInputDetector,
                                    ViewGroup vgSoftInputArea,
                                    ImageView btnAction2,
+                                   ViewGroup vgBtnAction2,
                                    EditText editText) {
         this.softInputDetector = softInputDetector;
         this.vgSoftInputArea = vgSoftInputArea;
         this.btnAction2 = btnAction2;
         this.stickerViewModel = stickerViewModel;
         this.editText = editText;
+        this.vgBtnAction2 = vgBtnAction2;
     }
 
     public void init() {
@@ -79,10 +82,10 @@ public class SoftInputAreaController {
         if (btnAction2 != null) {
             switch (expectPanel) {
                 case STICKER:
-                    initStickerButton(btnAction2);
+                    initStickerButton(btnAction2, vgBtnAction2);
                     break;
                 case SOFT_INPUT:
-                    initSoftInputButton(btnAction2);
+                    initSoftInputButton(btnAction2, vgBtnAction2);
                     break;
             }
         }
@@ -101,30 +104,49 @@ public class SoftInputAreaController {
         });
     }
 
-    private void initSoftInputButton(ImageView button) {
+    private void initSoftInputButton(ImageView button, ViewGroup vgButton) {
         button.setImageResource(R.drawable.chat_icon_keypad);
-        button.setOnClickListener(v -> {
-            expectPanel = ExpectPanel.SOFT_INPUT;
-            showSoftInput();
-        });
+        if (vgButton != null) {
+            vgButton.setOnClickListener(v -> {
+                onClickSoftInputButton();
+            });
+        } else {
+            button.setOnClickListener(v -> {
+                onClickSoftInputButton();
+            });
+        }
     }
 
-    private void initStickerButton(ImageView button) {
+    private void onClickSoftInputButton() {
+        expectPanel = ExpectPanel.SOFT_INPUT;
+        showSoftInput();
+    }
+
+    private void initStickerButton(ImageView button, ViewGroup vgButton) {
         button.setImageResource(R.drawable.chat_icon_emoticon);
-        button.setOnClickListener(v -> {
+        if (vgButton != null) {
+            vgButton.setOnClickListener(v -> {
+                onClickStickerButton();
+            });
+        } else {
+            button.setOnClickListener(v -> {
+                onClickStickerButton();
+            });
+        }
+    }
 
-            expectPanel = ExpectPanel.STICKER;
+    private void onClickStickerButton() {
+        expectPanel = ExpectPanel.STICKER;
 
-            if (softInputDetector.isSoftInputShowing()) {
-                hideSoftInput();
-            } else {
-                replaceSoftInputAreaAndActionButtons(expectPanel);
-            }
+        if (softInputDetector.isSoftInputShowing()) {
+            hideSoftInput();
+        } else {
+            replaceSoftInputAreaAndActionButtons(expectPanel);
+        }
 
-            if (onStickerButtonClickListener != null) {
-                onStickerButtonClickListener.onStickerButtonClick();
-            }
-        });
+        if (onStickerButtonClickListener != null) {
+            onStickerButtonClickListener.onStickerButtonClick();
+        }
     }
 
     public void replaceSoftInputAreaAndActionButtons(ExpectPanel expectPanel) {

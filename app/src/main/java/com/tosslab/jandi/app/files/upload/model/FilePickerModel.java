@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -64,12 +65,17 @@ public class FilePickerModel {
                     return "";
                 }
                 return filePath.getAbsolutePath();
-
             case FileUploadController.TYPE_UPLOAD_EXPLORER:
-                Uri uri = intent.getData();
-                String realPath = ImageFilePath.getPath(context, uri);
-                return realPath;
-
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    realFilePath = intent.getStringExtra("GetPath") +
+                            File.separator +
+                            intent.getStringExtra("GetFileName");
+                    return realFilePath;
+                } else {
+                    Uri uri = intent.getData();
+                    String realPath = ImageFilePath.getPath(context, uri);
+                    return realPath;
+                }
             default:
                 return "";
         }
@@ -149,7 +155,6 @@ public class FilePickerModel {
     }
 
     public boolean isOverSize(String... realFilePath) {
-
         File uploadFile;
         int totalSize = 0;
         for (String filePath : realFilePath) {
@@ -166,7 +171,6 @@ public class FilePickerModel {
     }
 
     public boolean isOverSize(List<String> realFilePath) {
-
         File uploadFile;
         int totalSize = 0;
         for (String filePath : realFilePath) {
@@ -187,7 +191,6 @@ public class FilePickerModel {
     }
 
     public ResUploadedFile uploadFile(ProgressDialog progressDialog, String realFilePath, String title, long entityId, String comment) throws IOException {
-
         File uploadFile = new File(realFilePath);
 
         return new FileUploadApi().uploadFile(title, entityId, TeamInfoLoader.getInstance().getTeamId(), comment, new ArrayList<>(), uploadFile, callback -> callback.distinctUntilChanged()

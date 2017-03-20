@@ -458,7 +458,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     private void initSoftInputAreaController() {
         softInputAreaController = new SoftInputAreaController(
                 stickerViewModel,
-                vgSoftInputDetector, vgSoftInputArea, btnAction,
+                vgSoftInputDetector, vgSoftInputArea, btnAction, null,
                 etComment);
 
         softInputAreaController.setOnStickerButtonClickListener(() -> {

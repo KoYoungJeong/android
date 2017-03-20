@@ -42,7 +42,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="11dp"
                     android:gravity="center"
-                    android:text="사진"
+                    android:text="@string/photo"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
 
@@ -67,7 +67,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="11dp"
                     android:gravity="center"
-                    android:text="비디오"
+                    android:text="@string/jandi_file_category_video"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
 

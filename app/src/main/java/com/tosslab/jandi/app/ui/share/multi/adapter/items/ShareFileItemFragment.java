@@ -123,8 +123,8 @@ public class ShareFileItemFragment extends Fragment implements FileShareInteract
             if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
                 actionBarSize = TypedValue.complexToDimensionPixelSize(typedValue.data, displayMetrics);
             }
-            lp.topMargin = (int) (actionBarSize + (needTopMargin? TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60f, displayMetrics) : 0));
-            lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 289f, displayMetrics);
+            lp.topMargin = actionBarSize;
+            lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 230f, displayMetrics);
         }
 
         vgFileType.setLayoutParams(lp);

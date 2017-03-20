@@ -224,6 +224,7 @@
             android:layout_alignParentBottom="true">
 
             <FrameLayout
+                android:id="@+id/vg_button_upload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom">
@@ -239,6 +240,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/vg_button_sticker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom">
@@ -269,6 +271,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:hint="@string/common_inputfield_placeholder"
                     android:lineSpacingExtra="2dp"
                     android:minHeight="36dp"
                     android:paddingBottom="2dp"

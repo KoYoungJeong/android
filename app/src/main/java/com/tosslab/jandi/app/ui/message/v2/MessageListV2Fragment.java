@@ -310,6 +310,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     ImageView btnActionUpload;
     @Bind(R.id.btn_message_action_button_sticker_keyboard)
     ImageView btnActionStickerKeyboard;
+    @Bind(R.id.vg_button_upload)
+    ViewGroup vgButtonUpload;
+    @Bind(R.id.vg_button_sticker)
+    ViewGroup vgButtonSticker;
+
     @Bind(R.id.vg_messages_member_status_alert)
     View vgMemberStatusAlert;
 
@@ -593,7 +598,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     private void initSoftInputAreaController() {
         softInputAreaController = new SoftInputAreaController(
-                stickerViewModel, vgSoftInputDetector, vgSoftInputArea, btnActionStickerKeyboard,
+                stickerViewModel, vgSoftInputDetector, vgSoftInputArea, btnActionStickerKeyboard, vgButtonSticker,
                 etMessage);
         softInputAreaController.setOnStickerButtonClickListener(() -> {
             sendAnalyticsEvent(AnalyticsValue.Action.Sticker);
@@ -2196,7 +2201,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         return false;
     }
 
-    @OnClick(R.id.btn_message_action_button_upload)
+    @OnClick(R.id.vg_button_upload)
     void onClickUploadButton() {
         boolean isShowSoftInputArea = false;
 

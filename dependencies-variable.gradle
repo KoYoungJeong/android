@@ -90,7 +90,8 @@ ext.dependecies = [
                 assertj_android_recyclerview     : 'com.squareup.assertj:assertj-android-recyclerview-v7:1.1.1@aar',
                 assertj                          : 'org.assertj:assertj-core:1.7.1',
                 junit                            : 'junit:junit:4.12',
-                subsampling_scale_image_view     : 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+                subsampling_scale_image_view     : 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0',
+                keyboard_visible_event           : 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
         ],
 
         buildscripts: [

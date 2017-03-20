@@ -17,7 +17,6 @@ configurations {
     apt
 }
 
-
 task resourceRefresh
 resourceRefresh.dependsOn(stringResourceRefresh, imageResourceRefresh)
 
@@ -43,7 +42,6 @@ android {
         multiDexEnabled true
     }
     buildTypes {
-
         debug {
             debuggable true
             testCoverageEnabled = project.hasProperty("report_coverage") && report_coverage.toBoolean()
@@ -51,7 +49,6 @@ android {
 
         release {
         }
-
     }
     productFlavors {
         full {     // release version
@@ -60,7 +57,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
-            minSdkVersion 21
+            minSdkVersion 15
         }
         api {
             applicationId 'com.tosslab.jandi.app.dev'
@@ -189,15 +186,9 @@ project.gradle.taskGraph.whenReady {
     }
 }
 
-
-
 apt {
     arguments {
         "dart.henson.package" android.defaultConfig.applicationId
-//        resourcePackageName android.defaultConfig.applicationId
-//        if (variant.outputs.size() > 0) {
-//            androidManifestFile variant.outputs[0].processResources.manifestFile
-//        }
     }
 }
 

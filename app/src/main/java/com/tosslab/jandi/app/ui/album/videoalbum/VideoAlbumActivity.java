@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.album.videoalbum;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,7 +20,6 @@ import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.ui.album.videoalbum.vo.SelectVideos;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
-import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -96,7 +93,7 @@ public class VideoAlbumActivity extends BaseAppCompatActivity {
         }
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("비디오 선택");
+        actionBar.setTitle(R.string.jandi_select_video);
     }
 
     @Override

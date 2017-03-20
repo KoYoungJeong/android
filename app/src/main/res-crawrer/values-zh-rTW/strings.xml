@@ -43,6 +43,9 @@
 	<string name="common_createteam_toaccthome">"前往帳號首頁"</string>
 	<string name="common_createteam_welcome">"歡迎！"</string>
 	<string name="common_creatteam_done">"確認"</string>
+	<string name="common_file_camera_photo">"拍照"</string>
+	<string name="common_file_camera_video">"錄影"</string>
+	<string name="common_file_contacts">"聯絡資訊"</string>
 	<string name="common_fileupload_filename">"檔案名稱"</string>
 	<string name="common_fileupload_rename">"更改"</string>
 	<string name="common_fileupload_rename_description">"重新命名"</string>
@@ -50,6 +53,7 @@
 	<string name="common_hamburger_manageacct">"JANDI 帳號設定"</string>
 	<string name="common_hamburger_teamadmin">"團隊管理員"</string>
 	<string name="common_hamburger_teamlist">"團隊列表"</string>
+	<string name="common_inputfield_placeholder">"輸入訊息中..."</string>
 	<string name="common_launch_503">"抱歉！JANDI 伺服器暫時出現異常。建議您再嘗試操作，造成不便敬請見諒"</string>
 	<string name="common_launch_fail">"暫時無法讀取啟動資訊
 請重新啟動 app"</string>
@@ -472,6 +476,7 @@
 	<string name="jandi_mention_push_message">"%s 提到你"</string>
 	<string name="jandi_mentions_are_empty">"你尚未被其他成員提及。
  欲提及其他成員？輸入"@"後成員名單跳出，選取成員完成提及。"</string>
+	<string name="jandi_mentions_are_empty_result_2">" "</string>
 	<string name="jandi_menu_room_selection">"選擇任一個討論"</string>
 	<string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
 	<string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
@@ -621,6 +626,7 @@
 	<string name="jandi_select_gallery">"選擇照片"</string>
 	<string name="jandi_select_maximum_10">"一次可上傳10張照片"</string>
 	<string name="jandi_select_team">"選擇您的團隊"</string>
+	<string name="jandi_select_video">"選擇影片"</string>
 	<string name="jandi_send">"送出"</string>
 	<string name="jandi_send_invitation">"現在邀請"</string>
 	<string name="jandi_send_to_email">"發送電子郵件"</string>
@@ -684,7 +690,9 @@
 	<string name="jandi_starred_all">"全部類別"</string>
 	<string name="jandi_starred_files">"檔案"</string>
 	<string name="jandi_starred_no_all">"沒有標示訊息或檔案"</string>
+	<string name="jandi_starred_no_all_result_2">""</string>
 	<string name="jandi_starred_no_file">"沒有標示檔案"</string>
+	<string name="jandi_starred_no_file_result_2">""</string>
 	<string name="jandi_starred_star">"標示"</string>
 	<string name="jandi_starred_stars">"已標示"</string>
 	<string name="jandi_starred_undo">"復原"</string>
@@ -692,7 +700,7 @@
 	<string name="jandi_starred_unstar_from_item">"你確定要取消標示嗎？"</string>
 	<string name="jandi_starred_unstarred">"已取消標示"</string>
 	<string name="jandi_start_direct_messages_1">"<b>您所有私訊的訊息現在是隱藏的。</b>"</string>
-	<string name="jandi_start_direct_messages_2">"點擊以下按鍵以開始或重新打開一個對話。"</string>
+	<string name="jandi_start_direct_messages_2">""</string>
 	<string name="jandi_storage_access_permission">"JANDI存取外部資料的動作被拒絕"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共享連結已複製至到剪貼簿"</string>
 	<string name="jandi_success_disable_external_link">"共享連結已被刪除"</string>
@@ -820,6 +828,7 @@
 	<string name="mypage_editprofile_phonenumber">"請輸入您的電話號碼"</string>
 	<string name="mypage_editprofile_statusmessage">"輸入你的狀態"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你\"</string>
+	<string name="photo">"照片"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"免費版本最多可邀請 500 位成員"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"已超過邀請成員數量上限"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"關閉"</string>

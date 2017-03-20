@@ -83,6 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
+                    android:hint="@string/common_inputfield_placeholder"
                     android:lineSpacingExtra="2dp"
                     android:minHeight="36dp"
                     android:paddingBottom="2dp"

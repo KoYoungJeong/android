@@ -8,13 +8,17 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
  */
 public class MimeTypeUtil {
 
-    public static int getMimeTypeIconImage(String serverUrl, String iconType, int type) {
+    public static int getMimeTypeIconImage(String serverUrl, String iconType, int type, boolean isContact) {
+        FilterType mimeType;
+        if (!isContact) {
+            mimeType = IconFilterUtil.getMimeType(iconType);
+        } else {
+            mimeType = FilterType.Contact;
+        }
 
-        FilterType mimeType = IconFilterUtil.getMimeType(iconType);
         SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
 
         return SourceTypeUtil.getFileIcon(mimeType, sourceType, type);
-
     }
 
     public static boolean isFileFromGoogleOrDropbox(MimeTypeUtil.SourceType sourceType) {
@@ -23,7 +27,7 @@ public class MimeTypeUtil {
     }
 
     public enum FilterType {
-        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, GoogleDocument, GoogleSpreadSheet, GooglePresentation, Zip, Etc
+        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, GoogleDocument, GoogleSpreadSheet, GooglePresentation, Zip, Contact, Etc
     }
 
     public enum SourceType {
@@ -31,6 +35,6 @@ public class MimeTypeUtil {
     }
 
     public enum PlaceholderType {
-        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, Etc, Google, Dropbox, ZIP
+        Audio, Image, Video, Pdf, Document, SpreadSheet, Presentation, Hwp, Etc, Google, Dropbox, ZIP, Contact
     }
 }

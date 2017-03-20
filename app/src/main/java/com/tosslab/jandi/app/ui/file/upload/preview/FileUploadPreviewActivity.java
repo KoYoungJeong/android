@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,6 +20,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -50,8 +50,11 @@ import com.tosslab.jandi.app.ui.file.upload.preview.dagger.FileUploadModule;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,6 +117,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     RecyclerView lvthumb;
     @Bind(R.id.vg_upload_info_bottom_sheet)
     View vgUploadInfoBottomSheet;
+    @Bind(R.id.vg_file_upload_preview_content_entity)
+    ViewGroup vgFileUploadPreviewContentEntity;
 
     @Bind(R.id.vg_coordinator)
     ViewGroup vgCoordinator;
@@ -149,7 +154,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared, realFilePathList);
 
         scrollButtonPublishSubject = PublishSubject.create();
-        subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
+        subscribe = scrollButtonPublishSubject.throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     for (ImageView scrollButton : scrollButtons) {
@@ -179,7 +184,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
 //        fileUploadPresenter.onInitPricingInfo();
 
         if (realFilePathList.size() > 1) {
-
             lvthumb.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             adapter = new FileUploadThumbAdapter();
             adapter.setItemClickListener((view, adapter1, position) -> {
@@ -191,43 +195,48 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             fileUploadPresenter.initThumbInfo(realFilePathList);
             thumbNailViewVisible = true;
 
+            etComment.setMaxLines(18);
         } else {
             thumbNailViewVisible = false;
             lvthumb.setVisibility(View.GONE);
+            etComment.setMaxLines(21);
         }
 
         vgUploadInfoBottomSheet.setOnTouchListener((v, event) -> true);
 
         bottomSheetBehavior = BottomSheetBehavior.from(vgUploadInfoBottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        setKeyboardStatusChangeListener();
-    }
 
-    private void setKeyboardStatusChangeListener() {
-        vgCoordinator.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            Rect r = new Rect();
-            vgCoordinator.getWindowVisibleDisplayFrame(r);
-
-            int heightDiff = vgCoordinator.getRootView().getHeight() - (r.bottom - r.top);
-            if (heightDiff > 500) {
-                int selection = etComment.getSelectionEnd();
-                Observable.just(1)
-                        .delay(200, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext(i -> {
-                            if (!TextUtils.isEmpty(etComment.getText().toString())) {
-                                etComment.setSelection(etComment.getText().length());
-                            }
-                        })
-                        .delay(50, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(i -> {
-                            if (selection > 0)
-                                etComment.setSelection(selection);
-                        });
+        etComment.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
             }
-
+            return false;
         });
+
+        KeyboardVisibilityEvent.setEventListener(
+                this, isOpen -> {
+                    if (isOpen) {
+                        etComment.setMaxLines(9);
+                        vgFileUploadPreviewContentEntity.setVisibility(View.GONE);
+                        Completable.complete()
+                                .delay(400, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
+                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(169.5f));
+                                });
+                    } else {
+                        vgFileUploadPreviewContentEntity.setVisibility(View.VISIBLE);
+                        if (lvthumb.getVisibility() == View.VISIBLE) {
+                            etComment.setMaxLines(18);
+                        } else {
+                            etComment.setMaxLines(21);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -287,6 +296,16 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             if (actionBar != null) {
                 actionBar.show();
             }
+            RelativeLayout.LayoutParams nextScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(0).getLayoutParams();
+            nextScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(245), 0, 0);
+            nextScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(0).setLayoutParams(nextScrollLayoutParams);
+            RelativeLayout.LayoutParams prevScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(1).getLayoutParams();
+            prevScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(245), 0, 0);
+            prevScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(1).setLayoutParams(prevScrollLayoutParams);
         } else {
             // 안보이게 하기, 배경 검정
             vgUploadInfoBottomSheet.setVisibility(View.GONE);
@@ -297,6 +316,17 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             if (actionBar != null) {
                 actionBar.hide();
             }
+
+            RelativeLayout.LayoutParams nextScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(0).getLayoutParams();
+            nextScrollLayoutParams.setMargins(0, 0, 0, 0);
+            nextScrollLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(0).setLayoutParams(nextScrollLayoutParams);
+            RelativeLayout.LayoutParams prevScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(1).getLayoutParams();
+            prevScrollLayoutParams.setMargins(0, 0, 0, 0);
+            prevScrollLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(1).setLayoutParams(prevScrollLayoutParams);
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
@@ -594,6 +624,5 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         adapter.setFileThumbInfo(files);
         adapter.notifyDataSetChanged();
     }
-
 
 }

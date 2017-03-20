@@ -162,19 +162,24 @@ public class TextCommentViewHolder extends BaseViewHolder<ResMessages.CommentMes
                 rule = RelativeLayout.ALIGN_RIGHT;
                 parentRule = RelativeLayout.ALIGN_PARENT_RIGHT;
             }
+
+            if (full) {
+                lp.removeRule(rule);
+                lp.addRule(parentRule);
+
+            } else {
+                lp.addRule(rule, R.id.tv_file_detail_comment_content);
+                lp.removeRule(parentRule);
+            }
         } else {
             rule = RelativeLayout.ALIGN_LEFT;
             parentRule = RelativeLayout.ALIGN_PARENT_LEFT;
+            if (full) {
+                lp.addRule(parentRule);
+            } else {
+                lp.addRule(rule, R.id.tv_file_detail_comment_content);
+            }
         }
-
-        if (full) {
-            lp.removeRule(rule);
-            lp.addRule(parentRule);
-        } else {
-            lp.addRule(rule, R.id.tv_file_detail_comment_content);
-            lp.removeRule(parentRule);
-        }
-
         vCellDivider.setLayoutParams(lp);
     }
 }

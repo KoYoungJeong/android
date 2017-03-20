@@ -257,7 +257,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
 
     private boolean isExceedFreeMembers(int invitationCnt) {
         TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-        long memberCount = teamInfoLoader.getTopicMemberCount(teamInfoLoader.getTeamId());
+        long memberCount = teamInfoLoader.getUserList().size();
         memberCount = memberCount + invitationCnt;
         if (memberCount > 500) {
             return true;
