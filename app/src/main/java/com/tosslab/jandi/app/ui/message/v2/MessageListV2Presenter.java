@@ -348,10 +348,10 @@ public class MessageListV2Presenter {
                     List<ResMessages.Link> messages = pair.second;
                     if (messages == null
                             || messages.isEmpty()) {
-
                         view.dismissProgressWheel();
                         view.dismissProgressView();
                         view.dismissOldLoadProgress();
+                        adapterModel.setOldNoMoreLoading();
 
                         if (pair.first.getData().isFirstLoadOldMessage() && adapterModel.getCount() == 0) {
                             view.showEmptyView(true);

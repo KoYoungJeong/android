@@ -37,7 +37,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         implements MessageListHeaderAdapter.MessageItemDate, MessageListAdapterView, MessageListAdapterModel {
 
     Context context;
-    AnimState markerAnimState = AnimState.Idle;
     MoreState oldMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
