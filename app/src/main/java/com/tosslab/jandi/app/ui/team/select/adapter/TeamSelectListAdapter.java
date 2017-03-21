@@ -81,15 +81,25 @@ public class TeamSelectListAdapter extends RecyclerView.Adapter<MainTeamListView
 
     @Override
     public int getItemCount() {
+        if (teams == null) {
+            return 0;
+        }
         return teams.size();
     }
 
     private List<Team> getDatas() {
+        if (teams == null) {
+            return new ArrayList<>();
+        }
         return teams;
     }
 
     @Override
     public void setDatas(List<Team> teams) {
+        if (teams == null) {
+            this.teams = new ArrayList<>();
+            return;
+        }
         this.teams = teams;
     }
 

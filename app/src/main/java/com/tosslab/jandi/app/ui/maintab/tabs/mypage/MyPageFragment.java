@@ -245,7 +245,7 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
 
     @Override
     public void onFocus() {
-        if (tabPagerAdapter != null || viewPager != null) {
+        if (tabPagerAdapter != null && viewPager != null) {
             Fragment item = tabPagerAdapter.getItem(viewPager.getCurrentItem());
 
             if (item != null && item instanceof TabFocusListener) {

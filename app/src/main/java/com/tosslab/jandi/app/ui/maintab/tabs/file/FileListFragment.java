@@ -627,7 +627,11 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
             return;
         }
 
-        fileListPresenter.onRefreshFileInfo(fileId, commentCount);
+        try {
+            fileListPresenter.onRefreshFileInfo(fileId, commentCount);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onEvent(RefreshOldFileEvent event) {
