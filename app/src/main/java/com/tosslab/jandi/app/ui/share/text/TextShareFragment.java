@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.share.text;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
@@ -33,7 +33,6 @@ import com.tosslab.jandi.app.ui.share.MainShareActivity;
 import com.tosslab.jandi.app.ui.share.text.dagger.DaggerTextShareComponent;
 import com.tosslab.jandi.app.ui.share.text.dagger.TextShareModule;
 import com.tosslab.jandi.app.ui.share.text.presenter.TextSharePresenter;
-import com.tosslab.jandi.app.ui.share.views.ShareSelectTeamActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TextCutter;
@@ -186,11 +185,20 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     @OnClick(R.id.vg_team)
     void clickSelectTeam() {
-        LogUtil.e("team");
-        startActivity(new Intent(getActivity(), ShareSelectTeamActivity.class));
+        long teamId = textSharePresenterImpl.getTeamId();
+
+        if (teamId <= 0) {
+            teamId = -1;
+        }
+
+        startActivity(Henson.with(getContext())
+                .gotoShareSelectTeamActivity()
+                .selectedTeamId(teamId)
+                .build());
 
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.SharetoJandi, AnalyticsValue.Action.TeamSelect);
     }
+
     @OnClick(R.id.vg_share_content)
     void onContentClick() {
         ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
