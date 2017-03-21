@@ -44,6 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tv_file_detail_comment_user_name"
         android:layout_alignEnd="@+id/tv_file_detail_comment_user_name"
+        android:layout_alignLeft="@+id/tv_file_detail_comment_user_name"
+        android:layout_alignRight="@+id/tv_file_detail_comment_user_name"
         android:layout_alignStart="@+id/tv_file_detail_comment_user_name"
         android:layout_alignTop="@+id/tv_file_detail_comment_user_name"
         android:src="@drawable/line_gray" />
