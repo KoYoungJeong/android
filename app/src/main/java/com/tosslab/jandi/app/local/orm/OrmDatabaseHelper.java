@@ -162,23 +162,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, PushToken.class);
             createTable(connectionSource, PushHistory.class);
 
-//            createTable(connectionSource, InitialInfo.class);
-//            createTable(connectionSource, InitialInfo.Self.class);
-//            createTable(connectionSource, InitialInfo.Poll.class);
-//            createTable(connectionSource, InitialInfo.Mention.class);
-//            createTable(connectionSource, InitialInfo.TeamPlan.class);
-//
-//            createTable(connectionSource, Team.class);
-//            createTable(connectionSource, Folder.class);
-//            createTable(connectionSource, Topic.class);
-//            createTable(connectionSource, Topic.Announcement.class);
-//            createTable(connectionSource, Chat.class);
-//            createTable(connectionSource, Chat.LastMessage.class);
-//            createTable(connectionSource, Marker.class);
-//            createTable(connectionSource, Human.class);
-//            createTable(connectionSource, Human.Profile.class);
-//            createTable(connectionSource, Bot.class);
-
             createTable(connectionSource, RawInitialInfo.class);
             createTable(connectionSource, Rank.class);
 
@@ -290,18 +273,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API, () -> {
-//                        createTable(connectionSource, InitialInfo.class);
-//                        createTable(connectionSource, InitialInfo.Self.class);
-//                        createTable(connectionSource, Team.class);
-//                        createTable(connectionSource, Folder.class);
-//                        createTable(connectionSource, Topic.class);
-//                        createTable(connectionSource, Topic.Announcement.class);
-//                        createTable(connectionSource, Chat.class);
-//                        createTable(connectionSource, Chat.LastMessage.class);
-//                        createTable(connectionSource, Marker.class);
-//                        createTable(connectionSource, Human.class);
-//                        createTable(connectionSource, Human.Profile.class);
-//                        createTable(connectionSource, Bot.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_START_API_ROOM_MESSAGE_RELATION, () -> {
                         createTable(connectionSource, RoomLinkRelation.class);
@@ -336,51 +307,19 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                         createTable(connectionSource, SocketEvent.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO, () -> {
-//                        createTable(connectionSource, InitialInfo.Poll.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_POLL_INFO_HOT_FIX, () -> {
-
-//                        try {
-//                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-//                            dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN poll_id INTEGER;");
-//                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
-//                            updateBuilder.updateColumnExpression("poll_id", "1");
-//                            updateBuilder.update();
-
-//                        } catch (SQLException e) {
-//                            e.printStackTrace();
-//                        }
-
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_FILTER, () -> {
                         createTable(connectionSource, MemberRecentKeyword.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_BADGE_AT_MYPAGE, () -> {
-//                        try {
-//                            Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-//                            dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN mention_id INTEGER;");
-//                            UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
-//                            updateBuilder.updateColumnExpression("mention_id", "1");
-//                            updateBuilder.update();
-//
-//                        } catch (SQLException e) {
-//                            e.printStackTrace();
-//                        }
-
-//                        createTable(connectionSource, InitialInfo.Mention.class);
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ACCOUNT_INFO_ADD_EMAIL_FIELD, () -> {
                         Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
                         dao.executeRawNoArgs("ALTER TABLE `account_teams` ADD COLUMN email VARCHAR;");
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_ADD_STARTAPI_ADD_TEAM_PLAN, () -> {
-//                        createTable(connectionSource, InitialInfo.TeamPlan.class);
-//
-//                        Dao<InitialInfo, ?> dao = DaoManager.createDao(connectionSource, InitialInfo.class);
-//                        dao.executeRawNoArgs("ALTER TABLE `initial_info_base` ADD COLUMN teamPlan_id INTEGER;");
-//                        UpdateBuilder<InitialInfo, ?> updateBuilder = dao.updateBuilder();
-//                        updateBuilder.updateColumnExpression("teamPlan_id", "1");
-//                        updateBuilder.update();
                     }),
                     UpgradeChecker.create(() -> DATABASE_VERSION_MEMBER_AUTHORITY, () -> {
                         Dao<ResAccountInfo.UserTeam, ?> dao = DaoManager.createDao(connectionSource, ResAccountInfo.UserTeam.class);
@@ -516,6 +455,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     public void clearAllDataExceptLoginInfo() {
+        ConnectionSource connectionSource = getConnectionSource();
+
         clearTable(connectionSource, ResMessages.Link.class);
         clearTable(connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
         clearTable(connectionSource, ResMessages.CreateEvent.class);
@@ -549,7 +490,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(connectionSource, ResRoomInfo.class);
         clearTable(connectionSource, ResRoomInfo.MarkerInfo.class);
 
-
         clearTable(connectionSource, FileDetail.class);
 
         clearTable(connectionSource, UploadedFileInfo.class);
@@ -560,13 +500,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         // for parse
         clearTable(connectionSource, BadgeCount.class);
 
-        clearTable(connectionSource, ResAccessToken.class);
-
-        clearTable(connectionSource, PushHistory.class);
-
-        clearTable(connectionSource, RawInitialInfo.class);
-        clearTable(connectionSource, Rank.class);
-
         clearTable(connectionSource, Poll.class);
         clearTable(connectionSource, Poll.Item.class);
         clearTable(connectionSource, ResMessages.PollMessage.class);
@@ -574,7 +507,6 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(connectionSource, ResMessages.PollConnectInfo.class);
 
         clearTable(connectionSource, ReadyCommentForPoll.class);
-        clearTable(connectionSource, SocketEvent.class);
         clearTable(connectionSource, MemberRecentKeyword.class);
     }
 
