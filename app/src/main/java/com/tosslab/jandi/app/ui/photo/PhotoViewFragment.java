@@ -375,7 +375,7 @@ public class PhotoViewFragment extends Fragment {
                         progress -> Observable.just(progress)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(it -> {
-                                    progressBar.setMax(100);
+                                    LogUtil.e(it + "");
                                     progressBar.setProgress(it);
                                     tvPercentage.setText(String.format("%d %%", progress));
                                 }),
@@ -475,7 +475,6 @@ public class PhotoViewFragment extends Fragment {
                         progress -> Observable.just(progress)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(it -> {
-                                    progressBar.setMax(100);
                                     progressBar.setProgress(it);
                                     tvPercentage.setText(String.format("%d %%", progress));
                                 }),
