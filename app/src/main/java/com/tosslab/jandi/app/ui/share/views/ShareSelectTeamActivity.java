@@ -47,6 +47,7 @@ public class ShareSelectTeamActivity extends BaseAppCompatActivity implements Sh
     @Bind(R.id.lv_select_team)
     RecyclerView lvSelectTeam;
 
+    @Nullable
     @InjectExtra
     long selectedTeamId = -1;
 
