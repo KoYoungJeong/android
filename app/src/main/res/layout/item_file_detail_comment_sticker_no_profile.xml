@@ -17,6 +17,8 @@
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginEnd="@dimen/jandi_file_detail_padding_sides"
+        android:layout_marginLeft="46dp"
+        android:layout_marginRight="@dimen/jandi_file_detail_padding_sides"
         android:layout_marginStart="46dp"
         android:layout_marginTop="12dp" />
 
