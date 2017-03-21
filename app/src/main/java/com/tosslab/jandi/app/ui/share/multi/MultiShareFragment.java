@@ -428,7 +428,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setRoomName(String roomName) {
         tvRoomName.setText(roomName);
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
