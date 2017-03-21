@@ -56,7 +56,8 @@ public class InviteDialogExecutor {
     public void executeInvite(Context context) {
         try {
             TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-            if (teamInfoLoader.getUserList().size() > 500) {
+
+            if (getUserCount() > 500) {
                 showErrorExceedFreeMembersDialog(context);
                 return;
             }
@@ -88,6 +89,13 @@ public class InviteDialogExecutor {
             e.printStackTrace();
             showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
         }
+    }
+
+    private int getUserCount() {
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .count()
+                .toBlocking().lastOrDefault(0) - 1;
     }
 
     public void showInvitationDialog(Context context, boolean isNotAvailButTeamOwner) {

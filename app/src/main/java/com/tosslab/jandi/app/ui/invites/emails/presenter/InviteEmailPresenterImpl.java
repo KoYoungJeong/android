@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterDataModel;
 import com.tosslab.jandi.app.ui.invites.emails.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.emails.vo.InviteEmailVO;
@@ -256,13 +257,19 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     }
 
     private boolean isExceedFreeMembers(int invitationCnt) {
-        TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-        long memberCount = teamInfoLoader.getUserList().size();
+        long memberCount = getUserCount();
         memberCount = memberCount + invitationCnt;
         if (memberCount > 500) {
             return true;
         }
         return false;
+    }
+
+    private int getUserCount() {
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .count()
+                .toBlocking().lastOrDefault(0) - 1;
     }
 
 }
