@@ -13,8 +13,14 @@ public class ResTeamDetailInfo {
     @JsonProperty("team")
     private InviteTeam inviteTeam;
 
+    private Member member;
+
     public InviteTeam getInviteTeam() {
         return inviteTeam;
+    }
+
+    public Member getMember() {
+        return member;
     }
 
     @Override
@@ -139,4 +145,19 @@ public class ResTeamDetailInfo {
                     '}';
         }
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Member {
+        private long id;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+    }
+
 }

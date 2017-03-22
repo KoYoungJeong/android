@@ -2,8 +2,8 @@ package com.tosslab.jandi.app.utils.analytics.sprinkler.model;
 
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IMemberId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPollId;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPropertyMemberId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITeamId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITopicId;
 
@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITopicId
  */
 
 public class SprinklrPollDeleted extends MainSprinklrModel
-        implements IMemberId, IPollId, ITeamId, ITopicId {
+        implements IPropertyMemberId, IPollId, ITeamId, ITopicId {
 
     private SprinklrPollDeleted() {
         super(SprinklerEvents.PollDeleted, true, true);
@@ -24,7 +24,7 @@ public class SprinklrPollDeleted extends MainSprinklrModel
 
     public static void sendLog(long memberId, long pollId, long teamId, long topicId) {
         new SprinklrPollDeleted()
-                .setMemberId(memberId)
+                .setPropertyMemberId(memberId)
                 .setPollId(pollId)
                 .setTeamId(teamId)
                 .setTopicId(topicId)
@@ -32,7 +32,7 @@ public class SprinklrPollDeleted extends MainSprinklrModel
     }
 
     @Override
-    public SprinklrPollDeleted setMemberId(long memberId) {
+    public SprinklrPollDeleted setPropertyMemberId(long memberId) {
         setProperty(PropertyKey.MemberId, memberId);
         return this;
     }
