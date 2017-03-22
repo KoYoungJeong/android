@@ -136,7 +136,6 @@ public class SocketEmitModel {
             Topic topic = object.getData().getTopic();
             long creatorId = topic.getCreatorId();
             if (AccountRepository.getRepository().isMine(creatorId)) {
-
                 long topicId = topic.getId();
                 String accessToken = TokenUtil.getAccessToken();
                 return SocketUpdateRoom.join(accessToken, creatorId, topicId);

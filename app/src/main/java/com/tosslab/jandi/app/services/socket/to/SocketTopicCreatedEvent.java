@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.services.socket.to;
 
+import android.support.annotation.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.start.FolderItem;
 import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
@@ -80,12 +83,23 @@ public class SocketTopicCreatedEvent implements EventHistoryInfo {
     public static class Data {
         private Topic topic;
 
+        @Nullable
+        private FolderItem folderItem;
+
         public Topic getTopic() {
             return topic;
         }
 
         public void setTopic(Topic topic) {
             this.topic = topic;
+        }
+
+        public FolderItem getFolderItem() {
+            return folderItem;
+        }
+
+        public void setFolderItem(FolderItem folderItem) {
+            this.folderItem = folderItem;
         }
     }
 }

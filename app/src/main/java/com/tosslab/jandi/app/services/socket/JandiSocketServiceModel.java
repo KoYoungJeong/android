@@ -64,6 +64,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
+import com.tosslab.jandi.app.network.models.start.FolderItem;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.start.Mention;
 import com.tosslab.jandi.app.network.models.start.TeamUsage;
@@ -1188,12 +1189,19 @@ public class JandiSocketServiceModel {
             saveEvent(event);
 
             Topic topic = event.getData().getTopic();
+            FolderItem folderItem = event.getData().getFolderItem();
 
             if (topic.getCreatorId() == TeamInfoLoader.getInstance().getMyId()) {
                 topic.setSubscribe(true);
                 topic.setIsJoined(true);
             }
             TopicRepository.getInstance(event.getTeamId()).addTopic(topic);
+
+            if (folderItem != null) {
+                FolderRepository.getInstance(event.getTeamId())
+                        .addTopic(folderItem.getFolderId(), topic.getId());
+            }
+
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new RetrieveTopicListEvent());
