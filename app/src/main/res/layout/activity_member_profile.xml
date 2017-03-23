@@ -3,61 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/vg_member_profile_img_large"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black">
-
-        <ImageView
-            android:id="@+id/iv_member_profile_img_large"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <View
-            android:id="@+id/v_member_profile_img_large_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/jandi_member_profile_img_overlay" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@id/vg_member_profile_img_large">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <View
-                android:id="@+id/v_member_profile_disable"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/alert_icon_warning"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_member_profile_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:lineSpacingExtra="5dp"
-                android:maxLines="3"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </FrameLayout>
-
     <com.tosslab.jandi.app.views.SwipeExitLayout
         android:id="@+id/vg_swipe_exit_layout"
         android:layout_width="match_parent"
@@ -68,149 +13,382 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <View
+                android:id="@+id/v_background_color"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/rgb_88c10e" />
+
+            <View
+                android:id="@+id/v_opacity_color"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/jandi_transparent_black_25p" />
+
+            <RelativeLayout
+                android:id="@+id/vg_actionbar_area"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp">
+
+                <ImageView
+                    android:id="@+id/iv_member_profile_close_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="56dp"
+                    android:scaleType="center"
+                    android:src="@drawable/actionbar_icon_remove" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="4dp">
+
+                    <ImageView
+                        android:id="@+id/iv_member_profile_star_btn"
+                        android:layout_width="48dp"
+                        android:layout_height="56dp"
+                        android:scaleType="center"
+                        android:src="@drawable/btn_action_icon_star" />
+
+                    <ImageView
+                        android:id="@+id/iv_member_profile_edit_btn"
+                        android:layout_width="48dp"
+                        android:layout_height="56dp"
+                        android:layout_marginRight="8dp"
+                        android:scaleType="center"
+                        android:src="@drawable/actionbar_icon_edit" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
             <LinearLayout
-                android:id="@+id/vg_member_profile_detail"
+                android:id="@+id/vg_profile_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@android:color/white"
-                android:orientation="vertical">
+                android:layout_above="@+id/vg_bottom"
+                android:layout_below="@id/vg_actionbar_area"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_member_profile_img_small"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="10dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="230dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:id="@+id/vg_profile_star_and_level"
-                        android:layout_width="wrap_content"
-                        android:layout_height="46dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:id="@+id/tv_member_profile_team_level"
-                            android:layout_width="wrap_content"
-                            android:layout_height="17dp"
-                            android:background="@drawable/bg_user_level_team_admin"
-                            android:gravity="center"
-                            android:textSize="@dimen/jandi_text_size_11sp" />
-
-                        <ImageView
-                            android:id="@+id/btn_member_profile_star"
-                            android:layout_width="40dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:paddingBottom="16dp"
-                            android:paddingTop="16dp"
-                            android:src="@drawable/jandi_member_profile_star_selector" />
-                    </LinearLayout>
-
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/tv_member_profile_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/vg_profile_star_and_level"
-                        android:layout_marginBottom="17dp"
-                        android:layout_marginLeft="35dp"
-                        android:layout_marginRight="35dp"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center"
-                        android:lineSpacingExtra="2dp"
-                        android:maxLines="2"
-                        android:textColor="@color/jandi_member_profile_user_name"
-                        android:textSize="20dp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_member_profile_division"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_member_profile_name"
-                        android:layout_marginLeft="35dp"
-                        android:layout_marginRight="35dp"
+                        android:layout_marginTop="15dp"
                         android:ellipsize="end"
-                        android:gravity="center"
                         android:maxLines="2"
-                        android:textColor="@color/jandi_text_light"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/tv_member_profile_position"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/tv_member_profile_division"
-                        android:layout_marginLeft="35dp"
-                        android:layout_marginRight="35dp"
-                        android:layout_marginTop="5dp"
-                        android:ellipsize="end"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:textColor="@color/jandi_text_light"
-                        android:textSize="13sp" />
-
-                    <android.support.v4.widget.Space
-                        android:id="@+id/sp_member_profile_seperator"
-                        android:layout_width="1dp"
-                        android:layout_height="15dp"
-                        android:layout_below="@+id/tv_member_profile_position" />
-
-                    <TextView
-                        android:id="@+id/tv_member_profile_phone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="23dp"
-                        android:layout_below="@+id/sp_member_profile_seperator"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="4dp"
-                        android:background="@drawable/bg_profile_info"
-                        android:textColor="@color/jandi_text_light"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/tv_member_profile_email"
-                        android:layout_width="wrap_content"
-                        android:layout_height="23dp"
-                        android:layout_below="@+id/tv_member_profile_phone"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center"
-                        android:background="@drawable/bg_profile_info"
-                        android:gravity="center"
-                        android:textColor="@color/jandi_text_light"
-                        android:textSize="13sp" />
-
+                        android:text="이름입니다. 이름입니다. 이름입니다 이름입니다. 이름입니다."
+                        android:textColor="@color/white"
+                        android:textSize="24dp" />
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:id="@+id/vg_member_profile_buttons"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/jandi_member_profile_buttons_height"
-                    android:orientation="horizontal" />
+                <TextView
+                    android:id="@+id/tv_member_profile_team_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/bg_user_level_for_profile"
+                    android:gravity="center"
+                    android:text="정회원"
+                    android:textColor="@color/white"
+                    android:textSize="11dp" />
 
+                <TextView
+                    android:id="@+id/tv_member_profile_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="17dp"
+                    android:lineSpacingExtra="1dp"
+                    android:text="정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원정회원"
+                    android:textColor="@color/jandi_transparent_white_70p"
+                    android:textSize="11dp" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/iv_member_profile_img_small"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_alignTop="@id/vg_member_profile_detail"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="-40dp" />
+            <LinearLayout
+                android:id="@+id/vg_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/tv_member_profile_division"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Android Team"
+                    android:textColor="@color/white"
+                    android:textSize="13dp" />
+
+                <TextView
+                    android:id="@+id/tv_member_profile_position"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="Android Developer"
+                    android:textColor="@color/white"
+                    android:textSize="13dp" />
+
+                <View
+                    android:id="@+id/v_button_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/jandi_transparent_white_20p" />
+
+                <LinearLayout
+                    android:id="@+id/vg_profile_resend_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="49.5dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_profile_mail_v2" />
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_resend_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="14dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/jandi_resend_invitation"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/jandi_transparent_white_20p" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_profile_mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="49.5dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_profile_mobile_v2" />
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="14dp"
+                            android:gravity="center_vertical"
+                            android:text="010-0000-0000"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/jandi_transparent_white_20p" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_profile_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="49.5dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_profile_mail_v2" />
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="14dp"
+                            android:gravity="center_vertical"
+                            android:text="tee.kim@tosslab.com"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/jandi_transparent_white_20p" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_profile_cancel_invitation"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="49.5dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_profile_cancel_v2" />
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_cancel_invitation"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="14dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/jandi_cancel_invitation"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/jandi_transparent_white_20p" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_profile_1_1_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="49.5dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_profile_message_v2" />
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_message"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="14dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/jandi_1_1_message"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/jandi_transparent_white_20p" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_profile_mentions"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="49.5dp"
+                        android:orientation="horizontal"
+                        android:paddingLeft="24dp"
+                        android:paddingRight="24dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/icon_profile_mention_v2" />
+
+                        <TextView
+                            android:id="@+id/tv_member_profile_mention"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="14dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/jandi_mention_mentions"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/jandi_transparent_white_20p" />
+                </LinearLayout>
+            </LinearLayout>
         </RelativeLayout>
+
 
     </com.tosslab.jandi.app.views.SwipeExitLayout>
 
-    <ImageView
-        android:id="@+id/btn_member_profile_close"
-        android:layout_width="@dimen/jandi_member_profile_btn_close_width"
-        android:layout_height="@dimen/jandi_member_profile_btn_close_height"
-        android:layout_marginTop="@dimen/jandi_actionbar_overlay_top_margin"
-        android:scaleType="center"
-        android:src="@drawable/actionbar_icon_remove" />
 
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/iv_member_profile_img_full"
@@ -219,4 +397,5 @@
         android:background="@android:color/black"
         android:scaleType="fitCenter"
         android:visibility="gone" />
+
 </RelativeLayout>

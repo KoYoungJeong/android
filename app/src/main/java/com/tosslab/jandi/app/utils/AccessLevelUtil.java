@@ -102,4 +102,23 @@ public class AccessLevelUtil {
 
         textView.setPaintFlags(textView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
     }
+
+    public static void setTextOfLevelInProfile(Level level, TextView textView) {
+        Resources resources = textView.getResources();
+        switch (level) {
+            case Guest:
+                textView.setText(R.string.common_authority_title_associate);
+                break;
+            case Owner:
+                textView.setText(R.string.common_authority_title_owner);
+                break;
+            case Admin:
+                textView.setText(R.string.common_authority_title_manager);
+                break;
+            default:
+            case Member:
+                textView.setText(R.string.common_authority_title_member);
+                break;
+        }
+    }
 }

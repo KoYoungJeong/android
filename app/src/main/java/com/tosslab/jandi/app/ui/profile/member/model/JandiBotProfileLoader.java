@@ -67,9 +67,9 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
-        int defaultColor = context.getResources().getColor(R.color.jandi_primary_color);
-        vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+    public void setBackgroundColor(View backgroundColor, View opacity, Level level, Member member) {
+        backgroundColor.setBackgroundColor(0xff11456b);
+        opacity.setBackgroundColor(0x40000000);
     }
 
     @Override

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="account_password_change">""</string>
 	<string name="app_name">"JANDI"</string>
 	<string name="commcon_search_result_sharedin">"共有範囲"</string>
 	<string name="comment">"コメント"</string>
+	<string name="common_account_name">""</string>
 	<string name="common_accthome_createteam">"新しいチーム作成"</string>
 	<string name="common_accthome_createteamguide">"参加中のチームがありません。\n下の「新しいチーム作成」をタッチし、\nJANDIを体験してみてください。"</string>
 	<string name="common_accthome_jandiacct">"JANDIアカウント"</string>
@@ -241,8 +243,8 @@
 	<string name="jandi_canceled">"キャンセルされました"</string>
 	<string name="jandi_cannot_connect_service_try_again">"JANDIに接続できません。後で再起動してください。"</string>
 	<string name="jandi_cannot_find_messages">"一致するメッセージがありません :"</string>
-	<string name="jandi_cannot_find_search_result_1">"ファイルがありません。"</string>
-	<string name="jandi_cannot_find_search_result_2">"アップロードして、会話の中で共有しましょう"</string>
+	<string name="jandi_cannot_find_search_result_1">"<b>アップロードしたすべてのファイルをすばやく簡単に検索できます。</b>"</string>
+	<string name="jandi_cannot_find_search_result_2">"トピックの[+]アイコンまたは1：1の会話をタップしてファイルを共有します。"</string>
 	<string name="jandi_cannot_find_search_result_old">"ファイルが見つかりません"</string>
 	<string name="jandi_change_passcode">"パスコード変更"</string>
 	<string name="jandi_character">"キャラクター"</string>
@@ -479,9 +481,8 @@
 	<string name="jandi_mention_no_mentions">"チームメンバーからメンションされたけんがありません。
   メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
 	<string name="jandi_mention_push_message">"%sさんからのメンション"</string>
-	<string name="jandi_mentions_are_empty">"チームメンバーからメンションされたけんがありません。
- メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
-	<string name="jandi_mentions_are_empty_result_2">" "</string>
+	<string name="jandi_mentions_are_empty">"<b>言及されたすべてのメッセージを一目で確認してください。</b>"</string>
+	<string name="jandi_mentions_are_empty_result_2">"あなたのメッセージの中の特定のメンバーに通知するための@メンバ。"</string>
 	<string name="jandi_menu_room_selection">"トークルーム選択_x007f_"</string>
 	<string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_ask_about_deleting">"本当に削除しますか？元には戻せません"</string>
@@ -559,8 +560,8 @@
 	<string name="jandi_poll_anonymous">"匿名投票"</string>
 	<string name="jandi_poll_create">"新しい投票を作成する"</string>
 	<string name="jandi_poll_deleted">"投票を削除しました。"</string>
-	<string name="jandi_poll_empty_1">"実施中の投票がありません。"</string>
-	<string name="jandi_poll_empty_2">"\nトピックで「＋」を押し、投票を作成してください。"</string>
+	<string name="jandi_poll_empty_1">"<b>投票リストを確認してください。</b>"</string>
+	<string name="jandi_poll_empty_2">"トピックの[+]アイコンをタップして投票を開始してください。"</string>
 	<string name="jandi_poll_finished_with_most">"投票が終了しました。最多得票の項目は、「%s」です。"</string>
 	<string name="jandi_poll_finished_without_participants">"投票が終了しました。参加者がいません。"</string>
 	<string name="jandi_poll_finishedat">"終了時間"</string>
@@ -697,18 +698,18 @@
 	<string name="jandi_starred">"お気に入りに追加"</string>
 	<string name="jandi_starred_all">"全ての種類"</string>
 	<string name="jandi_starred_files">"ファイル"</string>
-	<string name="jandi_starred_no_all">"スター付きのメッセージやファイルがありません"</string>
-	<string name="jandi_starred_no_all_result_2">""</string>
-	<string name="jandi_starred_no_file">"スター付きのファイルなし"</string>
-	<string name="jandi_starred_no_file_result_2">""</string>
+	<string name="jandi_starred_no_all">"<b>あなたのスター付きメッセージとファイルをチェックしてください。</b>"</string>
+	<string name="jandi_starred_no_all_result_2">"メッセージを長くタップするか、ファイルにスターを付けると、ここに保存されます。"</string>
+	<string name="jandi_starred_no_file">"<b>スター付きアイテムをすべて確認してください。</b>"</string>
+	<string name="jandi_starred_no_file_result_2">"ファイルの横にあるスターアイコンをタップして、ここに保存します。"</string>
 	<string name="jandi_starred_star">"スター付き"</string>
 	<string name="jandi_starred_stars">"スター付き"</string>
 	<string name="jandi_starred_undo">"取り消し"</string>
 	<string name="jandi_starred_unstar">"スター解除"</string>
 	<string name="jandi_starred_unstar_from_item">"スター付きを解除しましょうか？"</string>
 	<string name="jandi_starred_unstarred">"スターなし"</string>
-	<string name="jandi_start_direct_messages_1">"<b>メッセージ送ったり、これまでの会話履歴を見るには</b>"</string>
-	<string name="jandi_start_direct_messages_2">""</string>
+	<string name="jandi_start_direct_messages_1">"<b>チームメンバーとの会話をご覧ください。</b>"</string>
+	<string name="jandi_start_direct_messages_2">"選択したチームメンバーとの会話を開始するには、画面上の[+]アイコンをタップします。"</string>
 	<string name="jandi_storage_access_permission">"ストレージにアクセスするにはアプリの権限を許可してください。"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共有リンクがクリップボードにコピーされました"</string>
 	<string name="jandi_success_disable_external_link">"共有用リンクが削除されました"</string>
@@ -838,6 +839,16 @@
 	<string name="mypage_editprofile_phonenumber">"電話番号を入力してください"</string>
 	<string name="mypage_editprofile_statusmessage">"ステータスメッセージを入力"</string>
 	<string name="mypage_mention_newmentionalert">"新しいメンション"</string>
+	<string name="password_change_done">""</string>
+	<string name="password_current_type">""</string>
+	<string name="password_current_type_alert">""</string>
+	<string name="password_current_type_info">""</string>
+	<string name="password_forgot">""</string>
+	<string name="password_forgot_email_type_info">""</string>
+	<string name="password_new_again_type">""</string>
+	<string name="password_new_type">""</string>
+	<string name="password_new_type_confi_alert">""</string>
+	<string name="password_new_type_info">""</string>
 	<string name="photo">"写真"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"無料チームの場合チーム当たり最大500人まで招待することができます<br>プランをアップグレードして、より良いサービスを使用してみてください。</br>"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"招待可能なメンバー数を超えました。"</string>
@@ -850,6 +861,7 @@
 	<string name="primary_email_info_msg">"あなたのJANDIのアカウントに登録されたプライマリメールアドレスにメールが送られます。メールアドレスは先に認証される必要があります。"</string>
 	<string name="room_member_disabled_alert_body">"メッセージの作成ができません"</string>
 	<string name="room_member_disabled_alert_title">"ブロックされたメンバーです。"</string>
+	<string name="security_setting">""</string>
 	<string name="sent_auth_email">"メールを確認して、メールの中の登録ボタンから登録してください。"</string>
 	<string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
 	<string name="team_adminmenu_title">"管理者メニュー"</string>

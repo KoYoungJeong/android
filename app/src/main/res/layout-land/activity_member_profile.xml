@@ -201,7 +201,7 @@
     </com.tosslab.jandi.app.views.SwipeExitLayout>
 
     <ImageView
-        android:id="@+id/btn_member_profile_close"
+        android:id="@+id/iv_member_profile_close_btn"
         android:layout_width="@dimen/jandi_member_profile_btn_close_width"
         android:layout_height="@dimen/jandi_member_profile_btn_close_height"
         android:layout_marginTop="@dimen/jandi_actionbar_overlay_top_margin"

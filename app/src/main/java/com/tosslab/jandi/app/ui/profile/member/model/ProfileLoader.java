@@ -26,7 +26,7 @@ public interface ProfileLoader {
 
     boolean hasChangedProfileImage(Member member);
 
-    void setBlurBackgroundColor(View vProfileImageLargeOverlay);
+    void setBackgroundColor(View backgroundColor, View opacity, Level level, Member member);
 
     void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape);
 }

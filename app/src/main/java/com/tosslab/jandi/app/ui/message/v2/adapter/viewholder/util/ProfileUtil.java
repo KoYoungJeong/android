@@ -48,8 +48,10 @@ public class ProfileUtil {
 
         tvName.setText(entity.getName());
         if (TeamInfoLoader.getInstance().isUser(fromEntityId)) {
-            ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Image)));
-            tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Name)));
+            ivProfile.setOnClickListener(v ->
+                    EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Image)));
+            tvName.setOnClickListener(v ->
+                    EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Name)));
         } else {
             ivProfile.setOnClickListener(null);
             tvName.setOnClickListener(null);
@@ -88,8 +90,10 @@ public class ProfileUtil {
         }
 
         tvName.setText(entity.getName());
-        ivProfile.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Image)));
-        tvName.setOnClickListener(v -> EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Name)));
+        ivProfile.setOnClickListener(v ->
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Image)));
+        tvName.setOnClickListener(v ->
+                EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Name)));
     }
 
     public static boolean isChangedPhoto(String url) {
