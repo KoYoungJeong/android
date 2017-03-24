@@ -106,7 +106,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Bind(R.id.iv_multi_share_previous)
     ImageView ivPreviousScroll;
-
     @Bind(R.id.iv_multi_share_next)
     ImageView ivNextScroll;
 
@@ -129,8 +128,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     ViewGroup vgMultiShareTeam;
     @Bind(R.id.vg_multi_share_room)
     ViewGroup vgMultiShareRoom;
-    @Bind(R.id.v_empty_action_bar)
-    View vEmptyActionBar;
+
 
     @Inject
     ShareAdapterDataView shareAdapterDataView;
@@ -148,6 +146,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     private BottomSheetBehavior bottomSheetBehavior;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
+    private int viewPagerCurrentPosition = 0;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -249,17 +248,17 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         vpShare.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (ivPreviousScroll.getAnimation() != null) {
-                    ivPreviousScroll.getAnimation().reset();
-                }
-
-                if (ivNextScroll.getAnimation() != null) {
-                    ivNextScroll.getAnimation().reset();
-                }
-
-                if (scrollButtonPublishSubject != null) {
-                    scrollButtonPublishSubject.onNext(new Object());
-                }
+//                if (ivPreviousScroll.getAnimation() != null) {
+//                    ivPreviousScroll.getAnimation().reset();
+//                }
+//
+//                if (ivNextScroll.getAnimation() != null) {
+//                    ivNextScroll.getAnimation().reset();
+//                }
+//
+//                if (scrollButtonPublishSubject != null) {
+//                    scrollButtonPublishSubject.onNext(new Object());
+//                }
             }
 
             @Override
@@ -307,48 +306,53 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void setUpScrollButton(int position, int count) {
-        if (position == 0) {
-            ivPreviousScroll.setVisibility(View.GONE);
-        } else {
+        viewPagerCurrentPosition = position;
+        if (position != 0) {
             ivPreviousScroll.setVisibility(View.VISIBLE);
-        }
-
-        if (position == count - 1) {
-            ivNextScroll.setVisibility(View.GONE);
         } else {
-            ivNextScroll.setVisibility(View.VISIBLE);
+            ivPreviousScroll.setVisibility(View.GONE);
         }
 
-        scrollButtonPublishSubject = PublishSubject.create();
-        subscribe = scrollButtonPublishSubject.throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> {
-                    if (position == 0 && (ivPreviousScroll.getVisibility() != View.GONE)) {
-                        AlphaAnimation animation = new AlphaAnimation(1f, 0f);
-                        animation.setDuration(200);
-                        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-                        animation.setAnimationListener(new SimpleEndAnimationListener() {
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                ivPreviousScroll.setVisibility(View.GONE);
-                            }
-                        });
-                        ivPreviousScroll.startAnimation(animation);
-                    }
+        if (position != count - 1) {
+            ivNextScroll.setVisibility(View.VISIBLE);
+        } else {
+            ivNextScroll.setVisibility(View.GONE);
+        }
 
-                    if (position == count - 1 && (ivNextScroll.getVisibility() != View.GONE)) {
-                        AlphaAnimation animation = new AlphaAnimation(1f, 0f);
-                        animation.setDuration(200);
-                        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-                        animation.setAnimationListener(new SimpleEndAnimationListener() {
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                ivNextScroll.setVisibility(View.GONE);
-                            }
-                        });
-                        ivNextScroll.startAnimation(animation);
-                    }
-                });
+        if (scrollButtonPublishSubject == null) {
+            scrollButtonPublishSubject = PublishSubject.create();
+            subscribe = scrollButtonPublishSubject.throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(o -> {
+                        if (viewPagerCurrentPosition != 0) {
+                            AlphaAnimation animation = new AlphaAnimation(1f, 0f);
+                            animation.setDuration(200);
+                            animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+                            animation.setAnimationListener(new SimpleEndAnimationListener() {
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    ivPreviousScroll.setVisibility(View.GONE);
+                                }
+                            });
+                            ivPreviousScroll.startAnimation(animation);
+                        }
+
+                        if (viewPagerCurrentPosition != count - 1) {
+                            AlphaAnimation animation = new AlphaAnimation(1f, 0f);
+                            animation.setDuration(200);
+                            animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+                            animation.setAnimationListener(new SimpleEndAnimationListener() {
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    ivNextScroll.setVisibility(View.GONE);
+                                }
+                            });
+                            ivNextScroll.startAnimation(animation);
+                        }
+                    });
+        }
+
+        scrollButtonPublishSubject.onNext(new Object());
     }
 
     @OnClick(value = {R.id.iv_multi_share_previous, R.id.iv_multi_share_next})
@@ -674,14 +678,14 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             fileShareInteractor.onFocusContent(false);
             RelativeLayout.LayoutParams nextScrollLayoutParams =
                     (RelativeLayout.LayoutParams) ivNextScroll.getLayoutParams();
-            nextScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(100.0f), 0, 0);
+            nextScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(70.0f), 0, 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 nextScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
             }
             ivNextScroll.setLayoutParams(nextScrollLayoutParams);
             RelativeLayout.LayoutParams prevScrollLayoutParams =
                     (RelativeLayout.LayoutParams) ivPreviousScroll.getLayoutParams();
-            prevScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(100.0f), 0, 0);
+            prevScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(70.0f), 0, 0);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 prevScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
             }
