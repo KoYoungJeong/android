@@ -49,7 +49,6 @@ public class RoomMarkerRepository extends LockTemplate {
                 }
 
                 return chat.getMarkers();
-
             } else if (TopicRepository.getInstance(teamId).isTopic(roomId)) {
                 Topic topic = TopicRepository.getInstance(teamId).getTopic(roomId);
                 if (topic.getMarkers() == null) {

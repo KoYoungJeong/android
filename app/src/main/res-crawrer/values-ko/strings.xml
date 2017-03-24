@@ -243,7 +243,7 @@
 	<string name="jandi_back">"뒤로"</string>
 	<string name="jandi_baidu_app_store">"바이두 앱 스토어"</string>
 	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나,
-  잔디 Connect 메시지를 전달합니다."</string>
+잔디 Connect 메시지를 전달합니다."</string>
 	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다."</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_browse_team">"팀으로 가기"</string>

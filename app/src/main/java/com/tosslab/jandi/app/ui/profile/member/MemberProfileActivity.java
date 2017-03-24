@@ -8,7 +8,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -235,7 +234,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         initSwipeLayout();
 
 
-        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel, isLandscape());
+        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel);
         profileLoader.setName(tvProfileName, member);
         profileLoader.setDescription(tvProfileDescription, member);
         profileLoader.setProfileInfo(tvProfileDivision, tvProfilePosition, member);
@@ -315,7 +314,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
         }
 
-        profileLoader.setStarButton(ivMemberProfileStarBtn, member, tvTeamLevel, isLandscape());
+        profileLoader.setStarButton(ivMemberProfileStarBtn, member, tvTeamLevel);
 
         addButtons(member);
 
@@ -828,10 +827,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private boolean isMe() {
         return TeamInfoLoader.getInstance().getMyId() == memberId;
-    }
-
-    private boolean isLandscape() {
-        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     private AnalyticsValue.Screen getScreen() {

@@ -28,14 +28,15 @@ public class JandiBotProfileLoader implements ProfileLoader {
 
     @Override
     public void setDescription(TextView tvProfileDescription, Member member) {
-        tvProfileDescription.setText(R.string.common_profilemodal_jandi_botstatus);
+        String helloJandi = context.getString(R.string.common_profilemodal_jandi_botstatus);
+        String jandibotRole = context.getString(R.string.jandi_bot_role);
+        tvProfileDescription.setText(helloJandi + "\n" + jandibotRole);
+
     }
 
     @Override
     public void setProfileInfo(TextView tvProfileDivision, TextView tvProfilePosition, Member member) {
-        tvProfileDivision.setText(R.string.jandi_bot_role);
-        tvProfileDivision.setMaxLines(3);
-
+        tvProfileDivision.setVisibility(View.GONE);
         tvProfilePosition.setVisibility(View.GONE);
     }
 
@@ -50,7 +51,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         btnProfileStar.setVisibility(View.VISIBLE);
         btnProfileStar.setEnabled(true);
@@ -73,7 +74,7 @@ public class JandiBotProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape) {
+    public void setLevel(Level level, TextView tvTeamLevel) {
         tvTeamLevel.setVisibility(View.INVISIBLE);
     }
 

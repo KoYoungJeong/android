@@ -20,7 +20,7 @@ public interface ProfileLoader {
 
     void loadFullThumb(PhotoView ivProfileImageFull, String uri);
 
-    void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape);
+    void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel);
 
     boolean isEnabled(Member member);
 
@@ -28,5 +28,5 @@ public interface ProfileLoader {
 
     void setBackgroundColor(View backgroundColor, View opacity, Level level, Member member);
 
-    void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape);
+    void setLevel(Level level, TextView tvTeamLevel);
 }
