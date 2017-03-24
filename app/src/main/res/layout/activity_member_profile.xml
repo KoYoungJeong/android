@@ -63,6 +63,7 @@
 
             </RelativeLayout>
 
+
             <LinearLayout
                 android:id="@+id/vg_profile_content"
                 android:layout_width="match_parent"
@@ -75,6 +76,7 @@
 
                 <ImageView
                     android:id="@+id/iv_member_profile_img_small"
+                    android:layout_marginLeft="-10dp"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginTop="10dp" />

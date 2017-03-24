@@ -232,7 +232,6 @@
 
         <activity
             android:name=".ui.profile.member.MemberProfileActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="fullUser"
             android:theme="@style/Theme.AppCompat.Translucent" />
 
