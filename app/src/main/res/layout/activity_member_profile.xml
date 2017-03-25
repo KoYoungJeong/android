@@ -63,23 +63,24 @@
 
             </RelativeLayout>
 
+            <ImageView
+                android:id="@+id/iv_member_profile_img_small"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/vg_actionbar_area"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp" />
 
             <LinearLayout
                 android:id="@+id/vg_profile_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/vg_bottom"
-                android:layout_below="@id/vg_actionbar_area"
+                android:layout_below="@id/iv_member_profile_img_small"
                 android:orientation="vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp">
 
-                <ImageView
-                    android:id="@+id/iv_member_profile_img_small"
-                    android:layout_marginLeft="-10dp"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="10dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -152,7 +153,7 @@
                 <View
                     android:id="@+id/v_button_divider"
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="0.3dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="20dp"

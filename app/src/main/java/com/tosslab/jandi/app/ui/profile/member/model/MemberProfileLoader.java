@@ -61,7 +61,7 @@ public class MemberProfileLoader implements ProfileLoader {
     public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
         String profileImageUrl = member.getPhotoUrl();
         ImageUtil.loadProfileImage(
-                ivProfileImageSmall, profileImageUrl, R.drawable.profile_img);
+                ivProfileImageSmall, profileImageUrl, R.drawable.preview_img);
     }
 
     @Override
