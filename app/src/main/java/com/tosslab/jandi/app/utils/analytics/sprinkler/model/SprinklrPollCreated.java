@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.utils.analytics.sprinkler.model;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPollId;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPropertyMemberId;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPropertyValueMemberId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITeamId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITopicId;
 
@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITopicId
  */
 
 public class SprinklrPollCreated extends MainSprinklrModel
-        implements ITeamId, IPropertyMemberId, ITopicId, IPollId {
+        implements ITeamId, IPropertyValueMemberId, ITopicId, IPollId {
 
     private SprinklrPollCreated() {
         super(SprinklerEvents.PollCreated, true, true);

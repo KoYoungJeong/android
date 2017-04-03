@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.utils.analytics.sprinkler.model;
 
 import com.tosslab.jandi.app.utils.analytics.sprinkler.PropertyKey;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.SprinklerEvents;
-import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPropertyMemberId;
+import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.IPropertyValueMemberId;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITeamId;
 
 /**
@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.Properties.ITeamId;
  */
 
 public class SprinklrInvitationAccept extends MainSprinklrModel
-        implements ITeamId, IPropertyMemberId {
+        implements ITeamId, IPropertyValueMemberId {
     private SprinklrInvitationAccept() {
         super(SprinklerEvents.TeamInvitationAccept, true, true);
     }
