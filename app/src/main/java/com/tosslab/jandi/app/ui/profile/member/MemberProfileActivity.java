@@ -138,7 +138,9 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Bind(R.id.vg_profile_mentions)
     ViewGroup vgProfileMentions;
     @Bind(R.id.v_button_divider)
-    View v_button_divider;
+    View vButtonDivider;
+    @Bind(R.id.v_start_bottom_line)
+    View vStartBottomLine;
 
     ProfileLoader profileLoader;
 
@@ -202,11 +204,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (!isBot) {
             if (!TeamInfoLoader.getInstance().getUser(memberId).isInactive()) {
                 profileLoader = new MemberProfileLoader();
+                vStartBottomLine.setVisibility(View.VISIBLE);
             } else {
                 profileLoader = new InactivedMemberProfileLoader();
+                vStartBottomLine.setVisibility(View.INVISIBLE);
             }
         } else {
             profileLoader = new JandiBotProfileLoader();
+            vStartBottomLine.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -295,7 +300,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
             ivMemberProfileStarBtn.setVisibility(View.GONE);
             ivMemberProfileEditBtn.setVisibility(View.GONE);
-            v_button_divider.setVisibility(View.GONE);
+            vButtonDivider.setVisibility(View.GONE);
             return;
         }
 

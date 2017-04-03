@@ -52,8 +52,8 @@ public class MemberProfileLoader implements ProfileLoader {
         tvProfileDivision.setText(userDivision);
         tvProfilePosition.setText(userPosition);
         if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
-            tvProfileDivision.setVisibility(View.GONE);
-            tvProfilePosition.setVisibility(View.GONE);
+            tvProfileDivision.setVisibility(View.INVISIBLE);
+            tvProfilePosition.setVisibility(View.INVISIBLE);
         }
     }
 
