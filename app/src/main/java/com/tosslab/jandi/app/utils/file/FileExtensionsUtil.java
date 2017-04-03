@@ -199,6 +199,8 @@ public class FileExtensionsUtil {
                 return 0xffe88064;
             case HWP:
                 return 0xff07adad;
+            case DOC:
+                return 0xff426bb7;
             case ZIP:
                 return 0xff828282;
             case CONTACT:

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.share.multi;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -19,6 +18,8 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -90,7 +91,6 @@ import rx.subjects.PublishSubject;
 
 public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share, FileShareInteractor.Wrapper {
 
-    private static final int REQ_SELECT_TEAM = 1001;
     private static final String EXTRA_URIS = "uris";
 
     @Inject
@@ -106,7 +106,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Bind(R.id.iv_multi_share_previous)
     ImageView ivPreviousScroll;
-
     @Bind(R.id.iv_multi_share_next)
     ImageView ivNextScroll;
 
@@ -129,8 +128,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     ViewGroup vgMultiShareTeam;
     @Bind(R.id.vg_multi_share_room)
     ViewGroup vgMultiShareRoom;
-    @Bind(R.id.v_empty_action_bar)
-    View vEmptyActionBar;
+
 
     @Inject
     ShareAdapterDataView shareAdapterDataView;
@@ -148,6 +146,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     private BottomSheetBehavior bottomSheetBehavior;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
+    private int viewPagerCurrentPosition = 0;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -159,6 +158,35 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         fragment.setArguments(bundle);
 
         return fragment;
+    }
+
+    // (노티바- 스크린 크기 - 액션바 크기 - 아이템리스트뷰 - 하단 바텀시트) /2 - scroll높이 /2
+    // 위의 공식대로 하면 좌우 스크롤 이미지 뷰의 마진 높이를 구할 수 있다.
+    private void setScrollPosition() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        final int height = display.getHeight();
+        int contentAreaHeight = height;
+        contentAreaHeight -= UiUtils.getPixelFromDp(24f); // 노티바
+        contentAreaHeight -= UiUtils.getPixelFromDp(249.5f); // 바텀시트
+        if (lvFileThumbs.getVisibility() == View.VISIBLE) {
+            contentAreaHeight -= UiUtils.getPixelFromDp(60f); //아이템 리스트 뷰
+        }
+        TypedValue tv = new TypedValue();
+        getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+        int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
+        contentAreaHeight -= actionBarHeight; // 액션바
+        int scrollHeight = (int) UiUtils.getPixelFromDp(60f);
+        int scrollmargin = contentAreaHeight / 2 - scrollHeight / 2;
+        RelativeLayout.LayoutParams layoutParamsPreviewScroll =
+                (RelativeLayout.LayoutParams) ivPreviousScroll.getLayoutParams();
+        layoutParamsPreviewScroll.addRule(RelativeLayout.CENTER_VERTICAL, 0);
+        layoutParamsPreviewScroll.setMargins(0, scrollmargin, 0, 0);
+        ivPreviousScroll.setLayoutParams(layoutParamsPreviewScroll);
+        RelativeLayout.LayoutParams layoutParamsNextScroll =
+                (RelativeLayout.LayoutParams) ivNextScroll.getLayoutParams();
+        layoutParamsNextScroll.addRule(RelativeLayout.CENTER_VERTICAL, 0);
+        layoutParamsNextScroll.setMargins(0, scrollmargin, 0, 0);
+        ivNextScroll.setLayoutParams(layoutParamsNextScroll);
     }
 
     @Nullable
@@ -231,7 +259,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                                 .delay(400, TimeUnit.MILLISECONDS)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
-                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(239.5f));
+                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(249.5f));
                                 });
                     } else {
                         vgMultiShareTeam.setVisibility(View.VISIBLE);
@@ -249,17 +277,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         vpShare.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (ivPreviousScroll.getAnimation() != null) {
-                    ivPreviousScroll.getAnimation().reset();
-                }
-
-                if (ivNextScroll.getAnimation() != null) {
-                    ivNextScroll.getAnimation().reset();
-                }
-
-                if (scrollButtonPublishSubject != null) {
-                    scrollButtonPublishSubject.onNext(new Object());
-                }
             }
 
             @Override
@@ -307,48 +324,53 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void setUpScrollButton(int position, int count) {
-        if (position == 0) {
-            ivPreviousScroll.setVisibility(View.GONE);
-        } else {
+        viewPagerCurrentPosition = position;
+        if (position != 0) {
             ivPreviousScroll.setVisibility(View.VISIBLE);
-        }
-
-        if (position == count - 1) {
-            ivNextScroll.setVisibility(View.GONE);
         } else {
-            ivNextScroll.setVisibility(View.VISIBLE);
+            ivPreviousScroll.setVisibility(View.GONE);
         }
 
-        scrollButtonPublishSubject = PublishSubject.create();
-        subscribe = scrollButtonPublishSubject.throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(o -> {
-                    if (position == 0 && (ivPreviousScroll.getVisibility() != View.GONE)) {
-                        AlphaAnimation animation = new AlphaAnimation(1f, 0f);
-                        animation.setDuration(200);
-                        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-                        animation.setAnimationListener(new SimpleEndAnimationListener() {
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                ivPreviousScroll.setVisibility(View.GONE);
-                            }
-                        });
-                        ivPreviousScroll.startAnimation(animation);
-                    }
+        if (position != count - 1) {
+            ivNextScroll.setVisibility(View.VISIBLE);
+        } else {
+            ivNextScroll.setVisibility(View.GONE);
+        }
 
-                    if (position == count - 1 && (ivNextScroll.getVisibility() != View.GONE)) {
-                        AlphaAnimation animation = new AlphaAnimation(1f, 0f);
-                        animation.setDuration(200);
-                        animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
-                        animation.setAnimationListener(new SimpleEndAnimationListener() {
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                ivNextScroll.setVisibility(View.GONE);
-                            }
-                        });
-                        ivNextScroll.startAnimation(animation);
-                    }
-                });
+        if (scrollButtonPublishSubject == null) {
+            scrollButtonPublishSubject = PublishSubject.create();
+            subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(o -> {
+                        if (viewPagerCurrentPosition != 0) {
+                            AlphaAnimation animation = new AlphaAnimation(1f, 0f);
+                            animation.setDuration(200);
+                            animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+                            animation.setAnimationListener(new SimpleEndAnimationListener() {
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    ivPreviousScroll.setVisibility(View.GONE);
+                                }
+                            });
+                            ivPreviousScroll.startAnimation(animation);
+                        }
+
+                        if (viewPagerCurrentPosition != count - 1) {
+                            AlphaAnimation animation = new AlphaAnimation(1f, 0f);
+                            animation.setDuration(200);
+                            animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+                            animation.setAnimationListener(new SimpleEndAnimationListener() {
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    ivNextScroll.setVisibility(View.GONE);
+                                }
+                            });
+                            ivNextScroll.startAnimation(animation);
+                        }
+                    });
+        }
+
+        scrollButtonPublishSubject.onNext(new Object());
     }
 
     @OnClick(value = {R.id.iv_multi_share_previous, R.id.iv_multi_share_next})
@@ -645,8 +667,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             lvFileThumbs.setVisibility(View.GONE);
             etComment.setMaxLines(18);
         }
-
-
+        setScrollPosition();
     }
 
     private String getFileExtension(String fileName) {
@@ -672,20 +693,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                 actionBar.show();
             }
             fileShareInteractor.onFocusContent(false);
-            RelativeLayout.LayoutParams nextScrollLayoutParams =
-                    (RelativeLayout.LayoutParams) ivNextScroll.getLayoutParams();
-            nextScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(100.0f), 0, 0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                nextScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
-            }
-            ivNextScroll.setLayoutParams(nextScrollLayoutParams);
-            RelativeLayout.LayoutParams prevScrollLayoutParams =
-                    (RelativeLayout.LayoutParams) ivPreviousScroll.getLayoutParams();
-            prevScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(100.0f), 0, 0);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                prevScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
-            }
-            ivPreviousScroll.setLayoutParams(prevScrollLayoutParams);
+            setScrollPosition();
         } else {
             // 안보이게 하기, 배경 검정
             vgComment.setVisibility(View.GONE);
