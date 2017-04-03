@@ -128,7 +128,7 @@ public class ShareFileItemFragment extends Fragment implements FileShareInteract
             if (!isImageFile(filePath) && needTopMargin) {
                 lp.topMargin += UiUtils.getPixelFromDp(60);
             }
-            lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 230f, displayMetrics);
+            lp.bottomMargin = (int) UiUtils.getPixelFromDp(249.5f);
         }
 
         vgFileType.setLayoutParams(lp);

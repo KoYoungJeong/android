@@ -91,7 +91,6 @@ import rx.subjects.PublishSubject;
 
 public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share, FileShareInteractor.Wrapper {
 
-    private static final int REQ_SELECT_TEAM = 1001;
     private static final String EXTRA_URIS = "uris";
 
     @Inject
@@ -260,7 +259,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                                 .delay(400, TimeUnit.MILLISECONDS)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
-                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(239.5f));
+                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(249.5f));
                                 });
                     } else {
                         vgMultiShareTeam.setVisibility(View.VISIBLE);
