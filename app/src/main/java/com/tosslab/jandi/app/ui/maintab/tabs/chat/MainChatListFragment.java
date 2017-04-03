@@ -104,10 +104,6 @@ public class MainChatListFragment extends BaseLazyFragment
                 .build()
                 .inject(this);
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-
         initObjects();
     }
 
@@ -175,10 +171,24 @@ public class MainChatListFragment extends BaseLazyFragment
     }
 
     @Override
-    public void onDestroy() {
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+    }
+
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
     }
 

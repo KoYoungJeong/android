@@ -49,7 +49,8 @@ public class ProfileUtil {
         tvName.setText(entity.getName());
         if (TeamInfoLoader.getInstance().isUser(fromEntityId)) {
             ivProfile.setOnClickListener(v ->
-                    EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Image)));
+                    EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Image))
+            );
             tvName.setOnClickListener(v ->
                     EventBus.getDefault().post(new ShowProfileEvent(fromEntityId, ShowProfileEvent.From.Name)));
         } else {

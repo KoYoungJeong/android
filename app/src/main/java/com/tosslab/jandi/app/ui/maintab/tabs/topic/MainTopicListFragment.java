@@ -127,10 +127,6 @@ public class MainTopicListFragment extends BaseLazyFragment
                 .mainTopicListModule(new MainTopicListModule(this))
                 .build()
                 .inject(this);
-
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
     }
 
     @Override
@@ -206,6 +202,22 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     private void initUpdatedTopicAdapter() {
@@ -394,9 +406,6 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     @Override
     public void onDestroy() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
         super.onDestroy();
     }
 

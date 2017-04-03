@@ -126,10 +126,6 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
         ButterKnife.bind(this, view);
 
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-
         return view;
     }
 
@@ -237,10 +233,23 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
 
     @Override
     public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
-        super.onDestroyView();
     }
 
     @Override
