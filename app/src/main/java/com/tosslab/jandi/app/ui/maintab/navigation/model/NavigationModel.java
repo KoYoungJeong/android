@@ -12,11 +12,14 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
+import com.tosslab.jandi.app.network.client.marker.MarkerApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
@@ -27,7 +30,10 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.models.marker.Marker;
+import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -55,18 +61,20 @@ public class NavigationModel {
     private final Lazy<StartApi> startApi;
     private final Lazy<InvitationApi> invitationApi;
     private final Lazy<LoginApi> loginApi;
+    private final Lazy<MarkerApi> markerApi;
     private Lazy<TeamApi> teamApi;
 
     @Inject
     public NavigationModel(Lazy<AccountApi> accountApi,
                            Lazy<StartApi> startApi,
                            Lazy<InvitationApi> invitationApi,
-                           Lazy<LoginApi> loginApi, Lazy<TeamApi> teamApi) {
+                           Lazy<LoginApi> loginApi, Lazy<TeamApi> teamApi, Lazy<MarkerApi> markerApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.invitationApi = invitationApi;
         this.loginApi = loginApi;
         this.teamApi = teamApi;
+        this.markerApi = markerApi;
     }
 
     public User getMe() {
@@ -145,8 +153,42 @@ public class NavigationModel {
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             TeamInfoLoader.getInstance().refresh();
 
+            refreshMyMarker(teamId, TeamInfoLoader.getInstance().getMyId());
             return teamId;
         });
+    }
+
+    private void refreshMyMarker(long teamId, long myId) {
+
+        try {
+            List<Marker> markers = markerApi.get().getMarkersFromMemberId(teamId, myId);
+            for (Marker marker : markers) {
+                long roomId = marker.getRoomId();
+                long lastLinkId = marker.getReadLinkId();
+                if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+                    TopicRepository.getInstance(teamId).updateReadLinkId(roomId, lastLinkId);
+                    TopicRepository.getInstance(teamId).updateUnreadCount(roomId, 0);
+                } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
+                    ChatRepository.getInstance(teamId).updateReadLinkId(roomId, lastLinkId);
+                    ChatRepository.getInstance(teamId).updateUnreadCount(roomId, 0);
+                }
+            }
+
+            Observable.concat(
+                    Observable.from(TopicRepository.getInstance(teamId).getJoinedTopics())
+                            .map(Topic::getUnreadCount),
+                    Observable.from(ChatRepository.getInstance(teamId).getOpenedChats())
+                            .map(Chat::getUnreadCount))
+                    .filter(count -> count > 0)
+                    .defaultIfEmpty(0)
+                    .reduce((integer, integer2) -> integer + integer2)
+                    .subscribe(count -> {
+                        AccountRepository.getRepository().updateUnread(teamId, count);
+                    }, Throwable::printStackTrace);
+
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void refreshRankIfNeed(long teamId) {

@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
+import com.tosslab.jandi.app.network.client.marker.MarkerApi;
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.client.sticker.StickerApi;
@@ -30,6 +31,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.dynamicl10n.FormatParam;
 import com.tosslab.jandi.app.network.models.dynamicl10n.PollFinished;
+import com.tosslab.jandi.app.network.models.marker.Marker;
 import com.tosslab.jandi.app.network.models.messages.ReqMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqStickerMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
@@ -70,6 +72,7 @@ public class MessageListModel {
     private Lazy<MessageApi> messageApi;
     private Lazy<PollApi> pollApi;
     private Lazy<ChatApi> chatApi;
+    private Lazy<MarkerApi> markerApi;
 
     @Inject
     public MessageListModel(MessageManipulator messageManipulator,
@@ -78,7 +81,8 @@ public class MessageListModel {
                             Lazy<StickerApi> stickerApi,
                             Lazy<MessageApi> messageApi,
                             Lazy<ChatApi> chatApi,
-                            Lazy<PollApi> pollApi) {
+                            Lazy<PollApi> pollApi,
+                            Lazy<MarkerApi> markerApi) {
         this.messageManipulator = messageManipulator;
         this.entityClientManager = entityClientManager;
         this.roomsApi = roomsApi;
@@ -86,6 +90,7 @@ public class MessageListModel {
         this.messageApi = messageApi;
         this.chatApi = chatApi;
         this.pollApi = pollApi;
+        this.markerApi = markerApi;
     }
 
     public boolean isTopic(long entityid) {
@@ -610,5 +615,19 @@ public class MessageListModel {
         }
 
         return false;
+    }
+
+    public void refreshRoomMarker(long roomId) {
+        try {
+            long teamId = TeamInfoLoader.getInstance().getTeamId();
+            List<Marker> markers = markerApi.get().getMarkersFromRoomId(teamId, roomId);
+            for (Marker marker : markers) {
+                RoomMarkerRepository.getInstance(teamId).upsertRoomMarker(roomId,
+                        marker.getMemberId(),
+                        marker.getReadLinkId());
+            }
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 }
