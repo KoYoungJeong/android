@@ -30,6 +30,7 @@ public class IconFilterUtil {
         mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, iconType -> IconFilterUtil.isFilter(iconType, "gspreadsheet"));
         mimeFilterMap.put(MimeTypeUtil.FilterType.GooglePresentation, iconType -> IconFilterUtil.isFilter(iconType, "gpresentation"));
         mimeFilterMap.put(MimeTypeUtil.FilterType.Zip, iconType -> IconFilterUtil.isFilter(iconType, "zip"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Contact, iconType -> IconFilterUtil.isFilter(iconType, "contact"));
     }
 
     public static boolean isFilter(String iconType, List<String> filters) {

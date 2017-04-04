@@ -337,12 +337,13 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
                         String serverUrl = content.serverUrl;
                         String fileType = content.icon;
                         String fileUrl = content.fileUrl;
+                        boolean isContact = TextUtils.equals(content.ext, "vcf");
                         String thumbnailUrl =
                                 ImageUtil.getThumbnailUrl(content);
                         ImageUtil.setResourceIconOrLoadImageForComment(
                                 ivMessageCommonFile, vFileIconBorder,
                                 fileUrl, thumbnailUrl,
-                                serverUrl, fileType);
+                                serverUrl, fileType, isContact);
                     }
 
                 } else {
@@ -361,10 +362,11 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
                     String fileUrl = content.fileUrl;
                     String thumbnailUrl =
                             ImageUtil.getThumbnailUrl(content);
+                    boolean isContact = TextUtils.equals(content.ext, "vcf");
                     ImageUtil.setResourceIconOrLoadImageForComment(
                             ivMessageCommonFile, vFileIconBorder,
                             fileUrl, thumbnailUrl,
-                            serverUrl, fileType);
+                            serverUrl, fileType, isContact);
 
                     MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
                     if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {

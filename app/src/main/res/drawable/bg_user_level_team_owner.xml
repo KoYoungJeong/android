@@ -12,4 +12,6 @@
         android:width="0.5dp"
         android:color="@color/rgb_87bddc" />
 
+    <solid android:color="@color/white" />
+
 </shape>

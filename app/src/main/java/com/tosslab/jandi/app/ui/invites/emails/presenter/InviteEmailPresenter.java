@@ -40,5 +40,7 @@ public interface InviteEmailPresenter {
         void changeInvitationButtonIfPatiallyFailed();
 
         void showDialogOver10();
+
+        void showErrorExceedFreeMembersDialog();
     }
 }

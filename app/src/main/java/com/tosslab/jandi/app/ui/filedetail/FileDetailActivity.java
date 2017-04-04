@@ -203,6 +203,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         initViews();
 
         EventBus.getDefault().register(this);
+
+        btnSend.setEnabled(false);
     }
 
     void initViews() {
@@ -267,8 +269,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     private void initSoftInputAreaController() {
         softInputAreaController = new SoftInputAreaController(
-                stickerViewModel, null,
-                vgSoftInputDetector, vgSoftInputArea, null, btnAction,
+                stickerViewModel,
+                vgSoftInputDetector, vgSoftInputArea, btnAction, null,
                 etComment);
         softInputAreaController.setOnStickerButtonClickListener(() -> {
             sendAnalyticsEvent(AnalyticsValue.Action.Sticker);

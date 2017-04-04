@@ -28,6 +28,7 @@ import rx.Observable;
 public class InviteDialogExecutor {
 
     private static InviteDialogExecutor inviteDialogExecutor;
+
     private InviteDialogExecutor() {
     }
 
@@ -55,6 +56,11 @@ public class InviteDialogExecutor {
     public void executeInvite(Context context) {
         try {
             TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+
+            if (getUserCount() > 500) {
+                showErrorExceedFreeMembersDialog(context);
+                return;
+            }
             boolean teamOwner = teamInfoLoader.getUser(teamInfoLoader.getMyId()).isTeamOwner();
             String invitationStatus = teamInfoLoader.getInvitationStatus();
             String invitationUrl = teamInfoLoader.getInvitationUrl();
@@ -83,6 +89,13 @@ public class InviteDialogExecutor {
             e.printStackTrace();
             showErrorToast(JandiApplication.getContext().getResources().getString(R.string.err_entity_invite));
         }
+    }
+
+    private int getUserCount() {
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .count()
+                .toBlocking().lastOrDefault(0) - 1;
     }
 
     public void showInvitationDialog(Context context, boolean isNotAvailButTeamOwner) {
@@ -181,6 +194,19 @@ public class InviteDialogExecutor {
                         .getString(R.string.invite_associate_invitoronlyindefault_title))
                 .setMessage(JandiApplication.getContext()
                         .getString(R.string.invite_associate_invitoronlyindefault_desc))
+                .setCancelable(false)
+                .setPositiveButton(context.getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> {
+                        })
+                .create().show();
+    }
+
+    private void showErrorExceedFreeMembersDialog(Context context) {
+        new AlertDialog.Builder(context, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setTitle(JandiApplication.getContext()
+                        .getString(R.string.pricingplan_restrictions_exceedmember_invite_title))
+                .setMessage(JandiApplication.getContext()
+                        .getString(R.string.pricingplan_restrictions_exceedmember_invite_desc))
                 .setCancelable(false)
                 .setPositiveButton(context.getResources().getString(R.string.jandi_confirm),
                         (dialog, id) -> {

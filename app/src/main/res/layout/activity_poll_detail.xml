@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tosslab.jandi.app.views.SoftInputDetectLinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tosslab.jandi.app.views.SoftInputDetectLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/vg_poll_detail_soft_input_detector"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -49,10 +48,10 @@
         <View
             android:id="@+id/space_poll_detail_divider"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="0.5dp"
             android:layout_above="@+id/vg_poll_detail_input_comment"
             android:layout_alignWithParentIfMissing="true"
-            android:background="@color/jandi_line_gray" />
+            android:background="@color/rgb_d9d9d9" />
 
         <LinearLayout
             android:id="@+id/vg_poll_detail_input_comment"
@@ -70,7 +69,11 @@
 
             <LinearLayout
                 android:id="@+id/vg_message_input_wrapper"
-                style="@style/JandiChat.InputWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <com.tosslab.jandi.app.views.BackPressCatchEditText
@@ -78,6 +81,7 @@
                     style="@style/JandiChat.EditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:hint="@string/common_inputfield_placeholder"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:lineSpacingExtra="2dp"
@@ -91,18 +95,22 @@
                     android:layout_height="36dp"
                     android:layout_gravity="bottom"
                     android:paddingLeft="9dp"
-                    android:paddingRight="9dp"
+                    android:paddingRight="4dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/chat_mention"
                     android:visibility="visible" />
             </LinearLayout>
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_send_message"
-                style="@style/JandiChat.Button"
-                android:gravity="center"
-                android:text="@string/jandi_message_send"
-                android:textSize="@dimen/jandi_text_size_large" />
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="bottom"
+                android:paddingBottom="9dp"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:paddingTop="9dp"
+                android:src="@drawable/icon_send_button" />
         </LinearLayout>
 
         <android.support.v7.widget.Toolbar

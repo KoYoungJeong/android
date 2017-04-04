@@ -43,6 +43,9 @@
 	<string name="common_createteam_toaccthome">"Go to Account Home"</string>
 	<string name="common_createteam_welcome">"Welcome!"</string>
 	<string name="common_creatteam_done">"Done"</string>
+	<string name="common_file_camera_photo">"Take a photo"</string>
+	<string name="common_file_camera_video">"Take a video"</string>
+	<string name="common_file_contacts">"Contacts"</string>
 	<string name="common_fileupload_filename">"File Name"</string>
 	<string name="common_fileupload_rename">"Rename"</string>
 	<string name="common_fileupload_rename_description">"Rename"</string>
@@ -50,6 +53,7 @@
 	<string name="common_hamburger_manageacct">"JANDI account settings"</string>
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_hamburger_teamlist">"Team List"</string>
+	<string name="common_inputfield_placeholder">"Type a message..."</string>
 	<string name="common_launch_503">"We are sorry, but JANDI server is temporarily unavailable. We apologize for the inconvenience and suggest trying again later."</string>
 	<string name="common_launch_fail">"Failed to load initial data.
 Please restart the app."</string>
@@ -474,6 +478,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_mention_push_message">"%s mentioned you"</string>
 	<string name="jandi_mentions_are_empty">"You haven't been mentioned by other team members yet. 
  To send a mention, type "@" while inputting a message or comment."</string>
+	<string name="jandi_mentions_are_empty_result_2">" "</string>
 	<string name="jandi_menu_room_selection">"Select a room"</string>
 	<string name="jandi_message_ask_about_delete_comment">"Are you sure you want to delete this comment? It cannot be undone."</string>
 	<string name="jandi_message_ask_about_deleting">"Are you sure you want to delete this message? It cannot be undone."</string>
@@ -621,9 +626,10 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_search_roomsearch">"Search rooms."</string>
 	<string name="jandi_select_character">"Select a JANDI character"</string>
 	<string name="jandi_select_direct_messages">"Select Direct Message"</string>
-	<string name="jandi_select_gallery">"Select Pictures"</string>
+	<string name="jandi_select_gallery">"Select Photo"</string>
 	<string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
 	<string name="jandi_select_team">"Choose Your Team"</string>
+	<string name="jandi_select_video">"Select Video"</string>
 	<string name="jandi_send">"Send"</string>
 	<string name="jandi_send_invitation">"Send Invitations"</string>
 	<string name="jandi_send_to_email">"Send Email"</string>
@@ -687,7 +693,9 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_starred_all">"All"</string>
 	<string name="jandi_starred_files">"Files"</string>
 	<string name="jandi_starred_no_all">"No starred messages or files"</string>
+	<string name="jandi_starred_no_all_result_2">""</string>
 	<string name="jandi_starred_no_file">"No starred files"</string>
+	<string name="jandi_starred_no_file_result_2">""</string>
 	<string name="jandi_starred_star">"Star"</string>
 	<string name="jandi_starred_stars">"Stars"</string>
 	<string name="jandi_starred_undo">"UNDO"</string>
@@ -695,7 +703,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_starred_unstar_from_item">"Are you sure you want to unstar this item?"</string>
 	<string name="jandi_starred_unstarred">"Unstarred"</string>
 	<string name="jandi_start_direct_messages_1">"<b>All of your direct messages are currently hidden.</b>"</string>
-	<string name="jandi_start_direct_messages_2">"Click the button below to start or reopen a conversation."</string>
+	<string name="jandi_start_direct_messages_2">""</string>
 	<string name="jandi_storage_access_permission">"Application permissions required to read external storage were denied."</string>
 	<string name="jandi_success_copy_clipboard_external_link">"Public link has been copied to clipboard."</string>
 	<string name="jandi_success_disable_external_link">"Public link has been deleted."</string>
@@ -825,8 +833,9 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="mypage_editprofile_phonenumber">"Please enter your phone number"</string>
 	<string name="mypage_editprofile_statusmessage">"Enter your status message"</string>
 	<string name="mypage_mention_newmentionalert">"New Mention"</string>
-	<string name="pricingplan_restrictions_exceedmember_invite_desc">""</string>
-	<string name="pricingplan_restrictions_exceedmember_invite_title">""</string>
+	<string name="photo">"Photo"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">"You can invite up to 500 members in a Free Plan."</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">"You have exceeded the number of members you can invite."</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"Close"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"Please upgrade your plan for more storage in JANDI."</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"See details"</string>

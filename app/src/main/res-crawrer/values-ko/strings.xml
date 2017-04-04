@@ -46,6 +46,9 @@
 	<string name="common_createteam_toaccthome">"잔디 메인으로 가기"</string>
 	<string name="common_createteam_welcome">"안녕하세요!"</string>
 	<string name="common_creatteam_done">"완료"</string>
+	<string name="common_file_camera_photo">"사진 촬영"</string>
+	<string name="common_file_camera_video">"동영상 촬영"</string>
+	<string name="common_file_contacts">"연락처"</string>
 	<string name="common_fileupload_filename">"파일 이름"</string>
 	<string name="common_fileupload_rename">"변경"</string>
 	<string name="common_fileupload_rename_description">"파일 이름 변경"</string>
@@ -53,6 +56,7 @@
 	<string name="common_hamburger_manageacct">"잔디 계정 관리"</string>
 	<string name="common_hamburger_teamadmin">"팀 관리자"</string>
 	<string name="common_hamburger_teamlist">"팀 리스트"</string>
+	<string name="common_inputfield_placeholder">"메시지 쓰기..."</string>
 	<string name="common_launch_503">"일시적으로 서비스를 사용할 수 없습니다. 잠시 후 다시 시도하여 주세요."</string>
 	<string name="common_launch_fail">"초기 정보를 불러오지 못했습니다. 
 앱을 다시 실행하여 주세요."</string>
@@ -485,6 +489,8 @@
 	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
  메시지 입력 시 "@"를 입력하여 
  멘션을 주고 받을 수 있습니다."</string>
+	<string name="jandi_mentions_are_empty_result_2">"메시지 입력 시 ‘@이름’을 입력하여 콕 집어 메시지를 보내보세요.
+"</string>
 	<string name="jandi_menu_room_selection">"대화방 선택"</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
@@ -640,6 +646,7 @@
 	<string name="jandi_select_gallery">"사진 선택"</string>
 	<string name="jandi_select_maximum_10">"최대 10장까지 선택할 수 있습니다."</string>
 	<string name="jandi_select_team">"팀을 선택하세요"</string>
+	<string name="jandi_select_video">"동영상 선택"</string>
 	<string name="jandi_send">"전송"</string>
 	<string name="jandi_send_invitation">"멤버 초대하기"</string>
 	<string name="jandi_send_to_email">"메일 보내기"</string>
@@ -703,9 +710,14 @@
 	<string name="jandi_starred">"즐겨찾기 등록"</string>
 	<string name="jandi_starred_all">"모든 타입"</string>
 	<string name="jandi_starred_files">"파일"</string>
-	<string name="jandi_starred_no_all">"즐겨찾기 한 메시지나
-  파일이 없습니다."</string>
+	<string name="jandi_starred_no_all">"즐겨찾기 한 메시지나 파일이 없습니다."</string>
+	<string name="jandi_starred_no_all_result_2">"메시지를 꾹 누르거나 파일 오른쪽
+별 아이콘을 눌러 이곳에 보관하세요
+"</string>
 	<string name="jandi_starred_no_file">"즐겨찾기 한 파일이 없습니다."</string>
+	<string name="jandi_starred_no_file_result_2">"파일 오른쪽 별 아이콘을 눌러
+이곳에 보관하세요
+"</string>
 	<string name="jandi_starred_star">"즐겨찾기"</string>
 	<string name="jandi_starred_stars">"즐겨찾기"</string>
 	<string name="jandi_starred_undo">"취소"</string>
@@ -713,7 +725,9 @@
 	<string name="jandi_starred_unstar_from_item">"즐겨찾기에서 해제 할까요?"</string>
 	<string name="jandi_starred_unstarred">"즐겨찾기 해제됨"</string>
 	<string name="jandi_start_direct_messages_1">"<b>현재 열려있는 대화방이 없습니다.</b>"</string>
-	<string name="jandi_start_direct_messages_2">"지금 팀 멤버들에게 메시지를 보내보세요."</string>
+	<string name="jandi_start_direct_messages_2">"화면에서 [+]를 눌러 특정 팀 맴버와
+대화를 시작해보세요.
+"</string>
 	<string name="jandi_storage_access_permission">"저장소에 접근하려면 어플리케이션의 권한을 허용해주세요."</string>
 	<string name="jandi_success_copy_clipboard_external_link">"외부 공유용 링크가 클립보드에 복사되었습니다."</string>
 	<string name="jandi_success_disable_external_link">"외부 공유용 링크가 삭제되었습니다."</string>
@@ -842,6 +856,7 @@
 	<string name="mypage_editprofile_phonenumber">"전화번호를 입력하세요"</string>
 	<string name="mypage_editprofile_statusmessage">"상태 메시지를 입력하세요"</string>
 	<string name="mypage_mention_newmentionalert">"새로운 멘션"</string>
+	<string name="photo">"사진"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"무료 팀의 경우 팀당 최대 500명까지 초대하실 수 있습니다."</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"초대 가능한 멤버 수를 초과하였습니다.
 "</string>

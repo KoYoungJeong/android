@@ -142,6 +142,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
 
         progressWheel = new ProgressWheel(getActivity());
+        if (TeamInfoLoader.getInstance().isChat(roomId)) {
+            btnLeave.setText(R.string.menu_hide_1_1);
+        } else {
+            btnLeave.setText(R.string.menu_entity_leave);
+        }
     }
 
     void showGlobalPushSetupDialog() {

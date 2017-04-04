@@ -288,10 +288,11 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
                         String fileUrl = content.fileUrl;
                         String thumbnailUrl =
                                 ImageUtil.getThumbnailUrl(content);
+                        boolean isContact = TextUtils.equals(content.ext, "vcf");
                         ImageUtil.setResourceIconOrLoadImageForComment(
                                 ivMessageCommonFile, vFileIconBorder,
                                 fileUrl, thumbnailUrl,
-                                serverUrl, fileType);
+                                serverUrl, fileType, isContact);
                     }
                 } else {
                     if (content.size <= 0) {
@@ -307,10 +308,11 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
                     String fileUrl = content.fileUrl;
                     String thumbnailUrl =
                             ImageUtil.getThumbnailUrl(content);
+                    boolean isContact = TextUtils.equals(content.ext, "vcf");
                     ImageUtil.setResourceIconOrLoadImageForComment(
                             ivMessageCommonFile, vFileIconBorder,
                             fileUrl, thumbnailUrl,
-                            serverUrl, fileType);
+                            serverUrl, fileType, isContact);
 
                     MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(serverUrl);
                     if (MimeTypeUtil.isFileFromGoogleOrDropbox(sourceType)) {

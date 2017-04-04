@@ -261,7 +261,7 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         Fragment fragment = ImageAlbumFragment.create(bucketId, mode);
         fragmentTransaction.replace(R.id.vg_image_album_content, fragment);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     @Override

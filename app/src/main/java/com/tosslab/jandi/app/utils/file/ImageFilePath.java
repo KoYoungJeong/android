@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class ImageFilePath {
     private static final String TEMP_PHOTO_FILE = "temp.jpg";   // 임시 저장파일
@@ -77,6 +78,32 @@ public class ImageFilePath {
      */
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
+
+        // default file manager 를 통해 구글 드라이브 또는 드롭박스 파일을 가져오게 되었을 때
+        if (uri.toString().contains("content://com.google.android.apps.docs.storage/document/") // google drive
+                || uri.toString().contains("file:///storage/emulated/0/Android/data/com.dropbox.android/files/scratch")) { // dropbox
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            cursor.moveToFirst();
+            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            String name = cursor.getString(nameIndex);
+
+            File cacheFile = new File(context.getExternalCacheDir(), name);
+            try {
+                InputStream is = null;
+                is = context.getContentResolver().openInputStream(uri);
+                OutputStream os = new FileOutputStream(cacheFile);
+                byte[] buffer = new byte[1024];
+                int len = is.read(buffer);
+                while (len != -1) {
+                    os.write(buffer, 0, len);
+                    len = is.read(buffer);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+            return cacheFile.getAbsolutePath();
+        }
 
         //check here to KITKAT or new version
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
@@ -354,6 +381,5 @@ public class ImageFilePath {
     public static boolean isGoogleNewPhotosUri(Uri uri) {
         return "com.google.android.apps.photos.contentprovider".equals(uri.getAuthority());
     }
-
 
 }
