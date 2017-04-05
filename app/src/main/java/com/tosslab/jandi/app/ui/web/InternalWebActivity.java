@@ -336,7 +336,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
                 if (!isAdminPage) {
                     setActionBarTitle(title);
                 } else {
-                    setActionBarTitle("관리자 메뉴");
+                    setActionBarTitle(getString(R.string.team_adminmenu_title));
                 }
             }
 
