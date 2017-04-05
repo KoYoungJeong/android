@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/v_restrict_warning"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#CA000000"
@@ -13,20 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp">
 
-        <ImageView
-            android:id="@+id/iv_pricing_plan_warning_remove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="16dp"
-            android:src="@drawable/bar_icon_close"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/tv_pricing_plan_warning_team_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/iv_pricing_plan_warning_remove"
             android:text="TossLab,Inc"
             android:textColor="@color/white"
             android:textSize="13dp" />
@@ -39,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:lineSpacingExtra="1dp"
-        android:text="@string/common_pricingplan_msgsearch"
+        android:text="@string/pricingplan_almost_fileupload_popup"
         android:textColor="@color/white"
         android:textSize="12dp" />
 
@@ -49,21 +40,21 @@
         android:layout_marginTop="7dp">
 
         <TextView
-            android:id="@+id/tv_pricing_plan_warning_inquiry_button"
+            android:id="@+id/tv_show_deatil_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/common_pricingplan_livesupport"
+            android:text="@string/common_pricingplan_moreinfo"
             android:textColor="@color/rgb_00abe8"
             android:textSize="13dp" />
 
         <TextView
-            android:id="@+id/tv_show_pricing_plan"
+            android:id="@+id/tv_noshow_3days_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="24dp"
-            android:layout_toLeftOf="@id/tv_pricing_plan_warning_inquiry_button"
-            android:text="@string/common_pricingplan_moreinfo"
+            android:layout_toLeftOf="@id/tv_show_deatil_button"
+            android:text="@string/common_pricingplan_noview3days"
             android:textColor="@color/rgb_00abe8"
             android:textSize="13dp" />
     </RelativeLayout>

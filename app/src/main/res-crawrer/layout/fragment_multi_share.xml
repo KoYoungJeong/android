@@ -82,6 +82,17 @@
                 android:overScrollMode="never"
                 android:visibility="visible" />
 
+            <LinearLayout
+                android:id="@+id/vg_restrict_warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="249.5dp"
+                android:visibility="gone">
+
+                <include layout="@layout/layout_pricing_plan_restrict_warning" />
+            </LinearLayout>
+
         </RelativeLayout>
 
     </LinearLayout>

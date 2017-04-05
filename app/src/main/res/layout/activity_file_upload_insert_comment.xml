@@ -56,7 +56,20 @@
             android:layout_below="@+id/actionbar_file_upload"
             android:background="@color/jandi_primary_color"
             android:overScrollMode="never" />
+
+        <LinearLayout
+            android:id="@+id/vg_restrict_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="169.5dp"
+            android:visibility="gone">
+
+            <include layout="@layout/layout_pricing_plan_restrict_warning" />
+        </LinearLayout>
+
     </RelativeLayout>
+
 
     <include layout="@layout/activity_upload_preview_bottom_sheet" />
 

@@ -70,6 +70,8 @@
 	<string name="common_pricingplan_livesupport">"1:1 문의하기"</string>
 	<string name="common_pricingplan_moreinfo">"자세히 알아보기"</string>
 	<string name="common_pricingplan_msgsearch">"현재 팀에서 무료 사용량을 초과하여 언제든 검색이 제한될 수 \n 있습니다. 지금 STANDARD 플랜으로 전환하시고 \n 더욱 더 쾌적하게 협업하세요."</string>
+	<string name="common_pricingplan_noview3days">"3일동안 보지 않기
+"</string>
 	<string name="common_profilemodal_jandi_botstatus">"안녕하세요? JANDI입니다. "</string>
 	<string name="common_settings_lostpasscodedesc">"비밀번호를 잊은 경우 재설치 해주세요."</string>
 	<string name="common_sharetojandi_choose_room">"대화방 선택"</string>
@@ -78,6 +80,13 @@
 	<string name="common_signup_codeverification">"위 이메일로 인증번호를 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="common_signup_invalid_emaildomain">"이메일의 도메인 주소를 제대로 입력했는지 다시 확인해 주세요.
 "</string>
+	<string name="day_short_fri">"금"</string>
+	<string name="day_short_mon">"월"</string>
+	<string name="day_short_sat">"토"</string>
+	<string name="day_short_sun">"일"</string>
+	<string name="day_short_thu">"목"</string>
+	<string name="day_short_tue">"화"</string>
+	<string name="day_short_wed">"수"</string>
 	<string name="delete_cache">"캐시 삭제"</string>
 	<string name="delete_cache_confirm">"캐시 데이터를 삭제하시겠습니까?"</string>
 	<string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
@@ -862,17 +871,15 @@
 "</string>
 	<string name="password_forgot">"비밀번호가 생각나지 않으시나요?
 "</string>
-	<string name="password_forgot_email_type_info">"비밀번호를 새로 설정하기 위해 이메일 주소를 입력해주세요.
-"</string>
+	<string name="password_forgot_email_type_info">"비밀번호를 새로 설정하기 위해 이메일 주소를 입력해주세요."</string>
 	<string name="password_new_again_type">"새 비밀번호 다시 입력
 "</string>
 	<string name="password_new_type">"새 비밀번호 입력
 "</string>
-	<string name="password_new_type_confi_alert">"영어 대문자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다.
-"</string>
-	<string name="password_new_type_info">"비밀번호는 영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다.
-"</string>
+	<string name="password_new_type_confi_alert">"영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다."</string>
+	<string name="password_new_type_info">"비밀번호는 영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다."</string>
 	<string name="photo">"사진"</string>
+	<string name="pricingplan_almost_fileupload_popup">"현재 팀의 5 GB 무료 사용량이 한도에 거의 도달했습니다. 사용량 초과 시 파일 업로드가 제한 될 수 있으니 지금 플랜을 업그레이드 하시고 더욱 자유롭게 서비스를 사용하세요."</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"무료 팀의 경우 팀당 최대 500명까지 초대하실 수 있습니다."</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"초대 가능한 멤버 수를 초과하였습니다.
 "</string>
@@ -887,6 +894,16 @@
 	<string name="pricingplan_restrictions_view_message_alert_body">"Free 플랜은 최신15,000개의 메시지까지만 열람 가능합니다."</string>
 	<string name="pricingplan_restrictions_view_message_alert_title">"무료 사용량을 초과하여 메시지 확인이 불가능합니다."</string>
 	<string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
+	<string name="push_schedule_dayofweek">"요일"</string>
+	<string name="push_schedule_desc">"설정한 기간 동안에만 푸시 알림을 받습니다."</string>
+	<string name="push_schedule_end">"종료 시각"</string>
+	<string name="push_schedule_minoneday">"최소 하루는 선택해야합니다."</string>
+	<string name="push_schedule_selectdays">"요일 선택"</string>
+	<string name="push_schedule_start">"시작 시각"</string>
+	<string name="push_schedule_timezone">"시간은 설정 시 디바이스의 시간대를 기준으로 저장됩니다."</string>
+	<string name="push_schedule_title">"알림 수신 스케줄"</string>
+	<string name="push_schedule_weekdays">"주중"</string>
+	<string name="push_schedule_weekend">"주말"</string>
 	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능합니다."</string>
 	<string name="room_member_disabled_alert_title">"이 멤버는 차단된 멤버입니다."</string>
 	<string name="security_setting">"보안 설정
