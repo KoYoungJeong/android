@@ -31,15 +31,12 @@ import okio.Source;
  */
 public class JandiGlideModule implements GlideModule {
     private static Interceptor createInterceptor(final ResponseProgressListener listener) {
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                Response response = chain.proceed(request);
-                return response.newBuilder()
-                        .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
-                        .build();
-            }
+        return chain -> {
+            Request request = chain.request();
+            Response response = chain.proceed(request);
+            return response.newBuilder()
+                    .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
+                    .build();
         };
     }
 

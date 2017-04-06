@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.commonviewmodels.sticker.StickerViewModel;
-import com.tosslab.jandi.app.ui.commonviewmodels.uploadmenu.UploadMenuViewModel;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.views.SoftInputDetectLinearLayout;
@@ -22,34 +21,32 @@ public class SoftInputAreaController {
 
     private InputMethodManager inputMethodManager;
     private StickerViewModel stickerViewModel;
-    private UploadMenuViewModel uploadMenuViewModel;
 
     private SoftInputDetectLinearLayout softInputDetector;
     private ViewGroup vgSoftInputArea;
     private EditText editText;
-    private ImageView btnAction1;
     private ImageView btnAction2;
+    private ViewGroup vgBtnAction2;
 
     private OnSoftInputAreaShowingListener onSoftInputAreaShowingListener;
 
     private ExpectPanel expectPanel = ExpectPanel.SOFT_INPUT;
-    private OnUploadButtonClickListener onUploadButtonClickListener;
     private OnStickerButtonClickListener onStickerButtonClickListener;
 
+    private boolean isShowKeyboard = false;
+
     public SoftInputAreaController(StickerViewModel stickerViewModel,
-                                   UploadMenuViewModel uploadMenuViewModel,
                                    SoftInputDetectLinearLayout softInputDetector,
                                    ViewGroup vgSoftInputArea,
-                                   ImageView btnAction1,
                                    ImageView btnAction2,
+                                   ViewGroup vgBtnAction2,
                                    EditText editText) {
         this.softInputDetector = softInputDetector;
         this.vgSoftInputArea = vgSoftInputArea;
-        this.btnAction1 = btnAction1;
         this.btnAction2 = btnAction2;
         this.stickerViewModel = stickerViewModel;
-        this.uploadMenuViewModel = uploadMenuViewModel;
         this.editText = editText;
+        this.vgBtnAction2 = vgBtnAction2;
     }
 
     public void init() {
@@ -57,7 +54,7 @@ public class SoftInputAreaController {
 
         initSoftInputAreaHeight();
 
-        replaceActionButtons(ExpectPanel.UPLOAD, ExpectPanel.STICKER);
+        replaceActionButtons(ExpectPanel.STICKER);
 
         initSoftInputDetector();
     }
@@ -81,127 +78,93 @@ public class SoftInputAreaController {
         vgSoftInputArea.setLayoutParams(layoutParams);
     }
 
-    private void replaceActionButtons(ExpectPanel expectPanel1, ExpectPanel expectPanel2) {
-        if (btnAction1 != null) {
-            switch (expectPanel1) {
-                case UPLOAD:
-                    initUploadButton(btnAction1);
-                    break;
-                case STICKER:
-                    initStickerButton(btnAction1);
-                    break;
-                case SOFT_INPUT:
-                    initSoftInputButton(btnAction1);
-                    break;
-            }
-        }
-
+    private void replaceActionButtons(ExpectPanel expectPanel) {
         if (btnAction2 != null) {
-            switch (expectPanel2) {
-                case UPLOAD:
-                    initUploadButton(btnAction2);
-                    break;
+            switch (expectPanel) {
                 case STICKER:
-                    initStickerButton(btnAction2);
+                    initStickerButton(btnAction2, vgBtnAction2);
                     break;
                 case SOFT_INPUT:
-                    initSoftInputButton(btnAction2);
+                    initSoftInputButton(btnAction2, vgBtnAction2);
                     break;
             }
         }
-
     }
 
     private void initSoftInputDetector() {
         softInputDetector.setOnSoftInputDetectListener((isSoftInputShowing, softInputHeight) -> {
             if (isSoftInputShowing) {
-
+                isShowKeyboard = true;
                 setSoftInputAreaHeightIfNeed(softInputHeight);
-
                 replaceSoftInputAreaAndActionButtons(expectPanel = ExpectPanel.SOFT_INPUT);
-
             } else {
-
+                isShowKeyboard = false;
                 replaceSoftInputAreaAndActionButtons(expectPanel);
-
             }
         });
     }
 
-    private void initSoftInputButton(ImageView button) {
+    private void initSoftInputButton(ImageView button, ViewGroup vgButton) {
         button.setImageResource(R.drawable.chat_icon_keypad);
-        button.setOnClickListener(v -> {
-
-            expectPanel = ExpectPanel.SOFT_INPUT;
-
-            showSoftInput();
-
-        });
+        if (vgButton != null) {
+            vgButton.setOnClickListener(v -> {
+                onClickSoftInputButton();
+            });
+        } else {
+            button.setOnClickListener(v -> {
+                onClickSoftInputButton();
+            });
+        }
     }
 
-    private void initStickerButton(ImageView button) {
+    private void onClickSoftInputButton() {
+        expectPanel = ExpectPanel.SOFT_INPUT;
+        showSoftInput();
+    }
+
+    private void initStickerButton(ImageView button, ViewGroup vgButton) {
         button.setImageResource(R.drawable.chat_icon_emoticon);
-        button.setOnClickListener(v -> {
-
-            expectPanel = ExpectPanel.STICKER;
-
-            if (softInputDetector.isSoftInputShowing()) {
-                hideSoftInput();
-            } else {
-                replaceSoftInputAreaAndActionButtons(expectPanel);
-            }
-
-            if (onStickerButtonClickListener != null) {
-                onStickerButtonClickListener.onStickerButtonClick();
-            }
-        });
+        if (vgButton != null) {
+            vgButton.setOnClickListener(v -> {
+                onClickStickerButton();
+            });
+        } else {
+            button.setOnClickListener(v -> {
+                onClickStickerButton();
+            });
+        }
     }
 
-    private void initUploadButton(ImageView button) {
-        button.setImageResource(R.drawable.chat_icon_upload);
-        button.setOnClickListener(v -> {
+    private void onClickStickerButton() {
+        expectPanel = ExpectPanel.STICKER;
 
-            expectPanel = ExpectPanel.UPLOAD;
+        if (softInputDetector.isSoftInputShowing()) {
+            hideSoftInput();
+        } else {
+            replaceSoftInputAreaAndActionButtons(expectPanel);
+        }
 
-            if (softInputDetector.isSoftInputShowing()) {
-                hideSoftInput();
-            } else {
-                replaceSoftInputAreaAndActionButtons(expectPanel);
-            }
-
-            if (onUploadButtonClickListener != null) {
-                onUploadButtonClickListener.onUploadButtonClick();
-            }
-        });
+        if (onStickerButtonClickListener != null) {
+            onStickerButtonClickListener.onStickerButtonClick();
+        }
     }
 
     public void replaceSoftInputAreaAndActionButtons(ExpectPanel expectPanel) {
         switch (expectPanel) {
-            case UPLOAD:
-                vgSoftInputArea.removeAllViews();
-
-                uploadMenuViewModel.showUploadPanel(vgSoftInputArea);
-                vgSoftInputArea.setVisibility(View.VISIBLE);
-
-                replaceActionButtons(ExpectPanel.SOFT_INPUT, ExpectPanel.STICKER);
-                break;
-
             case STICKER:
                 vgSoftInputArea.removeAllViews();
 
                 stickerViewModel.showStickerPanel(vgSoftInputArea);
                 vgSoftInputArea.setVisibility(View.VISIBLE);
 
-                replaceActionButtons(ExpectPanel.UPLOAD, ExpectPanel.SOFT_INPUT);
+                replaceActionButtons(ExpectPanel.SOFT_INPUT);
                 break;
-
             case SOFT_INPUT:
-
                 if (isSoftInputAreaShowing()) {
                     hideSoftInputArea(false, false);
                 }
 
-                replaceActionButtons(ExpectPanel.UPLOAD, ExpectPanel.STICKER);
+                replaceActionButtons(ExpectPanel.STICKER);
 
                 break;
         }
@@ -244,7 +207,7 @@ public class SoftInputAreaController {
         vgSoftInputArea.setVisibility(View.GONE);
 
         if (replaceActionButtons) {
-            replaceActionButtons(ExpectPanel.UPLOAD, ExpectPanel.STICKER);
+            replaceActionButtons(ExpectPanel.STICKER);
         }
 
         if (shouldNotifyToListener) {
@@ -282,8 +245,8 @@ public class SoftInputAreaController {
         return vgSoftInputArea.getLayoutParams().height;
     }
 
-    public void setOnUploadButtonClickListener(OnUploadButtonClickListener onUploadButtonClickListener) {
-        this.onUploadButtonClickListener = onUploadButtonClickListener;
+    public boolean isShowSoftInput() {
+        return isShowKeyboard;
     }
 
     public void setOnStickerButtonClickListener(OnStickerButtonClickListener onStickerButtonClickListener) {
@@ -291,15 +254,11 @@ public class SoftInputAreaController {
     }
 
     public enum ExpectPanel {
-        UPLOAD, STICKER, SOFT_INPUT
+        STICKER, SOFT_INPUT
     }
 
     public interface OnSoftInputAreaShowingListener {
         void onShowing(boolean isShowing, int softInputHeight);
-    }
-
-    public interface OnUploadButtonClickListener {
-        void onUploadButtonClick();
     }
 
     public interface OnStickerButtonClickListener {

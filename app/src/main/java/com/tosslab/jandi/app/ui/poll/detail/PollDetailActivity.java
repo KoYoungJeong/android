@@ -169,6 +169,8 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
         initStickers();
 
         initPollDetails();
+
+        btnSend.setEnabled(false);
     }
 
     private void injectComponent(PollDetailAdapter pollDetailAdapter) {
@@ -455,8 +457,8 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     private void initSoftInputAreaController() {
         softInputAreaController = new SoftInputAreaController(
-                stickerViewModel, null,
-                vgSoftInputDetector, vgSoftInputArea, null, btnAction,
+                stickerViewModel,
+                vgSoftInputDetector, vgSoftInputArea, btnAction, null,
                 etComment);
 
         softInputAreaController.setOnStickerButtonClickListener(() -> {

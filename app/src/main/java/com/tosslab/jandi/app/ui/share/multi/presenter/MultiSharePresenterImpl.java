@@ -69,6 +69,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
         onSelectTeam(teamId);
     }
 
+
     @Override
     public void onSelectTeam(long teamId) {
         shareTarget.setTeamId(teamId);
@@ -84,6 +85,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                     shareTarget.setRoomId(-1);
                     shareTarget.setEntityId(-1);
                     String teamName = shareSelectModel.getTeamName();
+                    view.setTeamId(teamId);
                     view.setTeamName(teamName);
                     view.setRoomName("");
                     view.setMentionInfo(shareTarget.getTeamId(), shareTarget.getRoomId());

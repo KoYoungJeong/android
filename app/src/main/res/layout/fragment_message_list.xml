@@ -216,7 +216,7 @@
             android:layout_height="0.5dp"
             android:layout_above="@+id/vg_messages_input"
             android:layout_alignWithParentIfMissing="true"
-            android:background="@color/rgb_bebebe" />
+            android:background="@color/rgb_d9d9d9" />
 
         <LinearLayout
             android:id="@+id/vg_messages_input"
@@ -224,26 +224,45 @@
             android:layout_alignParentBottom="true">
 
             <FrameLayout
-                style="@style/JandiChat.ActionButton.Wrapper"
+                android:id="@+id/vg_button_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom">
 
                 <ImageView
-                    android:id="@+id/btn_message_action_button_1"
-                    style="@style/JandiChat.ActionButton.Upload" />
+                    android:id="@+id/btn_message_action_button_upload"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="10.5dp"
+                    android:layout_marginLeft="7dp"
+                    android:layout_marginTop="10.5dp"
+                    android:src="@drawable/chat_icon_upload" />
             </FrameLayout>
 
             <FrameLayout
-                style="@style/JandiChat.ActionButton.Wrapper"
+                android:id="@+id/vg_button_sticker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom">
 
                 <ImageView
-                    android:id="@+id/btn_message_action_button_2"
-                    style="@style/JandiChat.ActionButton.Sticker" />
+                    android:id="@+id/btn_message_action_button_sticker_keyboard"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="10.5dp"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="10.5dp"
+                    android:src="@drawable/chat_icon_emoticon" />
             </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/vg_message_input_wrapper"
-                style="@style/JandiChat.InputWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <com.tosslab.jandi.app.views.BackPressCatchEditText
@@ -252,6 +271,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:hint="@string/common_inputfield_placeholder"
                     android:lineSpacingExtra="2dp"
                     android:minHeight="36dp"
                     android:paddingBottom="2dp"
@@ -263,18 +283,22 @@
                     android:layout_height="36dp"
                     android:layout_gravity="bottom"
                     android:paddingLeft="9dp"
-                    android:paddingRight="9dp"
+                    android:paddingRight="4dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/chat_mention"
                     android:visibility="gone" />
             </LinearLayout>
 
-            <TextView
+            <ImageView
                 android:id="@+id/btn_send_message"
-                style="@style/JandiChat.Button"
-                android:gravity="center"
-                android:text="@string/jandi_message_send"
-                android:textSize="@dimen/jandi_text_size_large" />
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="bottom"
+                android:paddingBottom="9dp"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:paddingTop="9dp"
+                android:src="@drawable/icon_send_button" />
 
         </LinearLayout>
 
@@ -359,7 +383,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_search_bar">
+            android:layout_below="@+id/layout_search_bar"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/vg_message_offline"
@@ -392,7 +417,8 @@
 
         <include
             android:id="@+id/layout_messages_loading"
-            layout="@layout/progress_wheel" />
+            layout="@layout/progress_wheel"
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/progress_message"

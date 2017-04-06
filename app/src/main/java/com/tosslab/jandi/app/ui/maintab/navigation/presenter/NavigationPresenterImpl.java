@@ -27,16 +27,16 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import io.intercom.android.sdk.Company;
 import io.intercom.android.sdk.Intercom;
+import io.intercom.android.sdk.UserAttributes;
 import io.intercom.android.sdk.identity.Registration;
 import rx.Completable;
 import rx.Observable;
@@ -398,21 +398,26 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             long myId = TeamInfoLoader.getInstance().getMyId();
             User user = TeamInfoLoader.getInstance().getUser(myId);
 
-            Map<String, Object> attr = new HashMap<>();
-            attr.put("name", user.getName());
-            attr.put("email", user.getEmail());
-            attr.put("create_at", accountInfo.getCreatedAt());
-            attr.put("language_override", Locale.getDefault().getDisplayLanguage());
+            Company company = new Company.Builder()
+                    .withCompanyId(TeamInfoLoader.getInstance().getTeamId() + "")
+                    .build();
 
-            Intercom.client().updateUser(attr);
+            UserAttributes userAttributes = new UserAttributes.Builder()
+                    .withName(user.getName())
+                    .withEmail(user.getEmail())
+                    .withCustomAttribute("create_at", accountInfo.getCreatedAt())
+                    .withCustomAttribute("language_override",
+                            Locale.getDefault().getDisplayLanguage())
+                    .withCompany(company)
+                    .build();
+
+            Intercom.client().updateUser(userAttributes);
             Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
 
         }).subscribeOn(Schedulers.computation())
                 .subscribe(() -> {
                 }, t -> {
                 });
-
-
     }
 
     @Override

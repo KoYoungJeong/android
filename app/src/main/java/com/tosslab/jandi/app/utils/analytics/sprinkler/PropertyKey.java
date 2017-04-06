@@ -23,4 +23,6 @@ public class PropertyKey {
     public static final String StickerId = "p53";
     public static final String RankdId = "p55";
     public static final String LoginId = "p57";
+    public static final String PerformanceTarget = "p60";
+    public static final String StartFinishFlag = "p61";
 }

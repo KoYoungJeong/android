@@ -18,6 +18,7 @@ import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.UriUtil;
 import com.tosslab.jandi.app.utils.file.FileExtensionsUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -123,8 +124,11 @@ public class ShareFileItemFragment extends Fragment implements FileShareInteract
             if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
                 actionBarSize = TypedValue.complexToDimensionPixelSize(typedValue.data, displayMetrics);
             }
-            lp.topMargin = (int) (actionBarSize + (needTopMargin? TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60f, displayMetrics) : 0));
-            lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 289f, displayMetrics);
+            lp.topMargin = actionBarSize;
+            if (!isImageFile(filePath) && needTopMargin) {
+                lp.topMargin += UiUtils.getPixelFromDp(60);
+            }
+            lp.bottomMargin = (int) UiUtils.getPixelFromDp(249.5f);
         }
 
         vgFileType.setLayoutParams(lp);

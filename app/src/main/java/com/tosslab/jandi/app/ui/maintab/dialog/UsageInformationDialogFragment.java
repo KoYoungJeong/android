@@ -92,7 +92,7 @@ public class UsageInformationDialogFragment extends DialogFragment {
                 String.valueOf(TeamInfoLoader.getInstance().getTeamId())));
 
         userInfos.add(new Pair<>("Account ID",
-                String.valueOf(AccountUtil.getAccountId(JandiApplication.getContext()))));
+                String.valueOf(AccountUtil.getAccountUUID(JandiApplication.getContext()))));
 
         List<PushToken> pushTokenList = PushTokenRepository.getInstance().getPushTokenList();
         StringBuilder builder = new StringBuilder();

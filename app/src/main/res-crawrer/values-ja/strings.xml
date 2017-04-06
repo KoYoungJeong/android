@@ -17,7 +17,7 @@
 	<string name="common_authority_title_member">"正メンバー"</string>
 	<string name="common_authority_title_owner">"管理人"</string>
 	<string name="common_btn_close">"閉じる"</string>
-	<string name="common_btn_restart">""</string>
+	<string name="common_btn_restart">"再実行"</string>
 	<string name="common_btn_seedetail">"続きを読む"</string>
 	<string name="common_btn_seedetail_underline">"<u>続きを読む</u>"</string>
 	<string name="common_calleridnotifier_authorizecalllog">"発信許可設定"</string>
@@ -38,11 +38,14 @@
 	<string name="common_calleridnotifier_suggestmodal">"メンバー連絡先確認機能をお試しください"</string>
 	<string name="common_calleridnotifier_tosettings">"設定に移動"</string>
 	<string name="common_calleridnotifier_use">"有効にする"</string>
-	<string name="common_changedplan_restart_desc">""</string>
-	<string name="common_changedplan_restart_title">""</string>
+	<string name="common_changedplan_restart_desc">"サービス再実行が必要になります。"</string>
+	<string name="common_changedplan_restart_title">"料金プランが変更されました。"</string>
 	<string name="common_createteam_toaccthome">"JANDIホームに戻る"</string>
 	<string name="common_createteam_welcome">"ようこそ！"</string>
 	<string name="common_creatteam_done">"確認"</string>
+	<string name="common_file_camera_photo">"写真撮影"</string>
+	<string name="common_file_camera_video">"動画撮影"</string>
+	<string name="common_file_contacts">"コンタクト"</string>
 	<string name="common_fileupload_filename">"ファイル名"</string>
 	<string name="common_fileupload_rename">"変更"</string>
 	<string name="common_fileupload_rename_description">"名称変更"</string>
@@ -50,11 +53,12 @@
 	<string name="common_hamburger_manageacct">"JANDIアカウント設定"</string>
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_hamburger_teamlist">"チームリスト"</string>
+	<string name="common_inputfield_placeholder">"メッセージを送る..."</string>
 	<string name="common_launch_503">" 一時的にサービスを利用することができません。しばらくして、再試行してください。"</string>
 	<string name="common_launch_fail">"データの取得に失敗しました。
 アプリを再起動してください。"</string>
-	<string name="common_launch_maintenance_description">""</string>
-	<string name="common_launch_maintenance_title">""</string>
+	<string name="common_launch_maintenance_description">"利用に不便をお掛けします。"</string>
+	<string name="common_launch_maintenance_title">"定期点検中です。"</string>
 	<string name="common_pricingplan_fileupload">"現在無料ストレージを全部使用しました。 \n  ファイルのアップロードが制限される可能性があります。 STANDARDプランで、\n  より効率的なコラボレーションをお楽しみください。"</string>
 	<string name="common_pricingplan_livesupport">"お問い合わせ"</string>
 	<string name="common_pricingplan_moreinfo">"詳細はこちら"</string>
@@ -477,6 +481,7 @@
 	<string name="jandi_mention_push_message">"%sさんからのメンション"</string>
 	<string name="jandi_mentions_are_empty">"チームメンバーからメンションされたけんがありません。
  メンションするには、メッセージやコメントを入力する時「@」を入力してください"</string>
+	<string name="jandi_mentions_are_empty_result_2">" "</string>
 	<string name="jandi_menu_room_selection">"トークルーム選択_x007f_"</string>
 	<string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
 	<string name="jandi_message_ask_about_deleting">"本当に削除しますか？元には戻せません"</string>
@@ -629,6 +634,7 @@
 	<string name="jandi_select_gallery">"写真を選択"</string>
 	<string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
 	<string name="jandi_select_team">"チームを選択してください"</string>
+	<string name="jandi_select_video">"動画の選択"</string>
 	<string name="jandi_send">"送信"</string>
 	<string name="jandi_send_invitation">"招待メールを送信"</string>
 	<string name="jandi_send_to_email">"メールを送る"</string>
@@ -692,7 +698,9 @@
 	<string name="jandi_starred_all">"全ての種類"</string>
 	<string name="jandi_starred_files">"ファイル"</string>
 	<string name="jandi_starred_no_all">"スター付きのメッセージやファイルがありません"</string>
+	<string name="jandi_starred_no_all_result_2">""</string>
 	<string name="jandi_starred_no_file">"スター付きのファイルなし"</string>
+	<string name="jandi_starred_no_file_result_2">""</string>
 	<string name="jandi_starred_star">"スター付き"</string>
 	<string name="jandi_starred_stars">"スター付き"</string>
 	<string name="jandi_starred_undo">"取り消し"</string>
@@ -700,7 +708,7 @@
 	<string name="jandi_starred_unstar_from_item">"スター付きを解除しましょうか？"</string>
 	<string name="jandi_starred_unstarred">"スターなし"</string>
 	<string name="jandi_start_direct_messages_1">"<b>メッセージ送ったり、これまでの会話履歴を見るには</b>"</string>
-	<string name="jandi_start_direct_messages_2">"これまでの会話履歴を見るには以下のボタンを押してください"</string>
+	<string name="jandi_start_direct_messages_2">""</string>
 	<string name="jandi_storage_access_permission">"ストレージにアクセスするにはアプリの権限を許可してください。"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共有リンクがクリップボードにコピーされました"</string>
 	<string name="jandi_success_disable_external_link">"共有用リンクが削除されました"</string>
@@ -830,6 +838,9 @@
 	<string name="mypage_editprofile_phonenumber">"電話番号を入力してください"</string>
 	<string name="mypage_editprofile_statusmessage">"ステータスメッセージを入力"</string>
 	<string name="mypage_mention_newmentionalert">"新しいメンション"</string>
+	<string name="photo">"写真"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_desc">"無料チームの場合チーム当たり最大500人まで招待することができます<br>プランをアップグレードして、より良いサービスを使用してみてください。</br>"</string>
+	<string name="pricingplan_restrictions_exceedmember_invite_title">"招待可能なメンバー数を超えました。"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_close">"閉じる"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_desc">"そのチームのプランをアップグレードすると、さらに自由にサービスを使用することができます。"</string>
 	<string name="pricingplan_restrictions_fileupload_popup_seedetail">"詳細はこちら"</string>

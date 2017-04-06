@@ -73,7 +73,7 @@ public class IntroActivityPresenterTest {
             presenter.checkNewVersion(false);
 
             // Then
-            verify(mockView, timeout(3000)).showMaintenanceDialog();
+            verify(mockView, timeout(3000)).showMaintenanceDialog("");
 
             reset(mockView);
         }

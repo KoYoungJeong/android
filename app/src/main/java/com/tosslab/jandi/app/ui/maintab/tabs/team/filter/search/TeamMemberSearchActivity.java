@@ -120,6 +120,8 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
     private boolean showAllSelectOptionsMenu = true;
 
+    private Menu menu;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -314,15 +316,24 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 menuInflater.inflate(R.menu.invite_to_direct_message, menu);
             }
 
-            MenuItem item = menu.findItem(R.id.action_select_all);
-            if (item != null) {
+            MenuItem selectedAllItem = menu.findItem(R.id.action_select_all);
+            MenuItem unselectedAllItem = menu.findItem(R.id.action_unselect_all);
+
+            if (selectedAllItem != null) {
                 if (showAllSelectOptionsMenu) {
-                    item.setVisible(true);
+                    selectedAllItem.setVisible(true);
                 } else {
-                    item.setVisible(false);
+                    selectedAllItem.setVisible(false);
                 }
             }
+
+            if (unselectedAllItem != null) {
+                unselectedAllItem.setVisible(false);
+            }
+
+            this.menu = menu;
         }
+
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -354,17 +365,38 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
                 break;
 
             case R.id.action_select_all:
-                if (adapter.getItem(0) instanceof OnToggledUser) {
-                    OnToggledUser onToggledUser = (OnToggledUser) adapter.getItem(0);
-                    onToggledUser.onAddAllUser();
-                    AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_SelectAll);
-                }
+                onSelectAll();
                 break;
+
+            case R.id.action_unselect_all:
+                onUnselectAll();
+                break;
+
             case android.R.id.home:
                 finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onUnselectAll() {
+        if (adapter.getItem(0) instanceof OnToggledUser) {
+            OnToggledUser onToggledUser = ((OnToggledUser) adapter.getItem(0));
+            onToggledUser.onUnselectAll();
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_CancelSelect);
+            menu.findItem(R.id.action_unselect_all).setVisible(false);
+            menu.findItem(R.id.action_select_all).setVisible(true);
+        }
+    }
+
+    private void onSelectAll() {
+        if (adapter.getItem(0) instanceof OnToggledUser) {
+            OnToggledUser onToggledUser = (OnToggledUser) adapter.getItem(0);
+            onToggledUser.onAddAllUser();
+            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_SelectAll);
+            menu.findItem(R.id.action_unselect_all).setVisible(true);
+            menu.findItem(R.id.action_select_all).setVisible(false);
+        }
     }
 
     private void setSearchMode(boolean isInSearchMode) {
@@ -467,19 +499,22 @@ public class TeamMemberSearchActivity extends BaseAppCompatActivity implements T
 
     @OnClick(R.id.tv_team_member_toggled_unselect_all)
     void onUnselectAllClick() {
-        if (adapter.getItem(0) instanceof OnToggledUser) {
-            OnToggledUser onToggledUser = ((OnToggledUser) adapter.getItem(0));
-            onToggledUser.onUnselectAll();
-            AnalyticsUtil.sendEvent(screen, AnalyticsValue.Action.MembersTab_CancelSelect);
-        }
+        onUnselectAll();
     }
 
     @Override
-    public void toggle(int count) {
+    public void toggle(int count, int totalCnt) {
         if (count <= 0) {
             vgToggled.setVisibility(View.GONE);
         } else {
             vgToggled.setVisibility(View.VISIBLE);
+            if (count == totalCnt) {
+                menu.findItem(R.id.action_unselect_all).setVisible(true);
+                menu.findItem(R.id.action_select_all).setVisible(false);
+            } else {
+                menu.findItem(R.id.action_unselect_all).setVisible(false);
+                menu.findItem(R.id.action_select_all).setVisible(true);
+            }
         }
 
         tvInvite.setText(getString(R.string.jandi_invite_member_count, count));

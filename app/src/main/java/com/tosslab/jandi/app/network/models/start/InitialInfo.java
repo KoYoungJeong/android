@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.models.start;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.gson.Gson;
 import com.tosslab.jandi.app.network.jackson.deserialize.start.InitializeInfoConverter;
 import com.vimeo.stag.GsonAdapterKey;
 
@@ -23,6 +24,8 @@ public class InitialInfo {
     Mention mention;
     @GsonAdapterKey
     TeamPlan teamPlan;
+    @GsonAdapterKey
+    TeamUsage teamUsage;
 
     @GsonAdapterKey
     List<Folder> folders;
@@ -137,4 +140,17 @@ public class InitialInfo {
         this.teamPlan = teamPlan;
     }
 
+    public TeamUsage getTeamUsage() {
+        return teamUsage;
+    }
+
+    public void setTeamUsage(TeamUsage teamUsage) {
+        this.teamUsage = teamUsage;
+    }
+
+    public RawInitialInfo convertRawInitialInfo() {
+        Gson gson = new Gson();
+        String rawInitialInfo = gson.toJson(this);
+        return new RawInitialInfo(getTeam().id, rawInitialInfo);
+    }
 }

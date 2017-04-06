@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.queue.LimitMessageLink;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HighlightView;
@@ -46,6 +47,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
     long entityId;
     long lastReadLinkId = -1;
     List<ResMessages.Link> links;
+    private boolean isLimited = false;
 
     public MessageListSearchAdapter(Context context) {
         this.context = context;
@@ -54,65 +56,88 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         setHasStableIds(true);
     }
 
-    public void addAll(int position, List<ResMessages.Link> messages) {
+    public void addAll(int position, List<ResMessages.Link> links) {
+
+        long LimitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
+
+        // limitedLinkId가 존재할 경우 제한 로직 동작.
+        if (LimitedLinkId != -1) {
+            for (int i = links.size() - 1; i >= 0; i--) {
+                if (LimitedLinkId >= links.get(i).id) {
+                    if (i != links.size() - 1) {
+                        links = links.subList(i + 1, links.size());
+                    } else {
+                        links.clear();
+                        links.add(0, new LimitMessageLink());
+                    }
+                    if (links.size() > 0 &&
+                            !(links.get(0) instanceof LimitMessageLink)) {
+                        links.add(0, new LimitMessageLink());
+                    }
+                    isLimited = true;
+                    break;
+                }
+            }
+        }
+
         // delete dummy message by same messageId
-        for (int idx = messages.size() - 1; idx >= 0; --idx) {
-            int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
+        for (int idx = links.size() - 1; idx >= 0; --idx) {
+            int dummyMessagePosition = getDummyMessagePositionByMessageId(links.get(idx).messageId);
             if (dummyMessagePosition >= 0) {
-                links.remove(dummyMessagePosition);
+                this.links.remove(dummyMessagePosition);
             } else {
                 break;
             }
         }
 
-        for (int idx = links.size() - 1; idx >= 0; idx--) {
-            ResMessages.Link link = links.get(idx);
+        for (int idx = this.links.size() - 1; idx >= 0; idx--) {
+            ResMessages.Link link = this.links.get(idx);
             if (link instanceof DummyMessageLink) {
                 DummyMessageLink dummyLink = (DummyMessageLink) link;
                 if (TextUtils.equals(dummyLink.getStatus(), SendMessage.Status.COMPLETE.name())) {
-                    links.remove(idx);
+                    this.links.remove(idx);
                 }
             } else {
                 break;
             }
         }
 
-        int size = messages.size();
+        int size = links.size();
         ResMessages.Link link;
 
         for (int idx = size - 1; idx >= 0; --idx) {
-            link = messages.get(idx);
+            link = links.get(idx);
 
             if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
             } else if (TextUtils.equals(link.status, "edited")) {
                 int searchedPosition = indexByMessageId(link.messageId);
                 if (searchedPosition >= 0) {
-                    links.set(searchedPosition, link);
+                    this.links.set(searchedPosition, link);
                 }
-                messages.remove(link);
+                links.remove(link);
             } else if (TextUtils.equals(link.status, "archived")) {
                 int searchedPosition = indexByMessageId(link.messageId);
                 // if file type
                 if (TextUtils.equals(link.message.contentType, "file")) {
                     if (searchedPosition >= 0) {
-                        ResMessages.Link originLink = links.get(searchedPosition);
+                        ResMessages.Link originLink = this.links.get(searchedPosition);
                         originLink.message = link.message;
                         originLink.status = "archived";
-                        messages.remove(link);
+                        links.remove(link);
                     }
                     // if cannot find same object, will be addToggledUser to list.
                 } else {
                     if (searchedPosition >= 0) {
-                        links.remove(searchedPosition);
+                        this.links.remove(searchedPosition);
                     }
-                    messages.remove(link);
+                    links.remove(link);
                 }
             } else {
-                messages.remove(link);
+                links.remove(link);
             }
         }
 
-        links.addAll(Math.min(position, links.size() - getDummyMessageCount()), messages);
+        this.links.addAll(Math.min(position, this.links.size() - getDummyMessageCount()), links);
     }
 
     public void clear() {
@@ -219,7 +244,7 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
             bodyViewHolder.setLastReadViewVisible(0, -1);
         }
 
-        if (position <= getItemCount() / 10 && oldMoreState == MoreState.Idle) {
+        if (position <= getItemCount() / 10 && oldMoreState == MoreState.Idle && !isLimited) {
             oldMoreState = MoreState.Loading;
             synchronized (this) {
                 if (oldMoreState != MoreState.Idle) {

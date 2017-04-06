@@ -277,7 +277,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     @Override
     public void updateToggledUser(int toggledSize) {
         if (getActivity() instanceof ToggledUserView) {
-            ((ToggledUserView) getActivity()).toggle(toggledSize);
+            ((ToggledUserView) getActivity()).toggle(toggledSize, lvMember.getAdapter().getItemCount());
         }
     }
 

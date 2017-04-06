@@ -270,7 +270,8 @@ public class ImageLoader {
                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                         // 이 로직을 타면 이미지의 로컬 캐시가 되었을것이라 기대하고 진행함
                         Observable.fromCallable(() -> {
-                            FutureTarget<File> futureTarget = ((DrawableTypeRequest) getRequestBuilder(imageView)).downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+                            FutureTarget<File> futureTarget =
+                                    ((DrawableTypeRequest) getRequestBuilder(imageView)).downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
                             return futureTarget.get();
                         }).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())

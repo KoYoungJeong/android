@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
@@ -34,13 +35,15 @@ import butterknife.ButterKnife;
 public class StickerViewModel {
 
     public static final int STICKER_GROUP_RECENT = 0;
-    public static final int STICKER_GROUP_STAMP_107 = 1;
-    public static final int STICKER_GROUP_DEAN = 2;
-    public static final int STICKER_GROUP_BANILA = 3;
-    public static final int STICKER_GROUP_MALLOW = 4;
-    public static final int STICKER_GROUP_DINGO = 5;
-    public static final int STICKER_GROUP_DAY = 6;
-    public static final int STICKER_GROUP_MOZZI = 7;
+    public static final int STICKER_GROUP_TMON = 1;
+    public static final int STICKER_GROUP_STAMP_107 = 2;
+    public static final int STICKER_GROUP_DEAN = 3;
+    public static final int STICKER_GROUP_BANILA = 4;
+    public static final int STICKER_GROUP_MALLOW = 5;
+    public static final int STICKER_GROUP_DINGO = 6;
+    public static final int STICKER_GROUP_DAY = 7;
+    public static final int STICKER_GROUP_MOZZI = 8;
+
 
     public static final int TYPE_MESSAGE = 11;
     public static final int TYPE_TOPIC = 12;
@@ -90,11 +93,21 @@ public class StickerViewModel {
         if (onStickerLayoutShowListener != null) {
             onStickerLayoutShowListener.onStickerLayoutShow(isShow = true);
         }
+
+        if (!(TeamInfoLoader.getInstance().getTeamId() == 11254668
+                || TeamInfoLoader.getInstance().getTeamId() == 279)) {
+            hideTmonSticker();
+        }
+    }
+
+    private void hideTmonSticker() {
+        vgStickers.findViewById(R.id.btn_sticker_group_default_tmon).setVisibility(View.GONE);
     }
 
     private void initClicks() {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
         for (int idx = 0, size = vgStickerGroups.getChildCount(); idx < size; ++idx) {
+
             final int finalIdx = idx;
 
             if (idx == STICKER_GROUP_STAMP_107) {
@@ -155,6 +168,9 @@ public class StickerViewModel {
                 break;
             case STICKER_GROUP_DEAN:
                 stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_DEAN);
+                break;
+            case STICKER_GROUP_TMON:
+                stickers = stickerRepository.getStickers(StickerRepository.DEFAULT_GROUP_ID_TMON);
                 break;
             default:
                 stickers = new ArrayList<>();
@@ -267,6 +283,9 @@ public class StickerViewModel {
                     group = "(Mozzi)";
                     break;
 
+                case STICKER_GROUP_TMON:
+                    group = "(Tmon)";
+                    break;
                 default:
                     group = "";
             }

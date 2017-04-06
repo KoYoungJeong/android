@@ -34,9 +34,8 @@
     <RelativeLayout
         android:id="@+id/vg_chat_detail_leave"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:orientation="vertical">
+        android:layout_height="40dp"
+        android:background="?android:attr/selectableItemBackground">
 
         <View
             android:layout_width="match_parent"
@@ -45,16 +44,30 @@
 
 
         <TextView
-            android:layout_centerVertical="true"
+            android:id="@+id/tv_hide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/jandi_action_leave"
+            android:text="@string/menu_hide_1_1"
             android:textColor="@color/jandi_text"
             android:textSize="@dimen/jandi_text_size_large" />
 
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:duplicateParentState="true"
+        android:text="@string/menu_hide_desc_1_1"
+        android:textColor="@color/text_color_setting_check_summary"
+        android:textSize="@dimen/jandi_text_size_medium" />
 
 
 </LinearLayout>

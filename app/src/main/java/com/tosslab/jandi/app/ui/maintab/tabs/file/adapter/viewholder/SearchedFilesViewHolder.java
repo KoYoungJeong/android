@@ -103,10 +103,12 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
         String fileType = content.getIcon();
         String fileUrl = content.getFileUrl();
         String thumbnailUrl = ImageUtil.getOnlyLargestThumbnail(content);
+
+        boolean isContact = content.getExt().equals("vcf");
         ImageUtil.setResourceIconOrLoadImage(
                 ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,
-                serverUrl, fileType);
+                serverUrl, fileType, isContact);
 
         tvFileSize.setText(FileUtil.formatFileSize(searchedFile.getFile().getSize()));
     }

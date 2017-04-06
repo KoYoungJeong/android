@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.adapter.searchable.viewholder.MemberViewHolder;
 
 import butterknife.Bind;
@@ -60,7 +61,7 @@ public class PollParticipantsAdapter extends MultiItemRecyclerAdapter {
     }
 
     public interface OnMemberClickListener {
-        void onMemberClick(User member);
+        void onMemberClick(ChatChooseItem member);
     }
 
     public static class PollOptionTitleViewHolder extends BaseViewHolder<String> {

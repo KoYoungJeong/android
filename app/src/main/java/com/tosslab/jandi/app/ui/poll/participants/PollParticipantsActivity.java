@@ -140,11 +140,11 @@ public class PollParticipantsActivity extends AppCompatActivity
                         AnalyticsValue.Screen.PollParticipant, AnalyticsValue.Action.ViewMember);
             }
 
-            if (AccessLevelUtil.hasAccessLevel(member.getId())) {
+            if (AccessLevelUtil.hasAccessLevel(member.getEntityId())) {
 
                 startActivity(Henson.with(PollParticipantsActivity.this)
                         .gotoMemberProfileActivity()
-                        .memberId(member.getId())
+                        .memberId(member.getEntityId())
                         .build());
             } else {
                 AccessLevelUtil.showDialogUnabledAccessLevel(this);

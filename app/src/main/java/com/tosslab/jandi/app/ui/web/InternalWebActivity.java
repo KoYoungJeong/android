@@ -335,7 +335,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
             public void onReceivedTitle(WebView view, String title) {
                 if (!isAdminPage) {
                     setActionBarTitle(title);
-                }else{
+                } else {
                     setActionBarTitle("관리자 메뉴");
                 }
             }
@@ -366,13 +366,14 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
-                LaunchPageNotFoundActivity();
+                if (errorCode == -1 || errorCode == -2) {
+                    LaunchPageNotFoundActivity();
+                }
             }
 
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 super.onReceivedHttpError(view, request, errorResponse);
-                LaunchPageNotFoundActivity();
             }
         };
     }

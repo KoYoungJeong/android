@@ -36,7 +36,7 @@ public class FileUploadTypeDialogFragment extends DialogFragment {
                         int eventType;
                         switch (which) {
                             case 0:     // from gallery
-                                eventType = FileUploadController.TYPE_UPLOAD_GALLERY;
+                                eventType = FileUploadController.TYPE_UPLOAD_IMAGE_GALLERY;
                                 break;
                             case 1:     // from camera
                                 eventType = FileUploadController.TYPE_UPLOAD_TAKE_PHOTO;

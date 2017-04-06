@@ -55,6 +55,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.ScreenViewProperty;
@@ -96,9 +97,9 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     private LinearLayoutManager layoutManager;
     private AlertDialog createFolderDialog;
-    private UpdatedTopicAdapter updatedTopicAdapter;
     private boolean isFirstLoadFragment = true;
     private TopicFolderAdapter topicFolderAdapter;
+    private UpdatedTopicAdapter updatedTopicAdapter;
 
     public static MainTopicListFragment create(long selectedEntity) {
         Bundle args = new Bundle();
@@ -139,6 +140,7 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     void initViews(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
         mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
         mainTopicListPresenter.onInitViewList();
@@ -162,13 +164,15 @@ public class MainTopicListFragment extends BaseLazyFragment
         lvMainTopic.setItemAnimator(new DefaultItemAnimator());
         topicFolderAdapter = new TopicFolderAdapter();
         topicFolderAdapter.setOnFolderSettingClickListener(
-                (folderId, folderName, folderSeq) -> showGroupSettingPopupView(folderId, folderName, folderSeq));
+                (folderId, folderName, folderSeq) ->
+                        showGroupSettingPopupView(folderId, folderName, folderSeq));
 
         topicFolderAdapter.setOnItemLongClickListener(topicItemData -> {
             mainTopicListPresenter.onChildItemLongClick(topicItemData);
         });
 
         topicFolderAdapter.setOnItemClickListener(topicItemData -> {
+            SpeedEstimationUtil.sendAnalyticsTopicEnteredStart();
             topicFolderAdapter.stopAnimation();
             mainTopicListPresenter.onChildItemClick(topicItemData);
             topicFolderAdapter.notifyDataSetChanged();
@@ -412,6 +416,10 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MOVE_MESSAGE_ACTIVITY) {
+            if (updatedTopicAdapter == null || topicFolderAdapter == null) {
+                return;
+            }
+
             if (resultCode == Activity.RESULT_OK && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
                 long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
                 if (selectedEntity <= -2) {

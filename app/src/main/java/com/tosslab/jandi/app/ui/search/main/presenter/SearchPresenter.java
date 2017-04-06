@@ -85,5 +85,7 @@ public interface SearchPresenter {
         void showChooseRoomDialog(boolean showAllRoom);
 
         void showShouldOpenedUser();
+
+        void showUsageLimitDialog();
     }
 }

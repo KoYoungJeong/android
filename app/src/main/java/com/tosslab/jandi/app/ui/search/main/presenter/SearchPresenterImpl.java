@@ -438,6 +438,15 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void onMoveToMessageFromSearch(SearchMessageData searchMessageData) {
+
+        long linkId = searchMessageData.getLinkId();
+        long limitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
+
+        if (limitedLinkId != -1 && linkId < limitedLinkId) {
+            view.showUsageLimitDialog();
+            return;
+        }
+
         if (TeamInfoLoader.getInstance().isChat(searchMessageData.getRoomId())) {
             long memberId = TeamInfoLoader.getInstance()
                     .getChat(searchMessageData.getRoomId()).getCompanionId();

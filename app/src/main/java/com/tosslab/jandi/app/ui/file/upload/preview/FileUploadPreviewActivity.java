@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -48,9 +50,11 @@ import com.tosslab.jandi.app.ui.file.upload.preview.dagger.FileUploadModule;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TextCutter;
-import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +68,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -76,6 +81,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public static final int FROM_SELECT_IMAGE = 0x01;
     public static final int FROM_TAKE_PHOTO = 0x02;
     public static final int FROM_SELECT_FILE = 0x03;
+    public static final int FROM_SELECT_VIDEO = 0x04;
 
     @Nullable
     @InjectExtra
@@ -96,6 +102,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     FileUploadPresenter fileUploadPresenter;
 
     InputMethodManager inputMethodManager;
+
     @Bind(R.id.vp_file_upload_preview)
     ViewPager vpFilePreview;
     @Bind(R.id.tv_file_upload_title)
@@ -104,20 +111,24 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     TextView tvEntity;
     @Bind(R.id.et_file_upload_comment)
     EditText etComment;
-    @Bind(R.id.vg_file_upload_preview_content)
-    ViewGroup vgFileInfo;
     @Bind({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
-    @Bind(R.id.layout_pricing_plan_warning)
-    ViewGroup layoutPricingPlanWarning;
-
     @Bind(R.id.lv_file_upload_thumbs)
     RecyclerView lvthumb;
+    @Bind(R.id.vg_upload_info_bottom_sheet)
+    View vgUploadInfoBottomSheet;
+    @Bind(R.id.vg_file_upload_preview_content_entity)
+    ViewGroup vgFileUploadPreviewContentEntity;
 
+    @Bind(R.id.vg_coordinator)
+    ViewGroup vgCoordinator;
+
+    private boolean thumbNailViewVisible = false;
     private MentionControlViewModel mentionControlViewModel;
     private PublishSubject<Object> scrollButtonPublishSubject;
     private Subscription subscribe;
     private FileUploadThumbAdapter adapter;
+    private BottomSheetBehavior bottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +154,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared, realFilePathList);
 
         scrollButtonPublishSubject = PublishSubject.create();
-        subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
+        subscribe = scrollButtonPublishSubject.throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     for (ImageView scrollButton : scrollButtons) {
@@ -170,10 +181,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                     ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
 
-        fileUploadPresenter.onInitPricingInfo();
+//        fileUploadPresenter.onInitPricingInfo();
 
         if (realFilePathList.size() > 1) {
-
             lvthumb.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
             adapter = new FileUploadThumbAdapter();
             adapter.setItemClickListener((view, adapter1, position) -> {
@@ -183,11 +193,50 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
             lvthumb.addItemDecoration(new FileUploadThumbDivideItemDecorator());
 
             fileUploadPresenter.initThumbInfo(realFilePathList);
+            thumbNailViewVisible = true;
 
+            etComment.setMaxLines(18);
         } else {
+            thumbNailViewVisible = false;
             lvthumb.setVisibility(View.GONE);
+            etComment.setMaxLines(21);
         }
 
+        vgUploadInfoBottomSheet.setOnTouchListener((v, event) -> true);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(vgUploadInfoBottomSheet);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        etComment.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+            return false;
+        });
+
+        KeyboardVisibilityEvent.setEventListener(
+                this, isOpen -> {
+                    if (isOpen) {
+                        etComment.setMaxLines(9);
+                        vgFileUploadPreviewContentEntity.setVisibility(View.GONE);
+                        Completable.complete()
+                                .delay(400, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
+                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(169.5f));
+                                });
+                    } else {
+                        vgFileUploadPreviewContentEntity.setVisibility(View.VISIBLE);
+                        if (lvthumb.getVisibility() == View.VISIBLE) {
+                            etComment.setMaxLines(18);
+                        } else {
+                            etComment.setMaxLines(21);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -237,22 +286,47 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
 
         ActionBar actionBar = getSupportActionBar();
-        if (vgFileInfo.getVisibility() != View.VISIBLE) {
+        if (vgUploadInfoBottomSheet.getVisibility() != View.VISIBLE) {
             // 보이도록 하기, 배경 흰색
-            vgFileInfo.setVisibility(View.VISIBLE);
-            lvthumb.setVisibility(View.VISIBLE);
+            vgUploadInfoBottomSheet.setVisibility(View.VISIBLE);
+            if (thumbNailViewVisible) {
+                lvthumb.setVisibility(View.VISIBLE);
+            }
             vpFilePreview.setBackgroundColor(Color.WHITE);
             if (actionBar != null) {
                 actionBar.show();
             }
+            RelativeLayout.LayoutParams nextScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(0).getLayoutParams();
+            nextScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(245), 0, 0);
+            nextScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(0).setLayoutParams(nextScrollLayoutParams);
+            RelativeLayout.LayoutParams prevScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(1).getLayoutParams();
+            prevScrollLayoutParams.setMargins(0, (int) UiUtils.getPixelFromDp(245), 0, 0);
+            prevScrollLayoutParams.removeRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(1).setLayoutParams(prevScrollLayoutParams);
         } else {
             // 안보이게 하기, 배경 검정
-            vgFileInfo.setVisibility(View.GONE);
-            lvthumb.setVisibility(View.GONE);
+            vgUploadInfoBottomSheet.setVisibility(View.GONE);
+            if (thumbNailViewVisible) {
+                lvthumb.setVisibility(View.GONE);
+            }
             vpFilePreview.setBackgroundColor(Color.BLACK);
             if (actionBar != null) {
                 actionBar.hide();
             }
+
+            RelativeLayout.LayoutParams nextScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(0).getLayoutParams();
+            nextScrollLayoutParams.setMargins(0, 0, 0, 0);
+            nextScrollLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(0).setLayoutParams(nextScrollLayoutParams);
+            RelativeLayout.LayoutParams prevScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) scrollButtons.get(1).getLayoutParams();
+            prevScrollLayoutParams.setMargins(0, 0, 0, 0);
+            prevScrollLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            scrollButtons.get(1).setLayoutParams(prevScrollLayoutParams);
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
@@ -374,8 +448,22 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                             vpFilePreview.getCurrentItem(), renamedFileName);
                     setFileName(renamedFileName);
                     tvFileTitle.requestFocus();
+                    Completable.fromAction(() -> {
+                    }).delay(200, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
+
                 })
-                .setNegativeButton(getString(R.string.jandi_cancel), null);
+                .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
+                    Completable.fromAction(() -> {
+                    }).delay(200, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
+                                inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                            });
+                });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -513,23 +601,23 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         return false;
     }
 
-    @Override
-    public void setPricingLimitView(Boolean isLimited) {
-        if (isLimited) {
-            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
-            PricingPlanWarningViewController pricingPlanWarningViewController
-                    = PricingPlanWarningViewController.with(this, layoutPricingPlanWarning);
-            if (from == FROM_SELECT_IMAGE) {
-                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_IMAGE);
-            } else if (from == FROM_TAKE_PHOTO) {
-                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_TAKE_PHOTO);
-            } else if (from == FROM_SELECT_FILE) {
-                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_FILE);
-            }
-        } else {
-            layoutPricingPlanWarning.setVisibility(View.GONE);
-        }
-    }
+//    @Override
+//    public void setPricingLimitView(Boolean isLimited) {
+//        if (isLimited) {
+//            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
+//            PricingPlanWarningViewController pricingPlanWarningViewController
+//                    = PricingPlanWarningViewController.with(this, layoutPricingPlanWarning);
+//            if (from == FROM_SELECT_IMAGE) {
+//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_IMAGE);
+//            } else if (from == FROM_TAKE_PHOTO) {
+//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_TAKE_PHOTO);
+//            } else if (from == FROM_SELECT_FILE) {
+//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_FILE);
+//            }
+//        } else {
+//            layoutPricingPlanWarning.setVisibility(View.GONE);
+//        }
+//    }
 
     @Override
     public void setFileThumbInfo(List<FileUploadThumbAdapter.FileThumbInfo> files) {

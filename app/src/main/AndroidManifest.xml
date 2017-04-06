@@ -186,10 +186,15 @@
             android:name=".ui.file.upload.preview.FileUploadPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".ui.album.imagealbum.ImageAlbumActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.album.videoalbum.VideoAlbumActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" />
 
@@ -243,6 +248,12 @@
 
         <activity
             android:name=".ui.restart.RankResetActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Transparent" />
+
+        <activity
+            android:name=".ui.restart.TeamPlanResetActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.Transparent" />
@@ -374,7 +385,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -413,32 +424,9 @@
         </activity>
 
         <activity
-            android:name=".ui.share.views.ShareSelectRoomActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_share_to_jandi"
-            android:screenOrientation="portrait">
-
-            <intent-filter>
-                <action android:name="andorid.intent.action.VIEW" />
-                <action android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".ui.share.views.ShareSelectTeamActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_share_to_jandi"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="andorid.intent.action.VIEW" />
-                <action android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.filedetail.views.FileShareActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_title_cdp_to_be_shared"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="andorid.intent.action.VIEW" />

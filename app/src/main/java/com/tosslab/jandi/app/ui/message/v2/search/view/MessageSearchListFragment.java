@@ -426,13 +426,6 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
         dateAnimator = new DateAnimator(tvMessageDate);
         RecyclerScrollStateListener recyclerScrollStateListener = new RecyclerScrollStateListener();
-        recyclerScrollStateListener.setListener(scrolling -> {
-            if (scrolling) {
-                dateAnimator.show();
-            } else {
-                dateAnimator.hide();
-            }
-        });
 
         // 스크롤 했을 때 동작
         lvMessages.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -447,6 +440,23 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
                 Date date = ((MessageListSearchAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
+
+                if (date.getTime() == 1) {
+                    recyclerScrollStateListener.setListener(null);
+                    tvMessageDate.setVisibility(View.GONE);
+                } else {
+                    tvMessageDate.setVisibility(View.VISIBLE);
+                    if (!recyclerScrollStateListener.hasListener()) {
+                        recyclerScrollStateListener.setListener(scrolling -> {
+                            if (scrolling) {
+                                dateAnimator.show();
+                            } else {
+                                dateAnimator.hide();
+                            }
+                        });
+                    }
+                }
+
                 if (date != null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
@@ -861,7 +871,8 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
     public void showReadOnly(boolean readOnly) {
         vgReadOnly.setVisibility(readOnly ? View.VISIBLE : View.GONE);
         if (readOnly) {
-            vgReadOnly.setOnClickListener(v -> { });
+            vgReadOnly.setOnClickListener(v -> {
+            });
         } else {
             vgReadOnly.setOnClickListener(null);
         }

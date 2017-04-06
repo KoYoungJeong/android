@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/vg_team"
             android:layout_marginTop="16dp"
-            android:text="Topic or message"
+            android:text="@string/jandi_shared_in_room"
             android:textColor="@color/jandi_text_light"
             android:textSize="12sp" />
 

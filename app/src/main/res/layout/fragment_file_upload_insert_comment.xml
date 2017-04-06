@@ -2,19 +2,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_file_upload_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/black" />
 
     <!-- 액션바(56dp), 파일 제목, 엔티티, 댓글 영역(186dp)을 제외한 나머지 영역 -->
+
     <FrameLayout
         android:id="@+id/vg_file_extensions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="208dp"
+        android:layout_marginBottom="169.5dp"
         android:layout_marginTop="?android:attr/actionBarSize"
         android:visibility="gone">
 

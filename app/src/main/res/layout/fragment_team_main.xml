@@ -19,7 +19,7 @@
         android:layout_height="40dp"
         android:fillViewport="true"
         android:textSize="@dimen/jandi_text_size_medium"
-        app:tabBackground="@color/jandi_primary_color"
+        app:tabBackground="@color/rgb_11456b"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/white"
         app:tabIndicatorHeight="2dp"

@@ -33,8 +33,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 278
-        versionName '2.8.2'
+        versionCode 288
+        versionName '2.10.0'
 
         // for Ui Testing
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -60,7 +60,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
-            minSdkVersion project.hasProperty("dev_min_sdk") ? dev_min_sdk : 19
+            minSdkVersion project.hasProperty("dev_min_sdk") ? dev_min_sdk : 21
         }
         api {
             applicationId 'com.tosslab.jandi.app.dev'

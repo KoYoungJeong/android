@@ -17,11 +17,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Completable;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class MessageRepositoryModel {
 
-    public static final int MAX_COUNT = 50;
+    public static final int MAX_COUNT = 20;
     MessageManipulator messageManipulator;
 
     @Inject
@@ -42,6 +44,7 @@ public class MessageRepositoryModel {
                 try {
                     ResMessages messages = messageManipulator.getMessages(startLinkId, MAX_COUNT);
                     oldMessages = messages.records;
+
                 } catch (RetrofitException e) {
                     e.printStackTrace();
                 }
@@ -58,17 +61,18 @@ public class MessageRepositoryModel {
             if (oldMessages == null) {
                 oldMessages = new ArrayList<>(0);
             } else {
-                MessageRepository.getRepository().upsertMessages(oldMessages);
-                if (oldMessages != null && !oldMessages.isEmpty()) {
-                    long firstId = oldMessages.get(0).id;
-                    long lastId = oldMessages.get(oldMessages.size() - 1).id;
-                    oldMessages = MessageRepository.getRepository()
-                            .getMessages(roomId, firstId, lastId + 1);
-
-                    MessageRepository.getRepository().updateDirty(roomId, firstId, lastId);
-                }
+                final List<ResMessages.Link> oldMessageCopy = oldMessages;
+                Completable.complete()
+                        .observeOn(Schedulers.newThread())
+                        .subscribe(() -> {
+                            MessageRepository.getRepository().upsertMessages(oldMessageCopy);
+                            if (oldMessageCopy != null && !oldMessageCopy.isEmpty()) {
+                                long firstId = oldMessageCopy.get(0).id;
+                                long lastId = oldMessageCopy.get(oldMessageCopy.size() - 1).id;
+                                MessageRepository.getRepository().updateDirty(roomId, firstId, lastId);
+                            }
+                        });
             }
-
         } else if (oldMessages.size() < MAX_COUNT) {
             try {
 
@@ -82,14 +86,19 @@ public class MessageRepositoryModel {
                         }).toBlocking().first();
 
                 ResMessages messages = messageManipulator.getMessages(first.id, MAX_COUNT - oldMessages.size());
-                MessageRepository.getRepository().upsertMessages(messages.records);
-                if (messages.records != null && !messages.records.isEmpty()) {
-                    long firstId = messages.records.get(0).id;
-                    long lastId = messages.records.get(messages.records.size() - 1).id;
-                    messages.records = MessageRepository.getRepository()
-                            .getMessages(roomId, firstId - 1, lastId + 1);
-                    MessageRepository.getRepository().updateDirty(roomId, firstId, lastId);
-                }
+                Completable.complete()
+                        .observeOn(Schedulers.newThread())
+                        .subscribe(() -> {
+                            MessageRepository.getRepository().upsertMessages(messages.records);
+                            if (messages.records != null && !messages.records.isEmpty()) {
+                                long firstId = messages.records.get(0).id;
+                                long lastId = messages.records.get(messages.records.size() - 1).id;
+//                                messages.records = MessageRepository.getRepository()
+//                                        .getMessages(roomId, firstId - 1, lastId + 1);
+                                MessageRepository.getRepository().updateDirty(roomId, firstId, lastId);
+                            }
+                        });
+
                 oldMessages.addAll(messages.records);
             } catch (RetrofitException e) {
                 e.printStackTrace();
@@ -165,7 +174,6 @@ public class MessageRepositoryModel {
                 }
             }
         }
-
         return messages;
     }
 
