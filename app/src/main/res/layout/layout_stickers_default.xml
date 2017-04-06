@@ -13,6 +13,10 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/rgb_d9d9d9" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager_sticker_default_items"
@@ -20,7 +24,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:overScrollMode="never"
-            android:paddingBottom="20dp" />
+            android:paddingBottom="30dp" />
 
         <LinearLayout
             android:id="@+id/vg_sticker_default_items_no_item"
@@ -28,7 +32,8 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/iv_sticker_default_items_no_item"
@@ -49,9 +54,9 @@
         <com.tosslab.jandi.app.views.ViewPagerIndicator
             android:id="@+id/indicator_sticker_default_items_page_indicator"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="6dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="17dp"
             app:indicatorMargin="@dimen/jandi_view_pager_indicator_margin"
             app:indicatorWidth="@dimen/jandi_view_pager_indicator_size" />
 

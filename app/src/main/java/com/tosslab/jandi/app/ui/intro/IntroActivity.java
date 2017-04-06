@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.ui.sign.SignHomeActivity;
 import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -48,6 +49,11 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     @Nullable
     @InjectExtra
     boolean startForInvite = false;
+
+    @InjectExtra
+    @Nullable
+    boolean fromIntent = false;
+
     @Bind(R.id.iv_jandi_icon)
     ImageView ivJandiIcon;
     @Inject
@@ -64,6 +70,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     public static void startActivity(Context context, boolean startForInvite) {
         context.startActivity(Henson.with(context)
                 .gotoIntroActivity()
+                .fromIntent(true)
                 .startForInvite(startForInvite)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -75,6 +82,7 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     public static void startActivitySkipAnimation(Context context, boolean skipAnimation) {
         context.startActivity(Henson.with(context)
                 .gotoIntroActivity()
+                .fromIntent(true)
                 .skipAnimation(skipAnimation)
                 .build()
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -86,6 +94,11 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
+
+        if (!fromIntent) {
+            SpeedEstimationUtil.sendAnalyticsExecutionAppStart();
+        }
+
         loadAnimation = !KeepExecutedService.isServiceRunning(this) && !skipAnimation;
         if (loadAnimation) {
             setContentView(R.layout.activity_intro_animation);

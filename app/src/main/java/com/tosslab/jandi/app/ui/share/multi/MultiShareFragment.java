@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -17,12 +18,18 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,9 +63,13 @@ import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,16 +81,16 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnPageChange;
 import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func0;
+import rx.subjects.PublishSubject;
 
 public class MultiShareFragment extends Fragment implements MultiSharePresenter.View, MainShareActivity.Share, FileShareInteractor.Wrapper {
 
-    private static final int REQ_SELECT_TEAM = 1001;
     private static final String EXTRA_URIS = "uris";
 
     @Inject
@@ -95,7 +106,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Bind(R.id.iv_multi_share_previous)
     ImageView ivPreviousScroll;
-
     @Bind(R.id.iv_multi_share_next)
     ImageView ivNextScroll;
 
@@ -111,12 +121,19 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     RecyclerView lvFileThumbs;
     @Bind(R.id.vg_multi_share_content)
     View vgComment;
+    @Bind(R.id.vg_coordinator)
+    ViewGroup vgCoordinator;
+
+    @Bind(R.id.vg_multi_share_team)
+    ViewGroup vgMultiShareTeam;
+    @Bind(R.id.vg_multi_share_room)
+    ViewGroup vgMultiShareRoom;
+
 
     @Inject
     ShareAdapterDataView shareAdapterDataView;
     @Inject
     FileShareInteractor fileShareInteractor;
-
     @InjectExtra
     ArrayList<String> uris;
     private ProgressWheel progressWheel;
@@ -125,6 +142,11 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     private FileAccessLimitUtil fileAccessLimitUtil;
     private long teamId = -1;
+
+    private BottomSheetBehavior bottomSheetBehavior;
+    private PublishSubject<Object> scrollButtonPublishSubject;
+    private Subscription subscribe;
+    private int viewPagerCurrentPosition = 0;
 
     public static MultiShareFragment create(List<Uri> uris) {
         MultiShareFragment fragment = new MultiShareFragment();
@@ -136,6 +158,35 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         fragment.setArguments(bundle);
 
         return fragment;
+    }
+
+    // (노티바- 스크린 크기 - 액션바 크기 - 아이템리스트뷰 - 하단 바텀시트) /2 - scroll높이 /2
+    // 위의 공식대로 하면 좌우 스크롤 이미지 뷰의 마진 높이를 구할 수 있다.
+    private void setScrollPosition() {
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        final int height = display.getHeight();
+        int contentAreaHeight = height;
+        contentAreaHeight -= UiUtils.getPixelFromDp(24f); // 노티바
+        contentAreaHeight -= UiUtils.getPixelFromDp(249.5f); // 바텀시트
+        if (lvFileThumbs.getVisibility() == View.VISIBLE) {
+            contentAreaHeight -= UiUtils.getPixelFromDp(60f); //아이템 리스트 뷰
+        }
+        TypedValue tv = new TypedValue();
+        getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+        int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
+        contentAreaHeight -= actionBarHeight; // 액션바
+        int scrollHeight = (int) UiUtils.getPixelFromDp(60f);
+        int scrollmargin = contentAreaHeight / 2 - scrollHeight / 2;
+        RelativeLayout.LayoutParams layoutParamsPreviewScroll =
+                (RelativeLayout.LayoutParams) ivPreviousScroll.getLayoutParams();
+        layoutParamsPreviewScroll.addRule(RelativeLayout.CENTER_VERTICAL, 0);
+        layoutParamsPreviewScroll.setMargins(0, scrollmargin, 0, 0);
+        ivPreviousScroll.setLayoutParams(layoutParamsPreviewScroll);
+        RelativeLayout.LayoutParams layoutParamsNextScroll =
+                (RelativeLayout.LayoutParams) ivNextScroll.getLayoutParams();
+        layoutParamsNextScroll.addRule(RelativeLayout.CENTER_VERTICAL, 0);
+        layoutParamsNextScroll.setMargins(0, scrollmargin, 0, 0);
+        ivNextScroll.setLayoutParams(layoutParamsNextScroll);
     }
 
     @Nullable
@@ -177,6 +228,74 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         multiSharePresenter.initShareData(uris);
 
         setHasOptionsMenu(true);
+
+        fileAccessLimitUtil = FileAccessLimitUtil.newInstance();
+
+        bottomSheetBehavior = BottomSheetBehavior.from(vgComment);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        etComment.setOnTouchListener((v, event) -> {
+            v.getParent().requestDisallowInterceptTouchEvent(true);
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    v.getParent().requestDisallowInterceptTouchEvent(false);
+                    break;
+            }
+            return false;
+        });
+
+        setKeyboardVisibleEvent();
+        setOnPageChanged();
+    }
+
+    private void setKeyboardVisibleEvent() {
+        KeyboardVisibilityEvent.setEventListener(
+                getActivity(), isOpen -> {
+                    if (isOpen) {
+                        etComment.setMaxLines(9);
+                        vgMultiShareTeam.setVisibility(View.GONE);
+                        vgMultiShareRoom.setVisibility(View.GONE);
+                        Completable.complete()
+                                .delay(400, TimeUnit.MILLISECONDS)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> {
+                                    bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(249.5f));
+                                });
+                    } else {
+                        vgMultiShareTeam.setVisibility(View.VISIBLE);
+                        vgMultiShareRoom.setVisibility(View.VISIBLE);
+                        if (lvFileThumbs.getVisibility() == View.VISIBLE) {
+                            etComment.setMaxLines(15);
+                        } else {
+                            etComment.setMaxLines(18);
+                        }
+                    }
+                });
+    }
+
+    private void setOnPageChanged() {
+        vpShare.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                multiSharePresenter.onFilePageChanged(position, etComment.getText().toString());
+                setActionbarTitle(position, vpShare.getAdapter().getCount());
+
+                int itemCount = fileUploadThumbAdapter.getItemCount();
+                for (int idx = 0; idx < itemCount; idx++) {
+                    fileUploadThumbAdapter.getItem(idx).setSelected(idx == position);
+                }
+                fileUploadThumbAdapter.notifyDataSetChanged();
+                lvFileThumbs.getLayoutManager().scrollToPosition(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     @Override
@@ -197,35 +316,61 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        super.onDestroy();
-    }
-
-    @OnPageChange(R.id.vp_multi_share)
-    void onFilePageSelected(int position) {
-        multiSharePresenter.onFilePageChanged(position, etComment.getText().toString());
-        setActionbarTitle(position, vpShare.getAdapter().getCount());
-
-        int itemCount = fileUploadThumbAdapter.getItemCount();
-        for (int idx = 0; idx < itemCount; idx++) {
-            fileUploadThumbAdapter.getItem(idx).setSelected(idx == position);
+        if (subscribe != null && !subscribe.isUnsubscribed()) {
+            subscribe.unsubscribe();
         }
-        fileUploadThumbAdapter.notifyDataSetChanged();
-        lvFileThumbs.getLayoutManager().scrollToPosition(position);
+        super.onDestroy();
     }
 
     @Override
     public void setUpScrollButton(int position, int count) {
-        if (position == 0) {
-            ivPreviousScroll.setVisibility(View.GONE);
-        } else {
+        viewPagerCurrentPosition = position;
+        if (position != 0) {
             ivPreviousScroll.setVisibility(View.VISIBLE);
+        } else {
+            ivPreviousScroll.setVisibility(View.GONE);
         }
 
-        if (position == count - 1) {
-            ivNextScroll.setVisibility(View.GONE);
-        } else {
+        if (position != count - 1) {
             ivNextScroll.setVisibility(View.VISIBLE);
+        } else {
+            ivNextScroll.setVisibility(View.GONE);
         }
+
+        if (scrollButtonPublishSubject == null) {
+            scrollButtonPublishSubject = PublishSubject.create();
+            subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(o -> {
+                        if (viewPagerCurrentPosition != 0) {
+                            AlphaAnimation animation = new AlphaAnimation(1f, 0f);
+                            animation.setDuration(200);
+                            animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+                            animation.setAnimationListener(new SimpleEndAnimationListener() {
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    ivPreviousScroll.setVisibility(View.GONE);
+                                }
+                            });
+                            ivPreviousScroll.startAnimation(animation);
+                        }
+
+                        if (viewPagerCurrentPosition != count - 1) {
+                            AlphaAnimation animation = new AlphaAnimation(1f, 0f);
+                            animation.setDuration(200);
+                            animation.setStartTime(AnimationUtils.currentAnimationTimeMillis());
+                            animation.setAnimationListener(new SimpleEndAnimationListener() {
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    ivNextScroll.setVisibility(View.GONE);
+                                }
+                            });
+                            ivNextScroll.startAnimation(animation);
+                        }
+                    });
+        }
+
+        scrollButtonPublishSubject.onNext(new Object());
     }
 
     @OnClick(value = {R.id.iv_multi_share_previous, R.id.iv_multi_share_next})
@@ -266,7 +411,6 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
     @Override
     public void updateFiles(int pageCount) {
-
         shareAdapterDataView.refresh();
 
         setUpScrollButton(0, pageCount);
@@ -306,7 +450,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     @Override
     public void setRoomName(String roomName) {
         tvRoomName.setText(roomName);
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
@@ -395,6 +539,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     public void onEvent(ShareSelectRoomEvent event) {
         long roomId = event.getRoomId();
         multiSharePresenter.onSelectRoom(roomId);
+        Completable.complete()
+                .delay(200, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                });
     }
 
     public void onEvent(FileUploadPreviewImageClickEvent event) {
@@ -440,15 +590,16 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                     setFileName(renamedFileName);
                     tvTitle.requestFocus();
                     Completable.complete()
-                            .delay(100, TimeUnit.MILLISECONDS)
+                            .delay(200, TimeUnit.MILLISECONDS)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(() -> {
                                 inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
                             });
+
                 })
                 .setNegativeButton(getString(R.string.jandi_cancel), (dialog, which) -> {
                     Completable.complete()
-                            .delay(100, TimeUnit.MILLISECONDS)
+                            .delay(200, TimeUnit.MILLISECONDS)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(() -> {
                                 inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
@@ -511,11 +662,12 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             lvFileThumbs.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             lvFileThumbs.addItemDecoration(new FileUploadThumbDivideItemDecorator());
             lvFileThumbs.setAdapter(fileUploadThumbAdapter);
+            etComment.setMaxLines(15);
         } else {
             lvFileThumbs.setVisibility(View.GONE);
+            etComment.setMaxLines(18);
         }
-
-
+        setScrollPosition();
     }
 
     private String getFileExtension(String fileName) {
@@ -541,6 +693,7 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                 actionBar.show();
             }
             fileShareInteractor.onFocusContent(false);
+            setScrollPosition();
         } else {
             // 안보이게 하기, 배경 검정
             vgComment.setVisibility(View.GONE);
@@ -552,7 +705,18 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             fileShareInteractor.onFocusContent(true);
 
             inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+
+            RelativeLayout.LayoutParams nextScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) ivNextScroll.getLayoutParams();
+            nextScrollLayoutParams.setMargins(0, 0, 0, 0);
+            nextScrollLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+            ivNextScroll.setLayoutParams(nextScrollLayoutParams);
+
+            RelativeLayout.LayoutParams prevScrollLayoutParams =
+                    (RelativeLayout.LayoutParams) ivPreviousScroll.getLayoutParams();
+            prevScrollLayoutParams.setMargins(0, 0, 0, 0);
+            prevScrollLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+            ivPreviousScroll.setLayoutParams(prevScrollLayoutParams);
         }
     }
-
 }

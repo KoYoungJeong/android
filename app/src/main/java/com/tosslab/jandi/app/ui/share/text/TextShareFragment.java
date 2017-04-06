@@ -185,12 +185,10 @@ public class TextShareFragment extends Fragment implements MainShareActivity.Sha
 
     @OnClick(R.id.vg_team)
     void clickSelectTeam() {
-        LogUtil.e("team");
-        long teamId;
-        if (textSharePresenterImpl.getTeamId() <= 0) {
+        long teamId = textSharePresenterImpl.getTeamId();
+
+        if (teamId <= 0) {
             teamId = -1;
-        } else {
-            teamId = textSharePresenterImpl.getTeamId();
         }
 
         startActivity(Henson.with(getContext())

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.invites.emails.adapter.InviteEmailListAdapterDataModel;
 import com.tosslab.jandi.app.ui.invites.emails.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.emails.vo.InviteEmailVO;
@@ -103,7 +104,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     }
 
 
-    private InviteEmailVO.Status getInviteEmailStatus(String email,int mode) {
+    private InviteEmailVO.Status getInviteEmailStatus(String email, int mode) {
         AnalyticsValue.Screen screen;
         if (mode == EXTRA_INVITE_ASSOCIATE_MODE) {
             screen = AnalyticsValue.Screen.InviteAssociate;
@@ -146,6 +147,11 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     @Override
     public void startInvitationForAssociate(long selectedTopicId) {
         if (invitationUserCnt > 0) {
+            if (isExceedFreeMembers(invitationUserCnt)) {
+                view.showErrorExceedFreeMembersDialog();
+                return;
+            }
+
             if (selectedTopicId == -1) {
                 view.setErrorSelectedTopic();
             } else {
@@ -182,7 +188,10 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     @Override
     public void startInvitation() {
         if (invitationUserCnt > 0) {
-
+            if (isExceedFreeMembers(invitationUserCnt)) {
+                view.showErrorExceedFreeMembersDialog();
+                return;
+            }
             long teamId = TeamInfoLoader.getInstance().getTeamId();
             Rank rankOfMember = TeamInfoLoader.getInstance().getRankOfMember();
             SprinklrInvitationTeam.sendLog(teamId, adapterDataModel.getItems().size(), rankOfMember != null ? rankOfMember.getId() : -1);
@@ -245,6 +254,22 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
             return InviteEmailVO.Status.ACCOUNT_DUMMY;
         }
         return InviteEmailVO.Status.ACCOUNT_JOIN;
+    }
+
+    private boolean isExceedFreeMembers(int invitationCnt) {
+        long memberCount = getUserCount();
+        memberCount = memberCount + invitationCnt;
+        if (memberCount > 500) {
+            return true;
+        }
+        return false;
+    }
+
+    private int getUserCount() {
+        return Observable.from(TeamInfoLoader.getInstance().getUserList())
+                .filter(User::isEnabled)
+                .count()
+                .toBlocking().lastOrDefault(0) - 1;
     }
 
 }

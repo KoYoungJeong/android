@@ -42,14 +42,22 @@ public class NormalFileViewHolder extends FileViewHolder {
     }
 
     @Override
-    protected void initView() { }
+    protected void initView() {
+    }
 
     @Override
     public void bindFileContent(ResMessages.FileMessage fileMessage) {
         final ResMessages.FileContent content = fileMessage.content;
 
         String serverUrl = content.serverUrl;
-        String icon = content.icon;
+
+        String icon;
+
+        if (!fileMessage.content.ext.equals("vcf")) {
+            icon = content.icon;
+        } else {
+            icon = "contact";
+        }
 
         MimeTypeUtil.PlaceholderType placeholderType =
                 PlaceholderUtil.getPlaceholderType(serverUrl, icon);
@@ -110,6 +118,9 @@ public class NormalFileViewHolder extends FileViewHolder {
             case Document:
                 imageResourceId = R.drawable.file_detail_text;
                 break;
+            case Contact:
+                imageResourceId = R.drawable.file_detail_contact;
+                break;
             case ZIP:
                 imageResourceId = R.drawable.file_detail_zip;
                 break;
@@ -150,6 +161,9 @@ public class NormalFileViewHolder extends FileViewHolder {
                 break;
             case Document:
                 color = 0xff426bb7;
+                break;
+            case Contact:
+                color = 0xff288ae6;
                 break;
             case ZIP:
                 color = 0xff828282;

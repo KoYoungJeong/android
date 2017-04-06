@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.comment;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
@@ -168,11 +169,20 @@ public class TextCommentViewHolder extends BaseViewHolder<ResMessages.CommentMes
         }
 
         if (full) {
-            lp.removeRule(rule);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                lp.removeRule(rule);
+            } else {
+                lp.addRule(rule, 0);
+            }
             lp.addRule(parentRule);
         } else {
+
             lp.addRule(rule, R.id.tv_file_detail_comment_content);
-            lp.removeRule(parentRule);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                lp.removeRule(parentRule);
+            } else {
+                lp.addRule(parentRule, 0);
+            }
         }
 
         vCellDivider.setLayoutParams(lp);

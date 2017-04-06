@@ -1,235 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_multi_share"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/lv_multi_share_thumbs"
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/vg_multi_share_file_icon"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/vg_multi_share_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignWithParentIfMissing="true"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:background="@color/white">
 
-            <ImageView
-                android:id="@+id/iv_multi_share_previous"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:padding="12dp"
-                android:src="@drawable/upload_arrow_left" />
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vp_multi_share"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-            <ImageView
-                android:id="@+id/iv_multi_share_next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:padding="12dp"
-                android:src="@drawable/upload_arrow_right" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_below="@+id/lv_multi_share_thumbs"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/vg_multi_share_file_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/vg_multi_share_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/iv_multi_share_previous"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="70dp"
+                        android:padding="12dp"
+                        android:src="@drawable/upload_arrow_left"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/iv_multi_share_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="70dp"
+                        android:padding="12dp"
+                        android:src="@drawable/upload_arrow_right"
+                        android:visibility="gone" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <!-- fake -->
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/actionbar_file_upload"
+
+                android:overScrollMode="never" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/lv_multi_share_thumbs"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:background="@color/jandi_primary_color"
+                android:overScrollMode="never"
+                android:visibility="visible" />
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/vg_multi_share_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/share_upload_bg"
-            android:orientation="vertical">
+    </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/rgb_dadada" />
+    <include layout="@layout/fragment_multi_share_info_bottom_sheet" />
 
-            <LinearLayout
-                android:id="@+id/vg_multi_share_image_title"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_multi_share_image_title"
-                    style="@style/JandiMainShare.Content"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginTop="13dp"
-                    android:layout_weight="1"
-                    android:ellipsize="middle"
-                    android:gravity="center_vertical"
-                    android:hint="@string/jandi_topic_title_hint"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/rgb_333333"
-                    android:textSize="@dimen/jandi_text_size_large" />
-
-                <TextView
-                    android:id="@+id/tv_file_rename_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_round_rect_border_grey"
-                    android:gravity="center"
-                    android:paddingEnd="9dp"
-                    android:paddingLeft="9dp"
-                    android:paddingRight="9dp"
-                    android:paddingStart="9dp"
-                    android:text="@string/common_fileupload_rename"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/jandi_text_size_small" />
-
-            </LinearLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/vg_multi_share_team"
-                style="@style/JandiMainShare.Content"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:clickable="true">
-
-                <TextView
-                    android:id="@+id/tv_multi_share_team_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/jandi_team"
-                    android:textColor="@color/jandi_text_light"
-                    android:textSize="@dimen/jandi_text_size_medium" />
-
-                <TextView
-                    android:id="@+id/tv_multi_share_team_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_multi_share_team_title"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/rgb_333333"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="5dp"
-                    android:layout_alignBottom="@+id/tv_multi_share_team_name"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/tv_multi_share_team_name"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/dropdown_arrow" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/tv_multi_share_team_name"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/rgb_dadada" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/vg_multi_share_room"
-                style="@style/JandiMainShare.Content"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:clickable="true"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_multi_share_room_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/jandi_shared_in_room"
-                    android:textColor="@color/jandi_text_light"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tv_multi_share_room_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_multi_share_room_title"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="8dp"
-                    android:hint="@string/jandi_menu_room_selection"
-                    android:textColor="@color/rgb_333333"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="5dp"
-                    android:layout_alignBottom="@+id/tv_multi_share_room_name"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/tv_multi_share_room_name"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/dropdown_arrow" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/tv_multi_share_room_name"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/rgb_dadada" />
-            </RelativeLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="104dp">
-
-                <AutoCompleteTextView
-                    android:id="@+id/et_multi_share_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:gravity="top|start|left"
-                    android:hint="@string/file_upload_comment"
-                    android:imeOptions="flagNoExtractUi"
-                    android:inputType="textMultiLine"
-                    android:maxLines="3"
-                    android:paddingTop="0dp"
-                    android:scrollbars="vertical"
-                    android:textSize="@dimen/jandi_text_size_large"
-                    android:theme="@style/FloatingEditTextTheme" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/lv_multi_share_thumbs"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="?android:actionBarSize"
-        android:background="@color/jandi_primary_color"
-        android:overScrollMode="never"
-        android:visibility="gone" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

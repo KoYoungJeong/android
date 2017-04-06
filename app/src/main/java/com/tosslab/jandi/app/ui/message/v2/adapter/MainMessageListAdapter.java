@@ -24,9 +24,9 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -37,7 +37,6 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
         implements MessageListHeaderAdapter.MessageItemDate, MessageListAdapterView, MessageListAdapterModel {
 
     Context context;
-    AnimState markerAnimState = AnimState.Idle;
     MoreState oldMoreState;
     MainMessageListAdapter.OnItemClickListener onItemClickListener;
     MainMessageListAdapter.OnItemLongClickListener onItemLongClickListener;
@@ -54,10 +53,10 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     public MainMessageListAdapter(Context context, Room room) {
         this.context = context;
         this.room = room;
-        oldMoreState = MoreState.Idle;
+        oldMoreState = MoreState.FirstLoading;
         links = new ArrayList<>();
         setHasStableIds(true);
-        itemTypes = new WeakHashMap<>();
+        itemTypes = new HashMap<>();
 
         lock = new ReentrantLock();
     }
@@ -65,7 +64,8 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     @Override
     public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
-        View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
+        View convertView;
+        convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
         viewHolder.initView(convertView);
 
         return new RecyclerBodyViewHolder(convertView, viewHolder);
@@ -113,6 +113,20 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     }
 
+    private void setViewHolderDetail(RecyclerBodyViewHolder viewHolder, int position) {
+        ResMessages.Link currentLink = getItem(position);
+        ResMessages.Link previousLink = null;
+        ResMessages.Link nextLink = null;
+
+        if (position > 0) {
+            previousLink = getItem(position - 1);
+        }
+
+        if (position < getItemCount() - 1) {
+            nextLink = getItem(position + 1);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         ResMessages.Link currentLink = getItem(position);
@@ -151,7 +165,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
                 });
 
         // limitedLinkId가 존재할 경우 제한 로직 동작.
-        if (LimitedLinkId != -1) {
+        if (isLimited && (LimitedLinkId != -1)) {
             for (int i = links.size() - 1; i >= 0; i--) {
                 if (LimitedLinkId >= links.get(i).id) {
                     if (i != links.size() - 1) {
@@ -278,7 +292,9 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
 
     @Override
     public void setOldLoadingComplete() {
-        oldMoreState = MoreState.Idle;
+        if (oldMoreState != MoreState.Nope) {
+            oldMoreState = MoreState.Idle;
+        }
     }
 
     @Override
@@ -519,7 +535,7 @@ public class MainMessageListAdapter extends RecyclerView.Adapter<RecyclerBodyVie
     }
 
     enum MoreState {
-        Idle, Loading, Nope
+        FirstLoading, Idle, Loading, Nope
     }
 
     enum AnimState {

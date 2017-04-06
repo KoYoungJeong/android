@@ -90,17 +90,17 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
     }
 
-    @Override
-    public void onInitPricingInfo() {
-        Observable.defer(() -> {
-            boolean isLimited = fileUploadModel.isUploadLimited();
-            return Observable.just(isLimited);
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(isLimited -> {
-                    view.setPricingLimitView(isLimited);
-                });
-    }
+//    @Override
+//    public void onInitPricingInfo() {
+//        Observable.defer(() -> {
+//            boolean isLimited = fileUploadModel.isUploadLimited();
+//            return Observable.just(isLimited);
+//        }).subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(isLimited -> {
+//                    view.setPricingLimitView(isLimited);
+//                });
+//    }
 
     @Override
     public void onCommentTextChange(String text, int currentItemPosition) {

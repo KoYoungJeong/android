@@ -11,6 +11,37 @@ import android.support.annotation.Nullable;
  */
 public class UriUtil {
 
+    /**
+     * http scheme for URIs
+     */
+    public static final String HTTP_SCHEME = "http";
+    public static final String HTTPS_SCHEME = "https";
+    /**
+     * File scheme for URIs
+     */
+    public static final String LOCAL_FILE_SCHEME = "file";
+    /**
+     * Content URI scheme for URIs
+     */
+    public static final String LOCAL_CONTENT_SCHEME = "content";
+    /**
+     * Asset scheme for URIs
+     */
+    public static final String LOCAL_ASSET_SCHEME = "asset";
+    /**
+     * Resource scheme for URIs
+     */
+    public static final String LOCAL_RESOURCE_SCHEME = "res";
+    /**
+     * Data scheme for URIs
+     */
+    public static final String DATA_SCHEME = "data";
+    /**
+     * URI prefix (including scheme) for contact photos
+     */
+    private static final String LOCAL_CONTACT_IMAGE_PREFIX =
+            Uri.withAppendedPath(ContactsContract.AUTHORITY_URI, "display_photo").getPath();
+
     public static Uri getFileUri(String filePath) {
         Uri uri = Uri.parse(filePath);
 
@@ -28,40 +59,10 @@ public class UriUtil {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(imageId));
     }
 
-    /**
-     * http scheme for URIs
-     */
-    public static final String HTTP_SCHEME = "http";
-    public static final String HTTPS_SCHEME = "https";
-
-    /**
-     * File scheme for URIs
-     */
-    public static final String LOCAL_FILE_SCHEME = "file";
-
-    /**
-     * Content URI scheme for URIs
-     */
-    public static final String LOCAL_CONTENT_SCHEME = "content";
-
-    /**
-     * URI prefix (including scheme) for contact photos
-     */
-    private static final String LOCAL_CONTACT_IMAGE_PREFIX =
-            Uri.withAppendedPath(ContactsContract.AUTHORITY_URI, "display_photo").getPath();
-
-    /**
-     * Asset scheme for URIs
-     */
-    public static final String LOCAL_ASSET_SCHEME = "asset";
-
-    /**
-     * Resource scheme for URIs
-     */
-    public static final String LOCAL_RESOURCE_SCHEME = "res";
-
-    /** Data scheme for URIs */
-    public static final String DATA_SCHEME = "data";
+    public static Uri getContentUriForVideo(int videoId) {
+        return Uri.withAppendedPath(
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, String.valueOf(videoId));
+    }
 
     /**
      * /**
@@ -99,6 +100,7 @@ public class UriUtil {
 
     /**
      * Checks if the given URI is a general Contact URI, and not a specific display photo.
+     *
      * @param uri the URI to check
      * @return true if the uri is a Contact URI, and is not already specifying a display photo.
      */
@@ -110,6 +112,7 @@ public class UriUtil {
 
     /**
      * Checks if the given URI is for a photo from the device's local media store.
+     *
      * @param uri the URI to check
      * @return true if the URI points to a media store photo
      */
@@ -141,7 +144,9 @@ public class UriUtil {
         return LOCAL_RESOURCE_SCHEME.equals(scheme);
     }
 
-    /** Check if the uri is a data uri */
+    /**
+     * Check if the uri is a data uri
+     */
     public static boolean isDataUri(@Nullable Uri uri) {
         return DATA_SCHEME.equals(getSchemeOrNull(uri));
     }

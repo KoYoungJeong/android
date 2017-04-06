@@ -4,15 +4,19 @@ import android.content.Context;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -27,15 +31,12 @@ import okio.Source;
  */
 public class JandiGlideModule implements GlideModule {
     private static Interceptor createInterceptor(final ResponseProgressListener listener) {
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                Response response = chain.proceed(request);
-                return response.newBuilder()
-                        .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
-                        .build();
-            }
+        return chain -> {
+            Request request = chain.request();
+            Response response = chain.proceed(request);
+            return response.newBuilder()
+                    .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
+                    .build();
         };
     }
 
@@ -54,10 +55,10 @@ public class JandiGlideModule implements GlideModule {
 
     @Override
     public void registerComponents(Context context, Glide glide) {
-//        OkHttpClient client = new OkHttpClient.Builder()
-//                .addNetworkInterceptor(createInterceptor(new DispatchingProgressListener()))
-//                .build();
-//        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(createInterceptor(new DispatchingProgressListener()))
+                .build();
+        glide.register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(client));
     }
 
     public interface UIProgressListener {

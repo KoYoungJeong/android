@@ -16,6 +16,7 @@
         android:id="@+id/iv_file_detail_comment_sticker_user_profile"
         android:layout_width="@dimen/jandi_file_detail_comment_profile_size"
         android:layout_height="@dimen/jandi_file_detail_comment_profile_size"
+        android:layout_marginLeft="11dp"
         android:layout_marginStart="11dp"
         android:layout_marginTop="12dp" />
 
@@ -23,10 +24,13 @@
         android:id="@+id/tv_file_detail_comment_sticker_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:layout_alignTop="@+id/iv_file_detail_comment_sticker_user_profile"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginRight="10dp"
         android:layout_marginStart="9dp"
         android:layout_toEndOf="@+id/iv_file_detail_comment_sticker_user_profile"
+        android:layout_toRightOf="@+id/iv_file_detail_comment_sticker_user_profile"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
@@ -40,8 +44,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tv_file_detail_comment_sticker_user_name"
-        android:layout_alignStart="@+id/tv_file_detail_comment_sticker_user_name"
         android:layout_alignEnd="@+id/tv_file_detail_comment_sticker_user_name"
+        android:layout_alignStart="@+id/tv_file_detail_comment_sticker_user_name"
         android:layout_alignTop="@+id/tv_file_detail_comment_sticker_user_name"
         android:src="@drawable/line_gray" />
 
@@ -51,8 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:layout_alignBottom="@+id/iv_file_detail_comment_sticker_user_profile"
-        android:layout_alignStart="@+id/iv_file_detail_comment_sticker_user_profile"
         android:layout_alignEnd="@+id/iv_file_detail_comment_sticker_user_profile"
+        android:layout_alignStart="@+id/iv_file_detail_comment_sticker_user_profile"
         android:layout_alignTop="@+id/iv_file_detail_comment_sticker_user_profile"
         android:background="@color/jandi_member_profile_disabled"
         android:visibility="visible" />

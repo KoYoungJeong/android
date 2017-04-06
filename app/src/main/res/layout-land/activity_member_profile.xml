@@ -103,8 +103,8 @@
                     android:id="@+id/vg_member_profile_team_info"
                     android:layout_width="274dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignWithParentIfMissing="true"
                     android:layout_alignParentBottom="true"
+                    android:layout_alignWithParentIfMissing="true"
                     android:layout_marginBottom="20dp"
                     android:layout_toLeftOf="@+id/btn_member_profile_star"
                     android:orientation="vertical">
@@ -137,6 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
                     android:layout_gravity="center"
                     android:paddingBottom="16dp"
                     android:paddingTop="16dp"

@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.ui.message.v2.domain.Room;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageRepositoryModel;
+import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDelete;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -169,6 +170,7 @@ public class MessageListV2Presenter {
                             EventBus.getDefault().post(new RoomMarkerEvent(room.getRoomId()));
                         }
                     }
+                    SpeedEstimationUtil.sendAnalyticsMessageSendingEndIfStarted();
                 }, Throwable::printStackTrace);
     }
 
@@ -346,10 +348,10 @@ public class MessageListV2Presenter {
                     List<ResMessages.Link> messages = pair.second;
                     if (messages == null
                             || messages.isEmpty()) {
-
                         view.dismissProgressWheel();
                         view.dismissProgressView();
                         view.dismissOldLoadProgress();
+                        adapterModel.setOldNoMoreLoading();
 
                         if (pair.first.getData().isFirstLoadOldMessage() && adapterModel.getCount() == 0) {
                             view.showEmptyView(true);
@@ -387,10 +389,8 @@ public class MessageListV2Presenter {
 
                     adapterModel.addAll(0, pair.second);
                     view.refreshMessages();
-                    adapterModel.setOldLoadingComplete();
-                    view.setUpOldMessage(isFirstLoad);
-
                     currentMessageState.setIsFirstLoadOldMessage(false);
+                    view.setUpOldMessage(isFirstLoad);
                 })
                 .doOnNext(pair -> {
                     if (pair.second.isEmpty()) {
@@ -404,6 +404,8 @@ public class MessageListV2Presenter {
                     if (myMarker == null || myMarker.getReadLinkId() < lastLink.id) {
                         addMarkerQueue();
                     }
+                    SpeedEstimationUtil.sendAnalyticsTopicEnteredEndIfStarted();
+                    SpeedEstimationUtil.sendAnalyticsPushEnteredEndIfStarted();
                 })
                 .doOnError(t -> {
                     view.dismissProgressWheel();
@@ -413,6 +415,13 @@ public class MessageListV2Presenter {
                     if (currentMessageState.isFirstMessage()) {
                         view.showEmptyView(true);
                     }
+                }).doOnCompleted(() -> {
+                    // 메세지 리스트가 모두 갱신 된 후에 more loading 플래그를 변경해야 시간차로 인한 오류가 없다.
+                    Completable.complete()
+                            .delay(300, TimeUnit.MILLISECONDS)
+                            .subscribe(() -> {
+                                adapterModel.setOldLoadingComplete();
+                            });
                 })
                 .map(pair -> pair.first);
     }
