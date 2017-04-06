@@ -3,32 +3,26 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.invite.Invitation;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
-import java.util.List;
+/**
+ * Created by tee on 2017. 4. 6..
+ */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
-@Version(3)
-public class SocketTopicJoinedEvent implements EventHistoryInfo {
-    private int version;
+@Version(1)
+public class SocketTeamInvitationCreatedEvent implements EventHistoryInfo {
+
     private String event;
+    private int version;
+    private long ts;
     private long teamId;
     private Data data;
-    private long ts;
     private String unique;
 
-    @Override
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    @Override
     public String getEvent() {
         return event;
     }
@@ -37,22 +31,28 @@ public class SocketTopicJoinedEvent implements EventHistoryInfo {
         this.event = event;
     }
 
-    @Override
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public long getTs() {
+        return ts;
+    }
+
+    public void setTs(long ts) {
+        this.ts = ts;
+    }
+
     public long getTeamId() {
         return teamId;
     }
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
-    }
-
-    @Override
-    public String getUnique() {
-        return unique;
-    }
-
-    public void setUnique(String unique) {
-        this.unique = unique;
     }
 
     public Data getData() {
@@ -63,35 +63,25 @@ public class SocketTopicJoinedEvent implements EventHistoryInfo {
         this.data = data;
     }
 
-    @Override
-    public long getTs() {
-        return ts;
+    public String getUnique() {
+        return unique;
     }
 
-    public void setTs(long ts) {
-        this.ts = ts;
+    public void setUnique(String unique) {
+        this.unique = unique;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private List<Long> memberIds;
-        private long topicId;
+        private Invitation invitation;
 
-        public List<Long> getMemberIds() {
-            return memberIds;
+        public Invitation getInvitation() {
+            return invitation;
         }
 
-        public void setMemberIds(List<Long> memberIds) {
-            this.memberIds = memberIds;
-        }
-
-        public long getTopicId() {
-            return topicId;
-        }
-
-        public void setTopicId(long topicId) {
-            this.topicId = topicId;
+        public void setInvitation(Invitation invitation) {
+            this.invitation = invitation;
         }
     }
 }

@@ -6,10 +6,12 @@ import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
-@Version(2)
+@Version(3)
 public class SocketTeamJoinEvent implements EventHistoryInfo {
     private String event;
     private int version;
@@ -74,15 +76,15 @@ public class SocketTeamJoinEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private Human member;
+        private List<Human> members;
         private long teamId;
 
-        public Human getMember() {
-            return member;
+        public List<Human> getMembers() {
+            return members;
         }
 
-        public void setMember(Human member) {
-            this.member = member;
+        public void setMember(List<Human> members) {
+            this.members = members;
         }
 
         public long getTeamId() {
