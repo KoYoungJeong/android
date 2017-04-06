@@ -147,11 +147,12 @@ public class SocketEmitModel {
     public static SocketUpdateRoom topicJoin(Object data) {
         try {
             SocketTopicJoinedEvent object = SocketModelExtractor.getObject(data, SocketTopicJoinedEvent.class, true, false);
-            if (AccountRepository.getRepository().isMine(object.getData().getMemberId())) {
-                long memberId = object.getData().getMemberId();
-                long topicId = object.getData().getTopicId();
-                String accessToken = TokenUtil.getAccessToken();
-                return SocketUpdateRoom.join(accessToken, memberId, topicId);
+            for (long memberId : object.getData().getMemberIds()) {
+                if (AccountRepository.getRepository().isMine(memberId)) {
+                    long topicId = object.getData().getTopicId();
+                    String accessToken = TokenUtil.getAccessToken();
+                    return SocketUpdateRoom.join(accessToken, memberId, topicId);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
