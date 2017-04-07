@@ -509,6 +509,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             offlineLayer.showOfflineView();
         }
 
+        initTabBadges();
+
         SpeedEstimationUtil.sendAnalyticsExecutionAppEndIfStarted();
     }
 
