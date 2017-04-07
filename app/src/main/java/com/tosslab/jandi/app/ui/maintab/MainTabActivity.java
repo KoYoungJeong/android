@@ -360,7 +360,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 JandiPreference.setLastSelectedTab(position);
 
                 if (position == MypageTabInfo.INDEX) {
-//                    mainTabPresenter.onInitMyPageBadge(true);
                     Fragment fragment = getFragment(position);
                     if (fragment != null && fragment instanceof TabFocusListener) {
                         ((TabFocusListener) fragment).onFocus();
