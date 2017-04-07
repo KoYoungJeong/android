@@ -971,6 +971,8 @@ public class JandiSocketServiceModel {
                 teamId = event.getData().getTeam().getId();
             }
 
+            final long finalTeamId = teamId;
+
             long selectedTeamId = TeamInfoLoader.getInstance().getTeamId();
 
             if (teamId == selectedTeamId) {
@@ -988,10 +990,10 @@ public class JandiSocketServiceModel {
                                             .shouldRefreshAccountInfo(true)
                                             .build().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
-                            InitialInfoRepository.getInstance().removeInitialInfo(teamId);
+                            InitialInfoRepository.getInstance().removeInitialInfo(finalTeamId);
                             JandiPreference.setSocketConnectedLastTime(-1);
 
-                            PollRepository.getInstance().clear(teamId);
+                            PollRepository.getInstance().clear(finalTeamId);
 
                             TeamInfoLoader instance = TeamInfoLoader.getInstance();
                             instance = null;
