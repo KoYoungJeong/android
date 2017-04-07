@@ -267,6 +267,7 @@ public class JandiSocketService extends Service {
             }
         };
         eventsHashMap.put("topic_joined", Arrays.asList(topicJoinUpdateListener, topicJoinListener));
+
         EventListener topicInviteListener = objects -> jandiSocketServiceModel.onTopicInvited(objects[0]);
         eventHashMap.put("topic_invited", topicInviteListener);
         EventListener topicUpdatedListener = objects -> jandiSocketServiceModel.onTopicUpdated(objects[0]);
@@ -413,6 +414,19 @@ public class JandiSocketService extends Service {
             sendBroadcastForRestart();
         });
 
+        EventListener restartListener = objects -> {
+            JandiPreference.setSocketReconnectDelay(0l);
+            SocketStart socketStart = jandiSocketServiceModel.getStartInfo();
+            if (socketStart != null) {
+                jandiSocketManager.sendByJson("start", socketStart);
+            } else {
+                // 만료된 것으로 보고 소켓 서비스 강제 종료
+                setStopForcibly(true);
+                stopSelf();
+            }
+        };
+
+        eventHashMap.put("restart", restartListener);
     }
 
     private void setUpSocketListener() {

@@ -42,7 +42,7 @@ public class Invitation {
     @GsonAdapterKey
     String inviteeAccountDetailUuid;
     @GsonAdapterKey
-    long id;
+    String id;
 
     public long getInviteMemberId() {
         return inviteMemberId;
@@ -156,11 +156,11 @@ public class Invitation {
         this.inviteeAccountDetailUuid = inviteeAccountDetailUuid;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 }

@@ -3,14 +3,12 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
-@Version(3)
 public class SocketTopicJoinedEvent implements EventHistoryInfo {
     private int version;
     private String event;
@@ -76,7 +74,16 @@ public class SocketTopicJoinedEvent implements EventHistoryInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private List<Long> memberIds;
+        private long memberId;
         private long topicId;
+
+        public long getMemberId() {
+            return memberId;
+        }
+
+        public void setMemberId(long memberId) {
+            this.memberId = memberId;
+        }
 
         public List<Long> getMemberIds() {
             return memberIds;
