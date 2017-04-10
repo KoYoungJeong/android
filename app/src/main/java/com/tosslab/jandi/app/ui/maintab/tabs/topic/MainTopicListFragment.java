@@ -196,6 +196,7 @@ public class MainTopicListFragment extends BaseLazyFragment
         if (isFirstLoadFragment) {
             isFirstLoadFragment = false;
         }
+        onEvent(new RetrieveTopicListEvent());
     }
 
     @Override
