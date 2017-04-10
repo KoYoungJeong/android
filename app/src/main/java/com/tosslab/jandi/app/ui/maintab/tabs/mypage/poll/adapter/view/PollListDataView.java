@@ -5,4 +5,6 @@ package com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.view;
  */
 public interface PollListDataView {
     void notifyDataSetChanged();
+
+    int getItemCount();
 }

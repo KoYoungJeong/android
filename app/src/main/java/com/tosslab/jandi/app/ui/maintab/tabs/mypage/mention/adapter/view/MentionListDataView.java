@@ -7,6 +7,8 @@ public interface MentionListDataView {
 
     void notifyDataSetChanged();
 
+    int getItemCount();
+
     void clearLoadMoreOffset();
 
 }
