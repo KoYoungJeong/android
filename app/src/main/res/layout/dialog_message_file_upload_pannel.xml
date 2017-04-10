@@ -91,7 +91,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="11dp"
                     android:gravity="center"
-                    android:text="카메라"
+                    android:text="@string/jandi_upload_menu_camera"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
 
@@ -124,7 +124,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="11dp"
                     android:gravity="center"
-                    android:text="파일"
+                    android:text="@string/jandi_upload_menu_file"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
 
@@ -149,7 +149,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="11dp"
                     android:gravity="center"
-                    android:text="투표"
+                    android:text="@string/jandi_poll"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
             </LinearLayout>
@@ -172,7 +172,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="11dp"
                     android:gravity="center"
-                    android:text="연락처"
+                    android:text="@string/common_file_contacts"
                     android:textColor="@color/white"
                     android:textSize="14dp" />
 
