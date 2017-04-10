@@ -182,10 +182,13 @@ public class MainTopicListFragment extends BaseLazyFragment
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) {
-                    activity.setTabLayoutVisible(false);
-                } else {
-                    activity.setTabLayoutVisible(true);
+
+                if (topicFolderAdapter.getItemCount() > 12) {
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
                 }
             }
         });
