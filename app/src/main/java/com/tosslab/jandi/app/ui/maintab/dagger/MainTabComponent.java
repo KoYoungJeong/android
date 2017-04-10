@@ -7,6 +7,5 @@ import dagger.Component;
 
 @Component(modules = {ApiClientModule.class, MainTabModule.class})
 public interface MainTabComponent {
-
     void inject(MainTabActivity activity);
 }
