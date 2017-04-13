@@ -49,7 +49,6 @@ public class SignUpModel {
 
     public boolean isValidCharacterPassword(String password) {
         return PasswordChecker.checkStrength(password) >= PasswordChecker.AVERAGE;
-
     }
 
     public EmailTypo getEmailTypo() throws RetrofitException {

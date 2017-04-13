@@ -252,6 +252,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/JandiTheme.Transparent" />
 
+        <activity
+            android:name=".ui.sign.changepassword.ChangePasswordActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/account_password_change"
+            android:screenOrientation="portrait" />
+
         <service
             android:name=".services.keep.KeepExecutedService"
             android:label="@string/app_name" />

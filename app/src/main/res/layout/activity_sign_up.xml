@@ -32,18 +32,26 @@
                 android:layout_marginTop="16dp"
                 app:theme="@style/FloatingEditTextTheme">
 
-                <EditText
-                    android:id="@+id/et_name"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/jandi_name"
-                    android:imeOptions="actionNext"
-                    android:inputType="textImeMultiLine"
-                    android:maxLength="30"
-                    android:maxLines="1"
-                    android:nextFocusDown="@+id/et_password"
-                    android:paddingBottom="16dp"
-                    android:textSize="16sp" />
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/jandi_name"
+                        android:imeOptions="actionNext"
+                        android:inputType="textImeMultiLine"
+                        android:maxLength="30"
+                        android:maxLines="1"
+                        android:nextFocusDown="@+id/et_password"
+                        android:paddingBottom="16dp"
+                        android:paddingRight="30dp"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
 
             </android.support.design.widget.TextInputLayout>
 
