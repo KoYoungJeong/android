@@ -258,6 +258,16 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
 
     @Override
     protected void onDestroy() {
+        webView.clearCache(true);
+        webView.clearFormData();
+        webView.clearHistory();
+        CookieManager cookieManager = CookieManager.getInstance();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            cookieManager.removeAllCookies(null);
+        } else {
+            cookieManager.removeAllCookie();
+        }
+
         if (helpSite) {
             internalWebPresenter.zendeskCookieRemove(getApplicationContext());
         }

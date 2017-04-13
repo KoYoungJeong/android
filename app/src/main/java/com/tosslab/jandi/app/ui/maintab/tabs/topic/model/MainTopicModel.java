@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
-import rx.functions.Func0;
 
 public class MainTopicModel {
 
@@ -85,12 +84,14 @@ public class MainTopicModel {
     }
 
     public List<TopicRoom> getJoinedTopics() {
-        return Observable.from(TeamInfoLoader.getInstance().getTopicList())
-                .filter(TopicRoom::isJoined)
-                .collect((Func0<ArrayList<TopicRoom>>) ArrayList::new, ArrayList::add)
-                .toBlocking()
-                .firstOrDefault(new ArrayList<>());
-
+        List<TopicRoom> rooms = new ArrayList<>();
+        List<TopicRoom> topicList = TeamInfoLoader.getInstance().getTopicList();
+        for (TopicRoom room : topicList) {
+            if (room.isJoined()) {
+                rooms.add(room);
+            }
+        }
+        return rooms;
     }
 
     public List<IMarkerTopicFolderItem> getTopicFolderDatas() {
@@ -102,12 +103,14 @@ public class MainTopicModel {
         LinkedHashMap<Long, TopicRoom> joinedTopicsHashMap = new LinkedHashMap<>();
 
         for (TopicRoom topicRoom : joinedTopics) {
-            joinedTopicsHashMap.put(topicRoom.getId(), topicRoom);
+            if (topicRoom != null)
+                joinedTopicsHashMap.put(topicRoom.getId(), topicRoom);
         }
 
         for (TopicFolder topicFolder : topicFolders) {
             for (TopicRoom topicRoom : topicFolder.getRooms()) {
-                joinedTopicsHashMap.remove(topicRoom.getId());
+                if (topicRoom != null)
+                    joinedTopicsHashMap.remove(topicRoom.getId());
             }
         }
 
@@ -157,6 +160,8 @@ public class MainTopicModel {
                     });
 
                     for (TopicRoom room : topicFolder.getRooms()) {
+                        if (room == null)
+                            continue;
                         index++;
                         TopicItemData topicItemData = new TopicItemData();
                         topicItemData.setName(room.getName());

@@ -97,9 +97,9 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     private LinearLayoutManager layoutManager;
     private AlertDialog createFolderDialog;
+    private UpdatedTopicAdapter updatedTopicAdapter;
     private boolean isFirstLoadFragment = true;
     private TopicFolderAdapter topicFolderAdapter;
-    private UpdatedTopicAdapter updatedTopicAdapter;
 
     public static MainTopicListFragment create(long selectedEntity) {
         Bundle args = new Bundle();
@@ -114,8 +114,6 @@ public class MainTopicListFragment extends BaseLazyFragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_joined_topic_list, container, false);
         ButterKnife.bind(this, view);
-        initTopicFolderAdapter();
-        initUpdatedTopicAdapter();
         return view;
     }
 
@@ -136,7 +134,8 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     void initViews(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
+        initTopicFolderAdapter();
+        initUpdatedTopicAdapter();
         mainTopicListPresenter.onLoadFolderList();
         mainTopicListPresenter.initUpdatedTopicList();
         mainTopicListPresenter.onInitViewList();
@@ -200,6 +199,7 @@ public class MainTopicListFragment extends BaseLazyFragment
         if (isFirstLoadFragment) {
             isFirstLoadFragment = false;
         }
+        onEvent(new RetrieveTopicListEvent());
     }
 
     @Override
@@ -428,10 +428,6 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MOVE_MESSAGE_ACTIVITY) {
-            if (updatedTopicAdapter == null || topicFolderAdapter == null) {
-                return;
-            }
-
             if (resultCode == Activity.RESULT_OK && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
                 long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
                 if (selectedEntity <= -2) {
