@@ -57,7 +57,8 @@ public class InviteDialogExecutor {
         try {
             TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
 
-            if (getUserCount() > 500) {
+            if (TeamInfoLoader.getInstance().getTeamPlan().getPricing().equals("free") &&
+                    getUserCount() > 500) {
                 showErrorExceedFreeMembersDialog(context);
                 return;
             }
