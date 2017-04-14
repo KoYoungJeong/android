@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.profile.account.model;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
@@ -90,7 +91,7 @@ public class SettingAccountProfileModel {
             // deviceId 가 없는 경우에 대한 방어코드, deviceId 가 비어 있는 경우 400 error 가 떨어짐.
             // UUID RFC4122 규격 맞춘 아무 값이나 필요
             if (TextUtils.isEmpty(deviceId)) {
-                deviceId = UUID.randomUUID().toString();
+                deviceId = JandiApplication.getDeviceUUID();
             }
 
             return Observable.just(deviceId);

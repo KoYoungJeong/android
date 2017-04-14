@@ -362,6 +362,7 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
                 return R.string.jandi_title_name;
             case ACTION_FORGOT_PASSWORD:
+                return R.string.password_forgot_email_type_info;
             case ACTION_NEW_EMAIL:
                 return R.string.jandi_user_id;
             default:

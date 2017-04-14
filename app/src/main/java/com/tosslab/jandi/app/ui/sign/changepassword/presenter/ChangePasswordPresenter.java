@@ -6,15 +6,15 @@ package com.tosslab.jandi.app.ui.sign.changepassword.presenter;
 
 public interface ChangePasswordPresenter {
 
-    boolean checkCurrentPasswordValidation(String password);
-
     boolean checkNewPasswordAgainValidation(String newPassword, String newAgainPassword);
 
     boolean checkNewPasswordValidation(String password);
 
-    void setNewPassword(String oldPassword, String newPassword);
+    void setNewPassword(String oldPassword, String newPassword, String newPasswordAgain);
 
     void checkCanSendChangePassword(String oldPassword, String newPassword, String newPasswordAgain);
+
+    void forgotPassword(String email);
 
     interface View {
         void showProgressWheel();
@@ -36,6 +36,14 @@ public interface ChangePasswordPresenter {
         void setDoneButtonEnable(boolean visible);
 
         void showSuccessDialog();
+
+        void showSuggestJoin(String email);
+
+        void showNetworkErrorToast();
+
+        void showFailPasswordResetToast();
+
+        void showPasswordResetEmailSendSucsess();
 
     }
 }

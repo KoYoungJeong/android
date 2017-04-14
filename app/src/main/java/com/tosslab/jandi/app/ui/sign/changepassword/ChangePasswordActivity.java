@@ -18,6 +18,8 @@ import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -26,13 +28,16 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
+import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.sign.changepassword.dagger.ChangePasswordModule;
 import com.tosslab.jandi.app.ui.sign.changepassword.dagger.DaggerChangePasswordComponent;
 import com.tosslab.jandi.app.ui.sign.changepassword.presenter.ChangePasswordPresenter;
 import com.tosslab.jandi.app.ui.sign.signin.SignInActivity;
+import com.tosslab.jandi.app.ui.sign.signup.SignUpActivity;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
@@ -41,12 +46,19 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
+import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 
 /**
  * Created by tee on 2017. 4. 11..
@@ -111,6 +123,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         ButterKnife.bind(this);
         setUpActionBar();
         DaggerChangePasswordComponent.builder()
@@ -135,8 +148,16 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
         SpannableString content = new SpannableString(tvForgetPasswordButton.getText());
         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
         tvForgetPasswordButton.setText(content);
+        EventBus.getDefault().register(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
 
     @Override
     public void showProgressWheel() {
@@ -169,10 +190,28 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                Observable.defer(new Func0<Observable<Object>>() {
+                    @Override
+                    public Observable<Object> call() {
+                        hideKeyboard();
+                        return Observable.just(0);
+                    }
+                }).delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(i -> {
+                            finish();
+                        });
                 break;
         }
         return true;
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -201,7 +240,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
         etLayoutNewPassword.setError(getString(R.string.password_new_type_confi_alert));
         startBounceAnimation(etLayoutNewPassword.getChildAt(etLayoutNewPassword.getChildCount() - 1));
     }
-
 
     @Override
     public void showErrorNotSameNewPassword() {
@@ -247,13 +285,19 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
                     etNewPassword.getText().toString(),
                     etNewPasswordAgain.getText().toString());
             resetPasswordPresenter.checkNewPasswordValidation(etNewPassword.getText().toString());
-            removeErrorCurrentPassword();
         }
 
-        if (etCurrentPassword.length() > 0) {
-            ivCurrentPasswordClearButton.setVisibility(View.VISIBLE);
+        if (focused) {
+            if (etLayoutCurrentPassword.isErrorEnabled()) {
+                etCurrentPassword.setText("");
+                removeErrorCurrentPassword();
+            }
             ivNewPasswordClearButton.setVisibility(View.GONE);
             ivNewPasswordAgainClearButton.setVisibility(View.GONE);
+
+            if (etCurrentPassword.length() > 0) {
+                ivCurrentPasswordClearButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -263,21 +307,38 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
             resetPasswordPresenter.checkNewPasswordAgainValidation(
                     etNewPassword.getText().toString(),
                     etNewPasswordAgain.getText().toString());
-            removeErrorNewPassword();
         }
-
-        ivCurrentPasswordClearButton.setVisibility(View.GONE);
-        if (etNewPassword.length() > 0) {
-            ivNewPasswordClearButton.setVisibility(View.VISIBLE);
+        if (focused) {
+            if (etLayoutNewPassword.isErrorEnabled()) {
+                etNewPassword.setText("");
+                removeErrorNewPassword();
+            }
+            ivCurrentPasswordClearButton.setVisibility(View.GONE);
+            if (etNewPassword.length() > 0) {
+                ivNewPasswordClearButton.setVisibility(View.VISIBLE);
+            }
+            ivNewPasswordAgainClearButton.setVisibility(View.GONE);
         }
-        ivNewPasswordAgainClearButton.setVisibility(View.GONE);
-
         isFirstFocus = false;
     }
 
     @OnFocusChange(R.id.et_new_password_again)
     void onNewPasswordAgainFocused(boolean focused) {
         if (focused) {
+            if (etNewPassword.getText().toString().isEmpty()) {
+                etNewPassword.requestFocus();
+                Completable.complete()
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> {
+                            showErrorWeakNewPassword();
+                        });
+            } else {
+                scrollView.scrollTo(0, scrollView.getBottom());
+            }
+            if (etLayoutNewPasswordAgain.isErrorEnabled()) {
+                etNewPasswordAgain.setText("");
+            }
             resetPasswordPresenter.checkNewPasswordValidation(etNewPassword.getText().toString());
             removeErrorNewPasswordAgain();
             ivCurrentPasswordClearButton.setVisibility(View.GONE);
@@ -313,8 +374,12 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
     }
 
     @OnClick(R.id.tv_reset_password_done_button)
-    void onClickResetPasswordDone() {
-        resetPasswordPresenter.setNewPassword(etCurrentPassword.getText().toString(), etNewPassword.getText().toString());
+    void onClickChangePasswordDone() {
+        hideKeyboard();
+        resetPasswordPresenter.setNewPassword(
+                etCurrentPassword.getText().toString(),
+                etNewPassword.getText().toString(),
+                etNewPasswordAgain.getText().toString());
     }
 
     @OnClick(R.id.tv_forget_password_button)
@@ -342,6 +407,43 @@ public class ChangePasswordActivity extends AppCompatActivity implements ChangeP
                             | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
+                })
+                .create()
+                .show();
+    }
+
+    public void onEvent(ForgotPasswordEvent event) {
+        String email = event.getEmail();
+        resetPasswordPresenter.forgotPassword(email);
+    }
+
+    @Override
+    public void showSuggestJoin(String email) {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.jandi_sign_up_now)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
+                    SignUpActivity.startActivity(this, email);
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void showNetworkErrorToast() {
+        ColoredToast.showError(R.string.err_network);
+    }
+
+    @Override
+    public void showFailPasswordResetToast() {
+        ColoredToast.showError(getString(R.string.jandi_fail_send_password_reset_email));
+    }
+
+    @Override
+    public void showPasswordResetEmailSendSucsess() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_280)
+                .setMessage(R.string.sent_auth_email_short)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                 })
                 .create()
                 .show();

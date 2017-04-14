@@ -76,6 +76,7 @@ public class JandiPreference {
     private static final String PREF_FOLDER_CLOSED_SET = "push_folder_closed_set";
 
     private static final String PREF_EXCEED_POPUP_TIME_RECORD = "exceed_popup_time_record";
+    private static final String PREF_PROPERTY_DEVICE_ID = "device_id";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -509,6 +510,14 @@ public class JandiPreference {
 
     public static void setFolderClosedStatus(Set<String> folderClosedStatusSet) {
         getSharedPreferences().edit().putStringSet(PREF_FOLDER_CLOSED_SET, folderClosedStatusSet).commit();
+    }
+
+    public static String getDeviceId() {
+        return getSharedPreferences().getString(PREF_PROPERTY_DEVICE_ID, "");
+    }
+
+    public static void setDeviceId(String deviceId) {
+        getSharedPreferences().edit().putString(PREF_PROPERTY_DEVICE_ID, deviceId).commit();
     }
 
     public static boolean isExceedPopupWithin3Days() {

@@ -14,8 +14,6 @@ import android.util.DisplayMetrics;
 
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
-import java.util.UUID;
-
 /**
  * Created by tonyjs on 15. 7. 22..
  */
@@ -46,7 +44,7 @@ public class DefaultProperties {
                 context.getSharedPreferences(Sprinkler.PREFERENCES_NAME, Context.MODE_PRIVATE);
         String uuid = pref.getString(KEY_DEVICE_ID, null);
         if (TextUtils.isEmpty(uuid)) {
-            uuid = UUID.randomUUID().toString();
+            uuid = JandiApplication.getDeviceUUID();
             pref.edit()
                     .putString(KEY_DEVICE_ID, deviceId)
                     .commit();

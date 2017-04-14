@@ -2,8 +2,12 @@ package com.tosslab.jandi.app.ui.sign.changepassword.model;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApi;
 import com.tosslab.jandi.app.network.client.settings.ChangePasswordApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.PasswordChecker;
 
 import javax.inject.Inject;
@@ -18,9 +22,13 @@ public class ChangePasswordModel {
 
     private Lazy<ChangePasswordApi> changePasswordApi;
 
+    private Lazy<AccountPasswordApi> accountPasswordApi;
+
     @Inject
-    public ChangePasswordModel(Lazy<ChangePasswordApi> changePasswordApi) {
+    public ChangePasswordModel(Lazy<ChangePasswordApi> changePasswordApi,
+                               Lazy<AccountPasswordApi> accountPasswordApi) {
         this.changePasswordApi = changePasswordApi;
+        this.accountPasswordApi = accountPasswordApi;
     }
 
     public boolean isValidCharacterPassword(String password) {
@@ -43,5 +51,9 @@ public class ChangePasswordModel {
             return false;
         }
         return true;
+    }
+
+    public ResCommon requestPasswordReset(String email) throws RetrofitException {
+        return accountPasswordApi.get().resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage()));
     }
 }

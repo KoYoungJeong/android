@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,8 +37,10 @@ import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.LogManager;
 
 import io.fabric.sdk.android.Fabric;
@@ -49,6 +53,7 @@ import okhttp3.OkHttpClient;
  */
 public class JandiApplication extends MultiDexApplication {
     public static final String TAG_LIFECYCLE = "Jandi.Lifecycle";
+
 
     static Context context;
     static OkHttpClient okHttpClient;
@@ -100,6 +105,29 @@ public class JandiApplication extends MultiDexApplication {
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 
+    public static String getDeviceUUID() {
+        final String id = JandiPreference.getDeviceId();
+        UUID uuid = null;
+        if (!TextUtils.isEmpty(id)) {
+            uuid = UUID.fromString(id);
+        } else {
+            final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            try {
+                if (!"9774d56d682e549c".equals(androidId)) {
+                    uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
+                } else {
+                    final String deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+                    uuid = deviceId != null ? UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")) : UUID.randomUUID();
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            JandiPreference.setDeviceId(uuid.toString());
+        }
+
+        return uuid.toString();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -146,7 +174,6 @@ public class JandiApplication extends MultiDexApplication {
             networkStateBroadcastReceiver = null;
         }
     }
-
 
     protected void initIntercom() {
         Intercom.initialize(this,
@@ -254,7 +281,6 @@ public class JandiApplication extends MultiDexApplication {
 
         SocketServiceCloser.getInstance().close();
     }
-
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {

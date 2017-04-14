@@ -16,9 +16,8 @@
         android:layout_marginTop="24dp"
         android:background="@color/white"
         android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:text="title"
+        android:maxLines="2"
+        android:text="titlefasdfewqfeqwfewqfewqfewqfewqfewqfeqw"
         android:textColor="@color/message_controller_popup_text_color"
         android:textSize="@dimen/jandi_text_size_larger_3" />
 

@@ -47,7 +47,7 @@ public class SettingsPresenterImpl implements SettingsPresenter {
             // deviceId 가 없는 경우에 대한 방어코드, deviceId 가 비어 있는 경우 400 error 가 떨어짐.
             // UUID RFC4122 규격 맞춘 아무 값이나 필요
             if (TextUtils.isEmpty(deviceId)) {
-                deviceId = UUID.randomUUID().toString();
+                deviceId = JandiApplication.getDeviceUUID();
             }
 
             return Observable.just(deviceId);
