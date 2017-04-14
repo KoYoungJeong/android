@@ -177,6 +177,7 @@ android {
             events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
         }
     }
+    buildToolsVersion '25.0.0'
 }
 
 project.gradle.taskGraph.whenReady {

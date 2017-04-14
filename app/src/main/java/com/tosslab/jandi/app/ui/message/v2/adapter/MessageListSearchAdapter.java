@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
@@ -19,18 +18,14 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.queue.LimitMessageLink;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HighlightView;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.TypeUtil;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.*;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
+import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder> implements MessageListHeaderAdapter.MessageItemDate {
 
@@ -56,28 +51,40 @@ public class MessageListSearchAdapter extends RecyclerView.Adapter<RecyclerBodyV
         setHasStableIds(true);
     }
 
-    public void addAll(int position, List<ResMessages.Link> links) {
+    public void addAll(int position, List<ResMessages.Link> messages) {
 
         long LimitedLinkId = TeamInfoLoader.getInstance().getTeamUsage().getLimitedLinkId();
 
+        final List<ResMessages.Link> links = new ArrayList<>();
+
+        List<ResMessages.Link> tempLinks = new ArrayList<>();
+
+        Observable.from(messages)
+                .subscribe(link -> {
+                    links.add(link);
+                });
+
         // limitedLinkId가 존재할 경우 제한 로직 동작.
-        if (LimitedLinkId != -1) {
+        if (isLimited && (LimitedLinkId != -1)) {
             for (int i = links.size() - 1; i >= 0; i--) {
                 if (LimitedLinkId >= links.get(i).id) {
                     if (i != links.size() - 1) {
-                        links = links.subList(i + 1, links.size());
+                        tempLinks.addAll(links.subList(i + 1, links.size()));
                     } else {
-                        links.clear();
-                        links.add(0, new LimitMessageLink());
+                        tempLinks.add(0, new LimitMessageLink());
                     }
-                    if (links.size() > 0 &&
-                            !(links.get(0) instanceof LimitMessageLink)) {
-                        links.add(0, new LimitMessageLink());
+                    if (tempLinks.size() > 0 && !(tempLinks.get(0) instanceof LimitMessageLink)) {
+                        tempLinks.add(0, new LimitMessageLink());
                     }
                     isLimited = true;
                     break;
                 }
             }
+        }
+
+        if (isLimited && tempLinks.size() > 0) {
+            links.clear();
+            links.addAll(tempLinks);
         }
 
         // delete dummy message by same messageId
