@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
@@ -19,11 +20,11 @@ import com.tosslab.jandi.app.ui.settings.account.dagger.DaggerSettingAccountComp
 import com.tosslab.jandi.app.ui.settings.account.dagger.SettingAccountModule;
 import com.tosslab.jandi.app.ui.settings.account.presenter.SettingAccountPresenter;
 import com.tosslab.jandi.app.ui.settings.account.view.SettingAccountView;
+import com.tosslab.jandi.app.ui.sign.changepassword.ChangePasswordActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
 import javax.inject.Inject;
 
@@ -38,11 +39,11 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
     @Inject
     SettingAccountPresenter presenter;
 
-    @Bind(R.id.vg_setting_account_name)
-    SettingsBodyView sbvAccountName;
+    @Bind(R.id.tv_account_name)
+    TextView tvAccountName;
 
-    @Bind(R.id.vg_settin_account_email)
-    SettingsBodyView sbvAccountEmail;
+    @Bind(R.id.tv_email)
+    TextView tvEmail;
 
     @Bind(R.id.layout_search_bar)
     Toolbar toolbar;
@@ -86,7 +87,7 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
 
     @OnClick(R.id.vg_setting_account_name)
     void onClickAccountName() {
-        String currentName = sbvAccountName.getTitle();
+        String currentName = tvAccountName.getText().toString();
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_ACCOUNT_NAME, currentName);
         newFragment.show(getFragmentManager(), "dialog");
@@ -103,6 +104,11 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
         Intent intent = new Intent(this, EmailChooseActivity.class);
         startActivityForResult(intent, REQUEST_EMAIL_CHOOSE);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.AccountSetting, AnalyticsValue.Action.ChooseAnEmail);
+    }
+
+    @OnClick(R.id.vg_setting_reset_account_password)
+    void onClickResetAccountPassword() {
+        ChangePasswordActivity.startActivity(this);
     }
 
     @Override
@@ -129,12 +135,12 @@ public class SettingAccountActivity extends BaseAppCompatActivity implements Set
 
     @Override
     public void setAccountName(String name) {
-        sbvAccountName.setTitle(name);
+        tvAccountName.setText(name);
     }
 
     @Override
     public void setAccountEmail(String userEmail) {
-        sbvAccountEmail.setTitle(userEmail);
+        tvEmail.setText(userEmail);
     }
 
     @Override

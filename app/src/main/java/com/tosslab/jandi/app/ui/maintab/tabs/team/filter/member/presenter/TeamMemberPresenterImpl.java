@@ -201,28 +201,22 @@ public class TeamMemberPresenterImpl implements TeamMemberPresenter {
                         return -1;
                     }
 
-                    if (selectMode) {
+                    boolean starredLeft = entity.getChatChooseItem().isStarred();
+                    boolean starredRight = entity2.getChatChooseItem().isStarred();
+                    long entityIdLeft = entity.getChatChooseItem().getEntityId();
+                    long entityIdRight = entity2.getChatChooseItem().getEntityId();
+
+                    if (entityIdLeft != myId && entityIdRight != myId
+                            && starredLeft && starredRight) {
                         return StringCompareUtil.compare(entity.getName(), entity2.getName());
+                    } else if (starredLeft && entityIdLeft != myId) {
+                        return -1;
+                    } else if (starredRight && entityIdRight != myId) {
+                        return 1;
                     } else {
-                        boolean starredLeft = entity.getChatChooseItem().isStarred();
-                        boolean starredRight = entity2.getChatChooseItem().isStarred();
-
-
-                        long entityIdLeft = entity.getChatChooseItem().getEntityId();
-                        long entityIdRight = entity2.getChatChooseItem().getEntityId();
-
-                        if (entityIdLeft != myId && entityIdRight != myId
-                                && starredLeft && starredRight) {
-                            return StringCompareUtil.compare(entity.getName(), entity2.getName());
-                        } else if (starredLeft && entityIdLeft != myId) {
-                            return -1;
-                        } else if (starredRight && entityIdRight != myId) {
-                            return 1;
-                        } else {
-                            return StringCompareUtil.compare(entity.getName(), entity2.getName());
-                        }
-
+                        return StringCompareUtil.compare(entity.getName(), entity2.getName());
                     }
+
                 }
         );
     }

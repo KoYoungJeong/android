@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.JandiApplication;
 
 public class SdkUtils {
 
-
     public static boolean isOverJellyBeanMR1() {
 //         Build.VERSION_CODES.JELLY_BEAN_MR1 = 17
         return Build.VERSION.SDK_INT >= 17;

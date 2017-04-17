@@ -142,7 +142,6 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
             membersListPresenter.initKickableMode(entityId);
         }
 
-
     }
 
     @OnTextChanged(R.id.et_topic_member_search)

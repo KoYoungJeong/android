@@ -39,6 +39,7 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
@@ -49,8 +50,10 @@ import com.tosslab.jandi.app.ui.file.upload.preview.dagger.DaggerFileUploadCompo
 import com.tosslab.jandi.app.ui.file.upload.preview.dagger.FileUploadModule;
 import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TextCutter;
 import com.tosslab.jandi.app.utils.UiUtils;
+import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -119,6 +122,11 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
     View vgUploadInfoBottomSheet;
     @Bind(R.id.vg_file_upload_preview_content_entity)
     ViewGroup vgFileUploadPreviewContentEntity;
+    @Bind(R.id.v_restrict_warning)
+    View vRestrictWarning;
+    @Bind(R.id.vg_restrict_warning)
+    ViewGroup vgRestrictWarning;
+
 
     @Bind(R.id.vg_coordinator)
     ViewGroup vgCoordinator;
@@ -154,7 +162,7 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared, realFilePathList);
 
         scrollButtonPublishSubject = PublishSubject.create();
-        subscribe = scrollButtonPublishSubject.throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
+        subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     for (ImageView scrollButton : scrollButtons) {
@@ -180,8 +188,6 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                     SuperToast.cancelAllSuperToasts();
                     ColoredToast.showError(R.string.jandi_exceeded_max_text_length);
                 });
-
-//        fileUploadPresenter.onInitPricingInfo();
 
         if (realFilePathList.size() > 1) {
             lvthumb.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -220,6 +226,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         KeyboardVisibilityEvent.setEventListener(
                 this, isOpen -> {
                     if (isOpen) {
+                        if (vgRestrictWarning.getVisibility() == View.VISIBLE) {
+                            vgRestrictWarning.setVisibility(View.INVISIBLE);
+                        }
                         etComment.setMaxLines(9);
                         vgFileUploadPreviewContentEntity.setVisibility(View.GONE);
                         Completable.complete()
@@ -229,6 +238,13 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                                     bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(169.5f));
                                 });
                     } else {
+                        if (vgRestrictWarning.getVisibility() == View.INVISIBLE) {
+                            if (etComment.getLineCount() > 1) {
+                                vgRestrictWarning.setVisibility(View.GONE);
+                            } else {
+                                vgRestrictWarning.setVisibility(View.VISIBLE);
+                            }
+                        }
                         vgFileUploadPreviewContentEntity.setVisibility(View.VISIBLE);
                         if (lvthumb.getVisibility() == View.VISIBLE) {
                             etComment.setMaxLines(18);
@@ -237,6 +253,8 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
                         }
                     }
                 });
+
+        setPricingLimitView();
     }
 
     @Override
@@ -289,6 +307,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         if (vgUploadInfoBottomSheet.getVisibility() != View.VISIBLE) {
             // 보이도록 하기, 배경 흰색
             vgUploadInfoBottomSheet.setVisibility(View.VISIBLE);
+            if (vgRestrictWarning.getVisibility() == View.INVISIBLE) {
+                vgRestrictWarning.setVisibility(View.VISIBLE);
+            }
             if (thumbNailViewVisible) {
                 lvthumb.setVisibility(View.VISIBLE);
             }
@@ -309,6 +330,9 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         } else {
             // 안보이게 하기, 배경 검정
             vgUploadInfoBottomSheet.setVisibility(View.GONE);
+            if (vgRestrictWarning.getVisibility() == View.VISIBLE) {
+                vgRestrictWarning.setVisibility(View.INVISIBLE);
+            }
             if (thumbNailViewVisible) {
                 lvthumb.setVisibility(View.GONE);
             }
@@ -601,23 +625,23 @@ public class FileUploadPreviewActivity extends BaseAppCompatActivity implements 
         return false;
     }
 
-//    @Override
-//    public void setPricingLimitView(Boolean isLimited) {
-//        if (isLimited) {
-//            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
-//            PricingPlanWarningViewController pricingPlanWarningViewController
-//                    = PricingPlanWarningViewController.with(this, layoutPricingPlanWarning);
-//            if (from == FROM_SELECT_IMAGE) {
-//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_IMAGE);
-//            } else if (from == FROM_TAKE_PHOTO) {
-//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_TAKE_PHOTO);
-//            } else if (from == FROM_SELECT_FILE) {
-//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_UPLOAD_FROM_SELECT_FILE);
-//            }
-//        } else {
-//            layoutPricingPlanWarning.setVisibility(View.GONE);
-//        }
-//    }
+    public void setPricingLimitView() {
+        long fileSize = TeamInfoLoader.getInstance().getTeamUsage().getFileSize();
+        boolean isExceedThreshold = fileSize > 1024 * 1024 * 1024 * 4.5;
+        boolean isFree = TeamInfoLoader.getInstance().getTeamPlan().getPricing().equals("free");
+        boolean isNotShowWithin3Days = JandiPreference.isExceedPopupWithin3Days();
+        if (isExceedThreshold && isFree && !isNotShowWithin3Days) {
+            vgRestrictWarning.setVisibility(View.VISIBLE);
+            PricingPlanWarningViewController pricingPlanWarningViewController
+                    = PricingPlanWarningViewController.with(this, vRestrictWarning);
+            pricingPlanWarningViewController.bind();
+            pricingPlanWarningViewController.setOnClickRemoveViewListener(() -> {
+                vgRestrictWarning.setVisibility(View.GONE);
+            });
+        } else {
+            vgRestrictWarning.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void setFileThumbInfo(List<FileUploadThumbAdapter.FileThumbInfo> files) {

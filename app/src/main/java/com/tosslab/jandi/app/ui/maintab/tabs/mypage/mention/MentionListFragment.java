@@ -129,10 +129,12 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if (dy > 0) {
-                        activity.setTabLayoutVisible(false);
-                    } else {
-                        activity.setTabLayoutVisible(true);
+                    if (mentionListDataView.getItemCount() > 10) {
+                        if (dy > 0) {
+                            activity.setTabLayoutVisible(false);
+                        } else {
+                            activity.setTabLayoutVisible(true);
+                        }
                     }
                 }
             });

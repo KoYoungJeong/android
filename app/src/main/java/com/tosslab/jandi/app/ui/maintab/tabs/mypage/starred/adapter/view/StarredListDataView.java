@@ -14,6 +14,8 @@ public interface StarredListDataView {
 
     void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener);
 
+    int getItemCount();
+
     interface OnItemClickListener {
         void onItemClick(StarredMessage message);
     }

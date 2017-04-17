@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
@@ -144,7 +145,7 @@ public class OpenAction implements Action {
     private void deletePreviousToken(String previousRefreshToken) {
         if (!TextUtils.isEmpty(previousRefreshToken)) {
             final String deviceIdOrigin = TextUtils.isEmpty(TokenUtil.getTokenObject().getDeviceId())
-                    ? UUID.randomUUID().toString()
+                    ? JandiApplication.getDeviceUUID()
                     : TokenUtil.getTokenObject().getDeviceId();
             try {
                 loginApi.get().deleteToken(previousRefreshToken, deviceIdOrigin);

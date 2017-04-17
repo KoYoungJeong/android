@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
@@ -17,9 +18,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
 
@@ -104,7 +102,12 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
         String fileUrl = content.getFileUrl();
         String thumbnailUrl = ImageUtil.getOnlyLargestThumbnail(content);
 
-        boolean isContact = content.getExt().equals("vcf");
+        boolean isContact = false;
+
+        if (content.getExt() != null) {
+            isContact = content.getExt().equals("vcf");
+        }
+
         ImageUtil.setResourceIconOrLoadImage(
                 ivFileType, vFileRound,
                 fileUrl, thumbnailUrl,

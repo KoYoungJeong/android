@@ -146,10 +146,12 @@ public class StarredListFragment extends Fragment implements StarredListPresente
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if (dy > 0) {
-                        activity.setTabLayoutVisible(false);
-                    } else {
-                        activity.setTabLayoutVisible(true);
+                    if (starredListDataView.getItemCount() > 10) {
+                        if (dy > 0) {
+                            activity.setTabLayoutVisible(false);
+                        } else {
+                            activity.setTabLayoutVisible(true);
+                        }
                     }
                 }
             });

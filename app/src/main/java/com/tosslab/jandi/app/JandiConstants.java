@@ -9,6 +9,7 @@ public class JandiConstants {
     public static final String PUSH_CHANNEL_PREFIX = "c";
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
 
+    public static final String HTTP_ACCEPT_HEADER_V1 = "application/vnd.tosslab.jandi-v1+json";
     public static final String HTTP_ACCEPT_HEADER_V2 = "application/vnd.tosslab.jandi-v2+json";
     public static final String HTTP_ACCEPT_HEADER_V3 = "application/vnd.tosslab.jandi-v3+json";
     public static final String HTTP_ACCEPT_HEADER_V4 = "application/vnd.tosslab.jandi-v4+json";

@@ -17,6 +17,9 @@ import butterknife.ButterKnife;
 
 public class TeamMemberHeaderAdapter implements StickyHeadersAdapter<TeamMemberHeaderAdapter.HeaderViewHolder> {
 
+    private static long DISABLE_MEMBER_ID_HEADER_ID = -0x111;
+    private static long STARRED_MEMBER_ID_HEADER_ID = -0x112;
+
     private TeamMemberDataModel dataModel;
 
     public TeamMemberHeaderAdapter(TeamMemberDataModel dataModel) {
@@ -52,10 +55,10 @@ public class TeamMemberHeaderAdapter implements StickyHeadersAdapter<TeamMemberH
     public long getHeaderId(int position) {
         TeamMemberItem item = dataModel.getItem(position);
         if (item instanceof TeamDisabledMemberItem) {
-            return "disabled".hashCode();
+            return DISABLE_MEMBER_ID_HEADER_ID;
         } else {
             if (item.getChatChooseItem().isStarred()) {
-                return "Starred".hashCode();
+                return STARRED_MEMBER_ID_HEADER_ID;
             } else {
                 return item.getFirstCharacter().hashCode();
             }

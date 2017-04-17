@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="account_password_change">"계정 비밀번호 변경
-"</string>
+	<string name="account_password_change">"계정 비밀번호 변경"</string>
 	<string name="app_name">"JANDI"</string>
 	<string name="commcon_search_result_sharedin">"공유된 곳"</string>
 	<string name="comment">"댓글"</string>
-	<string name="common_account_name">"계정 이름
-"</string>
+	<string name="common_account_name">"계정 이름"</string>
 	<string name="common_accthome_createteam">"새로운 팀 생성"</string>
 	<string name="common_accthome_createteamguide">"아직 가입한 팀이 없습니다.\n아래 새로운 팀 생성을 터치하여 \n잔디를 경험해 보세요"</string>
 	<string name="common_accthome_jandiacct">"잔디계정"</string>
@@ -70,6 +68,8 @@
 	<string name="common_pricingplan_livesupport">"1:1 문의하기"</string>
 	<string name="common_pricingplan_moreinfo">"자세히 알아보기"</string>
 	<string name="common_pricingplan_msgsearch">"현재 팀에서 무료 사용량을 초과하여 언제든 검색이 제한될 수 \n 있습니다. 지금 STANDARD 플랜으로 전환하시고 \n 더욱 더 쾌적하게 협업하세요."</string>
+	<string name="common_pricingplan_noview3days">"3일동안 보지 않기
+"</string>
 	<string name="common_profilemodal_jandi_botstatus">"안녕하세요? JANDI입니다. "</string>
 	<string name="common_settings_lostpasscodedesc">"비밀번호를 잊은 경우 재설치 해주세요."</string>
 	<string name="common_sharetojandi_choose_room">"대화방 선택"</string>
@@ -78,6 +78,14 @@
 	<string name="common_signup_codeverification">"위 이메일로 인증번호를 발송했습니다.\n받으신 인증번호를 입력해주세요."</string>
 	<string name="common_signup_invalid_emaildomain">"이메일의 도메인 주소를 제대로 입력했는지 다시 확인해 주세요.
 "</string>
+	<string name="day_everyday">"매일"</string>
+	<string name="day_short_fri">"금"</string>
+	<string name="day_short_mon">"월"</string>
+	<string name="day_short_sat">"토"</string>
+	<string name="day_short_sun">"일"</string>
+	<string name="day_short_thu">"목"</string>
+	<string name="day_short_tue">"화"</string>
+	<string name="day_short_wed">"수"</string>
 	<string name="delete_cache">"캐시 삭제"</string>
 	<string name="delete_cache_confirm">"캐시 데이터를 삭제하시겠습니까?"</string>
 	<string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
@@ -309,8 +317,10 @@
 	<string name="jandi_create_topic">"토픽 만들기"</string>
 	<string name="jandi_created_this_topic">"%s님이 토픽을 생성하였습니다"</string>
 	<string name="jandi_date_days">"일"</string>
+	<string name="jandi_date_evening">"오후"</string>
 	<string name="jandi_date_hours">"시간"</string>
 	<string name="jandi_date_minutes">"분"</string>
+	<string name="jandi_date_morning">"오전"</string>
 	<string name="jandi_date_remaining">"남음"</string>
 	<string name="jandi_decide_choose">"사진 선택"</string>
 	<string name="jandi_delete_all">"전체 삭제"</string>
@@ -388,7 +398,7 @@
 	<string name="jandi_file_upload_succeed">"파일이 업로드 되었습니다"</string>
 	<string name="jandi_file_uploading">"업로드 중..."</string>
 	<string name="jandi_fingerprint_cannot_do_temporary">"지문 인식을 잠시 사용할 수 없습니다."</string>
-	<string name="jandi_finished">"종료됨"</string>
+	<string name="jandi_finished">"투표 마감됨"</string>
 	<string name="jandi_folder_alread_has_name">"이미 존재하는 이름입니다"</string>
 	<string name="jandi_folder_ask_delete">"폴더를 정말 삭제하시겠습니까?
 (폴더를 삭제해도 해당 폴더내 토픽들은 사라지지 않습니다.)"</string>
@@ -420,7 +430,7 @@
 	<string name="jandi_hi_apk_store">"Hi Apk 스토어"</string>
 	<string name="jandi_image_deleted">"이미지가 삭제되었습니다."</string>
 	<string name="jandi_image_too_big">"이미지가 너무 큽니다."</string>
-	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다."</string>
+	<string name="jandi_incorrect_passcode">"비밀번호가 일치하지 않습니다"</string>
 	<string name="jandi_info">"잔디 정보"</string>
 	<string name="jandi_input_enough_items">"보기는 최소 2개 이상 입력해주세요."</string>
 	<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
@@ -568,20 +578,32 @@
 	<string name="jandi_please_retry">"다시 시도해주세요."</string>
 	<string name="jandi_plz_input_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
 	<string name="jandi_poll">"투표"</string>
-	<string name="jandi_poll_add_item">"보기추가"</string>
+	<string name="jandi_poll_add_item">"+ 보기 추가"</string>
+	<string name="jandi_poll_allow_multi_choice">"복수선택"</string>
 	<string name="jandi_poll_anonymous">"익명투표"</string>
 	<string name="jandi_poll_create">"새 투표 작성하기"</string>
+	<string name="jandi_poll_create_cancel_popup">"작성을 취소하시겠습니까?"</string>
+	<string name="jandi_poll_create_choice">"보기 목록*"</string>
+	<string name="jandi_poll_create_description">"투표 설명 (옵션)"</string>
+	<string name="jandi_poll_create_description_placeholder">"설명을 입력하세요"</string>
+	<string name="jandi_poll_create_popup_no">"아니오"</string>
+	<string name="jandi_poll_create_popup_yes">"예"</string>
+	<string name="jandi_poll_days_left">"{{dayCount}}일 남음"</string>
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
 	<string name="jandi_poll_empty_1">"<b>투표 목록을 확인하세요.</b>"</string>
 	<string name="jandi_poll_empty_2">"토픽방에서 [+]를 눌러 투표를 진행해보세요."</string>
+	<string name="jandi_poll_ended_at">"{{endedAt}} 마감됨"</string>
 	<string name="jandi_poll_finished_with_most">"투표가 완료되었습니다. 가장 많이 투표된 항목은 \"%s\" 입니다."</string>
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
-	<string name="jandi_poll_finishedat">"종료 시각"</string>
+	<string name="jandi_poll_finishedat">"마감 시각*"</string>
 	<string name="jandi_poll_is_anonymous">"이 투표는 익명투표입니다."</string>
-	<string name="jandi_poll_multiple">"복수 선택 가능"</string>
-	<string name="jandi_poll_multiple_available">"복수 선택 가능"</string>
+	<string name="jandi_poll_multiple">"복수선택 가능"</string>
 	<string name="jandi_poll_participants_ing">"명 참여"</string>
-	<string name="jandi_poll_voted">"투표 완료"</string>
+	<string name="jandi_poll_till">"{{till}}까지"</string>
+	<string name="jandi_poll_title">"투표 제목*"</string>
+	<string name="jandi_poll_voted">"투표 참여함"</string>
+	<string name="jandi_poll_voting_anonymous_available_multi_choice">"투표하기 (익명투표, 복수선택 가능)"</string>
+	<string name="jandi_poll_voting_available_multi_choice">"투표하기 (복수선택 가능)"</string>
 	<string name="jandi_pp">"개인정보 취급방침"</string>
 	<string name="jandi_preview_message_contents">"메시지 내용 미리보기"</string>
 	<string name="jandi_privacy_policy">"개인정보 취급방침"</string>
@@ -830,7 +852,7 @@
 	<string name="jandi_view_all">"전체보기"</string>
 	<string name="jandi_view_comment_read_more">"%s 개의 댓글 모두 보기"</string>
 	<string name="jandi_vote">"투표하기"</string>
-	<string name="jandi_vote_anonymous">"투표하기 (익명)"</string>
+	<string name="jandi_vote_anonymous">"투표하기 (익명투표)"</string>
 	<string name="jandi_welcome_message">"JANDI에 오신 것을 환영합니다."</string>
 	<string name="jandi_what_is_topic_type">"공개 여부 설정은 이후에 변경이 불가능합니다."</string>
 	<string name="jandi_who_of_file">"님의 파일"</string>
@@ -852,27 +874,18 @@
 	<string name="mypage_editprofile_phonenumber">"전화번호를 입력하세요"</string>
 	<string name="mypage_editprofile_statusmessage">"상태 메시지를 입력하세요"</string>
 	<string name="mypage_mention_newmentionalert">"새로운 멘션"</string>
-	<string name="password_change_done">"비밀번호 변경이 완료되었습니다.
-"</string>
-	<string name="password_current_type">"현재 비밀번호 입력
-"</string>
-	<string name="password_current_type_alert">"이전 비밀번호가 잘못 입력되었습니다
-"</string>
-	<string name="password_current_type_info">"소중한 정보 보호를 위해 현재 비밀번호를 입력해주세요.
-"</string>
-	<string name="password_forgot">"비밀번호가 생각나지 않으시나요?
-"</string>
-	<string name="password_forgot_email_type_info">"비밀번호를 새로 설정하기 위해 이메일 주소를 입력해주세요.
-"</string>
-	<string name="password_new_again_type">"새 비밀번호 다시 입력
-"</string>
-	<string name="password_new_type">"새 비밀번호 입력
-"</string>
-	<string name="password_new_type_confi_alert">"영어 대문자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다.
-"</string>
-	<string name="password_new_type_info">"비밀번호는 영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다.
-"</string>
+	<string name="password_change_done">"비밀번호 변경이 완료되었습니다."</string>
+	<string name="password_current_type">"현재 비밀번호 입력"</string>
+	<string name="password_current_type_alert">"이전 비밀번호가 잘못 입력되었습니다"</string>
+	<string name="password_current_type_info">"소중한 정보 보호를 위해 현재 비밀번호를 입력해주세요"</string>
+	<string name="password_forgot">"비밀번호가 생각나지 않으시나요?"</string>
+	<string name="password_forgot_email_type_info">"비밀번호를 새로 설정하기 위해 이메일 주소를 입력해주세요"</string>
+	<string name="password_new_again_type">"새 비밀번호 다시 입력"</string>
+	<string name="password_new_type">"새 비밀번호 입력"</string>
+	<string name="password_new_type_confi_alert">"영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다"</string>
+	<string name="password_new_type_info">"비밀번호는 영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다."</string>
 	<string name="photo">"사진"</string>
+	<string name="pricingplan_almost_fileupload_popup">"현재 팀의 5GB 무료 사용량이 한도에 거의 도달했습니다. 사용량 초과 시 파일 업로드가 제한 될 수 있으니 지금 플랜을 업그레이드 하시고 더욱 자유롭게 서비스를 사용하세요."</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"무료 팀의 경우 팀당 최대 500명까지 초대하실 수 있습니다."</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"초대 가능한 멤버 수를 초과하였습니다.
 "</string>
@@ -887,10 +900,19 @@
 	<string name="pricingplan_restrictions_view_message_alert_body">"Free 플랜은 최신15,000개의 메시지까지만 열람 가능합니다."</string>
 	<string name="pricingplan_restrictions_view_message_alert_title">"무료 사용량을 초과하여 메시지 확인이 불가능합니다."</string>
 	<string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
+	<string name="push_schedule_dayofweek">"요일"</string>
+	<string name="push_schedule_desc">"설정한 기간 동안에만 푸시 알림을 받습니다."</string>
+	<string name="push_schedule_end">"종료 시각"</string>
+	<string name="push_schedule_minoneday">"최소 하루는 선택해야합니다."</string>
+	<string name="push_schedule_selectdays">"요일 선택"</string>
+	<string name="push_schedule_start">"시작 시각"</string>
+	<string name="push_schedule_timezone">"시간은 설정 시 디바이스의 시간대를 기준으로 저장됩니다."</string>
+	<string name="push_schedule_title">"알림 수신 스케줄"</string>
+	<string name="push_schedule_weekdays">"주중"</string>
+	<string name="push_schedule_weekend">"주말"</string>
 	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능합니다."</string>
 	<string name="room_member_disabled_alert_title">"이 멤버는 차단된 멤버입니다."</string>
-	<string name="security_setting">"보안 설정
-"</string>
+	<string name="security_setting">"보안 설정"</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
 	<string name="team_adminmenu_title">"관리자 메뉴"</string>

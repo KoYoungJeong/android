@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.services.socket.annotations.Version;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
-@Version(2)
 public class SocketTeamLeaveEvent implements EventHistoryInfo {
     private String event;
     private int version;
@@ -76,6 +76,7 @@ public class SocketTeamLeaveEvent implements EventHistoryInfo {
         private long memberId;
         private long teamId;
         private String memberStatus;
+        private List<Member> members;
 
         public long getMemberId() {
             return memberId;
@@ -99,6 +100,37 @@ public class SocketTeamLeaveEvent implements EventHistoryInfo {
 
         public void setMemberStatus(String memberStatus) {
             this.memberStatus = memberStatus;
+        }
+
+        public List<Member> getMembers() {
+            return members;
+        }
+
+        public void setMembers(List<Member> members) {
+            this.members = members;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Member {
+        private long id;
+        private String status;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
     }
 

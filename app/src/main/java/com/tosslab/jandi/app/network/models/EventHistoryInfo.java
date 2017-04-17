@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamDomainUpdatedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTeamInvitationCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamJoinEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamLeaveEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTeamNameUpdatedEvent;
@@ -124,6 +125,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "poll_comment_deleted", value = SocketPollCommentDeletedEvent.class),
         @JsonSubTypes.Type(name = "mention_marker_updated", value = SocketMentionMarkerUpdatedEvent.class),
         @JsonSubTypes.Type(name = "member_rank_updated", value = SocketMemberRankUpdatedEvent.class),
+        @JsonSubTypes.Type(name = "team_invitation_created", value = SocketTeamInvitationCreatedEvent.class),
 })
 public interface EventHistoryInfo {
 

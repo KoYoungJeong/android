@@ -242,7 +242,9 @@ public class PhotoViewFragment extends Fragment {
                                 // cache 가 되어 있지 않음
                                 vgPlayGif.setVisibility(View.VISIBLE);
                                 tvPlayGif.setText(getExt(imageType).toUpperCase() + ", " + FileUtil.formatFileSize(size));
-                                loadImageForGif(Uri.parse(thumbUrl));
+                                if (!TextUtils.isEmpty(thumbUrl)) {
+                                    loadImageForGif(Uri.parse(thumbUrl));
+                                }
                                 return true;
                             }
                         })

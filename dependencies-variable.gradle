@@ -21,12 +21,12 @@ ext.dependecies = [
                 firebase_core                    : 'com.google.firebase:firebase-core:10.+',
                 firebase_fcm                     : 'com.google.firebase:firebase-messaging:10.+',
 
-                support_appcompat                : 'com.android.support:appcompat-v7:24.2.1',
-                support_v4                       : 'com.android.support:support-v4:24.2.1',
-                support_v13                      : 'com.android.support:support-v13:24.2.1',
-                support_recyclerview             : 'com.android.support:recyclerview-v7:24.2.1',
-                support_annotation               : 'com.android.support:support-annotations:24.2.1',
-                support_design                   : 'com.android.support:design:25.1.0',
+                support_appcompat                : 'com.android.support:appcompat-v7:25.3.1',
+                support_v4                       : 'com.android.support:support-v4:25.3.1',
+                support_v13                      : 'com.android.support:support-v13:25.3.1',
+                support_recyclerview             : 'com.android.support:recyclerview-v7:25.3.1',
+                support_annotation               : 'com.android.support:support-annotations:25.3.1',
+                support_design                   : 'com.android.support:design:25.3.1',
 
                 supertoast                       : 'com.github.johnpersano:supertoasts:1.3.4@aar',
                 recyclerview_stickyheader        : 'com.eowise:recyclerview-stickyheaders:0.5.2@aar',
@@ -40,7 +40,7 @@ ext.dependecies = [
                 glide_okhttp                     : 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar',
                 glide_transformation             : 'jp.wasabeef:glide-transformations:2.0.1',
 
-                ormlite                          : 'com.j256.ormlite:ormlite-android:4.+',
+                ormlite                          : 'com.j256.ormlite:ormlite-android:5.+',
 
                 rxandroid                        : 'io.reactivex:rxandroid:1.2.+',
                 rxjava                           : 'io.reactivex:rxjava:1.2.+',
@@ -72,7 +72,7 @@ ext.dependecies = [
 
                 retrolambda                      : 'net.orfjackal.retrolambda:retrolambda:2.3.0',
 
-                intercom                         : 'io.intercom.android:intercom-sdk-base:3.+',
+                intercom                         : 'io.intercom.android:intercom-sdk-base:3.1.+',
 
                 libphonenumber_android           : 'io.michaelrocks:libphonenumber-android:7.7.2',
 

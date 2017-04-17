@@ -44,8 +44,6 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
 
     @Override
     public void initTeamDatas(boolean firstEntered, boolean shouldRefreshAccountInfo) {
-
-
         Observable.fromCallable(() -> {
             if (shouldRefreshAccountInfo) {
                 model.refreshAccountInfo();
@@ -101,6 +99,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                     model.updateEntityInfo(new RawInitialInfo(teamId, initialInfo));
                     model.refreshRankIfNeed(teamId);
                     TeamInfoLoader.getInstance().refresh();
+                    model.refreshMyMarker(teamId, TeamInfoLoader.getInstance().getMyId());
                     SprinklrLaunchTeam.sendLog(teamId);
                 })
                 .subscribeOn(Schedulers.io())

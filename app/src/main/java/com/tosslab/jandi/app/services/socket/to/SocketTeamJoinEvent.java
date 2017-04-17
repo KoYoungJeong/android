@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
-import com.tosslab.jandi.app.services.socket.annotations.Version;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
-@Version(2)
 public class SocketTeamJoinEvent implements EventHistoryInfo {
     private String event;
     private int version;
@@ -74,6 +74,7 @@ public class SocketTeamJoinEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
+        private List<Human> members;
         private Human member;
         private long teamId;
 
@@ -83,6 +84,14 @@ public class SocketTeamJoinEvent implements EventHistoryInfo {
 
         public void setMember(Human member) {
             this.member = member;
+        }
+
+        public List<Human> getMembers() {
+            return members;
+        }
+
+        public void setMembers(List<Human> members) {
+            this.members = members;
         }
 
         public long getTeamId() {

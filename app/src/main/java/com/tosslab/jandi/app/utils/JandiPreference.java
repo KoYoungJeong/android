@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import com.tosslab.jandi.app.JandiApplication;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,6 +74,9 @@ public class JandiPreference {
     private static final String PREF_PUSH_LAST_SENT_AT = "push_last_sent_at";
 
     private static final String PREF_FOLDER_CLOSED_SET = "push_folder_closed_set";
+
+    private static final String PREF_EXCEED_POPUP_TIME_RECORD = "exceed_popup_time_record";
+    private static final String PREF_PROPERTY_DEVICE_ID = "device_id";
 
     public static boolean isAleadyShowCoachMarkTopic(Context context) {
         if (!getSharedPreferences().getBoolean(PREF_COACH_MARK_TOPIC, false)) {
@@ -506,6 +510,36 @@ public class JandiPreference {
 
     public static void setFolderClosedStatus(Set<String> folderClosedStatusSet) {
         getSharedPreferences().edit().putStringSet(PREF_FOLDER_CLOSED_SET, folderClosedStatusSet).commit();
+    }
+
+    public static String getDeviceId() {
+        return getSharedPreferences().getString(PREF_PROPERTY_DEVICE_ID, "");
+    }
+
+    public static void setDeviceId(String deviceId) {
+        getSharedPreferences().edit().putString(PREF_PROPERTY_DEVICE_ID, deviceId).commit();
+    }
+
+    public static boolean isExceedPopupWithin3Days() {
+        int previousShowExceedPopupTime = getSharedPreferences().getInt(PREF_EXCEED_POPUP_TIME_RECORD, -1);
+        if (previousShowExceedPopupTime == -1) {
+            return false;
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            int currentMilliSecond = calendar.get(Calendar.MILLISECOND);
+            if (previousShowExceedPopupTime - currentMilliSecond < 3 * 24 * 60 * 60 * 1000) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void setExceedPopupNotShowRecordTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        int currentMilliSecond = calendar.get(Calendar.MILLISECOND);
+        getSharedPreferences().edit().putInt(PREF_EXCEED_POPUP_TIME_RECORD, currentMilliSecond).commit();
     }
 
 }

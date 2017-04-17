@@ -15,6 +15,10 @@ public class SocketModelExtractor {
         return getObject(object, clazz, true, false);
     }
 
+    public static <T extends EventHistoryInfo> T getObjectWithoutCheckVersion(Object object, Class<T> clazz) throws Exception {
+        return getObject(object, clazz, false, false);
+    }
+
     public static <T extends EventHistoryInfo> T getObject(Object object, Class<T> clazz, boolean checkVersion, boolean checkTeamId) throws Exception {
         T t;
         if (object.getClass() != clazz) {
@@ -22,6 +26,7 @@ public class SocketModelExtractor {
         } else {
             t = (T) object;
         }
+
         if (checkVersion) {
             throwExceptionIfInvaildVersion(t);
         }
