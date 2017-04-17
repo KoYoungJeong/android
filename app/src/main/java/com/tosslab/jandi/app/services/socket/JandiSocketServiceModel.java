@@ -490,13 +490,29 @@ public class JandiSocketServiceModel {
             if (data.getMemberId() == TeamInfoLoader.getInstance().getMyId()) {
                 TopicRepository.getInstance(event.getTeamId()).updateTopicJoin(data.getTopicId(), false);
                 postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId(), true));
-
             } else {
                 postEvent(new TopicLeftEvent(event.getTeamId(), event.getData().getTopicId(), false));
-
             }
             TopicRepository.getInstance(event.getTeamId()).removeMember(data.getTopicId(), data.getMemberId());
             RoomMarkerRepository.getInstance(event.getTeamId()).deleteMarker(data.getTopicId(), data.getMemberId());
+            List<Folder> folders = FolderRepository.getInstance().getFolders();
+            boolean find = false;
+            for (Folder folder : folders) {
+                List<Long> roomIds = folder.getRooms();
+                for (Long roomId : roomIds) {
+                    if (roomId == data.getTopicId()) {
+                        roomIds.remove(roomId);
+                        find = true;
+                        break;
+                    }
+                }
+                if (find) {
+                    if (roomIds.size() == 0) {
+                        folders.remove(folder);
+                    }
+                    break;
+                }
+            }
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
 //            PollRepository.initiate().upsertPollStatus(data.getTopicId(), "deleted");
@@ -1285,6 +1301,25 @@ public class JandiSocketServiceModel {
             long topicId = event.getData().getTopicId();
 
             TopicRepository.getInstance(event.getTeamId()).deleteTopic(topicId);
+            List<Folder> folders = FolderRepository.getInstance().getFolders();
+            boolean find = false;
+            for (Folder folder : folders) {
+                List<Long> roomIds = folder.getRooms();
+                for (Long roomId : roomIds) {
+                    if (roomId == topicId) {
+                        roomIds.remove(roomId);
+                        find = true;
+                        break;
+                    }
+                }
+                if (find) {
+                    if (roomIds.size() == 0) {
+                        folders.remove(folder);
+                    }
+                    break;
+                }
+            }
+
             RoomMarkerRepository.getInstance(event.getTeamId()).deleteMarkers(topicId);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
