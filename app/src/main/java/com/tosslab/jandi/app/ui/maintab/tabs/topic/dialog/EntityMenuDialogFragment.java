@@ -311,7 +311,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
             } else {
                 ChatRepository.getInstance().updateChatOpened(roomId, false);
             }
-            EventBus.getDefault().post(new RetrieveTopicListEvent());
             if (TeamInfoLoader.getInstance().isUser(entityId)) {
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.MessageTab, AnalyticsValue.Action.TopicSubMenu_Leave);
             } else {

@@ -139,6 +139,8 @@ public class MainTopicModel {
                         topicFolderData.setTitle(topicFolder.getName());
                         long childBadgeCnt = 0;
                         for (TopicRoom room : topicFolder.getRooms()) {
+                            if (room == null)
+                                continue;
                             childBadgeCnt += room.getUnreadCount();
                         }
                         topicFolderData.setChildBadgeCnt(childBadgeCnt);
@@ -148,20 +150,24 @@ public class MainTopicModel {
                     int index = -1;
 
                     Collections.sort(topicFolder.getRooms(), (lhs, rhs) -> {
-                        if (lhs.isStarred() && rhs.isStarred()) {
-                            return StringCompareUtil.compare(lhs.getName(), rhs.getName());
-                        } else if (lhs.isStarred()) {
-                            return -1;
-                        } else if (rhs.isStarred()) {
-                            return 1;
-                        } else {
-                            return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                        if (lhs != null && rhs != null) {
+                            if (lhs.isStarred() && rhs.isStarred()) {
+                                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                            } else if (lhs.isStarred()) {
+                                return -1;
+                            } else if (rhs.isStarred()) {
+                                return 1;
+                            } else {
+                                return StringCompareUtil.compare(lhs.getName(), rhs.getName());
+                            }
                         }
+                        return -1;
                     });
 
                     for (TopicRoom room : topicFolder.getRooms()) {
-                        if (room == null)
+                        if (room == null) {
                             continue;
+                        }
                         index++;
                         TopicItemData topicItemData = new TopicItemData();
                         topicItemData.setName(room.getName());
