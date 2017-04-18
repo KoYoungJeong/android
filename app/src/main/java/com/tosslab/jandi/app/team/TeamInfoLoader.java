@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TeamRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TeamUsageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.json.JsonMapper;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.start.Bot;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
@@ -35,6 +36,7 @@ import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.Member;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.member.WebhookBot;
+import com.tosslab.jandi.app.team.onlinestatus.OnlineStatus;
 import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicFolder;
@@ -55,26 +57,20 @@ public class TeamInfoLoader {
     private final long teamId;
     private Lock lock;
     private InitialInfo initialInfo;
-
     private FolderRepository topicFolders;
-
     private ChatRepository chatRooms;
     private TopicRepository topicRooms;
-
     private HumanRepository users;
     private BotRepository bots;
     private ArrayMap<Long, Rank> ranks;
-
     private TeamRepository teamRepository;
     private InitialMentionInfoRepository mention;
     private TeamPlanRepository teamPlan;
     private TeamUsageRepository teamUsage;
-
+    private OnlineStatus onlineStatus;
     private User me;
     private User jandiBot;
-
     private InitialPollInfoRepository poll;
-
 
     private TeamInfoLoader(long teamId) {
         this.teamId = teamId;
@@ -144,6 +140,10 @@ public class TeamInfoLoader {
 
         if (ranks == null) {
             ranks = new ArrayMap<>();
+        }
+
+        if (onlineStatus == null){
+            onlineStatus = OnlineStatus.getInstance();
         }
 
         ranks.clear();
@@ -723,6 +723,20 @@ public class TeamInfoLoader {
             setUpTeamUsage();
             InitialInfoRepository.getInstance().upsertInitialInfo(initialInfo);
         });
+    }
+
+    public OnlineStatus getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(List<ResOnlineStatus.Record> onlineStatusList) {
+        for (ResOnlineStatus.Record record : onlineStatusList) {
+            if (record.getPresence().equals("online")) {
+                onlineStatus.setOnlineMember(record.getMemberId());
+            } else {
+                onlineStatus.setOfflineMember(record.getMemberId());
+            }
+        }
     }
 
     interface Call0<T> {

@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.events.messages.MessageStarEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamBadgeUpdateEvent;
 import com.tosslab.jandi.app.events.team.TeamDeletedEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -60,6 +61,7 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Chat;
@@ -89,6 +91,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileShareEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewThumbnailEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberRankUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberStarredEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberUnstarredEvent;
@@ -269,6 +272,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketPollFinishedEvent.class, this::onPollFinished);
         messageEventActorMapper.put(SocketPollVotedEvent.class, this::onPollVoted);
         messageEventActorMapper.put(SocketMentionMarkerUpdatedEvent.class, this::onMentionMarkerUpdated);
+        messageEventActorMapper.put(SocketMemberOnlineStatusChangeEvent.class, this::onMemberOnlineStatusChanged);
 
         return messageEventActorMapper;
 
@@ -1707,6 +1711,22 @@ public class JandiSocketServiceModel {
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamInvitationCreatedEvent.class);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             postEvent(new TeamJoinEvent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onMemberOnlineStatusChanged(Object object) {
+        try {
+            SocketMemberOnlineStatusChangeEvent event =
+                    SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketMemberOnlineStatusChangeEvent.class);
+            ResOnlineStatus.Record data = event.getData();
+            if (data.getPresence().equals("online")) {
+                TeamInfoLoader.getInstance().getOnlineStatus().setOnlineMember(data.getMemberId());
+            } else {
+                TeamInfoLoader.getInstance().getOnlineStatus().setOfflineMember(data.getMemberId());
+            }
+            EventBus.getDefault().post(new MemberOnlineStatusChangeEvent(data.getMemberId(), data.getPresence()));
         } catch (Exception e) {
             e.printStackTrace();
         }

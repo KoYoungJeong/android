@@ -16,10 +16,12 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.network.models.validation.ResValidation;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -111,6 +113,11 @@ public class InsertTeamInfoModel {
             Ranks ranks = teamApi.get().getRanks(teamId);
             RankRepository.getInstance().addRanks(ranks.getRanks());
         }
+    }
+
+    public void updateOnlineStatus(long teamId) throws RetrofitException {
+        ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 
     public ResAccessToken refreshToken() throws RetrofitException {

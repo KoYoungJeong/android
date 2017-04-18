@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.marker.Marker;
@@ -172,6 +173,15 @@ public class TeamSelectListModel {
             } catch (RetrofitException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void updateOnlineStatus(long teamId) {
+        try {
+            ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+            TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
+        } catch (RetrofitException e) {
+            e.printStackTrace();
         }
     }
 

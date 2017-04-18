@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.tosslab.jandi.app.ui.entities.chats.domain.ChatChooseItem;
@@ -66,6 +67,9 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     View vHalfDivider;
     @Bind(R.id.v_full_divider)
     View vFullDivider;
+    @Bind(R.id.v_online)
+    View vOnline;
+
     private boolean isTeamMemberList = false;
     private boolean isKickMode = false;
     private boolean isSelectMode = false;
@@ -137,6 +141,12 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
         setItemViewClickListener(item.getEntityId());
 
         ivFavorite.setVisibility(View.GONE);
+
+        if (TeamInfoLoader.getInstance().getOnlineStatus().isOnlineMember(item.getEntityId())) {
+            vOnline.setVisibility(View.VISIBLE);
+        } else {
+            vOnline.setVisibility(View.GONE);
+        }
     }
 
     private void setCheckBoxIfSelectMode(ChatChooseItem item) {

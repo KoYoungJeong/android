@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.marker.Marker;
@@ -44,7 +45,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -150,12 +150,18 @@ public class NavigationModel {
             }
 
             refreshRankIfNeed(teamId);
+            updateOnlineStatus(teamId);
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             TeamInfoLoader.getInstance().refresh();
 
             refreshMyMarker(teamId, TeamInfoLoader.getInstance().getMyId());
             return teamId;
         });
+    }
+
+    public void updateOnlineStatus(long teamId) throws RetrofitException {
+        ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 
     private void refreshMyMarker(long teamId, long myId) {

@@ -28,23 +28,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 
 public class JandiSocketService extends Service {
 
     public static final String TAG = "SocketService";
     public static final String STOP_FORCIBLY = "stop_forcibly";
-
+    private static Subscription subscription;
     @Inject
     JandiSocketServiceModel jandiSocketServiceModel;
     private JandiSocketManager jandiSocketManager;
     private Map<String, EventListener> eventHashMap;
     private Map<String, List<EventListener>> eventsHashMap;
-
     private boolean isStopForcibly = false;
     private boolean isRunning = false;
     private boolean isInRefreshToken = false;
@@ -141,6 +142,7 @@ public class JandiSocketService extends Service {
         eventsHashMap = new HashMap<>();
 
         jandiSocketManager = JandiSocketManager.getInstance();
+
     }
 
     @Override
@@ -401,6 +403,7 @@ public class JandiSocketService extends Service {
                 stopSelf();
             }
         });
+
         eventHashMap.put("start", objects -> {
             jandiSocketManager.sendByJson("jandi_ping", "");
             jandiSocketServiceModel.updateEventHistory();
@@ -427,6 +430,10 @@ public class JandiSocketService extends Service {
         };
 
         eventHashMap.put("restart", restartListener);
+
+        EventListener memberOnlineStatusChangeListener = objects ->
+                jandiSocketServiceModel.onMemberOnlineStatusChanged(objects[0]);
+        eventHashMap.put("member_presence_updated", memberOnlineStatusChangeListener);
     }
 
     private void setUpSocketListener() {
@@ -475,6 +482,9 @@ public class JandiSocketService extends Service {
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
         jandiSocketServiceModel.stopEventPublisher();
+        if (!subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
     }
 
     private void sendBroadcastForRestart() {
@@ -568,6 +578,17 @@ public class JandiSocketService extends Service {
 
         });
         jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
+
+        subscription = Observable.interval(60, TimeUnit.SECONDS, Schedulers.io())
+                .map(tick -> {
+                    LogUtil.e("jandi_ping");
+                    if (jandiSocketManager != null)
+                        jandiSocketManager.sendByJson("jandi_ping", "");
+                    return tick;
+                })
+                .doOnError(err -> err.printStackTrace())
+                .retry()
+                .subscribe();
     }
 
     @Override
