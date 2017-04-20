@@ -60,8 +60,7 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
     }
 
     private void initSchedule(List<Integer> dayList, int startTime, int endTime, int timeZone) {
-        if (dayList != null
-                && dayList.size() > 0) {
+        if (dayList != null && dayList.size() > 0) {
             view.setDays(dayList);
         } else {
             return;
