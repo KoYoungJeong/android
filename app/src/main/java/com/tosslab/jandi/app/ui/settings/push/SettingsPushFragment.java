@@ -160,7 +160,8 @@ public class SettingsPushFragment extends Fragment {
                         Settings.getPreferencePushAlarmScheduleStartTime(),
                         Settings.getPreferencePushAlarmScheduleEndTime(),
                         Settings.getPreferencePushAlarmScheduleTimeZone());
-
+            } else {
+                vgNotificationScheduleDetail.setVisibility(View.GONE);
             }
         } else {
             Observable.defer(() -> {
@@ -178,8 +179,7 @@ public class SettingsPushFragment extends Fragment {
     }
 
     private void setAlarmScheduleDetail(List<Integer> dayList, int startTime, int endTime, int timeZone) {
-        if (dayList != null
-                && dayList.size() > 0) {
+        if (dayList != null && dayList.size() > 0) {
             Settings.setHasAlarmSchedule(true);
             Settings.setPreferencePushAlarmSchedule(true);
             Settings.setPreferencePushAlarmScheduleStartTime(startTime);
@@ -188,6 +188,7 @@ public class SettingsPushFragment extends Fragment {
             Settings.setPreferencePushAlarmScheduleTimeZone(timeZone);
             sbcvPushSchedule.setChecked(true);
             vgNotificationScheduleDetail.setVisibility(View.VISIBLE);
+
             int bitSum = 0; // 월 2 화 4 수 8 목 16 금 32 토 64 일 128
             int weekBit = 1;
             StringBuilder selectedDaysSB = new StringBuilder();
