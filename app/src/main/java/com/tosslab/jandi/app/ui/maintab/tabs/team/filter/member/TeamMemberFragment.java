@@ -49,12 +49,16 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.View,
         KeywordObservable, OnToggledUser, ListScroller, OnSearchModeChangeListener {
@@ -154,6 +158,14 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
         }
 
         setListViewScroll();
+
+        // 비정상 종료 후 재 실행시 리스트 정상 로딩을 위한 예외처리 코드
+        Completable.complete()
+                .delay(1000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    EventBus.getDefault().post(new TeamInfoChangeEvent());
+                });
     }
 
     private void setListViewScroll() {
