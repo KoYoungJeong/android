@@ -172,7 +172,7 @@ public class SettingsPushFragment extends Fragment {
                         setAlarmScheduleDetail(deviceInfo.getDays(),
                                 deviceInfo.getStartTime(),
                                 deviceInfo.getEndTime(),
-                                deviceInfo.getTimeZone());
+                                deviceInfo.getTimezone());
                     });
         }
     }

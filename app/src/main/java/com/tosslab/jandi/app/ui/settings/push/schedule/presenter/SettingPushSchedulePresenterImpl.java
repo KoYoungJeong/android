@@ -49,12 +49,12 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
                         initSchedule(deviceInfo.getDays(),
                                 deviceInfo.getStartTime(),
                                 deviceInfo.getEndTime(),
-                                deviceInfo.getTimeZone());
+                                deviceInfo.getTimezone());
                         Settings.setHasAlarmSchedule(true);
                         Settings.setPreferencePushAlarmScheduleDays(deviceInfo.getDays());
                         Settings.setPreferencePushAlarmScheduleStartTime(deviceInfo.getStartTime());
                         Settings.setPreferencePushAlarmScheduleEndTime(deviceInfo.getEndTime());
-                        Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimeZone());
+                        Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimezone());
                     });
         }
     }

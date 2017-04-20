@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.navigation.adapter.model;
 
 import android.support.v7.view.menu.MenuBuilder;
+import android.view.MenuItem;
 
 import com.tosslab.jandi.app.ui.base.adapter.MultiItemRecyclerAdapter;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -29,5 +30,7 @@ public interface NavigationDataModel {
     List<Team> getTeams();
 
     MultiItemRecyclerAdapter.Row<String> getVersionRow(String versionName);
+
+    MenuItem getNotificationItem();
 
 }

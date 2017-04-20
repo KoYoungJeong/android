@@ -117,6 +117,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                             navigationDataModel.removeAllTeamRows();
                             navigationDataModel.addTeamRows(teamRows);
                             navigationView.notifyDataSetChanged();
+                            initScheduleCache();
                         }, Throwable::printStackTrace);
 
     }
@@ -306,23 +307,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     public void onInitializePresetNavigationItems() {
         Observable.just(navigationModel.getNavigationMenus())
                 .doOnNext(menuBuilder -> {
-                    MenuItem itemNotification = menuBuilder.findItem(R.id.nav_setting_notification);
-
-                    int notificationState = getAlarmStatus();
-
-                    if (itemNotification != null) {
-                        if (notificationState == 0) {
-                            itemNotification.setIcon(
-                                    JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_on));
-                        } else if (notificationState == 1) {
-                            itemNotification.setIcon(
-                                    JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_off));
-                        } else if (notificationState == 2) {
-                            itemNotification.setIcon(
-                                    JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_schedule));
-                        }
-                    }
-
                     MenuItem itemOrientation = menuBuilder.findItem(R.id.nav_setting_orientation);
                     if (itemOrientation != null) {
                         itemOrientation.setVisible(!(navigationModel.isPhoneMode()));
@@ -415,7 +399,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void onInitIntercom() {
-
         Completable.fromAction(() -> {
             Registration it = Registration.create();
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
@@ -440,7 +423,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
             Intercom.client().updateUser(userAttributes);
             Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
-
         }).subscribeOn(Schedulers.computation())
                 .subscribe(() -> {
                 }, t -> {
@@ -491,10 +473,32 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                             Settings.setPreferencePushAlarmScheduleDays(deviceInfo.getDays());
                             Settings.setPreferencePushAlarmScheduleStartTime(deviceInfo.getStartTime());
                             Settings.setPreferencePushAlarmScheduleEndTime(deviceInfo.getEndTime());
-                            Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimeZone());
+                            Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimezone());
+                            setAlarmIconChanged();
                         }
                     });
+        } else {
+            setAlarmIconChanged();
         }
+    }
+
+    public void setAlarmIconChanged() {
+        MenuItem item = navigationDataModel.getNotificationItem();
+        int notificationState = getAlarmStatus();
+
+        if (item != null) {
+            if (notificationState == 0) {
+                item.setIcon(
+                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_on));
+            } else if (notificationState == 1) {
+                item.setIcon(
+                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_off));
+            } else if (notificationState == 2) {
+                item.setIcon(
+                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_schedule));
+            }
+        }
+        navigationView.notifyDataSetChanged();
     }
 
     // 0 : 푸쉬 알림 수신 가능 1 : 푸쉬 알림 수신 불가능 2 : 푸쉬 알림 스케쥴 수신 불가능
