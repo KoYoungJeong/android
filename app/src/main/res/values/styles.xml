@@ -651,16 +651,30 @@
         <item name="android:background">@color/account_home_divide_line</item>
     </style>
 
+    <style name="FloatingLabelTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">@color/jandi_transparent_black_38p</item>
+        <item name="android:textSize">@dimen/jandi_text_size_small</item>
+    </style>
+
     <style name="FloatingEditTextTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorHint">@color/jandi_text_light</item>
-        <item name="android:textColor">@color/jandi_text</item>
+        <item name="android:textColor">@color/jandi_transparent_black_38p</item>
         <item name="android:textSize">@dimen/jandi_text_size_large</item>
         <item name="colorAccent">@color/rgb_808080</item>
         <item name="colorControlNormal">@color/rgb_cccccc</item>
         <item name="textColorError">@color/jandi_red</item>
     </style>
 
+    <style name="FloatingTextLengthTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">@color/jandi_transparent_black_38p</item>
+        <item name="android:textSize">@dimen/jandi_text_size_small</item>
+    </style>
+
     <style name="CreatePollEditText" parent="@style/FloatingEditTextTheme"></style>
+
+    <style name="CreatePollLableText" parent="@style/FloatingLabelTextTheme"></style>
+
+    <style name="CreatePollTextLength" parent="@style/FloatingTextLengthTheme"></style>
 
     <style name="DayTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">
         <item name="android:textColor">@drawable/text_color_day</item>
