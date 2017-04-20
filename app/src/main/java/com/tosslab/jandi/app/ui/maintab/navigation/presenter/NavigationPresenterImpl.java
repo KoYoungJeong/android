@@ -596,7 +596,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         TimeZone timeZone = TimeZone.getDefault();
         String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
 
-        boolean isPlus = false;
+        boolean isPlus;
 
         if (timeZoneString.contains("+")) {
             isPlus = true;
