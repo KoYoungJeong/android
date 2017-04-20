@@ -482,7 +482,7 @@ public class JandiSocketService extends Service {
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
         jandiSocketServiceModel.stopEventPublisher();
-        if (!subscription.isUnsubscribed()) {
+        if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
         }
     }
