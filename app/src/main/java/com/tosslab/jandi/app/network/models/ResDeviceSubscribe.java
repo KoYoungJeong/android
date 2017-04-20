@@ -31,7 +31,7 @@ public class ResDeviceSubscribe {
     private Date updatedAt;
 
     private List<Integer> Days;
-    private int timeZone = -100;
+    private int timezone = -100;
     @JsonProperty("start_time")
     private int startTime = -1;
     @JsonProperty("end_time")
@@ -149,12 +149,12 @@ public class ResDeviceSubscribe {
         Days = days;
     }
 
-    public int getTimeZone() {
-        return timeZone;
+    public int getTimezone() {
+        return timezone;
     }
 
-    public void setTimeZone(int timeZone) {
-        this.timeZone = timeZone;
+    public void setTimezone(int timezone) {
+        this.timezone = timezone;
     }
 
     public int getStartTime() {
