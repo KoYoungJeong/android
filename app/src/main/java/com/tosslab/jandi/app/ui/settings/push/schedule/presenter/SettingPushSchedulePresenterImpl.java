@@ -61,33 +61,59 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
 
     private void initSchedule(List<Integer> dayList, int startTime, int endTime, int timeZone) {
         if (dayList != null && dayList.size() > 0) {
+            int timeZoneDistance = 0;
+
+            if (timeZone != -100) {
+                timeZoneDistance = getTimeZoneInt() - timeZone;
+            }
+
+            // 표준시로 인해 날짜가 바뀔 수 있음을 염두
+            boolean dayPlus = false;
+            boolean dayMinus = false;
+
+            if (startTime != -1) {
+                int startTimeHour = startTime / 100;
+                startTimeHour = startTimeHour + timeZoneDistance;
+                if (startTimeHour < 0) {
+                    startTimeHour = 24 - startTimeHour;
+                    dayMinus = true;
+                } else if (startTimeHour > 23) {
+                    startTimeHour = startTimeHour - 24;
+                    dayPlus = true;
+                }
+                view.setStartTime(startTimeHour * 100 + startTime % 100);
+            }
+
+            if (endTime != -1) {
+                int endTimeHour = endTime / 100;
+                endTimeHour = endTimeHour - timeZoneDistance;
+                if (endTimeHour < 0) {
+                    endTimeHour = 24 - endTimeHour;
+                } else if (endTimeHour > 23) {
+                    endTimeHour = endTimeHour - 24;
+                }
+                view.setEndTime(endTimeHour * 100 + endTime % 100);
+            }
+
+            if (dayMinus) {
+                for (int i = 0; i < dayList.size(); i++) {
+                    int replaceDay = dayList.get(i) - 1;
+                    if (replaceDay < 0) {
+                        replaceDay = 6;
+                    }
+                    dayList.set(i, replaceDay);
+                }
+            } else if (dayPlus) {
+                for (int i = 0; i < dayList.size(); i++) {
+                    int replaceDay = dayList.get(i) + 1;
+                    if (replaceDay > 6) {
+                        replaceDay = 0;
+                    }
+                    dayList.set(i, replaceDay);
+                }
+            }
+
             view.setDays(dayList);
-        } else {
-            return;
-        }
-
-        int timeZoneDistance = 0;
-
-        if (timeZone != -100) {
-            timeZoneDistance = timeZone - 9;
-        }
-
-        if (startTime != -1) {
-            int startTimeHour = startTime / 100;
-            startTimeHour = startTimeHour - timeZoneDistance;
-            if (startTimeHour < 0) {
-                startTimeHour = 24 - startTimeHour;
-            }
-            view.setStartTime(startTimeHour * 100 + startTime % 100);
-        }
-
-        if (endTime != -1) {
-            int endTimeHour = endTime / 100;
-            endTimeHour = endTimeHour - timeZoneDistance;
-            if (endTimeHour < 0) {
-                endTimeHour = 24 - endTimeHour;
-            }
-            view.setEndTime(endTimeHour * 100 + endTime % 100);
         }
     }
 

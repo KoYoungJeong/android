@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -545,10 +546,23 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 int startTime = Settings.getPreferencePushAlarmScheduleStartTime();
                 int endTime = Settings.getPreferencePushAlarmScheduleEndTime();
                 int timezone = Settings.getPreferencePushAlarmScheduleTimeZone();
-                int timezoneDistanceFromKorea = timezone - 9;
+                int timezoneDistance = getTimeZoneInt() - timezone;
                 DateFormat sdf = new SimpleDateFormat("HHmm");
                 int currentTime = Integer.valueOf(sdf.format(calendar.getTime()));
-                currentTime += timezoneDistanceFromKorea * 100;
+                startTime = timezoneDistance * 100 + startTime;
+                endTime = timezoneDistance * 100 + endTime;
+
+                if (startTime > 2400) {
+                    scheduledWeekday++;
+                    if (scheduledWeekday > 6) {
+                        scheduledWeekday = 0;
+                    }
+                } else if (startTime < 0) {
+                    weekdayOfJandiNum--;
+                    if (scheduledWeekday < 0) {
+                        scheduledWeekday = 6;
+                    }
+                }
 
                 if (endTime < startTime) {
                     if (weekdayOfJandiNum == scheduledWeekday) {
@@ -557,7 +571,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         }
                     } else {
                         int tempScheduledWeekday = scheduledWeekday + 1;
-                        if (tempScheduledWeekday == 7) {
+                        if (tempScheduledWeekday > 6) {
                             tempScheduledWeekday = 0;
                         }
                         if (weekdayOfJandiNum == tempScheduledWeekday) {
@@ -576,6 +590,26 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             }
         }
         return 2;
+    }
+
+    private int getTimeZoneInt() {
+        TimeZone timeZone = TimeZone.getDefault();
+        String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
+
+        boolean isPlus = false;
+
+        if (timeZoneString.contains("+")) {
+            isPlus = true;
+        } else {
+            isPlus = false;
+        }
+
+        int timeZoneInt = Integer.valueOf(timeZoneString.substring(1, 3));
+
+        if (!isPlus) {
+            timeZoneInt = timeZoneInt * -1;
+        }
+        return timeZoneInt;
     }
 
 }

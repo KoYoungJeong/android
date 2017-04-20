@@ -189,8 +189,60 @@ public class SettingsPushFragment extends Fragment {
             sbcvPushSchedule.setChecked(true);
             vgNotificationScheduleDetail.setVisibility(View.VISIBLE);
 
+            int timeZoneDistance = 0;
+
+            if (timeZone != -100) {
+                timeZoneDistance = getTimeZoneInt() - timeZone;
+            }
+
+            // 표준시로 인해 날짜가 바뀔 수 있음을 염두
+            boolean dayPlus = false;
+            boolean dayMinus = false;
+
+            if (startTime != -1) {
+                int startTimeHour = startTime / 100;
+                startTimeHour = startTimeHour + timeZoneDistance;
+                if (startTimeHour < 0) {
+                    startTimeHour = 24 - startTimeHour;
+                    dayMinus = true;
+                } else if (startTimeHour > 23) {
+                    startTimeHour = startTimeHour - 24;
+                    dayPlus = true;
+                }
+                tvPushScheduleStartTime.setText(getIntTimeToString(startTimeHour * 100 + startTime % 100));
+            }
+
+            if (endTime != -1) {
+                int endTimeHour = endTime / 100;
+                endTimeHour = endTimeHour - timeZoneDistance;
+                if (endTimeHour < 0) {
+                    endTimeHour = 24 - endTimeHour;
+                } else if (endTimeHour > 23) {
+                    endTimeHour = endTimeHour - 24;
+                }
+                tvPushScheduleEndTime.setText(getIntTimeToString(endTimeHour * 100 + endTime % 100));
+            }
+
+            if (dayMinus) {
+                for (int i = 0; i < dayList.size(); i++) {
+                    int replaceDay = dayList.get(i) - 1;
+                    if (replaceDay < 0) {
+                        replaceDay = 6;
+                    }
+                    dayList.set(i, replaceDay);
+                }
+            } else if (dayPlus) {
+                for (int i = 0; i < dayList.size(); i++) {
+                    int replaceDay = dayList.get(i) + 1;
+                    if (replaceDay > 6) {
+                        replaceDay = 0;
+                    }
+                    dayList.set(i, replaceDay);
+                }
+            }
+
             int bitSum = 0; // 월 2 화 4 수 8 목 16 금 32 토 64 일 128
-            int weekBit = 1;
+            int weekBit;
             StringBuilder selectedDaysSB = new StringBuilder();
 
             for (int day : dayList) {
@@ -245,32 +297,8 @@ public class SettingsPushFragment extends Fragment {
         } else {
             sbcvPushSchedule.setChecked(false);
             vgNotificationScheduleDetail.setVisibility(View.GONE);
-            return;
         }
 
-        int timeZoneDistance = 0;
-
-        if (timeZone != -100) {
-            timeZoneDistance = timeZone - 9;
-        }
-
-        if (startTime != -1) {
-            int startTimeHour = startTime / 100;
-            startTimeHour = startTimeHour - timeZoneDistance;
-            if (startTimeHour < 0) {
-                startTimeHour = 24 - startTimeHour;
-            }
-            tvPushScheduleStartTime.setText(getIntTimeToString(startTimeHour * 100 + startTime % 100));
-        }
-
-        if (endTime != -1) {
-            int endTimeHour = endTime / 100;
-            endTimeHour = endTimeHour - timeZoneDistance;
-            if (endTimeHour < 0) {
-                endTimeHour = 24 - endTimeHour;
-            }
-            tvPushScheduleEndTime.setText(getIntTimeToString(endTimeHour * 100 + endTime % 100));
-        }
     }
 
     private void setSoundSubStatus() {
