@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.marker.MarkerApi;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -62,19 +64,24 @@ public class NavigationModel {
     private final Lazy<InvitationApi> invitationApi;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<MarkerApi> markerApi;
+    private final Lazy<DeviceApi> deviceApi;
     private Lazy<TeamApi> teamApi;
 
     @Inject
     public NavigationModel(Lazy<AccountApi> accountApi,
                            Lazy<StartApi> startApi,
                            Lazy<InvitationApi> invitationApi,
-                           Lazy<LoginApi> loginApi, Lazy<TeamApi> teamApi, Lazy<MarkerApi> markerApi) {
+                           Lazy<LoginApi> loginApi,
+                           Lazy<TeamApi> teamApi,
+                           Lazy<MarkerApi> markerApi,
+                           Lazy<DeviceApi> deviceApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.invitationApi = invitationApi;
         this.loginApi = loginApi;
         this.teamApi = teamApi;
         this.markerApi = markerApi;
+        this.deviceApi = deviceApi;
     }
 
     public User getMe() {
@@ -299,4 +306,14 @@ public class NavigationModel {
                     }
                 });
     }
+
+    public ResDeviceSubscribe getDeviceInfo() {
+        try {
+            return deviceApi.get().getDeviceInfo(TokenUtil.getTokenObject().getDeviceId());
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

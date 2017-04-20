@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.settings.push;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -11,16 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.push.dagger.DaggerSettingsPushComponent;
 import com.tosslab.jandi.app.ui.settings.push.model.NotificationSoundDialog;
+import com.tosslab.jandi.app.ui.settings.push.schedule.SettingPushScheduleActivity;
+import com.tosslab.jandi.app.ui.settings.push.schedule.model.SettingPushScheduleModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -28,7 +33,10 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
 import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.TimeZone;
 
 import javax.inject.Inject;
 
@@ -40,10 +48,14 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static android.app.Activity.RESULT_OK;
+
 public class SettingsPushFragment extends Fragment {
 
     @Bind(R.id.vg_settings_push_notification)
     SettingsBodyCheckView sbcvPush;
+    @Bind(R.id.vg_settings_push_notification_schedule)
+    SettingsBodyCheckView sbcvPushSchedule;
     @Bind(R.id.vg_settings_push_sound)
     SettingsBodyCheckView sbcvSound;
     @Bind(R.id.vg_settings_push_sound_sub)
@@ -60,11 +72,30 @@ public class SettingsPushFragment extends Fragment {
     SettingsBodyCheckView sbcvLed;
     @Bind(R.id.vg_settings_push_preview)
     SettingsBodyView sbvPreview;
+
+    @Bind(R.id.vg_notification_schedule_detail)
+    ViewGroup vgNotificationScheduleDetail;
+
+    @Bind(R.id.tv_push_schedule_weekdays)
+    TextView tvPushScheduleWeekdays;
+    @Bind(R.id.tv_push_schedule_start_time)
+    TextView tvPushScheduleStartTime;
+    @Bind(R.id.tv_push_schedule_end_time)
+    TextView tvPushScheduleEndTime;
+
+    @Bind(R.id.tv_push_schedule_weekdays_title)
+    TextView tvPushScheduleWeekdaysTitle;
+    @Bind(R.id.tv_push_schedule_start_time_title)
+    TextView tvPushScheduleStartTimeTitle;
+    @Bind(R.id.tv_push_schedule_end_time_title)
+    TextView tvPushScheduleEndTimeTitle;
+
     @Inject
     SharedPreferences sharedPreferences;
     @Inject
     Lazy<DeviceApi> deviceApi;
-
+    @Inject
+    SettingPushScheduleModel settingPushScheduleModel;
 
     @Nullable
     @Override
@@ -81,6 +112,16 @@ public class SettingsPushFragment extends Fragment {
                 .build()
                 .inject(this);
         initViews();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SettingPushScheduleActivity.REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                setUpPushSchedule(true);
+            }
+        }
     }
 
     void initViews() {
@@ -100,6 +141,135 @@ public class SettingsPushFragment extends Fragment {
 
         setUpPushEnabled(pushOn);
         setUpPreview();
+        setUpPushSchedule(pushOn);
+    }
+
+    private void setUpPushSchedule(boolean pushOn) {
+        if (!pushOn) {
+            sbcvPushSchedule.setEnabled(false);
+        } else {
+            sbcvPushSchedule.setEnabled(true);
+        }
+
+        boolean hasScheduleCache = Settings.hasAlarmScheduleCache();
+        boolean isScheduleOn = Settings.getPreferencePushAlarmSchedule();
+
+        if (hasScheduleCache) {
+            if (isScheduleOn) {
+                setAlarmScheduleDetail(Settings.getPreferencePushAlarmScheduleDays(),
+                        Settings.getPreferencePushAlarmScheduleStartTime(),
+                        Settings.getPreferencePushAlarmScheduleEndTime(),
+                        Settings.getPreferencePushAlarmScheduleTimeZone());
+
+            }
+        } else {
+            Observable.defer(() -> {
+                ResDeviceSubscribe resDeviceSubscribe = settingPushScheduleModel.getDeviceInfo();
+                return Observable.just(resDeviceSubscribe);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deviceInfo -> {
+                        setAlarmScheduleDetail(deviceInfo.getDays(),
+                                deviceInfo.getStartTime(),
+                                deviceInfo.getEndTime(),
+                                deviceInfo.getTimeZone());
+                    });
+        }
+    }
+
+    private void setAlarmScheduleDetail(List<Integer> dayList, int startTime, int endTime, int timeZone) {
+        if (dayList != null
+                && dayList.size() > 0) {
+            Settings.setHasAlarmSchedule(true);
+            Settings.setPreferencePushAlarmSchedule(true);
+            Settings.setPreferencePushAlarmScheduleStartTime(startTime);
+            Settings.setPreferencePushAlarmScheduleEndTime(endTime);
+            Settings.setPreferencePushAlarmScheduleDays(dayList);
+            Settings.setPreferencePushAlarmScheduleTimeZone(timeZone);
+            sbcvPushSchedule.setChecked(true);
+            vgNotificationScheduleDetail.setVisibility(View.VISIBLE);
+            int bitSum = 0; // 월 2 화 4 수 8 목 16 금 32 토 64 일 128
+            int weekBit = 1;
+            StringBuilder selectedDaysSB = new StringBuilder();
+
+            for (int day : dayList) {
+                weekBit = 1;
+                for (int i = 0; i <= day; i++) {
+                    weekBit = weekBit * 2;
+                }
+                bitSum += weekBit;
+                switch (day) {
+                    case 0:
+                        selectedDaysSB.append("월, ");
+                        break;
+                    case 1:
+                        selectedDaysSB.append("화, ");
+                        break;
+                    case 2:
+                        selectedDaysSB.append("수, ");
+                        break;
+                    case 3:
+                        selectedDaysSB.append("목, ");
+                        break;
+                    case 4:
+                        selectedDaysSB.append("금, ");
+                        break;
+                    case 5:
+                        selectedDaysSB.append("토, ");
+                        break;
+                    case 6:
+                        selectedDaysSB.append("일, ");
+                        break;
+                }
+            }
+
+            // 주중
+            if (bitSum == 62) {
+                tvPushScheduleWeekdays.setText(getString(R.string.push_schedule_weekdays));
+            }
+            // 주말
+            else if (bitSum == 192) {
+                tvPushScheduleWeekdays.setText(getString(R.string.push_schedule_weekend));
+            }
+            // 매일
+            else if (bitSum == 254) {
+                tvPushScheduleWeekdays.setText(getString(R.string.day_everyday));
+            }
+            // 선택된 날짜
+            else {
+                tvPushScheduleWeekdays.setText(selectedDaysSB.delete(
+                        selectedDaysSB.length() - 2, selectedDaysSB.length() - 1));
+            }
+
+        } else {
+            sbcvPushSchedule.setChecked(false);
+            vgNotificationScheduleDetail.setVisibility(View.GONE);
+            return;
+        }
+
+        int timeZoneDistance = 0;
+
+        if (timeZone != -100) {
+            timeZoneDistance = timeZone - 9;
+        }
+
+        if (startTime != -1) {
+            int startTimeHour = startTime / 100;
+            startTimeHour = startTimeHour - timeZoneDistance;
+            if (startTimeHour < 0) {
+                startTimeHour = 24 - startTimeHour;
+            }
+            tvPushScheduleStartTime.setText(getIntTimeToString(startTimeHour * 100 + startTime % 100));
+        }
+
+        if (endTime != -1) {
+            int endTimeHour = endTime / 100;
+            endTimeHour = endTimeHour - timeZoneDistance;
+            if (endTimeHour < 0) {
+                endTimeHour = 24 - endTimeHour;
+            }
+            tvPushScheduleEndTime.setText(getIntTimeToString(endTimeHour * 100 + endTime % 100));
+        }
     }
 
     private void setSoundSubStatus() {
@@ -135,12 +305,22 @@ public class SettingsPushFragment extends Fragment {
     }
 
     private void setUpPushEnabled(boolean pushOn) {
+        sbcvPushSchedule.setEnabled(pushOn);
         sbcvSound.setEnabled(pushOn);
         sbcvLed.setEnabled(pushOn);
         sbcvVibration.setEnabled(pushOn);
         sbcvSoundSubTopic.setEnabled(pushOn);
         sbcvSoundSubDirectMessage.setEnabled(pushOn);
         sbcvSoundSubMentions.setEnabled(pushOn);
+        if (vgNotificationScheduleDetail.getVisibility() == View.VISIBLE) {
+            vgNotificationScheduleDetail.setEnabled(pushOn);
+            tvPushScheduleWeekdaysTitle.setEnabled(pushOn);
+            tvPushScheduleWeekdays.setEnabled(pushOn);
+            tvPushScheduleStartTimeTitle.setEnabled(pushOn);
+            tvPushScheduleStartTime.setEnabled(pushOn);
+            tvPushScheduleEndTimeTitle.setEnabled(pushOn);
+            tvPushScheduleEndTime.setEnabled(pushOn);
+        }
     }
 
     @OnClick(R.id.vg_settings_push_notification)
@@ -150,10 +330,57 @@ public class SettingsPushFragment extends Fragment {
         setUpPushEnabled(checked);
         setPushOnValue(checked);
         setPushOnSummary(checked);
-
         setUpParseValue(checked);
-
         sendAnalyticsEvent(AnalyticsValue.Action.Notifications, checked);
+    }
+
+    @OnClick(R.id.vg_settings_push_notification_schedule)
+    void onNotificationScheduleClick() {
+        boolean checked = !sbcvPushSchedule.isChecked();
+
+        if (checked) {
+            Observable.defer(() -> {
+                List<Integer> dayList = Settings.getPreferencePushAlarmScheduleDays();
+                int alarmScheduleStartTime = Settings.getPreferencePushAlarmScheduleStartTime();
+                int alarmScheduleEndTime = Settings.getPreferencePushAlarmScheduleEndTime();
+                boolean success = settingPushScheduleModel
+                        .setAlarmSchedule(dayList, alarmScheduleStartTime, alarmScheduleEndTime, getTimeZoneInt());
+                if (success) {
+                    Settings.setPreferencePushAlarmScheduleDays(dayList);
+                    Settings.setPreferencePushAlarmScheduleStartTime(alarmScheduleStartTime);
+                    Settings.setPreferencePushAlarmScheduleEndTime(alarmScheduleEndTime);
+                }
+                return Observable.just(success);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(success -> {
+                        if (success) {
+                            Settings.setPreferencePushAlarmSchedule(true);
+                            sbcvPushSchedule.setChecked(true);
+                            setUpPushSchedule(true);
+                        } else {
+                            // 오류 예외 처리
+                        }
+                    });
+        } else {
+            Settings.setPreferencePushAlarmSchedule(false);
+            Observable.defer(() -> {
+                List<Integer> dayList = new ArrayList<>();
+                boolean success = settingPushScheduleModel.setAlarmSchedule(
+                        dayList, 700, 1900, getTimeZoneInt());
+                return Observable.just(success);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(success -> {
+                        if (success) {
+                            Settings.setPreferencePushAlarmSchedule(false);
+                            sbcvPushSchedule.setChecked(false);
+                            vgNotificationScheduleDetail.setVisibility(View.GONE);
+                        } else {
+                            // 오류 예외 처리
+                        }
+                    });
+        }
     }
 
     private void sendAnalyticsEvent(AnalyticsValue.Action action, boolean on) {
@@ -195,6 +422,7 @@ public class SettingsPushFragment extends Fragment {
                 .putBoolean(Settings.SETTING_PUSH_AUTO_ALARM, checked)
                 .apply();
     }
+
 
     @OnClick(R.id.vg_settings_push_sound)
     void onSoundClick() {
@@ -286,7 +514,6 @@ public class SettingsPushFragment extends Fragment {
                 .apply();
     }
 
-
     @OnClick(R.id.vg_settings_push_preview)
     void onPreviewClick() {
         String value = sharedPreferences.getString(Settings.SETTING_PUSH_PREVIEW, "0");
@@ -323,6 +550,56 @@ public class SettingsPushFragment extends Fragment {
                     dialog.dismiss();
                 });
         builder.create().show();
-
     }
+
+    @OnClick(R.id.vg_notification_schedule_detail)
+    void onClickNotificationScheduleDetail() {
+        SettingPushScheduleActivity.launchActivity(this);
+    }
+
+    private String getIntTimeToString(int time) {
+        int hour = time / 100;
+        int minute = time % 100;
+        StringBuilder stringBuilder = new StringBuilder();
+        if (hour > 12) {
+            stringBuilder.append(getString(R.string.jandi_date_evening));
+            stringBuilder.append(" ");
+            hour = hour - 12;
+        } else {
+            stringBuilder.append(getString(R.string.jandi_date_morning));
+            stringBuilder.append(" ");
+        }
+
+        if (hour < 10) {
+            stringBuilder.append("0");
+        }
+        stringBuilder.append(hour);
+        stringBuilder.append(":");
+        if (minute < 10) {
+            stringBuilder.append("0");
+        }
+        stringBuilder.append(minute);
+        return stringBuilder.toString();
+    }
+
+    private int getTimeZoneInt() {
+        TimeZone timeZone = TimeZone.getDefault();
+        String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
+
+        boolean isPlus;
+
+        if (timeZoneString.contains("+")) {
+            isPlus = true;
+        } else {
+            isPlus = false;
+        }
+
+        int timeZoneInt = Integer.valueOf(timeZoneString.substring(1, 3));
+
+        if (!isPlus) {
+            timeZoneInt = timeZoneInt * -1;
+        }
+        return timeZoneInt;
+    }
+
 }

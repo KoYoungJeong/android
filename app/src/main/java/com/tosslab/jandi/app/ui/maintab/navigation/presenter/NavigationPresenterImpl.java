@@ -12,11 +12,13 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.model.NavigationModel;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -26,6 +28,9 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationA
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -301,6 +306,23 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     public void onInitializePresetNavigationItems() {
         Observable.just(navigationModel.getNavigationMenus())
                 .doOnNext(menuBuilder -> {
+                    MenuItem itemNotification = menuBuilder.findItem(R.id.nav_setting_notification);
+
+                    int notificationState = getAlarmStatus();
+
+                    if (itemNotification != null) {
+                        if (notificationState == 0) {
+                            itemNotification.setIcon(
+                                    JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_on));
+                        } else if (notificationState == 1) {
+                            itemNotification.setIcon(
+                                    JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_off));
+                        } else if (notificationState == 2) {
+                            itemNotification.setIcon(
+                                    JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_schedule));
+                        }
+                    }
+
                     MenuItem itemOrientation = menuBuilder.findItem(R.id.nav_setting_orientation);
                     if (itemOrientation != null) {
                         itemOrientation.setVisible(!(navigationModel.isPhoneMode()));
@@ -452,6 +474,104 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
+    }
+
+    @Override
+    public void initScheduleCache() {
+        if (!Settings.hasAlarmScheduleCache()) {
+            Observable.defer(() -> {
+                ResDeviceSubscribe resDeviceSubscribe = navigationModel.getDeviceInfo();
+                return Observable.just(resDeviceSubscribe);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deviceInfo -> {
+                        if (deviceInfo.getDays() != null && deviceInfo.getDays().size() > 0) {
+                            Settings.setHasAlarmSchedule(true);
+                            Settings.setPreferencePushAlarmSchedule(true);
+                            Settings.setPreferencePushAlarmScheduleDays(deviceInfo.getDays());
+                            Settings.setPreferencePushAlarmScheduleStartTime(deviceInfo.getStartTime());
+                            Settings.setPreferencePushAlarmScheduleEndTime(deviceInfo.getEndTime());
+                            Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimeZone());
+                        }
+                    });
+        }
+    }
+
+    // 0 : 푸쉬 알림 수신 가능 1 : 푸쉬 알림 수신 불가능 2 : 푸쉬 알림 스케쥴 수신 불가능
+    private int getAlarmStatus() {
+        if (!Settings.isPushOn()) {
+            return 1;
+        }
+
+        if (!Settings.getPreferencePushAlarmSchedule()) {
+            return 0;
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+
+            int weekdayOfJandiNum = 0;
+
+            switch (weekday) {
+                case Calendar.MONDAY:
+                    weekdayOfJandiNum = 0;
+                    break;
+                case Calendar.TUESDAY:
+                    weekdayOfJandiNum = 1;
+                    break;
+                case Calendar.WEDNESDAY:
+                    weekdayOfJandiNum = 2;
+                    break;
+                case Calendar.THURSDAY:
+                    weekdayOfJandiNum = 3;
+                    break;
+                case Calendar.FRIDAY:
+                    weekdayOfJandiNum = 4;
+                    break;
+                case Calendar.SATURDAY:
+                    weekdayOfJandiNum = 5;
+                    break;
+                case Calendar.SUNDAY:
+                    weekdayOfJandiNum = 6;
+                    break;
+            }
+
+            List<Integer> scheduledWeekdays = Settings.getPreferencePushAlarmScheduleDays();
+
+            for (int scheduledWeekday : scheduledWeekdays) {
+                int startTime = Settings.getPreferencePushAlarmScheduleStartTime();
+                int endTime = Settings.getPreferencePushAlarmScheduleEndTime();
+                int timezone = Settings.getPreferencePushAlarmScheduleTimeZone();
+                int timezoneDistanceFromKorea = timezone - 9;
+                DateFormat sdf = new SimpleDateFormat("HHmm");
+                int currentTime = Integer.valueOf(sdf.format(calendar.getTime()));
+                currentTime += timezoneDistanceFromKorea * 100;
+
+                if (endTime < startTime) {
+                    if (weekdayOfJandiNum == scheduledWeekday) {
+                        if (startTime < currentTime) {
+                            return 0;
+                        }
+                    } else {
+                        int tempScheduledWeekday = scheduledWeekday + 1;
+                        if (tempScheduledWeekday == 7) {
+                            tempScheduledWeekday = 0;
+                        }
+                        if (weekdayOfJandiNum == tempScheduledWeekday) {
+                            if (currentTime < endTime) {
+                                return 0;
+                            }
+                        }
+                    }
+                } else {
+                    if (weekdayOfJandiNum == scheduledWeekday) {
+                        if (startTime < currentTime && currentTime < endTime) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+        return 2;
     }
 
 }

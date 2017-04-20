@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.dialogs;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -20,6 +21,17 @@ import java.util.Calendar;
  */
 public class TimePickerDialogFragment extends DialogFragment {
 
+    public static int MODE_START_TIME = 0x01;
+    public static int MODE_END_TIME = 0x02;
+
+    public static String ARG_MODE = "arg_mode";
+    public static String ARG_INCLUDE_MINUTE = "arg_include_minute";
+    public static String ARG_DEFAULT_TIME = "arg_default_time";
+
+    private int mode = MODE_END_TIME;
+    private boolean isIncludeMinute = false;
+    private int defaultTime = 0700;
+
     public static DialogFragment newInstance() {
         return new TimePickerDialogFragment();
     }
@@ -27,22 +39,26 @@ public class TimePickerDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        if (getArguments() != null) {
+            mode = getArguments().getInt(ARG_MODE);
+            isIncludeMinute = getArguments().getBoolean(ARG_INCLUDE_MINUTE);
+            defaultTime = getArguments().getInt(ARG_DEFAULT_TIME);
+        }
+
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_timepicker, null);
 
-        final NumberPicker numberPicker = (NumberPicker) view.findViewById(R.id.number_picker);
-        numberPicker.setMinValue(0);
-        numberPicker.setMaxValue(23);
+        final NumberPicker numberPickerHour = (NumberPicker) view.findViewById(R.id.number_picker_hour);
+        numberPickerHour.setMinValue(0);
+        numberPickerHour.setMaxValue(23);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR_OF_DAY, 1);
-        numberPicker.setValue(calendar.get(Calendar.HOUR_OF_DAY));
 
         final TextView tvColon = (TextView) view.findViewById(R.id.tv_colon);
         final TextView tvHour = (TextView) view.findViewById(R.id.tv_hour);
 
         // NumberPicker TextSize 가져옴
-        for (int i = 0; i < numberPicker.getChildCount(); i++) {
-            View child = numberPicker.getChildAt(i);
+        for (int i = 0; i < numberPickerHour.getChildCount(); i++) {
+            View child = numberPickerHour.getChildAt(i);
             if (child != null && child instanceof TextView) {
                 float textSize = ((TextView) child).getTextSize();
                 tvColon.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
@@ -51,20 +67,66 @@ public class TimePickerDialogFragment extends DialogFragment {
             }
         }
 
+        Calendar calendar = Calendar.getInstance();
+        final NumberPicker numberPickerMinute = (NumberPicker) view.findViewById(R.id.number_picker_minute);
+        if (isIncludeMinute) {
+            String[] minuteValues = {"0", "30"};
+            numberPickerMinute.setMinValue(0);
+            numberPickerMinute.setMaxValue(1);
+            numberPickerMinute.setDisplayedValues(minuteValues);
+            tvHour.setVisibility(View.GONE);
+            numberPickerHour.setValue(defaultTime / 100);
+            numberPickerMinute.setValue((defaultTime % 100) / 30);
+        } else {
+            numberPickerMinute.setVisibility(View.GONE);
+            calendar.add(Calendar.HOUR_OF_DAY, 1);
+            numberPickerHour.setValue(calendar.get(Calendar.HOUR_OF_DAY));
+        }
+
+        String dialogTitle;
+
+        if (mode == MODE_START_TIME) {
+            dialogTitle = getString(R.string.push_schedule_start);
+        } else {
+            dialogTitle = getString(R.string.push_schedule_end);
+        }
+
         return new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.jandi_duedate)
+                .setTitle(dialogTitle)
                 .setView(view)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
-                    if (getActivity() instanceof OnHourSelectedListener) {
-                        ((OnHourSelectedListener) getActivity()).onHourSelected(numberPicker.getValue());
+                    calendar.set(Calendar.HOUR_OF_DAY, numberPickerHour.getValue());
+                    if (isIncludeMinute) {
+                        calendar.set(Calendar.MINUTE, numberPickerMinute.getValue());
                     }
+
+                    if (mode == MODE_END_TIME) {
+                        if (getActivity() instanceof OnEndHourSelectedListener) {
+                            ((OnEndHourSelectedListener) getActivity()).onEndHourSelected(calendar);
+                        }
+                    } else {
+                        if (getActivity() instanceof OnStartHourSelectedListener) {
+                            ((OnStartHourSelectedListener) getActivity()).onStartHourSelected(calendar);
+                        }
+                    }
+
                     dismiss();
                 })
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .create();
     }
 
-    public interface OnHourSelectedListener {
-        void onHourSelected(int hour);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
     }
+
+    public interface OnEndHourSelectedListener {
+        void onEndHourSelected(Calendar calendar);
+    }
+
+    public interface OnStartHourSelectedListener {
+        void onStartHourSelected(Calendar calendar);
+    }
+
 }

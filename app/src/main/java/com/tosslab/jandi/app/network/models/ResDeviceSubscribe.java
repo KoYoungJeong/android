@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -28,6 +29,13 @@ public class ResDeviceSubscribe {
     private Date createdAt;
     @JsonProperty("updated_at")
     private Date updatedAt;
+
+    private List<Integer> Days;
+    private int timeZone = -100;
+    @JsonProperty("start_time")
+    private int startTime = -1;
+    @JsonProperty("end_time")
+    private int endTime = -1;
 
     public String getId() {
         return id;
@@ -131,5 +139,37 @@ public class ResDeviceSubscribe {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Integer> getDays() {
+        return Days;
+    }
+
+    public void setDays(List<Integer> days) {
+        Days = days;
+    }
+
+    public int getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(int timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
     }
 }

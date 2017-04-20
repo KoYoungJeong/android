@@ -39,6 +39,7 @@ public abstract class MultiItemRecyclerAdapter extends RecyclerView.Adapter<Base
     }
 
     public synchronized void addRows(List<Row<?>> rows) {
+        this.rows.clear();
         this.rows.addAll(rows);
     }
 

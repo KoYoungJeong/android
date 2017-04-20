@@ -49,7 +49,7 @@ import butterknife.OnTextChanged;
  */
 public class PollCreateActivity extends BaseAppCompatActivity
         implements CalendarDialogFragment.OnDateSelectedListener,
-        TimePickerDialogFragment.OnHourSelectedListener,
+        TimePickerDialogFragment.OnEndHourSelectedListener,
         PollCreatePresenter.View {
 
     private static final String KEY_TOPIC_ID = "topicId";
@@ -104,8 +104,9 @@ public class PollCreateActivity extends BaseAppCompatActivity
         Calendar tomorrow = CalendarUtils.getInstance();
         tomorrow.add(Calendar.DAY_OF_MONTH, 1);
         onDateSelected(CalendarDay.from(tomorrow));
-
-        onHourSelected(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+        Calendar oneHourLater = Calendar.getInstance();
+        oneHourLater.set(Calendar.HOUR_OF_DAY, oneHourLater.get(Calendar.HOUR_OF_DAY) + 1);
+        onEndHourSelected(oneHourLater);
     }
 
     private void addDefaultPollItem() {
@@ -254,11 +255,9 @@ public class PollCreateActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void onHourSelected(int hour) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
+    public void onEndHourSelected(Calendar calendar) {
         setTime(calendar);
-        pollCreatePresenter.onPollDueDateHourSelected(hour);
+        pollCreatePresenter.onPollDueDateHourSelected(calendar.get(Calendar.HOUR_OF_DAY));
     }
 
     private void setTime(Calendar calendar) {
