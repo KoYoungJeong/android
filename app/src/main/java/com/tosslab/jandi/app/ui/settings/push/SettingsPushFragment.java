@@ -200,25 +200,25 @@ public class SettingsPushFragment extends Fragment {
                 bitSum += weekBit;
                 switch (day) {
                     case 0:
-                        selectedDaysSB.append("월, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_mon) + ", ");
                         break;
                     case 1:
-                        selectedDaysSB.append("화, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_tue) + ", ");
                         break;
                     case 2:
-                        selectedDaysSB.append("수, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_wed) + ", ");
                         break;
                     case 3:
-                        selectedDaysSB.append("목, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_thu) + ", ");
                         break;
                     case 4:
-                        selectedDaysSB.append("금, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_fri) + ", ");
                         break;
                     case 5:
-                        selectedDaysSB.append("토, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_sat) + ", ");
                         break;
                     case 6:
-                        selectedDaysSB.append("일, ");
+                        selectedDaysSB.append(getResources().getString(R.string.day_short_sun) + ", ");
                         break;
                 }
             }
