@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:text="TossLab,Inc"
             android:textColor="@color/white"
-            android:textSize="13dp" />
+            android:textSize="13dp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
