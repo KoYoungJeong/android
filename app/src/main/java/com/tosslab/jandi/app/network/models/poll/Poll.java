@@ -6,14 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
 import com.tosslab.jandi.app.local.orm.dao.PollDaoImpl;
 import com.tosslab.jandi.app.local.orm.persister.CollectionIntegerConverter;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 @DatabaseTable(tableName = "poll", daoClass = PollDaoImpl.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,6 +29,8 @@ public class Poll {
     private long teamId;
     @DatabaseField
     private String subject;
+    @DatabaseField
+    private String description;
     @DatabaseField
     private Date finishedAt;
     @DatabaseField
@@ -126,6 +126,14 @@ public class Poll {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getFinishedAt() {

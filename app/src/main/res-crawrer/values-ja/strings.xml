@@ -588,7 +588,7 @@
 	<string name="jandi_poll_is_anonymous">"この投票は匿名投票です。"</string>
 	<string name="jandi_poll_multiple">"複数選択"</string>
 	<string name="jandi_poll_participants_ing">"名参加"</string>
-	<string name="jandi_poll_till">"{{till}}まで"</string>
+	<string name="jandi_poll_till">"%sまで"</string>
 	<string name="jandi_poll_title">"投票タイトル*"</string>
 	<string name="jandi_poll_voted">"投票完了"</string>
 	<string name="jandi_poll_voting_anonymous_available_multi_choice">"投票する（匿名投票、複数選択）"</string>

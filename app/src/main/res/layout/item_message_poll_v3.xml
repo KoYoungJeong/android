@@ -77,18 +77,32 @@
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:ellipsize="end"
             android:maxLines="2"
+            android:text="subject"
             android:textColor="@color/jandi_text"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_message_poll_creator"
+            android:id="@+id/tv_message_poll_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_message_poll_subject"
+            android:layout_marginLeft="6.5dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/v_message_poll_icon"
+            android:text="description"
+            android:textColor="@color/rgb_999999"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/tv_message_poll_creator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_message_poll_description"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="5dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
+            android:text="creator"
             android:textColor="@color/jandi_text"
             android:textSize="11sp" />
 

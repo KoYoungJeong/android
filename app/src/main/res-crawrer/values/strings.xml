@@ -583,7 +583,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_poll_is_anonymous">"This poll is an anonymous poll."</string>
 	<string name="jandi_poll_multiple">"Multiple Answers"</string>
 	<string name="jandi_poll_participants_ing">"Participated"</string>
-	<string name="jandi_poll_till">"Until {{till}}"</string>
+	<string name="jandi_poll_till">"Until %s"</string>
 	<string name="jandi_poll_title">"Poll Title*"</string>
 	<string name="jandi_poll_voted">"Voted"</string>
 	<string name="jandi_poll_voting_anonymous_available_multi_choice">"Vote (Anonymous, Multiple Answers)"</string>

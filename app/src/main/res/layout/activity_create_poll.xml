@@ -34,6 +34,7 @@
                 android:paddingBottom="4dp">
 
                 <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="-4dp"
@@ -50,10 +51,10 @@
                     android:layout_marginRight="12dp"
                     android:hint="@string/jandi_input_poll_subject"
                     android:maxLength="50"
-                    android:maxLines="2"
                     android:theme="@style/CreatePollEditText" />
 
                 <TextView
+                    android:id="@+id/tv_create_poll_subject_length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -71,7 +72,7 @@
                 android:gravity="bottom"
                 android:minHeight="88dp"
                 android:orientation="vertical"
-                android:paddingBottom="4dp">
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -90,17 +91,17 @@
                     android:layout_marginRight="12dp"
                     android:hint="@string/jandi_poll_create_description_placeholder"
                     android:maxLength="150"
-                    android:maxLines="6"
                     android:theme="@style/CreatePollEditText" />
 
                 <TextView
+                    android:id="@+id/tv_create_poll_description_length"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="-5dp"
-                    android:text="0/50"
+                    android:text="0/150"
                     android:theme="@style/CreatePollTextLength" />
 
             </LinearLayout>
@@ -108,10 +109,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="-4dp"
+                android:layout_marginBottom="-12dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/jandi_poll_create_choice"
                 android:theme="@style/CreatePollLableText" />
 
@@ -119,16 +120,15 @@
                 android:id="@+id/vg_create_poll_item_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 android:orientation="vertical" />
 
             <LinearLayout
                 android:id="@+id/btn_create_poll_item_add"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="14dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -153,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="-2dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/jandi_poll_finishedat"
                 android:theme="@style/CreatePollLableText" />
 

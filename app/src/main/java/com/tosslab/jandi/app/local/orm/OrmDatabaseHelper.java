@@ -81,7 +81,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_ACCOUNT_TEAM_ADD_EMAIL = 29;
     private static final int DATABASE_VERSION_RAW_INIT_INFO = 30;
     private static final int DATABASE_VERSION_LOGIN_ID = 31;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_LOGIN_ID;
+    private static final int DATABASE_VERSION_POLL_DESCRIPTION_ADD = 32;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_POLL_DESCRIPTION_ADD;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -361,7 +362,12 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                             loginIdDao.create(new LoginId(userEmail.getEmail()));
                         }
 
-                    }));
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_POLL_DESCRIPTION_ADD, () -> {
+                        Dao<Poll, ?> dao = DaoManager.createDao(connectionSource, Poll.class);
+                        dao.executeRawNoArgs("ALTER TABLE `poll` ADD COLUMN description VARCHAR;");
+                    })
+            );
 
             Observable.from(upgradeCheckers)
                     .subscribe(upgradeChecker -> upgradeChecker.run(oldVersion));

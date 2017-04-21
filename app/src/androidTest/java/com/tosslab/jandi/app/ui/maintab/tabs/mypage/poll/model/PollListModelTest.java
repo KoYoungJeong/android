@@ -25,7 +25,7 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 16. 7. 14..
@@ -76,7 +76,7 @@ public class PollListModelTest {
         long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, 1);
-        ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
+        ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", "desc", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
         System.out.println(reqCreatePoll.toString());
         ResCreatePoll resCreatePoll = model.pollApi.get().createPoll(teamId, reqCreatePoll);
         System.out.println(resCreatePoll.toString());

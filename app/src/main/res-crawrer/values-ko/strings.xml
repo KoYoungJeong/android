@@ -599,7 +599,7 @@
 	<string name="jandi_poll_is_anonymous">"이 투표는 익명투표입니다."</string>
 	<string name="jandi_poll_multiple">"복수선택 가능"</string>
 	<string name="jandi_poll_participants_ing">"명 참여"</string>
-	<string name="jandi_poll_till">"{{till}}까지"</string>
+	<string name="jandi_poll_till">"%s 까지"</string>
 	<string name="jandi_poll_title">"투표 제목*"</string>
 	<string name="jandi_poll_voted">"투표 참여함"</string>
 	<string name="jandi_poll_voting_anonymous_available_multi_choice">"투표하기 (익명투표, 복수선택 가능)"</string>

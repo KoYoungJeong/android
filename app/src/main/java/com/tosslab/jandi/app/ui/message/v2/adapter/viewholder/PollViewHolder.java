@@ -25,6 +25,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
 
     private ImageView vPollIcon;
     private TextView tvSubject;
+    private TextView tvDescription;
     private TextView tvCreator;
     private TextView tvDueDate;
     private TextView tvPollDeleted;
@@ -49,6 +50,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
         tvCreator = (TextView) rootView.findViewById(R.id.tv_message_poll_creator);
         tvDueDate = (TextView) rootView.findViewById(R.id.tv_message_poll_due_date);
         tvPollDeleted = (TextView) rootView.findViewById(R.id.tv_message_poll_deleted);
+        tvDescription = (TextView) rootView.findViewById(R.id.tv_message_poll_description);
 
         vMargin = rootView.findViewById(R.id.v_margin);
     }
@@ -62,7 +64,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
         }
 
         PollBinder.bindPoll(link.poll, false,
-                vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
+                vPollIcon, tvSubject, tvDescription, tvCreator, tvDueDate, tvPollDeleted);
 
         setMessageBackground(link);
     }

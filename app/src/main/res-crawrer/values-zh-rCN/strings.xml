@@ -580,7 +580,7 @@
 	<string name="jandi_poll_is_anonymous">"此为不记名投票"</string>
 	<string name="jandi_poll_multiple">"可复选"</string>
 	<string name="jandi_poll_participants_ing">"位参与"</string>
-	<string name="jandi_poll_till">"直到 {{till}}"</string>
+	<string name="jandi_poll_till">"直到 %s"</string>
 	<string name="jandi_poll_title">"投票主题*"</string>
 	<string name="jandi_poll_voted">"已投票"</string>
 	<string name="jandi_poll_voting_anonymous_available_multi_choice">"投票 (不记名、可复选)"</string>

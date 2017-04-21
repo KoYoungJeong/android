@@ -17,7 +17,7 @@ public class PollBinder {
     public static void bindPoll(Poll poll,
                                 boolean dueDateToRemainingTime,
                                 ImageView vPollIcon,
-                                TextView tvSubject, TextView tvCreator,
+                                TextView tvSubject, TextView tvDescription, TextView tvCreator,
                                 TextView tvDueDate, TextView tvPollDeleted) {
         if (poll == null) {
             return;
@@ -31,7 +31,8 @@ public class PollBinder {
         if ("created".equals(status)) {
             String dueDate = dueDateToRemainingTime
                     ? DateTransformator.getRemainingDays(poll.getDueDate())
-                    : "~" + DateTransformator.getTimeString(poll.getDueDate());
+                    : tvDueDate.getContext().getString(R.string.jandi_poll_till,
+                    DateTransformator.getTimeString(poll.getDueDate()));
             tvDueDate.setText(dueDate);
             vPollIcon.setImageResource(R.drawable.poll_icon_normal_135);
         } else {

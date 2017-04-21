@@ -11,6 +11,8 @@ public interface PollCreatePresenter {
 
     void onPollSubjectChanged(String subject);
 
+    void onPollDescriptionChanged(String description);
+
     void onPollItemInput(int position, String title);
 
     void onPollItemRemove(int position);

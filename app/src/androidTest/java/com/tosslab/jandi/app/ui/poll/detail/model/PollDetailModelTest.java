@@ -59,11 +59,6 @@ public class PollDetailModelTest {
         DaggerPollDetailModelTest_Component.builder().build().inject(this);
     }
 
-    @dagger.Component(modules = ApiClientModule.class)
-    public interface Component {
-        void inject(PollDetailModelTest test);
-    }
-
     @Test
     public void testGetPollDetailObservable() throws Exception {
         // Given
@@ -298,8 +293,8 @@ public class PollDetailModelTest {
         ResPollLink resPollLink = testSubscriber.getOnNextEvents().get(0);
         System.out.println(resPollLink.toString());
         assertTrue(resPollLink != null && resPollLink.getLinkMessage() != null
-                    && resPollLink.getLinkMessage().poll != null
-                    && "finished".equals(resPollLink.getLinkMessage().poll.getStatus()));
+                && resPollLink.getLinkMessage().poll != null
+                && "finished".equals(resPollLink.getLinkMessage().poll.getStatus()));
     }
 
     @Test
@@ -343,10 +338,15 @@ public class PollDetailModelTest {
         long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, 1);
-        ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
+        ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", "desc", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
         System.out.println(reqCreatePoll.toString());
         ResCreatePoll resCreatePoll = model.pollApi.get().createPoll(teamId, reqCreatePoll);
         System.out.println(resCreatePoll.toString());
         return resCreatePoll.getLinkMessage().poll;
+    }
+
+    @dagger.Component(modules = ApiClientModule.class)
+    public interface Component {
+        void inject(PollDetailModelTest test);
     }
 }
