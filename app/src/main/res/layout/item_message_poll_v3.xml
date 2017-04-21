@@ -76,7 +76,6 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:ellipsize="end"
-            android:maxLines="2"
             android:text="subject"
             android:textColor="@color/jandi_text"
             android:textSize="14sp"
@@ -92,7 +91,8 @@
             android:layout_toRightOf="@id/v_message_poll_icon"
             android:text="description"
             android:textColor="@color/rgb_999999"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_message_poll_creator"

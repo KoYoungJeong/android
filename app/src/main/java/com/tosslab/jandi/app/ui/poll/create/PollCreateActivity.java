@@ -236,13 +236,13 @@ public class PollCreateActivity extends BaseAppCompatActivity
     void onSubjectTextChanged(CharSequence s, int start, int before, int count) {
         pollCreatePresenter.onPollSubjectChanged(s.toString());
         changePollButtonState();
-        tvCreatePollSubjectLegnth.setText(count + "/50");
+        tvCreatePollSubjectLegnth.setText(s.length() + "/50");
     }
 
     @OnTextChanged(R.id.et_create_poll_description)
     void onDescriptionTextChanged(CharSequence s, int start, int before, int count) {
         pollCreatePresenter.onPollDescriptionChanged(s.toString());
-        tvCreatePollDescriptionLegnth.setText(count + "/150");
+        tvCreatePollDescriptionLegnth.setText(s.length() + "/150");
     }
 
     @OnClick(R.id.btn_create_poll_duedate)

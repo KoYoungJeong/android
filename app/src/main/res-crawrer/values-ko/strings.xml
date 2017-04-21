@@ -68,8 +68,7 @@
 	<string name="common_pricingplan_livesupport">"1:1 문의하기"</string>
 	<string name="common_pricingplan_moreinfo">"자세히 알아보기"</string>
 	<string name="common_pricingplan_msgsearch">"현재 팀에서 무료 사용량을 초과하여 언제든 검색이 제한될 수 \n 있습니다. 지금 STANDARD 플랜으로 전환하시고 \n 더욱 더 쾌적하게 협업하세요."</string>
-	<string name="common_pricingplan_noview3days">"3일동안 보지 않기
-"</string>
+	<string name="common_pricingplan_noview3days">"3일동안 보지 않기"</string>
 	<string name="common_profilemodal_jandi_botstatus">"안녕하세요? JANDI입니다. "</string>
 	<string name="common_settings_lostpasscodedesc">"비밀번호를 잊은 경우 재설치 해주세요."</string>
 	<string name="common_sharetojandi_choose_room">"대화방 선택"</string>
@@ -592,7 +591,7 @@
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
 	<string name="jandi_poll_empty_1">"<b>투표 목록을 확인하세요.</b>"</string>
 	<string name="jandi_poll_empty_2">"토픽방에서 [+]를 눌러 투표를 진행해보세요."</string>
-	<string name="jandi_poll_ended_at">"{{endedAt}} 마감됨"</string>
+	<string name="jandi_poll_ended_at">"%s 마감됨"</string>
 	<string name="jandi_poll_finished_with_most">"투표가 완료되었습니다. 가장 많이 투표된 항목은 \"%s\" 입니다."</string>
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"마감 시각*"</string>
@@ -903,6 +902,7 @@
 	<string name="push_schedule_desc">"설정한 기간 동안에만 푸시 알림을 받습니다."</string>
 	<string name="push_schedule_end">"종료 시각"</string>
 	<string name="push_schedule_minoneday">"최소 하루는 선택해야합니다."</string>
+	<string name="push_schedule_nosametime">"시작과 종료 시각은 같을 수 없습니다."</string>
 	<string name="push_schedule_selectdays">"요일 선택"</string>
 	<string name="push_schedule_start">"시작 시각"</string>
 	<string name="push_schedule_timezone">"시간은 설정 시 디바이스의 시간대를 기준으로 저장됩니다."</string>
@@ -911,6 +911,8 @@
 	<string name="push_schedule_weekend">"주말"</string>
 	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능합니다."</string>
 	<string name="room_member_disabled_alert_title">"이 멤버는 차단된 멤버입니다."</string>
+	<string name="room_member_vacant_desc">"부재 중 시 상대방이 알림을 수신하지 못할 수 있습니다."</string>
+	<string name="room_member_vacant_title">"현재 부재 중 입니다."</string>
 	<string name="security_setting">"보안 설정"</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
@@ -979,6 +981,23 @@
 	<string name="topic_viewonly_set_body">"설정 시 관리자 이상만 내용 작성이 가능합니다."</string>
 	<string name="topic_viewonly_set_title">"읽기 전용 설정"</string>
 	<string name="url">"URL"</string>
+	<string name="vacancy_banner">"부재 중 설정 중입니다."</string>
+	<string name="vacancy_cancel_desc">"취소 시 이전 설정 값을 유지하게 됩니다."</string>
+	<string name="vacancy_cancel_title">"변경 사항을 취소하시겠습니까?"</string>
+	<string name="vacancy_desc">"부재 중 설정을 하시면 다른 사람에게 현재 부재 중 임을 알려주고 모바일의 푸시 알림을 끌 수 있습니다."</string>
+	<string name="vacancy_endday">"종료일"</string>
+	<string name="vacancy_info_desc">"문구 작성 시 프로필 상태 메시지를 통해 다른 사용자들에게 안내됩니다."</string>
+	<string name="vacancy_info_title">"안내 메시지 (옵션)"</string>
+	<string name="vacancy_period">"기간"</string>
+	<string name="vacancy_period_count">"(총 00일, 최대 3년)"</string>
+	<string name="vacancy_period_desc">"선택한 날의 자정을 기준으로 설정됩니다."</string>
+	<string name="vacancy_pushnoti_desc">"설정 시 해당 기간 동안 사용 중인 모바일에 푸시 알림을 보내지 않습니다."</string>
+	<string name="vacancy_pushnoti_title">"모바일 푸시 알림 설정"</string>
+	<string name="vacancy_startday">"시작일"</string>
+	<string name="vacancy_title">"부재 중 설정"</string>
+	<string name="vacancy_toast_off">"부재 중 설정을 해제하였습니다."</string>
+	<string name="vacancy_toast_on">"부재 중 설정이 등록되었습니다."</string>
+	<string name="vacancy_toast_update">"부재 중 설정이 변경되었습니다."</string>
 	<string name="warn_all_users_are_already_invited">"이미 모든 멤버가 이 토픽에 참여하고 있습니다."</string>
 	<string name="warn_messages_empty">"등록된 메시지가 없습니다"</string>
 	<string name="warn_no_more_files">"더 이상 검색된 파일이 없습니다"</string>

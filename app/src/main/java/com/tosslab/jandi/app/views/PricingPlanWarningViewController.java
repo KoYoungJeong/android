@@ -76,6 +76,7 @@ public class PricingPlanWarningViewController {
 
             ApplicationUtil.startWebBrowser(context, url);
         }
+        context = null;
     }
 
     public void onClickNoShow3days() {

@@ -41,13 +41,9 @@ import com.tosslab.jandi.app.team.room.DirectMessageRoom;
 import com.tosslab.jandi.app.team.room.Room;
 import com.tosslab.jandi.app.team.room.TopicFolder;
 import com.tosslab.jandi.app.team.room.TopicRoom;
-import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -102,7 +98,9 @@ public class TeamInfoLoader {
     public void refresh() {
         execute(() -> {
             refresh(teamId);
-            JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
+            if (initialInfo != null) {
+                JandiPreference.setSocketConnectedLastTime(initialInfo.getTs());
+            }
         });
     }
 
