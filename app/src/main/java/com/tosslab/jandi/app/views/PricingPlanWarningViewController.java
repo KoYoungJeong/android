@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.views;
 
 import android.content.Context;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,6 +40,12 @@ public class PricingPlanWarningViewController {
     private PricingPlanWarningViewController(Context context, View view) {
         contextWeakReference = new WeakReference<>(context);
         ButterKnife.bind(this, view);
+        SpannableString showDetailText = new SpannableString(tvShowDetailButton.getText().toString());
+        showDetailText.setSpan(new UnderlineSpan(), 0, showDetailText.length(), 0);
+        tvShowDetailButton.setText(showDetailText);
+        SpannableString noShow3daysText = new SpannableString(tvNoShow3daysButton.getText().toString());
+        noShow3daysText.setSpan(new UnderlineSpan(), 0, noShow3daysText.length(), 0);
+        tvNoShow3daysButton.setText(noShow3daysText);
         tvShowDetailButton.setOnClickListener(v -> onClickShowDetail());
         tvNoShow3daysButton.setOnClickListener(v -> onClickNoShow3days());
     }

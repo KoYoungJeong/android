@@ -81,8 +81,7 @@
                 android:singleLine="true"
                 android:text="3일 남음"
                 android:textColor="@color/rgb_999999"
-                android:textSize="12dp"
-                android:textStyle="bold" />
+                android:textSize="12dp" />
         </RelativeLayout>
 
     </RelativeLayout>
