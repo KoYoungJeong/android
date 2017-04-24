@@ -365,6 +365,14 @@ public class SettingsPushFragment extends Fragment {
 
     @OnClick(R.id.vg_settings_push_notification_schedule)
     void onNotificationScheduleClick() {
+
+        if (!Settings.hasAlarmScheduleCache()) {
+            if (!sbcvPushSchedule.isChecked()) {
+                SettingPushScheduleActivity.launchActivity(this);
+                return;
+            }
+        }
+
         boolean checked = !sbcvPushSchedule.isChecked();
 
         if (checked) {

@@ -302,7 +302,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         if (tempEndTime != startTime) {
             endTime = tempEndTime;
         } else {
-            ColoredToast.showError("시간이 같음");
+            ColoredToast.showError(getString(R.string.push_schedule_nosametime));
         }
         setEndTime(endTime);
     }
@@ -317,7 +317,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         if (tempStartTime != endTime) {
             startTime = tempStartTime;
         } else {
-            ColoredToast.showError("시간이 같음");
+            ColoredToast.showError(getString(R.string.push_schedule_nosametime));
         }
         setStartTime(startTime);
     }

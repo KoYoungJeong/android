@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.settings.push.schedule.presenter;
 
-import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.push.schedule.model.SettingPushScheduleModel;
 
@@ -40,22 +39,13 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
             int timeZone = Settings.getPreferencePushAlarmScheduleTimeZone();
             initSchedule(DayList, startTime, endTime, timeZone);
         } else {
-            Observable.defer(() -> {
-                ResDeviceSubscribe resDeviceSubscribe = model.getDeviceInfo();
-                return Observable.just(resDeviceSubscribe);
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(deviceInfo -> {
-                        initSchedule(deviceInfo.getDays(),
-                                deviceInfo.getStartTime(),
-                                deviceInfo.getEndTime(),
-                                deviceInfo.getTimezone());
-                        Settings.setHasAlarmSchedule(true);
-                        Settings.setPreferencePushAlarmScheduleDays(deviceInfo.getDays());
-                        Settings.setPreferencePushAlarmScheduleStartTime(deviceInfo.getStartTime());
-                        Settings.setPreferencePushAlarmScheduleEndTime(deviceInfo.getEndTime());
-                        Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimezone());
-                    });
+            List<Integer> defaultDays = new ArrayList<>();
+            defaultDays.add(0);
+            defaultDays.add(1);
+            defaultDays.add(2);
+            defaultDays.add(3);
+            defaultDays.add(4);
+            initSchedule(defaultDays, 700, 1900, getTimeZoneInt());
         }
     }
 
