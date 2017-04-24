@@ -198,19 +198,18 @@ public class PollCommentViewHolder extends BaseCommentViewHolder implements High
             }
 
             SpannableStringBuilder builderWithBadge = new SpannableStringBuilder(commentMessage.content.contentBuilder);
-            if (!hasOnlyBadge) {
-                int startIndex = builderWithBadge.length();
-                builderWithBadge.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
-                int endIndex = builderWithBadge.length();
 
-                DateViewSpannable spannable =
-                        new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
-                                DateTransformator.getTimeStringForSimple(commentMessage.createTime),
-                                (int) UiUtils.getPixelFromSp(10f));
-                spannable.setTextColor(
-                        JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
-                builderWithBadge.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+            int startIndex = builderWithBadge.length();
+            builderWithBadge.append(DateTransformator.getTimeStringForSimple(commentMessage.createTime));
+            int endIndex = builderWithBadge.length();
+
+            DateViewSpannable spannable =
+                    new DateViewSpannable(tvProfileNestedCommentContent.getContext(),
+                            DateTransformator.getTimeStringForSimple(commentMessage.createTime),
+                            (int) UiUtils.getPixelFromSp(10f));
+            spannable.setTextColor(
+                    JandiApplication.getContext().getResources().getColor(R.color.jandi_messages_date));
+            builderWithBadge.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             if (link.unreadCnt > 0) {
                 NameSpannable unreadCountSpannable =

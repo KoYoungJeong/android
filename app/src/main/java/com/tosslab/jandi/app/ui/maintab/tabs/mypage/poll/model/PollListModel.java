@@ -116,11 +116,13 @@ public class PollListModel {
     }
 
     public void sortPollListByDueDate(List<Poll> onGoing) {
-        Collections.sort(onGoing, (lhs, rhs) -> lhs.getDueDate().compareTo(rhs.getDueDate()));
+        Collections.sort(onGoing,
+                (lhs, rhs) -> (int) (lhs.getDueDate().getTime() - rhs.getDueDate().getTime()));
     }
 
     public void sortPollListByFinishedAt(List<Poll> finished) {
-        Collections.sort(finished, (lhs, rhs) -> rhs.getFinishedAt().compareTo(lhs.getFinishedAt()));
+        Collections.sort(finished,
+                (lhs, rhs) -> (int) (rhs.getFinishedAt().getTime() - lhs.getFinishedAt().getTime()));
     }
 
     public void upsertPolls(List<Poll> pollList) {

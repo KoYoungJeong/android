@@ -15,6 +15,7 @@
         android:paddingBottom="16dp"
         android:paddingRight="31dp"
         android:singleLine="true"
+        android:textSize="16dp"
         android:theme="@style/CreatePollEditText" />
 
     <ImageView
@@ -24,6 +25,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="5dp"
         android:paddingBottom="12dp"
         android:paddingEnd="5dp"
         android:paddingLeft="10dp"
