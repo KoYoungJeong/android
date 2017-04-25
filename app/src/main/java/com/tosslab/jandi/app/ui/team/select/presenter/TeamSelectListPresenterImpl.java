@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.team.select.adapter.datamodel.TeamSelectListAdapterDataModel;
@@ -122,9 +123,11 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
     public void onRequestAcceptJoin(Team selectedTeam) {
         Observable.defer(() -> {
             try {
-                model.acceptOrDeclineInvite(
+                ResTeamDetailInfo resTeamDetailInfo = model.acceptOrDeclineInvite(
                         selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
-                SprinklrInvitationAccept.sendLog(selectedTeam.getTeamId());
+                resTeamDetailInfo.getInviteTeam().getTeamMembers();
+                SprinklrInvitationAccept.sendLog(resTeamDetailInfo.getInviteTeam().getTeamId(),
+                        resTeamDetailInfo.getMember().getId());
                 return Observable.just(selectedTeam);
             } catch (RetrofitException e) {
                 return Observable.error(e);

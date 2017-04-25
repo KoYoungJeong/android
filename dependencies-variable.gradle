@@ -101,6 +101,6 @@ ext.dependecies = [
                 google_services     : 'com.google.gms:google-services:3.0.0',
                 retrolambda         : 'me.tatarka:gradle-retrolambda:3.4.0',
                 android_maven_gradle: 'com.github.dcendents:android-maven-gradle-plugin:1.4',
-                dexcount_gradle     : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.5',
+                dexcount_gradle     : 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4',
         ]
 ]

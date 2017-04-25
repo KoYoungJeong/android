@@ -3,10 +3,7 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -77,19 +74,11 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.GONE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);
-
-        if (btnProfileStar.getVisibility() == View.GONE && !isLandscape) {
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tvTeamLevel.getLayoutParams();
-            DisplayMetrics displayMetrics = tvTeamLevel.getResources().getDisplayMetrics();
-            lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics);
-            tvTeamLevel.setLayoutParams(lp);
-        }
-
     }
 
     @Override
@@ -104,18 +93,19 @@ public class InactivedMemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
-        int defaultColor = context.getResources().getColor(R.color.jandi_message_search_item_topic_txt_color);
-        vProfileImageLargeOverlay.setBackgroundColor(defaultColor);
+    public void setBackgroundColor(View backgroundColor, View opacity, Level level, Member member) {
+        if (level == Level.Member) {
+            backgroundColor.setBackgroundColor(0xfff79521);
+            opacity.setBackgroundColor(0x99000000);
+        } else if (level == Level.Guest) {
+            backgroundColor.setBackgroundColor(0xff88c10e);
+            opacity.setBackgroundColor(0x99000000);
+        }
     }
 
     @Override
-    public void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape) {
-        if (isLandscape) {
-            AccessLevelUtil.setTextOfLevelInNav(level, tvTeamLevel);
-        } else {
-            AccessLevelUtil.setTextOfLevel(level, tvTeamLevel);
-        }
+    public void setLevel(Level level, TextView tvTeamLevel) {
+        AccessLevelUtil.setTextOfLevelInProfile(level, tvTeamLevel);
     }
 
     private boolean isMe(long memberId) {

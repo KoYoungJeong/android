@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="account_password_change">""</string>
 	<string name="app_name">"JANDI"</string>
 	<string name="commcon_search_result_sharedin">"分享在"</string>
 	<string name="comment">"留言"</string>
+	<string name="common_account_name">""</string>
 	<string name="common_accthome_createteam">"建立新的團隊"</string>
 	<string name="common_accthome_createteamguide">"尚未加入任何團隊\n點擊以下的「建立新的團隊」\n開始體驗 JANDI 的高效率團隊通訊。"</string>
 	<string name="common_accthome_jandiacct">"JANDI 帳號"</string>
@@ -239,8 +241,8 @@
 	<string name="jandi_canceled">"取消了"</string>
 	<string name="jandi_cannot_connect_service_try_again">"非常抱歉！JANDI暫時無法運作，先喝杯茶稍後再試！"</string>
 	<string name="jandi_cannot_find_messages">"搜尋沒有結果 :"</string>
-	<string name="jandi_cannot_find_search_result_1">"您的檔案庫是空的。"</string>
-	<string name="jandi_cannot_find_search_result_2">"直接上傳及分享檔案到任何對話當中。"</string>
+	<string name="jandi_cannot_find_search_result_1">"<b>隨時隨地找到上傳的檔案</b>"</string>
+	<string name="jandi_cannot_find_search_result_2">"點擊議題訊息欄旁的 [+] 圖示, 上傳分享你的檔案"</string>
 	<string name="jandi_cannot_find_search_result_old">"找不到符合條件的內容"</string>
 	<string name="jandi_change_passcode">"更改密碼"</string>
 	<string name="jandi_character">"人物"</string>
@@ -474,9 +476,8 @@
 	<string name="jandi_mention_no_mentions">"你尚未被其他成員提及。
   欲提及其他成員？輸入"@"後成員名單跳出，選取成員完成提及。"</string>
 	<string name="jandi_mention_push_message">"%s 提到你"</string>
-	<string name="jandi_mentions_are_empty">"你尚未被其他成員提及。
- 欲提及其他成員？輸入"@"後成員名單跳出，選取成員完成提及。"</string>
-	<string name="jandi_mentions_are_empty_result_2">" "</string>
+	<string name="jandi_mentions_are_empty">"<b>一眼就看完被提及的訊息</b>"</string>
+	<string name="jandi_mentions_are_empty_result_2">"@ 成員名稱, 提醒對方重要任務"</string>
 	<string name="jandi_menu_room_selection">"選擇任一個討論"</string>
 	<string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
 	<string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
@@ -551,8 +552,8 @@
 	<string name="jandi_poll_anonymous">"不記名"</string>
 	<string name="jandi_poll_create">"建立新的投票"</string>
 	<string name="jandi_poll_deleted">"投票已經刪除"</string>
-	<string name="jandi_poll_empty_1">"無進行中的問卷"</string>
-	<string name="jandi_poll_empty_2">"\n回到議題點擊[+]建立新投票"</string>
+	<string name="jandi_poll_empty_1">"<b>一眼就看完所有投票記錄</b>"</string>
+	<string name="jandi_poll_empty_2">"回到議題, 點擊訊息欄旁的 [+] 舉辦投票"</string>
 	<string name="jandi_poll_finished_with_most">"投票已完成，得票最高的是 \"%s\""</string>
 	<string name="jandi_poll_finished_without_participants">"問卷已完成，此問卷無投票人"</string>
 	<string name="jandi_poll_finishedat">"結束時間"</string>
@@ -689,18 +690,18 @@
 	<string name="jandi_starred">"取消標記"</string>
 	<string name="jandi_starred_all">"全部類別"</string>
 	<string name="jandi_starred_files">"檔案"</string>
-	<string name="jandi_starred_no_all">"沒有標示訊息或檔案"</string>
-	<string name="jandi_starred_no_all_result_2">""</string>
-	<string name="jandi_starred_no_file">"沒有標示檔案"</string>
-	<string name="jandi_starred_no_file_result_2">""</string>
+	<string name="jandi_starred_no_all">"<b>一眼就看完標示星號的訊息與檔案</b>"</string>
+	<string name="jandi_starred_no_all_result_2">"長按訊息或點擊檔案旁星號, 在此收藏重要資訊"</string>
+	<string name="jandi_starred_no_file">"<b>一眼就看完標示星號的資訊</b>"</string>
+	<string name="jandi_starred_no_file_result_2">"標記星號, 收藏重點"</string>
 	<string name="jandi_starred_star">"標示"</string>
 	<string name="jandi_starred_stars">"已標示"</string>
 	<string name="jandi_starred_undo">"復原"</string>
 	<string name="jandi_starred_unstar">"取消標記"</string>
 	<string name="jandi_starred_unstar_from_item">"你確定要取消標示嗎？"</string>
 	<string name="jandi_starred_unstarred">"已取消標示"</string>
-	<string name="jandi_start_direct_messages_1">"<b>您所有私訊的訊息現在是隱藏的。</b>"</string>
-	<string name="jandi_start_direct_messages_2">""</string>
+	<string name="jandi_start_direct_messages_1">"<b>和團隊成員開始私訊</b>"</string>
+	<string name="jandi_start_direct_messages_2">"點擊螢幕的 [+] 圖示, 開始與任一團隊成員私訊"</string>
 	<string name="jandi_storage_access_permission">"JANDI存取外部資料的動作被拒絕"</string>
 	<string name="jandi_success_copy_clipboard_external_link">"共享連結已複製至到剪貼簿"</string>
 	<string name="jandi_success_disable_external_link">"共享連結已被刪除"</string>
@@ -828,6 +829,16 @@
 	<string name="mypage_editprofile_phonenumber">"請輸入您的電話號碼"</string>
 	<string name="mypage_editprofile_statusmessage">"輸入你的狀態"</string>
 	<string name="mypage_mention_newmentionalert">"有人提及你\"</string>
+	<string name="password_change_done">""</string>
+	<string name="password_current_type">""</string>
+	<string name="password_current_type_alert">""</string>
+	<string name="password_current_type_info">""</string>
+	<string name="password_forgot">""</string>
+	<string name="password_forgot_email_type_info">""</string>
+	<string name="password_new_again_type">""</string>
+	<string name="password_new_type">""</string>
+	<string name="password_new_type_confi_alert">""</string>
+	<string name="password_new_type_info">""</string>
 	<string name="photo">"照片"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"免費版本最多可邀請 500 位成員"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"已超過邀請成員數量上限"</string>
@@ -840,6 +851,7 @@
 	<string name="primary_email_info_msg">"所有與您JANDI帳號相關的電子郵件將寄送到主要電子郵件地址。您可以增加其它電子郵件地址到您的帳號并且指定爲某個團隊專屬電子郵件地址。(請注意電子郵件地址皆需事先被確認)"</string>
 	<string name="room_member_disabled_alert_body">"你無法發送訊息給該成員"</string>
 	<string name="room_member_disabled_alert_title">"該成員已被關閉"</string>
+	<string name="security_setting">""</string>
 	<string name="sent_auth_email">"電子郵件已寄送至您的郵箱，請點擊內建連結進行帳戶驗證。"</string>
 	<string name="sent_auth_email_short">"電子郵件已經成功寄出。 請查看您的郵箱"</string>
 	<string name="team_adminmenu_title">"管理者選單"</string>

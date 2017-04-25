@@ -3,10 +3,7 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -55,8 +52,8 @@ public class MemberProfileLoader implements ProfileLoader {
         tvProfileDivision.setText(userDivision);
         tvProfilePosition.setText(userPosition);
         if (TextUtils.isEmpty(userDivision) && TextUtils.isEmpty(userPosition)) {
-            tvProfileDivision.setVisibility(View.GONE);
-            tvProfilePosition.setVisibility(View.GONE);
+            tvProfileDivision.setVisibility(View.INVISIBLE);
+            tvProfilePosition.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -64,7 +61,7 @@ public class MemberProfileLoader implements ProfileLoader {
     public void loadSmallThumb(ImageView ivProfileImageSmall, Member member) {
         String profileImageUrl = member.getPhotoUrl();
         ImageUtil.loadProfileImage(
-                ivProfileImageSmall, profileImageUrl, R.drawable.profile_img);
+                ivProfileImageSmall, profileImageUrl, R.drawable.preview_img);
     }
 
     @Override
@@ -78,18 +75,11 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel, boolean isLandscape) {
+    public void setStarButton(View btnProfileStar, Member member, TextView tvTeamLevel) {
         btnProfileStar.setSelected(TeamInfoLoader.getInstance().isStarredUser(member.getId()));
         boolean isMe = isMe(member.getId());
         btnProfileStar.setVisibility(isMe ? View.GONE : View.VISIBLE);
         btnProfileStar.setEnabled(!isMe);
-
-        if (btnProfileStar.getVisibility() == View.GONE && !isLandscape) {
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tvTeamLevel.getLayoutParams();
-            DisplayMetrics displayMetrics = tvTeamLevel.getResources().getDisplayMetrics();
-            lp.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, displayMetrics);
-            tvTeamLevel.setLayoutParams(lp);
-        }
     }
 
     @Override
@@ -104,17 +94,31 @@ public class MemberProfileLoader implements ProfileLoader {
     }
 
     @Override
-    public void setBlurBackgroundColor(View vProfileImageLargeOverlay) {
-        vProfileImageLargeOverlay.setBackgroundResource(R.drawable.bg_profile_default_user);
+    public void setBackgroundColor(View backgroundColor, View opacity, Level level, Member member) {
+        if (!isEnabled(member)) {
+            backgroundColor.setBackgroundColor(0xff666666);
+            opacity.setBackgroundColor(0x40000000);
+            return;
+        }
+
+        if (level == Level.Owner) {
+            backgroundColor.setBackgroundColor(0xff3a97d2);
+            opacity.setBackgroundColor(0x40000000);
+        } else if (level == Level.Admin) {
+            backgroundColor.setBackgroundColor(0xff7b6ff1);
+            opacity.setBackgroundColor(0x40000000);
+        } else if (level == Level.Member) {
+            backgroundColor.setBackgroundColor(0xfff79521);
+            opacity.setBackgroundColor(0x40000000);
+        } else if (level == Level.Guest) {
+            backgroundColor.setBackgroundColor(0xff88c10e);
+            opacity.setBackgroundColor(0x40000000);
+        }
     }
 
     @Override
-    public void setLevel(Level level, TextView tvTeamLevel, boolean isLandscape) {
-        if (isLandscape) {
-            AccessLevelUtil.setTextOfLevelInNav(level, tvTeamLevel);
-        } else {
-            AccessLevelUtil.setTextOfLevel(level, tvTeamLevel);
-        }
+    public void setLevel(Level level, TextView tvTeamLevel) {
+        AccessLevelUtil.setTextOfLevelInProfile(level, tvTeamLevel);
     }
 
     private boolean isMe(long memberId) {

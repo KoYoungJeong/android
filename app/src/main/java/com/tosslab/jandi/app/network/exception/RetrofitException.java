@@ -42,6 +42,8 @@ public class RetrofitException extends Exception {
         return responseMessage;
     }
 
+
+
     @Override
     public String toString() {
         return "RetrofitException{" +

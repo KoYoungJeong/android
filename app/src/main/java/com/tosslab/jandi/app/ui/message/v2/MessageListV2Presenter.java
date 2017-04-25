@@ -292,7 +292,6 @@ public class MessageListV2Presenter {
                             }
                         }
                     }
-//                    messageListModel.presetTextContent(messages);
                     return messages;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -458,7 +457,6 @@ public class MessageListV2Presenter {
             }
             return;
         }
-        //
 
         List<Long> memberLastReadLinks = new ArrayList<>();
 

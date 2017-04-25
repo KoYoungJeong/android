@@ -178,10 +178,6 @@ public class SwipeExitLayout extends FrameLayout {
     }
 
     private void exit() {
-        if (onExitListener != null) {
-            onExitListener.onExit();
-        }
-
         int childCount = getChildCount();
         if (childCount <= 0) {
             return;

@@ -209,6 +209,9 @@ public class BodyViewFactory {
     }
 
     private static boolean isEventMessage(ResMessages.Link currentLink) {
+        if (currentLink == null) {
+            return false;
+        }
         return TextUtils.equals(currentLink.status, "event");
     }
 

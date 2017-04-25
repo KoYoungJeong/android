@@ -209,12 +209,17 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
         navigationModel.getInviteDecisionObservable(
                 team.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType())
-                .concatMap(resTeamDetailInfo ->
-                        navigationModel.getUpdateTeamInfoObservable(team.getTeamId()))
+                .concatMap(resTeamDetailInfo -> {
+                    resTeamDetailInfo.getInviteTeam().getTeamMembers();
+                    SprinklrInvitationAccept.sendLog(resTeamDetailInfo.getInviteTeam().getTeamId(),
+                            resTeamDetailInfo.getMember().getId());
+                    return navigationModel.getUpdateTeamInfoObservable(team.getTeamId());
+                })
+
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     onTeamCreated();
-                    SprinklrInvitationAccept.sendLog(team.getTeamId());
+
                 }, error -> {
                     LogUtil.e(TAG, Log.getStackTraceString(error));
                     navigationView.dismissProgressWheel();

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="account_password_change">"계정 비밀번호 변경
+"</string>
 	<string name="app_name">"JANDI"</string>
 	<string name="commcon_search_result_sharedin">"공유된 곳"</string>
 	<string name="comment">"댓글"</string>
+	<string name="common_account_name">"계정 이름
+"</string>
 	<string name="common_accthome_createteam">"새로운 팀 생성"</string>
 	<string name="common_accthome_createteamguide">"아직 가입한 팀이 없습니다.\n아래 새로운 팀 생성을 터치하여 \n잔디를 경험해 보세요"</string>
 	<string name="common_accthome_jandiacct">"잔디계정"</string>
@@ -239,7 +243,7 @@
 	<string name="jandi_back">"뒤로"</string>
 	<string name="jandi_baidu_app_store">"바이두 앱 스토어"</string>
 	<string name="jandi_bot_role">"저는 잔디 사용에 꼭 필요한 메시지나,
-  잔디 Connect 메시지를 전달합니다."</string>
+잔디 Connect 메시지를 전달합니다."</string>
 	<string name="jandi_bot_status">"안녕하세요? Mr.J입니다."</string>
 	<string name="jandi_browse_other_topics">"참여하지 않은 토픽 목록 보기"</string>
 	<string name="jandi_browse_team">"팀으로 가기"</string>
@@ -250,8 +254,8 @@
 	<string name="jandi_canceled">"취소됨"</string>
 	<string name="jandi_cannot_connect_service_try_again">"일시적으로 서비스 접속이 되지 않습니다. 잠시 후 다시 시도해주세요."</string>
 	<string name="jandi_cannot_find_messages">"검색 결과가 없습니다 :"</string>
-	<string name="jandi_cannot_find_search_result_1">"파일 서랍에 아직 파일이 없습니다."</string>
-	<string name="jandi_cannot_find_search_result_2">"토픽 또는 1:1메시지에서 파일을 업로드하실 수 있습니다."</string>
+	<string name="jandi_cannot_find_search_result_1">"<b>업로드한 모든 파일을 빠르고 쉽게 찾아보세요.</b>"</string>
+	<string name="jandi_cannot_find_search_result_2">"토픽방 또는 1:1 메시지에서 [+]를 눌러 파일을 공유해보세요."</string>
 	<string name="jandi_cannot_find_search_result_old">"검색된 파일이 없습니다."</string>
 	<string name="jandi_change_passcode">"비밀번호 변경"</string>
 	<string name="jandi_character">"캐릭터"</string>
@@ -486,11 +490,8 @@
 	<string name="jandi_mention_no_mentions">"다른 팀 멤버에게 받은 멘션이 없습니다. 
   메시지 입력창에서 "@"을 입력하여 멘션을 주고받을 수 있습니다."</string>
 	<string name="jandi_mention_push_message">"%s 님의 멘션"</string>
-	<string name="jandi_mentions_are_empty">"다른 멤버에게 받은 멘션이 없습니다. 
- 메시지 입력 시 "@"를 입력하여 
- 멘션을 주고 받을 수 있습니다."</string>
-	<string name="jandi_mentions_are_empty_result_2">"메시지 입력 시 ‘@이름’을 입력하여 콕 집어 메시지를 보내보세요.
-"</string>
+	<string name="jandi_mentions_are_empty">"<b>내가 언급된 모든 메시지를 한 눈에 확인하세요.</b>"</string>
+	<string name="jandi_mentions_are_empty_result_2">"메시지 입력 시 ‘@이름’을 입력하여 콕 집어 메시지를 보내보세요."</string>
 	<string name="jandi_menu_room_selection">"대화방 선택"</string>
 	<string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 	<string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
@@ -571,8 +572,8 @@
 	<string name="jandi_poll_anonymous">"익명투표"</string>
 	<string name="jandi_poll_create">"새 투표 작성하기"</string>
 	<string name="jandi_poll_deleted">"투표를 삭제했습니다."</string>
-	<string name="jandi_poll_empty_1">"진행중인 투표가 없습니다."</string>
-	<string name="jandi_poll_empty_2">"토픽에서 [+]를 눌러 투표를 만들 수 있습니다."</string>
+	<string name="jandi_poll_empty_1">"<b>투표 목록을 확인하세요.</b>"</string>
+	<string name="jandi_poll_empty_2">"토픽방에서 [+]를 눌러 투표를 진행해보세요."</string>
 	<string name="jandi_poll_finished_with_most">"투표가 완료되었습니다. 가장 많이 투표된 항목은 \"%s\" 입니다."</string>
 	<string name="jandi_poll_finished_without_participants">"투표가 완료되었습니다. 참여자가 없었습니다."</string>
 	<string name="jandi_poll_finishedat">"종료 시각"</string>
@@ -710,24 +711,19 @@
 	<string name="jandi_starred">"즐겨찾기 등록"</string>
 	<string name="jandi_starred_all">"모든 타입"</string>
 	<string name="jandi_starred_files">"파일"</string>
-	<string name="jandi_starred_no_all">"즐겨찾기 한 메시지나 파일이 없습니다."</string>
-	<string name="jandi_starred_no_all_result_2">"메시지를 꾹 누르거나 파일 오른쪽
-별 아이콘을 눌러 이곳에 보관하세요
-"</string>
-	<string name="jandi_starred_no_file">"즐겨찾기 한 파일이 없습니다."</string>
-	<string name="jandi_starred_no_file_result_2">"파일 오른쪽 별 아이콘을 눌러
-이곳에 보관하세요
-"</string>
+	<string name="jandi_starred_no_all">"<b>즐겨찾기한 중요한 메시지와 파일을 확인하세요.</b>"</string>
+	<string name="jandi_starred_no_all_result_2">"메시지를 꾹 누르거나 파일에서 별 아이콘을 눌러 이곳에 보관하세요."</string>
+	<string name="jandi_starred_no_file">"<b>즐겨찾기한 중요한 파일을 확인하세요.
+</b>"</string>
+	<string name="jandi_starred_no_file_result_2">"파일에서 별 아이콘을 눌러 이곳에 보관하세요."</string>
 	<string name="jandi_starred_star">"즐겨찾기"</string>
 	<string name="jandi_starred_stars">"즐겨찾기"</string>
 	<string name="jandi_starred_undo">"취소"</string>
 	<string name="jandi_starred_unstar">"즐겨찾기  해제"</string>
 	<string name="jandi_starred_unstar_from_item">"즐겨찾기에서 해제 할까요?"</string>
 	<string name="jandi_starred_unstarred">"즐겨찾기 해제됨"</string>
-	<string name="jandi_start_direct_messages_1">"<b>현재 열려있는 대화방이 없습니다.</b>"</string>
-	<string name="jandi_start_direct_messages_2">"화면에서 [+]를 눌러 특정 팀 맴버와
-대화를 시작해보세요.
-"</string>
+	<string name="jandi_start_direct_messages_1">"<b>팀 멤버와의 대화내용을 확인하세요.</b>"</string>
+	<string name="jandi_start_direct_messages_2">"화면에서 [+]를 눌러 특정 팀 맴버와 대화를 시작해보세요."</string>
 	<string name="jandi_storage_access_permission">"저장소에 접근하려면 어플리케이션의 권한을 허용해주세요."</string>
 	<string name="jandi_success_copy_clipboard_external_link">"외부 공유용 링크가 클립보드에 복사되었습니다."</string>
 	<string name="jandi_success_disable_external_link">"외부 공유용 링크가 삭제되었습니다."</string>
@@ -856,6 +852,26 @@
 	<string name="mypage_editprofile_phonenumber">"전화번호를 입력하세요"</string>
 	<string name="mypage_editprofile_statusmessage">"상태 메시지를 입력하세요"</string>
 	<string name="mypage_mention_newmentionalert">"새로운 멘션"</string>
+	<string name="password_change_done">"비밀번호 변경이 완료되었습니다.
+"</string>
+	<string name="password_current_type">"현재 비밀번호 입력
+"</string>
+	<string name="password_current_type_alert">"이전 비밀번호가 잘못 입력되었습니다
+"</string>
+	<string name="password_current_type_info">"소중한 정보 보호를 위해 현재 비밀번호를 입력해주세요.
+"</string>
+	<string name="password_forgot">"비밀번호가 생각나지 않으시나요?
+"</string>
+	<string name="password_forgot_email_type_info">"비밀번호를 새로 설정하기 위해 이메일 주소를 입력해주세요.
+"</string>
+	<string name="password_new_again_type">"새 비밀번호 다시 입력
+"</string>
+	<string name="password_new_type">"새 비밀번호 입력
+"</string>
+	<string name="password_new_type_confi_alert">"영어 대문자, 특수문자, 또는 영어 대문자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다.
+"</string>
+	<string name="password_new_type_info">"비밀번호는 영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다.
+"</string>
 	<string name="photo">"사진"</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_desc">"무료 팀의 경우 팀당 최대 500명까지 초대하실 수 있습니다."</string>
 	<string name="pricingplan_restrictions_exceedmember_invite_title">"초대 가능한 멤버 수를 초과하였습니다.
@@ -873,6 +889,8 @@
 	<string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
 	<string name="room_member_disabled_alert_body">"메시지 작성이 불가능합니다."</string>
 	<string name="room_member_disabled_alert_title">"이 멤버는 차단된 멤버입니다."</string>
+	<string name="security_setting">"보안 설정
+"</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
 	<string name="team_adminmenu_title">"관리자 메뉴"</string>

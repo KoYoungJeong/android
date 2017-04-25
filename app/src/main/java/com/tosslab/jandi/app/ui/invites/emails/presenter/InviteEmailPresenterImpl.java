@@ -147,7 +147,8 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     @Override
     public void startInvitationForAssociate(long selectedTopicId) {
         if (invitationUserCnt > 0) {
-            if (isExceedFreeMembers(invitationUserCnt)) {
+            if (TeamInfoLoader.getInstance().getTeamPlan().getPricing().equals("free") &&
+                    isExceedFreeMembers(invitationUserCnt)) {
                 view.showErrorExceedFreeMembersDialog();
                 return;
             }
@@ -188,7 +189,8 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
     @Override
     public void startInvitation() {
         if (invitationUserCnt > 0) {
-            if (isExceedFreeMembers(invitationUserCnt)) {
+            if (TeamInfoLoader.getInstance().getTeamPlan().getPricing().equals("free") &&
+                    isExceedFreeMembers(invitationUserCnt)) {
                 view.showErrorExceedFreeMembersDialog();
                 return;
             }

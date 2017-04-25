@@ -8,8 +8,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +17,14 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
@@ -60,11 +61,11 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -72,7 +73,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dagger.Lazy;
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import rx.Completable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -97,14 +97,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @InjectExtra
     int from;
 
+    @Bind(R.id.v_background_color)
+    View vBackgroundColor;
+    @Bind(R.id.v_opacity_color)
+    View vOpacityColor;
     @Bind(R.id.vg_swipe_exit_layout)
     SwipeExitLayout swipeExitLayout;
-
-    @Bind(R.id.v_member_profile_img_large_overlay)
-    View vProfileImageLargeOverlay;
     @Bind(R.id.tv_member_profile_description)
     TextView tvProfileDescription;
-
     @Bind(R.id.tv_member_profile_name)
     TextView tvProfileName;
     @Bind(R.id.tv_member_profile_division)
@@ -117,28 +117,30 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     TextView tvProfileEmail;
     @Bind(R.id.tv_member_profile_team_level)
     TextView tvTeamLevel;
-    @Bind(R.id.vg_member_profile_img_large)
-    ViewGroup vgProfileImageLarge;
-
-    @Bind(R.id.vg_member_profile_detail)
-    ViewGroup vgProfileTeamDetail;
-    @Nullable
-    @Bind(R.id.vg_member_profile_bottoms)
-    ViewGroup vgProfileTeamBottoms;
-    @Bind(R.id.vg_member_profile_buttons)
-    ViewGroup vgProfileTeamButtons;
-    @Bind(R.id.v_member_profile_disable)
-    View vDisableIcon;
-
-    @Bind(R.id.btn_member_profile_star)
-    View btnProfileStar;
+    @Bind(R.id.iv_member_profile_star_btn)
+    ImageView ivMemberProfileStarBtn;
+    @Bind(R.id.iv_member_profile_edit_btn)
+    ImageView ivMemberProfileEditBtn;
     @Bind(R.id.iv_member_profile_img_full)
     PhotoView ivProfileImageFull;
-
-    @Bind(R.id.iv_member_profile_img_large)
-    ImageView ivProfileImageLarge;
     @Bind(R.id.iv_member_profile_img_small)
     ImageView ivProfileImageSmall;
+    @Bind(R.id.vg_profile_resend_email)
+    ViewGroup vgProfileResendEmail;
+    @Bind(R.id.vg_profile_mobile)
+    ViewGroup vgProfileMobile;
+    @Bind(R.id.vg_profile_cancel_invitation)
+    ViewGroup vgProfileCancelInvitation;
+    @Bind(R.id.vg_profile_email)
+    ViewGroup vgProfileEmail;
+    @Bind(R.id.vg_profile_1_1_message)
+    ViewGroup vgProfile1to1Message;
+    @Bind(R.id.vg_profile_mentions)
+    ViewGroup vgProfileMentions;
+    @Bind(R.id.v_button_divider)
+    View vButtonDivider;
+    @Bind(R.id.v_start_bottom_line)
+    View vStartBottomLine;
 
     ProfileLoader profileLoader;
 
@@ -202,11 +204,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (!isBot) {
             if (!TeamInfoLoader.getInstance().getUser(memberId).isInactive()) {
                 profileLoader = new MemberProfileLoader();
+                vStartBottomLine.setVisibility(View.VISIBLE);
             } else {
                 profileLoader = new InactivedMemberProfileLoader();
+                vStartBottomLine.setVisibility(View.INVISIBLE);
             }
         } else {
             profileLoader = new JandiBotProfileLoader();
+            vStartBottomLine.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -231,25 +236,17 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         hasChangedProfileImage = profileLoader.hasChangedProfileImage(member);
 
-        initSwipeLayout(hasChangedProfileImage);
+        initSwipeLayout();
 
-        if (!hasChangedProfileImage) {
-            profileLoader.setBlurBackgroundColor(vProfileImageLargeOverlay);
-        } else {
-            vProfileImageLargeOverlay.setBackgroundColor(getResources().getColor(R.color.jandi_member_profile_img_overlay));
-        }
 
-        initLargeImageSize(profileImageUrl);
-
-        boolean isDisableUser = !profileLoader.isEnabled(member);
-        vDisableIcon.setVisibility(isDisableUser ? View.VISIBLE : View.GONE);
-
-        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel, isLandscape());
+        profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel);
         profileLoader.setName(tvProfileName, member);
         profileLoader.setDescription(tvProfileDescription, member);
         profileLoader.setProfileInfo(tvProfileDivision, tvProfilePosition, member);
         profileLoader.loadSmallThumb(ivProfileImageSmall, member);
         profileLoader.loadFullThumb(ivProfileImageFull, profileImageUrl);
+        profileLoader.setBackgroundColor(vBackgroundColor, vOpacityColor,
+                member instanceof User ? ((User) member).getLevel() : null, member);
 
         ivProfileImageFull.setOnViewTapListener((view, x, y) -> {
             ivProfileImageFull.setScale(1.0f, true);
@@ -259,51 +256,72 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         if (isFullSizeImageShowing) {
             ivProfileImageFull.setAlpha(1.0f);
             ivProfileImageFull.setVisibility(View.VISIBLE);
-
             ivProfileImageSmall.setScaleX(3.0f);
             ivProfileImageSmall.setScaleY(3.0f);
             ivProfileImageSmall.setAlpha(0.0f);
         }
 
+        boolean isDisableUser = !profileLoader.isEnabled(member);
+
         if (isDisableUser) {
-            tvProfileEmail.setVisibility(View.GONE);
-            tvProfilePhone.setVisibility(View.GONE);
-            btnProfileStar.setVisibility(View.INVISIBLE);
-            btnProfileStar.setEnabled(false);
+            ViewTreeObserver vto = tvProfileName.getViewTreeObserver();
+            final boolean[] isLoadDisableUserName = new boolean[1];
+            isLoadDisableUserName[0] = true;
+            ViewTreeObserver.OnGlobalLayoutListener listener = () -> {
+                if (isLoadDisableUserName[0]) {
+                    String ellipsizedText = "";
+
+                    if (tvProfileName.getLayout().getText().toString()
+                            .equals(tvProfileName.getText().toString())) {
+                        ellipsizedText = tvProfileName.getText().toString();
+                    } else {
+                        ellipsizedText = tvProfileName.getLayout().getText().toString();
+                        ellipsizedText = ellipsizedText.substring(0, ellipsizedText.length() - 7) + "...";
+                    }
+
+                    String ellipsizeTextWithSpace = ellipsizedText + "  ";
+                    SpannableString ss = new SpannableString(ellipsizeTextWithSpace);
+                    Drawable drawable = getResources().getDrawable(R.drawable.icon_profile_warning);
+                    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                    ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE);
+                    ss.setSpan(span, ellipsizedText.length() + 1,
+                            ellipsizedText.length() + 2,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    tvProfileName.setText(ss);
+                    isLoadDisableUserName[0] = false;
+                }
+            };
+
+            vto.addOnGlobalLayoutListener(listener);
+
+            vgProfileMobile.setVisibility(View.INVISIBLE);
+            vgProfileEmail.setVisibility(View.INVISIBLE);
+            vgProfile1to1Message.setVisibility(View.INVISIBLE);
+
+            ivMemberProfileStarBtn.setVisibility(View.GONE);
+            ivMemberProfileEditBtn.setVisibility(View.GONE);
+            vButtonDivider.setVisibility(View.GONE);
             return;
         }
 
         String userEmail = member.getEmail();
         tvProfileEmail.setText(userEmail);
         if (TextUtils.isEmpty(userEmail)) {
-            tvProfileEmail.setVisibility(View.GONE);
-        } else {
-            tvProfileEmail.setVisibility(View.VISIBLE);
+            tvProfileEmail.setText("-");
         }
 
-        if (isJandiBot(member)) {
-            tvProfilePhone.setVisibility(View.GONE);
-        } else {
+        if (!isJandiBot(member)) {
             String userPhoneNumber = ((User) member).getPhoneNumber();
-            tvProfilePhone.setText(userPhoneNumber);
             if (TextUtils.isEmpty(userPhoneNumber)) {
-                tvProfilePhone.setVisibility(View.GONE);
+                tvProfilePhone.setText("-");
             } else {
-                tvProfilePhone.setVisibility(View.VISIBLE);
+                tvProfilePhone.setText(userPhoneNumber);
             }
         }
 
-        profileLoader.setStarButton(btnProfileStar, member, tvTeamLevel, isLandscape());
+        profileLoader.setStarButton(ivMemberProfileStarBtn, member, tvTeamLevel);
 
-        boolean guest = TeamInfoLoader.getInstance().getMyLevel() == Level.Guest;
-
-        if (guest && !isMe()) {
-            tvProfilePhone.setVisibility(View.INVISIBLE);
-            tvProfileEmail.setVisibility(View.INVISIBLE);
-            vgProfileTeamButtons.setVisibility(View.INVISIBLE);
-        } else {
-            addButtons(member);
-        }
+        addButtons(member);
 
         AnalyticsUtil.sendScreenName(getScreen());
     }
@@ -312,83 +330,28 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         return TeamInfoLoader.getInstance().isJandiBot(member.getId());
     }
 
-    private void initSwipeLayout(boolean setViewToAlpha) {
+    private void initSwipeLayout() {
         swipeExitLayout.setOnExitListener(this::finish);
-        if (setViewToAlpha) {
-            swipeExitLayout.setViewToAlpha(vProfileImageLargeOverlay);
-        }
 
         swipeExitLayout.setStatusListener(new SwipeExitLayout.StatusListener() {
             @Override
             public void onTranslateY(float translateY) {
-                int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
-                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
-
-                float scaleX = (measuredWidth + (translateY * 2)) / measuredWidth;
-                scaleX = Math.max(1, scaleX);
-
-                float scaleY = (measuredHeight + (translateY * 2)) / measuredHeight;
-                scaleY = Math.max(1, scaleY);
-
-                vgProfileImageLarge.setScaleX(scaleX);
-                vgProfileImageLarge.setScaleY(scaleY);
             }
 
             @Override
             public void onCancel(float spareDistance, int cancelAnimDuration) {
-                vgProfileImageLarge.animate()
-                        .setDuration(cancelAnimDuration)
-                        .scaleX(1)
-                        .scaleY(1);
             }
 
             @Override
             public void onExit(float spareDistance, int exitAnimDuration) {
-                int measuredWidth = vgProfileImageLarge.getMeasuredWidth();
-                int measuredHeight = vgProfileImageLarge.getMeasuredHeight();
-
-                float ratio = (measuredWidth / (float) measuredHeight);
-
-                int spareBottom = swipeExitLayout.getMeasuredHeight() - measuredHeight;
-
-                float scaleY = (measuredHeight + spareBottom) / (float) measuredHeight;
-
-                vgProfileImageLarge.animate()
-                        .scaleX(scaleY * ratio)
-                        .scaleY(scaleY)
-                        .setDuration(exitAnimDuration);
+                Completable.complete()
+                        .delay(exitAnimDuration, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> {
+                            finish();
+                        });
             }
         });
-    }
-
-    private void initLargeImageSize(final String profileImageUrlLarge) {
-        vgProfileTeamDetail.post(() -> {
-            int screenHeight = findViewById(android.R.id.content).getMeasuredHeight();
-            int vgProfileTeamDetailHeight = vgProfileTeamDetail.getMeasuredHeight();
-            if (isLandscape() && vgProfileTeamBottoms != null) {
-                vgProfileTeamDetailHeight = vgProfileTeamBottoms.getMeasuredHeight();
-            }
-            int ivProfileImageLargeHeight = screenHeight - vgProfileTeamDetailHeight;
-
-            ViewGroup.LayoutParams layoutParams = vgProfileImageLarge.getLayoutParams();
-            layoutParams.height = ivProfileImageLargeHeight;
-            vgProfileImageLarge.setLayoutParams(layoutParams);
-
-            loadLargeImage(profileImageUrlLarge);
-        });
-    }
-
-    private void loadLargeImage(String profileImageUrlLarge) {
-        if (!hasChangedProfileImage) {
-            return;
-        }
-
-        ImageLoader.newInstance()
-                .placeHolder(R.drawable.bg_profile_default_user, ImageView.ScaleType.FIT_XY)
-                .actualImageScaleType(ImageView.ScaleType.CENTER_CROP)
-                .transformation(new BlurTransformation(getApplicationContext(), 10))
-                .uri(Uri.parse(profileImageUrlLarge))
-                .into(ivProfileImageLarge);
     }
 
     @OnClick(R.id.iv_member_profile_img_small)
@@ -397,9 +360,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return;
         }
 
-        if (isLandscape()) {
-            v.setPivotX(0);
-        }
         v.animate()
                 .scaleX(3.0f)
                 .scaleY(3.0f)
@@ -436,7 +396,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .alpha(1.0f);
     }
 
-    @OnClick(R.id.btn_member_profile_close)
+    @OnClick(R.id.iv_member_profile_close_btn)
     @Override
     public void onBackPressed() {
         if (ivProfileImageFull.isShown()) {
@@ -453,7 +413,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         overridePendingTransition(0, R.anim.alpha_on_exit);
     }
 
-    @OnClick(R.id.btn_member_profile_star)
+    @OnClick(R.id.iv_member_profile_star_btn)
     public void star(View v) {
         if (!v.isEnabled()) {
             return;
@@ -470,7 +430,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     }
 
     void postStar(boolean star) {
-
         Completable.fromCallable(() -> {
             if (star) {
                 entityClientManager.enableFavorite(memberId);
@@ -479,124 +438,103 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             }
             HumanRepository.getInstance().updateStarred(memberId, star);
             return true;
-        }).subscribeOn(Schedulers.io()).subscribe(() -> {}, Throwable::printStackTrace);
-
+        }).subscribeOn(Schedulers.io()).subscribe(() -> {
+        }, Throwable::printStackTrace);
     }
 
     private void addButtons(Member member) {
-        vgProfileTeamButtons.removeAllViews();
-
-
         if (!isJandiBot(member)
                 && (TeamInfoLoader.getInstance().getMyLevel() == Level.Admin
                 || TeamInfoLoader.getInstance().getMyLevel() == Level.Owner
                 || isMe())) {
-            vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_edit,
-                            getString(R.string.jandi_member_profile_edit), (v) -> {
-                                startModifyProfileActivityForAdmin(memberId);
-                            }
-                    )
-            );
+            ivMemberProfileEditBtn.setVisibility(View.VISIBLE);
+            onEditButtonClick();
+        } else {
+            ivMemberProfileEditBtn.setVisibility(View.GONE);
         }
 
         if (isMe()) {
-            vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_mention,
-                            getString(R.string.jandi_mention_mentions), (v) -> {
-                                startStarMentionListActivity();
-                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
-                            }));
+            vgProfileMobile.setVisibility(View.VISIBLE);
+            User user = (User) member;
+            String phoneNumber = user.getPhoneNumber();
+            if (!TextUtils.isEmpty(phoneNumber)) {
+                vgProfileMobile.setOnClickListener(v -> {
+                    onPhoneNumberClick();
+                });
+            } else {
+                vgProfileMobile.setOnClickListener(null);
+            }
+            final String userEmail = user.getEmail();
+            tvProfileEmail.setText(userEmail);
+            vgProfileEmail.setVisibility(View.VISIBLE);
+            vgProfileMentions.setVisibility(View.VISIBLE);
+            vgProfileMentions.setOnClickListener(v -> {
+                onMentionButtonClick();
+            });
         } else if (member.isInactive()) {
-            vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_mail,
-                            getString(R.string.jandi_resend_invitation),
-                            v -> {
-                                AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.ResendInvitation);
-                                requestReInvite();
-                            }));
+            vgProfileResendEmail.setVisibility(View.VISIBLE);
+            vgProfileResendEmail.setOnClickListener(v -> {
+                onResendInvitationButtonClick();
+            });
 
-            vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_cancel,
-                            getString(R.string.jandi_cancel_invitation),
-                            v -> {
-                                showRejectInvitationAlert();
-                            }));
-            vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_message,
-                            getString(R.string.jandi_member_profile_dm), (v) -> {
-                                long teamId = TeamInfoLoader.getInstance().getTeamId();
-                                long entityId = member.getId();
-                                startMessageListActivity(teamId, entityId);
-                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
-                            }));
+            vgProfileCancelInvitation.setVisibility(View.VISIBLE);
+            vgProfileCancelInvitation.setOnClickListener(v -> {
+                showRejectInvitationAlert();
+            });
+
+            vgProfile1to1Message.setVisibility(View.VISIBLE);
+            vgProfile1to1Message.setOnClickListener(v -> {
+                onOneToOneButtonClick(member);
+            });
         } else {
             if (!isJandiBot(member)) {
                 User user = (User) member;
                 String phoneNumber = user.getPhoneNumber();
+                vgProfileMobile.setVisibility(View.VISIBLE);
                 if (!TextUtils.isEmpty(phoneNumber)) {
-                    vgProfileTeamButtons.addView(
-                            getButton(R.drawable.icon_profile_mobile,
-                                    getString(R.string.jandi_member_profile_call), v -> {
-                                        callIfHasPermission();
-                                        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
-                                    }));
+                    vgProfileMobile.setOnClickListener(v -> {
+                        onPhoneNumberClick();
+                    });
+                } else {
+                    vgProfileMobile.setOnClickListener(null);
                 }
+
                 final String userEmail = user.getEmail();
-                if (!TextUtils.isEmpty(userEmail)) {
-                    vgProfileTeamButtons.addView(
-                            getButton(R.drawable.icon_profile_mail,
-                                    getString(R.string.jandi_member_profile_email), (v) -> sendEmail()));
-                }
+                tvProfileEmail.setText(userEmail);
+                vgProfileEmail.setVisibility(View.VISIBLE);
+                vgProfileEmail.setOnClickListener(v -> sendEmail());
             }
 
-
-            vgProfileTeamButtons.addView(
-                    getButton(R.drawable.icon_profile_message,
-                            getString(R.string.jandi_member_profile_dm), (v) -> {
-                                long teamId = TeamInfoLoader.getInstance().getTeamId();
-                                long entityId = member.getId();
-                                startMessageListActivity(teamId, entityId);
-                                AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
-                            }));
+            vgProfile1to1Message.setVisibility(View.VISIBLE);
+            vgProfile1to1Message.setOnClickListener(v -> {
+                onOneToOneButtonClick(member);
+            });
         }
+    }
 
+    private void onOneToOneButtonClick(Member member) {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long entityId = member.getId();
+        startMessageListActivity(teamId, entityId);
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.DirectMessage);
+    }
 
-        if (isLandscape()) {
-            int width;
-            int childCount = vgProfileTeamButtons.getChildCount();
-            if (childCount >= 4) {
-                width = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width_1);
-            } else {
-                width = getResources().getDimensionPixelSize(R.dimen.jandi_member_profile_buttons_width_2);
-            }
+    private void onResendInvitationButtonClick() {
+        AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.ResendInvitation);
+        requestReInvite();
+    }
 
-            int topMargin;
-            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-            if (childCount >= 4 || member.isInactive()) {
-                topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, displayMetrics);
-            } else {
-                topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 13f, displayMetrics);
-            }
+    private void onMentionButtonClick() {
+        startStarMentionListActivity();
+        AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Mentions);
+    }
 
-
-            for (int idx = 0; idx < childCount; idx++) {
-                ViewGroup view = (ViewGroup) vgProfileTeamButtons.getChildAt(idx);
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) view.getLayoutParams();
-                lp.width = width;
-                view.setLayoutParams(lp);
-
-                View textView = view.getChildAt(1);
-                LinearLayout.LayoutParams childLp = (LinearLayout.LayoutParams) textView.getLayoutParams();
-                childLp.topMargin = topMargin;
-                textView.setLayoutParams(childLp);
-            }
-        }
-
+    private void onEditButtonClick() {
+        ivMemberProfileEditBtn.setOnClickListener(v ->
+                startModifyProfileActivityForAdmin(memberId));
     }
 
     private void showRejectInvitationAlert() {
-
         String invitationStatus = TeamInfoLoader.getInstance().getInvitationStatus();
         String invitationUrl = TeamInfoLoader.getInstance().getInvitationUrl();
         boolean teamOwner = TeamInfoLoader.getInstance().getUser(TeamInfoLoader.getInstance().getMyId()).isTeamOwner();
@@ -705,7 +643,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                 .show();
     }
 
-    @OnClick(R.id.tv_member_profile_phone)
     void onPhoneNumberClick() {
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.UserProfile, AnalyticsValue.Action.TapPhoneNumber);
         new AlertDialog.Builder(MemberProfileActivity.this, R.style.JandiTheme_AlertDialog_FixWidth_280)
@@ -720,6 +657,7 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                         default:
                         case 2:
                             callIfHasPermission();
+                            AnalyticsUtil.sendEvent(getScreen(), AnalyticsValue.Action.Call);
                             break;
                     }
                 })
@@ -799,37 +737,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
                     PermissionRetryDialog.showCallPermissionDialog(MemberProfileActivity.this);
                 })
                 .resultPermission(Permissions.createPermissionResult(requestCode, permissions, grantResults));
-    }
-
-    private View getButton(int iconResource, String title, View.OnClickListener onClickListener) {
-        View buttonView = getLayoutInflater()
-                .inflate(R.layout.item_member_profile_button, vgProfileTeamButtons, false);
-
-        View vIcon = buttonView.findViewById(R.id.v_member_profile_button_icon);
-        TextView tvTitle = (TextView) buttonView.findViewById(R.id.tv_member_profile_button_title);
-
-        vIcon.setBackgroundResource(iconResource);
-        tvTitle.setText(title);
-
-        buttonView.setOnClickListener(onClickListener);
-
-        boolean landscape = isLandscape();
-        int width = landscape ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
-
-        LinearLayout.LayoutParams params =
-                new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.MATCH_PARENT);
-        if (!landscape) {
-            params.weight = 1;
-        }
-        buttonView.setLayoutParams(params);
-
-        return buttonView;
-    }
-
-    private void startModifyProfileActivity() {
-        Intent intent = new Intent(MemberProfileActivity.this, ModifyProfileActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivityForResult(intent, ModifyProfileActivity.REQUEST_CODE);
     }
 
     private void startModifyProfileActivityForAdmin(long memberId) {
@@ -925,10 +832,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private boolean isMe() {
         return TeamInfoLoader.getInstance().getMyId() == memberId;
-    }
-
-    private boolean isLandscape() {
-        return getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     private AnalyticsValue.Screen getScreen() {

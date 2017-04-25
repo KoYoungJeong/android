@@ -39,12 +39,6 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <!-- temp comment for protect ANR (Play-Service-Base : 6.5.87 issue
-        <meta-data
-            android:name="com.google.android.gms.analytics.globalConfigResource"
-            android:resource="@xml/global_tracker" />
-        -->
-
         <activity
             android:name=".ui.sign.signup.verify.SignUpVerifyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -239,7 +233,7 @@
         <activity
             android:name=".ui.profile.member.MemberProfileActivity"
             android:screenOrientation="fullUser"
-            android:theme="@style/Jandi.NoTitle" />
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
         <activity
             android:name=".ui.maintab.tabs.team.filter.deptgroup.DeptJobGroupActivity"

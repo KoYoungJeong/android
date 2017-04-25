@@ -184,9 +184,6 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
                 .inject(this);
 
         filePickerViewModel = new MainFileUploadControllerImpl();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
 
         searchSelectorViewController = new SearchSelectorViewController(
                 getContext(), tvFileListWhere, tvFileListWhom, tvFileListType);
@@ -248,10 +245,23 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     }
 
     @Override
-    public void onDestroy() {
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
+    }
+
+    @Override
+    public void onDestroy() {
         if (isLoadedAll()) {
             fileListPresenter.onDestory();
         }
