@@ -269,7 +269,14 @@ public class JandiSocketService extends Service {
         eventsHashMap.put("topic_joined", Arrays.asList(topicJoinUpdateListener, topicJoinListener));
 
         EventListener topicInviteListener = objects -> jandiSocketServiceModel.onTopicInvited(objects[0]);
-        eventHashMap.put("topic_invited", topicInviteListener);
+        EventListener topicInvitedUpdateListener = objects -> {
+            SocketUpdateRoom socketUpdateRoom = SocketEmitModel.topicInvited(objects[0]);
+            if (socketUpdateRoom != null) {
+                jandiSocketManager.sendByJson("update_room", socketUpdateRoom);
+            }
+        };
+        eventsHashMap.put("topic_invited", Arrays.asList(topicInvitedUpdateListener, topicInviteListener));
+
         EventListener topicUpdatedListener = objects -> jandiSocketServiceModel.onTopicUpdated(objects[0]);
         eventHashMap.put("topic_updated", topicUpdatedListener);
         EventListener topicStarredListener = objects -> jandiSocketServiceModel.onTopicStarred(objects[0]);
