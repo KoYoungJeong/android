@@ -262,7 +262,7 @@ public class InternalWebActivity extends BaseAppCompatActivity implements Intern
         webView.clearFormData();
         webView.clearHistory();
         CookieManager cookieManager = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             cookieManager.removeAllCookies(null);
         } else {
             cookieManager.removeAllCookie();
