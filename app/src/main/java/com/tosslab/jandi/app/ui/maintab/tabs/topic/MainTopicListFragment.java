@@ -498,11 +498,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
@@ -542,11 +539,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(RoomMarkerEvent event) {
@@ -556,11 +550,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
@@ -570,11 +561,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void setSelectedItem(long selectedEntity) {

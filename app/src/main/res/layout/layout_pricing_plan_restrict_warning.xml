@@ -21,7 +21,8 @@
             android:text="TossLab,Inc"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="13dp" />
+            android:textSize="13dp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

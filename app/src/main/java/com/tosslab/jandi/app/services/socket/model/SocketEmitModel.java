@@ -10,8 +10,10 @@ import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.socket.domain.SocketUpdateRoom;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicDeletedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicInvitedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicJoinedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicLeftEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 public class SocketEmitModel {
@@ -154,6 +156,20 @@ public class SocketEmitModel {
                     return SocketUpdateRoom.join(accessToken, memberId, topicId);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static SocketUpdateRoom topicInvited(Object data) {
+        try {
+            SocketTopicInvitedEvent object = SocketModelExtractor.getObject(data, SocketTopicInvitedEvent.class, true, false);
+            long topicId = object.getData().getTopic().getId();
+            String accessToken = TokenUtil.getAccessToken();
+            return SocketUpdateRoom.join(accessToken, TeamInfoLoader.getInstance().getMyId(), topicId);
         } catch (Exception e) {
             e.printStackTrace();
         }
