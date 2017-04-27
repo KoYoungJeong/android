@@ -107,25 +107,26 @@ public class JandiApplication extends MultiDexApplication {
 
     public static String getDeviceUUID() {
         final String id = JandiPreference.getDeviceId();
-        UUID uuid = null;
+        String uuid = null;
         if (!TextUtils.isEmpty(id)) {
-            uuid = UUID.fromString(id);
+            uuid = id;
         } else {
             final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
             try {
                 if (!"9774d56d682e549c".equals(androidId)) {
-                    uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
+                    uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8")).toString();
+                    uuid = androidId;
                 } else {
                     final String deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-                    uuid = deviceId != null ? UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")) : UUID.randomUUID();
+                    uuid = deviceId != null ? UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")).toString() : UUID.randomUUID().toString();
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
-            JandiPreference.setDeviceId(uuid.toString());
+            JandiPreference.setDeviceId(uuid);
         }
 
-        return uuid.toString();
+        return uuid;
     }
 
     @Override
