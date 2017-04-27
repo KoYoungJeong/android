@@ -644,6 +644,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
     private void initProgressWheel() {
         progressWheel = new ProgressWheel(getActivity());
+        progressWheel.setCancelable(false);
+        progressWheel.setCanceledOnTouchOutside(false);
     }
 
     private void initMessageEditText() {
@@ -1231,16 +1233,26 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     }
 
     private void showPreviewForUploadFiles(int requestCode, Intent intent) {
-        List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
-        if (filePaths != null && filePaths.size() > 0) {
-            startActivityForResult(Henson.with(getActivity())
-                    .gotoFileUploadPreviewActivity()
-                    .singleUpload(true)
-                    .realFilePathList(new ArrayList<>(filePaths))
-                    .selectedEntityIdToBeShared(entityId)
-                    .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
-                    .build(), FileUploadPreviewActivity.REQUEST_CODE);
-        }
+        showProgressWheel();
+        Observable.defer(() -> {
+            List<String> filePaths = fileUploadController.getFilePath(getActivity(), requestCode, intent);
+            return Observable.just(filePaths);
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(filePaths -> {
+                    dismissProgressWheel();
+                    if (filePaths != null && filePaths.size() > 0) {
+                        startActivityForResult(Henson.with(getActivity())
+                                .gotoFileUploadPreviewActivity()
+                                .singleUpload(true)
+                                .realFilePathList(new ArrayList<>(filePaths))
+                                .selectedEntityIdToBeShared(entityId)
+                                .from(FileUploadPreviewActivity.FROM_SELECT_FILE)
+                                .build(), FileUploadPreviewActivity.REQUEST_CODE);
+                    }
+                });
+
+
     }
 
     private void showPreviewForContactFile(int requestCode, Intent intent) {
