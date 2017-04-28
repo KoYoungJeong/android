@@ -602,6 +602,9 @@ public class SettingsPushFragment extends Fragment {
             stringBuilder.append(getString(R.string.jandi_date_evening));
             stringBuilder.append(" ");
             hour = hour - 12;
+            if (hour == 0) {
+                hour = 12;
+            }
         } else {
             stringBuilder.append(getString(R.string.jandi_date_morning));
             stringBuilder.append(" ");
