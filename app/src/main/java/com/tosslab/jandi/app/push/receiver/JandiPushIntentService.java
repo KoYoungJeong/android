@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class JandiPushIntentService extends IntentService {
         }
 
         String accountUUid = AccountUtil.getAccountUUID(getApplicationContext());
+
         if (TextUtils.isEmpty(accountUUid)) {
             LogUtil.e(TAG, "Account Id is empty.");
             return;
@@ -59,6 +61,12 @@ public class JandiPushIntentService extends IntentService {
         String content = intent.getStringExtra(EXTRA_CONTENT);
 
         BasePushInfo basePushInfo = parsingPushTO(content);
+
+        String deviceId = TokenUtil.getTokenObject().getDeviceId();
+
+        if (!(TextUtils.equals(basePushInfo.getDeviceId(), deviceId))) {
+            return;
+        }
 
         if (basePushInfo == null) {
             LogUtil.e(TAG, "messagePushInfo == null");
