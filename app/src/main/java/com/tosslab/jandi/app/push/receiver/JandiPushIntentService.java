@@ -117,7 +117,7 @@ public class JandiPushIntentService extends IntentService {
             postEvent(roomId, messagePushInfo.getRoomType());
             return;
         }
-
+        
         PushHandler.getInstance()
                 .addPushQueue(messagePushInfo);
     }
