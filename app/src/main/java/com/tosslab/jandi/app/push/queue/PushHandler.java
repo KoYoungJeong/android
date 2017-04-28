@@ -59,11 +59,13 @@ public class PushHandler {
 
     void notifyPush(Context context, BaseMessagePushInfo messagePushInfo) {
 
-        Completable.complete()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    PushWakeLock.acquire(context, 100);
-                });
+        if (!PushWakeLock.isScreenOn(context)) {
+            Completable.complete()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        PushWakeLock.acquire(context, 100);
+                    });
+        }
 
         boolean isMentionMessageToMe =
                 jandiPushReceiverModel.isMentionToMe(messagePushInfo.getMentioned());

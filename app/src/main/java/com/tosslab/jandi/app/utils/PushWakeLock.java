@@ -34,4 +34,11 @@ public class PushWakeLock {
 
     }
 
+    public static boolean isScreenOn(Context context) {
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        if (pm.isScreenOn()) {
+            return true;
+        }
+        return false;
+    }
 }
