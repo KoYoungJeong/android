@@ -35,6 +35,8 @@ public class GcmPushReceiver extends FirebaseMessagingService {
         LogUtil.d(TAG, "onMessageReceived() called with: remoteMessage = [" + data.toString() + "]");
         if (data.containsKey(KEY_CUSTOM_CONTENT)) {
             String customContent = data.get(KEY_CUSTOM_CONTENT);
+
+
             JandiPushIntentService.startService(GcmPushReceiver.this, customContent);
         }
     }

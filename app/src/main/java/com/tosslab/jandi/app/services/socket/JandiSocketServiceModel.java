@@ -1721,15 +1721,19 @@ public class JandiSocketServiceModel {
             SocketMemberOnlineStatusChangeEvent event =
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketMemberOnlineStatusChangeEvent.class);
             ResOnlineStatus.Record data = event.getData();
-            if (data.getPresence().equals("online")) {
-                TeamInfoLoader.getInstance().getOnlineStatus().setOnlineMember(data.getMemberId());
-            } else {
-                TeamInfoLoader.getInstance().getOnlineStatus().setOfflineMember(data.getMemberId());
+
+            if (TeamInfoLoader.getInstance().getMember(data.getMemberId()) != null) {
+                if (data.getPresence().equals("online")) {
+                    TeamInfoLoader.getInstance().getOnlineStatus().setOnlineMember(data.getMemberId());
+                } else {
+                    TeamInfoLoader.getInstance().getOnlineStatus().setOfflineMember(data.getMemberId());
+                }
+                EventBus.getDefault().post(new MemberOnlineStatusChangeEvent(data.getMemberId(), data.getPresence()));
             }
-            EventBus.getDefault().post(new MemberOnlineStatusChangeEvent(data.getMemberId(), data.getPresence()));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public interface Command {

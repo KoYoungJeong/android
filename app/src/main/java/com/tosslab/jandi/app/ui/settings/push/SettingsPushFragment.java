@@ -598,7 +598,7 @@ public class SettingsPushFragment extends Fragment {
         int hour = time / 100;
         int minute = time % 100;
         StringBuilder stringBuilder = new StringBuilder();
-        if (hour > 12) {
+        if (hour >= 12) {
             stringBuilder.append(getString(R.string.jandi_date_evening));
             stringBuilder.append(" ");
             hour = hour - 12;

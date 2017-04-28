@@ -35,6 +35,9 @@ public class BasePushInfo {
     private String accountUuid;
     @JsonProperty("room_id")
     private long roomId;
+    @JsonProperty("device_id")
+    private String deviceId;
+
     @JsonProperty("is_ringing")
     private boolean isRingIng; // 타 플랫폼 active && 토픽 푸쉬 on
     private String mentioned; // 나(value = member) 혹은 전체(value = room) 멘션했는지
@@ -45,6 +48,14 @@ public class BasePushInfo {
     @JsonProperty("sent_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss.SSS")
     private Date sentAt;
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
 
     public int getBadgeCount() {
         return badgeCount;

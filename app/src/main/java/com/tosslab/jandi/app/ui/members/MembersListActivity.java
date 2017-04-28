@@ -234,13 +234,16 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     protected void onResume() {
         super.onResume();
+        topicModdableMemberListAdapter.notifyDataSetChanged();
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
-        EventBus.getDefault().unregister(this);
         super.onPause();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     public void onEventMainThread(final RequestMoveDirectMessageEvent event) {
@@ -259,7 +262,7 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
         membersListPresenter.onSearch(tvSearch.getText().toString());
     }
 
-    public void onEventMainThread(final MemberOnlineStatusChangeEvent event) {
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
         topicModdableMemberListAdapter.notifyDataSetChanged();
     }
 

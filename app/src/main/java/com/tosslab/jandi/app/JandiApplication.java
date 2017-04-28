@@ -4,10 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -111,18 +111,33 @@ public class JandiApplication extends MultiDexApplication {
         if (!TextUtils.isEmpty(id)) {
             uuid = id;
         } else {
-            final String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            String tempUUID = null;
+
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD) {
+                try {
+                    tempUUID = (String) Build.class.getField("SERIAL").get(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             try {
-                if (!"9774d56d682e549c".equals(androidId)) {
-                    uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8")).toString();
-                    uuid = androidId;
+                if (!TextUtils.isEmpty(tempUUID) && !TextUtils.equals(tempUUID, "unknown")) {
+                    uuid = UUID.nameUUIDFromBytes(tempUUID.getBytes("utf8")).toString();
                 } else {
-                    final String deviceId = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-                    uuid = deviceId != null ? UUID.nameUUIDFromBytes(deviceId.getBytes("utf8")).toString() : UUID.randomUUID().toString();
+                    final String androidId = Settings.Secure.getString(
+                            context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                    if (!"9774d56d682e549c".equals(androidId)) {
+                        uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8")).toString();
+                    } else {
+                        uuid = UUID.randomUUID().toString();
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                uuid = UUID.randomUUID().toString();
             }
+
             JandiPreference.setDeviceId(uuid);
         }
 

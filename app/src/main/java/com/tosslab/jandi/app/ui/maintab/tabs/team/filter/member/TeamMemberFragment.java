@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
@@ -268,6 +269,13 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     public void onEvent(MemberRankUpdatedEvent event) {
         presenter.onRefresh();
     }
+
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
+        if (TeamInfoLoader.getInstance().getMember(event.getMemberId()) != null) {
+            refreshDataView();
+        }
+    }
+
 
     @Override
     public void refreshDataView() {
