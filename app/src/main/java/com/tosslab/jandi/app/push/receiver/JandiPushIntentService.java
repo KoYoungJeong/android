@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.push.to.BasePushInfo;
 import com.tosslab.jandi.app.push.to.MarkerPushInfo;
 import com.tosslab.jandi.app.ui.settings.Settings;
+import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -24,10 +25,12 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 public class JandiPushIntentService extends IntentService {
     public static final String TAG = "JandiPushIntentService";
@@ -92,8 +95,14 @@ public class JandiPushIntentService extends IntentService {
         Date sentAt = basePushInfo.getSentAt();
         if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
             JandiPreference.setPushLastSentAt(sentAt.getTime());
-            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
-        } else {
+            Observable.from(getTeams())
+                    .filter(team -> team.getStatus() == Team.Status.JOINED)
+                    .map(Team::getUnread)
+                    .defaultIfEmpty(0)
+                    .reduce((prev, current) -> prev + current)
+                    .subscribe(totalActivedBadge -> {
+                        BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    });
             return;
         }
 
@@ -117,7 +126,7 @@ public class JandiPushIntentService extends IntentService {
             postEvent(roomId, messagePushInfo.getRoomType());
             return;
         }
-        
+
         PushHandler.getInstance()
                 .addPushQueue(messagePushInfo);
     }
@@ -137,6 +146,18 @@ public class JandiPushIntentService extends IntentService {
         }
         return false;
     }
+
+    public List<Team> getTeams() {
+        List<Team> teams = new ArrayList<>();
+        Observable.from(AccountRepository.getRepository().getAccountTeams())
+                .map(Team::createTeam)
+                .toList()
+                .subscribe(teamList -> {
+                    teams.addAll(teamList);
+                });
+        return teams;
+    }
+
 
     private void postEvent(long roomId, String roomType) {
         EventBus eventBus = EventBus.getDefault();

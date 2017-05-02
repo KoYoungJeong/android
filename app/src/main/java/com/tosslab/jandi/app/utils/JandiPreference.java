@@ -73,6 +73,8 @@ public class JandiPreference {
 
     private static final String PREF_PUSH_LAST_SENT_AT = "push_last_sent_at";
 
+    private static final String PREF_DEVICE_HOME_BADGE_REFRESH_AT = "device_home_badge_refresh_at";
+
     private static final String PREF_FOLDER_CLOSED_SET = "push_folder_closed_set";
 
     private static final String PREF_EXCEED_POPUP_TIME_RECORD = "exceed_popup_time_record";
