@@ -92,7 +92,10 @@ public class JandiPushIntentService extends IntentService {
         Date sentAt = basePushInfo.getSentAt();
         if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
             JandiPreference.setPushLastSentAt(sentAt.getTime());
-            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+            if (JandiPreference.getDeviceHomeBadgeRefreshAt() < sentAt.getTime()) {
+                JandiPreference.setDeviceHomeBadgeRefreshAt(sentAt.getTime());
+                BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+            }
         } else {
             return;
         }
@@ -117,7 +120,7 @@ public class JandiPushIntentService extends IntentService {
             postEvent(roomId, messagePushInfo.getRoomType());
             return;
         }
-        
+
         PushHandler.getInstance()
                 .addPushQueue(messagePushInfo);
     }

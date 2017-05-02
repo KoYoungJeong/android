@@ -73,6 +73,8 @@ public class JandiPreference {
 
     private static final String PREF_PUSH_LAST_SENT_AT = "push_last_sent_at";
 
+    private static final String PREF_DEVICE_HOME_BADGE_REFRESH_AT = "device_home_badge_refresh_at";
+
     private static final String PREF_FOLDER_CLOSED_SET = "push_folder_closed_set";
 
     private static final String PREF_EXCEED_POPUP_TIME_RECORD = "exceed_popup_time_record";
@@ -502,6 +504,14 @@ public class JandiPreference {
 
     public static void setPushLastSentAt(long time) {
         getSharedPreferences().edit().putLong(PREF_PUSH_LAST_SENT_AT, time).commit();
+    }
+
+    public static long getDeviceHomeBadgeRefreshAt() {
+        return getSharedPreferences().getLong(PREF_DEVICE_HOME_BADGE_REFRESH_AT, 0);
+    }
+
+    public static void setDeviceHomeBadgeRefreshAt(long time) {
+        getSharedPreferences().edit().putLong(PREF_DEVICE_HOME_BADGE_REFRESH_AT, time).commit();
     }
 
     public static Set<String> getFolderClosedStatus() {

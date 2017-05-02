@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DeviceUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationAccept;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -179,7 +180,12 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .defaultIfEmpty(0)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
-                    BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+                    long time = cal.getTimeInMillis();
+                    if (JandiPreference.getDeviceHomeBadgeRefreshAt() < time) {
+                        JandiPreference.setDeviceHomeBadgeRefreshAt(time);
+                        BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    }
                 }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
                 });
