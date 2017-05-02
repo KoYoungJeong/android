@@ -723,5 +723,7 @@
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
 </manifest>

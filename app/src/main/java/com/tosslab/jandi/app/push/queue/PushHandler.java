@@ -8,12 +8,15 @@ import com.tosslab.jandi.app.local.orm.repositories.PushHistoryRepository;
 import com.tosslab.jandi.app.push.queue.dagger.DaggerPushHandlerComponent;
 import com.tosslab.jandi.app.push.receiver.JandiPushReceiverModel;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
+import com.tosslab.jandi.app.utils.PushWakeLock;
 
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import rx.Completable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -55,6 +58,14 @@ public class PushHandler {
 
 
     void notifyPush(Context context, BaseMessagePushInfo messagePushInfo) {
+
+        if (!PushWakeLock.isScreenOn(context)) {
+            Completable.complete()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+                        PushWakeLock.acquire(context, 100);
+                    });
+        }
 
         boolean isMentionMessageToMe =
                 jandiPushReceiverModel.isMentionToMe(messagePushInfo.getMentioned());
