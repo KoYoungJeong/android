@@ -81,11 +81,11 @@ public class DeptPositionActivity extends BaseAppCompatActivity {
     }
 
     private void initView() {
-        if (mode.equals(EXTRA_JOB_TITLE_MODE)) {
+        if (TextUtils.equals(mode, EXTRA_JOB_TITLE_MODE)) {
             getSupportActionBar().setTitle(R.string.jandi_job_title);
             etName.setHint(R.string.jandi_enter_your_job_title);
             tvList.setText(R.string.jandi_job_title_list);
-        } else if (mode.equals(EXTRA_DEPARTMENT_MODE)) {
+        } else if (TextUtils.equals(mode, EXTRA_DEPARTMENT_MODE)) {
             getSupportActionBar().setTitle(R.string.jandi_profile_division);
             etName.setHint(R.string.jandi_enter_your_dept);
             tvList.setText(R.string.jandi_department_list);
