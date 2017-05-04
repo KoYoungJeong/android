@@ -70,9 +70,11 @@ public class SpannableLookUp {
 
     public SpannableLookUp mention(MentionAnalysisInfo mentionAnalysisInfo, boolean isPlainText) {
         try {
-            RuleAnalysis ruleAnalysis = SpannableRule.Mention.getAnalysisClass().newInstance();
-            ((MentionAnalysis) ruleAnalysis).setMentionAnalysisInfo(mentionAnalysisInfo);
-            ruleAnalysisList.add(0, Pair.create(ruleAnalysis, isPlainText));
+            if (mentionAnalysisInfo.getMentions().size() > 0) {
+                RuleAnalysis ruleAnalysis = SpannableRule.Mention.getAnalysisClass().newInstance();
+                ((MentionAnalysis) ruleAnalysis).setMentionAnalysisInfo(mentionAnalysisInfo);
+                ruleAnalysisList.add(0, Pair.create(ruleAnalysis, isPlainText));
+            }
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
