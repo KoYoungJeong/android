@@ -158,6 +158,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ImageLoader.loadFromResources(ivIcon, R.drawable.logotype_80);
         }
 
+
         if (onRecyclerItemClickListener != null) {
             viewHolder.itemView.setOnClickListener(v ->
                     onRecyclerItemClickListener.onItemClick(
@@ -169,6 +170,12 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 onRecyclerItemLongClickListener.onItemClick(viewHolder.itemView, this, position);
                 return true;
             });
+        }
+
+        if (TeamInfoLoader.getInstance().getOnlineStatus().isOnlineMember(item.getEntityId())) {
+            viewHolder.vOnline.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.vOnline.setVisibility(View.GONE);
         }
 
     }
@@ -233,6 +240,8 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public View vDisableLineThrough;
         public View vDisableCover;
         public View selector;
+        private View vOnline;
+
 
         public ChatViewHolder(View itemView) {
             super(itemView);
@@ -244,6 +253,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvBadgeCount = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
             vDisableLineThrough = itemView.findViewById(R.id.iv_name_line_through);
             vDisableCover = itemView.findViewById(R.id.v_name_warning);
+            vOnline = itemView.findViewById(R.id.v_online);
         }
 
 

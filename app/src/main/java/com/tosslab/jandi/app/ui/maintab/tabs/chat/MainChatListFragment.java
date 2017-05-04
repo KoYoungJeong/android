@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
@@ -362,6 +363,14 @@ public class MainChatListFragment extends BaseLazyFragment
             return;
         }
         mainChatListPresenter.onReloadChatList();
+    }
+
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
+        if (!isLoadedAll()) {
+            return;
+        }
+
+        mainChatListAdapter.notifyDataSetChanged();
     }
 
     @Override
