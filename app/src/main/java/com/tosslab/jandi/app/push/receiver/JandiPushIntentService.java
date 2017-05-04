@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.queue.PushHandler;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
@@ -95,14 +96,19 @@ public class JandiPushIntentService extends IntentService {
         Date sentAt = basePushInfo.getSentAt();
         if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
             JandiPreference.setPushLastSentAt(sentAt.getTime());
-            Observable.from(getTeams())
-                    .filter(team -> team.getStatus() == Team.Status.JOINED)
-                    .map(Team::getUnread)
-                    .defaultIfEmpty(0)
-                    .reduce((prev, current) -> prev + current)
-                    .subscribe(totalActivedBadge -> {
-                        BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
-                    });
+            boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+            if (isSocketConnected) {
+                Observable.from(getTeams())
+                        .filter(team -> team.getStatus() == Team.Status.JOINED)
+                        .map(Team::getUnread)
+                        .defaultIfEmpty(0)
+                        .reduce((prev, current) -> prev + current)
+                        .subscribe(totalActivedBadge -> {
+                            BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                        });
+            } else {
+                BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+            }
             return;
         }
 
