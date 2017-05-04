@@ -22,43 +22,51 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout style="@style/JandiSettings.Group">
+            <LinearLayout
+                android:id="@+id/vg_setting_account_name"
+                style="@style/JandiSettings.Group">
 
                 <TextView
-                    style="@style/JandiSettings.Header.Text"
-                    android:text="@string/jandi_name_in_jandi" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/jandi_name_in_jandi"
+                    android:textColor="@color/rgb_333333"
+                    android:textSize="16dp" />
 
-                <com.tosslab.jandi.app.views.settings.SettingsBodyView
-                    android:id="@+id/vg_setting_account_name"
-                    style="@style/JandiSettings.Body">
+                <TextView
+                    android:id="@+id/tv_account_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Tee"
+                    android:textColor="@color/rgb_666666"
+                    android:textSize="14dp" />
 
-                    <View
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_marginRight="16dp"
-                        android:background="@drawable/account_icon_edit" />
-
-                </com.tosslab.jandi.app.views.settings.SettingsBodyView>
             </LinearLayout>
 
             <View style="@style/JandiSettings.Divider" />
 
-            <LinearLayout style="@style/JandiSettings.Group">
+
+            <LinearLayout
+                android:id="@+id/vg_settin_account_email"
+                style="@style/JandiSettings.Group">
 
                 <TextView
-                    style="@style/JandiSettings.Header.Text"
-                    android:text="@string/jandi_user_default_email" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/jandi_user_default_email"
+                    android:textColor="@color/rgb_333333"
+                    android:textSize="16dp" />
 
-                <com.tosslab.jandi.app.views.settings.SettingsBodyView
-                    android:id="@+id/vg_settin_account_email"
-                    style="@style/JandiSettings.Body">
+                <TextView
+                    android:id="@+id/tv_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="tee.kim@tosslab.com"
+                    android:textColor="@color/rgb_666666"
+                    android:textSize="14dp" />
 
-                    <View
-                        android:layout_width="6dp"
-                        android:layout_height="9dp"
-                        android:layout_marginRight="16dp"
-                        android:background="@drawable/more_icon_arrow_right" />
-                </com.tosslab.jandi.app.views.settings.SettingsBodyView>
             </LinearLayout>
 
             <View style="@style/JandiSettings.Divider" />
@@ -66,12 +74,56 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:layout_marginTop="12dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/jandi_setting_account_email_info"
                 android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
                 android:textSize="@dimen/jandi_text_size_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/security_setting"
+                        android:textColor="@color/rgb_999999"
+                        android:textSize="14dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vg_setting_reset_account_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/account_password_change"
+                        android:textColor="@color/rgb_333333"
+                        android:textSize="16dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View style="@style/JandiSettings.Divider" />
 
         </LinearLayout>
     </ScrollView>

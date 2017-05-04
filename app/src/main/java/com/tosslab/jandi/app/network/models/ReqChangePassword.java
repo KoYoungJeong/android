@@ -1,22 +1,24 @@
 package com.tosslab.jandi.app.network.models;
 
 /**
- * Created by Steve SeongUg Jung on 14. 12. 15..
+ * Created by tee on 2017. 4. 13..
  */
+
 public class ReqChangePassword {
-    private final String token;
-    private final String password;
 
-    public ReqChangePassword(String token, String password) {
-        this.token = token;
-        this.password = password;
+    private String oldPassword;
+    private String newPassword;
+
+    public ReqChangePassword(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
 
-    public String getToken() {
-        return token;
+    public String getOldPassword() {
+        return oldPassword;
     }
 
-    public String getPassword() {
-        return password;
+    public String getNewPassword() {
+        return newPassword;
     }
 }

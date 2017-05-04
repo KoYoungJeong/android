@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -418,7 +419,7 @@ public class JandiSocketServiceModelTest {
 
             Field unique = clazz.getDeclaredField("unique");
             unique.setAccessible(true);
-            unique.set(event, UUID.randomUUID().toString());
+            unique.set(event, JandiApplication.getDeviceUUID());
             unique.setAccessible(false);
 
             Field ts = clazz.getDeclaredField("ts");

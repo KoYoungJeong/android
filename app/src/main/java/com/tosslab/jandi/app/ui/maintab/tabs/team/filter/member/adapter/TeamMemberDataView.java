@@ -6,5 +6,7 @@ import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 public interface TeamMemberDataView {
     void refresh();
 
+    int getItemCount();
+
     void setOnItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener);
 }

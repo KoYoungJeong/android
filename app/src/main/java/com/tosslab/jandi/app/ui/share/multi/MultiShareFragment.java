@@ -62,10 +62,12 @@ import com.tosslab.jandi.app.ui.share.multi.interaction.FileShareInteractor;
 import com.tosslab.jandi.app.ui.share.multi.presenter.MultiSharePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FileAccessLimitUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
+import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
@@ -128,6 +130,10 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
     ViewGroup vgMultiShareTeam;
     @Bind(R.id.vg_multi_share_room)
     ViewGroup vgMultiShareRoom;
+    @Bind(R.id.v_restrict_warning)
+    View vRestrictWarning;
+    @Bind(R.id.vg_restrict_warning)
+    ViewGroup vgRestrictWarning;
 
 
     @Inject
@@ -246,12 +252,17 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
 
         setKeyboardVisibleEvent();
         setOnPageChanged();
+
+        setPricingLimitView();
     }
 
     private void setKeyboardVisibleEvent() {
         KeyboardVisibilityEvent.setEventListener(
                 getActivity(), isOpen -> {
                     if (isOpen) {
+                        if (vgRestrictWarning.getVisibility() == View.VISIBLE) {
+                            vgRestrictWarning.setVisibility(View.INVISIBLE);
+                        }
                         etComment.setMaxLines(9);
                         vgMultiShareTeam.setVisibility(View.GONE);
                         vgMultiShareRoom.setVisibility(View.GONE);
@@ -262,6 +273,13 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
                                     bottomSheetBehavior.setPeekHeight((int) UiUtils.getPixelFromDp(249.5f));
                                 });
                     } else {
+                        if (vgRestrictWarning.getVisibility() == View.INVISIBLE) {
+                            if (etComment.getLineCount() > 1) {
+                                vgRestrictWarning.setVisibility(View.GONE);
+                            } else {
+                                vgRestrictWarning.setVisibility(View.VISIBLE);
+                            }
+                        }
                         vgMultiShareTeam.setVisibility(View.VISIBLE);
                         vgMultiShareRoom.setVisibility(View.VISIBLE);
                         if (lvFileThumbs.getVisibility() == View.VISIBLE) {
@@ -685,6 +703,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         if (vgComment.getVisibility() != View.VISIBLE) {
             // 보이도록 하기, 배경 흰색
             vgComment.setVisibility(View.VISIBLE);
+            if (vgRestrictWarning.getVisibility() == View.INVISIBLE) {
+                vgRestrictWarning.setVisibility(View.VISIBLE);
+            }
             if (fileUploadThumbAdapter != null && fileUploadThumbAdapter.getItemCount() > 1) {
                 lvFileThumbs.setVisibility(View.VISIBLE);
             }
@@ -697,6 +718,9 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
         } else {
             // 안보이게 하기, 배경 검정
             vgComment.setVisibility(View.GONE);
+            if (vgRestrictWarning.getVisibility() == View.VISIBLE) {
+                vgRestrictWarning.setVisibility(View.INVISIBLE);
+            }
             lvFileThumbs.setVisibility(View.GONE);
             vpShare.setBackgroundColor(Color.BLACK);
             if (actionBar != null) {
@@ -719,4 +743,23 @@ public class MultiShareFragment extends Fragment implements MultiSharePresenter.
             ivPreviousScroll.setLayoutParams(prevScrollLayoutParams);
         }
     }
+
+    public void setPricingLimitView() {
+        long fileSize = TeamInfoLoader.getInstance().getTeamUsage().getFileSize();
+        boolean isExceedThreshold = fileSize > 1024 * 1024 * 1024 * 4.5;
+        boolean isFree = TeamInfoLoader.getInstance().getTeamPlan().getPricing().equals("free");
+        boolean isNotShowWithin3Days = JandiPreference.isExceedPopupWithin3Days();
+        if (isExceedThreshold && isFree && !isNotShowWithin3Days) {
+            vgRestrictWarning.setVisibility(View.VISIBLE);
+            PricingPlanWarningViewController pricingPlanWarningViewController
+                    = PricingPlanWarningViewController.with(getActivity(), vRestrictWarning);
+            pricingPlanWarningViewController.bind();
+            pricingPlanWarningViewController.setOnClickRemoveViewListener(() -> {
+                vgRestrictWarning.setVisibility(View.GONE);
+            });
+        } else {
+            vgRestrictWarning.setVisibility(View.GONE);
+        }
+    }
+
 }

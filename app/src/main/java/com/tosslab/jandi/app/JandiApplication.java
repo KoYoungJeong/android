@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
@@ -35,8 +37,10 @@ import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.LogManager;
 
 import io.fabric.sdk.android.Fabric;
@@ -49,6 +53,7 @@ import okhttp3.OkHttpClient;
  */
 public class JandiApplication extends MultiDexApplication {
     public static final String TAG_LIFECYCLE = "Jandi.Lifecycle";
+
 
     static Context context;
     static OkHttpClient okHttpClient;
@@ -100,6 +105,45 @@ public class JandiApplication extends MultiDexApplication {
         }, () -> LogUtil.i("PlatformApi", "Success(updatePlatformStatus)"));
     }
 
+    public static String getDeviceUUID() {
+        final String id = JandiPreference.getDeviceId();
+        String uuid = null;
+        if (!TextUtils.isEmpty(id)) {
+            uuid = id;
+        } else {
+            String tempUUID = null;
+
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD) {
+                try {
+                    tempUUID = (String) Build.class.getField("SERIAL").get(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                if (!TextUtils.isEmpty(tempUUID) && !TextUtils.equals(tempUUID, "unknown")) {
+                    uuid = UUID.nameUUIDFromBytes(tempUUID.getBytes("utf8")).toString();
+                } else {
+                    final String androidId = Settings.Secure.getString(
+                            context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                    if (!"9774d56d682e549c".equals(androidId)) {
+                        uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8")).toString();
+                    } else {
+                        uuid = UUID.randomUUID().toString();
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                uuid = UUID.randomUUID().toString();
+            }
+
+            JandiPreference.setDeviceId(uuid);
+        }
+
+        return uuid;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -146,7 +190,6 @@ public class JandiApplication extends MultiDexApplication {
             networkStateBroadcastReceiver = null;
         }
     }
-
 
     protected void initIntercom() {
         Intercom.initialize(this,
@@ -254,7 +297,6 @@ public class JandiApplication extends MultiDexApplication {
 
         SocketServiceCloser.getInstance().close();
     }
-
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {

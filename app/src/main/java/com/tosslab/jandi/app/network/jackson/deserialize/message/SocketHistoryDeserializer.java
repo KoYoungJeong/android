@@ -164,6 +164,7 @@ public class SocketHistoryDeserializer extends JsonDeserializer<EventHistoryInfo
         PollFinished("poll_finished", SocketPollFinishedEvent.class),
         PollDeleted("poll_deleted", SocketPollDeletedEvent.class),
         PollVoted("poll_voted", SocketPollVotedEvent.class),
+        TeamInvitationCreated("team_invitation_created", SocketAnnouncementDeletedEvent.class),
         Unknown("", UnknownEventHistoryInfo.class);
 
         private final String rawType;

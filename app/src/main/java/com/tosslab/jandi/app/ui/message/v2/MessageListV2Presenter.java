@@ -472,21 +472,21 @@ public class MessageListV2Presenter {
 
         int unreadCnt = 0;
 
-        while ((unreadCnt < memberLastReadLinks.size() - 1) && memberLastReadLinks.get(unreadCnt) < 0) {
+        while ((unreadCnt < memberLastReadLinks.size() - 1) && memberLastReadLinks.get(unreadCnt) <= 0) {
             unreadCnt++;
         }
 
-        long linkCursor = memberLastReadLinks.get(unreadCnt);
+        long lastLinkCursor = memberLastReadLinks.get(unreadCnt);
 
         for (int j = 0; j < adapterModel.getCount(); j++) {
-            if (adapterModel.getItem(j).id <= linkCursor) {
+            if (adapterModel.getItem(j).id <= lastLinkCursor) {
                 adapterModel.getItem(j).unreadCnt = unreadCnt;
             } else {
-                while (unreadCnt < memberLastReadLinks.size() - 1 &&
-                        linkCursor == memberLastReadLinks.get(unreadCnt)) {
+                while (unreadCnt < memberLastReadLinks.size() - 1
+                        && adapterModel.getItem(j).id > lastLinkCursor) {
                     unreadCnt++;
+                    lastLinkCursor = memberLastReadLinks.get(unreadCnt);
                 }
-                linkCursor = memberLastReadLinks.get(unreadCnt);
                 adapterModel.getItem(j).unreadCnt = unreadCnt;
             }
         }
@@ -661,7 +661,6 @@ public class MessageListV2Presenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(roomid -> {
                     room.setRoomId(roomid);
-
                     String readyMessage = messageListModel.getReadyMessage(roomid);
                     view.initRoomInfo(roomid, readyMessage);
                     Level myLevel = TeamInfoLoader.getInstance().getMyLevel();
@@ -671,12 +670,13 @@ public class MessageListV2Presenter {
                             && !messageListModel.isTopicOwner(roomid));
                 })
                 .observeOn(Schedulers.io())
-                .subscribe(roomid -> {
-                    SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomid);
+                .subscribe(roomId1 -> {
+                    messageListModel.refreshRoomMarker(roomId1);
+                    SendMessageRepository.getRepository().deleteCompletedMessageOfRoom(roomId1);
 
-                    long lastReadLinkId = messageListModel.getLastReadLinkId(roomid);
+                    long lastReadLinkId = messageListModel.getLastReadLinkId(roomId1);
                     messagePointer.setLastReadLinkId(lastReadLinkId);
-                    messageListModel.setRoomId(roomid);
+                    messageListModel.setRoomId(roomId1);
                     isInitialized = true;
 
                     OldMessageContainer oldMessageQueue = new OldMessageContainer(currentMessageState);
@@ -763,7 +763,6 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> saveMessages(List<ResMessages.Link> links) {
         messageListModel.upsertMessages(room.getRoomId(), links);
-//        List<ResMessages.Link> messages = MessageRepository.getRepository().getMessages(room.getRoomId(), links.get(0).id, Long.MAX_VALUE);
         Observable.from(links)
                 .map(it -> it.id)
                 .collect((Func0<ArrayList<Long>>) ArrayList::new, ArrayList::add)
@@ -772,7 +771,6 @@ public class MessageListV2Presenter {
                 });
 
         messageListModel.sortByTime(links);
-//        messageListModel.presetTextContent(messages);
 
         return links;
     }
@@ -1134,7 +1132,6 @@ public class MessageListV2Presenter {
             item.feedback.status = archivedStatus;
             item.feedback.createTime = new Date();
             adapterModel.updateCachedType(commentIndex);
-
         }
 
         if (position >= 0 || commentIndexes.size() > 0) {

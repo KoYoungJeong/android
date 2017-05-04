@@ -170,12 +170,15 @@ public class DeptJobFragment extends Fragment implements DeptJobPresenter.View,
             lvMember.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    if (dy > 0) {
-                        activity.setTabLayoutVisible(false);
-                    } else {
-                        activity.setTabLayoutVisible(true);
+                    if (deptJobDataView.getItemCount() > 10) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        if (dy > 0) {
+                            activity.setTabLayoutVisible(false);
+                        } else {
+                            activity.setTabLayoutVisible(true);
+                        }
                     }
+
                 }
             });
         }

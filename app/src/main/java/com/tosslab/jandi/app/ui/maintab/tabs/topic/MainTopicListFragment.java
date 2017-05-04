@@ -181,10 +181,13 @@ public class MainTopicListFragment extends BaseLazyFragment
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) {
-                    activity.setTabLayoutVisible(false);
-                } else {
-                    activity.setTabLayoutVisible(true);
+
+                if (topicFolderAdapter.getItemCount() > 12) {
+                    if (dy > 0) {
+                        activity.setTabLayoutVisible(false);
+                    } else {
+                        activity.setTabLayoutVisible(true);
+                    }
                 }
             }
         });
@@ -499,11 +502,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(TopicFolderRefreshEvent event) {
@@ -543,11 +543,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(RoomMarkerEvent event) {
@@ -557,11 +554,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void onEvent(SocketMessageCreatedEvent event) {
@@ -571,11 +565,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if (isCurrentFolder()) {
-            mainTopicListPresenter.refreshList();
-        } else {
-            mainTopicListPresenter.onRefreshUpdatedTopicList();
-        }
+        mainTopicListPresenter.refreshList();
+        mainTopicListPresenter.onRefreshUpdatedTopicList();
     }
 
     public void setSelectedItem(long selectedEntity) {

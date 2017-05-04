@@ -164,8 +164,8 @@ public class SendMessageRepository extends LockExecutorTemplate {
             try {
                 Dao<SendMessage, ?> dao = getHelper().getDao(SendMessage.class);
                 return dao.queryBuilder()
-                        .offset(index)
-                        .limit(1)
+                        .offset((long) index)
+                        .limit(1l)
                         .where()
                         .eq("roomId", roomId)
                         .queryForFirst();

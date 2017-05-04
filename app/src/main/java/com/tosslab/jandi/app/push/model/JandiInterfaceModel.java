@@ -6,10 +6,13 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.events.EventsApi;
+import com.tosslab.jandi.app.network.client.marker.MarkerApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
@@ -17,8 +20,11 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPollList;
+import com.tosslab.jandi.app.network.models.marker.Marker;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
+import com.tosslab.jandi.app.network.models.start.Topic;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -37,6 +43,7 @@ import rx.Observable;
 
 public class JandiInterfaceModel {
 
+    private Lazy<MarkerApi> markerApi;
     private Lazy<AccountApi> accountApi;
     private Lazy<StartApi> startApi;
     private Lazy<EventsApi> eventApi;
@@ -46,12 +53,14 @@ public class JandiInterfaceModel {
     @Inject
     public JandiInterfaceModel(Lazy<AccountApi> accountApi,
                                Lazy<StartApi> startApi, Lazy<EventsApi> eventApi,
-                               Lazy<PollApi> pollApi, Lazy<TeamApi> teamApi) {
+                               Lazy<PollApi> pollApi, Lazy<TeamApi> teamApi,
+                               Lazy<MarkerApi> markerApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.eventApi = eventApi;
         this.pollApi = pollApi;
         this.teamApi = teamApi;
+        this.markerApi = markerApi;
     }
 
     public void refreshAccountInfo() throws RetrofitException {
@@ -109,6 +118,7 @@ public class JandiInterfaceModel {
             if (!refreshRankInfoIfNeed(selectedTeamId)) {
                 TeamInfoLoader.getInstance().refresh();
             }
+            refreshMyMarker();
             refreshPollList(selectedTeamId);
             return true;
         } catch (RetrofitException e) {
@@ -117,6 +127,41 @@ public class JandiInterfaceModel {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void refreshMyMarker() {
+        long teamId = TeamInfoLoader.getInstance().getTeamId();
+        long myId = TeamInfoLoader.getInstance().getMyId();
+
+        try {
+            List<Marker> markers = markerApi.get().getMarkersFromMemberId(teamId, myId);
+            for (Marker marker : markers) {
+                long roomId = marker.getRoomId();
+                long lastLinkId = marker.getReadLinkId();
+                if (TeamInfoLoader.getInstance().isTopic(roomId)) {
+                    TopicRepository.getInstance(teamId).updateReadLinkId(roomId, lastLinkId);
+                    TopicRepository.getInstance(teamId).updateUnreadCount(roomId, 0);
+                } else if (TeamInfoLoader.getInstance().isChat(roomId)) {
+                    ChatRepository.getInstance(teamId).updateReadLinkId(roomId, lastLinkId);
+                    ChatRepository.getInstance(teamId).updateUnreadCount(roomId, 0);
+                }
+            }
+
+            Observable.concat(
+                    Observable.from(TopicRepository.getInstance(teamId).getJoinedTopics())
+                            .map(Topic::getUnreadCount),
+                    Observable.from(ChatRepository.getInstance(teamId).getOpenedChats())
+                            .map(Chat::getUnreadCount))
+                    .filter(count -> count > 0)
+                    .defaultIfEmpty(0)
+                    .reduce((integer, integer2) -> integer + integer2)
+                    .subscribe(count -> {
+                        AccountRepository.getRepository().updateUnread(teamId, count);
+                    }, Throwable::printStackTrace);
+
+        } catch (RetrofitException e) {
+            e.printStackTrace();
         }
     }
 
@@ -162,9 +207,7 @@ public class JandiInterfaceModel {
             } else {
                 entityId = -1;
             }
-        } else
-
-        if (!isChatType(roomType)) {
+        } else if (!isChatType(roomType)) {
             // Room Type 은 RoomId = EntityId
             if (hasEntity(roomId)) {
                 entityId = roomId;

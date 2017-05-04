@@ -815,19 +815,21 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
                 Date date = ((MainMessageListAdapter) recyclerView.getAdapter()).getItemDate(firstVisibleItemPosition);
 
-                if (date.getTime() == 1) {
-                    recyclerScrollStateListener.setListener(null);
-                    tvMessageDate.setVisibility(View.GONE);
-                } else {
-                    tvMessageDate.setVisibility(View.VISIBLE);
-                    if (!recyclerScrollStateListener.hasListener()) {
-                        recyclerScrollStateListener.setListener(scrolling -> {
-                            if (scrolling) {
-                                dateAnimator.show();
-                            } else {
-                                dateAnimator.hide();
-                            }
-                        });
+                if (date != null) {
+                    if (date.getTime() == 1) {
+                        recyclerScrollStateListener.setListener(null);
+                        tvMessageDate.setVisibility(View.GONE);
+                    } else {
+                        tvMessageDate.setVisibility(View.VISIBLE);
+                        if (!recyclerScrollStateListener.hasListener()) {
+                            recyclerScrollStateListener.setListener(scrolling -> {
+                                if (scrolling) {
+                                    dateAnimator.show();
+                                } else {
+                                    dateAnimator.hide();
+                                }
+                            });
+                        }
                     }
                 }
 

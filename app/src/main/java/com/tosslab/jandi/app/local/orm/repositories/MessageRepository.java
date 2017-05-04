@@ -332,7 +332,7 @@ public class MessageRepository extends LockExecutorTemplate {
 
                 return getHelper().getDao(ResMessages.Link.class)
                         .queryBuilder()
-                        .limit(count)
+                        .limit((long)count)
                         .orderBy("time", false)
                         .where()
                         .in("id", queryBuilder)

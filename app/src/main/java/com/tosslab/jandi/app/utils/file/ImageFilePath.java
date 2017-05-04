@@ -83,9 +83,13 @@ public class ImageFilePath {
         if (uri.toString().contains("content://com.google.android.apps.docs.storage/document/") // google drive
                 || uri.toString().contains("file:///storage/emulated/0/Android/data/com.dropbox.android/files/scratch")) { // dropbox
             Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            cursor.moveToFirst();
-            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            String name = cursor.getString(nameIndex);
+            int uriLastIndex = uri.toString().lastIndexOf("/");
+            String name = uri.toString().substring(uriLastIndex + 1, uri.toString().length());
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                name = cursor.getString(nameIndex);
+            }
 
             File cacheFile = new File(context.getExternalCacheDir(), name);
             try {

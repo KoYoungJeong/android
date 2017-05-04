@@ -167,7 +167,6 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
             finish();
             return;
         }
-
         Dart.inject(this);
         ButterKnife.bind(this);
         DaggerMainTabComponent.builder()
@@ -507,6 +506,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         } else {
             offlineLayer.showOfflineView();
         }
+
+        initTabBadges();
 
         SpeedEstimationUtil.sendAnalyticsExecutionAppEndIfStarted();
     }

@@ -56,7 +56,6 @@ public class RoomMarkerRepository extends LockTemplate {
                 }
 
                 return topic.getMarkers();
-
             } else {
                 return null;
             }

@@ -6,5 +6,7 @@ package com.tosslab.jandi.app.ui.maintab.tabs.file.adapter;
 public interface SearchedFilesAdapterView {
     public void clearListView();
 
+    public int getItemCount();
+
     public void refreshListView();
 }

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
  * Created by tonyjs on 16. 4. 4..
@@ -11,7 +10,6 @@ import com.tosslab.jandi.app.services.socket.annotations.Version;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
-@Version(2)
 public class SocketTeamDeletedEvent implements EventHistoryInfo {
 
     private String event;
@@ -79,6 +77,8 @@ public class SocketTeamDeletedEvent implements EventHistoryInfo {
     public static class Data {
         private long teamId;
 
+        private Team team;
+
         public long getTeamId() {
             return teamId;
         }
@@ -87,5 +87,98 @@ public class SocketTeamDeletedEvent implements EventHistoryInfo {
             this.teamId = id;
         }
 
+        public Team getTeam() {
+            return team;
+        }
+
+        public void setTeam(Team team) {
+            this.team = team;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Team {
+        private long id;
+        private String name;
+        private String status;
+        private String domain;
+        private String emailDomain;
+        private String invitationStatus;
+        private String invitationCode;
+        private String invitationUrl;
+        private String all;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public String getEmailDomain() {
+            return emailDomain;
+        }
+
+        public void setEmailDomain(String emailDomain) {
+            this.emailDomain = emailDomain;
+        }
+
+        public String getInvitationStatus() {
+            return invitationStatus;
+        }
+
+        public void setInvitationStatus(String invitationStatus) {
+            this.invitationStatus = invitationStatus;
+        }
+
+        public String getInvitationCode() {
+            return invitationCode;
+        }
+
+        public void setInvitationCode(String invitationCode) {
+            this.invitationCode = invitationCode;
+        }
+
+        public String getInvitationUrl() {
+            return invitationUrl;
+        }
+
+        public void setInvitationUrl(String invitationUrl) {
+            this.invitationUrl = invitationUrl;
+        }
+
+        public String getAll() {
+            return all;
+        }
+
+        public void setAll(String all) {
+            this.all = all;
+        }
     }
 }

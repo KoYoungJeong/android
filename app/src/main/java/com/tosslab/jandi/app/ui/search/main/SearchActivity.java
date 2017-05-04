@@ -48,7 +48,6 @@ import com.tosslab.jandi.app.utils.ApplicationUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
-import com.tosslab.jandi.app.views.PricingPlanWarningViewController;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import java.util.List;
@@ -629,21 +628,21 @@ public class SearchActivity extends BaseAppCompatActivity
 
     @Override
     public void setPricingLimitView(Boolean isLimited) {
-        if (isLimited) {
-            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
-            PricingPlanWarningViewController pricingPlanWarningViewController =
-                    PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
-                            .addViewRemoveButton(() -> {
-                                layoutPricingPlanWarning.setVisibility(View.GONE);
-                            });
-            if (isOnlyMessageMode) {
-                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_MSG_MESSAGE_SEARCH);
-            } else {
-                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_MSG_UNIV_SEARCH);
-            }
-        } else {
-            layoutPricingPlanWarning.setVisibility(View.GONE);
-        }
+//        if (isLimited) {
+//            layoutPricingPlanWarning.setVisibility(View.VISIBLE);
+//            PricingPlanWarningViewController pricingPlanWarningViewController =
+//                    PricingPlanWarningViewController.with(this, layoutPricingPlanWarning)
+//                            .addViewRemoveButton(() -> {
+//                                layoutPricingPlanWarning.setVisibility(View.GONE);
+//                            });
+//            if (isOnlyMessageMode) {
+//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_MSG_MESSAGE_SEARCH);
+//            } else {
+//                pricingPlanWarningViewController.bind(PricingPlanWarningViewController.TYPE_MSG_UNIV_SEARCH);
+//            }
+//        } else {
+//            layoutPricingPlanWarning.setVisibility(View.GONE);
+//        }
     }
 
     @Override

@@ -11,22 +11,27 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.queue.PushHandler;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.push.to.BasePushInfo;
 import com.tosslab.jandi.app.push.to.MarkerPushInfo;
 import com.tosslab.jandi.app.ui.settings.Settings;
+import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 public class JandiPushIntentService extends IntentService {
     public static final String TAG = "JandiPushIntentService";
@@ -51,6 +56,7 @@ public class JandiPushIntentService extends IntentService {
         }
 
         String accountUUid = AccountUtil.getAccountUUID(getApplicationContext());
+
         if (TextUtils.isEmpty(accountUUid)) {
             LogUtil.e(TAG, "Account Id is empty.");
             return;
@@ -59,6 +65,12 @@ public class JandiPushIntentService extends IntentService {
         String content = intent.getStringExtra(EXTRA_CONTENT);
 
         BasePushInfo basePushInfo = parsingPushTO(content);
+
+        String deviceId = TokenUtil.getTokenObject().getDeviceId();
+
+        if (!(TextUtils.equals(basePushInfo.getDeviceId(), deviceId))) {
+            return;
+        }
 
         if (basePushInfo == null) {
             LogUtil.e(TAG, "messagePushInfo == null");
@@ -70,12 +82,6 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        Date sentAt = basePushInfo.getSentAt();
-        if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
-            JandiPreference.setPushLastSentAt(sentAt.getTime());
-            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
-        }
-
         if (basePushInfo instanceof MarkerPushInfo) {
 
             if (basePushInfo.getBadgeCount() == 0) {
@@ -84,6 +90,25 @@ public class JandiPushIntentService extends IntentService {
 
             // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
             PushHandler.getInstance().removeNotificationIfNeed(basePushInfo.getRoomId());
+            return;
+        }
+
+        Date sentAt = basePushInfo.getSentAt();
+        if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
+            JandiPreference.setPushLastSentAt(sentAt.getTime());
+            boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+            if (isSocketConnected) {
+                Observable.from(getTeams())
+                        .filter(team -> team.getStatus() == Team.Status.JOINED)
+                        .map(Team::getUnread)
+                        .defaultIfEmpty(0)
+                        .reduce((prev, current) -> prev + current)
+                        .subscribe(totalActivedBadge -> {
+                            BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                        });
+            } else {
+                BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+            }
             return;
         }
 
@@ -127,6 +152,18 @@ public class JandiPushIntentService extends IntentService {
         }
         return false;
     }
+
+    public List<Team> getTeams() {
+        List<Team> teams = new ArrayList<>();
+        Observable.from(AccountRepository.getRepository().getAccountTeams())
+                .map(Team::createTeam)
+                .toList()
+                .subscribe(teamList -> {
+                    teams.addAll(teamList);
+                });
+        return teams;
+    }
+
 
     private void postEvent(long roomId, String roomType) {
         EventBus eventBus = EventBus.getDefault();

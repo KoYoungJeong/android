@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.models;
 
 import android.os.Build;
-import android.provider.Settings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tosslab.jandi.app.JandiApplication;
@@ -38,7 +37,7 @@ public class ReqAccessToken {
         platformVersion = String.valueOf(Build.VERSION.SDK_INT);
         appVersion = ApplicationUtil.getAppVersionName();
         pushTokens = PushTokenRepository.getInstance().getPushTokenList();
-        uuid = Settings.Secure.getString(JandiApplication.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        uuid = JandiApplication.getDeviceUUID();
     }
 
     public static ReqAccessToken createPasswordReqToken(String userId, String userPassword) {
