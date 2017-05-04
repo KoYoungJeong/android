@@ -37,6 +37,8 @@ public class Regex {
      */
 
     public static final Pattern VALID_URL_PATTERN;
+    public static final Pattern NEW_URL_PATTERN =
+            Pattern.compile("^((http[s]?|ftp):\\/)?\\/?([^:\\/\\s]+)((\\/\\w+)*\\/)([\\w\\-\\.]+[^#?\\s]+)(.*)?(#[\\w\\-]+)?$");
     public static final int VALID_URL_GROUP_ALL = 1;
     public static final int VALID_URL_GROUP_BEFORE = 2;
     public static final int VALID_URL_GROUP_URL = 3;
