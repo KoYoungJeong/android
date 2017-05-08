@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.json.JsonMapper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.queue.PushHandler;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
@@ -90,25 +90,16 @@ public class JandiPushIntentService extends IntentService {
 
             // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
             PushHandler.getInstance().removeNotificationIfNeed(basePushInfo.getRoomId());
+            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
             return;
         }
 
         Date sentAt = basePushInfo.getSentAt();
         if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
+            Log.e("log", basePushInfo.toString());
             JandiPreference.setPushLastSentAt(sentAt.getTime());
-            boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
-            if (isSocketConnected) {
-                Observable.from(getTeams())
-                        .filter(team -> team.getStatus() == Team.Status.JOINED)
-                        .map(Team::getUnread)
-                        .defaultIfEmpty(0)
-                        .reduce((prev, current) -> prev + current)
-                        .subscribe(totalActivedBadge -> {
-                            BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
-                        });
-            } else {
-                BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
-            }
+            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
+        } else {
             return;
         }
 
