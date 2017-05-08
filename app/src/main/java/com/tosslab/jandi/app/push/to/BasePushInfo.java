@@ -137,4 +137,21 @@ public class BasePushInfo {
     public void setAccountUuid(String accountUuid) {
         this.accountUuid = accountUuid;
     }
+
+    @Override
+    public String toString() {
+        return "BasePushInfo{" +
+                "pushType='" + pushType + '\'' +
+                ", badgeCount=" + badgeCount +
+                ", accountId='" + accountId + '\'' +
+                ", accountUuid='" + accountUuid + '\'' +
+                ", roomId=" + roomId +
+                ", deviceId='" + deviceId + '\'' +
+                ", isRingIng=" + isRingIng +
+                ", mentioned='" + mentioned + '\'' +
+                ", deviceSubscribe=" + deviceSubscribe +
+                ", devicePushPreview=" + devicePushPreview +
+                ", sentAt=" + sentAt +
+                '}';
+    }
 }

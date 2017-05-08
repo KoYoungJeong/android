@@ -104,7 +104,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                         .doOnNext(teams -> Collections.sort(teams,
                                 (team, team2) -> team.getStatus() == Team.Status.PENDING ? -1 : 1))
                         .doOnNext(this::initBadgeCount)
-                        .doOnNext(this::initLauncherBadgeCount)
+//                        .doOnNext(this::initLauncherBadgeCount)
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(navigationDataModel::getTeamRows)
                         .observeOn(AndroidSchedulers.mainThread())
@@ -120,7 +120,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     public void initBadgeCount() {
         List<Team> teams = navigationDataModel.getTeams();
         initBadgeCount(teams);
-        initLauncherBadgeCount(teams);
+//        initLauncherBadgeCount(teams);
     }
 
     private void initBadgeCount(List<Team> teams) {
