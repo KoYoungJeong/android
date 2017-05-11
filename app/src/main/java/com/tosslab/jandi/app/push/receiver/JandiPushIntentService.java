@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.push.queue.PushHandler;
 import com.tosslab.jandi.app.push.to.BaseMessagePushInfo;
 import com.tosslab.jandi.app.push.to.BasePushInfo;
 import com.tosslab.jandi.app.push.to.MarkerPushInfo;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
@@ -115,11 +116,15 @@ public class JandiPushIntentService extends IntentService {
         boolean userWantsNotification = isPushOn();
         boolean isRingIng = messagePushInfo.isRingIng(); // 타 플랫폼 active && 토픽 푸쉬 on
 
+        boolean isActive = !JandiApplication.isApplicationDeactive();
+
+        long currentTeamId = TeamInfoLoader.getInstance().getTeamId();
         // 해당 채팅방에 진입해 있거나
         // 푸시 알림 설정 Off 이거나
         // 타 플랫폼이 active 이고 현재 플랫폼이 inactive 인 경우이거나
         // 해당 토픽 푸시 설정이 off 인 경우
-        if (isShowingEntity || !userWantsNotification || !isRingIng) {
+        if (isShowingEntity || !userWantsNotification || !isRingIng ||
+                !(isActive && currentTeamId == messagePushInfo.getTeamId())) {
             postEvent(roomId, messagePushInfo.getRoomType());
             return;
         }

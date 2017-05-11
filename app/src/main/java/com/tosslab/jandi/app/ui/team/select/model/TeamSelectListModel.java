@@ -179,6 +179,7 @@ public class TeamSelectListModel {
     public void updateOnlineStatus(long teamId) {
         try {
             ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+            TeamInfoLoader.getInstance().removeAllOnlineStatus();
             TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
         } catch (RetrofitException e) {
             e.printStackTrace();

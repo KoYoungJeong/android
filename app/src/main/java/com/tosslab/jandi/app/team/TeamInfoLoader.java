@@ -741,6 +741,10 @@ public class TeamInfoLoader {
         }
     }
 
+    public void removeAllOnlineStatus() {
+        onlineStatus.removeAll();
+    }
+
     interface Call0<T> {
         T execute();
     }

@@ -26,6 +26,10 @@ public class OnlineStatus {
         return onlineStatus;
     }
 
+    public void removeAll() {
+        onlineMemberSet.clear();
+    }
+
     public void setOnlineMember(long memberId) {
         if (onlineMemberSet != null) {
             onlineMemberSet.add(memberId);

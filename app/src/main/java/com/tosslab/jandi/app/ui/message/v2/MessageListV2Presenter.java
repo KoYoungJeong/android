@@ -596,8 +596,6 @@ public class MessageListV2Presenter {
                 .subscribe(aBoolean -> {
                     initAnnouncement();
                 });
-
-
     }
 
     private long getRoomId() {

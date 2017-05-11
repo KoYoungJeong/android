@@ -496,13 +496,13 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         if (item != null) {
             if (notificationState == 0) {
                 item.setIcon(
-                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_on));
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_on));
             } else if (notificationState == 1) {
                 item.setIcon(
-                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_off));
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_off));
             } else if (notificationState == 2) {
                 item.setIcon(
-                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_schedule));
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_schedule));
             }
         }
         navigationView.notifyDataSetChanged();
