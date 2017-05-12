@@ -247,8 +247,6 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             vDisableCover = itemView.findViewById(R.id.v_name_warning);
             vOnline = itemView.findViewById(R.id.v_online);
         }
-
-
     }
 
 }

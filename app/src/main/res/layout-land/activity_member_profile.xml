@@ -127,6 +127,7 @@
                     android:orientation="vertical"
                     android:paddingBottom="20dp">
 
+
                     <TextView
                         android:id="@+id/tv_member_profile_division"
                         android:layout_width="match_parent"

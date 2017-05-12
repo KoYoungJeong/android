@@ -203,7 +203,7 @@ public class SettingsPushFragment extends Fragment {
                 int startTimeHour = startTime / 100;
                 startTimeHour = startTimeHour + timeZoneDistance;
                 if (startTimeHour < 0) {
-                    startTimeHour = 24 - startTimeHour;
+                    startTimeHour = 24 + startTimeHour;
                     dayMinus = true;
                 } else if (startTimeHour > 23) {
                     startTimeHour = startTimeHour - 24;
@@ -214,9 +214,9 @@ public class SettingsPushFragment extends Fragment {
 
             if (endTime != -1) {
                 int endTimeHour = endTime / 100;
-                endTimeHour = endTimeHour - timeZoneDistance;
+                endTimeHour = endTimeHour + timeZoneDistance;
                 if (endTimeHour < 0) {
-                    endTimeHour = 24 - endTimeHour;
+                    endTimeHour = 24 + endTimeHour;
                 } else if (endTimeHour > 23) {
                     endTimeHour = endTimeHour - 24;
                 }
