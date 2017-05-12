@@ -40,11 +40,11 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
             initSchedule(DayList, startTime, endTime, timeZone);
         } else {
             List<Integer> defaultDays = new ArrayList<>();
-            defaultDays.add(0);
             defaultDays.add(1);
             defaultDays.add(2);
             defaultDays.add(3);
             defaultDays.add(4);
+            defaultDays.add(5);
             initSchedule(defaultDays, 700, 1900, getTimeZoneInt());
         }
     }

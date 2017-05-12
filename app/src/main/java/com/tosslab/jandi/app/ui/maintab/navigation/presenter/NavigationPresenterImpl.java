@@ -523,27 +523,28 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             int weekdayOfJandiNum = 0;
 
             switch (weekday) {
-                case Calendar.MONDAY:
+                case Calendar.SUNDAY:
                     weekdayOfJandiNum = 0;
                     break;
-                case Calendar.TUESDAY:
+                case Calendar.MONDAY:
                     weekdayOfJandiNum = 1;
                     break;
-                case Calendar.WEDNESDAY:
+                case Calendar.TUESDAY:
                     weekdayOfJandiNum = 2;
                     break;
-                case Calendar.THURSDAY:
+                case Calendar.WEDNESDAY:
                     weekdayOfJandiNum = 3;
                     break;
-                case Calendar.FRIDAY:
+                case Calendar.THURSDAY:
                     weekdayOfJandiNum = 4;
                     break;
-                case Calendar.SATURDAY:
+                case Calendar.FRIDAY:
                     weekdayOfJandiNum = 5;
                     break;
-                case Calendar.SUNDAY:
+                case Calendar.SATURDAY:
                     weekdayOfJandiNum = 6;
                     break;
+
             }
 
             List<Integer> scheduledWeekdays = Settings.getPreferencePushAlarmScheduleDays();

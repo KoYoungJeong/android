@@ -119,14 +119,18 @@ public class JandiPushIntentService extends IntentService {
         boolean isActive = !JandiApplication.isApplicationDeactive();
 
         long currentTeamId = TeamInfoLoader.getInstance().getTeamId();
+
         // 해당 채팅방에 진입해 있거나
         // 푸시 알림 설정 Off 이거나
         // 타 플랫폼이 active 이고 현재 플랫폼이 inactive 인 경우이거나
         // 해당 토픽 푸시 설정이 off 인 경우
-        if (isShowingEntity || !userWantsNotification || !isRingIng ||
-                !(isActive && currentTeamId == messagePushInfo.getTeamId())) {
-            postEvent(roomId, messagePushInfo.getRoomType());
-            return;
+        // 하지만 해당 단말기가 active 상태이고 푸쉬가 온 팀과 현재 보고 있는 팀이 같다면 패스
+        if (isShowingEntity || !userWantsNotification || !isRingIng) {
+            if (isActive && (currentTeamId == messagePushInfo.getTeamId())) {
+            } else {
+                postEvent(roomId, messagePushInfo.getRoomType());
+                return;
+            }
         }
 
         PushHandler.getInstance()

@@ -241,9 +241,14 @@ public class SettingsPushFragment extends Fragment {
                 }
             }
 
-            int bitSum = 0; // 월 2 화 4 수 8 목 16 금 32 토 64 일 128
+            int bitSum = 0; // 일 2 월 4 화 8 수 16 목 32 금 64 토 128
             int weekBit;
             StringBuilder selectedDaysSB = new StringBuilder();
+
+            if (dayList.get(0) == 0) {
+                dayList.remove(0);
+                dayList.add(0);
+            }
 
             for (int day : dayList) {
                 weekBit = 1;
@@ -252,36 +257,37 @@ public class SettingsPushFragment extends Fragment {
                 }
                 bitSum += weekBit;
                 switch (day) {
-                    case 0:
+                    case 1:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_mon) + ", ");
                         break;
-                    case 1:
+                    case 2:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_tue) + ", ");
                         break;
-                    case 2:
+                    case 3:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_wed) + ", ");
                         break;
-                    case 3:
+                    case 4:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_thu) + ", ");
                         break;
-                    case 4:
+                    case 5:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_fri) + ", ");
                         break;
-                    case 5:
+                    case 6:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_sat) + ", ");
                         break;
-                    case 6:
+                    case 0:
                         selectedDaysSB.append(getResources().getString(R.string.day_short_sun) + ", ");
                         break;
+
                 }
             }
 
             // 주중
-            if (bitSum == 62) {
+            if (bitSum == 124) {
                 tvPushScheduleWeekdays.setText(getString(R.string.push_schedule_weekdays));
             }
             // 주말
-            else if (bitSum == 192) {
+            else if (bitSum == 130) {
                 tvPushScheduleWeekdays.setText(getString(R.string.push_schedule_weekend));
             }
             // 매일
