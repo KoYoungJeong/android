@@ -40,11 +40,11 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
             initSchedule(DayList, startTime, endTime, timeZone);
         } else {
             List<Integer> defaultDays = new ArrayList<>();
-            defaultDays.add(0);
             defaultDays.add(1);
             defaultDays.add(2);
             defaultDays.add(3);
             defaultDays.add(4);
+            defaultDays.add(5);
             initSchedule(defaultDays, 700, 1900, getTimeZoneInt());
         }
     }
@@ -65,7 +65,7 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
                 int startTimeHour = startTime / 100;
                 startTimeHour = startTimeHour + timeZoneDistance;
                 if (startTimeHour < 0) {
-                    startTimeHour = 24 - startTimeHour;
+                    startTimeHour = 24 + startTimeHour;
                     dayMinus = true;
                 } else if (startTimeHour > 23) {
                     startTimeHour = startTimeHour - 24;
@@ -76,9 +76,9 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
 
             if (endTime != -1) {
                 int endTimeHour = endTime / 100;
-                endTimeHour = endTimeHour - timeZoneDistance;
+                endTimeHour = endTimeHour + timeZoneDistance;
                 if (endTimeHour < 0) {
-                    endTimeHour = 24 - endTimeHour;
+                    endTimeHour = 24 + endTimeHour;
                 } else if (endTimeHour > 23) {
                     endTimeHour = endTimeHour - 24;
                 }

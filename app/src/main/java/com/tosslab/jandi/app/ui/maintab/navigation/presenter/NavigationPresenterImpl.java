@@ -496,13 +496,13 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         if (item != null) {
             if (notificationState == 0) {
                 item.setIcon(
-                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_on));
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_on));
             } else if (notificationState == 1) {
                 item.setIcon(
-                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_off));
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_off));
             } else if (notificationState == 2) {
                 item.setIcon(
-                        JandiApplication.getContext().getDrawable(R.drawable.side_bar_notifications_schedule));
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_schedule));
             }
         }
         navigationView.notifyDataSetChanged();
@@ -523,27 +523,28 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             int weekdayOfJandiNum = 0;
 
             switch (weekday) {
-                case Calendar.MONDAY:
+                case Calendar.SUNDAY:
                     weekdayOfJandiNum = 0;
                     break;
-                case Calendar.TUESDAY:
+                case Calendar.MONDAY:
                     weekdayOfJandiNum = 1;
                     break;
-                case Calendar.WEDNESDAY:
+                case Calendar.TUESDAY:
                     weekdayOfJandiNum = 2;
                     break;
-                case Calendar.THURSDAY:
+                case Calendar.WEDNESDAY:
                     weekdayOfJandiNum = 3;
                     break;
-                case Calendar.FRIDAY:
+                case Calendar.THURSDAY:
                     weekdayOfJandiNum = 4;
                     break;
-                case Calendar.SATURDAY:
+                case Calendar.FRIDAY:
                     weekdayOfJandiNum = 5;
                     break;
-                case Calendar.SUNDAY:
+                case Calendar.SATURDAY:
                     weekdayOfJandiNum = 6;
                     break;
+
             }
 
             List<Integer> scheduledWeekdays = Settings.getPreferencePushAlarmScheduleDays();

@@ -49,11 +49,11 @@ public class Settings {
     public static List<Integer> getPreferencePushAlarmScheduleDays() {
         Set<String> defaultDaysSet = new HashSet<>();
         List<Integer> dayList = new ArrayList<>();
-        defaultDaysSet.add("0");
         defaultDaysSet.add("1");
         defaultDaysSet.add("2");
         defaultDaysSet.add("3");
         defaultDaysSet.add("4");
+        defaultDaysSet.add("5");
         Set<String> alarmScheduleDays = PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext())
                 .getStringSet(Settings.SETTING_PUSH_ALARM_SCHEDULE_DAYS, defaultDaysSet);
         Iterator iterator = alarmScheduleDays.iterator();

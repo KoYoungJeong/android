@@ -131,15 +131,35 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.tv_mon_button)
-    void onDayMonClicked() {
+    @OnClick(R.id.tv_sun_button)
+    void onDaySunClicked() {
         if (dayClickedInfoHashMap.get(0) == null || !dayClickedInfoHashMap.get(0)) {
             dayClickedInfoHashMap.put(0, true);
+            tvSunButton.setTextColor(getResources().getColor(R.color.white));
+            tvSunButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
+            selectedDayCount++;
+        } else {
+            dayClickedInfoHashMap.put(0, false);
+            tvSunButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
+            tvSunButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
+            selectedDayCount--;
+        }
+
+        if (selectedDayCount == 0) {
+            onDaySunClicked();
+            showLeastOnedaySelectToast();
+        }
+    }
+
+    @OnClick(R.id.tv_mon_button)
+    void onDayMonClicked() {
+        if (dayClickedInfoHashMap.get(1) == null || !dayClickedInfoHashMap.get(1)) {
+            dayClickedInfoHashMap.put(1, true);
             tvMonButton.setTextColor(getResources().getColor(R.color.white));
             tvMonButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
             selectedDayCount++;
         } else {
-            dayClickedInfoHashMap.put(0, false);
+            dayClickedInfoHashMap.put(1, false);
             tvMonButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
             tvMonButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
             selectedDayCount--;
@@ -152,13 +172,13 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.tv_tue_button)
     void onDayTueClicked() {
-        if (dayClickedInfoHashMap.get(1) == null || !dayClickedInfoHashMap.get(1)) {
-            dayClickedInfoHashMap.put(1, true);
+        if (dayClickedInfoHashMap.get(2) == null || !dayClickedInfoHashMap.get(2)) {
+            dayClickedInfoHashMap.put(2, true);
             tvTueButton.setTextColor(getResources().getColor(R.color.white));
             tvTueButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
             selectedDayCount++;
         } else {
-            dayClickedInfoHashMap.put(1, false);
+            dayClickedInfoHashMap.put(2, false);
             tvTueButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
             tvTueButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
             selectedDayCount--;
@@ -172,13 +192,13 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.tv_wed_button)
     void onDayWedClicked() {
-        if (dayClickedInfoHashMap.get(2) == null || !dayClickedInfoHashMap.get(2)) {
-            dayClickedInfoHashMap.put(2, true);
+        if (dayClickedInfoHashMap.get(3) == null || !dayClickedInfoHashMap.get(3)) {
+            dayClickedInfoHashMap.put(3, true);
             tvWedButton.setTextColor(getResources().getColor(R.color.white));
             tvWedButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
             selectedDayCount++;
         } else {
-            dayClickedInfoHashMap.put(2, false);
+            dayClickedInfoHashMap.put(3, false);
             tvWedButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
             tvWedButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
             selectedDayCount--;
@@ -192,13 +212,13 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.tv_thu_button)
     void onDayThuClicked() {
-        if (dayClickedInfoHashMap.get(3) == null || !dayClickedInfoHashMap.get(3)) {
-            dayClickedInfoHashMap.put(3, true);
+        if (dayClickedInfoHashMap.get(4) == null || !dayClickedInfoHashMap.get(4)) {
+            dayClickedInfoHashMap.put(4, true);
             tvThuButton.setTextColor(getResources().getColor(R.color.white));
             tvThuButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
             selectedDayCount++;
         } else {
-            dayClickedInfoHashMap.put(3, false);
+            dayClickedInfoHashMap.put(4, false);
             tvThuButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
             tvThuButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
             selectedDayCount--;
@@ -212,13 +232,13 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.tv_fri_button)
     void onDayFriClicked() {
-        if (dayClickedInfoHashMap.get(4) == null || !dayClickedInfoHashMap.get(4)) {
-            dayClickedInfoHashMap.put(4, true);
+        if (dayClickedInfoHashMap.get(5) == null || !dayClickedInfoHashMap.get(5)) {
+            dayClickedInfoHashMap.put(5, true);
             tvFriButton.setTextColor(getResources().getColor(R.color.white));
             tvFriButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
             selectedDayCount++;
         } else {
-            dayClickedInfoHashMap.put(4, false);
+            dayClickedInfoHashMap.put(5, false);
             tvFriButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
             tvFriButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
             selectedDayCount--;
@@ -232,13 +252,13 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     @OnClick(R.id.tv_sat_button)
     void onDaySatClicked() {
-        if (dayClickedInfoHashMap.get(5) == null || !dayClickedInfoHashMap.get(5)) {
-            dayClickedInfoHashMap.put(5, true);
+        if (dayClickedInfoHashMap.get(6) == null || !dayClickedInfoHashMap.get(6)) {
+            dayClickedInfoHashMap.put(6, true);
             tvSatButton.setTextColor(getResources().getColor(R.color.white));
             tvSatButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
             selectedDayCount++;
         } else {
-            dayClickedInfoHashMap.put(5, false);
+            dayClickedInfoHashMap.put(6, false);
             tvSatButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
             tvSatButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
             selectedDayCount--;
@@ -250,25 +270,6 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         }
     }
 
-    @OnClick(R.id.tv_sun_button)
-    void onDaySunClicked() {
-        if (dayClickedInfoHashMap.get(6) == null || !dayClickedInfoHashMap.get(6)) {
-            dayClickedInfoHashMap.put(6, true);
-            tvSunButton.setTextColor(getResources().getColor(R.color.white));
-            tvSunButton.setBackground(getResources().getDrawable(R.drawable.notification_day_on));
-            selectedDayCount++;
-        } else {
-            dayClickedInfoHashMap.put(6, false);
-            tvSunButton.setTextColor(getResources().getColor(R.color.rgb_cccccc));
-            tvSunButton.setBackground(getResources().getDrawable(R.drawable.notification_day_off));
-            selectedDayCount--;
-        }
-
-        if (selectedDayCount == 0) {
-            onDaySunClicked();
-            showLeastOnedaySelectToast();
-        }
-    }
 
     @OnClick(R.id.vg_select_start_time)
     void onStartTimeClicked() {
@@ -339,26 +340,27 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         for (int day : days) {
             switch (day) {
                 case 0:
-                    onDayMonClicked();
-                    break;
-                case 1:
-                    onDayTueClicked();
-                    break;
-                case 2:
-                    onDayWedClicked();
-                    break;
-                case 3:
-                    onDayThuClicked();
-                    break;
-                case 4:
-                    onDayFriClicked();
-                    break;
-                case 5:
-                    onDaySatClicked();
-                    break;
-                case 6:
                     onDaySunClicked();
                     break;
+                case 1:
+                    onDayMonClicked();
+                    break;
+                case 2:
+                    onDayTueClicked();
+                    break;
+                case 3:
+                    onDayWedClicked();
+                    break;
+                case 4:
+                    onDayThuClicked();
+                    break;
+                case 5:
+                    onDayFriClicked();
+                    break;
+                case 6:
+                    onDaySatClicked();
+                    break;
+
             }
         }
     }

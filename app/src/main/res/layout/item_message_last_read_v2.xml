@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/vg_message_last_read"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vg_message_last_read"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="25dp"
@@ -16,7 +16,7 @@
         android:layout_centerInParent="true"
         android:text="@string/jandi_unread_messages_below"
         android:textColor="#66000000"
-        android:textSize="12dp" />
+        android:textSize="12sp" />
 
     <View
         android:layout_width="match_parent"

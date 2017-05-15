@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.dept.DeptJobFragment;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.deptgroup.dagger.DaggerDeptJobGroupComponent;
@@ -137,6 +138,10 @@ public class DeptJobGroupActivity extends BaseAppCompatActivity implements DeptJ
     }
 
     public void onEvent(MemberRankUpdatedEvent event) {
+        presenter.onRefresh();
+    }
+
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
         presenter.onRefresh();
     }
 

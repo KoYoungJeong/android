@@ -183,6 +183,7 @@ public class JandiInterfaceModel {
 
     public void updateOnlineStatus(long teamId) throws RetrofitException {
         ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().removeAllOnlineStatus();
         TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 

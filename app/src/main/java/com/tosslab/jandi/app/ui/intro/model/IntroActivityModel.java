@@ -86,7 +86,6 @@ public class IntroActivityModel {
             if (!refreshRankIfNeeds()) {
                 TeamInfoLoader.getInstance().refresh();
             }
-            updateOnlineStatus(selectedTeamId);
             refreshMyMarker();
             return true;
         } catch (RetrofitException e) {
@@ -132,6 +131,10 @@ public class IntroActivityModel {
     public boolean hasSelectedTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null;
+    }
+
+    public long getSelectedTeamId() {
+        return AccountRepository.getRepository().getSelectedTeamId();
     }
 
     public int clearLinkRepository() {
@@ -194,6 +197,7 @@ public class IntroActivityModel {
 
     public void updateOnlineStatus(long teamId) throws RetrofitException {
         ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().removeAllOnlineStatus();
         TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 
