@@ -545,7 +545,7 @@ public class MessageSearchListFragment extends Fragment implements MessageSearch
 
             int itemCount = messageAdapter.getItemCount();
             if (itemCount > 0) {
-                messageAdapter.notifyItemRangeChanged(0, itemCount);
+                messageAdapter.notifyDataSetChanged();
             }
             resetUnreadCnt();
             return true;

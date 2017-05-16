@@ -12,10 +12,12 @@ import android.widget.ImageView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.StartApiCalledEvent;
+import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.services.keep.KeepExecutedService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
@@ -207,12 +209,18 @@ public class IntroActivity extends BaseAppCompatActivity implements IntroActivit
 
     @Override
     public void moveToSignHomeActivity() {
+        clearAllDatas();
         Intent intent = new Intent(IntroActivity.this, SignHomeActivity.class);
         intent.addFlags(
                 Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivityWithAnimationAndFinish(intent);
+    }
+
+    private void clearAllDatas() {
+        OpenHelperManager.getHelper(this, OrmDatabaseHelper.class)
+                .clearAllData();
     }
 
     private void startActivityWithAnimationAndFinish(final Intent intent) {
