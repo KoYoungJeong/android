@@ -20,7 +20,7 @@
             android:layout_height="@dimen/jandi_messages_image_height"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:scaleType="centerInside"/>
+            android:scaleType="centerInside" />
 
         <View
             android:id="@+id/iv_message_photo_cover"
@@ -44,11 +44,11 @@
             android:layout_below="@id/v_divider"
             android:background="@drawable/bg_round_bottom_white_for_message"
             android:ellipsize="middle"
+            android:maxLines="1"
             android:paddingBottom="8dp"
             android:paddingLeft="9dp"
             android:paddingRight="9dp"
             android:paddingTop="7dp"
-            android:maxLines="1"
             android:singleLine="true"
             android:text="가로 긴 이미지.png"
             android:textColor="@color/dark_gray"
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
             android:textColor="#ff00ace9"
-            android:textSize="9sp"
+            android:textSize="9dp"
             android:textStyle="bold" />
 
         <TextView
@@ -102,7 +102,7 @@
             android:layout_marginTop="-2dp"
             android:text="오전 11:30"
             android:textColor="#ff999999"
-            android:textSize="10sp" />
+            android:textSize="10dp" />
     </LinearLayout>
     <!-- badge와 시간 끝 -->
 
