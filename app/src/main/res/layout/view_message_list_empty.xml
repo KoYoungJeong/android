@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/rgb_e1e6ec"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="20dp"
@@ -26,8 +26,8 @@
             android:gravity="center"
             android:lineSpacingExtra="4dp"
             android:text="@string/jandi_no_message_in_topic_dm"
-            android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="@dimen/jandi_text_size_large"
+            android:textColor="@color/rgb_999999"
+            android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

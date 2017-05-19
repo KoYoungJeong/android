@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.push.queue.PushHandler;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
@@ -167,6 +168,7 @@ public class MessageListV2Presenter {
                     } else {
                         if (messageListModel.getBadgeCount(room.getRoomId()) != 0) {
                             messageListModel.initBadge(room.getRoomId(), lastLinkId);
+                            PushHandler.getInstance().removeNotificationIfNeed(room.getRoomId());
                             EventBus.getDefault().post(new RoomMarkerEvent(room.getRoomId()));
                         }
                     }
@@ -834,7 +836,7 @@ public class MessageListV2Presenter {
             Observable.from(TeamInfoLoader.getInstance().getUserList())
                     .filter(User::isEnabled)
                     .count()
-                    .map(it -> it - 1)
+                    .map(it -> it - 2)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(it -> {
@@ -853,6 +855,15 @@ public class MessageListV2Presenter {
 
 
         } else {
+            for (long memberId : TeamInfoLoader.getInstance().getRoom(entityId).getMembers()) {
+                if (memberId != TeamInfoLoader.getInstance().getMyId()) {
+                    if (TeamInfoLoader.getInstance().getUser(memberId).isDisabled()) {
+                        view.insertNeverMessageLayout();
+                        return;
+                    }
+                }
+            }
+
             view.insertMessageEmptyLayout();
         }
     }
@@ -1294,6 +1305,8 @@ public class MessageListV2Presenter {
         void updateRecyclerViewInfo();
 
         void showReadOnly(boolean readOnly);
+
+        void insertNeverMessageLayout();
     }
 
 }

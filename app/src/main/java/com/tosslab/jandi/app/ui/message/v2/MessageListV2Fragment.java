@@ -32,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
@@ -344,6 +345,8 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     private MessageRecyclerViewManager messageRecyclerViewManager;
     private MessageListAdapterView adapterView;
 
+    private boolean isEmptyViewAnimatedHide = false;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -593,7 +596,6 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         initActionListeners();
 
         initMessages(true /* withProgress */);
-
     }
 
     private void initSoftInputAreaController() {
@@ -733,6 +735,35 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     private void initActionListeners() {
         softInputAreaController.setOnSoftInputAreaShowingListener((isShowing, softInputAreaHeight) -> {
             announcementViewModel.setAnnouncementViewVisibility(!isShowing);
+            if (isShowing) {
+                if (isEmptyViewAnimatedHide) {
+                    return;
+                } else {
+                    isEmptyViewAnimatedHide = true;
+                }
+                if (vgEmptyLayout != null && vgEmptyLayout.getVisibility() == View.VISIBLE) {
+                    Animation animation = new AlphaAnimation(1.0f, 0.0f);
+                    animation.setDuration(1000);
+                    animation.setFillEnabled(true);
+                    animation.setFillAfter(true);
+                    ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
+                    layoutViewGroup.getChildAt(0).startAnimation(animation);
+                }
+            } else {
+                if (!isEmptyViewAnimatedHide) {
+                    return;
+                } else {
+                    isEmptyViewAnimatedHide = false;
+                }
+                if (vgEmptyLayout != null && vgEmptyLayout.getVisibility() == View.VISIBLE) {
+                    Animation animation = new AlphaAnimation(0.0f, 1.0f);
+                    animation.setDuration(1000);
+                    animation.setFillEnabled(true);
+                    animation.setFillAfter(true);
+                    ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
+                    layoutViewGroup.getChildAt(0).startAnimation(animation);
+                }
+            }
         });
     }
 
@@ -2020,14 +2051,18 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
             return;
         }
         vgEmptyLayout.removeAllViews();
+
         View view = LayoutInflater.from(getActivity().getBaseContext())
                 .inflate(R.layout.view_team_member_empty, vgEmptyLayout, true);
+        TextView tvMessageNoMember = (TextView) view.findViewById(R.id.tv_message_no_member);
+        tvMessageNoMember.setText(
+                getString(R.string.jandi_message_no_member, TeamInfoLoader.getInstance().getTeamName()));
+
         View.OnClickListener onClickListener = v -> {
             InviteDialogExecutor.getInstance().executeInvite(getContext());
         };
         view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
         view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
-
     }
 
     @Override
@@ -2080,6 +2115,17 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         LayoutInflater.from(getActivity().getBaseContext())
                 .inflate(R.layout.view_message_list_empty, vgEmptyLayout, true);
 
+    }
+
+    @Override
+    public void insertNeverMessageLayout() {
+        if (vgEmptyLayout == null) {
+            return;
+        }
+        vgEmptyLayout.removeAllViews();
+
+        LayoutInflater.from(getActivity().getBaseContext())
+                .inflate(R.layout.view_message_list_never_message, vgEmptyLayout, true);
     }
 
     @Override

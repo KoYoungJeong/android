@@ -83,24 +83,23 @@ public class JandiPushIntentService extends IntentService {
             return;
         }
 
-        if (basePushInfo instanceof MarkerPushInfo) {
-
-            if (basePushInfo.getBadgeCount() == 0) {
-                PushHandler.getInstance().removeNotificationAll();
-            }
-
-            // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
-            PushHandler.getInstance().removeNotificationIfNeed(basePushInfo.getRoomId());
-            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
-            return;
-        }
-
         Date sentAt = basePushInfo.getSentAt();
         if (sentAt != null && JandiPreference.getPushLastSentAt() < sentAt.getTime()) {
             Log.e("log", basePushInfo.toString());
             JandiPreference.setPushLastSentAt(sentAt.getTime());
             BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
         } else {
+            return;
+        }
+
+        if (basePushInfo instanceof MarkerPushInfo) {
+//            if (basePushInfo.getBadgeCount() == 0) {
+//                PushHandler.getInstance().removeNotificationAll();
+//            }
+//
+//            // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
+            PushHandler.getInstance().removeNotificationIfNeed(basePushInfo.getRoomId());
+            BadgeUtils.setBadge(JandiApplication.getContext(), basePushInfo.getBadgeCount());
             return;
         }
 
