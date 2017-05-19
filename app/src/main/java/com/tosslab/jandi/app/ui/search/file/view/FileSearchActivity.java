@@ -29,6 +29,8 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -69,6 +71,8 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
     InputMethodManager inputMethodManager;
 
     private SearchSelectView searchSelectView;
+
+    private boolean isFirstKeyboardActive = true;
 
     public static void start(Context context, long entityId) {
         context.startActivity(Henson.with(context)
@@ -111,6 +115,19 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
         addFragments();
         hideSoftInput();
+
+        KeyboardVisibilityEvent.registerEventListener(this, isOpen -> {
+            if (isOpen) {
+                if (isFirstKeyboardActive) {
+                    searchSelectView.setOnEmptyViewChildVisible(false);
+                    isFirstKeyboardActive = false;
+                } else {
+                    searchSelectView.setOnEmptyViewAnimationVisible(false);
+                }
+            } else {
+                searchSelectView.setOnEmptyViewAnimationVisible(true);
+            }
+        });
 
     }
 
@@ -279,6 +296,10 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         void setOnSearchItemSelect(OnSearchItemSelect onSearchItemSelect);
 
         void setOnSearchText(OnSearchText onSearchText);
+
+        void setOnEmptyViewAnimationVisible(boolean visible);
+
+        void setOnEmptyViewChildVisible(boolean visible);
     }
 
     public interface OnSearchItemSelect {

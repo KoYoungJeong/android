@@ -920,14 +920,12 @@
 	<string name="security_setting">"보안 설정"</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
-	<string name="tab_1_1_esm_1">"팀 멤버와 1:1 대화를 시작해보세요
-"</string>
-	<string name="tab_1_1_esm_2">"화면에서 +를 눌러\n대화를 시작해보세요
-"</string>
+	<string name="tab_1_1_esm_1">"팀 멤버와 1:1 대화를 시작해보세요"</string>
+	<string name="tab_1_1_esm_2">"화면에서 +를 눌러\n대화를 시작해보세요"</string>
 	<string name="tab_file_esm_1">"공유한 모든 파일을 여기서\n확인해보세요"</string>
 	<string name="tab_file_esm_2">"토픽방 또는 1:1 대화방에서 +를 눌러\n파일을 공유해보세요"</string>
 	<string name="tab_mypage_mention_esm_1">"내가 언급된 모든 메시지를 여기서\n확인해보세요"</string>
-	<string name="tab_mypage_mention_esm_2">"입렵창에 ‘@%s’을\n콕 집어 메시지를 보내보세요"</string>
+	<string name="tab_mypage_mention_esm_2">"입렵창에 ‘@팀 멤버 이름’을\n콕 집어 메시지를 보내보세요"</string>
 	<string name="tab_mypage_poll_esm_1">"투표 목록을 여기서 확인해보세요"</string>
 	<string name="tab_mypage_poll_esm_2">"토픽방에서 +를 눌러 투표를\n진행해보세요"</string>
 	<string name="tab_mypage_star_file_esm_1">"즐겨찾기한 파일을\n여기서 확인하세요"</string>

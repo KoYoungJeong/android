@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
@@ -28,7 +28,6 @@ import com.f2prateek.dart.InjectExtra;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -112,7 +111,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
     TextView tvFileListType;
 
     @Bind(R.id.vg_file_list_empty)
-    View uploadEmptyView;
+    ViewGroup uploadEmptyView;
 
     @Bind(R.id.vg_file_list_search_empty)
     View searchEmptyView;
@@ -286,11 +285,11 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         searchSelectorViewController.showFileTypeDialog();
     }
 
-    @OnClick(value = {R.id.btn_file_empty_upload, R.id.iv_file_empty_upload})
-    void onUploadClick() {
-        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
-        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
-    }
+//    @OnClick(value = {R.id.btn_file_empty_upload, R.id.iv_file_empty_upload})
+//    void onUploadClick() {
+//        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
+//        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+//    }
 
     private void setListView() {
         if (getActivity() instanceof FileSearchActivity) {
@@ -785,4 +784,37 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         }
     }
 
+    @Override
+    public void setOnEmptyViewAnimationVisible(boolean visible) {
+        if (!visible) {
+            if (uploadEmptyView != null && uploadEmptyView.getVisibility() == View.VISIBLE) {
+                Animation animation = new AlphaAnimation(1.0f, 0.0f);
+                animation.setDuration(1000);
+                animation.setFillEnabled(true);
+                animation.setFillAfter(true);
+                ViewGroup layoutViewGroup = (ViewGroup) uploadEmptyView.getChildAt(0);
+                layoutViewGroup.setVisibility(View.VISIBLE);
+                layoutViewGroup.startAnimation(animation);
+            }
+        } else {
+            if (uploadEmptyView != null && uploadEmptyView.getVisibility() == View.VISIBLE) {
+                Animation animation = new AlphaAnimation(0.0f, 1.0f);
+                animation.setDuration(1000);
+                animation.setFillEnabled(true);
+                animation.setFillAfter(true);
+                ViewGroup layoutViewGroup = (ViewGroup) uploadEmptyView.getChildAt(0);
+                layoutViewGroup.setVisibility(View.VISIBLE);
+                layoutViewGroup.startAnimation(animation);
+            }
+        }
+    }
+
+    @Override
+    public void setOnEmptyViewChildVisible(boolean visible) {
+        if (visible) {
+            uploadEmptyView.getChildAt(0).setVisibility(View.VISIBLE);
+        } else {
+            uploadEmptyView.getChildAt(0).setVisibility(View.INVISIBLE);
+        }
+    }
 }
