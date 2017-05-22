@@ -35,6 +35,8 @@ import com.tosslab.jandi.app.views.settings.SettingsBodyView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -170,10 +172,14 @@ public class SettingsPushFragment extends Fragment {
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(deviceInfo -> {
-                        setAlarmScheduleDetail(deviceInfo.getDays(),
-                                deviceInfo.getStartTime(),
-                                deviceInfo.getEndTime(),
-                                deviceInfo.getTimezone());
+                        if (deviceInfo != null) {
+                            setAlarmScheduleDetail(deviceInfo.getDays(),
+                                    deviceInfo.getStartTime(),
+                                    deviceInfo.getEndTime(),
+                                    deviceInfo.getTimezone());
+                        }
+                    }, t -> {
+                        t.printStackTrace();
                     });
         }
     }
@@ -629,22 +635,12 @@ public class SettingsPushFragment extends Fragment {
     }
 
     private int getTimeZoneInt() {
-        TimeZone timeZone = TimeZone.getDefault();
-        String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = GregorianCalendar.getInstance(tz);
+        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
 
-        boolean isPlus;
+        int timeZoneInt = offsetInMillis / 3600000;
 
-        if (timeZoneString.contains("+")) {
-            isPlus = true;
-        } else {
-            isPlus = false;
-        }
-
-        int timeZoneInt = Integer.valueOf(timeZoneString.substring(1, 3));
-
-        if (!isPlus) {
-            timeZoneInt = timeZoneInt * -1;
-        }
         return timeZoneInt;
     }
 

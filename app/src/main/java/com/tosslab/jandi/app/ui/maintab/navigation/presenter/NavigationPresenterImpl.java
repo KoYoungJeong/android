@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -474,6 +475,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(deviceInfo -> {
+                        if (deviceInfo == null) {
+                            return;
+                        }
                         if (deviceInfo.getDays() != null && deviceInfo.getDays().size() > 0) {
                             Settings.setHasAlarmSchedule(true);
                             Settings.setPreferencePushAlarmSchedule(true);
@@ -483,6 +487,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                             Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimezone());
                             setAlarmIconChanged();
                         }
+                    }, t -> {
+                        t.printStackTrace();
                     });
         } else {
             setAlarmIconChanged();
@@ -600,22 +606,12 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     }
 
     private int getTimeZoneInt() {
-        TimeZone timeZone = TimeZone.getDefault();
-        String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = GregorianCalendar.getInstance(tz);
+        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
 
-        boolean isPlus;
+        int timeZoneInt = offsetInMillis / 3600000;
 
-        if (timeZoneString.contains("+")) {
-            isPlus = true;
-        } else {
-            isPlus = false;
-        }
-
-        int timeZoneInt = Integer.valueOf(timeZoneString.substring(1, 3));
-
-        if (!isPlus) {
-            timeZoneInt = timeZoneInt * -1;
-        }
         return timeZoneInt;
     }
 
