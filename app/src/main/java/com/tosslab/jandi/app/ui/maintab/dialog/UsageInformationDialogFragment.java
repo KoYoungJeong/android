@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.utils.AccountUtil;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -107,6 +108,10 @@ public class UsageInformationDialogFragment extends DialogFragment {
         }
 
         userInfos.add(new Pair<>("Device Token", builder.toString()));
+
+        if (TokenUtil.getTokenObject() != null && TokenUtil.getTokenObject().getDeviceId() != null) {
+            userInfos.add(new Pair<>("Device ID", TokenUtil.getTokenObject().getDeviceId()));
+        }
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         Observable.from(userInfos)
