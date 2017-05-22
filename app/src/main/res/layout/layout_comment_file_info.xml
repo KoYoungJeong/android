@@ -14,8 +14,8 @@
         android:layout_width="@dimen/jandi_messages_profile_size"
         android:layout_height="@dimen/jandi_messages_profile_size"
         android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        android:src="@drawable/comment_profile"
-        android:clickable="false"/>
+        android:clickable="false"
+        android:src="@drawable/comment_profile" />
 
     <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
         android:id="@+id/vg_message_common_file"
@@ -37,7 +37,7 @@
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_centerVertical="true"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter" />
 
         <View
             android:id="@+id/v_message_common_file_border"
@@ -47,7 +47,7 @@
             android:layout_alignLeft="@+id/iv_message_common_file"
             android:layout_alignRight="@+id/iv_message_common_file"
             android:layout_alignTop="@+id/iv_message_common_file"
-            android:background="@drawable/border_black_a_10"/>
+            android:background="@drawable/border_black_a_10" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -68,8 +68,8 @@
                 android:singleLine="true"
                 android:text="jfile name asjhdk lajdlkjhsdlka jfdsafdsafd safdsfsdh flkjahsdf"
                 android:textColor="@color/dark_gray"
-                android:textSize="14dp"
-                android:textStyle="bold"/>
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_uploader_name"
@@ -84,7 +84,7 @@
                 android:text="tee"
                 android:textColor="@color/jandi_text"
                 android:textSize="11sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_file_info_divider"
@@ -96,7 +96,7 @@
                 android:layout_toRightOf="@+id/tv_uploader_name"
                 android:text="|"
                 android:textColor="#999999"
-                android:textSize="11dp"/>
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/tv_common_file_size"
@@ -106,7 +106,7 @@
                 android:layout_toRightOf="@+id/tv_file_info_divider"
                 android:text="file size"
                 android:textColor="#999999"
-                android:textSize="11dp"/>
+                android:textSize="11sp" />
 
         </RelativeLayout>
 

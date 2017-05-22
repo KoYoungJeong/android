@@ -92,7 +92,7 @@ def makeXml(dic, absResourcePath):
                 dic[languageKey][resourceKey] = ""
             output += "\n"
             output += "\t<string name=\"%s\">\"%s\"</string>" % (
-            resourceKey, dic[languageKey][resourceKey])
+                resourceKey, dic[languageKey][resourceKey])
 
         output += "\n</resources>"
 

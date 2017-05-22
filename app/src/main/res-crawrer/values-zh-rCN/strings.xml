@@ -56,6 +56,8 @@
 	<string name="common_hamburger_teamadmin">"团队管理员"</string>
 	<string name="common_hamburger_teamlist">"团队列表"</string>
 	<string name="common_inputfield_placeholder">"输入信息中..."</string>
+	<string name="common_keyboard_next">"下一步"</string>
+	<string name="common_keyboard_previous">"上一步"</string>
 	<string name="common_launch_503">"抱歉！JANDI 服务器暂时出现异常。建议您再尝试操作，造成不便敬请见谅"</string>
 	<string name="common_launch_fail">"暂时无法加载初始数据
 请重新启动 app"</string>
@@ -499,7 +501,7 @@
 	<string name="jandi_message_leave_private_topic">"您如果离开这个私人议题群组，未来希望能够重新加入，必须先取得其它人的邀请。您确定您想要离开？"</string>
 	<string name="jandi_message_leave_private_topic_when_only_you">"一旦离开议题，议题将会自动删除！你确定要离开议题？"</string>
 	<string name="jandi_message_logout">"已登出"</string>
-	<string name="jandi_message_no_member">"不再单打独斗，现在就邀请所有伙伴加入你的团队！"</string>
+	<string name="jandi_message_no_member">""</string>
 	<string name="jandi_message_no_starred">"取消标记"</string>
 	<string name="jandi_message_search">"信息搜索"</string>
 	<string name="jandi_message_search_available">"信息关键词搜索功能上线啰！"</string>
@@ -528,6 +530,7 @@
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"请提供您想邀请的团队成员的电子邮件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此团队的成员"</string>
+	<string name="jandi_no_message_dm_disabled_member">""</string>
 	<string name="jandi_no_message_in_topic_dm">"输入信息以开始对话"</string>
 	<string name="jandi_no_preview_push_mention">"你在此信息中被提及"</string>
 	<string name="jandi_no_preview_push_message">"你收到一则新信息"</string>
@@ -858,6 +861,7 @@
 	<string name="password_current_type_info">"请输入目前的密码以确保重要数据"</string>
 	<string name="password_forgot">"忘记密码？"</string>
 	<string name="password_forgot_email_type_info">"请输入注册的电子邮箱, 以重新设置密码"</string>
+	<string name="password_forgot_not_jandi_email_type_info">"此电邮尚未注册 JANDI. 请重新输入您的电子邮件."</string>
 	<string name="password_new_again_type">"再次确认新密码"</string>
 	<string name="password_new_type">"输入新密码"</string>
 	<string name="password_new_type_confi_alert">"密码不得少于8个字元, 同时包含大小写英文字母、数字或特殊符号"</string>

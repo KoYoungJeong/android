@@ -837,7 +837,7 @@ public class MessageListV2Presenter {
             Observable.from(TeamInfoLoader.getInstance().getUserList())
                     .filter(User::isEnabled)
                     .count()
-                    .map(it -> it - 1)
+                    .map(it -> it - 2)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(it -> {
@@ -856,6 +856,15 @@ public class MessageListV2Presenter {
 
 
         } else {
+            for (long memberId : TeamInfoLoader.getInstance().getRoom(entityId).getMembers()) {
+                if (memberId != TeamInfoLoader.getInstance().getMyId()) {
+                    if (TeamInfoLoader.getInstance().getUser(memberId).isDisabled()) {
+                        view.insertNeverMessageLayout();
+                        return;
+                    }
+                }
+            }
+
             view.insertMessageEmptyLayout();
         }
     }
@@ -1297,6 +1306,8 @@ public class MessageListV2Presenter {
         void updateRecyclerViewInfo();
 
         void showReadOnly(boolean readOnly);
+
+        void insertNeverMessageLayout();
     }
 
 }

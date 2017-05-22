@@ -34,9 +34,10 @@
         android:id="@+id/cb_call_preview_permission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="-8dp"
         android:layout_marginTop="14dp"
-        android:textSize="@dimen/jandi_text_size_medium"
         android:text="@string/common_calleridnotifier_dontshowmodal"
+        android:textSize="@dimen/jandi_text_size_medium"
         android:theme="@style/Jandi.Default.CheckBox" />
 
 </LinearLayout>

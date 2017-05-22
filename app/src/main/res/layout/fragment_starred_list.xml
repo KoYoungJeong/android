@@ -23,7 +23,7 @@
             android:gravity="center"
             android:text="@string/jandi_starred_all"
             android:textColor="@color/text_color_category"
-            android:textSize="@dimen/jandi_star_tab_text_size"/>
+            android:textSize="@dimen/jandi_star_tab_text_size" />
 
         <TextView
             android:id="@+id/btn_starred_list_file"
@@ -34,7 +34,7 @@
             android:gravity="center"
             android:text="@string/jandi_starred_files"
             android:textColor="@color/text_color_category"
-            android:textSize="@dimen/jandi_star_tab_text_size"/>
+            android:textSize="@dimen/jandi_star_tab_text_size" />
     </LinearLayout>
 
     <View
@@ -42,14 +42,14 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/vg_starred_list_tab"
-        android:background="@color/jandi_starred_list_line"/>
+        android:background="@color/jandi_starred_list_line" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_starred_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/v_starred_list_divider"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false" />
 
     <LinearLayout
         android:id="@+id/vg_starred_list_empty"
@@ -59,19 +59,32 @@
         android:background="@android:color/white"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingLeft="48dp"
-        android:paddingRight="48dp"
         android:visibility="gone">
 
+        <ImageView
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:src="@drawable/img_no_star" />
+
         <TextView
-            android:id="@+id/tv_starred_list_empty"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_starred_list_empty1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="27dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="@string/jandi_mention_no_mentions"
-            android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="@dimen/jandi_text_size_large"/>
+            android:text="@string/tab_mypage_star_message_file_esm_1"
+            android:textColor="@color/rgb_999999"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_starred_list_empty2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/tab_mypage_star_message_file_esm_2"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -83,6 +96,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_circle_white"
-        android:indeterminate="true"/>
+        android:indeterminate="true" />
 
 </RelativeLayout>

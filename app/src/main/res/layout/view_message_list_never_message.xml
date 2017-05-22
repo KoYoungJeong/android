@@ -2,53 +2,32 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/rgb_e1e6ec"
     android:clipToPadding="false"
     android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/vg_member_empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/rgb_e1e6ec"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="20dp"
         android:paddingTop="20dp">
 
         <ImageView
-            android:id="@+id/img_chat_choose_member_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_send_invitations" />
+            android:src="@drawable/img_no_message_disable_member" />
 
         <TextView
-            android:id="@+id/tv_message_no_member"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
-            android:layout_marginRight="64dp"
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
-            android:text="@string/jandi_message_no_member"
+            android:text="@string/jandi_no_message_dm_disabled_member"
             android:textColor="@color/rgb_999999"
             android:textSize="14sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/btn_chat_choose_member_empty"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/bg_round_blue_radius_20"
-            android:gravity="center_vertical"
-            android:paddingLeft="17dp"
-            android:paddingRight="17dp"
-            android:text="@string/jandi_send_invitation"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
     </LinearLayout>
-
 </ScrollView>

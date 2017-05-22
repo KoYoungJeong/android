@@ -27,10 +27,21 @@
             android:gravity="center"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="@string/jandi_start_direct_messages_1"
-            android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="@dimen/jandi_text_size_large"
-            android:textStyle="bold" />
+            android:text="@string/tab_1_1_esm_1"
+            android:textColor="@color/rgb_999999"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/tab_1_1_esm_2"
+            android:textColor="@color/rgb_999999"
+            android:textSize="14sp" />
 
     </LinearLayout>
 </ScrollView>

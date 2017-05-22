@@ -56,6 +56,8 @@
 	<string name="common_hamburger_teamadmin">"Team admin"</string>
 	<string name="common_hamburger_teamlist">"Team List"</string>
 	<string name="common_inputfield_placeholder">"Type a message..."</string>
+	<string name="common_keyboard_next">"Next"</string>
+	<string name="common_keyboard_previous">"Previous"</string>
 	<string name="common_launch_503">"We are sorry, but JANDI server is temporarily unavailable. We apologize for the inconvenience and suggest trying again later."</string>
 	<string name="common_launch_fail">"Failed to load initial data.
 Please restart the app."</string>
@@ -502,7 +504,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_message_leave_private_topic_when_only_you">"Once you leave the topic, the topic will be deleted.
   Are you sure you want to leave the topic?"</string>
 	<string name="jandi_message_logout">"Signed out"</string>
-	<string name="jandi_message_no_member">"No other members have joined your team. Invite them now to start collaborating."</string>
+	<string name="jandi_message_no_member">""</string>
 	<string name="jandi_message_no_starred">"Unstarred"</string>
 	<string name="jandi_message_search">"Message search"</string>
 	<string name="jandi_message_search_available">"Message Search is now available!"</string>
@@ -531,6 +533,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_next">"Next"</string>
 	<string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
 	<string name="jandi_no_long_team_member">"%s is no longer a team member."</string>
+	<string name="jandi_no_message_dm_disabled_member">""</string>
 	<string name="jandi_no_message_in_topic_dm">"Enter a message to start the conversation."</string>
 	<string name="jandi_no_preview_push_mention">"You were mentioned in a message."</string>
 	<string name="jandi_no_preview_push_message">"You received a new message."</string>
@@ -863,6 +866,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="password_current_type_info">"Please enter your current password to protect your valuable information"</string>
 	<string name="password_forgot">"Can’t remember your password?"</string>
 	<string name="password_forgot_email_type_info">"Please enter an email address to reset your password"</string>
+	<string name="password_forgot_not_jandi_email_type_info">"This email address is not registered in JANDI. Please retype your email address."</string>
 	<string name="password_new_again_type">"Confirm new password"</string>
 	<string name="password_new_type">"Enter a new password"</string>
 	<string name="password_new_type_confi_alert">"Must be at least 8 characters long and contain at least 1 uppercase letter, number or special character"</string>

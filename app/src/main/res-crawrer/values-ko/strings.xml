@@ -59,6 +59,8 @@
 	<string name="common_hamburger_teamadmin">"팀 관리자"</string>
 	<string name="common_hamburger_teamlist">"팀 리스트"</string>
 	<string name="common_inputfield_placeholder">"메시지 쓰기..."</string>
+	<string name="common_keyboard_next">"다음"</string>
+	<string name="common_keyboard_previous">"이전"</string>
 	<string name="common_launch_503">"일시적으로 서비스를 사용할 수 없습니다. 잠시 후 다시 시도하여 주세요."</string>
 	<string name="common_launch_fail">"초기 정보를 불러오지 못했습니다. 
 앱을 다시 실행하여 주세요."</string>
@@ -408,7 +410,7 @@
 	<string name="jandi_folder_insert_name">"폴더명을 입력해주세요."</string>
 	<string name="jandi_folder_move_to">"폴더로 이동하기"</string>
 	<string name="jandi_folder_new_folder">"새 폴더 만들기"</string>
-	<string name="jandi_folder_no_have">"폴더가 없습니다"</string>
+	<string name="jandi_folder_no_have">"폴더를 만들어 토픽 목록을\n관리해보세요"</string>
 	<string name="jandi_folder_remove_from">"폴더에서 제거하기"</string>
 	<string name="jandi_folder_removed">"폴더가 삭제되었습니다."</string>
 	<string name="jandi_folder_rename">"이름 변경"</string>
@@ -466,7 +468,8 @@
 	<string name="jandi_invite_to_dummy_account_again">"입력하신 이메일 주소는 이미 다른 멤버가 초대 중입니다.
   초대메일을 다시 보낼까요?"</string>
 	<string name="jandi_invite_to_team">"팀으로 초대하기"</string>
-	<string name="jandi_invite_to_team_for_member">"멤버 초대하기"</string>
+	<string name="jandi_invite_to_team_for_member">"팀에 멤버 초대하기
+"</string>
 	<string name="jandi_invite_wechat">"위챗"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>
@@ -512,8 +515,7 @@
 	<string name="jandi_message_leave_private_topic_when_only_you">"혼자있는 비공개 토픽을 나가게 될 경우, 토픽은 삭제됩니다.
   그래도 토픽을 나가시겠습니까?"</string>
 	<string name="jandi_message_logout">"로그아웃 되었습니다"</string>
-	<string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다.
-  지금 바로 멤버들을 초대하세요."</string>
+	<string name="jandi_message_no_member">"%s에 멤버를 초대하여\n대화를 시작해보세요"</string>
 	<string name="jandi_message_no_starred">"즐겨찾기가 해제되었습니다"</string>
 	<string name="jandi_message_search">"메시지 검색"</string>
 	<string name="jandi_message_search_available">"잔디에 메시지 검색 기능이 업데이트 되었습니다!"</string>
@@ -546,7 +548,8 @@
 	<string name="jandi_next">"다음"</string>
 	<string name="jandi_no_invite_email">"팀에 초대를 원하는 멤버들의 이메일 주소를 입력해주세요"</string>
 	<string name="jandi_no_long_team_member">"%s님은 더 이상 팀 멤버가 아닙니다."</string>
-	<string name="jandi_no_message_in_topic_dm">"아직 메시지가 없습니다. 메시지를 입력하셔서 대화를 시작해보세요."</string>
+	<string name="jandi_no_message_dm_disabled_member">"과거 대화 내용이 없습니다"</string>
+	<string name="jandi_no_message_in_topic_dm">"메시지를 입력하여 대화를\n시작해보세요"</string>
 	<string name="jandi_no_preview_push_mention">"메시지에서 멘션했습니다."</string>
 	<string name="jandi_no_preview_push_message">"새 메시지가 도착했습니다."</string>
 	<string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
@@ -801,7 +804,7 @@
 	<string name="jandi_topic_invitation">"초대하기"</string>
 	<string name="jandi_topic_leave">"토픽 나가기"</string>
 	<string name="jandi_topic_message_search">"대화방, 메시지 검색"</string>
-	<string name="jandi_topic_no_member_1">"아직 토픽에 초대된 멤버가 없습니다."</string>
+	<string name="jandi_topic_no_member_1">"토픽에 멤버를 초대하여\n대화를 시작해보세요"</string>
 	<string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>
 	<string name="jandi_topic_notification">"알림"</string>
 	<string name="jandi_topic_owner">"토픽 관리자"</string>
@@ -878,6 +881,7 @@
 	<string name="password_current_type_info">"소중한 정보 보호를 위해 현재 비밀번호를 입력해주세요"</string>
 	<string name="password_forgot">"비밀번호가 생각나지 않으시나요?"</string>
 	<string name="password_forgot_email_type_info">"비밀번호를 새로 설정하기 위해 이메일 주소를 입력해주세요"</string>
+	<string name="password_forgot_not_jandi_email_type_info">"잔디 계정의 이메일 주소가 아닙니다. 이메일을 다시 입력해주세요."</string>
 	<string name="password_new_again_type">"새 비밀번호 다시 입력"</string>
 	<string name="password_new_type">"새 비밀번호 입력"</string>
 	<string name="password_new_type_confi_alert">"영어 대문자, 특수문자, 또는 숫자 중 최소한 1자 이상이 포함된 8자 이상이어야 합니다"</string>
@@ -916,22 +920,18 @@
 	<string name="security_setting">"보안 설정"</string>
 	<string name="sent_auth_email">"인증 이메일이 전송되었습니다! 로그인을 하시려면 지금 메일함을 확인해주세요"</string>
 	<string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
-	<string name="tab_1_1_esm_1">""</string>
-	<string name="tab_1_1_esm_2">""</string>
-	<string name="tab_file_esm_1">"공유한 모든 파일을 여기서 확인해보세요
-"</string>
-	<string name="tab_file_esm_2">"토픽방 또는 1:1 대화방에서 +를 눌러 파일을 공유해보세요
-"</string>
-	<string name="tab_mypage_mention_esm_1">"내가 언급된 모든 메시지를
-여기서 확인해보세요
-"</string>
-	<string name="tab_mypage_mention_esm_2">""</string>
-	<string name="tab_mypage_poll_esm_1">"<b>투표 목록을 여기서 확인해보세요</b>"</string>
-	<string name="tab_mypage_poll_esm_2">"토픽방에서 +를 눌러 투표를 진행해보세요"</string>
-	<string name="tab_mypage_star_file_esm_1">"<b>즐겨찾기한 파일을 여기서 확인하세요</b>"</string>
-	<string name="tab_mypage_star_file_esm_2">"파일에서 별 아이콘을 눌러 이곳에 보관하세요"</string>
-	<string name="tab_mypage_star_message_file_esm_1">"<b>즐겨찾기한 메시지와 파일을 여기서 확인하세요</b>"</string>
-	<string name="tab_mypage_star_message_file_esm_2">"메시지를 꾹 누르거나 파일에서 별 아이콘을 눌러 이곳에 보관하세요"</string>
+	<string name="tab_1_1_esm_1">"팀 멤버와 1:1 대화를 시작해보세요"</string>
+	<string name="tab_1_1_esm_2">"화면에서 +를 눌러\n대화를 시작해보세요"</string>
+	<string name="tab_file_esm_1">"공유한 모든 파일을 여기서\n확인해보세요"</string>
+	<string name="tab_file_esm_2">"토픽방 또는 1:1 대화방에서 +를 눌러\n파일을 공유해보세요"</string>
+	<string name="tab_mypage_mention_esm_1">"내가 언급된 모든 메시지를 여기서\n확인해보세요"</string>
+	<string name="tab_mypage_mention_esm_2">"입렵창에 ‘@팀 멤버 이름’을\n콕 집어 메시지를 보내보세요"</string>
+	<string name="tab_mypage_poll_esm_1">"투표 목록을 여기서 확인해보세요"</string>
+	<string name="tab_mypage_poll_esm_2">"토픽방에서 +를 눌러 투표를\n진행해보세요"</string>
+	<string name="tab_mypage_star_file_esm_1">"즐겨찾기한 파일을\n여기서 확인하세요"</string>
+	<string name="tab_mypage_star_file_esm_2">"파일에서 별 아이콘을 눌러\n이곳에 보관하세요"</string>
+	<string name="tab_mypage_star_message_file_esm_1">"즐겨찾기한 메시지와 파일을\n여기서 확인하세요"</string>
+	<string name="tab_mypage_star_message_file_esm_2">"메시지를 꾹 누르거나 파일에서\n별 아이콘을 눌러 이곳에 보관하세요"</string>
 	<string name="team_adminmenu_title">"관리자 메뉴"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"팀 정보"</string>
