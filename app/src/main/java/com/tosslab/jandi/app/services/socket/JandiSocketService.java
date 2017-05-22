@@ -28,23 +28,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 
 public class JandiSocketService extends Service {
 
     public static final String TAG = "SocketService";
     public static final String STOP_FORCIBLY = "stop_forcibly";
-
+    private static Subscription subscription;
     @Inject
     JandiSocketServiceModel jandiSocketServiceModel;
     private JandiSocketManager jandiSocketManager;
     private Map<String, EventListener> eventHashMap;
     private Map<String, List<EventListener>> eventsHashMap;
-
     private boolean isStopForcibly = false;
     private boolean isRunning = false;
     private boolean isInRefreshToken = false;
@@ -141,6 +142,7 @@ public class JandiSocketService extends Service {
         eventsHashMap = new HashMap<>();
 
         jandiSocketManager = JandiSocketManager.getInstance();
+
     }
 
     @Override
@@ -233,6 +235,7 @@ public class JandiSocketService extends Service {
         eventHashMap.put("connect_updated", connectUpdatedListener);
 
         EventListener topicLeftListener = objects -> jandiSocketServiceModel.onTopicLeft(objects[0]);
+
         EventListener topicLeftUpdateListener = objects -> {
             SocketUpdateRoom socketUpdateRoom = SocketEmitModel.topicLeft(objects[0]);
             if (socketUpdateRoom != null) {
@@ -242,6 +245,7 @@ public class JandiSocketService extends Service {
         eventsHashMap.put("topic_left", Arrays.asList(topicLeftUpdateListener, topicLeftListener));
 
         EventListener topicDeletedListener = objects -> jandiSocketServiceModel.onTopicDeleted(objects[0]);
+
         EventListener topicDeletedUpdateListener = objects -> {
             SocketUpdateRoom socketUpdateRoom = SocketEmitModel.topicDelete(objects[0]);
             if (socketUpdateRoom != null) {
@@ -251,6 +255,7 @@ public class JandiSocketService extends Service {
         eventsHashMap.put("topic_deleted", Arrays.asList(topicDeletedUpdateListener, topicDeletedListener));
 
         EventListener teamCreatedListener = objects -> jandiSocketServiceModel.onTopicCreated(objects[0]);
+
         EventListener teamCreatedUpdateListener = objects -> {
             SocketUpdateRoom socketUpdateRoom = SocketEmitModel.topicCreate(objects[0]);
             if (socketUpdateRoom != null) {
@@ -260,6 +265,7 @@ public class JandiSocketService extends Service {
         eventsHashMap.put("topic_created", Arrays.asList(teamCreatedUpdateListener, teamCreatedListener));
 
         EventListener topicJoinListener = objects -> jandiSocketServiceModel.onTopicJoined(objects[0]);
+
         EventListener topicJoinUpdateListener = objects -> {
             SocketUpdateRoom socketUpdateRoom = SocketEmitModel.topicJoin(objects[0]);
             if (socketUpdateRoom != null) {
@@ -279,23 +285,31 @@ public class JandiSocketService extends Service {
 
         EventListener topicUpdatedListener = objects -> jandiSocketServiceModel.onTopicUpdated(objects[0]);
         eventHashMap.put("topic_updated", topicUpdatedListener);
+
         EventListener topicStarredListener = objects -> jandiSocketServiceModel.onTopicStarred(objects[0]);
         eventHashMap.put("topic_starred", topicStarredListener);
+
         EventListener topicUnstarredListener = objects -> jandiSocketServiceModel.onTopicUnstarred(objects[0]);
         eventHashMap.put("topic_unstarred", topicUnstarredListener);
+
         EventListener topicThrowOutListener = objects -> jandiSocketServiceModel.onTopicKickOut(objects[0]);
         eventHashMap.put("topic_kicked_out", topicThrowOutListener);
 
         EventListener memberStarredListener = objects -> jandiSocketServiceModel.onMemberStarred(objects[0]);
         eventHashMap.put("member_starred", memberStarredListener);
+
         EventListener memberUnstarredListener = objects -> jandiSocketServiceModel.onMemberUnstarred(objects[0]);
         eventHashMap.put("member_unstarred", memberUnstarredListener);
+
         EventListener memberUpdatedListener = objects -> jandiSocketServiceModel.onMemberUpdated(objects[0]);
         eventHashMap.put("member_updated", memberUpdatedListener);
+
         EventListener memberRankUpdateListener = objects -> jandiSocketServiceModel.onMemberRankUpdated(objects[0]);
         eventHashMap.put("member_rank_updated", memberRankUpdateListener);
+
         EventListener teamPlanUpdatedListener = objects -> jandiSocketServiceModel.onTeamPlanUpdated(objects[0]);
         eventHashMap.put("team_plan_updated", teamPlanUpdatedListener);
+
         EventListener teamUsageUpdatedListener = objects -> jandiSocketServiceModel.onTeamUsageUpdated(objects[0]);
         eventHashMap.put("team_usage_updated", teamUsageUpdatedListener);
 
@@ -343,6 +357,7 @@ public class JandiSocketService extends Service {
 
         EventListener announcementStatusUpdatedListener = objects -> jandiSocketServiceModel.onAnnouncementStatusUpdated(objects[0]);
         eventHashMap.put("announcement_status_updated", announcementStatusUpdatedListener);
+
         EventListener announceCreatedListener = objects -> jandiSocketServiceModel.onAnnouncementCreated(objects[0]);
         eventHashMap.put("announcement_created", announceCreatedListener);
 
@@ -361,15 +376,19 @@ public class JandiSocketService extends Service {
         EventListener topicFolderCreated =
                 objects -> jandiSocketServiceModel.onTopicFolderCreated(objects[0]);
         eventHashMap.put("folder_created", topicFolderCreated);
+
         EventListener topicFolderUpdated =
                 objects -> jandiSocketServiceModel.onTopicFolderUpdated(objects[0]);
         eventHashMap.put("folder_updated", topicFolderUpdated);
+
         EventListener folderDeletedListener =
                 objects -> jandiSocketServiceModel.onFolderDeleted(objects[0]);
         eventHashMap.put("folder_deleted", folderDeletedListener);
+
         EventListener folderItemCreatedListener =
                 objects -> jandiSocketServiceModel.onFolderItemCreated(objects[0]);
         eventHashMap.put("folder_item_created", folderItemCreatedListener);
+
         EventListener folderItemDeletedListener =
                 objects -> jandiSocketServiceModel.onFolderItemDeleted(objects[0]);
         eventHashMap.put("folder_item_deleted", folderItemDeletedListener);
@@ -377,12 +396,15 @@ public class JandiSocketService extends Service {
         EventListener pollCreatedListener =
                 objects -> jandiSocketServiceModel.onPollCreated(objects[0]);
         eventHashMap.put("poll_created", pollCreatedListener);
+
         EventListener pollFinishedListener =
                 objects -> jandiSocketServiceModel.onPollFinished(objects[0]);
         eventHashMap.put("poll_finished", pollFinishedListener);
+
         EventListener pollDeletedListener =
                 objects -> jandiSocketServiceModel.onPollDeleted(objects[0]);
         eventHashMap.put("poll_deleted", pollDeletedListener);
+
         EventListener pollVotedListener =
                 objects -> jandiSocketServiceModel.onPollVoted(objects[0]);
         eventHashMap.put("poll_voted", pollVotedListener);
@@ -390,9 +412,11 @@ public class JandiSocketService extends Service {
         EventListener pollCommentCreatedListener =
                 objects -> jandiSocketServiceModel.onPollCommentCreated(objects[0]);
         eventHashMap.put("poll_comment_created", pollCommentCreatedListener);
+
         EventListener pollCommentDeletedListener =
                 objects -> jandiSocketServiceModel.onPollCommentDeleted(objects[0]);
         eventHashMap.put("poll_comment_deleted", pollCommentDeletedListener);
+
         EventListener mentionMarkerUpdatedListener =
                 objects -> jandiSocketServiceModel.onMentionMarkerUpdated(objects[0]);
         eventHashMap.put("mention_marker_updated", mentionMarkerUpdatedListener);
@@ -408,6 +432,7 @@ public class JandiSocketService extends Service {
                 stopSelf();
             }
         });
+
         eventHashMap.put("start", objects -> {
             jandiSocketManager.sendByJson("jandi_ping", "");
             jandiSocketServiceModel.updateEventHistory();
@@ -432,8 +457,11 @@ public class JandiSocketService extends Service {
                 stopSelf();
             }
         };
-
         eventHashMap.put("restart", restartListener);
+
+        EventListener memberOnlineStatusChangeListener = objects ->
+                jandiSocketServiceModel.onMemberOnlineStatusChanged(objects[0]);
+        eventHashMap.put("member_presence_updated", memberOnlineStatusChangeListener);
     }
 
     private void setUpSocketListener() {
@@ -482,6 +510,9 @@ public class JandiSocketService extends Service {
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
         jandiSocketServiceModel.stopEventPublisher();
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+        }
     }
 
     private void sendBroadcastForRestart() {
@@ -575,6 +606,17 @@ public class JandiSocketService extends Service {
 
         });
         jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
+
+        subscription = Observable.interval(60, TimeUnit.SECONDS, Schedulers.io())
+                .map(tick -> {
+                    LogUtil.e("jandi_ping");
+                    if (jandiSocketManager != null)
+                        jandiSocketManager.sendByJson("jandi_ping", "");
+                    return tick;
+                })
+                .doOnError(err -> err.printStackTrace())
+                .retry()
+                .subscribe();
     }
 
     @Override

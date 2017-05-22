@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.poll.detail.adapter.viewholder;
 
 import android.content.res.Resources;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,15 @@ import java.util.Date;
 public class PollInfoViewHolder extends BaseViewHolder<Poll> {
 
     private TextView tvSubject;
+    private TextView tvDescription;
     private TextView tvDueDate;
     private TextView tvParticipants;
     private TextView tvOptions;
 
     private View btnParticipants;
     private View vParticipantsMetaphor;
+
+    private TextView pollDetailInfoStatusBadge;
 
     private OnPollParticipantsClickListener onPollParticipantsClickListener;
 
@@ -33,11 +37,13 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
         this.onPollParticipantsClickListener = onPollParticipantsClickListener;
 
         tvSubject = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_subject);
+        tvDescription = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_description);
         tvDueDate = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_duedate);
         tvParticipants = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_participants_count);
         tvOptions = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_options);
         btnParticipants = itemView.findViewById(R.id.btn_poll_detail_info_participants);
         vParticipantsMetaphor = itemView.findViewById(R.id.v_poll_detail_info_participants_arrow);
+        pollDetailInfoStatusBadge = (TextView) itemView.findViewById(R.id.tv_poll_detail_info_status_badge);
     }
 
     public static PollInfoViewHolder newInstance(ViewGroup parent,
@@ -49,9 +55,16 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
 
     @Override
     public void onBindView(Poll poll) {
+
         Resources resources = tvSubject.getResources();
 
         tvSubject.setText(poll.getSubject());
+        if (!TextUtils.isEmpty(poll.getDescription())) {
+            tvDescription.setVisibility(View.VISIBLE);
+            tvDescription.setText(poll.getDescription());
+        } else {
+            tvDescription.setVisibility(View.GONE);
+        }
         String participants =
                 poll.getVotedCount() + resources.getString(R.string.jandi_poll_participants_ing);
         tvParticipants.setText(participants);
@@ -70,7 +83,14 @@ public class PollInfoViewHolder extends BaseViewHolder<Poll> {
             } else {
                 btnParticipants.setOnClickListener(null);
             }
+
+            if (TextUtils.equals(poll.getVoteStatus(), "voted")) {
+                pollDetailInfoStatusBadge.setVisibility(View.VISIBLE);
+            } else {
+                pollDetailInfoStatusBadge.setVisibility(View.GONE);
+            }
         } else {
+            pollDetailInfoStatusBadge.setVisibility(View.GONE);
             tvDueDate.setSelected(true);
             btnParticipants.setSelected(true);
             vParticipantsMetaphor.setVisibility(View.VISIBLE);

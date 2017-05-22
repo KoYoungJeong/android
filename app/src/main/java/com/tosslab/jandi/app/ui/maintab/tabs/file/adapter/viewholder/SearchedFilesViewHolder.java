@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.ui.maintab.tabs.file.adapter.viewholder;
 
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
@@ -18,6 +18,9 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
 
@@ -104,8 +107,8 @@ public class SearchedFilesViewHolder extends RecyclerView.ViewHolder {
 
         boolean isContact = false;
 
-        if (content.getExt() != null) {
-            isContact = content.getExt().equals("vcf");
+        if (content != null && !TextUtils.isEmpty(content.getExt())) {
+            isContact = TextUtils.equals(content.getExt(), "vcf");
         }
 
         ImageUtil.setResourceIconOrLoadImage(

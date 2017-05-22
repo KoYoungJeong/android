@@ -3,5 +3,5 @@
     <item android:drawable="@drawable/btn_create_poll_bg_press" android:state_selected="true" />
     <item android:drawable="@drawable/btn_create_poll_bg_press" android:state_pressed="true" />
     <item android:drawable="@drawable/btn_create_poll_bg_disabled" android:state_enabled="false" />
-    <item android:drawable="@drawable/btn_create_poll_bg_normal" />
+    <item android:drawable="@drawable/btn_create_poll_bg_press" />
 </selector>

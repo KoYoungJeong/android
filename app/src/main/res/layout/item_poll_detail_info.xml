@@ -10,17 +10,49 @@
         android:layout_height="wrap_content"
         android:lineSpacingExtra="3dp"
         android:textColor="@color/jandi_text"
-        android:textSize="19sp"/>
+        android:textSize="19sp" />
+
+    <TextView
+        android:id="@+id/tv_poll_detail_info_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_poll_detail_info_subject"
+        android:layout_marginTop="12dp"
+        android:lineSpacingExtra="1dp"
+        android:text="잔디 투표기능에 들어갈 설명을 작성할 때에, 150글자 이내로 작성하셔야만해요 아시겠죠?
+                      잔디 투표기능에 들어갈 설명을 작성할 때에, 150글자 이내로 작성하셔야만해요 아시겠죠?
+                      잔디 투표기능에 들어갈 설명을 작성할 때에, 150글자 이내로 작성하셔야만해요 아시겠죠?"
+        android:textColor="@color/rgb_999999"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_poll_detail_info_status_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        android:layout_below="@id/tv_poll_detail_info_description"
+        android:layout_marginRight="7dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_round_rect_dark_gray_rad_7"
+        android:gravity="center"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="@string/jandi_poll_voted"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_poll_detail_info_duedate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_poll_detail_info_subject"
+        android:layout_below="@id/tv_poll_detail_info_description"
         android:layout_marginTop="10dp"
+        android:layout_toRightOf="@id/tv_poll_detail_info_status_badge"
+        android:text="3일 남음"
         android:textColor="@drawable/text_color_poll_detail_info_duedate"
         android:textSize="12dp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
+
 
     <LinearLayout
         android:id="@+id/btn_poll_detail_info_participants"
@@ -41,13 +73,13 @@
             android:text="•"
             android:textColor="@color/jandi_text_light"
             android:textSize="12dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <View
             android:id="@+id/v_poll_detail_info_participants_icon"
             android:layout_width="10dp"
             android:layout_height="12dp"
-            android:background="@drawable/icon_poll_detail_info_participants"/>
+            android:background="@drawable/icon_poll_detail_info_participants" />
 
         <TextView
             android:id="@+id/tv_poll_detail_info_participants_count"
@@ -58,13 +90,13 @@
             android:layout_marginTop="-1dp"
             android:textColor="@drawable/text_color_poll_detail_info_participants"
             android:textSize="12dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <View
             android:id="@+id/v_poll_detail_info_participants_arrow"
             android:layout_width="7dp"
             android:layout_height="12dp"
-            android:background="@drawable/poll_member_click"/>
+            android:background="@drawable/poll_member_click" />
 
     </LinearLayout>
 
@@ -75,6 +107,6 @@
         android:layout_below="@id/btn_poll_detail_info_participants"
         android:layout_marginTop="2dp"
         android:textColor="@color/jandi_text_light"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
 </RelativeLayout>

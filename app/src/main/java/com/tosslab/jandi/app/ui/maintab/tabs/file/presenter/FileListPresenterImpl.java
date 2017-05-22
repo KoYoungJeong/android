@@ -181,7 +181,6 @@ public class FileListPresenterImpl implements FileListPresenter {
         }
 
         view.dismissMoreProgressBar();
-
     }
 
     @Override

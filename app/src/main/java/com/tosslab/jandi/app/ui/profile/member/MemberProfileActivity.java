@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -73,6 +74,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dagger.Lazy;
+import de.greenrobot.event.EventBus;
 import rx.Completable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -142,6 +144,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     @Bind(R.id.v_start_bottom_line)
     @Nullable
     View vStartBottomLine;
+    @Bind(R.id.v_online)
+    View vOnline;
 
     ProfileLoader profileLoader;
 
@@ -192,6 +196,15 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
         initObject();
         initViews();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @Override
@@ -241,7 +254,6 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         hasChangedProfileImage = profileLoader.hasChangedProfileImage(member);
 
         initSwipeLayout();
-
 
         profileLoader.setLevel(member instanceof User ? ((User) member).getLevel() : null, tvTeamLevel);
         profileLoader.setName(tvProfileName, member);
@@ -326,6 +338,10 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         profileLoader.setStarButton(ivMemberProfileStarBtn, member, tvTeamLevel);
 
         addButtons(member);
+
+        if (TeamInfoLoader.getInstance().getOnlineStatus().isOnlineMember(memberId)) {
+            vOnline.setVisibility(View.VISIBLE);
+        }
 
         AnalyticsUtil.sendScreenName(getScreen());
     }
@@ -843,6 +859,16 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             return AnalyticsValue.Screen.MyProfile;
         } else {
             return AnalyticsValue.Screen.UserProfile;
+        }
+    }
+
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
+        if (event.getMemberId() == memberId) {
+            if (event.getPresence().equals("online")) {
+                vOnline.setVisibility(View.VISIBLE);
+            } else {
+                vOnline.setVisibility(View.GONE);
+            }
         }
     }
 }

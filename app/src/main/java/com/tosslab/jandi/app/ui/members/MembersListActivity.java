@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -233,13 +234,16 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     @Override
     protected void onResume() {
         super.onResume();
+        topicModdableMemberListAdapter.notifyDataSetChanged();
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
-        EventBus.getDefault().unregister(this);
         super.onPause();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     public void onEventMainThread(final RequestMoveDirectMessageEvent event) {
@@ -256,6 +260,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
 
     public void onEvent(TeamJoinEvent event) {
         membersListPresenter.onSearch(tvSearch.getText().toString());
+    }
+
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
+        topicModdableMemberListAdapter.notifyDataSetChanged();
     }
 
     public void onEvent(TeamLeaveEvent event) {

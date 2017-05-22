@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Ranks;
 
@@ -33,7 +34,6 @@ public class TeamApi extends ApiTemplate<TeamApi.Api> {
         return call(() -> getApi().createNewTeam(req));
     }
 
-
     public List<ResInvitationMembers> inviteToTeam(long teamId, ReqInvitationMembers invitationMembers)
             throws RetrofitException {
         return call(() -> getApi().inviteToTeam(teamId, invitationMembers));
@@ -51,9 +51,11 @@ public class TeamApi extends ApiTemplate<TeamApi.Api> {
         return call(() -> getApi().getRanks(teamId));
     }
 
+    public ResOnlineStatus getOnlineStatus(long teamId) throws RetrofitException {
+        return call(() -> getApi().getOnlineStatus(teamId));
+    }
 
     interface Api {
-
         @POST("teams")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
         Call<ResTeamDetailInfo> createNewTeam(@Body ReqCreateNewTeam req);
@@ -75,6 +77,9 @@ public class TeamApi extends ApiTemplate<TeamApi.Api> {
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<Ranks> getRanks(@Path("teamId") long teamId);
 
-
+        @GET("teams/{teamId}/presence")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<ResOnlineStatus> getOnlineStatus(@Path("teamId") long teamId);
     }
+
 }

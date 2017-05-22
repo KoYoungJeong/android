@@ -165,6 +165,13 @@ public class IntroActivityPresenter {
                         }
 
                         model.refreshRankIfNeeds();
+
+                        try {
+                            model.updateOnlineStatus(model.getSelectedTeamId());
+                        } catch (RetrofitException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                     if (!it) {
                         view.startSocketService();

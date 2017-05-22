@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.UiUtils;
 
+
 public class MessageViewHolder extends BaseMessageViewHolder implements HighlightView {
 
     protected Context context;

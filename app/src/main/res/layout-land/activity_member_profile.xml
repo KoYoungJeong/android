@@ -73,6 +73,16 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="10dp">
 
+                <View
+                    android:id="@+id/v_online"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_circle_online_for_profile"
+                    android:visibility="gone" />
+
                 <ImageView
                     android:id="@+id/iv_member_profile_img_small"
                     android:layout_width="80dp"
@@ -116,6 +126,7 @@
                     android:layout_alignParentBottom="true"
                     android:orientation="vertical"
                     android:paddingBottom="20dp">
+
 
                     <TextView
                         android:id="@+id/tv_member_profile_division"

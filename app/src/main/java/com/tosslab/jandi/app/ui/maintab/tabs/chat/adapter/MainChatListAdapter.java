@@ -76,12 +76,6 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         viewHolder.tvName.setText(item.getName());
 
-        if (item.isStarred()) {
-            viewHolder.ivFavorite.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.ivFavorite.setVisibility(View.INVISIBLE);
-        }
-
         if (item.getUnread() > 999) {
             viewHolder.tvBadgeCount.setText(String.valueOf(999));
         } else {
@@ -158,6 +152,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ImageLoader.loadFromResources(ivIcon, R.drawable.logotype_80);
         }
 
+
         if (onRecyclerItemClickListener != null) {
             viewHolder.itemView.setOnClickListener(v ->
                     onRecyclerItemClickListener.onItemClick(
@@ -169,6 +164,12 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 onRecyclerItemLongClickListener.onItemClick(viewHolder.itemView, this, position);
                 return true;
             });
+        }
+
+        if (TeamInfoLoader.getInstance().getOnlineStatus().isOnlineMember(item.getEntityId())) {
+            viewHolder.vOnline.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.vOnline.setVisibility(View.GONE);
         }
 
     }
@@ -226,27 +227,26 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class ChatViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivIcon;
-        public ImageView ivFavorite;
         public TextView tvName;
         public TextView tvAdditional;
         public TextView tvBadgeCount;
         public View vDisableLineThrough;
         public View vDisableCover;
         public View selector;
+        private View vOnline;
+
 
         public ChatViewHolder(View itemView) {
             super(itemView);
             selector = itemView.findViewById(R.id.v_entity_listitem_selector);
             tvName = (TextView) itemView.findViewById(R.id.tv_user_name);
             ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
-            ivFavorite = (ImageView) itemView.findViewById(R.id.iv_favorite);
             tvAdditional = (TextView) itemView.findViewById(R.id.tv_user_department);
             tvBadgeCount = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
             vDisableLineThrough = itemView.findViewById(R.id.iv_name_line_through);
             vDisableCover = itemView.findViewById(R.id.v_name_warning);
+            vOnline = itemView.findViewById(R.id.v_online);
         }
-
-
     }
 
 }

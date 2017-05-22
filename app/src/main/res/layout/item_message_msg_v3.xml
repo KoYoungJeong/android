@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="1dp"
             android:textColor="#ff00ace9"
-            android:textSize="9sp"
+            android:textSize="9dp"
             android:textStyle="bold" />
 
         <TextView
@@ -93,7 +93,7 @@
             android:layout_marginTop="-2dp"
             android:text="오전 11:30"
             android:textColor="#ff999999"
-            android:textSize="10sp" />
+            android:textSize="10dp" />
     </LinearLayout>
     <!-- badge와 시간 끝 -->
 

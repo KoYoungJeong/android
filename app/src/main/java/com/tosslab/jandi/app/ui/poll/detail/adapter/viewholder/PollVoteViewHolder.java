@@ -12,8 +12,6 @@ import com.tosslab.jandi.app.ui.base.adapter.viewholder.BaseViewHolder;
 
 import java.util.Collection;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * Created by tonyjs on 16. 6. 23..
  */
@@ -42,9 +40,19 @@ public class PollVoteViewHolder extends BaseViewHolder<Poll> {
         itemView.setEnabled(votedItemSeqs != null && votedItemSeqs.size() > 0);
 
         Resources resources = itemView.getResources();
-        String vote = poll.isAnonymous()
-                ? resources.getString(R.string.jandi_vote_anonymous)
-                : resources.getString(R.string.jandi_vote);
+
+        String vote;
+
+        if (poll.isAnonymous() && !poll.isMultipleChoice()) {
+            vote = resources.getString(R.string.jandi_vote_anonymous);
+        } else if (poll.isMultipleChoice() && !poll.isAnonymous()) {
+            vote = resources.getString(R.string.jandi_poll_voting_available_multi_choice);
+        } else if (poll.isMultipleChoice() && poll.isAnonymous()) {
+            vote = resources.getString(R.string.jandi_poll_voting_anonymous_available_multi_choice);
+        } else {
+            vote = resources.getString(R.string.jandi_vote);
+        }
+
         tvPollItemVote.setText(vote);
 
         itemView.setOnClickListener(v ->

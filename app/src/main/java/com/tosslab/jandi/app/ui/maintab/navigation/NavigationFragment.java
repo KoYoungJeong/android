@@ -138,7 +138,6 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         initProgressWheel();
 
         initNavigations();
-
         navigationPresenter.onInitIntercom();
 
         Intercom.client().addUnreadConversationCountListener(intercomUnreadCountListener = count -> {
@@ -638,10 +637,15 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         super.onDestroyView();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        navigationPresenter.initScheduleCache();
+    }
+
     public interface NavigationOwner {
         void openNavigation();
 
         void closeNavigation();
     }
-
 }

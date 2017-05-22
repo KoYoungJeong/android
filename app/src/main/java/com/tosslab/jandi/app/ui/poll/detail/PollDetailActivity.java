@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.Henson;
@@ -124,6 +125,7 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
     ImageView btnAction;
     @Bind(R.id.lv_poll_detail)
     RecyclerView lvPollDetail;
+
 
     private ProgressWheel progressWheel;
     private StickerViewModel stickerViewModel;

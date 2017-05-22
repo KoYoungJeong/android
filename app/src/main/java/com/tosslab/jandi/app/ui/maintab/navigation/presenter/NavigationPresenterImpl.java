@@ -12,23 +12,30 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.maintab.navigation.adapter.model.NavigationDataModel;
 import com.tosslab.jandi.app.ui.maintab.navigation.model.NavigationModel;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.DeviceUtil;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SignOutUtil;
 import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrInvitationAccept;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -112,6 +119,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                             navigationDataModel.removeAllTeamRows();
                             navigationDataModel.addTeamRows(teamRows);
                             navigationView.notifyDataSetChanged();
+                            initScheduleCache();
                         }, Throwable::printStackTrace);
 
     }
@@ -172,7 +180,12 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 .defaultIfEmpty(0)
                 .reduce((prev, current) -> prev + current)
                 .subscribe(totalActivedBadge -> {
-                    BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+                    long time = cal.getTimeInMillis();
+                    if (JandiPreference.getDeviceHomeBadgeRefreshAt() < time) {
+                        JandiPreference.setDeviceHomeBadgeRefreshAt(time);
+                        BadgeUtils.setBadge(JandiApplication.getContext(), totalActivedBadge);
+                    }
                 }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
                 });
@@ -393,7 +406,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
     @Override
     public void onInitIntercom() {
-
         Completable.fromAction(() -> {
             Registration it = Registration.create();
             ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
@@ -418,7 +430,6 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
             Intercom.client().updateUser(userAttributes);
             Intercom.client().setInAppMessageVisibility(Intercom.Visibility.GONE);
-
         }).subscribeOn(Schedulers.computation())
                 .subscribe(() -> {
                 }, t -> {
@@ -452,6 +463,160 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         } catch (Exception e) {
             LogUtil.e(TAG, Log.getStackTraceString(e));
         }
+    }
+
+    @Override
+    public void initScheduleCache() {
+        if (!Settings.hasAlarmScheduleCache()) {
+            Observable.defer(() -> {
+                ResDeviceSubscribe resDeviceSubscribe = navigationModel.getDeviceInfo();
+                return Observable.just(resDeviceSubscribe);
+            }).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deviceInfo -> {
+                        if (deviceInfo.getDays() != null && deviceInfo.getDays().size() > 0) {
+                            Settings.setHasAlarmSchedule(true);
+                            Settings.setPreferencePushAlarmSchedule(true);
+                            Settings.setPreferencePushAlarmScheduleDays(deviceInfo.getDays());
+                            Settings.setPreferencePushAlarmScheduleStartTime(deviceInfo.getStartTime());
+                            Settings.setPreferencePushAlarmScheduleEndTime(deviceInfo.getEndTime());
+                            Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimezone());
+                            setAlarmIconChanged();
+                        }
+                    });
+        } else {
+            setAlarmIconChanged();
+        }
+    }
+
+    public void setAlarmIconChanged() {
+        MenuItem item = navigationDataModel.getNotificationItem();
+        int notificationState = getAlarmStatus();
+
+        if (item != null) {
+            if (notificationState == 0) {
+                item.setIcon(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_on));
+            } else if (notificationState == 1) {
+                item.setIcon(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_off));
+            } else if (notificationState == 2) {
+                item.setIcon(
+                        JandiApplication.getContext().getResources().getDrawable(R.drawable.side_bar_notifications_schedule));
+            }
+        }
+        navigationView.notifyDataSetChanged();
+    }
+
+    // 0 : 푸쉬 알림 수신 가능 1 : 푸쉬 알림 수신 불가능 2 : 푸쉬 알림 스케쥴 수신 불가능
+    private int getAlarmStatus() {
+        if (!Settings.isPushOn()) {
+            return 1;
+        }
+
+        if (!Settings.getPreferencePushAlarmSchedule()) {
+            return 0;
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            int weekday = calendar.get(Calendar.DAY_OF_WEEK);
+
+            int weekdayOfJandiNum = 0;
+
+            switch (weekday) {
+                case Calendar.SUNDAY:
+                    weekdayOfJandiNum = 0;
+                    break;
+                case Calendar.MONDAY:
+                    weekdayOfJandiNum = 1;
+                    break;
+                case Calendar.TUESDAY:
+                    weekdayOfJandiNum = 2;
+                    break;
+                case Calendar.WEDNESDAY:
+                    weekdayOfJandiNum = 3;
+                    break;
+                case Calendar.THURSDAY:
+                    weekdayOfJandiNum = 4;
+                    break;
+                case Calendar.FRIDAY:
+                    weekdayOfJandiNum = 5;
+                    break;
+                case Calendar.SATURDAY:
+                    weekdayOfJandiNum = 6;
+                    break;
+
+            }
+
+            List<Integer> scheduledWeekdays = Settings.getPreferencePushAlarmScheduleDays();
+
+            for (int scheduledWeekday : scheduledWeekdays) {
+                int startTime = Settings.getPreferencePushAlarmScheduleStartTime();
+                int endTime = Settings.getPreferencePushAlarmScheduleEndTime();
+                int timezone = Settings.getPreferencePushAlarmScheduleTimeZone();
+                int timezoneDistance = getTimeZoneInt() - timezone;
+                DateFormat sdf = new SimpleDateFormat("HHmm");
+                int currentTime = Integer.valueOf(sdf.format(calendar.getTime()));
+                startTime = timezoneDistance * 100 + startTime;
+                endTime = timezoneDistance * 100 + endTime;
+
+                if (startTime > 2400) {
+                    scheduledWeekday++;
+                    if (scheduledWeekday > 6) {
+                        scheduledWeekday = 0;
+                    }
+                } else if (startTime < 0) {
+                    weekdayOfJandiNum--;
+                    if (scheduledWeekday < 0) {
+                        scheduledWeekday = 6;
+                    }
+                }
+
+                if (endTime < startTime) {
+                    if (weekdayOfJandiNum == scheduledWeekday) {
+                        if (startTime < currentTime) {
+                            return 0;
+                        }
+                    } else {
+                        int tempScheduledWeekday = scheduledWeekday + 1;
+                        if (tempScheduledWeekday > 6) {
+                            tempScheduledWeekday = 0;
+                        }
+                        if (weekdayOfJandiNum == tempScheduledWeekday) {
+                            if (currentTime < endTime) {
+                                return 0;
+                            }
+                        }
+                    }
+                } else {
+                    if (weekdayOfJandiNum == scheduledWeekday) {
+                        if (startTime < currentTime && currentTime < endTime) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }
+        return 2;
+    }
+
+    private int getTimeZoneInt() {
+        TimeZone timeZone = TimeZone.getDefault();
+        String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
+
+        boolean isPlus;
+
+        if (timeZoneString.contains("+")) {
+            isPlus = true;
+        } else {
+            isPlus = false;
+        }
+
+        int timeZoneInt = Integer.valueOf(timeZoneString.substring(1, 3));
+
+        if (!isPlus) {
+            timeZoneInt = timeZoneInt * -1;
+        }
+        return timeZoneInt;
     }
 
 }

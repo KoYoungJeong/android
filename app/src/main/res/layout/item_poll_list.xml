@@ -26,101 +26,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="File Name"
+            android:maxLines="2"
+            android:text="잔디 투표 기능에 들어갈 제목을 작성할 때에, 50글자 이내로 작성하셔야만 합니다 "
             android:textColor="@color/rgb_333333"
             android:textSize="15dp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_poll_list_duedate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/tv_poll_list_subject"
-            android:layout_below="@id/tv_poll_list_subject"
-            android:layout_marginTop="5dp"
-            android:layout_toRightOf="@id/tv_poll_list_duedate"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="3d"
-            android:textColor="@color/rgb_999999"
-            android:textSize="12dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_poll_list_status_badge"
-            android:layout_width="wrap_content"
-            android:layout_height="17dp"
-            android:layout_alignBottom="@id/tv_poll_list_duedate"
-            android:layout_gravity="center_vertical"
-
-            android:layout_marginLeft="6dp"
-            android:layout_toRightOf="@id/tv_poll_list_duedate"
-            android:background="@drawable/bg_round_rect_dark_gray_rad_7"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/jandi_poll_voted"
-            android:textColor="@color/white"
-            android:textSize="11dp"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/tv_poll_list_finished_badge"
-            android:layout_width="wrap_content"
-            android:layout_height="17dp"
-            android:layout_alignBottom="@id/tv_poll_list_duedate"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="1dp"
-            android:layout_marginLeft="6dp"
-            android:layout_toRightOf="@id/tv_poll_list_duedate"
-            android:background="@drawable/bg_round_rect_bright_gray_rad_7"
-            android:gravity="center"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:text="@string/jandi_finished"
-            android:textColor="@color/rgb_808080"
-            android:textSize="11dp"
-            android:visibility="gone" />
-
-        <com.tosslab.jandi.app.views.FixedLinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="18dp"
-            android:layout_alignLeft="@id/tv_poll_list_subject"
-            android:layout_below="@id/tv_poll_list_duedate"
-            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_poll_list_subject"
+            android:layout_marginTop="7dp"
             android:gravity="center_vertical">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_poll_list_creator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="Justin"
-                    android:textColor="@color/rgb_333333"
-                    android:textSize="13dp" />
-            </RelativeLayout>
-
             <TextView
-                android:id="@+id/tv_poll_list_create_date"
+                android:id="@+id/tv_poll_list_creator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/tv_poll_list_creator"
-                android:layout_marginLeft="8dp"
-                android:layout_toRightOf="@id/tv_poll_list_creator"
-                android:text="Date"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/tv_poll_list_status_badge"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="JustinJustinJustinJustinJustinJustinJustinJustin"
+                android:textColor="@color/rgb_333333"
+                android:textSize="13dp" />
+
+            <TextView
+                android:id="@+id/tv_poll_list_status_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_toLeftOf="@+id/tv_poll_list_duedate"
+                android:background="@drawable/bg_round_rect_dark_gray_rad_7"
+                android:gravity="center"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:text="@string/jandi_poll_voted"
+                android:textColor="@color/white"
+                android:textSize="11dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_poll_list_duedate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="3일 남음"
                 android:textColor="@color/rgb_999999"
                 android:textSize="12dp" />
-        </com.tosslab.jandi.app.views.FixedLinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 

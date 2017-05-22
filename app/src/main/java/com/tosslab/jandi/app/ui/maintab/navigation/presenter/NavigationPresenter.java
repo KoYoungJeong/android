@@ -48,6 +48,8 @@ public interface NavigationPresenter {
 
     void onReloadTeams();
 
+    void initScheduleCache();
+
     interface View {
 
         void showCheckNetworkDialog();

@@ -122,7 +122,6 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
 
         if (fileListFragment != null) {
             searchSelectView = fileListFragment;
-            searchSelectView.setOnSearchItemSelect(this::finish);
             searchSelectView.setOnSearchText(() -> etSearch.getText().toString().trim());
             return;
         }
@@ -133,7 +132,6 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
         fragmentTransaction.commitAllowingStateLoss();
 
         searchSelectView = fileListFragment;
-        searchSelectView.setOnSearchItemSelect(this::finish);
         searchSelectView.setOnSearchText(() -> etSearch.getText().toString().trim());
 
         fileListFragment.setUserVisibleHint(true);
@@ -268,6 +266,11 @@ public class FileSearchActivity extends BaseAppCompatActivity implements FileSea
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     public interface SearchSelectView {

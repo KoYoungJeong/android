@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -32,6 +33,8 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -49,7 +52,7 @@ import butterknife.OnTextChanged;
  */
 public class PollCreateActivity extends BaseAppCompatActivity
         implements CalendarDialogFragment.OnDateSelectedListener,
-        TimePickerDialogFragment.OnHourSelectedListener,
+        TimePickerDialogFragment.OnEndHourSelectedListener,
         PollCreatePresenter.View {
 
     private static final String KEY_TOPIC_ID = "topicId";
@@ -62,7 +65,7 @@ public class PollCreateActivity extends BaseAppCompatActivity
     @Bind(R.id.vg_create_poll_item_wrapper)
     ViewGroup vgPollItems;
     @Bind(R.id.btn_create_poll_item_add)
-    View btnCreatePoll;
+    View btnAddPoll;
     @Bind(R.id.switch_create_poll_anonymous)
     SwitchCompat switchAnonymous;
     @Bind(R.id.switch_create_poll_multiplechoice)
@@ -73,6 +76,10 @@ public class PollCreateActivity extends BaseAppCompatActivity
     TextView tvCreatePollTime;
     @Bind(R.id.btn_create_poll)
     TextView tvCreatePollButton;
+    @Bind(R.id.tv_create_poll_subject_length)
+    TextView tvCreatePollSubjectLegnth;
+    @Bind(R.id.tv_create_poll_description_length)
+    TextView tvCreatePollDescriptionLegnth;
 
     private ProgressWheel progressWheel;
 
@@ -104,8 +111,18 @@ public class PollCreateActivity extends BaseAppCompatActivity
         Calendar tomorrow = CalendarUtils.getInstance();
         tomorrow.add(Calendar.DAY_OF_MONTH, 1);
         onDateSelected(CalendarDay.from(tomorrow));
+        Calendar oneHourLater = Calendar.getInstance();
+        oneHourLater.set(Calendar.HOUR_OF_DAY, oneHourLater.get(Calendar.HOUR_OF_DAY) + 1);
+        onEndHourSelected(oneHourLater);
 
-        onHourSelected(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1);
+        KeyboardVisibilityEvent.setEventListener(
+                this, isOpen -> {
+                    if (isOpen) {
+                        tvCreatePollButton.setVisibility(View.GONE);
+                    } else {
+                        tvCreatePollButton.setVisibility(View.VISIBLE);
+                    }
+                });
     }
 
     private void addDefaultPollItem() {
@@ -133,7 +150,14 @@ public class PollCreateActivity extends BaseAppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_280)
+                    .setMessage(getString(R.string.jandi_poll_create_cancel_popup))
+                    .setNegativeButton(R.string.jandi_poll_create_popup_no, null)
+                    .setPositiveButton(R.string.jandi_poll_create_popup_yes, (dialog, which) -> {
+                        finish();
+                    })
+                    .create()
+                    .show();
             return true;
         }
 
@@ -196,7 +220,7 @@ public class PollCreateActivity extends BaseAppCompatActivity
         }
 
         if (childCount >= 31) {
-            btnCreatePoll.setVisibility(View.GONE);
+            btnAddPoll.setVisibility(View.GONE);
         }
     }
 
@@ -209,9 +233,16 @@ public class PollCreateActivity extends BaseAppCompatActivity
     }
 
     @OnTextChanged(R.id.et_create_poll_subject)
-    void onSubjectChanged(CharSequence subject) {
-        pollCreatePresenter.onPollSubjectChanged(subject.toString());
+    void onSubjectTextChanged(CharSequence s, int start, int before, int count) {
+        pollCreatePresenter.onPollSubjectChanged(s.toString());
         changePollButtonState();
+        tvCreatePollSubjectLegnth.setText(s.length() + "/50");
+    }
+
+    @OnTextChanged(R.id.et_create_poll_description)
+    void onDescriptionTextChanged(CharSequence s, int start, int before, int count) {
+        pollCreatePresenter.onPollDescriptionChanged(s.toString());
+        tvCreatePollDescriptionLegnth.setText(s.length() + "/150");
     }
 
     @OnClick(R.id.btn_create_poll_duedate)
@@ -254,11 +285,9 @@ public class PollCreateActivity extends BaseAppCompatActivity
     }
 
     @Override
-    public void onHourSelected(int hour) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
+    public void onEndHourSelected(Calendar calendar) {
         setTime(calendar);
-        pollCreatePresenter.onPollDueDateHourSelected(hour);
+        pollCreatePresenter.onPollDueDateHourSelected(calendar.get(Calendar.HOUR_OF_DAY));
     }
 
     private void setTime(Calendar calendar) {
@@ -336,7 +365,7 @@ public class PollCreateActivity extends BaseAppCompatActivity
 
     private void setupActionBar() {
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.actionbar_icon_back);
+        toolbar.setNavigationIcon(R.drawable.actionbar_icon_remove);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);

@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.builder.BaseViewHolderBuilder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.poll.util.PollBinder;
+import com.tosslab.jandi.app.utils.DateTransformator;
 
 /**
  * Created by tonyjs on 16. 6. 15..
@@ -25,6 +26,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
 
     private ImageView vPollIcon;
     private TextView tvSubject;
+    private TextView tvDescription;
     private TextView tvCreator;
     private TextView tvDueDate;
     private TextView tvPollDeleted;
@@ -49,6 +51,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
         tvCreator = (TextView) rootView.findViewById(R.id.tv_message_poll_creator);
         tvDueDate = (TextView) rootView.findViewById(R.id.tv_message_poll_due_date);
         tvPollDeleted = (TextView) rootView.findViewById(R.id.tv_message_poll_deleted);
+        tvDescription = (TextView) rootView.findViewById(R.id.tv_message_poll_description);
 
         vMargin = rootView.findViewById(R.id.v_margin);
     }
@@ -62,9 +65,12 @@ public class PollViewHolder extends BaseMessageViewHolder {
         }
 
         PollBinder.bindPoll(link.poll, false,
-                vPollIcon, tvSubject, tvCreator, tvDueDate, tvPollDeleted);
+                vPollIcon, tvSubject, tvDescription, tvCreator, tvDueDate, tvPollDeleted);
 
         setMessageBackground(link);
+
+        setMessageTime(link);
+        setBadge(link);
     }
 
     private void setMessageBackground(ResMessages.Link link) {
@@ -88,6 +94,24 @@ public class PollViewHolder extends BaseMessageViewHolder {
             } else {
                 vMargin.setVisibility(View.GONE);
             }
+        }
+    }
+
+    private void setBadge(final ResMessages.Link link) {
+
+        if (link.unreadCnt > 0) {
+            tvMessageBadge.setText(String.valueOf(link.unreadCnt));
+            tvMessageBadge.setVisibility(View.VISIBLE);
+        } else {
+            tvMessageBadge.setVisibility(View.GONE);
+        }
+    }
+
+    private void setMessageTime(ResMessages.Link link) {
+        if (!hasOnlyBadge) {
+            tvMessageTime.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        } else {
+            tvMessageTime.setVisibility(View.GONE);
         }
     }
 

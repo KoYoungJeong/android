@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.poll.create.model;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
@@ -26,7 +25,10 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import setup.BaseInitUtil;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by tonyjs on 16. 7. 8..
@@ -72,7 +74,7 @@ public class PollCreateModelTest {
         long topicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, 1);
-        ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
+        ReqCreatePoll reqCreatePoll = ReqCreatePoll.create(topicId, "HiHi", "desc", false, true, calendar.getTime(), Arrays.asList("a,b,c".split(",")));
         System.out.println(reqCreatePoll.toString());
 
         // When

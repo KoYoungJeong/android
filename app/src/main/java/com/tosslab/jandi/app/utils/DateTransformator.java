@@ -26,11 +26,13 @@ public class DateTransformator {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
         switch (locale.getLanguage()) {
             case "ko":
+                return getTimeString(date, ("yyyy년 M월 dd일 a h:mm"));
             case "zh":
+                return getTimeString(date, ("yyyy年 M月 dd日 a h:mm"));
             case "ja":
-                return getTimeString(date, "yyyy/MM/dd a hh:mm");
+                return getTimeString(date, ("yyyy年 M月 dd日 a h:mm"));
             default:
-                return getTimeString(date, "MM/dd/yyyy hh:mm a");
+                return getTimeString(date, "M/dd/yyyy h:mm a");
         }
     }
 
@@ -38,11 +40,13 @@ public class DateTransformator {
         Locale locale = JandiApplication.getContext().getResources().getConfiguration().locale;
         switch (locale.getLanguage()) {
             case "ko":
+                return getTimeString(date, ("yyyy년 M월 dd일 a h:mm"));
             case "zh":
+                return getTimeString(date, ("yyyy年 M月 dd日 a h:mm"));
             case "ja":
-                return getTimeString(date, "yyyy.MM.dd. hh:mm a");
+                return getTimeString(date, ("yyyy年 M月 dd日 a h:mm"));
             default:
-                return getTimeString(date, "MM.dd.yyyy. hh:mm a");
+                return getTimeString(date, "M.dd.yyyy. h:mm a");
         }
     }
 
@@ -111,7 +115,8 @@ public class DateTransformator {
         if (leftHour > 0) {
             return sb.append(leftHour)
                     .append(resources.getString(R.string.jandi_date_hours))
-                    .append(" ").toString();
+                    .append(" ")
+                    .append(resources.getString(R.string.jandi_date_remaining)).toString();
         }
 
         return sb.append(leftMinute)

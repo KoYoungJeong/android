@@ -27,12 +27,8 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
     TextView tvDueDate;
     @Bind(R.id.tv_poll_list_status_badge)
     TextView tvStatusBadge;
-    @Bind(R.id.tv_poll_list_finished_badge)
-    TextView tvFinishedBadge;
     @Bind(R.id.tv_poll_list_creator)
     TextView tvCreator;
-    @Bind(R.id.tv_poll_list_create_date)
-    TextView tvCreateDate;
     @Bind(R.id.v_poll_list_icon)
     ImageView vPollIcon;
     @Bind(R.id.vg_poll_list_info)
@@ -61,7 +57,6 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
 
     private void bindPoll(Poll poll) {
         tvSubject.setText(poll.getSubject());
-        tvCreateDate.setText(DateTransformator.getTimeString(poll.getCreatedAt()));
 
         String status = poll.getStatus();
 
@@ -73,25 +68,21 @@ public class PollViewHolder extends BaseViewHolder<Poll> {
             tvStatusBadge.setVisibility("voted".equals(poll.getVoteStatus())
                     ? View.VISIBLE : View.GONE);
 
-            tvFinishedBadge.setVisibility(View.GONE);
-
             tvCreator.setTextColor(0xff333333);
             tvSubject.setTextColor(0xff333333);
             tvDueDate.setTextColor(0xff999999);
-            tvCreateDate.setTextColor(0xff999999);
         } else {
             vPollIcon.setImageResource(R.drawable.poll_icon_closed_192);
 
             String finished = DateTransformator.getTimeString(poll.getFinishedAt());
-            tvDueDate.setText(finished);
+            tvDueDate.setText(
+                    tvDueDate.getResources().getString(R.string.jandi_poll_ended_at, finished));
 
             tvStatusBadge.setVisibility(View.GONE);
-            tvFinishedBadge.setVisibility(View.VISIBLE);
 
             tvCreator.setTextColor(0xffcccccc);
             tvSubject.setTextColor(0xffcccccc);
             tvDueDate.setTextColor(0xffcccccc);
-            tvCreateDate.setTextColor(0xffcccccc);
         }
     }
 

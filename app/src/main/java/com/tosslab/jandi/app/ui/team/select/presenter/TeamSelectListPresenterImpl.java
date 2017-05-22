@@ -98,6 +98,7 @@ public class TeamSelectListPresenterImpl implements TeamSelectListPresenter {
                 .doOnNext(initialInfo -> {
                     model.updateEntityInfo(new RawInitialInfo(teamId, initialInfo));
                     model.refreshRankIfNeed(teamId);
+                    model.updateOnlineStatus(teamId);
                     TeamInfoLoader.getInstance().refresh();
                     model.refreshMyMarker(teamId, TeamInfoLoader.getInstance().getMyId());
                     SprinklrLaunchTeam.sendLog(teamId);

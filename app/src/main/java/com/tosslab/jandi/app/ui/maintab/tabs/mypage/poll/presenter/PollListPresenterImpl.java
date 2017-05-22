@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.model.PollListModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +70,7 @@ public class PollListPresenterImpl implements PollListPresenter {
                     }
 
                     List<Poll> onGoing = resPollList.getOnGoing();
+
                     pollListModel.sortPollListByDueDate(onGoing);
                     List<Poll> finished = resPollList.getFinished();
                     pollListModel.sortPollListByFinishedAt(finished);
@@ -221,7 +223,6 @@ public class PollListPresenterImpl implements PollListPresenter {
                             return false;
                         }
                     }
-
                     return true;
                 })
                 .subscribe(poll1 -> {

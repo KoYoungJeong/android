@@ -8,12 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginTop="8dp"
         android:hint="@string/jandi_input_poll_item"
         android:maxLength="100"
         android:maxLines="1"
         android:paddingBottom="16dp"
         android:paddingRight="31dp"
         android:singleLine="true"
+        android:textSize="16dp"
         android:theme="@style/CreatePollEditText" />
 
     <ImageView
@@ -23,6 +25,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="right|center_vertical"
+        android:layout_marginTop="5dp"
         android:paddingBottom="12dp"
         android:paddingEnd="5dp"
         android:paddingLeft="10dp"

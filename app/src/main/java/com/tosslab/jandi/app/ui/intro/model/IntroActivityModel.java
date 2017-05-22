@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.marker.Marker;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -132,6 +133,10 @@ public class IntroActivityModel {
         return selectedTeamInfo != null;
     }
 
+    public long getSelectedTeamId() {
+        return AccountRepository.getRepository().getSelectedTeamId();
+    }
+
     public int clearLinkRepository() {
         return MessageRepository.getRepository().deleteAllLink();
     }
@@ -188,6 +193,12 @@ public class IntroActivityModel {
         } catch (RetrofitException e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateOnlineStatus(long teamId) throws RetrofitException {
+        ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().removeAllOnlineStatus();
+        TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 
     public boolean hasRank() {

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter;
 
+import android.text.TextUtils;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.network.models.poll.Poll;
@@ -10,6 +11,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.view.PollListDa
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.poll.adapter.viewholder.PollViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -104,6 +106,30 @@ public class PollListAdapter extends MultiItemRecyclerAdapter
     @Override
     public void addPoll(int position, Poll poll) {
         addRow(position, Row.create(poll, VIEW_TYPE_POLL));
+
+        List<Poll> pollCreated = new ArrayList<>();
+
+        List<Poll> pollFinished = new ArrayList<>();
+
+        for (Row row : getRows()) {
+            Poll pollItem = (Poll) row.getItem();
+            if (TextUtils.equals(pollItem.getStatus(), "created")) {
+                pollCreated.add(pollItem);
+            } else {
+                pollFinished.add(pollItem);
+            }
+        }
+
+        Collections.sort(pollCreated, (lhs, rhs) ->
+                (int) (lhs.getDueDate().getTime() - rhs.getDueDate().getTime()));
+
+        pollCreated.addAll(pollFinished);
+
+        clear();
+
+        addPolls(pollCreated);
+
+        notifyDataSetChanged();
     }
 
     @Override

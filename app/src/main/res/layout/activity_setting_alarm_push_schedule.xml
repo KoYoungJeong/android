@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="visible"
+        app:navigationIcon="@drawable/actionbar_icon_back"
+        app:title="@string/push_schedule_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/push_schedule_selectdays"
+            android:textColor="@color/rgb_999999"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="3dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_mon_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_mon"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_tue_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_tue"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_wed_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_wed"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_thu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_thu"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_fri_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_fri"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_sat_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_sat"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_sun_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/notification_day_off"
+            android:gravity="center"
+            android:text="@string/day_short_sun"
+            android:textColor="@color/rgb_cccccc"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <View style="@style/JandiSettings.Divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/push_schedule_start"
+                    android:textSize="12dp" />
+
+                <LinearLayout
+                    android:id="@+id/vg_select_start_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="35"
+                    android:background="@drawable/bg_poll_create_edittext"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_select_start_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="오후 07:00"
+                        android:textColor="@color/jandi_text"
+                        android:textSize="16dp" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/poll_dropdown" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/push_schedule_end"
+                    android:textSize="12dp" />
+
+                <LinearLayout
+                    android:id="@+id/vg_select_end_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="35"
+                    android:background="@drawable/bg_poll_create_edittext"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_select_end_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="오후 07:00"
+                        android:textColor="@color/jandi_text"
+                        android:textSize="16dp" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="17dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/poll_dropdown" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/push_schedule_timezone"
+            android:textColor="@color/rgb_999999"
+            android:textSize="12dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

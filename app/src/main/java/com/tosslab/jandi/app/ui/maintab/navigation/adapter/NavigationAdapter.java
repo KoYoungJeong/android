@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -104,6 +105,7 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
     @Override
     public List<Row<?>> getNavigationRows(MenuBuilder menuBuilder) {
         List<Row<?>> rows = new ArrayList<>();
+
         ArrayList<MenuItemImpl> enableItems =
                 menuBuilder == null ? new ArrayList<>() : menuBuilder.getVisibleItems();
         if (enableItems.size() <= 0) {
@@ -280,6 +282,18 @@ public class NavigationAdapter extends MultiItemRecyclerAdapter
     @Override
     public Row<String> getVersionRow(String versionName) {
         return Row.create(versionName, VIEW_TYPE_VERSION);
+    }
+
+    @Override
+    public MenuItem getNotificationItem() {
+        for (Row<?> row : getRows()) {
+            if (row.getItem() instanceof MenuItem) {
+                if (((MenuItem) row.getItem()).getItemId() == R.id.nav_setting_notification) {
+                    return (MenuItem) row.getItem();
+                }
+            }
+        }
+        return null;
     }
 
     @Override

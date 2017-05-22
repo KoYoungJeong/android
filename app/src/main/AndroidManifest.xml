@@ -507,7 +507,8 @@
         <activity
             android:name=".ui.team.create.CreateTeamActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".ui.profile.modify.property.dept.DeptPositionActivity"
@@ -549,7 +550,8 @@
         <activity
             android:name=".ui.team.create.CreateTeamForNewAccountActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".ui.profile.account.SettingAccountProfileActivity"
@@ -572,6 +574,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
+        <activity
+            android:name=".ui.settings.push.schedule.SettingPushScheduleActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
 
         <service android:name=".services.socket.JandiSocketService" />
 

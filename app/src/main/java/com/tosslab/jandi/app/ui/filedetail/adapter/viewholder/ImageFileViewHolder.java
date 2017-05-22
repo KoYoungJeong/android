@@ -260,11 +260,13 @@ public class ImageFileViewHolder extends FileViewHolder {
     }
 
     protected void loadingThumb(ResMessages.FileContent content) {
-        ImageLoader.newInstance()
-                .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
-                .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
-                .uri(Uri.parse(ImageUtil.getThumbnailUrl(content)))
-                .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+        if (ImageUtil.getThumbnailUrl(content) != null) {
+            ImageLoader.newInstance()
+                    .actualImageScaleType(ImageView.ScaleType.FIT_CENTER)
+                    .error(R.drawable.file_noimage, ImageView.ScaleType.FIT_CENTER)
+                    .uri(Uri.parse(ImageUtil.getThumbnailUrl(content)))
+                    .intoWithProgress(ivFileThumb, progressStarted, progressDownloading, null, progressPresent);
+        }
     }
 
     private void showTapToViewLayout(long fileMessageId, ResMessages.FileMessage fileMessage) {

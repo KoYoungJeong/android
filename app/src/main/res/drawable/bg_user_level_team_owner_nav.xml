@@ -13,5 +13,4 @@
         android:color="@color/jandi_text_level_team_owner_nav" />
 
     <solid android:color="@color/jandi_transparent_black_15p" />
-
 </shape>

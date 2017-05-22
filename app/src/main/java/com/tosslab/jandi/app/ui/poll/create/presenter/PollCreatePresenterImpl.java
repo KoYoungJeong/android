@@ -46,6 +46,11 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
     }
 
     @Override
+    public void onPollDescriptionChanged(String description) {
+        createPollBuilder.description(description);
+    }
+
+    @Override
     public void onPollItemInput(int position, String title) {
         if (TextUtils.isEmpty(title)) {
             createPollBuilder.removeItemFromMap(position);
@@ -141,12 +146,10 @@ public class PollCreatePresenterImpl implements PollCreatePresenter {
                 .subscribe(resCreatePoll -> {
                     pollCreateView.dismissProgress();
                     pollCreateView.finish();
-
                     SprinklrPollCreated.sendLog(TeamInfoLoader.getInstance().getMyId(),
                             resCreatePoll.getLinkMessage().pollId,
                             TeamInfoLoader.getInstance().getTeamId(),
                             reqCreatePoll.getTopicId());
-
                 }, throwable -> {
                     pollCreateView.dismissProgress();
                     LogUtil.e(Log.getStackTraceString(throwable));

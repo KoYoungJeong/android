@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.models;
 
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 public class ReqCreatePoll {
     private long topicId;
     private String subject;
+    private String description;
     private boolean anonymous;
     private boolean multipleChoice;
     private String dueDate;
@@ -21,21 +23,22 @@ public class ReqCreatePoll {
     private String comment;
     private List<MentionObject> mentions;
 
-    private ReqCreatePoll(long topicId, String subject,
+    private ReqCreatePoll(long topicId, String subject, String description,
                           boolean anonymous, boolean multipleChoice,
                           Date dueDate, List<String> items) {
         this.topicId = topicId;
         this.subject = subject;
+        this.description = description;
         this.anonymous = anonymous;
         this.multipleChoice = multipleChoice;
         this.dueDate = ISO8601Utils.format(dueDate);
         this.items = items;
     }
 
-    public static ReqCreatePoll create(long topicId, String subject,
+    public static ReqCreatePoll create(long topicId, String subject, String description,
                                        boolean anonymous, boolean multipleChoice,
                                        Date dueDate, List<String> items) {
-        return new ReqCreatePoll(topicId, subject, anonymous, multipleChoice, dueDate, items);
+        return new ReqCreatePoll(topicId, subject, description, anonymous, multipleChoice, dueDate, items);
     }
 
     public ReqCreatePoll comment(String comment) {
@@ -54,6 +57,10 @@ public class ReqCreatePoll {
 
     public String getSubject() {
         return subject;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public boolean isAnonymous() {
@@ -105,6 +112,7 @@ public class ReqCreatePoll {
         private List<String> items;
         private String comment;
         private List<MentionObject> mentions;
+        private String description;
 
         public Builder(long topicId) {
             this.topicId = topicId;
@@ -112,6 +120,11 @@ public class ReqCreatePoll {
 
         public Builder subject(String subject) {
             this.subject = subject;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
             return this;
         }
 
@@ -172,6 +185,10 @@ public class ReqCreatePoll {
             return subject;
         }
 
+        public String getDescription() {
+            return description;
+        }
+
         public boolean isAnonymous() {
             return anonymous;
         }
@@ -206,7 +223,7 @@ public class ReqCreatePoll {
 
         public ReqCreatePoll build() {
             ReqCreatePoll reqCreatePoll = new ReqCreatePoll(topicId,
-                    subject, anonymous, multipleChoice,
+                    subject, description, anonymous, multipleChoice,
                     dueDate.getTime(), items);
             reqCreatePoll.comment(comment);
             reqCreatePoll.mentions(mentions);

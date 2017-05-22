@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.poll.Poll;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.push.queue.PushHandler;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
@@ -167,6 +168,8 @@ public class MessageListV2Presenter {
                     } else {
                         if (messageListModel.getBadgeCount(room.getRoomId()) != 0) {
                             messageListModel.initBadge(room.getRoomId(), lastLinkId);
+                            // 마커가 업데이트 된 roomId 와 마지막으로 받은 푸쉬 메세지의 roomId 가 같으면 노티를 지움.
+                            PushHandler.getInstance().removeNotificationIfNeed(room.getRoomId());
                             EventBus.getDefault().post(new RoomMarkerEvent(room.getRoomId()));
                         }
                     }
@@ -596,8 +599,6 @@ public class MessageListV2Presenter {
                 .subscribe(aBoolean -> {
                     initAnnouncement();
                 });
-
-
     }
 
     private long getRoomId() {

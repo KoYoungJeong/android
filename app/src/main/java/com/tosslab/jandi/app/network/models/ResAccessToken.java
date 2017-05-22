@@ -75,10 +75,12 @@ public class ResAccessToken {
     @Override
     public String toString() {
         return "ResAccessToken{" +
-                "accessToken='" + accessToken + '\'' +
+                "_id=" + _id +
+                ", accessToken='" + accessToken + '\'' +
                 ", refreshToken='" + refreshToken + '\'' +
                 ", tokenType='" + tokenType + '\'' +
                 ", expireTime='" + expireTime + '\'' +
+                ", deviceId='" + deviceId + '\'' +
                 '}';
     }
 

@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
 import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
@@ -168,6 +169,7 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
                 });
     }
 
+
     private void setListViewScroll() {
         if (getActivity() instanceof MainTabActivity) {
             MainTabActivity activity = (MainTabActivity) getActivity();
@@ -219,7 +221,6 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
 
     @Override
     public void moveDisabledMembers() {
-
         startActivityForResult(Henson.with(getActivity())
                 .gotoDisabledEntityChooseActivity()
                 .build(), REQ_DISABLED_MEMBER);
@@ -268,6 +269,13 @@ public class TeamMemberFragment extends Fragment implements TeamMemberPresenter.
     public void onEvent(MemberRankUpdatedEvent event) {
         presenter.onRefresh();
     }
+
+    public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
+        if (TeamInfoLoader.getInstance().getMember(event.getMemberId()) != null) {
+            refreshDataView();
+        }
+    }
+
 
     @Override
     public void refreshDataView() {

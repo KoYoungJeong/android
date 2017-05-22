@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
+import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.client.marker.MarkerApi;
@@ -28,6 +29,8 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.marker.Marker;
@@ -44,7 +47,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -62,19 +64,24 @@ public class NavigationModel {
     private final Lazy<InvitationApi> invitationApi;
     private final Lazy<LoginApi> loginApi;
     private final Lazy<MarkerApi> markerApi;
+    private final Lazy<DeviceApi> deviceApi;
     private Lazy<TeamApi> teamApi;
 
     @Inject
     public NavigationModel(Lazy<AccountApi> accountApi,
                            Lazy<StartApi> startApi,
                            Lazy<InvitationApi> invitationApi,
-                           Lazy<LoginApi> loginApi, Lazy<TeamApi> teamApi, Lazy<MarkerApi> markerApi) {
+                           Lazy<LoginApi> loginApi,
+                           Lazy<TeamApi> teamApi,
+                           Lazy<MarkerApi> markerApi,
+                           Lazy<DeviceApi> deviceApi) {
         this.accountApi = accountApi;
         this.startApi = startApi;
         this.invitationApi = invitationApi;
         this.loginApi = loginApi;
         this.teamApi = teamApi;
         this.markerApi = markerApi;
+        this.deviceApi = deviceApi;
     }
 
     public User getMe() {
@@ -150,12 +157,19 @@ public class NavigationModel {
             }
 
             refreshRankIfNeed(teamId);
+            updateOnlineStatus(teamId);
             AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             TeamInfoLoader.getInstance().refresh();
 
             refreshMyMarker(teamId, TeamInfoLoader.getInstance().getMyId());
             return teamId;
         });
+    }
+
+    public void updateOnlineStatus(long teamId) throws RetrofitException {
+        ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().removeAllOnlineStatus();
+        TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 
     private void refreshMyMarker(long teamId, long myId) {
@@ -293,4 +307,14 @@ public class NavigationModel {
                     }
                 });
     }
+
+    public ResDeviceSubscribe getDeviceInfo() {
+        try {
+            return deviceApi.get().getDeviceInfo(TokenUtil.getTokenObject().getDeviceId());
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

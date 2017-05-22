@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResPollList;
 import com.tosslab.jandi.app.network.models.marker.Marker;
 import com.tosslab.jandi.app.network.models.poll.Poll;
@@ -118,6 +119,7 @@ public class JandiInterfaceModel {
             if (!refreshRankInfoIfNeed(selectedTeamId)) {
                 TeamInfoLoader.getInstance().refresh();
             }
+            updateOnlineStatus(selectedTeamId);
             refreshMyMarker();
             refreshPollList(selectedTeamId);
             return true;
@@ -177,6 +179,12 @@ public class JandiInterfaceModel {
             }
         }
         return false;
+    }
+
+    public void updateOnlineStatus(long teamId) throws RetrofitException {
+        ResOnlineStatus resOnlineStatus = teamApi.get().getOnlineStatus(teamId);
+        TeamInfoLoader.getInstance().removeAllOnlineStatus();
+        TeamInfoLoader.getInstance().setOnlineStatus(resOnlineStatus.getRecords());
     }
 
     /**

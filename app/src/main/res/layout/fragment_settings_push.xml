@@ -23,6 +23,113 @@
         <View style="@style/JandiSettings.Divider" />
 
         <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
+            android:id="@+id/vg_settings_push_notification_schedule"
+            style="@style/JandiSettings.Body"
+            app:sbvChcked="false"
+            app:sbvSummary="@string/push_schedule_desc"
+            app:sbvTitle="@string/push_schedule_title" />
+
+        <RelativeLayout
+            android:id="@+id/vg_notification_schedule_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:id="@+id/vg_push_schedule_weekdays"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_push_schedule_weekdays_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/push_schedule_dayofweek"
+                    android:textColor="@color/text_color_setting_check_title"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_push_schedule_weekdays"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="@string/push_schedule_weekdays"
+                    android:textColor="@color/text_color_setting_summary_notification_sound"
+                    android:textSize="14dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/vg_push_schedule_start_time"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:layout_below="@id/vg_push_schedule_weekdays"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_push_schedule_start_time_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/push_schedule_start"
+                    android:textColor="@color/text_color_setting_check_title"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_push_schedule_start_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="오전 07:00"
+                    android:textColor="@color/text_color_setting_summary_notification_sound"
+                    android:textSize="14dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vg_push_schedule_end__time"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:layout_below="@id/vg_push_schedule_start_time"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_push_schedule_end_time_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/push_schedule_end"
+                    android:textColor="@color/text_color_setting_check_title"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_push_schedule_end_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="오후 07:00"
+                    android:textColor="@color/text_color_setting_summary_notification_sound"
+                    android:textSize="14dp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/more_icon_arrow_right" />
+
+        </RelativeLayout>
+
+        <View style="@style/JandiSettings.Divider" />
+
+        <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
             android:id="@+id/vg_settings_push_sound"
             style="@style/JandiSettings.Body"
             app:sbvChcked="true"

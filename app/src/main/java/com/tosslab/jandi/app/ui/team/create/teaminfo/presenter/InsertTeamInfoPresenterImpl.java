@@ -96,6 +96,7 @@ public class InsertTeamInfoPresenterImpl implements InsertTeamInfoPresenter {
                         }
                     }
                     teamInsertInfoModel.updateRank(teamId);
+                    teamInsertInfoModel.updateOnlineStatus(teamId);
                     TeamInfoLoader.getInstance().refresh();
 
                     return teamId;
