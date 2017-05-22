@@ -4,6 +4,8 @@ import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.ui.settings.push.schedule.model.SettingPushScheduleModel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
@@ -146,22 +148,12 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
     }
 
     private int getTimeZoneInt() {
-        TimeZone timeZone = TimeZone.getDefault();
-        String timeZoneString = timeZone.getDisplayName(false, TimeZone.SHORT).replace("GMT", "");
+        TimeZone tz = TimeZone.getDefault();
+        Calendar cal = GregorianCalendar.getInstance(tz);
+        int offsetInMillis = tz.getOffset(cal.getTimeInMillis());
 
-        boolean isPlus = false;
+        int timeZoneInt = offsetInMillis / 3600000;
 
-        if (timeZoneString.contains("+")) {
-            isPlus = true;
-        } else {
-            isPlus = false;
-        }
-
-        int timeZoneInt = Integer.valueOf(timeZoneString.substring(1, 3));
-
-        if (!isPlus) {
-            timeZoneInt = timeZoneInt * -1;
-        }
         return timeZoneInt;
     }
 

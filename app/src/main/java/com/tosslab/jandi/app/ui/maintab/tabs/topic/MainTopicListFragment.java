@@ -428,6 +428,10 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MOVE_MESSAGE_ACTIVITY) {
+            if (updatedTopicAdapter == null || topicFolderAdapter == null) {
+                return;
+            }
+
             if (resultCode == Activity.RESULT_OK && (data != null && data.hasExtra(MessageListV2Activity.KEY_ENTITY_ID))) {
                 long selectedEntity = data.getLongExtra(MessageListV2Activity.KEY_ENTITY_ID, -2);
                 if (selectedEntity <= -2) {
