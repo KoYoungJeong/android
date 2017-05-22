@@ -172,10 +172,14 @@ public class SettingsPushFragment extends Fragment {
             }).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(deviceInfo -> {
-                        setAlarmScheduleDetail(deviceInfo.getDays(),
-                                deviceInfo.getStartTime(),
-                                deviceInfo.getEndTime(),
-                                deviceInfo.getTimezone());
+                        if (deviceInfo != null) {
+                            setAlarmScheduleDetail(deviceInfo.getDays(),
+                                    deviceInfo.getStartTime(),
+                                    deviceInfo.getEndTime(),
+                                    deviceInfo.getTimezone());
+                        }
+                    }, t -> {
+                        t.printStackTrace();
                     });
         }
     }
