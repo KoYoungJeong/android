@@ -90,6 +90,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     private static final int REQUEST_TEAM_CREATE = 1603;
 
+    @Bind(R.id.vg_navigation_absence_wrapper)
+    ViewGroup vgNavigationAbsenceWrapper;
     @Bind(R.id.iv_navigation_profile_large)
     ImageView ivProfileLarge;
     @Bind(R.id.iv_navigation_profile)
@@ -206,6 +208,9 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.nav_setting_absence_notification:
+
+                return true;
             case R.id.nav_setting_notification:
                 Completable.fromAction(this::closeNavigation)
                         .subscribeOn(AndroidSchedulers.mainThread())
@@ -648,4 +653,5 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
         void closeNavigation();
     }
+
 }
