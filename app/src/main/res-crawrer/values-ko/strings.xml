@@ -468,8 +468,7 @@
 	<string name="jandi_invite_to_dummy_account_again">"입력하신 이메일 주소는 이미 다른 멤버가 초대 중입니다.
   초대메일을 다시 보낼까요?"</string>
 	<string name="jandi_invite_to_team">"팀으로 초대하기"</string>
-	<string name="jandi_invite_to_team_for_member">"팀에 멤버 초대하기
-"</string>
+	<string name="jandi_invite_to_team_for_member">"팀에 멤버 초대하기"</string>
 	<string name="jandi_invite_wechat">"위챗"</string>
 	<string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
 	<string name="jandi_is_newcomer">"잔디가 처음이신가요?"</string>

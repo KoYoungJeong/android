@@ -59,6 +59,7 @@
         android:background="@android:color/white"
         android:gravity="center"
         android:orientation="vertical"
+        android:paddingBottom="64dp"
         android:visibility="gone">
 
         <ImageView

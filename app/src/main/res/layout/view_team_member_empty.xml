@@ -32,8 +32,7 @@
             android:lineSpacingExtra="4dp"
             android:text="@string/jandi_message_no_member"
             android:textColor="@color/rgb_999999"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/btn_chat_choose_member_empty"
@@ -44,7 +43,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="17dp"
             android:paddingRight="17dp"
-            android:text="@string/jandi_send_invitation"
+            android:text="@string/jandi_invite_to_team_for_member"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
