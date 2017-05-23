@@ -47,7 +47,8 @@
             android:paddingRight="17dp"
             android:text="@string/jandi_folder_new_folder"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

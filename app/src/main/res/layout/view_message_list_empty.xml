@@ -27,7 +27,6 @@
             android:lineSpacingExtra="4dp"
             android:text="@string/jandi_no_message_in_topic_dm"
             android:textColor="@color/rgb_999999"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textSize="14sp" />
     </LinearLayout>
 </ScrollView>

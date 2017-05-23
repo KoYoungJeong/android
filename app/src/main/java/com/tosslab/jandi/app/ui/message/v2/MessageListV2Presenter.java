@@ -856,13 +856,9 @@ public class MessageListV2Presenter {
 
 
         } else {
-            for (long memberId : TeamInfoLoader.getInstance().getRoom(entityId).getMembers()) {
-                if (memberId != TeamInfoLoader.getInstance().getMyId()) {
-                    if (TeamInfoLoader.getInstance().getUser(memberId).isDisabled()) {
-                        view.insertNeverMessageLayout();
-                        return;
-                    }
-                }
+            if (messageListModel.isDisabledUserChat(entityId)) {
+                view.insertNeverMessageLayout();
+                return;
             }
 
             view.insertMessageEmptyLayout();
