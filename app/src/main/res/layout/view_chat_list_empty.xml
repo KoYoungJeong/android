@@ -38,7 +38,7 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="@string/tab_1_1_esm_2"
-            android:textColor="@color/rgb_999999"
+            android:textColor="@color/rgb_cccccc"
             android:textSize="14sp" />
 
     </LinearLayout>

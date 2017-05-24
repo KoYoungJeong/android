@@ -54,6 +54,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:gravity="center"
+                android:lineSpacingExtra="3dp"
                 android:text="@string/tab_mypage_poll_esm_1"
                 android:textColor="@color/rgb_999999"
                 android:textSize="14sp" />
@@ -64,6 +65,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:gravity="center"
+                android:lineSpacingExtra="3dp"
                 android:text="@string/tab_mypage_poll_esm_2"
                 android:textColor="@color/rgb_cccccc"
                 android:textSize="14sp" />

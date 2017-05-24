@@ -743,7 +743,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 }
                 if (vgEmptyLayout != null && vgEmptyLayout.getVisibility() == View.VISIBLE) {
                     Animation animation = new AlphaAnimation(1.0f, 0.0f);
-                    animation.setDuration(1000);
+                    animation.setDuration(500);
                     animation.setFillEnabled(true);
                     animation.setFillAfter(true);
                     ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
@@ -757,7 +757,7 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                 }
                 if (vgEmptyLayout != null && vgEmptyLayout.getVisibility() == View.VISIBLE) {
                     Animation animation = new AlphaAnimation(0.0f, 1.0f);
-                    animation.setDuration(1000);
+                    animation.setDuration(500);
                     animation.setFillEnabled(true);
                     animation.setFillAfter(true);
                     ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
