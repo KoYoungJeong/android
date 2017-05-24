@@ -295,7 +295,6 @@ public class MessageRepository extends LockExecutorTemplate {
         return queryBuilder;
     }
 
-
     public ResMessages.Link getLastMessage(long roomId) {
         return execute(() -> {
             ResMessages.Link link = null;
@@ -304,6 +303,7 @@ public class MessageRepository extends LockExecutorTemplate {
                         .queryBuilder()
                         .orderBy("time", false)
                         .where()
+                        .and()
                         .in("id", inQueryBuildOfRoomRelation(roomId))
                         .queryForFirst();
             } catch (SQLException e) {
@@ -332,7 +332,7 @@ public class MessageRepository extends LockExecutorTemplate {
 
                 return getHelper().getDao(ResMessages.Link.class)
                         .queryBuilder()
-                        .limit((long)count)
+                        .limit((long) count)
                         .orderBy("time", false)
                         .where()
                         .in("id", queryBuilder)
