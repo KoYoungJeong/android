@@ -303,7 +303,6 @@ public class MessageRepository extends LockExecutorTemplate {
                         .queryBuilder()
                         .orderBy("time", false)
                         .where()
-                        .and()
                         .in("id", inQueryBuildOfRoomRelation(roomId))
                         .queryForFirst();
             } catch (SQLException e) {
