@@ -55,7 +55,7 @@
                     android:layout_centerVertical="true"
                     android:text="오후 01:23"
                     android:textColor="@color/jandi_border_gray"
-                    android:textSize="12dp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_starred_name"
@@ -68,7 +68,7 @@
                     android:singleLine="true"
                     android:text="Teefweqfewqfewqfewqfweqfweqfwe"
                     android:textColor="@color/dark_gray"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
             </RelativeLayout>
@@ -84,7 +84,7 @@
                 android:singleLine="false"
                 android:text="HQ had a discussion around fewfqweqthis topic and understood the needs.the needs. the needs the needs. the needs "
                 android:textColor="@color/dark_gray"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                     android:singleLine="true"
                     android:text="Design_team_HQ"
                     android:textColor="@color/jandi_text_light"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
             </LinearLayout>

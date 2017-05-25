@@ -43,13 +43,14 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/iv_starred_poll_profile"
+            android:layout_toLeftOf="@+id/tv_starred_poll_create_date"
             android:layout_toRightOf="@id/iv_starred_poll_profile"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:text="Tee"
             android:textColor="@color/rgb_333333"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
@@ -58,12 +59,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginTop="2dp"
+
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:text="2016/10/11 오전 10:40"
             android:textColor="@color/rgb_999999"
-            android:textSize="12dp" />
+            android:textSize="12sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -93,7 +95,7 @@
                 android:maxLines="3"
                 android:text="8098521308509823"
                 android:textColor="@color/rgb_333333"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
         </LinearLayout>
 

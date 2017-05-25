@@ -99,8 +99,9 @@
             <LinearLayout
                 android:id="@+id/vg_topic_create_autojoin"
                 android:layout_width="match_parent"
-                android:layout_height="88dp"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:minHeight="88dp"
                 android:orientation="horizontal"
                 android:paddingBottom="8dp"
                 android:paddingLeft="16dp"

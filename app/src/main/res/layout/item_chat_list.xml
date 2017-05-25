@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="72dp">
+    android:layout_height="72dp">
 
     <View
         android:id="@+id/v_entity_listitem_selector"
@@ -32,55 +31,58 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp" />
 
-    <TextView
-        android:id="@+id/tv_user_department"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/vg_entity_listitem_name"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/vg_entity_listitem_name"
-        android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/tv_entity_listitem_badge"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:text="ahahahaha"
-        android:textColor="@color/jandi_text_medium"
-        android:textSize="@dimen/jandi_text_size_small" />
-
-    <RelativeLayout
-        android:id="@+id/vg_entity_listitem_name"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_marginBottom="3dp"
+        android:layout_height="match_parent"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/tv_entity_listitem_badge"
-        android:layout_toRightOf="@+id/iv_entity_listitem_icon">
+        android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="16dp">
+
+            <TextView
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Topic Name"
+                android:textColor="@color/jandi_text"
+                android:textSize="@dimen/jandi_text_size_large"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_name_line_through"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/tv_user_name"
+                android:layout_alignLeft="@+id/tv_user_name"
+                android:layout_alignRight="@+id/tv_user_name"
+                android:layout_alignTop="@+id/tv_user_name"
+                android:src="@drawable/line_black" />
+
+        </RelativeLayout>
 
         <TextView
-            android:id="@+id/tv_user_name"
+            android:id="@+id/tv_user_department"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
             android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Topic Name"
-            android:textColor="@color/jandi_text"
-            android:textSize="@dimen/jandi_text_size_large"
-            android:textStyle="bold" />
+            android:maxLines="2"
+            android:text="ahahahaha"
+            android:textColor="@color/jandi_text_medium"
+            android:textSize="@dimen/jandi_text_size_small" />
 
-        <ImageView
-            android:id="@+id/iv_name_line_through"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_user_name"
-            android:layout_alignLeft="@+id/tv_user_name"
-            android:layout_alignRight="@+id/tv_user_name"
-            android:layout_alignTop="@+id/tv_user_name"
-            android:src="@drawable/line_black" />
+    </LinearLayout>
 
-    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_entity_listitem_badge"

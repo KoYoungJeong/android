@@ -130,13 +130,13 @@
         <TextView
             android:id="@+id/tv_authority_badge"
             android:layout_width="wrap_content"
-            android:layout_height="17dp"
-            android:layout_marginEnd="12dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="12dp"
-            android:layout_marginStart="16dp"
             android:background="@drawable/bg_user_level_team_admin"
             android:gravity="center_vertical"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
             android:text="@string/common_authority_title_owner"
             android:textColor="@color/jandi_text_level_team_admin"
             android:textSize="@dimen/jandi_text_size_11sp" />
