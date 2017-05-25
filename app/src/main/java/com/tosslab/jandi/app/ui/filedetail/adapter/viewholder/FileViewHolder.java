@@ -188,7 +188,7 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
                 .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
                 .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
                 .filter(id -> {
-                    if (ssb.length() > 0) {
+                    if (ssb.length() == firstLength) {
                         ssb.append(", ");
                     }
                     if (guest) {
