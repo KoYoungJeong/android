@@ -188,6 +188,9 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
                 .distinct(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
                 .map(ResMessages.OriginalMessage.IntegerWrapper::getShareEntity)
                 .filter(id -> {
+                    if (ssb.length() > 0) {
+                        ssb.append(", ");
+                    }
                     if (guest) {
                         if (TeamInfoLoader.getInstance().isTopic(id)) {
                             // 해당 토픽이 내가 참여 중인지 확인함

@@ -186,6 +186,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     private boolean isExternalShared;
 
     private StickerInfo stickerInfo = NULL_STICKER;
+    private LinearLayoutManager layoutManager;
 
 
     @Override
@@ -306,7 +307,7 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
     }
 
     private void initFileInfoViews() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
+        layoutManager = new LinearLayoutManager(getBaseContext());
         listView.setLayoutManager(layoutManager);
         listView.setAdapter(adapter = new FileDetailAdapter());
 
@@ -566,7 +567,8 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
         if (adapter.getItemCount() <= 0) {
             return;
         }
-        listView.smoothScrollToPosition(adapter.getItemCount() - 1);
+
+        listView.postDelayed(() -> layoutManager.scrollToPositionWithOffset(adapter.getItemCount() - 1, 0), 1000);
     }
 
     @Override

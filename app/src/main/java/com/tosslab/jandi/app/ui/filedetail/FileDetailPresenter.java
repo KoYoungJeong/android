@@ -77,7 +77,7 @@ public class FileDetailPresenter {
                         return;
                     }
 
-                    retrieveFileDetail(pair.first, pair.second);
+                    retrieveFileDetail(pair.first, pair.second, false);
                 });
 
         starredStatePublishSubject = PublishSubject.create();
@@ -94,7 +94,7 @@ public class FileDetailPresenter {
     }
 
     // 화면 진입시, 코멘트(스티커 포함) 보낼 때 사용되어 짐
-    private void retrieveFileDetail(long fileId, boolean withProgress) {
+    private void retrieveFileDetail(long fileId, boolean withProgress, boolean isScrollBottom) {
         if (withProgress) {
             view.showProgress();
         }
@@ -140,11 +140,9 @@ public class FileDetailPresenter {
                         messages.get(messages.size() - 1) instanceof ResMessages.FileMessage)
                 .subscribe(messages -> {
                     int fileDetailPosition = messages.size() - 1;
-                    ResMessages.FileMessage fileMessage =
-                            (ResMessages.FileMessage) messages.get(fileDetailPosition);
+                    ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) messages.get(fileDetailPosition);
                     if (fileMessage.content != null) {
                         setFileDetailToView(fileMessage);
-
                         messages.remove(fileDetailPosition);
                     }
 
@@ -158,7 +156,11 @@ public class FileDetailPresenter {
                     if (withProgress) {
                         view.dismissProgress();
                     }
-                }, Throwable::printStackTrace);
+                }, Throwable::printStackTrace, () -> {
+                    if (isScrollBottom) {
+                        view.scrollToLastComment();
+                    }
+                });
 
     }
 
@@ -203,8 +205,7 @@ public class FileDetailPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(links -> {
-                    retrieveFileDetail(fileId, false);
-                    view.scrollToLastComment();
+                    retrieveFileDetail(fileId, false, true);
                 }, (t) -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
                     if (t instanceof RetrofitException) {
@@ -228,8 +229,7 @@ public class FileDetailPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(messageId -> {
-                    retrieveFileDetail(fileId, false);
-                    view.scrollToLastComment();
+                    retrieveFileDetail(fileId, false, true);
                 }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
 
@@ -437,7 +437,7 @@ public class FileDetailPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    retrieveFileDetail(fileId, false);
+                    retrieveFileDetail(fileId, false, false);
 
                     view.dismissProgress();
 
@@ -472,7 +472,7 @@ public class FileDetailPresenter {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                    retrieveFileDetail(fileId, false);
+                    retrieveFileDetail(fileId, false, false);
                     view.dismissProgress();
                     view.showUnshareSuccessToast();
 
@@ -557,7 +557,8 @@ public class FileDetailPresenter {
             return true;
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {}, t -> {
+                .subscribe(() -> {
+                }, t -> {
                     LogUtil.e(TAG, Log.getStackTraceString(t));
 
                     view.showCommentDeleteErrorToast();
