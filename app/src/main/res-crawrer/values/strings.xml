@@ -309,10 +309,10 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_create_topic">"Create a topic"</string>
 	<string name="jandi_created_this_topic">"%s created this topic"</string>
 	<string name="jandi_date_days">"D"</string>
-	<string name="jandi_date_evening">""</string>
+	<string name="jandi_date_evening">"PM"</string>
 	<string name="jandi_date_hours">"H"</string>
 	<string name="jandi_date_minutes">"M"</string>
-	<string name="jandi_date_morning">""</string>
+	<string name="jandi_date_morning">"AM"</string>
 	<string name="jandi_date_remaining">"left"</string>
 	<string name="jandi_decide_choose">"Select"</string>
 	<string name="jandi_delete_all">"Clear all"</string>

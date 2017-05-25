@@ -307,10 +307,10 @@
 	<string name="jandi_create_topic">"建立议题"</string>
 	<string name="jandi_created_this_topic">"%s建立了这议题"</string>
 	<string name="jandi_date_days">"日"</string>
-	<string name="jandi_date_evening">""</string>
+	<string name="jandi_date_evening">"下午"</string>
 	<string name="jandi_date_hours">"时"</string>
 	<string name="jandi_date_minutes">"分"</string>
-	<string name="jandi_date_morning">""</string>
+	<string name="jandi_date_morning">"上午"</string>
 	<string name="jandi_date_remaining">"剩余时间"</string>
 	<string name="jandi_decide_choose">"选择照片"</string>
 	<string name="jandi_delete_all">"清除纪录"</string>

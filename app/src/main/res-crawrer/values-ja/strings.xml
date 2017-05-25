@@ -311,10 +311,10 @@
 	<string name="jandi_create_topic">"トピック作成"</string>
 	<string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
 	<string name="jandi_date_days">"日"</string>
-	<string name="jandi_date_evening">""</string>
+	<string name="jandi_date_evening">"午後"</string>
 	<string name="jandi_date_hours">"時"</string>
 	<string name="jandi_date_minutes">"分"</string>
-	<string name="jandi_date_morning">""</string>
+	<string name="jandi_date_morning">"午前"</string>
 	<string name="jandi_date_remaining">"残り"</string>
 	<string name="jandi_decide_choose">"写真を選択"</string>
 	<string name="jandi_delete_all">"すべて消去"</string>
