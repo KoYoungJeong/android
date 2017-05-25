@@ -56,6 +56,8 @@
 	<string name="common_hamburger_teamadmin">"團隊管理員"</string>
 	<string name="common_hamburger_teamlist">"團隊列表"</string>
 	<string name="common_inputfield_placeholder">"輸入訊息中..."</string>
+	<string name="common_keyboard_next">"下一步"</string>
+	<string name="common_keyboard_previous">"上一步"</string>
 	<string name="common_launch_503">"抱歉！JANDI 伺服器暫時出現異常。建議您再嘗試操作，造成不便敬請見諒"</string>
 	<string name="common_launch_fail">"暫時無法讀取啟動資訊
 請重新啟動 app"</string>
@@ -305,10 +307,10 @@
 	<string name="jandi_create_topic">"建立議題"</string>
 	<string name="jandi_created_this_topic">"%s建立了這議題"</string>
 	<string name="jandi_date_days">"日"</string>
-	<string name="jandi_date_evening">""</string>
+	<string name="jandi_date_evening">"下午"</string>
 	<string name="jandi_date_hours">"時"</string>
 	<string name="jandi_date_minutes">"分"</string>
-	<string name="jandi_date_morning">""</string>
+	<string name="jandi_date_morning">"上午"</string>
 	<string name="jandi_date_remaining">"剩餘時間"</string>
 	<string name="jandi_decide_choose">"選擇照片"</string>
 	<string name="jandi_delete_all">"清除紀錄"</string>
@@ -499,7 +501,7 @@
 	<string name="jandi_message_leave_private_topic">"您如果離開這個私人議題群組，未來希望能夠重新加入，必須先取得其它人的邀請。您確定您想要離開？"</string>
 	<string name="jandi_message_leave_private_topic_when_only_you">"一旦離開議題，議題將會自動刪除。你確定要離開議題？一旦離開議題，議題將會自動刪除。你確定要離開議題？"</string>
 	<string name="jandi_message_logout">"已登出"</string>
-	<string name="jandi_message_no_member">"不再單打獨鬥，現在就邀請所有夥伴開始加入你的團隊！"</string>
+	<string name="jandi_message_no_member">""</string>
 	<string name="jandi_message_no_starred">"取消標記"</string>
 	<string name="jandi_message_search">"訊息搜尋"</string>
 	<string name="jandi_message_search_available">"訊息關鍵字搜尋功能上線囉！"</string>
@@ -528,6 +530,7 @@
 	<string name="jandi_next">"下一步"</string>
 	<string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
 	<string name="jandi_no_long_team_member">"%s 不再是此團隊的成員"</string>
+	<string name="jandi_no_message_dm_disabled_member">""</string>
 	<string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
 	<string name="jandi_no_preview_push_mention">"你在此訊息中被提及"</string>
 	<string name="jandi_no_preview_push_message">"你收到一則新訊息"</string>
@@ -858,6 +861,7 @@
 	<string name="password_current_type_info">"請輸入目前的密碼以確保重要資訊"</string>
 	<string name="password_forgot">"忘記密碼？"</string>
 	<string name="password_forgot_email_type_info">"請輸入註冊的電子郵箱, 以重新設定密碼"</string>
+	<string name="password_forgot_not_jandi_email_type_info">"此電郵尚未註冊 JANDI. 請重新輸入您的電子郵件."</string>
 	<string name="password_new_again_type">"再次確認新密碼"</string>
 	<string name="password_new_type">"輸入新密碼"</string>
 	<string name="password_new_type_confi_alert">"密碼不得少於8個字元, 同時包含大小寫英文字母、數字或特殊符號"</string>

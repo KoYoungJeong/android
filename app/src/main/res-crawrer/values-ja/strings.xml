@@ -56,6 +56,8 @@
 	<string name="common_hamburger_teamadmin">"チームの管理者"</string>
 	<string name="common_hamburger_teamlist">"チームリスト"</string>
 	<string name="common_inputfield_placeholder">"メッセージを送る..."</string>
+	<string name="common_keyboard_next">"進む"</string>
+	<string name="common_keyboard_previous">"戻る"</string>
 	<string name="common_launch_503">" 一時的にサービスを利用することができません。しばらくして、再試行してください。"</string>
 	<string name="common_launch_fail">"データの取得に失敗しました。
 アプリを再起動してください。"</string>
@@ -309,10 +311,10 @@
 	<string name="jandi_create_topic">"トピック作成"</string>
 	<string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
 	<string name="jandi_date_days">"日"</string>
-	<string name="jandi_date_evening">""</string>
+	<string name="jandi_date_evening">"午後"</string>
 	<string name="jandi_date_hours">"時"</string>
 	<string name="jandi_date_minutes">"分"</string>
-	<string name="jandi_date_morning">""</string>
+	<string name="jandi_date_morning">"午前"</string>
 	<string name="jandi_date_remaining">"残り"</string>
 	<string name="jandi_decide_choose">"写真を選択"</string>
 	<string name="jandi_delete_all">"すべて消去"</string>
@@ -505,7 +507,7 @@
 	<string name="jandi_message_leave_private_topic_when_only_you">"トピックから退出する同時トピックが削除されます。
   本当にトピックから退出しますか？"</string>
 	<string name="jandi_message_logout">"ログアウトしました"</string>
-	<string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
+	<string name="jandi_message_no_member">""</string>
 	<string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
 	<string name="jandi_message_search">"メッセージ
   検索"</string>
@@ -536,6 +538,7 @@
 	<string name="jandi_next">"次へ"</string>
 	<string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
 	<string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
+	<string name="jandi_no_message_dm_disabled_member">""</string>
 	<string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
 	<string name="jandi_no_preview_push_mention">"メッセージでメンションされました。"</string>
 	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
@@ -868,6 +871,7 @@
 	<string name="password_current_type_info">"お客さまの大切な情報を保護するために、現在のパスワードを入力してください"</string>
 	<string name="password_forgot">"パスワードをお忘れですか？"</string>
 	<string name="password_forgot_email_type_info">"新しいパスワードを設定するために、メールアドレスを入力してください"</string>
+	<string name="password_forgot_not_jandi_email_type_info">"このメールアドレスはJANDIに登録されていません. あなたのメールアドレスを再入力してください."</string>
 	<string name="password_new_again_type">"新しいパスワードを再入力"</string>
 	<string name="password_new_type">"新しいパスワード"</string>
 	<string name="password_new_type_confi_alert">"パスワードは半角英大文字、数字、記号を1種類以上含む8文字以上にしてください"</string>
