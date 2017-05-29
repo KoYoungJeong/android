@@ -145,7 +145,6 @@ public class NavigationModel {
                     if (e.getStatusCode() == 403) {
                         ResAccessToken accessToken = loginApi.get().getAccessToken(ReqAccessToken.createRefreshReqToken(TokenUtil.getRefreshToken()));
                         TokenUtil.saveTokenInfoByRefresh(accessToken);
-
                         initializeInfo = startApi.get().getRawInitializeInfo(teamId);
                     } else {
                         throw e;

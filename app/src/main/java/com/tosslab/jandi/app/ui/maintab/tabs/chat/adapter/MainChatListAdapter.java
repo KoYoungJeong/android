@@ -16,7 +16,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.chat.to.ChatItem;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.folder.TopicFolderAdapter;
+import com.tosslab.jandi.app.ui.maintab.tabs.topic.adapter.updated.UpdatedTopicAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -218,6 +221,31 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
+        return -1;
+    }
+
+    public int getHigherViewIndexIfHasUnreadCnt(int firstVisibleIndex) {
+        if (firstVisibleIndex == 0) {
+            return -1;
+        }
+        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+            if (entities.get(i).getUnread() > 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getLowerViewIndexIfHasUnreadCnt(int lastVisibleIndex) {
+        if (lastVisibleIndex <= 0
+                || lastVisibleIndex == entities.size() - 1) {
+            return -1;
+        }
+        for (int i = lastVisibleIndex; i < entities.size(); i++) {
+            if (entities.get(i).getUnread() > 0) {
+                return i;
+            }
+        }
         return -1;
     }
 

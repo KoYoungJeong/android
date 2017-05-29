@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
+import com.tosslab.jandi.app.ui.settings.push.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;
@@ -209,7 +210,11 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_setting_absence_notification:
-
+                Completable.fromAction(this::closeNavigation)
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .delay(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::moveToSetUpAbsence);
                 return true;
             case R.id.nav_setting_notification:
                 Completable.fromAction(this::closeNavigation)
@@ -383,6 +388,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     private void moveToSetUpNotification() {
         startActivity(new Intent(getActivity(), SettingPushActivity.class));
+    }
+
+    private void moveToSetUpAbsence() {
+        startActivity(new Intent(getActivity(), SettingAbsenceActivity.class));
     }
 
     @SuppressLint("CommitPrefEdits")

@@ -47,6 +47,5 @@ public class AccountApi extends ApiTemplate<AccountApi.Api> {
         @PUT("account")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<ResAccountInfo> updateName(@Body ReqProfileName profileName);
-
     }
 }

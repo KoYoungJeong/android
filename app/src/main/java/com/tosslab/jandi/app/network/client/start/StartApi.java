@@ -22,11 +22,19 @@ public class StartApi extends ApiTemplate<StartApi.Api> {
         return call(() -> getApi().getRawInitializeInfo(teamId));
     }
 
+    public String getRawAccountInitializeInfo() throws RetrofitException {
+        return call(() -> getApi().getRawAccountInitializeInfo());
+    }
+
     interface Api {
 
         @GET("/start-api/teams/{teamId}")
         @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
         Call<String> getRawInitializeInfo(@Path("teamId") long teamId);
+
+        @GET("/start-api/account")
+        @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+        Call<String> getRawAccountInitializeInfo();
 
     }
 }

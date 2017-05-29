@@ -14,9 +14,9 @@
         app:titleMarginEnd="16dp" />
 
     <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
-        android:id="@+id/vg_settings_push_notification"
+        android:id="@+id/vg_setting_absence_checkbox"
         style="@style/JandiSettings.Body"
-        app:sbvChcked="true"
+        app:sbvChcked="false"
         app:sbvSummary="부재 중 설정을 하시면 다른 사람에게 현재\n부재 중 임을 알려주고 모바일의 푸시 알림을\n끌 수 있습니다."
         app:sbvTitle="부재 중 설정" />
 
@@ -26,6 +26,7 @@
         android:background="@color/rgb_e5e5e5" />
 
     <LinearLayout
+        android:id="@+id/vg_setting_absence_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -40,20 +41,19 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_period_title"
+                android:id="@+id/tv_absence_period_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:text="기간"
                 android:textColor="@color/rgb_333333"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/tv_absence_period"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/tv_period_title"
+                android:layout_alignBaseline="@id/tv_absence_period_title"
                 android:layout_alignParentRight="true"
-
                 android:text="총 01일, 최대 3년"
                 android:textColor="@color/rgb_00a2e2"
                 android:textSize="12sp" />
@@ -82,7 +82,7 @@
                     android:textSize="12dp" />
 
                 <LinearLayout
-                    android:id="@+id/vg_select_start_time"
+                    android:id="@+id/vg_select_absence_start_time"
                     android:layout_width="match_parent"
                     android:layout_height="33dp"
                     android:layout_marginTop="8dp"
@@ -91,7 +91,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tv_select_start_time"
+                        android:id="@+id/tv_select_absence_start_time"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -123,7 +123,7 @@
                     android:textSize="12dp" />
 
                 <LinearLayout
-                    android:id="@+id/vg_select_end_time"
+                    android:id="@+id/vg_select_absence_end_time"
                     android:layout_width="match_parent"
                     android:layout_height="33dp"
                     android:layout_marginTop="8dp"
@@ -132,7 +132,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tv_select_end_time"
+                        android:id="@+id/tv_select_absence_end_time"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -164,6 +164,7 @@
             android:textSize="12sp" />
 
         <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
+            android:id="@+id/vg_setting_push_alarm_enable_checkbox"
             style="@style/JandiSettings.Body"
             app:sbvChcked="true"
             app:sbvSummary="설정 시 해당 기간 동안 사용 중인 모바일에 푸시 알림을 보내지 않습니다. "
@@ -177,6 +178,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
@@ -189,27 +191,30 @@
                 app:theme="@style/FloatingEditTextTheme">
 
                 <AutoCompleteTextView
-                    android:id="@+id/et_option_message"
+                    android:id="@+id/et_absence_option_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:hint="안내 메시지 (옵션)"
                     android:imeOptions="actionNext"
-                    android:inputType="textEmailAddress"
+                    android:inputType="text"
                     android:maxLength="60"
-                    android:nextFocusDown="@+id/et_password"
+                    android:maxLines="2"
                     android:paddingBottom="16dp"
                     android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
 
             <TextView
+                android:id="@+id/tv_absence_option_message_length"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="-20dp"
                 android:color="@color/jandi_transparent_black_38p"
-                android:text="6/60"
+                android:text="0/60"
                 android:textSize="12sp" />
 
             <TextView

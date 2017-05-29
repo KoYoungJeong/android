@@ -63,6 +63,8 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrScreenView;
 import com.tosslab.jandi.app.views.FloatingActionMenu;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
+import com.tosslab.jandi.app.views.listeners.UnreadMessageClickListener;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -73,10 +75,13 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import rx.Completable;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class MainTopicListFragment extends BaseLazyFragment
-        implements MainTopicListPresenter.View, BackPressConsumer, ListScroller, FloatingActionBarDetector {
+        implements MainTopicListPresenter.View,
+        BackPressConsumer, ListScroller, FloatingActionBarDetector, TabFocusListener, UnreadMessageClickListener {
 
     private static final int MOVE_MESSAGE_ACTIVITY = 702;
 
@@ -97,9 +102,12 @@ public class MainTopicListFragment extends BaseLazyFragment
 
     private LinearLayoutManager layoutManager;
     private AlertDialog createFolderDialog;
+    private TopicFolderAdapter topicFolderAdapter;
     private UpdatedTopicAdapter updatedTopicAdapter;
     private boolean isFirstLoadFragment = true;
-    private TopicFolderAdapter topicFolderAdapter;
+
+    private int unreadUpperIndex = -1;
+    private int unreadLowerIndex = -1;
 
     public static MainTopicListFragment create(long selectedEntity) {
         Bundle args = new Bundle();
@@ -162,6 +170,10 @@ public class MainTopicListFragment extends BaseLazyFragment
                 (folderId, folderName, folderSeq) ->
                         showGroupSettingPopupView(folderId, folderName, folderSeq));
 
+        topicFolderAdapter.setOnFolderStatusChangeListener((folderId, isOpened) -> {
+            setViewUnreadMessage();
+        });
+
         topicFolderAdapter.setOnItemLongClickListener(topicItemData -> {
             mainTopicListPresenter.onChildItemLongClick(topicItemData);
         });
@@ -170,14 +182,49 @@ public class MainTopicListFragment extends BaseLazyFragment
             SpeedEstimationUtil.sendAnalyticsTopicEnteredStart();
             topicFolderAdapter.stopAnimation();
             mainTopicListPresenter.onChildItemClick(topicItemData);
-            topicFolderAdapter.notifyDataSetChanged();
+            notifyTopicFolderListChanged();
         });
+    }
+
+    private void notifyTopicFolderListChanged() {
+        topicFolderAdapter.notifyDataSetChanged();
+        Completable.complete()
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (getActivity() instanceof MainTabActivity
+                            && ((MainTabActivity) getActivity()).getCurrentFragment() == this) {
+                        setViewUnreadMessage();
+                    }
+                });
+    }
+
+    private void notifyUpdatedTopicListChanged() {
+        updatedTopicAdapter.notifyDataSetChanged();
+        Completable.complete()
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    if (getActivity() instanceof MainTabActivity
+                            && ((MainTabActivity) getActivity()).getCurrentFragment() == this) {
+                        setViewUnreadMessage();
+                    }
+                });
     }
 
     private void setListViewScroll() {
         MainTabActivity activity = (MainTabActivity) getActivity();
 
         lvMainTopic.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    setViewUnreadMessage();
+                }
+            }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -189,8 +236,44 @@ public class MainTopicListFragment extends BaseLazyFragment
                         activity.setTabLayoutVisible(true);
                     }
                 }
+
             }
         });
+    }
+
+    private void setViewUnreadMessage() {
+        MainTabActivity activity = (MainTabActivity) getActivity();
+
+        if (layoutManager == null || lvMainTopic == null) {
+            return;
+        }
+
+        if(activity.getCurrentFragment() != this){
+            return;
+        }
+
+        int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+        int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+
+        if (lvMainTopic.getAdapter() instanceof TopicFolderAdapter) {
+            unreadUpperIndex = topicFolderAdapter.getHigherViewIndexIfHasUnreadCnt(firstVisiblePosition);
+            unreadLowerIndex = topicFolderAdapter.getLowerViewIndexIfHasUnreadCnt(lastVisiblePosition);
+        } else if (lvMainTopic.getAdapter() instanceof UpdatedTopicAdapter) {
+            unreadUpperIndex = updatedTopicAdapter.getHigherViewIndexIfHasUnreadCnt(firstVisiblePosition);
+            unreadLowerIndex = updatedTopicAdapter.getLowerViewIndexIfHasUnreadCnt(lastVisiblePosition);
+        }
+
+        if (unreadUpperIndex != -1) {
+            activity.setVisibleUnreadMessageTop(true);
+        } else {
+            activity.setVisibleUnreadMessageTop(false);
+        }
+
+        if (unreadLowerIndex != -1) {
+            activity.setVisibleUnreadMessageBottom(true);
+        } else {
+            activity.setVisibleUnreadMessageBottom(false);
+        }
     }
 
     @Override
@@ -229,13 +312,13 @@ public class MainTopicListFragment extends BaseLazyFragment
             updatedTopicAdapter.stopAnimation();
             Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
             mainTopicListPresenter.onUpdatedTopicClick(item);
-            updatedTopicAdapter.notifyDataSetChanged();
+            notifyUpdatedTopicListChanged();
         });
 
         updatedTopicAdapter.setOnRecyclerItemLongClickListener((view, adapter, position) -> {
             Topic item = ((UpdatedTopicAdapter) adapter).getItem(position);
             mainTopicListPresenter.onUpdatedTopicLongClick(item);
-            updatedTopicAdapter.notifyDataSetChanged();
+            notifyUpdatedTopicListChanged();
             return false;
         });
     }
@@ -354,6 +437,8 @@ public class MainTopicListFragment extends BaseLazyFragment
             tvSortTitle.setText(R.string.jandi_sort_folder);
             ivTopicOrder.setImageResource(R.drawable.topic_list_default);
         }
+
+        lvMainTopic.postDelayed(() -> setViewUnreadMessage(), 100);
     }
 
     @OnClick(R.id.vg_main_topic_order)
@@ -381,20 +466,20 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void setUpdatedItems(List<Topic> topics) {
         updatedTopicAdapter.setItems(topics);
-        updatedTopicAdapter.notifyDataSetChanged();
+        notifyUpdatedTopicListChanged();
     }
 
     @Override
     public void showList(List<IMarkerTopicFolderItem> topicFolderItems) {
         topicFolderAdapter.setItems(topicFolderItems);
-        topicFolderAdapter.notifyDataSetChanged();
+        notifyTopicFolderListChanged();
         EventBus.getDefault().post(new TopicBadgeEvent());
     }
 
     @Override
     public void refreshList(List<IMarkerTopicFolderItem> topicFolderItems) {
         topicFolderAdapter.setItems(topicFolderItems);
-        topicFolderAdapter.notifyDataSetChanged();
+        notifyTopicFolderListChanged();
     }
 
     public void showGroupSettingPopupView(long folderId, String folderName, int seq) {
@@ -458,7 +543,7 @@ public class MainTopicListFragment extends BaseLazyFragment
                         }
                     }
                     updatedTopicAdapter.startAnimation();
-                    updatedTopicAdapter.notifyDataSetChanged();
+                    notifyUpdatedTopicListChanged();
                 }
             }
         }
@@ -687,7 +772,7 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void scrollToTop() {
         if (lvMainTopic != null) {
-            lvMainTopic.scrollToPosition(0);
+            lvMainTopic.smoothScrollToPosition(0);
         }
     }
 
@@ -716,4 +801,30 @@ public class MainTopicListFragment extends BaseLazyFragment
         }
     }
 
+    @Override
+    public void onFocus() {
+        setViewUnreadMessage();
+    }
+
+    @Override
+    public void onClickTopUnreadMessage() {
+        if (unreadUpperIndex != -1) {
+            if (unreadUpperIndex < 8) {
+                lvMainTopic.smoothScrollToPosition(0);
+            } else {
+                lvMainTopic.smoothScrollToPosition(unreadUpperIndex - 8);
+            }
+        }
+    }
+
+    @Override
+    public void onClickBottomUnreadMessage() {
+        if (unreadLowerIndex != -1) {
+            if (lvMainTopic.getAdapter().getItemCount() - 1 < unreadLowerIndex + 8) {
+                lvMainTopic.smoothScrollToPosition(lvMainTopic.getAdapter().getItemCount() - 1);
+            } else {
+                lvMainTopic.smoothScrollToPosition(unreadLowerIndex + 8);
+            }
+        }
+    }
 }

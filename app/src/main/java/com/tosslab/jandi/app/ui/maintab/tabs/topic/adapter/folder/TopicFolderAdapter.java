@@ -47,6 +47,7 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
     private Set<String> closedFolderSet = new HashSet<>();
 
     private OnFolderSettingClickListener onFolderSettingClickListener;
+    private OnFolderStatusChangeListener onFolderStatusChangeListener;
     private OnItemLongClickListener onItemLongClickListener;
     private OnItemClickListener onItemClickListener;
 
@@ -221,9 +222,18 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
 
         if (isOpened) {
             notifyItemRangeInserted(itemStartIndex, itemCnt);
+
         } else {
             notifyItemRangeRemoved(itemStartIndex, itemCnt);
         }
+
+        if (onFolderSettingClickListener != null) {
+            onFolderStatusChangeListener.onFolderStatusChanged(folderId, isOpened);
+        }
+    }
+
+    public void setOnFolderStatusChangeListener(OnFolderStatusChangeListener onFolderStatusChangeListener) {
+        this.onFolderStatusChangeListener = onFolderStatusChangeListener;
     }
 
     public void setOnFolderSettingClickListener(
@@ -297,12 +307,59 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
         colorAnimator.start();
     }
 
+    public int getHigherViewIndexIfHasUnreadCnt(int firstVisibleIndex) {
+        if (firstVisibleIndex <= 0) {
+            return -1;
+        }
+        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+            IMarkerTopicFolderItem item = cloneItems.get(i);
+            if (item instanceof TopicFolderData) {
+                TopicFolderData topicFolderData = (TopicFolderData) item;
+                if (!topicFolderData.isOpened() && topicFolderData.getChildBadgeCnt() > 0) {
+                    return i;
+                }
+            } else if (item instanceof TopicItemData) {
+                TopicItemData topicItemData = (TopicItemData) item;
+                if (topicItemData.getUnreadCount() > 0) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public int getLowerViewIndexIfHasUnreadCnt(int lastVisibleIndex) {
+        if (lastVisibleIndex < 0 ||
+                lastVisibleIndex == cloneItems.size() - 1) {
+            return -1;
+        }
+        for (int i = lastVisibleIndex; i < cloneItems.size(); i++) {
+            IMarkerTopicFolderItem item = cloneItems.get(i);
+            if (item instanceof TopicFolderData) {
+                TopicFolderData topicFolderData = (TopicFolderData) item;
+                if (!topicFolderData.isOpened() && topicFolderData.getChildBadgeCnt() > 0) {
+                    return i;
+                }
+            } else if (item instanceof TopicItemData) {
+                TopicItemData topicItemData = (TopicItemData) item;
+                if (topicItemData.getUnreadCount() > 0) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
     private enum AnimStatus {
         READY, IN_ANIM, FINISH, IDLE
     }
 
     public interface OnFolderSettingClickListener {
         void onClick(long folderId, String folderName, int folderSeq);
+    }
+
+    public interface OnFolderStatusChangeListener {
+        void onFolderStatusChanged(long folderId, boolean isOpened);
     }
 
     public interface OnItemClickListener {

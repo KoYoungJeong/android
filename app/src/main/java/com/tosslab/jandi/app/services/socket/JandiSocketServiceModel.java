@@ -75,6 +75,7 @@ import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
 import com.tosslab.jandi.app.services.socket.model.SocketModelExtractor;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketAbsenceUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementUpdatedEvent;
@@ -273,6 +274,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketPollVotedEvent.class, this::onPollVoted);
         messageEventActorMapper.put(SocketMentionMarkerUpdatedEvent.class, this::onMentionMarkerUpdated);
         messageEventActorMapper.put(SocketMemberOnlineStatusChangeEvent.class, this::onMemberOnlineStatusChanged);
+        messageEventActorMapper.put(SocketAbsenceUpdatedEvent.class, this::onAbsenceUpdated);
 
         return messageEventActorMapper;
 
@@ -1733,6 +1735,9 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onAbsenceUpdated(Object object) {
 
     }
 

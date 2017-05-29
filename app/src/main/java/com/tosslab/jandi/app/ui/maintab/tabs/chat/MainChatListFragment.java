@@ -50,6 +50,8 @@ import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.TabFocusListener;
+import com.tosslab.jandi.app.views.listeners.UnreadMessageClickListener;
 
 import java.util.List;
 
@@ -60,7 +62,8 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 public class MainChatListFragment extends BaseLazyFragment
-        implements MainChatListPresenter.View, ListScroller, FloatingActionBarDetector {
+        implements MainChatListPresenter.View,
+        ListScroller, FloatingActionBarDetector, TabFocusListener, UnreadMessageClickListener {
 
     @Inject
     MainChatListPresenter mainChatListPresenter;
@@ -75,6 +78,10 @@ public class MainChatListFragment extends BaseLazyFragment
     View emptyView;
 
     MainChatListAdapter mainChatListAdapter;
+    private LinearLayoutManager layoutManager;
+
+    private int unreadUpperIndex = -1;
+    private int unreadLowerIndex = -1;
 
     public static MainChatListFragment create(long selectedEntity) {
         Bundle bundle = new Bundle();
@@ -116,11 +123,10 @@ public class MainChatListFragment extends BaseLazyFragment
     }
 
     void initObjects() {
-
         mainChatListAdapter = new MainChatListAdapter(getActivity());
 
         setHasOptionsMenu(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = new LinearLayoutManager(getActivity());
         lvChat.setLayoutManager(layoutManager);
         mainChatListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
             SpeedEstimationUtil.sendAnalyticsTopicEnteredEndIfStarted();
@@ -137,6 +143,15 @@ public class MainChatListFragment extends BaseLazyFragment
         MainTabActivity activity = (MainTabActivity) getActivity();
 
         lvChat.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    setViewUnreadMessage();
+                }
+            }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -150,6 +165,37 @@ public class MainChatListFragment extends BaseLazyFragment
             }
         });
     }
+
+    private void setViewUnreadMessage() {
+        MainTabActivity activity = (MainTabActivity) getActivity();
+
+        if (layoutManager == null || lvChat == null || mainChatListAdapter == null) {
+            return;
+        }
+
+        if (activity.getCurrentFragment() != this) {
+            return;
+        }
+
+        int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+        int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
+
+        unreadUpperIndex = mainChatListAdapter.getHigherViewIndexIfHasUnreadCnt(firstVisiblePosition);
+        unreadLowerIndex = mainChatListAdapter.getLowerViewIndexIfHasUnreadCnt(lastVisiblePosition);
+
+        if (unreadUpperIndex != -1) {
+            activity.setVisibleUnreadMessageTop(true);
+        } else {
+            activity.setVisibleUnreadMessageTop(false);
+        }
+
+        if (unreadLowerIndex != -1) {
+            activity.setVisibleUnreadMessageBottom(true);
+        } else {
+            activity.setVisibleUnreadMessageBottom(false);
+        }
+    }
+
 
     @Override
     public void onResume() {
@@ -198,6 +244,10 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void refreshListView() {
         mainChatListAdapter.notifyDataSetChanged();
+        if (getActivity() instanceof MainTabActivity
+                && ((MainTabActivity) getActivity()).getCurrentFragment() == this) {
+            setViewUnreadMessage();
+        }
     }
 
     @Override
@@ -213,7 +263,7 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void setChatItems(List<ChatItem> chatItems) {
         mainChatListAdapter.setChatItem(chatItems);
-        mainChatListAdapter.notifyDataSetChanged();
+        refreshListView();
     }
 
     @Override
@@ -250,7 +300,7 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void startSelectedItemAnimation() {
         mainChatListAdapter.startAnimation();
-        mainChatListAdapter.notifyDataSetChanged();
+        refreshListView();
     }
 
     @Override
@@ -258,7 +308,7 @@ public class MainChatListFragment extends BaseLazyFragment
         int position = mainChatListAdapter.findPosition(entityId);
         if (position >= 0) {
             mainChatListAdapter.getItem(position).starred(isStarred);
-            mainChatListAdapter.notifyDataSetChanged();
+            refreshListView();
         }
     }
 
@@ -370,7 +420,7 @@ public class MainChatListFragment extends BaseLazyFragment
             return;
         }
 
-        mainChatListAdapter.notifyDataSetChanged();
+        refreshListView();
     }
 
     @Override
@@ -439,7 +489,7 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void scrollToTop() {
         if (lvChat != null) {
-            lvChat.scrollToPosition(0);
+            lvChat.smoothScrollToPosition(0);
         }
     }
 
@@ -454,4 +504,30 @@ public class MainChatListFragment extends BaseLazyFragment
         }
     }
 
+    @Override
+    public void onFocus() {
+        setViewUnreadMessage();
+    }
+
+    @Override
+    public void onClickTopUnreadMessage() {
+        if (unreadUpperIndex != -1) {
+            if (unreadUpperIndex < 8) {
+                lvChat.smoothScrollToPosition(0);
+            } else {
+                lvChat.smoothScrollToPosition(unreadUpperIndex - 8);
+            }
+        }
+    }
+
+    @Override
+    public void onClickBottomUnreadMessage() {
+        if (unreadLowerIndex != -1) {
+            if (lvChat.getAdapter().getItemCount() - 1 < unreadLowerIndex + 8) {
+                lvChat.smoothScrollToPosition(lvChat.getAdapter().getItemCount() - 1);
+            } else {
+                lvChat.smoothScrollToPosition(unreadLowerIndex + 8);
+            }
+        }
+    }
 }

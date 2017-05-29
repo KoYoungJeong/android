@@ -7,7 +7,9 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/v_dummy_tab_view">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/vg_appbar"
@@ -100,6 +102,38 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/vg_unread_message_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="42dp"
+                    android:background="@drawable/unread_message_bg"
+                    android:clickable="true"
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="3dp"
+                        android:text="안 읽은 메시지"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/unread_message_top" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
         </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>
@@ -139,5 +173,33 @@
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
         android:background="@drawable/btn_chat_fab" />
+
+    <LinearLayout
+        android:id="@+id/vg_unread_message_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="63dp"
+        android:background="@drawable/unread_message_bg"
+        android:clickable="true"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:text="안 읽은 메시지"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/unread_message_bottom" />
+    </LinearLayout>
+
 
 </RelativeLayout>

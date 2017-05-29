@@ -67,10 +67,10 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
     @Bind(R.id.tv_sun_button)
     TextView tvSunButton;
 
-    @Bind(R.id.tv_select_start_time)
+    @Bind(R.id.tv_select_absence_start_time)
     TextView tvSelectStartTime;
 
-    @Bind(R.id.tv_select_end_time)
+    @Bind(R.id.tv_select_absence_end_time)
     TextView tvSelectEndTime;
 
     // 월요일부터 0 - 일요일 6
@@ -271,7 +271,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
     }
 
 
-    @OnClick(R.id.vg_select_start_time)
+    @OnClick(R.id.vg_select_absence_start_time)
     void onStartTimeClicked() {
         TimePickerDialogFragment fragment = new TimePickerDialogFragment();
         Bundle bundle = new Bundle();
@@ -282,7 +282,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         fragment.show(getSupportFragmentManager(), "time_picker_dialog");
     }
 
-    @OnClick(R.id.vg_select_end_time)
+    @OnClick(R.id.vg_select_absence_end_time)
     void onEndTimeClicked() {
         TimePickerDialogFragment fragment = new TimePickerDialogFragment();
         Bundle bundle = new Bundle();

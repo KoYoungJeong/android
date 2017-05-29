@@ -462,6 +462,11 @@ public class JandiSocketService extends Service {
         EventListener memberOnlineStatusChangeListener = objects ->
                 jandiSocketServiceModel.onMemberOnlineStatusChanged(objects[0]);
         eventHashMap.put("member_presence_updated", memberOnlineStatusChangeListener);
+
+        EventListener absenceUpdatedListener =
+                objects -> jandiSocketServiceModel.onAbsenceUpdated(objects[0]);
+        eventHashMap.put("absence_updated", absenceUpdatedListener);
+
     }
 
     private void setUpSocketListener() {

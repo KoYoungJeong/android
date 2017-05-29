@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab;
 
+import android.animation.Animator;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,6 +17,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
@@ -35,9 +38,7 @@ import com.tosslab.jandi.app.events.socket.EventUpdateStart;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
-import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.keep.KeepAliveService;
 import com.tosslab.jandi.app.services.keep.KeepExecutedService;
@@ -73,7 +74,9 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.TabView;
 import com.tosslab.jandi.app.views.listeners.ListScroller;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 import com.tosslab.jandi.app.views.listeners.TabFocusListener;
+import com.tosslab.jandi.app.views.listeners.UnreadMessageClickListener;
 import com.tosslab.jandi.app.views.viewgroup.SwipeViewPager;
 
 import java.io.IOException;
@@ -134,6 +137,12 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     @Bind(R.id.v_tab_shadow)
     View vTabShadow;
 
+    @Bind(R.id.vg_unread_message_top)
+    LinearLayout vgUnreadMessageTop;
+
+    @Bind(R.id.vg_unread_message_bottom)
+    LinearLayout vgUnreadMessageBottom;
+
     @Inject
     MainTabPresenter mainTabPresenter;
 
@@ -158,6 +167,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
     private boolean swiping = true;
     private boolean isFirstLoadActivity = true;
     private boolean isFABController;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -360,20 +370,13 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
 
                 JandiPreference.setLastSelectedTab(position);
 
-                if (position == MypageTabInfo.INDEX) {
-                    Fragment fragment = getFragment(position);
-                    if (fragment != null && fragment instanceof TabFocusListener) {
-                        ((TabFocusListener) fragment).onFocus();
-                    }
-                }
+                setUnreadMessageViewForTab(position);
 
-                if (position == TeamTabInfo.INDEX) {
-                    Fragment fragment = getFragment(position);
-                    if (fragment != null && fragment instanceof TabFocusListener) {
-                        ((TabFocusListener) fragment).onFocus();
-                    }
-                }
+                currentFragment = getFragment(position);
 
+                if (currentFragment != null && currentFragment instanceof TabFocusListener) {
+                    ((TabFocusListener) currentFragment).onFocus();
+                }
             }
 
             @Override
@@ -399,6 +402,27 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                             .setText(tabInfo.getTitle())
                             .setCustomView(tabView), index, isFirstTab);
                 });
+    }
+
+    private void setUnreadMessageViewForTab(int position) {
+        vgUnreadMessageTop.animate().cancel();
+        vgUnreadMessageBottom.animate().cancel();
+        vgUnreadMessageTop.setVisibility(View.INVISIBLE);
+        vgUnreadMessageBottom.setVisibility(View.INVISIBLE);
+
+
+        if ((position == TopicTabInfo.INDEX || position == ChatTabInfo.INDEX)) {
+            RelativeLayout.LayoutParams layoutParams =
+                    (RelativeLayout.LayoutParams) vgUnreadMessageTop.getLayoutParams();
+
+            if (position == TopicTabInfo.INDEX) {
+                layoutParams.topMargin = (int) UiUtils.getPixelFromDp(42);
+                vgUnreadMessageTop.setLayoutParams(layoutParams);
+            } else {
+                layoutParams.topMargin = (int) UiUtils.getPixelFromDp(7);
+                vgUnreadMessageTop.setLayoutParams(layoutParams);
+            }
+        }
     }
 
     private void setPosition() {
@@ -735,6 +759,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         //FAB 버튼 위치 -> FAB 높이 + 탭 높이 + 마진
         int fabY = btnFab.getHeight() + tabLayout.getHeight() + (int) UiUtils.getPixelFromDp(20);
         int shadowY = vTabShadow.getHeight() + tabLayout.getHeight();
+        int unreadMessageBottomY = tabLayout.getHeight();
 
         if (visible) {
             if (vDummyTabView.getVisibility() != View.VISIBLE) {
@@ -744,6 +769,7 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 if (isFABController) {
                     btnFab.animate().setDuration(300).translationY(0);
                 }
+                vgUnreadMessageBottom.animate().setDuration(200).translationY(0);
             }
         } else {
             if (vDummyTabView.getVisibility() == View.VISIBLE) {
@@ -753,8 +779,60 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
                 if (isFABController) {
                     btnFab.animate().setDuration(300).translationY(fabY);
                 }
+                vgUnreadMessageBottom.animate().setDuration(200).translationY(unreadMessageBottomY);
             }
         }
+    }
+
+    @OnClick(R.id.vg_unread_message_top)
+    void onClickTopUnreadMessage() {
+        if (currentFragment instanceof UnreadMessageClickListener) {
+            ((UnreadMessageClickListener) currentFragment).onClickTopUnreadMessage();
+        }
+    }
+
+    @OnClick(R.id.vg_unread_message_bottom)
+    void onClickBottomUnreadMessage() {
+        if (currentFragment instanceof UnreadMessageClickListener) {
+            ((UnreadMessageClickListener) currentFragment).onClickBottomUnreadMessage();
+        }
+    }
+
+    public void setVisibleUnreadMessageTop(boolean visible) {
+        if (visible) {
+            vgUnreadMessageTop.setVisibility(View.VISIBLE);
+            vgUnreadMessageTop.animate().setDuration(200).alpha(1.0f);
+        } else {
+            vgUnreadMessageTop.animate().setDuration(200).alpha(0.0f);
+
+            vgUnreadMessageTop.animate().setListener(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    vgUnreadMessageTop.setVisibility(View.INVISIBLE);
+                    vgUnreadMessageTop.animate().setListener(null);
+                }
+            });
+        }
+    }
+
+    public void setVisibleUnreadMessageBottom(boolean visible) {
+        if (visible) {
+            vgUnreadMessageBottom.setVisibility(View.VISIBLE);
+            vgUnreadMessageBottom.animate().setDuration(200).alpha(1.0f);
+        } else {
+            vgUnreadMessageBottom.animate().setDuration(200).alpha(0.0f);
+            vgUnreadMessageBottom.animate().setListener(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    vgUnreadMessageBottom.setVisibility(View.INVISIBLE);
+                    vgUnreadMessageBottom.animate().setListener(null);
+                }
+            });
+        }
+    }
+
+    public Fragment getCurrentFragment() {
+        return currentFragment;
     }
 
 }
