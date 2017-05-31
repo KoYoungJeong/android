@@ -7,12 +7,34 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <ImageView
-        android:id="@+id/iv_member_item_icon"
+    <RelativeLayout
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp">
+
+
+        <ImageView
+            android:id="@+id/iv_member_item_profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/vg_profile_absence"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_round_black_transparent60_radius_20"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/profile_image_away_02" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:id="@+id/vg_content"

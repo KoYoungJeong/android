@@ -35,8 +35,8 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     private final int teamOwnerPaddingTop;
     @Bind(R.id.iv_profile)
     ImageView ivProfile;
-    @Bind(R.id.iv_favorite)
-    ImageView ivFavorite;
+    @Bind(R.id.vg_profile_absence)
+    ViewGroup vgProfileAbsence;
     @Bind(R.id.vg_content)
     ViewGroup vgContent;
     @Bind(R.id.vg_user_name)
@@ -140,8 +140,6 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
 
         setItemViewClickListener(item.getEntityId());
 
-        ivFavorite.setVisibility(View.GONE);
-
         if (TeamInfoLoader.getInstance().getOnlineStatus().isOnlineMember(item.getEntityId())) {
             vOnline.setVisibility(View.VISIBLE);
         } else {
@@ -213,8 +211,14 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     private void setProfileImage(ChatChooseItem item) {
         if (!item.isBot()) {
             if (!item.isInactive()) {
+                if (item.getAbsence() == null || item.getAbsence().getStartAt() == null) {
+                    vgProfileAbsence.setVisibility(View.GONE);
+                } else {
+                    vgProfileAbsence.setVisibility(View.VISIBLE);
+                }
                 ImageUtil.loadProfileImage(ivProfile, item.getPhotoUrl(), R.drawable.profile_img);
             } else {
+                vgProfileAbsence.setVisibility(View.GONE);
                 String url = item.getPhotoUrl();
                 if (ProfileUtil.isChangedPhoto(url)) {
                     ImageUtil.loadProfileImage(ivProfile, url, R.drawable.profile_img_dummyaccount_40);
@@ -224,6 +228,7 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
                 }
             }
         } else {
+            vgProfileAbsence.setVisibility(View.GONE);
             ivProfile.setImageResource(R.drawable.logotype_80);
         }
     }

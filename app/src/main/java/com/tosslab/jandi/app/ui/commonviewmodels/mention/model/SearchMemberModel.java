@@ -73,7 +73,8 @@ public class SearchMemberModel {
                         .setSmallProfileImageUrl(entity.getPhotoUrl())
                         .setInactive(entity.isInactive())
                         .setEnabled(entity.isEnabled())
-                        .setStarred(teamInfoLoader.isStarredUser(entity.getId())))
+                        .setStarred(teamInfoLoader.isStarredUser(entity.getId()))
+                        .setAbsence(entity.getAbsence()))
                 .subscribe(searchedItem -> {
                     selectableMembersLinkedHashMap.put(searchedItem.getId(), searchedItem);
                 }, Throwable::printStackTrace, () -> {

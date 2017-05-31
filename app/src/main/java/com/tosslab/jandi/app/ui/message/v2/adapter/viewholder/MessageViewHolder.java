@@ -29,6 +29,7 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
     protected Context context;
 
     private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
 
     private TextView tvName;
     private View vDisableLineThrough;
@@ -51,6 +52,7 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
         int topMargin = (int) UiUtils.getPixelFromDp(5f);
         if (hasProfile) {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
 
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
@@ -87,7 +89,8 @@ public class MessageViewHolder extends BaseMessageViewHolder implements Highligh
         if (hasProfile) {
             changeVisible(ivProfile, View.VISIBLE);
             changeVisible(tvName, View.VISIBLE);
-            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vgProfileAbsence, vProfileCover,
+                    tvName, vDisableLineThrough);
         }
         setMessage(link);
         setMessageTime(link);

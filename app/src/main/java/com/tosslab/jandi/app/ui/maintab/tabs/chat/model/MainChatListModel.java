@@ -53,7 +53,8 @@ public class MainChatListModel {
                             .status(member.isEnabled())
                             .inactive(member.isInactive())
                             .email(member.getEmail())
-                            .photo(member.getPhotoUrl());
+                            .photo(member.getPhotoUrl())
+                            .absence(member.getAbsence());
 
                     return chatItem;
                 })

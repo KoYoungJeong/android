@@ -6,6 +6,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import de.greenrobot.event.EventBus;
 public class ProfileUtil {
     public static void setProfile(long fromEntityId,
                                   ImageView ivProfile,
+                                  ViewGroup vgProfileAbsence,
                                   View vProfileCover,
                                   TextView tvName,
                                   View vDisableLineThrough) {
@@ -28,6 +30,12 @@ public class ProfileUtil {
             return;
         }
         User entity = TeamInfoLoader.getInstance().getUser(fromEntityId);
+
+        if (entity.getAbsence() == null || entity.getAbsence().getStartAt() == null) {
+            vgProfileAbsence.setVisibility(View.GONE);
+        } else {
+            vgProfileAbsence.setVisibility(View.VISIBLE);
+        }
 
         String profileUrl = entity.getPhotoUrl();
 
@@ -61,6 +69,7 @@ public class ProfileUtil {
 
     public static void setProfileForCommment(long fromEntityId,
                                              ImageView ivProfile,
+                                             ViewGroup vgProfileAbsence,
                                              View vProfileCover,
                                              TextView tvName,
                                              View vDisableLineThrough) {
@@ -69,6 +78,12 @@ public class ProfileUtil {
         }
 
         User entity = TeamInfoLoader.getInstance().getUser(fromEntityId);
+
+        if (entity.getAbsence() == null || entity.getAbsence().getStartAt() == null) {
+            vgProfileAbsence.setVisibility(View.GONE);
+        } else {
+            vgProfileAbsence.setVisibility(View.VISIBLE);
+        }
 
         if (entity.isBot()) {
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

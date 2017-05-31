@@ -36,6 +36,7 @@ import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.marker.Marker;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
@@ -318,7 +319,7 @@ public class NavigationModel {
         }
     }
 
-    public ResStartAccountInfo.Absence getAbsenceInfo() {
+    public Absence getAbsenceInfo() {
         return InitialAccountInfoRepository.getInstance().getAbsenceInfo();
     }
 

@@ -58,6 +58,23 @@
                 android:layout_marginRight="7dp"
                 android:layout_marginTop="2dp" />
 
+            <LinearLayout
+                android:id="@+id/vg_profile_absence"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="9dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/bg_round_black_transparent60_radius_20"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/profile_image_away_03" />
+
+            </LinearLayout>
+
             <View
                 android:id="@+id/v_profile_nested_user_profile_for_sticker_cover"
                 android:layout_width="wrap_content"

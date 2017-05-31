@@ -64,9 +64,9 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResOnlineStatus;
-import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.FolderItem;
@@ -1368,7 +1368,9 @@ public class JandiSocketServiceModel {
 
             SocketMemberUpdatedEvent.Data data = event.getData();
             Human member = data.getMember();
+            Absence absence = data.getAbsence();
             HumanRepository.getInstance(event.getTeamId()).updateHuman(member);
+            HumanRepository.getInstance(event.getTeamId()).updateAbsence(member.getId(), absence);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new ProfileChangeEvent(data.getMember()));
@@ -1746,7 +1748,7 @@ public class JandiSocketServiceModel {
             SocketAbsenceUpdatedEvent event =
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketAbsenceUpdatedEvent.class);
             saveEvent(event);
-            ResStartAccountInfo.Absence absence = event.getData().getAbsence();
+            Absence absence = event.getData().getAbsence();
             InitialAccountInfoRepository.getInstance().upsertAbsenceInfo(absence);
             postEvent(new AbsenceInfoUpdatedEvent());
         } catch (Exception e) {

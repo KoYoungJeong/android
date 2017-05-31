@@ -24,7 +24,7 @@
         android:visibility="visible" />
 
     <ImageView
-        android:id="@+id/iv_entity_listitem_icon"
+        android:id="@+id/iv_profile"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
@@ -32,11 +32,28 @@
         android:layout_marginRight="16dp" />
 
     <LinearLayout
+        android:id="@+id/vg_profile_absence"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/bg_round_black_transparent60_radius_20"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:src="@drawable/profile_image_away_01" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@+id/tv_entity_listitem_badge"
-        android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+        android:layout_toRightOf="@+id/iv_profile"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

@@ -32,6 +32,8 @@ import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderRefreshEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicPushEvent;
@@ -53,6 +55,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.util.BackPressConsumer;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.search.main.SearchActivity;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SpeedEstimationUtil;
@@ -248,7 +251,7 @@ public class MainTopicListFragment extends BaseLazyFragment
             return;
         }
 
-        if(activity.getCurrentFragment() != this){
+        if (activity.getCurrentFragment() != this) {
             return;
         }
 
@@ -409,16 +412,32 @@ public class MainTopicListFragment extends BaseLazyFragment
         FragmentActivity activity = getActivity();
         if (activity instanceof MainTabActivity) {
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+            MenuItem item = menu.findItem(R.id.action_main_absence);
+            Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
+            if (absenceInfo.getStatus().equals("enabled")) {
+                item.setVisible(true);
+            } else {
+                item.setVisible(false);
+            }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_main_search) {
-            onSearchOptionSelect();
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_main_search:
+                onSearchOptionSelect();
+                break;
+            case R.id.action_main_absence:
+                moveToSetUpAbsence();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveToSetUpAbsence() {
+        startActivity(new Intent(getActivity(), SettingAbsenceActivity.class));
     }
 
     void onSearchOptionSelect() {

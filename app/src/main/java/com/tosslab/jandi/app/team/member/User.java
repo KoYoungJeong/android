@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.team.member;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.team.authority.Level;
@@ -120,5 +121,10 @@ public class User implements Member {
         } else {
             return Level.Member;
         }
+    }
+
+    @Override
+    public Absence getAbsence() {
+        return human.getAbsence();
     }
 }

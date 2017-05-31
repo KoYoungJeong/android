@@ -43,10 +43,12 @@ import com.tosslab.jandi.app.events.files.UnshareFileEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.files.upload.MainFileUploadControllerImpl;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
@@ -60,6 +62,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.file.dagger.DaggerFileListComponent
 import com.tosslab.jandi.app.ui.maintab.tabs.file.dagger.FileListModule;
 import com.tosslab.jandi.app.ui.maintab.tabs.file.presenter.FileListPresenter;
 import com.tosslab.jandi.app.ui.search.file.view.FileSearchActivity;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
@@ -428,15 +431,32 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
         FragmentActivity activity = getActivity();
         if (activity instanceof MainTabActivity) {
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+            MenuItem item = menu.findItem(R.id.action_main_absence);
+            Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
+            if (absenceInfo.getStatus().equals("enabled")) {
+                item.setVisible(true);
+            } else {
+                item.setVisible(false);
+            }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_main_search) {
-            fileListPresenter.onMoveFileSearch();
+        switch (item.getItemId()) {
+            case R.id.action_main_search:
+                fileListPresenter.onMoveFileSearch();
+                break;
+            case R.id.action_main_absence:
+                moveToSetUpAbsence();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveToSetUpAbsence() {
+        startActivity(new Intent(getActivity(), SettingAbsenceActivity.class));
     }
 
     private boolean isInSearchActivity() {

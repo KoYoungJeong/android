@@ -536,6 +536,8 @@ public class MainTabActivity extends BaseAppCompatActivity implements MainTabPre
         initTabBadges();
 
         SpeedEstimationUtil.sendAnalyticsExecutionAppEndIfStarted();
+
+        invalidateOptionsMenu();
     }
 
     private void sendAnalyticsCurrentScreen() {

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.team.member;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Bot;
 
 public class WebhookBot implements Member {
@@ -71,6 +72,11 @@ public class WebhookBot implements Member {
     }
 
     public void updateStatus(String status) {
-        
+
+    }
+
+    @Override
+    public Absence getAbsence() {
+        return null;
     }
 }

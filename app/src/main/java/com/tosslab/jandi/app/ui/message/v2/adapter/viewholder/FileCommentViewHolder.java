@@ -57,6 +57,7 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
     private View vProfileCover;
     private View vFileIconBorder;
     private ViewGroup vgProfileNestedComment;
+    private ViewGroup vgProfileAbsence;
 
 
     private FileCommentViewHolder() {
@@ -93,6 +94,7 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
         // 프로필이 있는 커멘트
         if (hasNestedProfile) {
             ivProfileNestedCommentUserProfile = (ImageView) rootView.findViewById(R.id.iv_profile_nested_comment_user_profile);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
             vProfileCover = rootView.findViewById(R.id.v_profile_nested_comment_user_profile_cover);
             tvProfileNestedCommentUserName = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name);
             ivProfileNestedNameLineThrough = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through);
@@ -122,7 +124,7 @@ public class FileCommentViewHolder extends BaseCommentViewHolder implements High
         }
 
         if (hasNestedProfile) {
-            ProfileUtil.setProfileForCommment(link.fromEntity, ivProfileNestedCommentUserProfile, vProfileCover,
+            ProfileUtil.setProfileForCommment(link.fromEntity, ivProfileNestedCommentUserProfile, vgProfileAbsence, vProfileCover,
                     tvProfileNestedCommentUserName, ivProfileNestedNameLineThrough);
         }
 

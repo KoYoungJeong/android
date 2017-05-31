@@ -432,6 +432,16 @@
             android:indeterminateDrawable="@drawable/progress_refresh_animation"
             android:visibility="gone" />
 
+        <FrameLayout
+            android:id="@+id/vg_absence_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vg_messages_member_status_alert">
+
+            <include layout="@layout/item_chat_notify_absence" />
+        </FrameLayout>
+
+
     </RelativeLayout>
 
     <FrameLayout
@@ -439,5 +449,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
 
 </com.tosslab.jandi.app.views.SoftInputDetectLinearLayout>

@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 
 import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.local.orm.repositories.template.LockExecutorTemplate;
-import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
+import com.tosslab.jandi.app.network.models.start.Absence;
 
 import java.sql.SQLException;
 
@@ -24,11 +24,11 @@ public class InitialAccountInfoRepository extends LockExecutorTemplate {
         return instance;
     }
 
-    public boolean upsertAbsenceInfo(ResStartAccountInfo.Absence absenceInfo) {
+    public boolean upsertAbsenceInfo(Absence absenceInfo) {
         return execute(() -> {
             try {
                 deleteAbsenceInfo();
-                Dao<ResStartAccountInfo.Absence, ?> absenceInfoDao = getHelper().getDao(ResStartAccountInfo.Absence.class);
+                Dao<Absence, ?> absenceInfoDao = getHelper().getDao(Absence.class);
                 Dao.CreateOrUpdateStatus status = absenceInfoDao.createOrUpdate(absenceInfo);
                 return status.isCreated() || status.isUpdated();
             } catch (SQLException e) {
@@ -39,14 +39,14 @@ public class InitialAccountInfoRepository extends LockExecutorTemplate {
     }
 
     protected void deleteAbsenceInfo() throws SQLException {
-        getHelper().getDao(ResStartAccountInfo.Absence.class)
+        getHelper().getDao(Absence.class)
                 .deleteBuilder()
                 .delete();
     }
 
-    public ResStartAccountInfo.Absence getAbsenceInfo() {
+    public Absence getAbsenceInfo() {
         try {
-            return getHelper().getDao(ResStartAccountInfo.Absence.class)
+            return getHelper().getDao(Absence.class)
                     .queryBuilder()
                     .queryForFirst();
         } catch (SQLException e) {

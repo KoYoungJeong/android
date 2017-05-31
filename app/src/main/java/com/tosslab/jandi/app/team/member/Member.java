@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.team.member;
 
+import com.tosslab.jandi.app.network.models.start.Absence;
+
 public interface Member {
     long getId();
 
@@ -20,4 +22,6 @@ public interface Member {
     boolean isBot();
 
     boolean isStarred();
+
+    Absence getAbsence();
 }

@@ -23,7 +23,7 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
     public View vAnimator;
     @Bind(R.id.rl_topic_item_container)
     RelativeLayout container;
-    @Bind(R.id.iv_entity_listitem_icon)
+    @Bind(R.id.iv_profile)
     ImageView ivTopicIcon;
     @Bind(R.id.vg_entity_listitem_name)
     FixedLinearLayout vgTopicName;

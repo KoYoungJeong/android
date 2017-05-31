@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
 /**
@@ -79,13 +80,13 @@ public class SocketAbsenceUpdatedEvent implements EventHistoryInfo {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
-        private ResStartAccountInfo.Absence absence;
+        private Absence absence;
 
-        public ResStartAccountInfo.Absence getAbsence() {
+        public Absence getAbsence() {
             return absence;
         }
 
-        public void setAbsence(ResStartAccountInfo.Absence absence) {
+        public void setAbsence(Absence absence) {
             this.absence = absence;
         }
     }

@@ -44,6 +44,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
     private final float MAX_WIDTH_RATIO;
 
     private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
     private TextView tvName;
     private ImageView ivFileImage;
     private TextView tvFileName;
@@ -77,6 +78,7 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
         }
 
         vgFileImageWrapper = rootView.findViewById(R.id.vg_message_photo_wrapper);
@@ -105,7 +107,8 @@ public class ImageMessageViewHolder extends BaseMessageViewHolder {
         setMarginVisible();
         setTimeVisible();
         if (hasProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vgProfileAbsence, vProfileCover,
+                    tvName, vDisableLineThrough);
         }
         bindFileImage(link, teamId, roomId);
         setFileTitleBackground(link);

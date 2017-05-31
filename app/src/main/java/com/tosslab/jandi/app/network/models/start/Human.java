@@ -31,6 +31,8 @@ public class Human {
     long rankId;
     @GsonAdapterKey
     boolean isStarred;
+    @GsonAdapterKey
+    Absence absence;
 
     public long getId() {
         return id;
@@ -100,6 +102,10 @@ public class Human {
         return isStarred;
     }
 
+    public void setStarred(boolean starred) {
+        isStarred = starred;
+    }
+
     public void setIsStarred(boolean starred) {
         isStarred = starred;
     }
@@ -111,6 +117,14 @@ public class Human {
     public Human setRankId(long rankId) {
         this.rankId = rankId;
         return this;
+    }
+
+    public Absence getAbsence() {
+        return absence;
+    }
+
+    public void setAbsence(Absence absence) {
+        this.absence = absence;
     }
 
     public List<Long> getJoinTopics() {

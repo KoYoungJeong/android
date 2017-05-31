@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import android.support.v4.util.LongSparseArray;
 
 import com.tosslab.jandi.app.local.orm.repositories.template.LockTemplate;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -84,7 +85,6 @@ public class HumanRepository extends LockTemplate {
 
     public boolean updateHuman(Human member) {
         return execute(() -> {
-
             if (hasUser(member.getId())) {
                 Human saved = users.get(member.getId()).getRaw();
                 saved.setType(member.getType());
@@ -100,7 +100,6 @@ public class HumanRepository extends LockTemplate {
                 users.put(member.getId(), new User(member));
                 return false;
             }
-
         });
     }
 
@@ -110,7 +109,6 @@ public class HumanRepository extends LockTemplate {
                 User user = users.get(member.getId());
                 member.setIsStarred(user.isStarred());
             }
-
             users.put(member.getId(), new User(member));
             return true;
         });
@@ -122,12 +120,10 @@ public class HumanRepository extends LockTemplate {
 
     public boolean updateStarred(long memberId, boolean isStarred) {
         return execute(() -> {
-
             if (hasUser(memberId)) {
                 users.get(memberId).getRaw().setIsStarred(isStarred);
                 return true;
             }
-
             return false;
         });
     }
@@ -166,6 +162,16 @@ public class HumanRepository extends LockTemplate {
         });
     }
 
+    public boolean updateAbsence(long userId, Absence absence) {
+        return execute(() -> {
+            if (hasUser(userId)) {
+                users.get(userId).getRaw().setAbsence(absence);
+                return true;
+            }
+            return false;
+        });
+    }
+
     public User getUser(long myId) {
         return execute(() -> users.get(myId));
     }
@@ -179,8 +185,8 @@ public class HumanRepository extends LockTemplate {
             }
             return temp;
         });
-
     }
+
 
     public void clear() {
         execute(() -> {
@@ -188,4 +194,5 @@ public class HumanRepository extends LockTemplate {
             return true;
         });
     }
+
 }

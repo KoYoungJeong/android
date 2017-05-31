@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.settings.absence.presenter;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.ui.settings.absence.model.SettingAbsenceModel;
 
 import java.util.Calendar;
@@ -32,7 +32,7 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
 
     @Override
     public void onInit() {
-        ResStartAccountInfo.Absence absenceInfo = settingAbsenceModel.getAbsenceInfo();
+        Absence absenceInfo = settingAbsenceModel.getAbsenceInfo();
         if (absenceInfo != null && absenceInfo.getStatus().equals("enabled")) {
             view.onSettingAbsenceCheckboxClicked();
             if (absenceInfo.isDisablePush()) {
@@ -112,7 +112,7 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
     }
 
     public boolean hasChangeInfo(boolean enabled, Date startDate, Date endDate, boolean disablePush, String message) {
-        ResStartAccountInfo.Absence savedAbsence = settingAbsenceModel.getAbsenceInfo();
+        Absence savedAbsence = settingAbsenceModel.getAbsenceInfo();
         if (savedAbsence == null) {
             return true;
         }
@@ -146,7 +146,7 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
 
 
     public boolean comparePreviousAndCurrentEnabled(boolean enabled) {
-        ResStartAccountInfo.Absence savedAbsence = settingAbsenceModel.getAbsenceInfo();
+        Absence savedAbsence = settingAbsenceModel.getAbsenceInfo();
         if (savedAbsence == null) {
             return false;
         }

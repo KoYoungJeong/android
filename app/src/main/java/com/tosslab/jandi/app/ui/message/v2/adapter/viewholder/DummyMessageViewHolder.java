@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 
 public class DummyMessageViewHolder implements BodyViewHolder {
     private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
     private TextView tvName;
     private TextView tvMessage;
     private ImageView ivSticker;
@@ -36,12 +37,14 @@ public class DummyMessageViewHolder implements BodyViewHolder {
     private TextView tvUnreadCount;
     private TextView tvTime;
 
+
     private DummyMessageViewHolder() {
     }
 
     @Override
     public void initView(View rootView) {
         ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+        vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
         tvName = (TextView) rootView.findViewById(R.id.tv_message_profile_user_name);
         tvMessage = (TextView) rootView.findViewById(R.id.tv_dummy_message_content);
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_dummy_message_sticker);
@@ -92,6 +95,12 @@ public class DummyMessageViewHolder implements BodyViewHolder {
                 .getUser(dummyMessageLink.message.writerId);
 
         String profileUrl = user.getPhotoUrl();
+
+        if (user.getAbsence() == null || user.getAbsence().getStartAt() == null) {
+            vgProfileAbsence.setVisibility(View.GONE);
+        } else {
+            vgProfileAbsence.setVisibility(View.VISIBLE);
+        }
 
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 

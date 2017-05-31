@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.messages.ReqStickerMessage;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Announcement;
 import com.tosslab.jandi.app.network.models.start.Marker;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
@@ -46,6 +47,7 @@ import com.tosslab.jandi.app.utils.analytics.sprinkler.model.SprinklrMessageDele
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -1229,6 +1231,32 @@ public class MessageListV2Presenter {
                 }, Throwable::printStackTrace);
     }
 
+    public void onInitAbsence() {
+        long roomId = room.getRoomId();
+        boolean isChat = TeamInfoLoader.getInstance().isChat(roomId);
+        if (!isChat) {
+            view.setAbsenceView(null);
+            return;
+        } else {
+            long companionId = TeamInfoLoader.getInstance().getChat(roomId).getCompanionId();
+            if (TeamInfoLoader.getInstance().isJandiBot(companionId)) {
+                view.setAbsenceView(null);
+                return;
+            }
+            User user = TeamInfoLoader.getInstance().getUser(companionId);
+            Absence absence = user.getAbsence();
+            if (absence == null || absence.getStartAt() == null) {
+                view.setAbsenceView(null);
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getStartAt()));
+            sb.append(" - ");
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getEndAt()));
+            view.setAbsenceView(sb.toString());
+        }
+    }
+
     public interface View {
         void showDisabledUserLayer();
 
@@ -1305,6 +1333,8 @@ public class MessageListV2Presenter {
         void showReadOnly(boolean readOnly);
 
         void insertNeverMessageLayout();
+
+        void setAbsenceView(String period);
     }
 
 }

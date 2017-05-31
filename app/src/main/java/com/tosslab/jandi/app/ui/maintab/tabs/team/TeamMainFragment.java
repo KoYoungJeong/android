@@ -21,6 +21,8 @@ import android.widget.CheckBox;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
@@ -29,6 +31,7 @@ import com.tosslab.jandi.app.ui.maintab.tabs.team.adapter.TeamViewPagerAdapter;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.filter.search.TeamMemberSearchActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.team.info.TeamInfoActivity;
 import com.tosslab.jandi.app.ui.maintab.tabs.util.FloatingActionBarDetector;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.utils.DeviceUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.SdkUtils;
@@ -123,11 +126,21 @@ public class TeamMainFragment extends BaseLazyFragment implements TabFocusListen
         if (myLevel != Level.Owner && myLevel != Level.Admin) {
             menu.removeItem(R.id.menu_team_config);
         }
+        MenuItem item = menu.findItem(R.id.action_main_absence);
+        Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
+        if (absenceInfo.getStatus().equals("enabled")) {
+            item.setVisible(true);
+        } else {
+            item.setVisible(false);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_main_absence:
+                moveToSetUpAbsence();
+                break;
             case R.id.menu_team_config:
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                 String url = JandiConstantsForFlavors.getServiceBaseUrl() + "/main/#/setting/" + teamId + "/admin/usage";
@@ -154,6 +167,10 @@ public class TeamMainFragment extends BaseLazyFragment implements TabFocusListen
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveToSetUpAbsence() {
+        startActivity(new Intent(getActivity(), SettingAbsenceActivity.class));
     }
 
     @Override

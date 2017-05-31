@@ -34,6 +34,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
     private ImageView ivMessageCommonFile;
 
     private ImageView ivProfileNestedUserProfileForSticker;
+    private ViewGroup vgProfileAbsence;
     private TextView tvProfileNestedUserNameForSticker;
     private ImageView ivProfileNestedLineThroughForSticker;
 
@@ -87,6 +88,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
         // 커멘트 스티커 프로필
         if (hasNestedProfile) {
             ivProfileNestedUserProfileForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_user_profile_for_sticker);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
             vProfileCover = rootView.findViewById(R.id.v_profile_nested_user_profile_for_sticker_cover);
             tvProfileNestedUserNameForSticker = (TextView) rootView.findViewById(R.id.tv_profile_nested_comment_user_name_for_sticker);
             ivProfileNestedLineThroughForSticker = (ImageView) rootView.findViewById(R.id.iv_profile_nested_name_line_through_for_sticker);
@@ -120,7 +122,7 @@ public class FileStickerCommentViewHolder extends BaseCommentViewHolder implemen
 
         if (hasNestedProfile) {
             ProfileUtil.setProfileForCommment(
-                    link.fromEntity, ivProfileNestedUserProfileForSticker, vProfileCover,
+                    link.fromEntity, ivProfileNestedUserProfileForSticker, vgProfileAbsence, vProfileCover,
                     tvProfileNestedUserNameForSticker, ivProfileNestedLineThroughForSticker);
         }
 

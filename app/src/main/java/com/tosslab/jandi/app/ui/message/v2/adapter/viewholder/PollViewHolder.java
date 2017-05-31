@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
     private View vgPoll;
 
     private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
     private TextView tvName;
     private View vDisableLineThrough;
     private View vProfileCover;
@@ -41,6 +43,7 @@ public class PollViewHolder extends BaseMessageViewHolder {
 
         if (hasProfile) {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
@@ -61,7 +64,8 @@ public class PollViewHolder extends BaseMessageViewHolder {
         setMarginVisible();
 
         if (hasProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vgProfileAbsence, vProfileCover,
+                    tvName, vDisableLineThrough);
         }
 
         PollBinder.bindPoll(link.poll, false,

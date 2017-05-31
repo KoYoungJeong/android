@@ -8,7 +8,7 @@
 
 
     <ImageView
-        android:id="@+id/iv_entity_listitem_icon"
+        android:id="@+id/iv_profile"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
@@ -22,7 +22,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@+id/vg_entity_listitem_badge"
-        android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+        android:layout_toRightOf="@+id/iv_profile"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -141,8 +141,8 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/iv_entity_listitem_icon"
-        android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+        android:layout_toEndOf="@+id/iv_profile"
+        android:layout_toRightOf="@+id/iv_profile"
         android:background="@color/rgb_e5e5e5" />
 
 
