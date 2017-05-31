@@ -64,14 +64,14 @@
             </RelativeLayout>
 
             <View
-                android:visibility="gone"
                 android:id="@+id/v_online"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_below="@id/vg_actionbar_area"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_circle_online_for_profile" />
+                android:background="@drawable/bg_circle_online_for_profile"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/iv_member_profile_img_small"
@@ -80,6 +80,16 @@
                 android:layout_below="@id/vg_actionbar_area"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="10dp" />
+
+            <ImageView
+                android:id="@+id/iv_member_profile_absense_img"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/vg_actionbar_area"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/"
+                android:src="@drawable/absence" />
 
             <LinearLayout
                 android:id="@+id/vg_profile_content"
