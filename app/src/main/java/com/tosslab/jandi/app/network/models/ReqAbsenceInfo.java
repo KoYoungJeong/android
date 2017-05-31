@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models;
 
+import com.fasterxml.jackson.databind.util.ISO8601Utils;
+
 import java.util.Date;
 
 /**
@@ -11,15 +13,15 @@ public class ReqAbsenceInfo {
     private String status;
     private boolean disablePush;
     private String message;
-    private Date startAt;
-    private Date endAt;
+    private String startAt;
+    private String endAt;
 
     public ReqAbsenceInfo(String status, boolean disablePush, String message, Date startAt, Date endAt) {
         this.status = status;
         this.disablePush = disablePush;
         this.message = message;
-        this.startAt = startAt;
-        this.endAt = endAt;
+        this.startAt = ISO8601Utils.format(startAt);
+        this.endAt = ISO8601Utils.format(endAt);
     }
 
     public ReqAbsenceInfo(String status) {
@@ -50,20 +52,20 @@ public class ReqAbsenceInfo {
         this.message = message;
     }
 
-    public Date getStartAt() {
+    public String getStartAt() {
         return startAt;
     }
 
     public void setStartAt(Date startAt) {
-        this.startAt = startAt;
+        this.startAt = ISO8601Utils.format(startAt);
     }
 
-    public Date getEndAt() {
+    public String getEndAt() {
         return endAt;
     }
 
     public void setEndAt(Date endAt) {
-        this.endAt = endAt;
+        this.endAt = ISO8601Utils.format(endAt);
     }
 
     @Override

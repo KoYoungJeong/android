@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.sticker;
 
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
@@ -34,7 +34,7 @@ public class StickerApiTest {
 
     @Before
     public void setUp() throws Exception {
-        stickerApi = new StickerApi(RetrofitBuilder.getInstance());
+        stickerApi = new StickerApi(InnerApiRetrofitBuilder.getInstance());
         fileInfo = getFileInfo();
 
         teamId = TeamInfoLoader.getInstance().getTeamId();
@@ -49,7 +49,7 @@ public class StickerApiTest {
                 .setPage(1)
                 .setCount(1)
                 .setKeyword("").build();
-        ResSearch search = new SearchApi(RetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), reqSearch);
+        ResSearch search = new SearchApi(InnerApiRetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), reqSearch);
         return search.getRecords().get(0).getFile();
     }
 

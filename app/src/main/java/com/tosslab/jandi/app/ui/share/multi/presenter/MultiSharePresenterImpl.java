@@ -7,7 +7,7 @@ import android.util.Pair;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
@@ -183,7 +183,7 @@ public class MultiSharePresenterImpl implements MultiSharePresenter {
                         long chatId = teamInfoLoader.getChatId(roomId);
                         if (chatId <= 0) {
                             try {
-                                return new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).getId();
+                                return new ChatApi(InnerApiRetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).getId();
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
                             }

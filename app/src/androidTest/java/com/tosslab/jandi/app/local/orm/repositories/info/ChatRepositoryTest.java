@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories.info;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.LastMessage;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -28,7 +28,7 @@ public class ChatRepositoryTest {
     @org.junit.BeforeClass
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
+        initializeInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(TeamInfoLoader.getInstance().getTeamId());
         teamId = TeamInfoLoader.getInstance().getTeamId();
 
 

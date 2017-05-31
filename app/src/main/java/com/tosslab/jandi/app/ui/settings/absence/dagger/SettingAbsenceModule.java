@@ -1,7 +1,7 @@
-package com.tosslab.jandi.app.ui.settings.push.absence.dagger;
+package com.tosslab.jandi.app.ui.settings.absence.dagger;
 
-import com.tosslab.jandi.app.ui.settings.push.absence.presenter.SettingAbsencePresenter;
-import com.tosslab.jandi.app.ui.settings.push.absence.presenter.SettingAbsencePresenterImpl;
+import com.tosslab.jandi.app.ui.settings.absence.presenter.SettingAbsencePresenter;
+import com.tosslab.jandi.app.ui.settings.absence.presenter.SettingAbsencePresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;

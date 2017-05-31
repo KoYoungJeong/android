@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
+import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -33,6 +34,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -613,6 +615,17 @@ public class NavigationPresenterImpl implements NavigationPresenter {
         int timeZoneInt = offsetInMillis / 3600000;
 
         return timeZoneInt;
+    }
+
+    @Override
+    public void onInitializeAbsence() {
+        ResStartAccountInfo.Absence absence = navigationModel.getAbsenceInfo();
+        if (absence != null && absence.getStatus().equals("enabled")) {
+            long endTime = absence.getEndAt().getTime() - 86400000;
+            navigationView.showAbsenceInfo(true, absence.getStartAt(), new Date(endTime));
+        } else {
+            navigationView.showAbsenceInfo(false, null, null);
+        }
     }
 
 }

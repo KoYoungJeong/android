@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tosslab.jandi.app.services.socket.to.SocketAbsenceUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementUpdatedEvent;
@@ -128,6 +129,7 @@ import com.tosslab.jandi.app.services.socket.to.UnknownEventHistoryInfo;
         @JsonSubTypes.Type(name = "member_rank_updated", value = SocketMemberRankUpdatedEvent.class),
         @JsonSubTypes.Type(name = "team_invitation_created", value = SocketTeamInvitationCreatedEvent.class),
         @JsonSubTypes.Type(name = "member_presence_updated", value = SocketMemberOnlineStatusChangeEvent.class),
+        @JsonSubTypes.Type(name = "absence_updated", value = SocketAbsenceUpdatedEvent.class)
 
 })
 public interface EventHistoryInfo {

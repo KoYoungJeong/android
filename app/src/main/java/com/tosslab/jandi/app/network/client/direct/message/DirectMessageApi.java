@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.direct.message;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -18,7 +18,7 @@ import retrofit2.http.Query;
 
 public class DirectMessageApi extends ApiTemplate<DirectMessageApi.Api> {
     @Inject
-    public DirectMessageApi(RetrofitBuilder retrofitBuilder) {
+    public DirectMessageApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.teams.sendmessage;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSendMessages;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -22,7 +22,7 @@ import retrofit2.http.Path;
 public class SendMessageApi extends ApiTemplate<SendMessageApi.Api> {
 
     @Inject
-    public SendMessageApi(RetrofitBuilder retrofitBuilder) {
+    public SendMessageApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

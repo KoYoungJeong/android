@@ -24,6 +24,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
 import com.tosslab.jandi.app.events.team.TeamBadgeUpdateEvent;
@@ -53,7 +54,7 @@ import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
-import com.tosslab.jandi.app.ui.settings.push.absence.SettingAbsenceActivity;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;
@@ -70,7 +71,9 @@ import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -93,6 +96,8 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     @Bind(R.id.vg_navigation_absence_wrapper)
     ViewGroup vgNavigationAbsenceWrapper;
+    @Bind(R.id.tv_absence_duration)
+    TextView tvAbsenceDuration;
     @Bind(R.id.iv_navigation_profile_large)
     ImageView ivProfileLarge;
     @Bind(R.id.iv_navigation_profile)
@@ -161,6 +166,21 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
         navigationPresenter.onInitUserProfile();
         navigationPresenter.onInitializePresetNavigationItems();
         navigationPresenter.onInitializeTeams();
+        navigationPresenter.onInitializeAbsence();
+    }
+
+    @Override
+    public void showAbsenceInfo(boolean isShow, Date startAt, Date endAt) {
+        if (isShow) {
+            vgNavigationAbsenceWrapper.setVisibility(View.VISIBLE);
+            StringBuilder sb = new StringBuilder();
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(startAt));
+            sb.append(" - ");
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(endAt));
+            tvAbsenceDuration.setText(sb);
+        } else {
+            vgNavigationAbsenceWrapper.setVisibility(View.GONE);
+        }
     }
 
     void initProgressWheel() {
@@ -634,6 +654,10 @@ public class NavigationFragment extends Fragment implements NavigationPresenter.
 
     public void onEvent(TeamBadgeUpdateEvent event) {
         navigationPresenter.onReloadTeams();
+    }
+
+    public void onEventMainThread(AbsenceInfoUpdatedEvent event) {
+        navigationPresenter.onInitializeAbsence();
     }
 
     private void showBugReportDialog() {

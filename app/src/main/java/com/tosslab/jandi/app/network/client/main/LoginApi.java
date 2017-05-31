@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.main;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqTargetToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -20,7 +20,7 @@ import retrofit2.http.POST;
 public class LoginApi extends ApiTemplate<LoginApi.Api> {
 
     @Inject
-    public LoginApi(RetrofitBuilder retrofitBuilder) {
+    public LoginApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(LoginApi.Api.class, retrofitBuilder);
     }
 

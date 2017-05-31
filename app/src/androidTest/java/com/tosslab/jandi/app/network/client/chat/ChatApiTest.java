@@ -4,7 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -35,7 +35,7 @@ public class ChatApiTest {
 
     @Before
     public void setUp() throws Exception {
-        chatApi = new ChatApi(RetrofitBuilder.getInstance());
+        chatApi = new ChatApi(InnerApiRetrofitBuilder.getInstance());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ChatApiTest {
         if (chatId > 0) {
             assertThat(chat.getId()).isEqualTo(chatId);
         } else {
-            String rawInitializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+            String rawInitializeInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
             InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, rawInitializeInfo));
             TeamInfoLoader.getInstance().refresh();
             assertThat(TeamInfoLoader.getInstance().isChat(chat.getId())).isTrue();

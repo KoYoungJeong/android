@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
@@ -80,11 +80,11 @@ public class CarouselViewerActivityTest {
 
     private long getLatestFileId() throws RetrofitException {
         ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
-        return new SearchApi(RetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords().get(0).getMessageId();
+        return new SearchApi(InnerApiRetrofitBuilder.getInstance()).getSearch(teamId, builder.build()).getRecords().get(0).getMessageId();
     }
 
     private List<CarouselFileInfo> getCarousel() throws RetrofitException {
-        CarouselViewerModel model = new CarouselViewerModel(() -> new FileApi(RetrofitBuilder.getInstance()));
+        CarouselViewerModel model = new CarouselViewerModel(() -> new FileApi(InnerApiRetrofitBuilder.getInstance()));
         Observable<List<ResMessages.FileMessage>> imageFileListObservable =
                 model.getImageFileListObservable(teamId, roomId, getLatestFileId());
         TestSubscriber<List<ResMessages.FileMessage>> testSubscriber = new TestSubscriber<>();

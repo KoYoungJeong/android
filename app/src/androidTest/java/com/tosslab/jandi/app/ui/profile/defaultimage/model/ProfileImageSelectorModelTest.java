@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.profile.defaultimage.model;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,7 +21,7 @@ public class ProfileImageSelectorModelTest {
 
     @Before
     public void setUp() throws Exception {
-        profileImageSelectorModel = new ProfileImageSelectorModel(() -> new ProfileApi(RetrofitBuilder.getInstance()));
+        profileImageSelectorModel = new ProfileImageSelectorModel(() -> new ProfileApi(InnerApiRetrofitBuilder.getInstance()));
 
     }
 

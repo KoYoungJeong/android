@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
@@ -50,8 +50,8 @@ public class TopicCreateModelTest {
     @Before
     public void setUp() throws Exception {
 
-        topicCreateModel = new TopicCreateModel(() -> new ChannelApi(RetrofitBuilder.getInstance()),
-                () -> new GroupApi(RetrofitBuilder.getInstance()));
+        topicCreateModel = new TopicCreateModel(() -> new ChannelApi(InnerApiRetrofitBuilder.getInstance()),
+                () -> new GroupApi(InnerApiRetrofitBuilder.getInstance()));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class TopicCreateModelTest {
             assertThat(topic.getId(), is(greaterThanOrEqualTo(0L)));
 
             // Restore
-            new ChannelApi(RetrofitBuilder.getInstance())
+            new ChannelApi(InnerApiRetrofitBuilder.getInstance())
                     .deleteTopic(topic.getId(), new ReqDeleteTopic(TeamInfoLoader.getInstance().getTeamId()));
         }
 
@@ -90,7 +90,7 @@ public class TopicCreateModelTest {
             String topicDescription = "haha2" + new Date().toString();
             Topic topic = topicCreateModel.createTopic(topicName, false, topicDescription, false);
             long teamId = TeamInfoLoader.getInstance().getTeamId();
-            String initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+            String initializeInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
             InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
             TeamInfoLoader.getInstance().refresh();
 
@@ -102,7 +102,7 @@ public class TopicCreateModelTest {
             assertThat(entity.isAutoJoin(), is(false));
 
             // Restore
-            new GroupApi(RetrofitBuilder.getInstance())
+            new GroupApi(InnerApiRetrofitBuilder.getInstance())
                     .deleteGroup(TeamInfoLoader.getInstance().getTeamId(), topic.getId());
         }
 

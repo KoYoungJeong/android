@@ -1,9 +1,6 @@
 package com.tosslab.jandi.app.dialogs;
 
 import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.hardware.camera2.params.ColorSpaceTransform;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -12,20 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.DayViewDecorator;
-import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.format.DayFormatter;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by tonyjs on 16. 6. 16..
  */
 public class CalendarDialogFragment extends DialogFragment {
+
+    private OnDateSelectedListener onDateSelectedListener;
+    private MaterialCalendarView calendarView;
+    private Date initialDay = null;
+    private String title;
 
     public static DialogFragment newInstance() {
         return new CalendarDialogFragment();
@@ -36,14 +35,16 @@ public class CalendarDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_calendar, null);
 
-        final MaterialCalendarView calendarView = (MaterialCalendarView) view.findViewById(R.id.calendar_view);
-        initCalendarView(calendarView);
+        calendarView = (MaterialCalendarView) view.findViewById(R.id.calendar_view);
+        initCalendarView();
 
         return new AlertDialog.Builder(getActivity(), R.style.JandiTheme_AlertDialog_FixWidth_300)
-                .setTitle(R.string.jandi_duedate)
+                .setTitle(title != null ? title : getString(R.string.jandi_duedate))
                 .setView(view)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
-                    if (getActivity() instanceof OnDateSelectedListener) {
+                    if (onDateSelectedListener != null) {
+                        onDateSelectedListener.onDateSelected(calendarView.getSelectedDate());
+                    } else if (getActivity() instanceof OnDateSelectedListener) {
                         ((OnDateSelectedListener) getActivity())
                                 .onDateSelected(calendarView.getSelectedDate());
                     }
@@ -53,7 +54,7 @@ public class CalendarDialogFragment extends DialogFragment {
                 .create();
     }
 
-    private void initCalendarView(MaterialCalendarView calendarView) {
+    private void initCalendarView() {
         calendarView.setDayFormatter(DayFormatter.DEFAULT);
         calendarView.setShowOtherDates(MaterialCalendarView.SHOW_ALL);
         int selectionColor = calendarView.getResources()
@@ -63,12 +64,29 @@ public class CalendarDialogFragment extends DialogFragment {
 
         MaterialCalendarView.StateBuilder stateBuilder = calendarView.state().edit();
         Calendar calendar = Calendar.getInstance();
-        stateBuilder.setMinimumDate(calendar);
-        calendarView.setCurrentDate(calendar);
+        if (initialDay != null) {
+            calendar.setTimeInMillis(initialDay.getTime());
+        }
         calendarView.setDateSelected(calendar, true);
-        calendar.add(Calendar.DAY_OF_MONTH, 30);
-        stateBuilder.setMaximumDate(calendar);
+        calendarView.setCurrentDate(Calendar.getInstance());
+        if (initialDay == null) {
+            calendar.add(Calendar.DAY_OF_MONTH, 30);
+            stateBuilder.setMaximumDate(calendar);
+            stateBuilder.setMinimumDate(Calendar.getInstance());
+        }
         stateBuilder.commit();
+    }
+
+    public void setInitDate(Date date) {
+        this.initialDay = date;
+    }
+
+    public void setOnDateListener(OnDateSelectedListener onDateSelectedListener) {
+        this.onDateSelectedListener = onDateSelectedListener;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public interface OnDateSelectedListener {

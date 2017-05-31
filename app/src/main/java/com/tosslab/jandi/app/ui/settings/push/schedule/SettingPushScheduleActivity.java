@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.settings.push.schedule.dagger.DaggerSettingPushS
 import com.tosslab.jandi.app.ui.settings.push.schedule.dagger.SettingPushScheduleModule;
 import com.tosslab.jandi.app.ui.settings.push.schedule.presenter.SettingPushSchedulePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Calendar;
@@ -103,6 +104,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     private void initViews() {
         settingPushSchedulePresenter.initValues();
+        initProgressWheel();
     }
 
     private void initToolbar() {
@@ -397,6 +399,11 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
     public void showLeastOnedaySelectToast() {
         ColoredToast.showError(R.string.push_schedule_minoneday);
     }
+
+    private void initProgressWheel() {
+        progressWheel = new ProgressWheel(this);
+    }
+
 
     @Override
     public void showProgressWheel() {

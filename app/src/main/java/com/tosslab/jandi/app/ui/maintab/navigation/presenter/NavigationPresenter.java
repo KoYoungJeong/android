@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.navigation.presenter;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,6 +51,8 @@ public interface NavigationPresenter {
 
     void initScheduleCache();
 
+    void onInitializeAbsence();
+
     interface View {
 
         void showCheckNetworkDialog();
@@ -77,6 +80,8 @@ public interface NavigationPresenter {
         void closeNavigation();
 
         void moveTeamList();
+
+        void showAbsenceInfo(boolean isShow, Date startAt, Date endAt);
     }
 
 }

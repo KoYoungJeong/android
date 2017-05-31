@@ -26,11 +26,12 @@
             android:id="@+id/tv_absence_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="부재 중 설정 중입니다."
+            android:text="@string/vacancy_banner"
             android:textColor="@color/white"
             android:textSize="12sp" />
 
         <TextView
+            android:id="@+id/tv_absence_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_absence_message"

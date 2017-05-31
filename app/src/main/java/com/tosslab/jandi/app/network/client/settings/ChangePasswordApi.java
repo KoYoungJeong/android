@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.settings;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -21,7 +21,7 @@ import retrofit2.http.POST;
 public class ChangePasswordApi extends ApiTemplate<ChangePasswordApi.Api> {
 
     @Inject
-    public ChangePasswordApi(RetrofitBuilder retrofitBuilder) {
+    public ChangePasswordApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(ChangePasswordApi.Api.class, retrofitBuilder);
     }
 

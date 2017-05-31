@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.profile;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.album.imagealbum.model.ImageAlbumModel;
@@ -30,7 +30,7 @@ public class ProfileApiTest {
     @Test
     public void uploadProfilePhoto() throws Exception {
         String imagePicture = getImageList().get(0).getImagePath();
-        Human resCommon = new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), TeamInfoLoader.getInstance().getMyId(), new File(imagePicture));
+        Human resCommon = new ProfileApi(InnerApiRetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), TeamInfoLoader.getInstance().getMyId(), new File(imagePicture));
 
         assertThat(resCommon).isNotNull();
     }

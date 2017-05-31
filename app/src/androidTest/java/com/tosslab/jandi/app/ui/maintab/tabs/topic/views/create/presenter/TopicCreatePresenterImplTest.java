@@ -5,7 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.ui.maintab.tabs.topic.views.create.dagger.TopicCreateModule;
 
@@ -113,7 +113,7 @@ public class TopicCreatePresenterImplTest {
         if (teamId[0] > 0) {
             verify(mockView, times(1)).createTopicSuccess(eq(teamId[0]), eq(topicId[0]), eq(topicName), eq(true));
             // restore
-            new ChannelApi(RetrofitBuilder.getInstance()).deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
+            new ChannelApi(InnerApiRetrofitBuilder.getInstance()).deleteTopic(topicId[0], new ReqDeleteTopic(teamId[0]));
         }
 
     }

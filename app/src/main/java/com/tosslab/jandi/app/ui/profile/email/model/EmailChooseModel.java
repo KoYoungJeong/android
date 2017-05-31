@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.account.emails.AccountEmailsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -37,7 +37,7 @@ public class EmailChooseModel {
 
     public ResAccountInfo requestNewEmail(String email) throws RetrofitException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
-        return new AccountEmailsApi(RetrofitBuilder.getInstance()).requestAddEmail(reqAccountEmail);
+        return new AccountEmailsApi(InnerApiRetrofitBuilder.getInstance()).requestAddEmail(reqAccountEmail);
     }
 
     public boolean isConfirmedEmail(String email) {
@@ -62,15 +62,15 @@ public class EmailChooseModel {
 
     public ResAccountInfo requestDeleteEmail(String email) throws RetrofitException {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage());
-        return new AccountEmailsApi(RetrofitBuilder.getInstance()).deleteEmail(reqAccountEmail);
+        return new AccountEmailsApi(InnerApiRetrofitBuilder.getInstance()).deleteEmail(reqAccountEmail);
     }
 
     public ResAccountInfo getAccountEmailsFromServer() throws RetrofitException {
-        return new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+        return new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
     }
 
     public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws RetrofitException {
-        return new AccountApi(RetrofitBuilder.getInstance()).updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo(selectedEmail));
+        return new AccountApi(InnerApiRetrofitBuilder.getInstance()).updatePrimaryEmail(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 
 }

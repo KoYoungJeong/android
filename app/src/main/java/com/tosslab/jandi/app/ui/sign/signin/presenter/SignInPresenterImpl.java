@@ -84,6 +84,7 @@ public class SignInPresenterImpl implements SignInPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accessToken -> {
                     getAccountInfo(email);
+                    model.updateAbsenceInfo();
                 }, t -> {
                     view.dismissProgressDialog();
                     if (!(t instanceof RetrofitException)) {

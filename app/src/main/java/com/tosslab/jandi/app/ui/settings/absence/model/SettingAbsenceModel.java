@@ -1,8 +1,10 @@
-package com.tosslab.jandi.app.ui.settings.push.absence.model;
+package com.tosslab.jandi.app.ui.settings.absence.model;
 
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.network.client.account.absence.AccountAbsenceApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAbsenceInfo;
+import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 
 import java.util.Date;
 
@@ -25,8 +27,10 @@ public class SettingAbsenceModel {
 
     public boolean setEnableAbsenceInfo(boolean disablePush, String message, Date startAt, Date endAt) {
         try {
+            // 종료날짜에 하루 더해야 함.
+            long endTime = endAt.getTime() + 86400000;
             ReqAbsenceInfo reqAbsenceInfo =
-                    new ReqAbsenceInfo("enabled", disablePush, message, startAt, endAt);
+                    new ReqAbsenceInfo("enabled", disablePush, message, startAt, new Date(endTime));
             accountAbsenceApi.get().updateAbsenceInfo(reqAbsenceInfo);
             return true;
         } catch (RetrofitException e) {
@@ -44,6 +48,10 @@ public class SettingAbsenceModel {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public ResStartAccountInfo.Absence getAbsenceInfo() {
+        return InitialAccountInfoRepository.getInstance().getAbsenceInfo();
     }
 
 

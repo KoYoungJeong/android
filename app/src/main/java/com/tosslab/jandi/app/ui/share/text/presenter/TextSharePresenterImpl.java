@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -118,7 +118,7 @@ public class TextSharePresenterImpl implements TextSharePresenter {
                 chatId = teamInfoLoader.getChatId(roomId);
                 if (chatId <= 0) {
                     try {
-                        chatId = new ChatApi(RetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).getId();
+                        chatId = new ChatApi(InnerApiRetrofitBuilder.getInstance()).createChat(teamInfoLoader.getTeamId(), roomId).getId();
                     } catch (RetrofitException e) {
                         e.printStackTrace();
                     }

@@ -3,9 +3,8 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
+import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
-
-import java.util.Date;
 
 /**
  * Created by tee on 2017. 5. 29..
@@ -20,7 +19,7 @@ public class SocketAbsenceUpdatedEvent implements EventHistoryInfo {
     private int version;
     private long ts;
     private long teamId;
-    private SocketAbsenceUpdatedEvent.Data data;
+    private Data data;
     private String unique;
 
     @Override
@@ -76,72 +75,17 @@ public class SocketAbsenceUpdatedEvent implements EventHistoryInfo {
         this.data = data;
     }
 
-    public static class Absence {
-        private String status;
-        private String applyStatus;
-        private String message;
-        private Date startAt;
-        private Date endAt;
-        private boolean disablePush;
 
-        public String getStatus() {
-            return status;
-        }
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Data {
+        private ResStartAccountInfo.Absence absence;
 
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public String getApplyStatus() {
-            return applyStatus;
-        }
-
-        public void setApplyStatus(String applyStatus) {
-            this.applyStatus = applyStatus;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-
-        public Date getStartAt() {
-            return startAt;
-        }
-
-        public void setStartAt(Date startAt) {
-            this.startAt = startAt;
-        }
-
-        public Date getEndAt() {
-            return endAt;
-        }
-
-        public void setEndAt(Date endAt) {
-            this.endAt = endAt;
-        }
-
-        public boolean isDisablePush() {
-            return disablePush;
-        }
-
-        public void setDisablePush(boolean disablePush) {
-            this.disablePush = disablePush;
-        }
-    }
-
-    public class Data {
-
-        private Absence absence;
-
-        public Absence getAbsence() {
+        public ResStartAccountInfo.Absence getAbsence() {
             return absence;
         }
 
-        public void setAbsence(Absence absence) {
+        public void setAbsence(ResStartAccountInfo.Absence absence) {
             this.absence = absence;
         }
     }

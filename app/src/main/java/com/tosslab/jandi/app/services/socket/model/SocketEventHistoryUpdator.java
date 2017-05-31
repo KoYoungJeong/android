@@ -153,8 +153,6 @@ public class SocketEventHistoryUpdator {
                 long teamId = TeamInfoLoader.getInstance().getTeamId();
                 String initializeInfo = startApi.get().getRawInitializeInfo(teamId);
                 InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initializeInfo));
-                String accountInitialInfo = startApi.get().getRawAccountInitializeInfo();
-                InitialInfoRepository.getInstance().upsertAccountRawInitialInfo(accountInitialInfo);
                 refreshRankIfNeed(teamId);
                 TeamInfoLoader.getInstance().refresh();
                 EventBus.getDefault().post(new RetrieveTopicListEvent());

@@ -8,7 +8,7 @@ import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.ui.profile.defaultimage.model.ProfileImageSelectorModel;
 import com.tosslab.jandi.app.utils.file.FileUtil;
 
@@ -51,7 +51,7 @@ public class ProfileImageSelectorPresenterTest {
     @Before
     public void setUp() throws Exception {
         mockView = mock(ProfileImageSelectorPresenter.View.class);
-        profileImageSelectorPresenter = new ProfileImageSelectorPresenter(new ProfileImageSelectorModel(() -> new ProfileApi(RetrofitBuilder.getInstance())), mockView);
+        profileImageSelectorPresenter = new ProfileImageSelectorPresenter(new ProfileImageSelectorModel(() -> new ProfileApi(InnerApiRetrofitBuilder.getInstance())), mockView);
 
     }
 

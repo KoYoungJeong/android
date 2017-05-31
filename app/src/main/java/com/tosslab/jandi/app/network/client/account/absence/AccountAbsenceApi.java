@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.account.absence;
 
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.BaseRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAbsenceInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -19,7 +19,7 @@ import retrofit2.http.PUT;
 public class AccountAbsenceApi extends ApiTemplate<AccountAbsenceApi.Api> {
 
     @Inject
-    public AccountAbsenceApi(RetrofitBuilder retrofitBuilder) {
+    public AccountAbsenceApi(BaseRetrofitBuilder retrofitBuilder) {
         super(AccountAbsenceApi.Api.class, retrofitBuilder);
     }
 

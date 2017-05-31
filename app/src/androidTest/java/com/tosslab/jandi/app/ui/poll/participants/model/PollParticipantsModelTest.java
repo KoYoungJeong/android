@@ -5,7 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.teams.poll.PollApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ResCreatePoll;
 import com.tosslab.jandi.app.network.models.ResPollParticipants;
@@ -48,7 +48,7 @@ public class PollParticipantsModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new PollParticipantsModel(() -> new PollApi(RetrofitBuilder.getInstance()));
+        model = new PollParticipantsModel(() -> new PollApi(InnerApiRetrofitBuilder.getInstance()));
     }
 
     @Test

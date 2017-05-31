@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -127,7 +128,7 @@ public class SettingPushSchedulePresenterImpl implements SettingPushSchedulePres
         }
 
         Observable.defer(() -> {
-            final int timeZoneInt = getTimeZoneInt();
+            final int timeZoneInt = SettingPushSchedulePresenterImpl.this.getTimeZoneInt();
             boolean success = model.setAlarmSchedule(dayList, startTime, endTime, timeZoneInt);
             return Observable.just(success);
         }).subscribeOn(Schedulers.io())

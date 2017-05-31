@@ -311,10 +311,10 @@
 	<string name="jandi_create_topic">"トピック作成"</string>
 	<string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
 	<string name="jandi_date_days">"日"</string>
-	<string name="jandi_date_evening">""</string>
+	<string name="jandi_date_evening">"午後"</string>
 	<string name="jandi_date_hours">"時"</string>
 	<string name="jandi_date_minutes">"分"</string>
-	<string name="jandi_date_morning">""</string>
+	<string name="jandi_date_morning">"午前"</string>
 	<string name="jandi_date_remaining">"残り"</string>
 	<string name="jandi_decide_choose">"写真を選択"</string>
 	<string name="jandi_delete_all">"すべて消去"</string>
@@ -403,7 +403,7 @@
 	<string name="jandi_folder_insert_name">"フォルダ名を入力ください"</string>
 	<string name="jandi_folder_move_to">"フォルダに移動する"</string>
 	<string name="jandi_folder_new_folder">"新規フォルダを作成する"</string>
-	<string name="jandi_folder_no_have">"フォルダがありません"</string>
+	<string name="jandi_folder_no_have">"フォルダを作成して\nトピック一覧を管理できます"</string>
 	<string name="jandi_folder_remove_from">"フォルダから除く"</string>
 	<string name="jandi_folder_removed">"フォルダが削除されました"</string>
 	<string name="jandi_folder_rename">"リネーム"</string>
@@ -452,7 +452,7 @@
 	<string name="jandi_invite_kakao">"カカオトーク"</string>
 	<string name="jandi_invite_line">"LINE"</string>
 	<string name="jandi_invite_many_people_explain">"100人以上のメンバーを追加したいですか？サポートにご連絡はこちらまで support@tosslab.com"</string>
-	<string name="jandi_invite_member">"このトピックに招待"</string>
+	<string name="jandi_invite_member">"トピックにメンバーを招待"</string>
 	<string name="jandi_invite_member_count">"%d名を招待する"</string>
 	<string name="jandi_invite_member_to_topic">"トピックにメンバー招待"</string>
 	<string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
@@ -461,7 +461,7 @@
 	<string name="jandi_invite_to_dummy_account_again">"入力したメールアドレスはすでに他のメンバーが招待中です。
   招待メールを再送信しますか？"</string>
 	<string name="jandi_invite_to_team">"チームに招待する"</string>
-	<string name="jandi_invite_to_team_for_member">"招待メールを送信"</string>
+	<string name="jandi_invite_to_team_for_member">"チームにメンバーを招待"</string>
 	<string name="jandi_invite_wechat">"WeChat"</string>
 	<string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
 	<string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
@@ -507,7 +507,7 @@
 	<string name="jandi_message_leave_private_topic_when_only_you">"トピックから退出する同時トピックが削除されます。
   本当にトピックから退出しますか？"</string>
 	<string name="jandi_message_logout">"ログアウトしました"</string>
-	<string name="jandi_message_no_member">""</string>
+	<string name="jandi_message_no_member">"%sにメンバーを招待し\n会話を始めましょう"</string>
 	<string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
 	<string name="jandi_message_search">"メッセージ
   検索"</string>
@@ -538,8 +538,8 @@
 	<string name="jandi_next">"次へ"</string>
 	<string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
 	<string name="jandi_no_long_team_member">"%sさんはもうこのチームのメンバーではありません"</string>
-	<string name="jandi_no_message_dm_disabled_member">""</string>
-	<string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
+	<string name="jandi_no_message_dm_disabled_member">"会話履歴がありません"</string>
+	<string name="jandi_no_message_in_topic_dm">"メッセージを入力し\n会話を開始しましょう"</string>
 	<string name="jandi_no_preview_push_mention">"メッセージでメンションされました。"</string>
 	<string name="jandi_no_preview_push_message">"新着メッセージがあります。"</string>
 	<string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
@@ -793,7 +793,7 @@
 	<string name="jandi_topic_invitation">"招待"</string>
 	<string name="jandi_topic_leave">"このトピックから退出"</string>
 	<string name="jandi_topic_message_search">"トークルーム、メッセージ検索"</string>
-	<string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
+	<string name="jandi_topic_no_member_1">"トピックにメンバーを\n招待し会話を開始しましょう"</string>
 	<string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
 	<string name="jandi_topic_notification">"通知"</string>
 	<string name="jandi_topic_owner">"トピックの管理者"</string>
@@ -905,18 +905,18 @@
 	<string name="security_setting">"セキュリティー設定"</string>
 	<string name="sent_auth_email">"メールを確認して、メールの中の登録ボタンから登録してください。"</string>
 	<string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
-	<string name="tab_1_1_esm_1">""</string>
-	<string name="tab_1_1_esm_2">""</string>
-	<string name="tab_file_esm_1">""</string>
-	<string name="tab_file_esm_2">""</string>
-	<string name="tab_mypage_mention_esm_1">""</string>
-	<string name="tab_mypage_mention_esm_2">""</string>
-	<string name="tab_mypage_poll_esm_1">""</string>
-	<string name="tab_mypage_poll_esm_2">""</string>
-	<string name="tab_mypage_star_file_esm_1">""</string>
-	<string name="tab_mypage_star_file_esm_2">""</string>
-	<string name="tab_mypage_star_message_file_esm_1">""</string>
-	<string name="tab_mypage_star_message_file_esm_2">""</string>
+	<string name="tab_1_1_esm_1">"チームメンバーと\n1:1会話を開始しましょう"</string>
+	<string name="tab_1_1_esm_2">"画面の+をタップし\n会話を開始しましょう"</string>
+	<string name="tab_file_esm_1">"共有したファイルは\nここで確認できます"</string>
+	<string name="tab_file_esm_2">"トピック又は1:1会話で+をタップし\nファイルを共有してください"</string>
+	<string name="tab_mypage_mention_esm_1">"自分がメンションされた\nメッセージはここで確認できます"</string>
+	<string name="tab_mypage_mention_esm_2">"入力欄に@メンバーの名前を入力し\nメッセージを送信してください"</string>
+	<string name="tab_mypage_poll_esm_1">"投票一覧をここで確認できます"</string>
+	<string name="tab_mypage_poll_esm_2">"トピックで+をタップし投票を作成してください"</string>
+	<string name="tab_mypage_star_file_esm_1">"スターしたファイルは\nここで確認できます"</string>
+	<string name="tab_mypage_star_file_esm_2">"ファイルのスターをタップすると\nここに保存できます"</string>
+	<string name="tab_mypage_star_message_file_esm_1">"スターしたファイルやメッセージは\nここで確認できます"</string>
+	<string name="tab_mypage_star_message_file_esm_2">"メッセージの長押し、又は\nファイルのスターをタップするとここに保存できます"</string>
 	<string name="team_adminmenu_title">"管理者メニュー"</string>
 	<string name="team_create">"@string/jandi_team_select_create_a_team"</string>
 	<string name="team_info">"チーム情報"</string>
@@ -949,6 +949,7 @@
 	<string name="topic_search_1on1_unable">"準メンバーはダイレクトメッセージを送信できません。"</string>
 	<string name="topic_topicchat_mentionall">"@all（トピック内）"</string>
 	<string name="topic_topicsettings_removetopicfromfolder">"%sフォルダからトピックが除かれました"</string>
+	<string name="topic_unread_message_button">"未読メッセージ"</string>
 	<string name="topic_viewonly_alert_body">"管理人・副管理人のみメッセージを作成できます。"</string>
 	<string name="topic_viewonly_alert_title">"読み取り専用のトークルームです。"</string>
 	<string name="topic_viewonly_label">"読取専用"</string>
@@ -963,8 +964,10 @@
 	<string name="vacancy_info_desc">"理由作成の際、ステータスメッセージに表示されます。"</string>
 	<string name="vacancy_info_title">"不在理由（選択）"</string>
 	<string name="vacancy_period">"期間"</string>
-	<string name="vacancy_period_count">"（総00日、最大3年）"</string>
+	<string name="vacancy_period_count">"（総%s日、最大3年）"</string>
 	<string name="vacancy_period_desc">"選択された日の真夜中を基準に設定されます。"</string>
+	<string name="vacancy_period_error_popup">""</string>
+	<string name="vacancy_period_pastperiod_popup">""</string>
 	<string name="vacancy_pushnoti_desc">"設定時、その期間には携帯電話にプッシュ通知が送信されません。"</string>
 	<string name="vacancy_pushnoti_title">"モバイルプッシュ通知の設定"</string>
 	<string name="vacancy_startday">"開始日"</string>

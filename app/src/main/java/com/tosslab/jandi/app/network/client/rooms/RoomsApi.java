@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.rooms;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqMember;
 import com.tosslab.jandi.app.network.models.ReqOwner;
 import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
@@ -24,7 +24,7 @@ import retrofit2.http.Path;
 
 public class RoomsApi extends ApiTemplate<RoomsApi.Api> {
     @Inject
-    public RoomsApi(RetrofitBuilder retrofitBuilder) {
+    public RoomsApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

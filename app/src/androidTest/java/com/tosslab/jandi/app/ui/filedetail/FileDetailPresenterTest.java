@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.client.messages.MessageApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
@@ -163,9 +163,9 @@ public class FileDetailPresenterTest {
 
     private ResMessages.FileMessage getFileMessage() throws RetrofitException {
         ReqSearch.Builder builder = new ReqSearch.Builder().setType("file").setWriterId(-1).setRoomId(-1).setFileType("all").setPage(1).setKeyword("").setCount(1);
-        ResSearch.SearchRecord searchRecord = new SearchApi(RetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), builder.build()).getRecords().get(0);
+        ResSearch.SearchRecord searchRecord = new SearchApi(InnerApiRetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), builder.build()).getRecords().get(0);
         long messageId = searchRecord.getMessageId();
-        for (ResMessages.OriginalMessage messageDetail : new MessageApi(RetrofitBuilder.getInstance()).getFileDetail(TeamInfoLoader.getInstance().getTeamId(), messageId).messageDetails) {
+        for (ResMessages.OriginalMessage messageDetail : new MessageApi(InnerApiRetrofitBuilder.getInstance()).getFileDetail(TeamInfoLoader.getInstance().getTeamId(), messageId).messageDetails) {
             if (messageDetail instanceof ResMessages.FileMessage) {
                 return ((ResMessages.FileMessage) messageDetail);
             }

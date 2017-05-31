@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.marker;
 
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.marker.Marker;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import retrofit2.http.Path;
 
 public class MarkerApi extends ApiTemplate<MarkerApi.Api> {
     @Inject
-    public MarkerApi(RetrofitBuilder retrofitBuilder) {
+    public MarkerApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(MarkerApi.Api.class, retrofitBuilder);
     }
 

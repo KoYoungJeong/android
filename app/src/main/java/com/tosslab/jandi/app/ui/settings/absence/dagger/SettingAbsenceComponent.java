@@ -1,7 +1,7 @@
-package com.tosslab.jandi.app.ui.settings.push.absence.dagger;
+package com.tosslab.jandi.app.ui.settings.absence.dagger;
 
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
-import com.tosslab.jandi.app.ui.settings.push.absence.SettingAbsenceActivity;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 
 import dagger.Component;
 

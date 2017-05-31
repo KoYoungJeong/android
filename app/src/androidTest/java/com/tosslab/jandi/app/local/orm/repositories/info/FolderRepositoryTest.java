@@ -5,7 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tosslab.jandi.app.local.orm.domain.FolderExpand;
 import com.tosslab.jandi.app.network.client.start.StartApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -35,7 +35,7 @@ public class FolderRepositoryTest {
     public static void setUpClass() throws Exception {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+        initializeInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
     @Before

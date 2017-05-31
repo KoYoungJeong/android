@@ -21,7 +21,7 @@ import com.tosslab.jandi.app.network.SimpleApiRequester;
 import com.tosslab.jandi.app.network.client.platform.PlatformApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.okhttp.OkHttpClientFactory;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqUpdatePlatformStatus;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceCloser;
@@ -98,7 +98,7 @@ public class JandiApplication extends MultiDexApplication {
         SimpleApiRequester.request(() -> {
             ReqUpdatePlatformStatus req = new ReqUpdatePlatformStatus(active);
             try {
-                new PlatformApi(RetrofitBuilder.getInstance()).updatePlatformStatus(req);
+                new PlatformApi(InnerApiRetrofitBuilder.getInstance()).updatePlatformStatus(req);
             } catch (RetrofitException e) {
                 LogUtil.e("PlatformApi", Log.getStackTraceString(e));
             }
@@ -208,7 +208,7 @@ public class JandiApplication extends MultiDexApplication {
     }
 
     private void initRetrofitBuilder() {
-        RetrofitBuilder.getInstance();
+        InnerApiRetrofitBuilder.getInstance();
     }
 
     private void addLogConfigIfDebug() {

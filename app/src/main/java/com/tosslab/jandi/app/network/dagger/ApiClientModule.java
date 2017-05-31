@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.dagger;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.BaseRetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 
 import dagger.Module;
 import dagger.Provides;
@@ -9,8 +10,13 @@ import dagger.Provides;
 public class ApiClientModule {
 
     @Provides
-    RetrofitBuilder provideRetrofitAdapterBuilder() {
-        return RetrofitBuilder.getInstance();
+    InnerApiRetrofitBuilder provideInnerApiRetrofitAdapterBuilder() {
+        return InnerApiRetrofitBuilder.getInstance();
+    }
+
+    @Provides
+    BaseRetrofitBuilder provideBaseRetrofitAdapterBuilder() {
+        return BaseRetrofitBuilder.getInstance();
     }
 
 }

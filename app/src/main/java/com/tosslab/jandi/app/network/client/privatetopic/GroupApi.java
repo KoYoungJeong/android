@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.privatetopic;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
@@ -28,7 +28,7 @@ import retrofit2.http.Query;
 
 public class GroupApi extends ApiTemplate<GroupApi.Api> {
     @Inject
-    public GroupApi(RetrofitBuilder retrofitBuilder) {
+    public GroupApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

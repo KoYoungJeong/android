@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.file.body.ProgressCallback;
 import com.tosslab.jandi.app.network.file.body.ProgressRequestBody;
 import com.tosslab.jandi.app.network.json.JsonMapper;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 
@@ -49,7 +49,7 @@ public class FileUploadApi {
         }
         MultipartBody.Part userFilePart = MultipartBody.Part.createFormData("userFile", file.getName(), fileBody);
 
-        return RetrofitBuilder.getInstanceOfFileUpload().create(Api.class)
+        return InnerApiRetrofitBuilder.getInstanceOfFileUpload().create(Api.class)
                 .upload(titlePart, entityPart, teamIdPart, commentPart, mentionsPart, userFilePart);
     }
 
