@@ -17,7 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -30,6 +31,8 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.listeners.SimpleTextWatcher;
 import com.tosslab.jandi.app.views.settings.SettingsBodyCheckView;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -66,13 +69,16 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     SettingsBodyCheckView vgSettingPushAlarmEnableCheckBox;
 
     @Bind(R.id.et_absence_option_message)
-    AutoCompleteTextView etAbsenceOptionMessage;
+    EditText etAbsenceOptionMessage;
 
     @Bind(R.id.tv_absence_option_message_length)
     TextView tvAbsenceOptionMessageLength;
 
     @Bind(R.id.tv_absence_period)
     TextView tvAbsencePeriod;
+
+    @Bind(R.id.v_scroll)
+    ScrollView scrollView;
 
     private boolean isEnablePushAlarm = false;
     private Date startDate;
@@ -108,6 +114,12 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
             }
         });
         initProgressWheel();
+        KeyboardVisibilityEvent.setEventListener(
+                this, isOpen -> {
+                    if (isOpen) {
+                        scrollView.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
 
     }
 

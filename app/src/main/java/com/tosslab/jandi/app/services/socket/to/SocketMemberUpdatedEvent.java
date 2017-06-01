@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.socket.to;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
-import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.services.socket.annotations.Version;
 
@@ -76,8 +75,6 @@ public class SocketMemberUpdatedEvent implements EventHistoryInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private Human member;
-        private String status;
-        private Absence absence;
 
         public Human getMember() {
             return member;
@@ -86,23 +83,6 @@ public class SocketMemberUpdatedEvent implements EventHistoryInfo {
         public void setMember(Human member) {
             this.member = member;
         }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public Absence getAbsence() {
-            return absence;
-        }
-
-        public void setAbsence(Absence absence) {
-            this.absence = absence;
-        }
-
     }
 
 }

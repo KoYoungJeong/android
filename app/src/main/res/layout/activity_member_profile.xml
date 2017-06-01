@@ -63,40 +63,82 @@
 
             </RelativeLayout>
 
-            <View
-                android:id="@+id/v_online"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_below="@id/vg_actionbar_area"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_circle_online_for_profile"
-                android:visibility="gone" />
+            <RelativeLayout
+                android:id="@+id/vg_profile_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/vg_actionbar_area">
 
-            <ImageView
-                android:id="@+id/iv_member_profile_img_small"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@id/vg_actionbar_area"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp" />
+                <View
+                    android:id="@+id/v_online"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_circle_online_for_profile"
+                    android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/iv_member_profile_absense_img"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@id/vg_actionbar_area"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/"
-                android:src="@drawable/absence" />
+                <ImageView
+                    android:id="@+id/iv_member_profile_img_small"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="10dp" />
+
+                <View
+                    android:id="@+id/v_background_profile_absence"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/profile_dim"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/iv_member_profile_absence_img"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="6dp"
+                    android:src="@drawable/absence"
+                    android:visibility="invisible" />
+
+                <LinearLayout
+                    android:id="@+id/vg_absence_message_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="21dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_toRightOf="@id/iv_member_profile_img_small"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/room_member_vacant_title"
+                        android:textColor="@color/white"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id='@+id/tv_absence_duration'
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="2017.04.05 - 2017.04.10"
+                        android:textColor="@color/white"
+                        android:textSize="12dp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/vg_profile_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/vg_bottom"
-                android:layout_below="@id/iv_member_profile_img_small"
+                android:layout_below="@id/vg_profile_area"
                 android:orientation="vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp">
@@ -110,7 +152,7 @@
                         android:id="@+id/tv_member_profile_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
+                        android:layout_marginTop="3dp"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="이름입니다. 이름입니다. 이름입니다 이름입니다. 이름입니다."

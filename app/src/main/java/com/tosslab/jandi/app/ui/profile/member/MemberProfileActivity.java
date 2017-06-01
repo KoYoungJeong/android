@@ -9,6 +9,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,7 @@ import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
@@ -42,6 +44,7 @@ import com.tosslab.jandi.app.network.client.member.MemberApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.member.MemberInfo;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.permissions.PermissionRetryDialog;
 import com.tosslab.jandi.app.permissions.Permissions;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -64,6 +67,7 @@ import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 import com.tosslab.jandi.app.views.SwipeExitLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -146,6 +150,14 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
     View vStartBottomLine;
     @Bind(R.id.v_online)
     View vOnline;
+    @Bind(R.id.iv_member_profile_absence_img)
+    ImageView ivMemberProfileAbsenceImg;
+    @Bind(R.id.v_background_profile_absence)
+    View vBackgroundProfileAbsence;
+    @Bind(R.id.vg_absence_message_wrapper)
+    ViewGroup vgAbsenceMessageWrapper;
+    @Bind(R.id.tv_absence_duration)
+    TextView tvAbsenceDuration;
 
     ProfileLoader profileLoader;
 
@@ -344,6 +356,32 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
         }
 
         AnalyticsUtil.sendScreenName(getScreen());
+
+        setAbsenceInfo();
+    }
+
+    private void setAbsenceInfo() {
+        Absence absence = TeamInfoLoader.getInstance().getUser(memberId).getAbsence();
+        if (absence != null && absence.getStartAt() != null) {
+            vBackgroundProfileAbsence.setVisibility(View.VISIBLE);
+            ivMemberProfileAbsenceImg.setVisibility(View.VISIBLE);
+            vgAbsenceMessageWrapper.setVisibility(View.VISIBLE);
+            StringBuilder sb = new StringBuilder();
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getStartAt()));
+            sb.append(" - ");
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getEndAt()));
+            tvAbsenceDuration.setText(sb);
+            AnimationDrawable drawable =
+                    (AnimationDrawable) ivMemberProfileAbsenceImg.getDrawable();
+            drawable.start();
+            if (!TextUtils.isEmpty(absence.getMessage())) {
+                tvProfileDescription.setText(absence.getMessage());
+            }
+        } else {
+            vBackgroundProfileAbsence.setVisibility(View.GONE);
+            ivMemberProfileAbsenceImg.setVisibility(View.INVISIBLE);
+            vgAbsenceMessageWrapper.setVisibility(View.GONE);
+        }
     }
 
     private boolean isJandiBot(Member member) {
@@ -869,6 +907,12 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             } else {
                 vOnline.setVisibility(View.GONE);
             }
+        }
+    }
+
+    public void onEventMainThread(ProfileChangeEvent event) {
+        if (event.getMember().getId() == memberId) {
+            setAbsenceInfo();
         }
     }
 }

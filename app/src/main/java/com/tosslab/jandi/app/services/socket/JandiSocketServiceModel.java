@@ -1368,10 +1368,11 @@ public class JandiSocketServiceModel {
 
             SocketMemberUpdatedEvent.Data data = event.getData();
             Human member = data.getMember();
-            Absence absence = data.getAbsence();
             HumanRepository.getInstance(event.getTeamId()).updateHuman(member);
+
+            Absence absence = member.getAbsence();
+
             HumanRepository.getInstance(event.getTeamId()).updateAbsence(member.getId(), absence);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
 
             postEvent(new ProfileChangeEvent(data.getMember()));
         } catch (Exception e) {
