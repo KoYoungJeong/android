@@ -957,6 +957,7 @@
 	<string name="vacancy_period_count">"(总共 %s 天，最多 3 年)"</string>
 	<string name="vacancy_period_desc">"以设置日期午夜零时为准"</string>
 	<string name="vacancy_period_error_popup">""</string>
+	<string name="vacancy_period_max3y_popup">"休假模式最多只能设置 3 年"</string>
 	<string name="vacancy_period_pastperiod_popup">""</string>
 	<string name="vacancy_pushnoti_desc">"开启勿扰设置后，将暂时不会收到手机推播通知"</string>
 	<string name="vacancy_pushnoti_title">"手机推播通知勿扰设置"</string>

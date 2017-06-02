@@ -69,6 +69,8 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
     TextView tvDeletedDate;
     @Bind(R.id.tv_file_detail_shared_topics)
     LinkedEllipsizeTextView tvSharedTopics;
+    @Bind(R.id.vg_profile_absence)
+    ViewGroup vgProfileAbsence;
     private Context context;
     private ViewGroup vgFileContent;
 
@@ -96,12 +98,11 @@ public abstract class FileViewHolder extends BaseViewHolder<ResMessages.FileMess
     @Override
     public void onBindView(ResMessages.FileMessage fileMessage) {
 
-
         long writerId = fileMessage.writerId;
 
         User writer = TeamInfoLoader.getInstance().getUser(writerId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
-                ivUserProfile, vUserProfileDisableIndicator)
+                ivUserProfile, vgProfileAbsence, vUserProfileDisableIndicator)
                 .bind(writer);
 
         String createTime = DateTransformator.getTimeString(fileMessage.createTime);

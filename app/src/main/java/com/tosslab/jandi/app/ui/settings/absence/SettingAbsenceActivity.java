@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -120,6 +121,27 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
                         scrollView.fullScroll(View.FOCUS_DOWN);
                     }
                 });
+        etAbsenceOptionMessage.addTextChangedListener(new SimpleTextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                super.afterTextChanged(s);
+                int selectionEnd = etAbsenceOptionMessage.getSelectionEnd();
+                int cnt = 0;
+                for (int i = 1; i <= s.length(); i++) {
+                    if (s.subSequence(i - 1, i).toString().equals("\n")) {
+                        if (cnt > 0) {
+                            s.replace(i - 1, i, "");
+                            if (selectionEnd > i - 1) {
+                                selectionEnd = i - 1;
+                            }
+                            etAbsenceOptionMessage.setText(s);
+                        }
+                        cnt++;
+                    }
+                }
+                etAbsenceOptionMessage.setSelection(selectionEnd);
+            }
+        });
 
     }
 
@@ -219,7 +241,10 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     public void setPeriodView() {
         long period = endDate.getTime() - startDate.getTime();
         // 하루 = 86400000ms
-        long day = (period / 86400000) + 1;
+        long day = (period / 86400000);
+        if (day >= 0) {
+            day = day + 1;
+        }
         String periodDays = getResources().getString(R.string.vacancy_period_count, day + "");
 
         if (day < 0) {
@@ -325,6 +350,15 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     public void showInvalidDatesDialog() {
         new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
                 .setMessage(R.string.vacancy_period_error_popup)
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm), null)
+                .create().show();
+    }
+
+    @Override
+    public void showOver3YearsDialog() {
+        new AlertDialog.Builder(this, R.style.JandiTheme_AlertDialog_FixWidth_300)
+                .setMessage(R.string.vacancy_period_max3y_popup)
                 .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.jandi_confirm), null)
                 .create().show();

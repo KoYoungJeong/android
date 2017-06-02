@@ -53,6 +53,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
     View vFullDivider;
     @Bind(R.id.v_half_divider)
     View vHalfDivider;
+    @Bind(R.id.vg_profile_absence)
+    ViewGroup vgProfileAbsence;
 
     public MentionMessageViewHolder(View itemView) {
         super(itemView);
@@ -136,20 +138,25 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         boolean isBot = TeamInfoLoader.getInstance().isBot(mentionMessage.getWriterId());
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(mentionMessage.getWriterId());
 
+        User user = TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId());
+
         if (!isJandiBot && !isBot) {
             ImageUtil.loadProfileImage(ivProfile, mentionMessage.getWriterProfileUrl(), R.drawable.profile_img);
 
-            User user = TeamInfoLoader.getInstance().getUser(mentionMessage.getWriterId());
-
             if (user != null && user.isEnabled()) {
+                if (user.getAbsence() == null || user.getAbsence().getStartAt() == null) {
+                    vgProfileAbsence.setVisibility(View.GONE);
+                } else {
+                    vgProfileAbsence.setVisibility(View.VISIBLE);
+                }
                 vProfileCover.setBackgroundColor(Color.TRANSPARENT);
                 if ((tvWriter.getPaintFlags() & Paint.STRIKE_THRU_TEXT_FLAG) > 0) {
                     tvWriter.setPaintFlags(
                             tvWriter.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                 }
                 tvWriter.setTextColor(0xff333333);
-
             } else {
+                vgProfileAbsence.setVisibility(View.GONE);
                 ShapeDrawable foreground = new ShapeDrawable(new OvalShape());
                 foreground.getPaint().setColor(0x66FFFFFF);
                 vProfileCover.setBackgroundDrawable(foreground);
@@ -160,7 +167,7 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
         }
 
         vProfileCover.setVisibility(View.GONE);
-
+        vgProfileAbsence.setVisibility(View.GONE);
         if (isJandiBot) {
 
             ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

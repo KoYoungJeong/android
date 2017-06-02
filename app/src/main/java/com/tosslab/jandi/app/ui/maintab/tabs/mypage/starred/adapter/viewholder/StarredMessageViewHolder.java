@@ -30,6 +30,7 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
     private View vSemiDivider;
     private View vFullDivider;
     private View vProfileCover;
+    private ViewGroup vgProfileAbsence;
 
     private StarredMessageViewHolder(View itemView) {
         super(itemView);
@@ -41,6 +42,7 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
         vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
         vFullDivider = itemView.findViewById(R.id.v_full_divider);
         vProfileCover = itemView.findViewById(R.id.v_starred_profile_cover);
+        vgProfileAbsence = (ViewGroup) itemView.findViewById(R.id.vg_profile_absence);
 
     }
 
@@ -53,7 +55,7 @@ public class StarredMessageViewHolder extends BaseViewHolder<StarredMessage> {
     @Override
     public void onBindView(StarredMessage starredMessage) {
         Member member = TeamInfoLoader.getInstance().getMember(starredMessage.getMessage().writerId);
-        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover)
+        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover, vgProfileAbsence)
                 .bind(member);
         long roomId = starredMessage.getRoom().id;
         String roomName = getRoomName(roomId);

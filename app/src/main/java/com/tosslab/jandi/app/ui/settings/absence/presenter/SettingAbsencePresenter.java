@@ -42,5 +42,7 @@ public interface SettingAbsencePresenter {
         void showInvalidDatesDialog();
 
         void showPastDatesDialog();
+
+        void showOver3YearsDialog();
     }
 }

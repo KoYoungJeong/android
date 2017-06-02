@@ -76,6 +76,11 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
             return;
         }
 
+        if (isOver3year(startDate, endDate)) {
+            view.showOver3YearsDialog();
+            return;
+        }
+
         view.showProgressBar();
         boolean isEnableNotChanged = comparePreviousAndCurrentEnabled(enabled);
 
@@ -172,6 +177,15 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
         calendar.set(Calendar.MILLISECOND, 0);
 
         if (calendar.getTimeInMillis() > endDate.getTime()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isOver3year(Date startDate, Date endDate) {
+        // 3year == 94670778000 millisecond;
+        if ((endDate.getTime() - startDate.getTime()) > 94670778000l) {
             return true;
         }
 

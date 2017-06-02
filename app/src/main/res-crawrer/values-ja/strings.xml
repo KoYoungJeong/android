@@ -967,6 +967,7 @@
 	<string name="vacancy_period_count">"（総%s日、最大3年）"</string>
 	<string name="vacancy_period_desc">"選択された日の真夜中を基準に設定されます。"</string>
 	<string name="vacancy_period_error_popup">""</string>
+	<string name="vacancy_period_max3y_popup">"不在設定期間は最大３年まで可能です."</string>
 	<string name="vacancy_period_pastperiod_popup">""</string>
 	<string name="vacancy_pushnoti_desc">"設定時、その期間には携帯電話にプッシュ通知が送信されません。"</string>
 	<string name="vacancy_pushnoti_title">"モバイルプッシュ通知の設定"</string>

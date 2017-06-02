@@ -993,6 +993,7 @@
 	<string name="vacancy_period_desc">"선택한 날의 자정을 기준으로 설정됩니다."</string>
 	<string name="vacancy_period_error_popup">"종료일이 시작일보다 이전 날짜입니다.
 기간을 다시 확인해주세요."</string>
+	<string name="vacancy_period_max3y_popup">"부재 중 설정 기간은 최대 3년까지만 설정이 가능합니다."</string>
 	<string name="vacancy_period_pastperiod_popup">"설정한 기간이 과거 일정 입니다.
 기간을 다시 확인해주세요."</string>
 	<string name="vacancy_pushnoti_desc">"설정 시 해당 기간 동안 사용 중인 모바일에 푸시 알림을 보내지 않습니다."</string>

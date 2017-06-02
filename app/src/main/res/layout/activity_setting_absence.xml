@@ -31,6 +31,8 @@
                 <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
                     android:id="@+id/vg_setting_absence_checkbox"
                     style="@style/JandiSettings.Body"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
                     app:sbvChcked="false"
                     app:sbvSummary="@string/vacancy_desc"
                     app:sbvTitle="@string/vacancy_title" />
@@ -45,7 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="invisible">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -178,6 +180,11 @@
                         android:textColor="@color/rgb_999999"
                         android:textSize="12sp" />
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/rgb_e5e5e5" />
+
                     <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
                         android:id="@+id/vg_setting_push_alarm_enable_checkbox"
                         style="@style/JandiSettings.Body"
@@ -211,7 +218,6 @@
                                 android:layout_height="wrap_content"
                                 android:hint="@string/vacancy_info_title"
                                 android:maxLength="60"
-                                android:maxLines="2"
                                 android:paddingBottom="16dp"
                                 android:textSize="16sp" />
                         </android.support.design.widget.TextInputLayout>
@@ -225,6 +231,7 @@
                             android:layout_marginTop="-20dp"
                             android:color="@color/jandi_transparent_black_38p"
                             android:text="0/60"
+                            android:textColor="@color/jandi_transparent_black_38p"
                             android:textSize="12sp" />
 
                         <TextView
