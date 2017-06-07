@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
 
 import retrofit2.Call;
@@ -32,8 +31,8 @@ public class ApiTemplate<API> {
         return retrofitBuilder.create(clazz);
     }
 
-
     public interface Action0<RESULT> {
         Call<RESULT> call();
     }
+
 }
