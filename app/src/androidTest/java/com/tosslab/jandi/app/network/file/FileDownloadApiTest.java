@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -45,7 +45,7 @@ public class FileDownloadApiTest {
                 .setPage(1)
                 .setCount(1)
                 .setKeyword("").build();
-        ResSearch search = new SearchApi(RetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), reqSearch);
+        ResSearch search = new SearchApi(InnerApiRetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), reqSearch);
         return search.getRecords().get(0).getFile();
     }
 

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.profile;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAvatarsInfo;
 import com.tosslab.jandi.app.network.models.start.Human;
@@ -27,7 +27,7 @@ import retrofit2.http.Path;
 
 public class ProfileApi extends ApiTemplate<ProfileApi.Api> {
     @Inject
-    public ProfileApi(RetrofitBuilder retrofitBuilder) {
+    public ProfileApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

@@ -25,17 +25,21 @@
             android:layout_height="40dp"
             android:layout_centerInParent="true" />
 
-        <ImageView
-            android:id="@+id/iv_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/iv_profile"
-            android:layout_alignEnd="@+id/iv_profile"
-            android:layout_alignRight="@+id/iv_profile"
-            android:layout_marginBottom="-2dp"
-            android:layout_marginEnd="-2dp"
-            android:layout_marginRight="-2dp"
-            android:src="@drawable/icon_team_member_star" />
+        <LinearLayout
+            android:id="@+id/vg_profile_absence"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_round_black_transparent60_radius_20"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/profile_image_away_01" />
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 
@@ -130,13 +134,13 @@
         <TextView
             android:id="@+id/tv_authority_badge"
             android:layout_width="wrap_content"
-            android:layout_height="17dp"
-            android:layout_marginEnd="12dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="12dp"
-            android:layout_marginStart="16dp"
             android:background="@drawable/bg_user_level_team_admin"
             android:gravity="center_vertical"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
             android:text="@string/common_authority_title_owner"
             android:textColor="@color/jandi_text_level_team_admin"
             android:textSize="@dimen/jandi_text_size_11sp" />

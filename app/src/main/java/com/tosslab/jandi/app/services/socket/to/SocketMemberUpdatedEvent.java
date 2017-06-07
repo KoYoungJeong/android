@@ -84,4 +84,5 @@ public class SocketMemberUpdatedEvent implements EventHistoryInfo {
             this.member = member;
         }
     }
+
 }

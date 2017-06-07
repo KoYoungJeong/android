@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.direct.message;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -43,13 +43,13 @@ public class DirectMessageApiTest {
                 .toBlocking()
                 .first();
         entityId = formattedUsersWithoutMe.get((int) (Math.random() * formattedUsersWithoutMe.size())).getId();
-        ResMessages directMessages = new DirectMessageApi(RetrofitBuilder.getInstance()).getDirectMessages(teamId, entityId, -1, 1);
+        ResMessages directMessages = new DirectMessageApi(InnerApiRetrofitBuilder.getInstance()).getDirectMessages(teamId, entityId, -1, 1);
         linkId = directMessages.records.get(0).id;
     }
 
     @Before
     public void setUp() throws Exception {
-        api = new DirectMessageApi(RetrofitBuilder.getInstance());
+        api = new DirectMessageApi(InnerApiRetrofitBuilder.getInstance());
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.teams.poll;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqCreatePoll;
 import com.tosslab.jandi.app.network.models.ReqSendPollComment;
 import com.tosslab.jandi.app.network.models.ReqVotePoll;
@@ -34,7 +34,7 @@ import retrofit2.http.Query;
 public class PollApi extends ApiTemplate<PollApi.Api> {
 
     @Inject
-    public PollApi(RetrofitBuilder retrofitBuilder) {
+    public PollApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

@@ -21,6 +21,21 @@
             android:layout_height="40dp"
             android:layout_marginRight="16dp" />
 
+        <LinearLayout
+            android:id="@+id/vg_profile_absence"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/bg_round_black_transparent60_radius_20"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/profile_image_away_01" />
+
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/iv_profile_cover"
             android:layout_width="wrap_content"

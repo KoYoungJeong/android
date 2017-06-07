@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.PollRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.network.client.account.teams.AccountTeamsApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
@@ -101,7 +101,7 @@ public class TeamInfoActivity extends BaseAppCompatActivity {
                 .setMessage(R.string.team_teamleave_member_desc)
                 .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> {
                     Completable.fromCallable(() -> {
-                        new AccountTeamsApi(RetrofitBuilder.getInstance()).requestLeaveTeam(TeamInfoLoader.getInstance().getTeamId());
+                        new AccountTeamsApi(InnerApiRetrofitBuilder.getInstance()).requestLeaveTeam(TeamInfoLoader.getInstance().getTeamId());
                         return Completable.complete();
                     }).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())

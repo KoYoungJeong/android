@@ -39,7 +39,7 @@
         android:paddingRight="3dp"
         android:text="1000 KB"
         android:textColor="@color/white"
-        android:textSize="11dp" />
+        android:textSize="11sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -58,7 +58,7 @@
             android:maxLines="2"
             android:text="d1-abcdefewqfjowiqefjoiwejfewqfewqfwefqofijoweiqjfiweqfweq"
             android:textColor="@color/rgb_333333"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -92,7 +92,7 @@
                 android:src="@drawable/file_icon_comment"
                 android:text="99"
                 android:textColor="@color/jandi_file_search_item_type_text"
-                android:textSize="11dp" />
+                android:textSize="11sp" />
 
         </LinearLayout>
 
@@ -115,7 +115,7 @@
                 android:singleLine="true"
                 android:text="Justin"
                 android:textColor="@color/rgb_333333"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
             <ImageView
                 android:id="@+id/v_searched_file_name_line_through"
@@ -140,7 +140,7 @@
             android:singleLine="true"
             android:text="Date"
             android:textColor="@color/rgb_999999"
-            android:textSize="12dp" />
+            android:textSize="12sp" />
 
 
     </RelativeLayout>

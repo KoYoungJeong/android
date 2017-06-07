@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,16 +24,19 @@ public class StarredMessageProfileBinder {
 
     private TextView tvUserName;
     private ImageView ivUserProfile;
+    private ViewGroup vgUserProfileAbsence;
     private android.view.View vProfileCover;
 
-    public StarredMessageProfileBinder(TextView tvUserName, ImageView ivUserProfile, android.view.View vProfileCover) {
+    public StarredMessageProfileBinder(TextView tvUserName, ImageView ivUserProfile, android.view.View vProfileCover, ViewGroup vgUserProfileAbsence) {
         this.tvUserName = tvUserName;
         this.ivUserProfile = ivUserProfile;
+        this.vgUserProfileAbsence = vgUserProfileAbsence;
         this.vProfileCover = vProfileCover;
     }
 
-    public static StarredMessageProfileBinder newInstance(TextView tvUserName, ImageView ivUserProfile, android.view.View vProfileCover) {
-        return new StarredMessageProfileBinder(tvUserName, ivUserProfile, vProfileCover);
+    public static StarredMessageProfileBinder newInstance(
+            TextView tvUserName, ImageView ivUserProfile, android.view.View vProfileCover, ViewGroup vgUserProfileAbsence) {
+        return new StarredMessageProfileBinder(tvUserName, ivUserProfile, vProfileCover, vgUserProfileAbsence);
     }
 
     public void bind(Member writer) {
@@ -44,12 +48,13 @@ public class StarredMessageProfileBinder {
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(writer.getId());
 
         if (isJandiBot) {
-
+            vgUserProfileAbsence.setVisibility(View.GONE);
             ivUserProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             ImageLoader.loadFromResources(ivUserProfile, R.drawable.logotype_80);
 
         } else {
             if (isBot) {
+                vgUserProfileAbsence.setVisibility(View.GONE);
                 Uri uri = Uri.parse(writer.getPhotoUrl());
                 ImageLoader.newInstance()
                         .placeHolder(R.drawable.profile_img, ImageView.ScaleType.FIT_CENTER)
@@ -61,6 +66,11 @@ public class StarredMessageProfileBinder {
                         .uri(uri)
                         .into(ivUserProfile);
             } else {
+                if (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null) {
+                    vgUserProfileAbsence.setVisibility(View.GONE);
+                } else {
+                    vgUserProfileAbsence.setVisibility(View.VISIBLE);
+                }
                 ImageUtil.loadProfileImage(ivUserProfile, writer.getPhotoUrl(), R.drawable.profile_img);
             }
         }

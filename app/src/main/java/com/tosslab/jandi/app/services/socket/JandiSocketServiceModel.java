@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.MemberRankUpdatedEvent;
 import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.ChatListRefreshEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -46,6 +47,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.BotRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.FolderRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.HumanRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialPollInfoRepository;
@@ -64,6 +66,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.Folder;
 import com.tosslab.jandi.app.network.models.start.FolderItem;
@@ -75,6 +78,7 @@ import com.tosslab.jandi.app.network.socket.domain.SocketStart;
 import com.tosslab.jandi.app.services.socket.model.SocketEventHistoryUpdator;
 import com.tosslab.jandi.app.services.socket.model.SocketModelExtractor;
 import com.tosslab.jandi.app.services.socket.to.MessageReadEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketAbsenceUpdatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementCreatedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementUpdatedEvent;
@@ -273,6 +277,7 @@ public class JandiSocketServiceModel {
         messageEventActorMapper.put(SocketPollVotedEvent.class, this::onPollVoted);
         messageEventActorMapper.put(SocketMentionMarkerUpdatedEvent.class, this::onMentionMarkerUpdated);
         messageEventActorMapper.put(SocketMemberOnlineStatusChangeEvent.class, this::onMemberOnlineStatusChanged);
+        messageEventActorMapper.put(SocketAbsenceUpdatedEvent.class, this::onAbsenceUpdated);
 
         return messageEventActorMapper;
 
@@ -1364,7 +1369,10 @@ public class JandiSocketServiceModel {
             SocketMemberUpdatedEvent.Data data = event.getData();
             Human member = data.getMember();
             HumanRepository.getInstance(event.getTeamId()).updateHuman(member);
-            JandiPreference.setSocketConnectedLastTime(event.getTs());
+
+            Absence absence = member.getAbsence();
+
+            HumanRepository.getInstance(event.getTeamId()).updateAbsence(member.getId(), absence);
 
             postEvent(new ProfileChangeEvent(data.getMember()));
         } catch (Exception e) {
@@ -1709,6 +1717,7 @@ public class JandiSocketServiceModel {
         try {
             SocketTeamInvitationCreatedEvent event =
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketTeamInvitationCreatedEvent.class);
+            saveEvent(event);
             JandiPreference.setSocketConnectedLastTime(event.getTs());
             postEvent(new TeamJoinEvent());
         } catch (Exception e) {
@@ -1721,7 +1730,7 @@ public class JandiSocketServiceModel {
             SocketMemberOnlineStatusChangeEvent event =
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketMemberOnlineStatusChangeEvent.class);
             ResOnlineStatus.Record data = event.getData();
-
+            saveEvent(event);
             if (TeamInfoLoader.getInstance().getMember(data.getMemberId()) != null) {
                 if (data.getPresence().equals("online")) {
                     TeamInfoLoader.getInstance().getOnlineStatus().setOnlineMember(data.getMemberId());
@@ -1733,7 +1742,19 @@ public class JandiSocketServiceModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public void onAbsenceUpdated(Object object) {
+        try {
+            SocketAbsenceUpdatedEvent event =
+                    SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketAbsenceUpdatedEvent.class);
+            saveEvent(event);
+            Absence absence = event.getData().getAbsence();
+            InitialAccountInfoRepository.getInstance().upsertAbsenceInfo(absence);
+            postEvent(new AbsenceInfoUpdatedEvent());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface Command {

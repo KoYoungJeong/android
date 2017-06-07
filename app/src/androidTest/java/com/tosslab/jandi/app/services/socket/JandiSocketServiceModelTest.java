@@ -38,7 +38,7 @@ import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageA
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.json.JsonMapper;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.EventHistoryInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.start.Announcement;
@@ -106,7 +106,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -135,7 +134,7 @@ public class JandiSocketServiceModelTest {
     public static void beforeClass() throws Exception {
         BaseInitUtil.initData();
         teamId = TeamInfoLoader.getInstance().getTeamId();
-        initializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+        initializeInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
     }
 
     @Before

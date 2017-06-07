@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.account.emails;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
@@ -18,7 +18,7 @@ import retrofit2.http.POST;
 public class AccountEmailsApi extends ApiTemplate<AccountEmailsApi.Api> {
 
     @Inject
-    public AccountEmailsApi(RetrofitBuilder retrofitBuilder) {
+    public AccountEmailsApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(AccountEmailsApi.Api.class, retrofitBuilder);
     }
 

@@ -21,6 +21,22 @@
         android:layout_marginTop="12dp"
         android:src="@drawable/profile_img" />
 
+    <LinearLayout
+        android:id="@+id/vg_profile_absence"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginLeft="11dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_round_black_transparent60_radius_20"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/profile_image_away_03" />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/tv_file_detail_comment_user_name"

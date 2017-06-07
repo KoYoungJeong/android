@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.account.devices;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAlarmSchedule;
 import com.tosslab.jandi.app.network.models.ReqPushToken;
 import com.tosslab.jandi.app.network.models.ReqSubscribeToken;
@@ -24,7 +24,7 @@ import retrofit2.http.Path;
 public class DeviceApi extends ApiTemplate<DeviceApi.Api> {
 
     @Inject
-    public DeviceApi(RetrofitBuilder retrofitBuilder) {
+    public DeviceApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

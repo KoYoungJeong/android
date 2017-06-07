@@ -4,7 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.network.client.messages.MessageApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResStarMentioned;
 import com.tosslab.jandi.app.ui.maintab.tabs.mypage.mention.dto.MentionMessage;
 
@@ -42,7 +42,7 @@ public class MentionListModelTest {
     @Before
     public void setup() throws Exception {
 
-        model = new MentionListModel(() -> new MessageApi(RetrofitBuilder.getInstance()));
+        model = new MentionListModel(() -> new MessageApi(InnerApiRetrofitBuilder.getInstance()));
     }
 
     @Test

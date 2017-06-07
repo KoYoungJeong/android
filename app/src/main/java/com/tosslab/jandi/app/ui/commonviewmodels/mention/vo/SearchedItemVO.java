@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.commonviewmodels.mention.vo;
 
+import com.tosslab.jandi.app.network.models.start.Absence;
+
 /**
  * Created by tee on 15. 7. 21..
  */
@@ -17,6 +19,7 @@ public class SearchedItemVO {
     private boolean starred;
     private boolean bot;
     private boolean inactive;
+    private Absence absence;
 
 
     public String getName() {
@@ -124,6 +127,15 @@ public class SearchedItemVO {
 
     public SearchedItemVO setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+        return this;
+    }
+
+    public Absence getAbsence() {
+        return absence;
+    }
+
+    public SearchedItemVO setAbsence(Absence absence) {
+        this.absence = absence;
         return this;
     }
 }

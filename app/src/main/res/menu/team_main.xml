@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_main_absence"
+        android:icon="@drawable/actionbar_icon_away"
+        android:orderInCategory="100"
+        android:title="@string/vacancy_title"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_team_config"
         android:icon="@drawable/actionbar_icon_admin"
         android:orderInCategory="100"

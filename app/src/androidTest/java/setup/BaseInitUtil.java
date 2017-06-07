@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.client.teams.TeamApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -86,13 +86,13 @@ public class BaseInitUtil {
     public static long getUserIdByEmail(String email) {
         ResAccessToken accessToken = null;
         try {
-            accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
+            accessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance()).getAccessToken(
                     ReqAccessToken.createPasswordReqToken(email, TEST_PASSWORD));
 
             TokenUtil.saveTokenInfoByPassword(accessToken);
-            ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+            ResAccountInfo accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
             long result = accountInfo.getMemberships().iterator().next().getMemberId();
-            accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
+            accessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance()).getAccessToken(
                     ReqAccessToken.createPasswordReqToken(TEST1_EMAIL, TEST_PASSWORD));
             TokenUtil.saveTokenInfoByPassword(accessToken);
             return result;
@@ -103,12 +103,12 @@ public class BaseInitUtil {
     }
 
     public static String getUserNameByEmail(String email) throws RetrofitException {
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
+        ResAccessToken accessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(email, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+        ResAccountInfo accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
         String result = accountInfo.getMemberships().iterator().next().getName();
-        accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
+        accessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance()).getAccessToken(
                 ReqAccessToken.createPasswordReqToken(TEST1_EMAIL, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
         return result;
@@ -126,11 +126,11 @@ public class BaseInitUtil {
 
         try {
             ResAccessToken accessToken = null;
-            accessToken = new LoginApi(RetrofitBuilder.getInstance()).getAccessToken(
+            accessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance()).getAccessToken(
                     ReqAccessToken.createPasswordReqToken(testId, testPasswd));
             TokenUtil.saveTokenInfoByPassword(accessToken);
 
-            ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+            ResAccountInfo accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
             long teamId = Observable.from(accountInfo.getMemberships())
                     .takeFirst(userTeam -> TextUtils.equals(userTeam.getName(), "android-test-code"))
                     .toBlocking().first().getTeamId();
@@ -155,13 +155,13 @@ public class BaseInitUtil {
         if (topicState == STATE_TEMP_TOPIC_NOT_CREATED) {
             try {
                 userSignin();
-                ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+                ResAccountInfo accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
                 long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
                 ReqCreateTopic topic = new ReqCreateTopic();
                 topic.teamId = teamId;
                 topic.name = "테스트 토픽 : " + new Date();
                 topic.description = "테스트 토픽 입니다.";
-                Topic resCommon = new ChannelApi(RetrofitBuilder.getInstance()).createChannel(teamId, topic);
+                Topic resCommon = new ChannelApi(InnerApiRetrofitBuilder.getInstance()).createChannel(teamId, topic);
                 tempTopicId = resCommon.getId();
                 topicState = STATE_TEMP_TOPIC_CREATED;
             } catch (RetrofitException e) {
@@ -173,7 +173,7 @@ public class BaseInitUtil {
 
     public static void inviteDummyMembers() {
         try {
-            ResAccountInfo accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+            ResAccountInfo accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
             long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
             long tester2Id = getUserIdByEmail(TEST2_EMAIL);
             long tester3Id = getUserIdByEmail(TEST3_EMAIL);
@@ -181,7 +181,7 @@ public class BaseInitUtil {
             members.add(tester2Id);
             members.add(tester3Id);
             ReqInviteTopicUsers reqInviteTopicUsers = new ReqInviteTopicUsers(members, teamId);
-            new ChannelApi(RetrofitBuilder.getInstance()).invitePublicTopic(tempTopicId, reqInviteTopicUsers);
+            new ChannelApi(InnerApiRetrofitBuilder.getInstance()).invitePublicTopic(tempTopicId, reqInviteTopicUsers);
             refreshTeamInfo();
         } catch (RetrofitException e) {
             e.printStackTrace();
@@ -192,10 +192,10 @@ public class BaseInitUtil {
     public static void deleteDummyTopic() {
         ResAccountInfo accountInfo = null;
         try {
-            accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
+            accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
             long teamId = accountInfo.getMemberships().iterator().next().getTeamId();
             if (topicState == STATE_TEMP_TOPIC_CREATED) {
-                new ChannelApi(RetrofitBuilder.getInstance()).deleteTopic(tempTopicId, new ReqDeleteTopic(teamId));
+                new ChannelApi(InnerApiRetrofitBuilder.getInstance()).deleteTopic(tempTopicId, new ReqDeleteTopic(teamId));
                 topicState = STATE_TEMP_TOPIC_NOT_CREATED;
             }
             refreshTeamInfo();
@@ -207,9 +207,9 @@ public class BaseInitUtil {
     public static void refreshTeamInfo() {
         try {
             long teamId = AccountRepository.getRepository().getSelectedTeamId();
-            String initialInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+            String initialInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
             InitialInfoRepository.getInstance().upsertRawInitialInfo(new RawInitialInfo(teamId, initialInfo));
-            Ranks ranks = new TeamApi(RetrofitBuilder.getInstance()).getRanks(teamId);
+            Ranks ranks = new TeamApi(InnerApiRetrofitBuilder.getInstance()).getRanks(teamId);
             RankRepository.getInstance().addRanks(ranks.getRanks());
             TeamInfoLoader.getInstance().refresh();
         } catch (RetrofitException e) {

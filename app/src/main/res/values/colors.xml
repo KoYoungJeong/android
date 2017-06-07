@@ -327,6 +327,7 @@
     <color name="rgb_11456b">#FF11456B</color>
     <color name="rgb_1bdde9">#FF1BDDE9</color>
     <color name="rgb_b3b3b3">#FFB3B3B3</color>
+    <color name="rgb_fb9607">#FFFB9607</color>
     <color name="rgb_e1e6ec">#FFE1E6EC</color>
     <color name="rgb_cccccc">#FFCCCCCC</color>
     <color name="rgb_d9d9d9">#FFD9D9D9</color>
@@ -368,6 +369,7 @@
     <color name="rgb_696969">#FF696969</color>
     <color name="rgb_3a97d2">#FF3A97D2</color>
     <color name="rgb_f79521">#FFF79521</color>
+    <color name="rgb_00a2e2">#FF00A2E2</color>
 
     <color name="jandi_web_button_retry_background_selected">#FFE0E0E0</color>
     <color name="jandi_web_button_retry_background">#FFFFFFFF</color>

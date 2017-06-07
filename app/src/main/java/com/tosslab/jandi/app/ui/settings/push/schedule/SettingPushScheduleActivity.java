@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.ui.settings.push.schedule.dagger.DaggerSettingPushS
 import com.tosslab.jandi.app.ui.settings.push.schedule.dagger.SettingPushScheduleModule;
 import com.tosslab.jandi.app.ui.settings.push.schedule.presenter.SettingPushSchedulePresenter;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Calendar;
@@ -67,10 +68,10 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
     @Bind(R.id.tv_sun_button)
     TextView tvSunButton;
 
-    @Bind(R.id.tv_select_start_time)
+    @Bind(R.id.tv_select_absence_start_time)
     TextView tvSelectStartTime;
 
-    @Bind(R.id.tv_select_end_time)
+    @Bind(R.id.tv_select_absence_end_time)
     TextView tvSelectEndTime;
 
     // 월요일부터 0 - 일요일 6
@@ -103,6 +104,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
 
     private void initViews() {
         settingPushSchedulePresenter.initValues();
+        initProgressWheel();
     }
 
     private void initToolbar() {
@@ -271,7 +273,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
     }
 
 
-    @OnClick(R.id.vg_select_start_time)
+    @OnClick(R.id.vg_select_absence_start_time)
     void onStartTimeClicked() {
         TimePickerDialogFragment fragment = new TimePickerDialogFragment();
         Bundle bundle = new Bundle();
@@ -282,7 +284,7 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
         fragment.show(getSupportFragmentManager(), "time_picker_dialog");
     }
 
-    @OnClick(R.id.vg_select_end_time)
+    @OnClick(R.id.vg_select_absence_end_time)
     void onEndTimeClicked() {
         TimePickerDialogFragment fragment = new TimePickerDialogFragment();
         Bundle bundle = new Bundle();
@@ -397,6 +399,11 @@ public class SettingPushScheduleActivity extends BaseAppCompatActivity
     public void showLeastOnedaySelectToast() {
         ColoredToast.showError(R.string.push_schedule_minoneday);
     }
+
+    private void initProgressWheel() {
+        progressWheel = new ProgressWheel(this);
+    }
+
 
     @Override
     public void showProgressWheel() {

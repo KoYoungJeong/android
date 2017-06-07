@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApi;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqModifyTopicDescription;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.room.TopicRoom;
@@ -121,9 +121,9 @@ public class TopicDescriptionEditActivity extends BaseAppCompatActivity {
                 reqModifyTopicDescription.description = description;
                 reqModifyTopicDescription.teamId = topicRoom.getTeamId();
                 if (topicRoom.isPublicTopic()) {
-                    new ChannelApi(RetrofitBuilder.getInstance()).modifyPublicTopicDescription(topicRoom.getTeamId(), reqModifyTopicDescription, entityId);
+                    new ChannelApi(InnerApiRetrofitBuilder.getInstance()).modifyPublicTopicDescription(topicRoom.getTeamId(), reqModifyTopicDescription, entityId);
                 } else {
-                    new GroupApi(RetrofitBuilder.getInstance()).modifyGroupDescription(topicRoom.getTeamId(), reqModifyTopicDescription, entityId);
+                    new GroupApi(InnerApiRetrofitBuilder.getInstance()).modifyGroupDescription(topicRoom.getTeamId(), reqModifyTopicDescription, entityId);
                 }
 
                 TopicRepository.getInstance().updateDescription(entityId, description);

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.entities.chats.domain;
 
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 
@@ -22,8 +23,10 @@ public class ChatChooseItem {
     private boolean isOwner = false;
     private boolean isMyId = true;
     private Level level;
+    private Absence absence;
 
-    public ChatChooseItem() { }
+    public ChatChooseItem() {
+    }
 
     public static ChatChooseItem create(User user) {
         return new ChatChooseItem().entityId(user.getId())
@@ -38,7 +41,8 @@ public class ChatChooseItem {
                 .department(user.getDivision())
                 .jobTitle(user.getPosition())
                 .owner(user.isTeamOwner())
-                .name(user.getName());
+                .name(user.getName())
+                .absence(user.getAbsence());
     }
 
     public ChatChooseItem name(String name) {
@@ -180,6 +184,15 @@ public class ChatChooseItem {
 
     public ChatChooseItem level(Level level) {
         this.level = level;
+        return this;
+    }
+
+    public Absence getAbsence() {
+        return absence;
+    }
+
+    public ChatChooseItem absence(Absence absence) {
+        this.absence = absence;
         return this;
     }
 }

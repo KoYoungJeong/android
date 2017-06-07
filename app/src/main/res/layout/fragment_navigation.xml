@@ -5,7 +5,9 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/item_navigation_profile"/>
+    <include layout="@layout/item_navigation_absence" />
+
+    <include layout="@layout/item_navigation_profile" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lv_navigation"
@@ -14,6 +16,6 @@
         android:layout_weight="1"
         android:background="@android:color/white"
         android:clipToPadding="false"
-        android:overScrollMode="ifContentScrolls"/>
+        android:overScrollMode="ifContentScrolls" />
 
 </LinearLayout>

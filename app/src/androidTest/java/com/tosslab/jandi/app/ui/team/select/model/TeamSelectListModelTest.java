@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.client.invitation.InvitationApi;
 import com.tosslab.jandi.app.network.client.start.StartApi;
 import com.tosslab.jandi.app.network.dagger.ApiClientModule;
 import com.tosslab.jandi.app.network.json.JsonMapper;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.start.InitialInfo;
@@ -67,7 +67,7 @@ public class TeamSelectListModelTest {
     @Test
     public void testGetTeamInfos() throws Exception {
         // Given
-        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(RetrofitBuilder.getInstance()).getPedingTeamInfo();
+        List<ResPendingTeamInfo> pendingTeamInfo = new InvitationApi(InnerApiRetrofitBuilder.getInstance()).getPedingTeamInfo();
 
         int pendingCount = 0;
         for (ResPendingTeamInfo resPendingTeamInfo : pendingTeamInfo) {
@@ -138,7 +138,7 @@ public class TeamSelectListModelTest {
         List<ResAccountInfo.UserTeam> accountTeams = AccountRepository.getRepository().getAccountTeams();
         long teamId = accountTeams.get(accountTeams.size() - 1).getTeamId();
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
-        String rawInitializeInfo = new StartApi(RetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
+        String rawInitializeInfo = new StartApi(InnerApiRetrofitBuilder.getInstance()).getRawInitializeInfo(teamId);
         InitialInfo initialInfo = JsonMapper.getInstance().getObjectMapper().readValue(rawInitializeInfo, InitialInfo.class);
         // When
         teamSelectListModel.updateEntityInfo(new RawInitialInfo(teamId, rawInitializeInfo));

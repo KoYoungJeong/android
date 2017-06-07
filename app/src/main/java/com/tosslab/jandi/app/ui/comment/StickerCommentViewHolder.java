@@ -44,6 +44,9 @@ public class StickerCommentViewHolder extends BaseViewHolder<ResMessages.Comment
     View vCellDivider;
     @Bind(R.id.v_file_detail_comment_sticker_background)
     View vBackground;
+    @Nullable
+    @Bind(R.id.vg_profile_absence)
+    ViewGroup vgProfileAbsence;
 
     private OnCommentClickListener onCommentClickListener;
     private OnCommentLongClickListener onCommentLongClickListener;
@@ -80,7 +83,7 @@ public class StickerCommentViewHolder extends BaseViewHolder<ResMessages.Comment
         if (tvUserName != null) {
             User writer = TeamInfoLoader.getInstance().getUser(stickerMessage.writerId);
             ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
-                    ivUserProfile, vUserProfileDisableIndicator)
+                    ivUserProfile, vgProfileAbsence, vUserProfileDisableIndicator)
                     .bindForComment(writer);
         }
 

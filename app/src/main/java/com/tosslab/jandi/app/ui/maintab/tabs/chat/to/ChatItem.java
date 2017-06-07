@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.chat.to;
 
+import com.tosslab.jandi.app.network.models.start.Absence;
+
 /**
  * Created by Steve SeongUg Jung on 15. 1. 13..
  */
@@ -16,6 +18,7 @@ public class ChatItem {
     private boolean inactive;
     private boolean status;
     private long roomId;
+    private Absence absence;
 
     public ChatItem() {
     }
@@ -125,6 +128,15 @@ public class ChatItem {
 
     public ChatItem inactive(boolean inactive) {
         this.inactive = inactive;
+        return this;
+    }
+
+    public Absence getAbsence() {
+        return absence;
+    }
+
+    public ChatItem absence(Absence absence) {
+        this.absence = absence;
         return this;
     }
 }

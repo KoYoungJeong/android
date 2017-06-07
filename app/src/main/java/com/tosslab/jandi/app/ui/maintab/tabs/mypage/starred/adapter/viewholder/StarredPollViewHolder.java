@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
  */
 public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
 
+    private ViewGroup vgProfileAbsence;
     private ImageView ivProfile;
     private TextView tvWriter;
 
@@ -38,6 +39,7 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
         vSemiDivider = itemView.findViewById(R.id.v_semi_divider);
         vFullDivider = itemView.findViewById(R.id.v_full_divider);
         vProfileCover = itemView.findViewById(R.id.v_starred_profile_cover);
+        vgProfileAbsence = (ViewGroup) itemView.findViewById(R.id.vg_profile_absence);
     }
 
     public static StarredPollViewHolder newInstance(ViewGroup parent) {
@@ -49,7 +51,7 @@ public class StarredPollViewHolder extends BaseViewHolder<StarredMessage> {
     @Override
     public void onBindView(StarredMessage starredMessage) {
         User user = TeamInfoLoader.getInstance().getUser(starredMessage.getMessage().writerId);
-        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover)
+        StarredMessageProfileBinder.newInstance(tvWriter, ivProfile, vProfileCover, vgProfileAbsence)
                 .bind(user);
 
         StarredMessage.Message.Content content = starredMessage.getMessage().content;

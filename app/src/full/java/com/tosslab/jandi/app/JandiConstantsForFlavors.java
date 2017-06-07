@@ -28,7 +28,7 @@ public class JandiConstantsForFlavors {
         return "ws." + DomainUtil.getDomain();
     }
 
-    private static String getServiceRootUrl() {
+    public static String getServiceRootUrl() {
         return "https://" + getServiceDomain() + ":443/";
     }
 

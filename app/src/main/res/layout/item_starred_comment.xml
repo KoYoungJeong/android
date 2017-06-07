@@ -21,6 +21,23 @@
             android:layout_height="40dp"
             android:layout_marginRight="16dp" />
 
+        <LinearLayout
+            android:id="@+id/vg_profile_absence"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_round_black_transparent60_radius_20"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/profile_image_away_01" />
+
+        </LinearLayout>
+
         <View
             android:id="@+id/v_starred_profile_cover"
             android:layout_width="wrap_content"
@@ -55,7 +72,7 @@
                     android:layout_centerVertical="true"
                     android:text="오후 01:23"
                     android:textColor="@color/jandi_border_gray"
-                    android:textSize="12dp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_starred_name"
@@ -68,7 +85,7 @@
                     android:singleLine="true"
                     android:text="fewqfweqfweqfweqfweqfweqfweqfwqe"
                     android:textColor="@color/dark_gray"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
             </RelativeLayout>
@@ -84,7 +101,7 @@
                 android:singleLine="false"
                 android:text="HQ had a discussion around this topic and understood the needs.the needs. the needs the needs. the needs "
                 android:textColor="@color/dark_gray"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,7 +119,7 @@
                     android:singleLine="true"
                     android:text="Design_team_HQ"
                     android:textColor="@color/jandi_text_light"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -115,7 +132,7 @@
                     android:ellipsize="end"
                     android:text="|"
                     android:textColor="@color/jandi_text_light"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -136,7 +153,7 @@
                     android:singleLine="true"
                     android:text="몇 글짜까지 들어감.jpg"
                     android:textColor="@color/jandi_text_light"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:visibility="visible" />
 

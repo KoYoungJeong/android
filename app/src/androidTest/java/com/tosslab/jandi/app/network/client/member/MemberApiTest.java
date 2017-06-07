@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.member;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.member.MemberInfo;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.member.User;
@@ -25,7 +25,7 @@ public class MemberApiTest {
 
     @Before
     public void setUp() throws Exception {
-        memberApi = new MemberApi(RetrofitBuilder.getInstance());
+        memberApi = new MemberApi(InnerApiRetrofitBuilder.getInstance());
     }
 
     @Test

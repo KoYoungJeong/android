@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -25,7 +26,8 @@ import de.greenrobot.event.EventBus;
  */
 public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
 
-    private ImageView ivIcon;
+    private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
     private TextView tvName;
     private TextView tvJobTitle;
     private TextView tvDepartment;
@@ -34,7 +36,8 @@ public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
 
     public MentionMemberListViewHolder(View itemView) {
         super(itemView);
-        ivIcon = (ImageView) itemView.findViewById(R.id.iv_member_item_icon);
+        ivProfile = (ImageView) itemView.findViewById(R.id.iv_member_item_profile);
+        vgProfileAbsence = (ViewGroup) itemView.findViewById(R.id.vg_profile_absence);
         tvName = (TextView) itemView.findViewById(R.id.tv_user_name);
         tvJobTitle = (TextView) itemView.findViewById(R.id.tv_job_title);
         tvDepartment = (TextView) itemView.findViewById(R.id.tv_user_department);
@@ -50,7 +53,7 @@ public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
                 - UiUtils.getPixelFromDp(72) - UiUtils.getPixelFromDp(16));
 
         if (itemVO.getName().equals("all") && itemVO.getType().equals("room")) {
-            ImageLoader.loadFromResources(ivIcon, R.drawable.thum_all_member);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.thum_all_member);
             tvName.setText(R.string.jandi_all_of_topic_members);
             LinearLayout.LayoutParams userNameLP =
                     (LinearLayout.LayoutParams) tvName.getLayoutParams();
@@ -61,10 +64,16 @@ public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
         } else {
 
             if (!itemVO.isInactive()) {
-                ImageUtil.loadProfileImage(ivIcon,
+                if (TeamInfoLoader.getInstance().getUser(itemVO.getId()).isDisabled() ||
+                        (itemVO.getAbsence() == null || itemVO.getAbsence().getStartAt() == null)) {
+                    vgProfileAbsence.setVisibility(View.GONE);
+                } else {
+                    vgProfileAbsence.setVisibility(View.VISIBLE);
+                }
+                ImageUtil.loadProfileImage(ivProfile,
                         itemVO.getSmallProfileImageUrl(), R.drawable.profile_img);
             } else {
-                ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_40);
+                ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_40);
             }
 
             tvName.setText(itemVO.getName());

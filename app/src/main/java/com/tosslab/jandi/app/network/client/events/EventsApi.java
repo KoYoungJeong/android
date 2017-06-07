@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.events;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import retrofit2.http.Query;
 
 public class EventsApi extends ApiTemplate<EventsApi.Api> {
     @Inject
-    public EventsApi(RetrofitBuilder retrofitBuilder) {
+    public EventsApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

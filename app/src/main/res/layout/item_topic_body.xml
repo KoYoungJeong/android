@@ -8,7 +8,7 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/iv_entity_listitem_icon"
+        android:id="@+id/iv_profile"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerVertical="true"
@@ -22,7 +22,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@+id/vg_entity_listitem_badge"
-        android:layout_toRightOf="@+id/iv_entity_listitem_icon"
+        android:layout_toRightOf="@+id/iv_profile"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

@@ -260,6 +260,31 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    public int getHigherViewIndexIfHasUnreadCnt(int firstVisibleIndex) {
+        if (firstVisibleIndex == 0) {
+            return -1;
+        }
+        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+            if (topicItemDataList.get(i).getUnreadCount() > 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getLowerViewIndexIfHasUnreadCnt(int lastVisibleIndex) {
+        if (lastVisibleIndex <= 0
+                || lastVisibleIndex == topicItemDataList.size() - 1) {
+            return -1;
+        }
+        for (int i = lastVisibleIndex; i < topicItemDataList.size(); i++) {
+            if (topicItemDataList.get(i).getUnreadCount() > 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private enum AnimStatus {
         READY, IN_ANIM, FINISH, IDLE
     }
@@ -268,7 +293,7 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @Bind(R.id.rl_topic_item_container)
         RelativeLayout container;
-        @Bind(R.id.iv_entity_listitem_icon)
+        @Bind(R.id.iv_profile)
         ImageView ivTopicIcon;
         @Bind(R.id.vg_entity_listitem_name)
         FixedLinearLayout vgTopicName;

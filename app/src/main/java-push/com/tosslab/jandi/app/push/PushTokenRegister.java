@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.local.orm.repositories.PushTokenRepository;
 import com.tosslab.jandi.app.network.client.account.devices.DeviceApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.PushToken;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqPushToken;
@@ -31,7 +31,7 @@ public class PushTokenRegister {
     private Lazy<DeviceApi> deviceApi;
 
     private PushTokenRegister() {
-        deviceApi = () -> new DeviceApi(RetrofitBuilder.getInstance());
+        deviceApi = () -> new DeviceApi(InnerApiRetrofitBuilder.getInstance());
         tokenQueue = PublishSubject.create();
 
         tokenQueue
@@ -75,7 +75,7 @@ public class PushTokenRegister {
     private ResAccessToken refreshToken(ResAccessToken accessToken) throws RetrofitException {
         ReqAccessToken refreshReqToken =
                 ReqAccessToken.createRefreshReqToken(accessToken.getRefreshToken());
-        ResAccessToken resAccessToken = new LoginApi(RetrofitBuilder.getInstance())
+        ResAccessToken resAccessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance())
                 .getAccessToken(refreshReqToken);
 
         TokenUtil.saveTokenInfoByRefresh(resAccessToken);

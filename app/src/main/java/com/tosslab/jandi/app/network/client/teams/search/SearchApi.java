@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.teams.search;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.search.ReqSearch;
 import com.tosslab.jandi.app.network.models.search.ResSearch;
 
@@ -23,7 +23,7 @@ import retrofit2.http.QueryMap;
 public class SearchApi extends ApiTemplate<SearchApi.Api> {
 
     @Inject
-    public SearchApi(RetrofitBuilder retrofitBuilder) {
+    public SearchApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(Api.class, retrofitBuilder);
     }
 

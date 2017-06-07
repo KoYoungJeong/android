@@ -7,10 +7,26 @@
 
     <ImageView
         android:id="@+id/iv_message_user_profile"
-        android:layout_width="@dimen/jandi_messages_profile_size"
-        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginLeft="7dp"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+        android:layout_marginRight="7dp" />
+
+    <LinearLayout
+        android:id="@+id/vg_profile_absence"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:background="@drawable/bg_round_black_transparent60_radius_20"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/profile_image_away_02" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_message_profile_user_name"

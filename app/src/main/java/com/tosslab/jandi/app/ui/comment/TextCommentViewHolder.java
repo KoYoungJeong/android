@@ -51,6 +51,9 @@ public class TextCommentViewHolder extends BaseViewHolder<ResMessages.CommentMes
     View vCellDivider;
     @Bind(R.id.v_file_detail_comment_background)
     View vBackground;
+    @Nullable
+    @Bind(R.id.vg_profile_absence)
+    ViewGroup vgProfileAbsence;
 
     private OnCommentClickListener onCommentClickListener;
     private OnCommentLongClickListener onCommentLongClickListener;
@@ -88,7 +91,7 @@ public class TextCommentViewHolder extends BaseViewHolder<ResMessages.CommentMes
             User writer = TeamInfoLoader.getInstance().getUser(commentMessage.writerId);
             ProfileBinder.newInstance(tvUserName,
                     vUserNameDisableIndicator,
-                    ivUserProfile,
+                    ivUserProfile, vgProfileAbsence,
                     vUserProfileDisableIndicator).bindForComment(writer);
         }
 

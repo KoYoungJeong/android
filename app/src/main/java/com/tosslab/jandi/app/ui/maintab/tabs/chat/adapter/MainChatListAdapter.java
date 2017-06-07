@@ -129,27 +129,34 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             colorAnimation.start();
         }
 
-        ImageView ivIcon = viewHolder.ivIcon;
-        ivIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        ImageView ivProfile = viewHolder.ivProfile;
+        ivProfile.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
         boolean isJandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
 
         if (!isJandiBot) {
             String photoUrl = item.getPhoto();
             if (!item.isInactive()) {
-                ImageUtil.loadProfileImage(ivIcon, photoUrl, R.drawable.profile_img);
-            } else {
-                if (ProfileUtil.isChangedPhoto(photoUrl)) {
-                    ImageUtil.loadProfileImage(ivIcon, photoUrl, R.drawable.profile_img);
+                if (TeamInfoLoader.getInstance().getUser(item.getEntityId()).isDisabled() ||
+                        ((item.getAbsence() == null || item.getAbsence().getStartAt() == null))) {
+                    viewHolder.vgProfileAbsence.setVisibility(View.GONE);
                 } else {
-                    ivIcon.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    ImageLoader.loadFromResources(ivIcon, R.drawable.profile_img_dummyaccount_40);
+                    viewHolder.vgProfileAbsence.setVisibility(View.VISIBLE);
+                }
+                ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
+            } else {
+                viewHolder.vgProfileAbsence.setVisibility(View.GONE);
+                if (ProfileUtil.isChangedPhoto(photoUrl)) {
+                    ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);
+                } else {
+                    ivProfile.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    ImageLoader.loadFromResources(ivProfile, R.drawable.profile_img_dummyaccount_40);
                 }
             }
-
         } else {
-            ivIcon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            ImageLoader.loadFromResources(ivIcon, R.drawable.logotype_80);
+            viewHolder.vgProfileAbsence.setVisibility(View.GONE);
+            ivProfile.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            ImageLoader.loadFromResources(ivProfile, R.drawable.logotype_80);
         }
 
 
@@ -221,12 +228,38 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return -1;
     }
 
+    public int getHigherViewIndexIfHasUnreadCnt(int firstVisibleIndex) {
+        if (firstVisibleIndex == 0) {
+            return -1;
+        }
+        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+            if (entities.get(i).getUnread() > 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getLowerViewIndexIfHasUnreadCnt(int lastVisibleIndex) {
+        if (lastVisibleIndex <= 0
+                || lastVisibleIndex == entities.size() - 1) {
+            return -1;
+        }
+        for (int i = lastVisibleIndex; i < entities.size(); i++) {
+            if (entities.get(i).getUnread() > 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private enum AnimStatus {
         IDLE, READY, IN_ANIM, FINISH
     }
 
     static class ChatViewHolder extends RecyclerView.ViewHolder {
-        public ImageView ivIcon;
+        public ImageView ivProfile;
+        public ViewGroup vgProfileAbsence;
         public TextView tvName;
         public TextView tvAdditional;
         public TextView tvBadgeCount;
@@ -235,17 +268,17 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public View selector;
         private View vOnline;
 
-
         public ChatViewHolder(View itemView) {
             super(itemView);
             selector = itemView.findViewById(R.id.v_entity_listitem_selector);
             tvName = (TextView) itemView.findViewById(R.id.tv_user_name);
-            ivIcon = (ImageView) itemView.findViewById(R.id.iv_entity_listitem_icon);
+            ivProfile = (ImageView) itemView.findViewById(R.id.iv_profile);
             tvAdditional = (TextView) itemView.findViewById(R.id.tv_user_department);
             tvBadgeCount = (TextView) itemView.findViewById(R.id.tv_entity_listitem_badge);
             vDisableLineThrough = itemView.findViewById(R.id.iv_name_line_through);
             vDisableCover = itemView.findViewById(R.id.v_name_warning);
             vOnline = itemView.findViewById(R.id.v_online);
+            vgProfileAbsence = (ViewGroup) itemView.findViewById(R.id.vg_profile_absence);
         }
     }
 

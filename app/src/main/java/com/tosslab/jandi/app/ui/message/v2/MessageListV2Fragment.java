@@ -331,6 +331,11 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
     @Bind(R.id.tv_synchronize)
     TextView tvSynchronize;
 
+    @Bind(R.id.vg_absence_wrapper)
+    ViewGroup vgAbsenceWrapper;
+    @Bind(R.id.tv_absence_duration)
+    TextView tvAbsenceDuration;
+
     private OfflineLayer offlineLayer;
 
     private ProgressWheel progressWheel;
@@ -596,6 +601,22 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
         initActionListeners();
 
         initMessages(true /* withProgress */);
+
+        initAbsenceNotification();
+    }
+
+    private void initAbsenceNotification() {
+        messageListPresenter.onInitAbsence();
+    }
+
+    @Override
+    public void setAbsenceView(String period) {
+        if (!TextUtils.isEmpty(period)) {
+            vgAbsenceWrapper.setVisibility(View.VISIBLE);
+            tvAbsenceDuration.setText(period);
+        } else {
+            vgAbsenceWrapper.setVisibility(View.GONE);
+        }
     }
 
     private void initSoftInputAreaController() {

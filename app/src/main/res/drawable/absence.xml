@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:variablePadding="true"
+    android:visible="true">
+    <item
+        android:drawable="@drawable/away_300_00"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_01"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_02"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_03"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_04"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_05"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_06"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_07"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_08"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_09"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_10"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_11"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_12"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_13"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_14"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_15"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_16"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_17"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_18"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_19"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_20"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_21"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_22"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_23"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_24"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_25"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_26"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_27"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_28"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_29"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_30"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_31"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_32"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_33"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_34"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_35"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_36"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_37"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_38"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_39"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_40"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_41"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_42"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_43"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_44"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_45"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_46"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_47"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_48"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_49"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_50"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_51"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_52"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_53"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_54"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_55"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_56"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_57"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_58"
+        android:duration="8" />
+    <item
+        android:drawable="@drawable/away_300_59"
+        android:duration="8" />
+
+</animation-list>
+

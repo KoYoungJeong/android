@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.network.client.profile.ProfileApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.file.FileUploadApi;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResUploadedFile;
 import com.tosslab.jandi.app.network.models.start.Human;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -212,7 +212,7 @@ public class FilePickerModel {
     }
 
     public Human uploadProfilePhoto(File file, long memberId) throws RetrofitException {
-        return new ProfileApi(RetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), memberId, file);
+        return new ProfileApi(InnerApiRetrofitBuilder.getInstance()).uploadProfilePhoto(TeamInfoLoader.getInstance().getTeamId(), memberId, file);
     }
 
     public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {

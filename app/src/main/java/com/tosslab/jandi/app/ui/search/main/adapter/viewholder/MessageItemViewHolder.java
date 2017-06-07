@@ -74,7 +74,11 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
     @Bind(R.id.iv_profile_cover)
     View vProfileCover;
 
+    @Bind(R.id.vg_profile_absence)
+    ViewGroup vgProfileAbsence;
+
     private OnClickMessageListener onClickMessageListener;
+
 
     public MessageItemViewHolder(View itemView) {
         super(itemView);
@@ -110,6 +114,13 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         } else {
             User writer = teamInfoLoader.getUser(searchMessageData.getWriterId());
             if (writer != null) {
+                if (TeamInfoLoader.getInstance().getUser(writer.getId()).isDisabled() ||
+                        (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null)) {
+                    vgProfileAbsence.setVisibility(View.GONE);
+                } else {
+                    vgProfileAbsence.setVisibility(View.VISIBLE);
+                }
+
                 String photoUrl =
                         teamInfoLoader.getUser(searchMessageData.getWriterId()).getPhotoUrl();
                 ImageUtil.loadProfileImage(ivProfile, photoUrl, R.drawable.profile_img);

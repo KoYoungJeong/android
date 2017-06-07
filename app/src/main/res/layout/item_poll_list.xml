@@ -29,7 +29,7 @@
             android:maxLines="2"
             android:text="잔디 투표 기능에 들어갈 제목을 작성할 때에, 50글자 이내로 작성하셔야만 합니다 "
             android:textColor="@color/rgb_333333"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <RelativeLayout
@@ -51,7 +51,7 @@
                 android:singleLine="true"
                 android:text="JustinJustinJustinJustinJustinJustinJustinJustin"
                 android:textColor="@color/rgb_333333"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tv_poll_list_status_badge"
@@ -67,7 +67,7 @@
                 android:paddingRight="4dp"
                 android:text="@string/jandi_poll_voted"
                 android:textColor="@color/white"
-                android:textSize="11dp"
+                android:textSize="11sp"
                 android:visibility="visible" />
 
             <TextView
@@ -81,7 +81,7 @@
                 android:singleLine="true"
                 android:text="3일 남음"
                 android:textColor="@color/rgb_999999"
-                android:textSize="12dp" />
+                android:textSize="12sp" />
         </RelativeLayout>
 
     </RelativeLayout>

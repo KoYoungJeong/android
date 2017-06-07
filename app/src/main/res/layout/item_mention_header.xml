@@ -13,11 +13,11 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:textColor="@color/rgb_989898"
-        android:textSize="12dp"/>
+        android:textSize="12sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/rgb_e5e5e5"/>
+        android:background="@color/rgb_e5e5e5" />
 
 </LinearLayout>

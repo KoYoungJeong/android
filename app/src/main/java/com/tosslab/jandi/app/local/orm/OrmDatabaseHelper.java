@@ -36,6 +36,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.team.rank.Rank;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -82,7 +83,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION_RAW_INIT_INFO = 30;
     private static final int DATABASE_VERSION_LOGIN_ID = 31;
     private static final int DATABASE_VERSION_POLL_DESCRIPTION_ADD = 32;
-    private static final int DATABASE_VERSION = DATABASE_VERSION_POLL_DESCRIPTION_ADD;
+    private static final int DATABASE_VERSION_ADD_INITIAL_ABSENCE_INFO = 33;
+    private static final int DATABASE_VERSION = DATABASE_VERSION_ADD_INITIAL_ABSENCE_INFO;
 
     public OrmLiteSqliteOpenHelper helper;
 
@@ -177,6 +179,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, MemberRecentKeyword.class);
 
             createTable(connectionSource, SocketEvent.class);
+
+            createTable(connectionSource, Absence.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -366,6 +370,9 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     UpgradeChecker.create(() -> DATABASE_VERSION_POLL_DESCRIPTION_ADD, () -> {
                         Dao<Poll, ?> dao = DaoManager.createDao(connectionSource, Poll.class);
                         dao.executeRawNoArgs("ALTER TABLE `poll` ADD COLUMN description VARCHAR;");
+                    }),
+                    UpgradeChecker.create(() -> DATABASE_VERSION_ADD_INITIAL_ABSENCE_INFO, () -> {
+                        createTable(connectionSource, Absence.class);
                     })
             );
 
@@ -458,6 +465,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         clearTable(connectionSource, ReadyCommentForPoll.class);
         clearTable(connectionSource, SocketEvent.class);
         clearTable(connectionSource, MemberRecentKeyword.class);
+        clearTable(connectionSource, Absence.class);
     }
 
     public void clearAllDataExceptLoginInfo() {

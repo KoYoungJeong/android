@@ -1,11 +1,15 @@
 package com.tosslab.jandi.app.ui.maintab.tabs.mypage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,10 +21,14 @@ import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialMentionInfoRepository;
 import com.tosslab.jandi.app.network.models.poll.Poll;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.base.BaseLazyFragment;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
@@ -48,6 +56,7 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
     protected void onLazyLoad(Bundle savedInstanceState) {
         super.onLazyLoad(savedInstanceState);
 
+        setHasOptionsMenu(true);
         viewPager.setOffscreenPageLimit(2);
         tabPagerAdapter = new MyPagePagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(tabPagerAdapter);
@@ -229,6 +238,41 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
                     .subscribeOn(Schedulers.computation())
                     .subscribe();
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        menu.clear();
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainTabActivity) {
+            activity.getMenuInflater().inflate(R.menu.mypage_main, menu);
+        }
+
+        MenuItem item = menu.findItem(R.id.action_main_absence);
+        Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
+        if (absenceInfo.getStatus().equals("enabled")) {
+            item.setVisible(true);
+        } else {
+            item.setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_main_absence:
+                moveToSetUpAbsence();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void moveToSetUpAbsence() {
+        startActivity(new Intent(getActivity(), SettingAbsenceActivity.class));
     }
 
     @Override

@@ -27,11 +27,13 @@ public class PollHeaderViewHolder extends BaseViewHolder<Poll> {
     private TextView tvCreatedDate;
     private View btnStar;
     private OnPollStarClickListener onPollStarClickListener;
+    private ViewGroup vgProfileAbsence;
 
     private PollHeaderViewHolder(View itemView, OnPollStarClickListener onPollStarClickListener) {
         super(itemView);
         tvUserName = (TextView) itemView.findViewById(R.id.tv_poll_detail_user_name);
         ivUserProfile = (ImageView) itemView.findViewById(R.id.iv_poll_detail_user_profile);
+        vgProfileAbsence = (ViewGroup) itemView.findViewById(R.id.vg_profile_absence);
         tvCreatedDate = (TextView) itemView.findViewById(R.id.tv_poll_detail_create_date);
         btnStar = itemView.findViewById(R.id.btn_poll_detail_star);
 
@@ -54,7 +56,7 @@ public class PollHeaderViewHolder extends BaseViewHolder<Poll> {
         long creatorId = poll.getCreatorId();
         User creator = TeamInfoLoader.getInstance().getUser(creatorId);
         ProfileBinder.newInstance(tvUserName, vUserNameDisableIndicator,
-                ivUserProfile, vUserProfileDisableIndicator)
+                ivUserProfile, vgProfileAbsence, vUserProfileDisableIndicator)
                 .bind(creator);
 
         String createdAt = DateTransformator.getTimeString(poll.getCreatedAt());

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.messages.comments;
 import com.tosslab.jandi.app.network.client.file.FileApi;
 import com.tosslab.jandi.app.network.client.teams.search.SearchApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
@@ -34,8 +34,8 @@ public class CommentApiTest {
 
     @Before
     public void setUp() throws Exception {
-        commentApi = new CommentApi(RetrofitBuilder.getInstance());
-        FileApi fileApi = new FileApi(RetrofitBuilder.getInstance());
+        commentApi = new CommentApi(InnerApiRetrofitBuilder.getInstance());
+        FileApi fileApi = new FileApi(InnerApiRetrofitBuilder.getInstance());
         teamId = TeamInfoLoader.getInstance().getTeamId();
         long defaultTopicId = TeamInfoLoader.getInstance().getDefaultTopicId();
         fileMessage = getDownloadInfo();
@@ -50,7 +50,7 @@ public class CommentApiTest {
                 .setPage(1)
                 .setCount(1)
                 .setKeyword("").build();
-        ResSearch search = new SearchApi(RetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), reqSearch);
+        ResSearch search = new SearchApi(InnerApiRetrofitBuilder.getInstance()).getSearch(TeamInfoLoader.getInstance().getTeamId(), reqSearch);
         return search.getRecords().get(0).getFile();
     }
 

@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.ShowProfileEvent;
 import com.tosslab.jandi.app.events.team.MemberOnlineStatusChangeEvent;
 import com.tosslab.jandi.app.events.team.TeamJoinEvent;
@@ -263,6 +264,10 @@ public class MembersListActivity extends BaseAppCompatActivity implements Member
     }
 
     public void onEventMainThread(MemberOnlineStatusChangeEvent event) {
+        topicModdableMemberListAdapter.notifyDataSetChanged();
+    }
+
+    public void onEventMainThread(ProfileChangeEvent event) {
         topicModdableMemberListAdapter.notifyDataSetChanged();
     }
 

@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.share.ShareSelectRoomEvent;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.messages.ReqTextMessage;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
@@ -49,7 +49,7 @@ public class InternalWebPresenter {
     public void sendMessageToRoom(long entityId, String text) throws RetrofitException {
         long teamId = TeamInfoLoader.getInstance().getTeamId();
 
-        RoomsApi roomsAPi = new RoomsApi(RetrofitBuilder.getInstance());
+        RoomsApi roomsAPi = new RoomsApi(InnerApiRetrofitBuilder.getInstance());
 
         ReqTextMessage reqMessage = new ReqTextMessage(text, null);
 

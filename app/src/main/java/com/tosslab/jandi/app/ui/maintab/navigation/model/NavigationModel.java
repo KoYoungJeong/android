@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
@@ -32,8 +33,10 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
 import com.tosslab.jandi.app.network.models.ResOnlineStatus;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.marker.Marker;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
 import com.tosslab.jandi.app.network.models.start.Topic;
@@ -145,7 +148,6 @@ public class NavigationModel {
                     if (e.getStatusCode() == 403) {
                         ResAccessToken accessToken = loginApi.get().getAccessToken(ReqAccessToken.createRefreshReqToken(TokenUtil.getRefreshToken()));
                         TokenUtil.saveTokenInfoByRefresh(accessToken);
-
                         initializeInfo = startApi.get().getRawInitializeInfo(teamId);
                     } else {
                         throw e;
@@ -315,6 +317,10 @@ public class NavigationModel {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Absence getAbsenceInfo() {
+        return InitialAccountInfoRepository.getInstance().getAbsenceInfo();
     }
 
 }

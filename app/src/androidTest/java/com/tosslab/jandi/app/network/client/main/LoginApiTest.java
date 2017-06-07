@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.main;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -24,7 +24,7 @@ public class LoginApiTest {
 
     @Test
     public void testGetAccessToken() throws Exception {
-        LoginApi loginApi = new LoginApi(RetrofitBuilder.getInstance());
+        LoginApi loginApi = new LoginApi(InnerApiRetrofitBuilder.getInstance());
         {
             ResAccessToken accessToken = loginApi
                     .getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));

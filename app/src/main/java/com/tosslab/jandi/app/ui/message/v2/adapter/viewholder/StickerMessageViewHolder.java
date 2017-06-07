@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
     protected Context context;
 
     private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
 
     private TextView tvName;
     private View vDisableLineThrough;
@@ -32,6 +34,7 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
         context = rootView.getContext();
         if (hasProfile) {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
@@ -47,7 +50,8 @@ public class StickerMessageViewHolder extends BaseMessageViewHolder {
             ivProfile.setVisibility(View.VISIBLE);
             tvName.setVisibility(View.VISIBLE);
             vDisableLineThrough.setVisibility(View.VISIBLE);
-            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+            ProfileUtil.setProfile(link.fromEntity, ivProfile, vgProfileAbsence, vProfileCover,
+                    tvName, vDisableLineThrough);
         }
         setBadge(link, teamId, roomId);
         setTime(link);

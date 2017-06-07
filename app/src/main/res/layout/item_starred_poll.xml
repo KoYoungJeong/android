@@ -20,6 +20,23 @@
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true" />
 
+        <LinearLayout
+            android:id="@+id/vg_profile_absence"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_round_black_transparent60_radius_20"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/profile_image_away_01" />
+
+        </LinearLayout>
+
         <View
             android:id="@+id/v_starred_profile_cover"
             android:layout_width="wrap_content"
@@ -43,13 +60,14 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@id/iv_starred_poll_profile"
+            android:layout_toLeftOf="@+id/tv_starred_poll_create_date"
             android:layout_toRightOf="@id/iv_starred_poll_profile"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:text="Tee"
             android:textColor="@color/rgb_333333"
-            android:textSize="15dp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
@@ -58,12 +76,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginTop="2dp"
+
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:text="2016/10/11 오전 10:40"
             android:textColor="@color/rgb_999999"
-            android:textSize="12dp" />
+            android:textSize="12sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -93,7 +112,7 @@
                 android:maxLines="3"
                 android:text="8098521308509823"
                 android:textColor="@color/rgb_333333"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
         </LinearLayout>
 

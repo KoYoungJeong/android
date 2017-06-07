@@ -139,6 +139,8 @@ public class IntroActivityPresenter {
 
     void moveNextActivity(final boolean startForInvite) {
 
+        model.updateAbsenceInfo();
+
         Observable<Boolean> hasTeamObservable = Observable.just(model.hasSelectedTeam() && !startForInvite)
                 .share();
 

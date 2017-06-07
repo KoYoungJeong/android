@@ -22,6 +22,24 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp" />
 
+    <LinearLayout
+        android:id="@+id/vg_profile_absence"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/bg_round_black_transparent60_radius_20"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/profile_image_away_03" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tv_room_selector_item_name"
         android:layout_width="wrap_content"

@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client.main;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.ApiTemplate;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResConfig;
 
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import retrofit2.http.Headers;
 public class ConfigApi extends ApiTemplate<ConfigApi.Api> {
 
     @Inject
-    public ConfigApi(RetrofitBuilder retrofitBuilder) {
+    public ConfigApi(InnerApiRetrofitBuilder retrofitBuilder) {
         super(ConfigApi.Api.class, retrofitBuilder);
     }
 

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.ChatRepository;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialInfoRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.RankRepository;
 import com.tosslab.jandi.app.local.orm.repositories.info.TopicRepository;
@@ -18,6 +19,7 @@ import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResOnlineStatus;
+import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.network.models.marker.Marker;
 import com.tosslab.jandi.app.network.models.start.Chat;
 import com.tosslab.jandi.app.network.models.start.RawInitialInfo;
@@ -139,6 +141,16 @@ public class IntroActivityModel {
 
     public int clearLinkRepository() {
         return MessageRepository.getRepository().deleteAllLink();
+    }
+
+    public void updateAbsenceInfo() {
+        try {
+            ResStartAccountInfo resStartAccountInfo = startApi.get().getAccountInitializeInfo();
+            InitialAccountInfoRepository initialAccountInfoRepository = InitialAccountInfoRepository.getInstance();
+            initialAccountInfoRepository.upsertAbsenceInfo(resStartAccountInfo.getAbsence());
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean refreshRankIfNeeds() {

@@ -5,7 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tosslab.jandi.app.network.client.account.AccountApi;
 import com.tosslab.jandi.app.network.client.main.LoginApi;
 import com.tosslab.jandi.app.network.json.JsonMapper;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -29,11 +29,11 @@ public class StartApiTest {
     @Before
     public void setUp() throws Exception {
 
-        ResAccessToken accessToken = new LoginApi(RetrofitBuilder.getInstance())
+        ResAccessToken accessToken = new LoginApi(InnerApiRetrofitBuilder.getInstance())
                 .getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST1_EMAIL, BaseInitUtil.TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(accessToken);
-        accountInfo = new AccountApi(RetrofitBuilder.getInstance()).getAccountInfo();
-        startApi = new StartApi(RetrofitBuilder.getInstance());
+        accountInfo = new AccountApi(InnerApiRetrofitBuilder.getInstance()).getAccountInfo();
+        startApi = new StartApi(InnerApiRetrofitBuilder.getInstance());
     }
 
     @Test

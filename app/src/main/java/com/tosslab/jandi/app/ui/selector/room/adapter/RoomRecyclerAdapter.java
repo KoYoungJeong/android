@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.ui.selector.room.domain.ExpandRoomData;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.image.loader.ImageLoader;
@@ -130,6 +131,13 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.BOLD));
         } else if (item.isUser()) {
             roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.NORMAL));
+            User user = TeamInfoLoader.getInstance().getUser(item.getEntityId());
+            if (TeamInfoLoader.getInstance().getUser(user.getId()).isDisabled() ||
+                    (user.getAbsence() == null || user.getAbsence().getStartAt() == null)) {
+                roomholder.vgProfileAbsence.setVisibility(View.GONE);
+            } else {
+                roomholder.vgProfileAbsence.setVisibility(View.VISIBLE);
+            }
             String fileUrl = ImageUtil.getImageFileUrl(item.getProfileUrl());
             boolean jandiBot = TeamInfoLoader.getInstance().isJandiBot(item.getEntityId());
 
@@ -251,6 +259,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private View vgLine;
         private View vLineThrough;
         private View vDisableCover;
+        private ViewGroup vgProfileAbsence;
 
         public RoomViewHolder(View itemView) {
             super(itemView);
@@ -259,6 +268,7 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             vgLine = itemView.findViewById(R.id.v_line_use_for_first_no_folder_item);
             vLineThrough = itemView.findViewById(R.id.iv_room_selector_item_name_line_through);
             vDisableCover = itemView.findViewById(R.id.v_room_selector_disabled_warning);
+            vgProfileAbsence = (ViewGroup) itemView.findViewById(R.id.vg_profile_absence);
         }
     }
 

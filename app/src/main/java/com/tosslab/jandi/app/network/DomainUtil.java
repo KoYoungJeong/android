@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -46,7 +46,7 @@ public class DomainUtil {
                     LogUtil.d("DomainUtil.showDomainDialog() / Selected : " + which + ", " + DOMAINS[which]);
                     dialog.dismiss();
                     DomainUtil.putDomain(DOMAINS[which]);
-                    RetrofitBuilder.reset();
+                    InnerApiRetrofitBuilder.reset();
                     SignOutService.start();
                 })
                 .setNegativeButton(R.string.jandi_cancel, null)

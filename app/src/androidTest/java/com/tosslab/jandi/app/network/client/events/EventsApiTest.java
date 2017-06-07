@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.events;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.network.models.ResEventHistory;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 
@@ -31,7 +31,7 @@ public class EventsApiTest {
 
     @Before
     public void setUp() throws Exception {
-        eventsApi = new EventsApi(RetrofitBuilder.getInstance());
+        eventsApi = new EventsApi(InnerApiRetrofitBuilder.getInstance());
         myId = TeamInfoLoader.getInstance().getMyId();
     }
 

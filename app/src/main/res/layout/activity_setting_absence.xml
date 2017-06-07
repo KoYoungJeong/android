@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/actionbar_icon_back"
+            app:title="@string/vacancy_title"
+            app:titleMarginEnd="16dp" />
+
+        <ScrollView
+            android:id="@id/v_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
+                    android:id="@+id/vg_setting_absence_checkbox"
+                    style="@style/JandiSettings.Body"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    app:sbvChcked="false"
+                    app:sbvSummary="@string/vacancy_desc"
+                    app:sbvTitle="@string/vacancy_title" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/rgb_e5e5e5" />
+
+                <LinearLayout
+                    android:id="@+id/vg_setting_absence_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_absence_period_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/vacancy_period"
+                            android:textColor="@color/rgb_333333"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tv_absence_period"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBaseline="@id/tv_absence_period_title"
+                            android:layout_alignParentRight="true"
+                            android:text="@string/vacancy_period_count"
+                            android:textColor="@color/rgb_00a2e2"
+                            android:textSize="12sp" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="57dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/vacancy_startday"
+                                android:textSize="12dp" />
+
+                            <LinearLayout
+                                android:id="@+id/vg_select_absence_start_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="33dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="35"
+                                android:background="@drawable/bg_poll_create_edittext"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_select_absence_start_time"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="2016-06-07"
+                                    android:textColor="@color/jandi_text"
+                                    android:textSize="16dp" />
+
+                                <View
+                                    android:layout_width="10dp"
+                                    android:layout_height="17dp"
+                                    android:layout_marginLeft="10dp"
+                                    android:background="@drawable/poll_dropdown" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/vacancy_endday"
+                                android:textSize="12dp" />
+
+                            <LinearLayout
+                                android:id="@+id/vg_select_absence_end_time"
+                                android:layout_width="match_parent"
+                                android:layout_height="33dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="35"
+                                android:background="@drawable/bg_poll_create_edittext"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_select_absence_end_time"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="2016-06-08"
+                                    android:textColor="@color/jandi_text"
+                                    android:textSize="16dp" />
+
+                                <View
+                                    android:layout_width="10dp"
+                                    android:layout_height="17dp"
+                                    android:layout_marginLeft="10dp"
+                                    android:background="@drawable/poll_dropdown" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="36dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/vacancy_period_desc"
+                        android:textColor="@color/rgb_999999"
+                        android:textSize="12sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/rgb_e5e5e5" />
+
+                    <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
+                        android:id="@+id/vg_setting_push_alarm_enable_checkbox"
+                        style="@style/JandiSettings.Body"
+                        app:sbvChcked="true"
+                        app:sbvSummary="@string/vacancy_pushnoti_desc"
+                        app:sbvTitle="@string/vacancy_pushnoti_title" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:background="@color/rgb_e5e5e5" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/et_layout_option_message"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp"
+                            android:paddingBottom="16dp"
+                            app:theme="@style/FloatingEditTextTheme">
+
+                            <EditText
+                                android:id="@+id/et_absence_option_message"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/vacancy_info_title"
+                                android:maxLength="60"
+                                android:paddingBottom="16dp"
+                                android:textSize="16sp" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <TextView
+                            android:id="@+id/tv_absence_option_message_length"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="-20dp"
+                            android:color="@color/jandi_transparent_black_38p"
+                            android:text="0/60"
+                            android:textColor="@color/jandi_transparent_black_38p"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="54dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/vacancy_info_desc"
+                            android:textColor="@color/rgb_999999"
+                            android:textSize="12dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>

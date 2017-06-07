@@ -25,20 +25,22 @@ public class ProfileBinder {
     private View vUserNameDisableIndicator;
     private ImageView ivProfile;
     private View vUserProfileDisableIndicator;
+    private ViewGroup vgProfileAbsence;
 
     private ProfileBinder(TextView tvUserName, View vUserNameDisableIndicator,
-                          ImageView ivUserProfile, View vUserProfileDisableIndicator) {
+                          ImageView ivUserProfile, ViewGroup vgProfileAbsence, View vUserProfileDisableIndicator) {
         this.tvUserName = tvUserName;
         this.vUserNameDisableIndicator = vUserNameDisableIndicator;
         this.ivProfile = ivUserProfile;
         this.vUserProfileDisableIndicator = vUserProfileDisableIndicator;
+        this.vgProfileAbsence = vgProfileAbsence;
     }
 
     public static ProfileBinder newInstance(
             TextView tvUserName, View vUserNameDisableIndicator,
-            ImageView ivUserProfile, View vUserProfileDisableIndicator) {
+            ImageView ivUserProfile, ViewGroup vgProfileAbsence, View vUserProfileDisableIndicator) {
         return new ProfileBinder(tvUserName,
-                vUserNameDisableIndicator, ivUserProfile, vUserProfileDisableIndicator);
+                vUserNameDisableIndicator, ivUserProfile, vgProfileAbsence, vUserProfileDisableIndicator);
     }
 
     public void bind(User writer) {
@@ -46,6 +48,12 @@ public class ProfileBinder {
             return;
         }
         String profileUrl = writer.getPhotoUrl();
+        if (TeamInfoLoader.getInstance().getUser(writer.getId()).isDisabled() ||
+                (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null)) {
+            vgProfileAbsence.setVisibility(View.GONE);
+        } else {
+            vgProfileAbsence.setVisibility(View.VISIBLE);
+        }
         ImageUtil.loadProfileImage(ivProfile, profileUrl, R.drawable.profile_img);
 
         String writerName = writer.getName();
@@ -81,6 +89,12 @@ public class ProfileBinder {
     public void bindForComment(User writer) {
         if (writer == null) {
             return;
+        }
+
+        if (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null) {
+            vgProfileAbsence.setVisibility(View.GONE);
+        } else {
+            vgProfileAbsence.setVisibility(View.VISIBLE);
         }
 
         if (writer.isBot()) {

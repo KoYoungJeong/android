@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import java.util.Collection;
 public class FileMessageViewHolder extends BaseMessageViewHolder {
 
     private ImageView ivProfile;
+    private ViewGroup vgProfileAbsence;
     private TextView tvName;
     private View vDisableLineThrough;
 
@@ -49,6 +51,7 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         super.initView(rootView);
         if (hasProfile) {
             ivProfile = (ImageView) rootView.findViewById(R.id.iv_message_user_profile);
+            vgProfileAbsence = (ViewGroup) rootView.findViewById(R.id.vg_profile_absence);
             vProfileCover = rootView.findViewById(R.id.v_message_user_profile_cover);
             tvName = (TextView) rootView.findViewById(R.id.tv_message_user_name);
             vDisableLineThrough = rootView.findViewById(R.id.iv_name_line_through);
@@ -69,7 +72,8 @@ public class FileMessageViewHolder extends BaseMessageViewHolder {
         setMarginVisible();
         setTimeVisible();
         if (hasProfile) {
-            ProfileUtil.setProfile(link.fromEntity, ivProfile, vProfileCover, tvName, vDisableLineThrough);
+            ProfileUtil.setProfile(link.fromEntity, ivProfile,
+                    vgProfileAbsence, vProfileCover, tvName, vDisableLineThrough);
         }
 
         setFileInfo(link, teamId, roomId);

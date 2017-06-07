@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import com.tosslab.jandi.app.network.client.chat.ChatApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RetrofitBuilder;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
 import com.tosslab.jandi.app.services.upload.FileUploadManager;
 import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -71,7 +71,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
                             roomId = chatId;
                         } else {
                             try {
-                                roomId = new ChatApi(RetrofitBuilder.getInstance()).createChat(TeamInfoLoader.getInstance().getTeamId(), it).getId();
+                                roomId = new ChatApi(InnerApiRetrofitBuilder.getInstance()).createChat(TeamInfoLoader.getInstance().getTeamId(), it).getId();
                             } catch (RetrofitException e) {
                                 e.printStackTrace();
                                 roomId = TeamInfoLoader.getInstance().getDefaultTopicId();
