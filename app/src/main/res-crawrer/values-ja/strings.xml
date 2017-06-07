@@ -965,11 +965,11 @@
 	<string name="vacancy_info_title">"不在理由（選択）"</string>
 	<string name="vacancy_period">"期間"</string>
 	<string name="vacancy_period_count">"（総%s日、最大3年）"</string>
-	<string name="vacancy_period_desc">"選択された日の真夜中を基準に設定されます。"</string>
-	<string name="vacancy_period_error_popup">""</string>
+	<string name="vacancy_period_desc">"選択した開始日の０時から終了日の24時までに設定します。"</string>
+	<string name="vacancy_period_error_popup">"終了日が開始日より前です。期限をもう一度確認してください。"</string>
 	<string name="vacancy_period_max3y_popup">"不在設定期間は最大３年まで可能です."</string>
-	<string name="vacancy_period_pastperiod_popup">""</string>
-	<string name="vacancy_pushnoti_desc">"設定時、その期間には携帯電話にプッシュ通知が送信されません。"</string>
+	<string name="vacancy_period_pastperiod_popup">"終了日が過去に設定されています。期限をもう一度確認してください。"</string>
+	<string name="vacancy_pushnoti_desc">"設定をOFFにすると設定されて期間にはモバイルプッシュが送信されません。ONすると既存のモバイルプッシュの設定が維持されます。"</string>
 	<string name="vacancy_pushnoti_title">"モバイルプッシュ通知の設定"</string>
 	<string name="vacancy_startday">"開始日"</string>
 	<string name="vacancy_title">"不在設定"</string>

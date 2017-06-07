@@ -120,16 +120,20 @@ public class SearchMessageData extends SearchData {
         return hasHalfLine;
     }
 
-    public void setHasHalfLine(boolean hasHalfLine) {
-        this.hasHalfLine = hasHalfLine;
-    }
-
     public String getKeyword() {
         return keyword;
     }
 
     public void setKeyword(String keyword) {
         this.keyword = keyword;
+    }
+
+    public boolean isHasHalfLine() {
+        return hasHalfLine;
+    }
+
+    public void setHasHalfLine(boolean hasHalfLine) {
+        this.hasHalfLine = hasHalfLine;
     }
 
     public static class Builder {

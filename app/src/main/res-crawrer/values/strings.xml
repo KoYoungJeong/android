@@ -960,11 +960,11 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="vacancy_info_title">"Notification Message (optional)"</string>
 	<string name="vacancy_period">"Period"</string>
 	<string name="vacancy_period_count">"(%s days total, 3 years max)"</string>
-	<string name="vacancy_period_desc">"Settings are based on midnight of the selected day."</string>
-	<string name="vacancy_period_error_popup">""</string>
+	<string name="vacancy_period_desc">"The setting will apply from midnight of the start date to midnight of the end date."</string>
+	<string name="vacancy_period_error_popup">"The start date must be set before the end date. Please check the date again."</string>
 	<string name="vacancy_period_max3y_popup">"You can only set up Vacation Mode up to 3 years."</string>
-	<string name="vacancy_period_pastperiod_popup">""</string>
-	<string name="vacancy_pushnoti_desc">"While this setting on, you will not receive mobile push notifications. "</string>
+	<string name="vacancy_period_pastperiod_popup">"The selected period is a past date. Please check the date again."</string>
+	<string name="vacancy_pushnoti_desc">"By turning this off, you will not receive push notifications on your mobile. By turning it on, your previous push notification settings will be appiled. "</string>
 	<string name="vacancy_pushnoti_title">"Mobile Push Notification Settings"</string>
 	<string name="vacancy_startday">"Starts at"</string>
 	<string name="vacancy_title">"Vacation Mode"</string>

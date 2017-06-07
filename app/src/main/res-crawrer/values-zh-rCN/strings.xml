@@ -955,11 +955,11 @@
 	<string name="vacancy_info_title">"休假状态提醒 (选填)"</string>
 	<string name="vacancy_period">"期间"</string>
 	<string name="vacancy_period_count">"(总共 %s 天，最多 3 年)"</string>
-	<string name="vacancy_period_desc">"以设置日期午夜零时为准"</string>
-	<string name="vacancy_period_error_popup">""</string>
+	<string name="vacancy_period_desc">"设置时间将于开始日期午夜起，至结束日期午夜止"</string>
+	<string name="vacancy_period_error_popup">"结束时间早于开始时间，请再次确认日期设置"</string>
 	<string name="vacancy_period_max3y_popup">"休假模式最多只能设置 3 年"</string>
-	<string name="vacancy_period_pastperiod_popup">""</string>
-	<string name="vacancy_pushnoti_desc">"开启勿扰设置后，将暂时不会收到手机推播通知"</string>
+	<string name="vacancy_period_pastperiod_popup">"所选的时段已经过期，请再次确认日期设置"</string>
+	<string name="vacancy_pushnoti_desc">"一旦关闭，你将不会在手机收到通知;重新开启后，通知将回复到关闭前的设置"</string>
 	<string name="vacancy_pushnoti_title">"手机推播通知勿扰设置"</string>
 	<string name="vacancy_startday">"开始于"</string>
 	<string name="vacancy_title">"休假模式"</string>

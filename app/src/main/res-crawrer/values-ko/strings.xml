@@ -990,13 +990,11 @@
 	<string name="vacancy_info_title">"안내 메시지 (옵션)"</string>
 	<string name="vacancy_period">"기간"</string>
 	<string name="vacancy_period_count">"(총 %s일, 최대 3년)"</string>
-	<string name="vacancy_period_desc">"선택한 날의 자정을 기준으로 설정됩니다."</string>
-	<string name="vacancy_period_error_popup">"종료일이 시작일보다 이전 날짜입니다.
-기간을 다시 확인해주세요."</string>
+	<string name="vacancy_period_desc">"선택한 시작일의 0시부터 종료일의 24시까지로 설정됩니다."</string>
+	<string name="vacancy_period_error_popup">"종료일이 시작일보다 이전 날짜입니다. 기간을 다시 확인해주세요."</string>
 	<string name="vacancy_period_max3y_popup">"부재 중 설정 기간은 최대 3년까지만 설정이 가능합니다."</string>
-	<string name="vacancy_period_pastperiod_popup">"설정한 기간이 과거 일정 입니다.
-기간을 다시 확인해주세요."</string>
-	<string name="vacancy_pushnoti_desc">"설정 시 해당 기간 동안 사용 중인 모바일에 푸시 알림을 보내지 않습니다."</string>
+	<string name="vacancy_period_pastperiod_popup">"설정한 기간이 과거 일정 입니다. 기간을 다시 확인해주세요."</string>
+	<string name="vacancy_pushnoti_desc">"설정을 OFF시 설정 기간 동안 사용 중인 모바일로 푸시 알림을 보내지 않습니다. ON시 기존 모바일 푸시 설정이 유지됩니다."</string>
 	<string name="vacancy_pushnoti_title">"모바일 푸시 알림 설정"</string>
 	<string name="vacancy_startday">"시작일"</string>
 	<string name="vacancy_title">"부재 중 설정"</string>
