@@ -17,7 +17,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_no_message" />
+            android:src="@drawable/img_no_message_disable_member" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
-            android:text="@string/jandi_no_message_in_topic_dm"
+            android:text="@string/jandi_no_message_dm_disabled_member"
             android:textColor="@color/rgb_999999"
             android:textSize="14sp" />
     </LinearLayout>

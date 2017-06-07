@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical" />
 
     <ProgressBar
         android:id="@+id/progress_poll_list"
@@ -18,7 +18,7 @@
         android:layout_gravity="center"
         android:indeterminate="true"
         android:indeterminateDrawable="@drawable/progress_refresh_animation"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progress_poll_list_more_loading"
@@ -27,13 +27,14 @@
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_circle_white"
-        android:indeterminate="true"/>
+        android:indeterminate="true" />
 
     <FrameLayout
         android:id="@+id/vg_poll_list_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:paddingBottom="50dp"
         android:visibility="gone">
 
         <LinearLayout
@@ -42,24 +43,32 @@
             android:layout_gravity="center"
             android:orientation="vertical">
 
-            <TextView
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/jandi_poll_empty_1"
-                android:textColor="@color/jandi_text"
-                android:textSize="18sp"/>
+                android:layout_height="140dp"
+                android:src="@drawable/img_no_poll" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
-                android:text="@string/jandi_poll_empty_2"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="16sp"/>
+                android:lineSpacingExtra="3dp"
+                android:text="@string/tab_mypage_poll_esm_1"
+                android:textColor="@color/rgb_999999"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:lineSpacingExtra="3dp"
+                android:text="@string/tab_mypage_poll_esm_2"
+                android:textColor="@color/rgb_cccccc"
+                android:textSize="14sp" />
         </LinearLayout>
 
     </FrameLayout>

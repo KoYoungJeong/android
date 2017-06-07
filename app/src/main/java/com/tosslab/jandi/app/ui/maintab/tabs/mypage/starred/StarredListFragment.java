@@ -65,8 +65,11 @@ public class StarredListFragment extends Fragment implements StarredListPresente
     @Bind(R.id.vg_starred_list_empty)
     View vgEmptyStarredList;
 
-    @Bind(R.id.tv_starred_list_empty)
-    TextView tvEmptyMessage;
+    @Bind(R.id.tv_starred_list_empty1)
+    TextView tvEmptyMessage1;
+
+    @Bind(R.id.tv_starred_list_empty2)
+    TextView tvEmptyMessage2;
 
     @Bind(R.id.progress_starred_list_more_loading)
     View pbMoreLoading;
@@ -198,8 +201,10 @@ public class StarredListFragment extends Fragment implements StarredListPresente
 
     public void showEmptyLayout() {
         boolean isAllType = starredType == StarredListPresenter.StarredType.All;
-        tvEmptyMessage.setText(isAllType
-                ? R.string.jandi_starred_no_all : R.string.jandi_starred_no_file);
+        tvEmptyMessage1.setText(isAllType
+                ? R.string.tab_mypage_star_message_file_esm_1 : R.string.tab_mypage_star_file_esm_1);
+        tvEmptyMessage2.setText(isAllType
+                ? R.string.tab_mypage_star_message_file_esm_2 : R.string.tab_mypage_star_file_esm_2);
         vgEmptyStarredList.setVisibility(View.VISIBLE);
     }
 

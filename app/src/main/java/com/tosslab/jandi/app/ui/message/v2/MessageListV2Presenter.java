@@ -726,7 +726,8 @@ public class MessageListV2Presenter {
     }
 
     private List<ResMessages.Link> getNewMessages(NewMessageContainer messageContainer) {
-        long lastUpdateLinkId = MessageRepository.getRepository().getLastMessage(room.getRoomId()).id;
+        ResMessages.Link lastOldLink = adapterModel.getItem(adapterModel.getCount() - 1);
+        long lastUpdateLinkId = lastOldLink.id;
         return messageRepositoryModel.getAfterMessages(lastUpdateLinkId, room.getRoomId());
 
     }
@@ -837,7 +838,7 @@ public class MessageListV2Presenter {
             Observable.from(TeamInfoLoader.getInstance().getUserList())
                     .filter(User::isEnabled)
                     .count()
-                    .map(it -> it - 1)
+                    .map(it -> it - 2)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(it -> {
@@ -856,6 +857,11 @@ public class MessageListV2Presenter {
 
 
         } else {
+            if (messageListModel.isDisabledUserChat(entityId)) {
+                view.insertNeverMessageLayout();
+                return;
+            }
+
             view.insertMessageEmptyLayout();
         }
     }
@@ -1297,6 +1303,8 @@ public class MessageListV2Presenter {
         void updateRecyclerViewInfo();
 
         void showReadOnly(boolean readOnly);
+
+        void insertNeverMessageLayout();
     }
 
 }
