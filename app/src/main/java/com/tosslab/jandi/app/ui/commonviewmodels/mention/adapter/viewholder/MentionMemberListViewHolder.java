@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMentionEvent;
+import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.utils.UiUtils;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
@@ -63,7 +64,8 @@ public class MentionMemberListViewHolder extends RecyclerView.ViewHolder {
         } else {
 
             if (!itemVO.isInactive()) {
-                if (itemVO.getAbsence() == null || itemVO.getAbsence().getStartAt() == null) {
+                if (TeamInfoLoader.getInstance().getUser(itemVO.getId()).isDisabled() ||
+                        (itemVO.getAbsence() == null || itemVO.getAbsence().getStartAt() == null)) {
                     vgProfileAbsence.setVisibility(View.GONE);
                 } else {
                     vgProfileAbsence.setVisibility(View.VISIBLE);

@@ -114,7 +114,8 @@ public class MessageItemViewHolder extends BaseViewHolder<SearchData> {
         } else {
             User writer = teamInfoLoader.getUser(searchMessageData.getWriterId());
             if (writer != null) {
-                if (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null) {
+                if (TeamInfoLoader.getInstance().getUser(writer.getId()).isDisabled() ||
+                        (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null)) {
                     vgProfileAbsence.setVisibility(View.GONE);
                 } else {
                     vgProfileAbsence.setVisibility(View.VISIBLE);

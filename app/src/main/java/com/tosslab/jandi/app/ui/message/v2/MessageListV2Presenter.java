@@ -1245,7 +1245,8 @@ public class MessageListV2Presenter {
             }
             User user = TeamInfoLoader.getInstance().getUser(companionId);
             Absence absence = user.getAbsence();
-            if (absence == null || absence.getStartAt() == null) {
+            if (TeamInfoLoader.getInstance().getUser(user.getId()).isDisabled() ||
+                    (absence == null || absence.getStartAt() == null)) {
                 view.setAbsenceView(null);
                 return;
             }

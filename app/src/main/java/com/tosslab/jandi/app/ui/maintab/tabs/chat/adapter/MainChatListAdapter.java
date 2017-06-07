@@ -137,7 +137,8 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (!isJandiBot) {
             String photoUrl = item.getPhoto();
             if (!item.isInactive()) {
-                if (item.getAbsence() == null || item.getAbsence().getStartAt() == null) {
+                if (TeamInfoLoader.getInstance().getUser(item.getEntityId()).isDisabled() ||
+                        ((item.getAbsence() == null || item.getAbsence().getStartAt() == null))) {
                     viewHolder.vgProfileAbsence.setVisibility(View.GONE);
                 } else {
                     viewHolder.vgProfileAbsence.setVisibility(View.VISIBLE);

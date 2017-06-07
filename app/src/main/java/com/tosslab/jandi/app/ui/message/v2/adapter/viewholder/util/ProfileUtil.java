@@ -31,7 +31,8 @@ public class ProfileUtil {
         }
         User entity = TeamInfoLoader.getInstance().getUser(fromEntityId);
 
-        if (entity.getAbsence() == null || entity.getAbsence().getStartAt() == null) {
+        if (TeamInfoLoader.getInstance().getUser(entity.getId()).isDisabled() ||
+                (entity.getAbsence() == null || entity.getAbsence().getStartAt() == null)) {
             vgProfileAbsence.setVisibility(View.GONE);
         } else {
             vgProfileAbsence.setVisibility(View.VISIBLE);

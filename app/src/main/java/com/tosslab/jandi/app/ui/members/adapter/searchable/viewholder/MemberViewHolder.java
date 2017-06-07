@@ -211,7 +211,8 @@ public abstract class MemberViewHolder<T> extends BaseViewHolder<T> {
     private void setProfileImage(ChatChooseItem item) {
         if (!item.isBot()) {
             if (!item.isInactive()) {
-                if (item.getAbsence() == null || item.getAbsence().getStartAt() == null) {
+                if (TeamInfoLoader.getInstance().getUser(item.getEntityId()).isDisabled() ||
+                        (item.getAbsence() == null || item.getAbsence().getStartAt() == null)) {
                     vgProfileAbsence.setVisibility(View.GONE);
                 } else {
                     vgProfileAbsence.setVisibility(View.VISIBLE);

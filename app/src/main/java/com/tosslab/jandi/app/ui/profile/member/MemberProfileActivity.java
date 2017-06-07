@@ -362,7 +362,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
 
     private void setAbsenceInfo() {
         Absence absence = TeamInfoLoader.getInstance().getUser(memberId).getAbsence();
-        if (absence != null && absence.getStartAt() != null) {
+        if (!TeamInfoLoader.getInstance().getUser(memberId).isDisabled() &&
+                (absence != null && absence.getStartAt() != null)) {
             vBackgroundProfileAbsence.setVisibility(View.VISIBLE);
             ivMemberProfileAbsenceImg.setVisibility(View.VISIBLE);
             vgAbsenceMessageWrapper.setVisibility(View.VISIBLE);

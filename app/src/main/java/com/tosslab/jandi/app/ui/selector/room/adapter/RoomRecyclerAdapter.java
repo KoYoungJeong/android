@@ -132,7 +132,8 @@ public class RoomRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (item.isUser()) {
             roomholder.tvName.setTypeface(Typeface.create(roomholder.tvName.getTypeface(), Typeface.NORMAL));
             User user = TeamInfoLoader.getInstance().getUser(item.getEntityId());
-            if (user.getAbsence() == null || user.getAbsence().getStartAt() == null) {
+            if (TeamInfoLoader.getInstance().getUser(user.getId()).isDisabled() ||
+                    (user.getAbsence() == null || user.getAbsence().getStartAt() == null)) {
                 roomholder.vgProfileAbsence.setVisibility(View.GONE);
             } else {
                 roomholder.vgProfileAbsence.setVisibility(View.VISIBLE);

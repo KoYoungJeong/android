@@ -144,7 +144,8 @@ public class MentionMessageViewHolder extends BaseViewHolder<MentionMessage> {
             ImageUtil.loadProfileImage(ivProfile, mentionMessage.getWriterProfileUrl(), R.drawable.profile_img);
 
             if (user != null && user.isEnabled()) {
-                if (user.getAbsence() == null || user.getAbsence().getStartAt() == null) {
+                if (TeamInfoLoader.getInstance().getUser(user.getId()).isDisabled() ||
+                        (user.getAbsence() == null || user.getAbsence().getStartAt() == null)) {
                     vgProfileAbsence.setVisibility(View.GONE);
                 } else {
                     vgProfileAbsence.setVisibility(View.VISIBLE);

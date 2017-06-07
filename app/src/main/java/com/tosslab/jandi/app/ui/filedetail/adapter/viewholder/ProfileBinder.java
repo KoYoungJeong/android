@@ -48,7 +48,8 @@ public class ProfileBinder {
             return;
         }
         String profileUrl = writer.getPhotoUrl();
-        if (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null) {
+        if (TeamInfoLoader.getInstance().getUser(writer.getId()).isDisabled() ||
+                (writer.getAbsence() == null || writer.getAbsence().getStartAt() == null)) {
             vgProfileAbsence.setVisibility(View.GONE);
         } else {
             vgProfileAbsence.setVisibility(View.VISIBLE);
