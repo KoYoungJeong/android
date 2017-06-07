@@ -414,7 +414,9 @@ public class MainTopicListFragment extends BaseLazyFragment
             activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
             MenuItem item = menu.findItem(R.id.action_main_absence);
             Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
-            if (absenceInfo.getStatus().equals("enabled")) {
+            if (absenceInfo != null &&
+                    absenceInfo.getStatus() != null &&
+                    absenceInfo.getStatus().equals("enabled")) {
                 item.setVisible(true);
             } else {
                 item.setVisible(false);
