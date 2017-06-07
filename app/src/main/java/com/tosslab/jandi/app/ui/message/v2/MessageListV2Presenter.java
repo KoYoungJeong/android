@@ -727,7 +727,13 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> getNewMessages(NewMessageContainer messageContainer) {
         ResMessages.Link lastOldLink = adapterModel.getItem(adapterModel.getCount() - 1);
-        long lastUpdateLinkId = lastOldLink.id;
+        long lastUpdateLinkId;
+        try {
+            lastUpdateLinkId = lastOldLink.id;
+        } catch (Exception e) {
+            e.printStackTrace();
+            lastUpdateLinkId = MessageRepository.getRepository().getLastMessage(room.getRoomId()).id;
+        }
         return messageRepositoryModel.getAfterMessages(lastUpdateLinkId, room.getRoomId());
 
     }
