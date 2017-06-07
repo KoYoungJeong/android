@@ -69,6 +69,7 @@ import com.tosslab.jandi.app.views.SwipeExitLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -370,7 +371,8 @@ public class MemberProfileActivity extends BaseAppCompatActivity {
             StringBuilder sb = new StringBuilder();
             sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getStartAt()));
             sb.append(" - ");
-            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getEndAt()));
+            Date endDate = new Date(absence.getEndAt().getTime() - 86400000);
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(endDate));
             tvAbsenceDuration.setText(sb);
             AnimationDrawable drawable =
                     (AnimationDrawable) ivMemberProfileAbsenceImg.getDrawable();

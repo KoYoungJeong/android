@@ -33,9 +33,14 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
     @Override
     public void onInit() {
         Absence absenceInfo = settingAbsenceModel.getAbsenceInfo();
-        if (absenceInfo != null && absenceInfo.getStatus().equals("enabled")) {
+
+        long todayInMillis = System.currentTimeMillis();
+
+        if (absenceInfo != null
+                && todayInMillis < absenceInfo.getEndAt().getTime()
+                && absenceInfo.getStatus().equals("enabled")) {
             view.onSettingAbsenceCheckboxClicked();
-            if (absenceInfo.isDisablePush()) {
+            if (!absenceInfo.isDisablePush()) {
                 view.onPushAlarmEnableCheckboxClicked();
             }
             view.setStartDate(absenceInfo.getStartAt());
@@ -117,9 +122,20 @@ public class SettingAbsencePresenterImpl implements SettingAbsencePresenter {
     }
 
     public boolean hasChangeInfo(boolean enabled, Date startDate, Date endDate, boolean disablePush, String message) {
+
         Absence savedAbsence = settingAbsenceModel.getAbsenceInfo();
         if (savedAbsence == null) {
             return true;
+        }
+
+        long todayInMillis = System.currentTimeMillis();
+
+        if (todayInMillis > savedAbsence.getEndAt().getTime()) {
+            if (enabled) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         if (enabled != savedAbsence.getStatus().equals("enabled")) {

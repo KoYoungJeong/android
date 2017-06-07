@@ -80,11 +80,11 @@ public class SignInPresenterImpl implements SignInPresenter {
                     model.updateLoginId(email);
                     model.saveTokenInfo(accessToken);
                     PushUtil.registPush();
+                    model.updateAbsenceInfo();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(accessToken -> {
                     getAccountInfo(email);
-                    model.updateAbsenceInfo();
                 }, t -> {
                     view.dismissProgressDialog();
                     if (!(t instanceof RetrofitException)) {
