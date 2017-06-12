@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.MessageStarredEvent;
@@ -444,6 +445,10 @@ public class MentionListFragment extends Fragment implements MentionListView, Li
             presenter.onUpdateMentionMarker();
             presenter.onInitializeMyPage(false, true);
         }
+    }
+
+    public void onEventMainThread(AbsenceInfoUpdatedEvent event) {
+        getActivity().invalidateOptionsMenu();
     }
 
     private class MentionMessageMoreRequestHandler implements MentionListAdapter.OnLoadMoreCallback {

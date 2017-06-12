@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResDeviceSubscribe;
-import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -621,7 +620,12 @@ public class NavigationPresenterImpl implements NavigationPresenter {
     @Override
     public void onInitializeAbsence() {
         Absence absence = navigationModel.getAbsenceInfo();
-        if (absence != null && absence.getStatus().equals("enabled")) {
+
+        long todayInMillis = System.currentTimeMillis();
+
+        if (absence != null &&
+                (absence.getStartAt().getTime() < todayInMillis) &&
+                (absence.getEndAt().getTime() > todayInMillis) && absence.getStatus().equals("enabled")) {
             long endTime = absence.getEndAt().getTime() - 86400000;
             navigationView.showAbsenceInfo(true, absence.getStartAt(), new Date(endTime));
         } else {

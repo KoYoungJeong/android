@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -54,6 +55,9 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     @Inject
     SettingAbsencePresenter settingAbsencePresenter;
 
+    @Inject
+    InputMethodManager inputMethodManager;
+
     @Bind(R.id.vg_setting_absence_checkbox)
     SettingsBodyCheckView vgSettingAbsenceCheckBox;
 
@@ -80,6 +84,7 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
 
     @Bind(R.id.v_scroll)
     ScrollView scrollView;
+
 
     private boolean isEnablePushAlarm = false;
     private Date startDate;
@@ -173,6 +178,7 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                hideKeyboard();
                 if (settingAbsencePresenter.hasChangeInfo(
                         vgSettingAbsenceCheckBox.isChecked(), startDate, endDate,
                         !vgSettingPushAlarmEnableCheckBox.isChecked(),
@@ -183,6 +189,7 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
                 }
                 return true;
             case R.id.action_done:
+                hideKeyboard();
                 settingAbsencePresenter.updateAbsence(
                         vgSettingAbsenceCheckBox.isChecked(), startDate, endDate,
                         !isEnablePushAlarm, etAbsenceOptionMessage.getText().toString());
@@ -196,6 +203,7 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     @Override
     @OnClick(R.id.vg_setting_absence_checkbox)
     public void onSettingAbsenceCheckboxClicked() {
+        hideKeyboard();
         boolean isChecked = vgSettingAbsenceCheckBox.isChecked();
         vgSettingAbsenceCheckBox.setChecked(!isChecked);
         if (!isChecked) {
@@ -209,14 +217,16 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     @Override
     @OnClick(R.id.vg_setting_push_alarm_enable_checkbox)
     public void onPushAlarmEnableCheckboxClicked() {
+        hideKeyboard();
         boolean isChecked = vgSettingPushAlarmEnableCheckBox.isChecked();
         vgSettingPushAlarmEnableCheckBox.setChecked(!isChecked);
         isEnablePushAlarm = vgSettingPushAlarmEnableCheckBox.isChecked();
         setConfirmButton();
     }
 
-    @OnClick(R.id.tv_select_absence_start_time)
+    @OnClick(R.id.vg_select_absence_start_time)
     void showStartDateChoiceView() {
+        hideKeyboard();
         CalendarDialogFragment fragment = new CalendarDialogFragment();
         if (startDate != null) {
             fragment.setInitDate(startDate);
@@ -265,8 +275,9 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
         tvSelectAbsenceStartTime.setText(new SimpleDateFormat("yyyy-MM-dd").format(startDate));
     }
 
-    @OnClick(R.id.tv_select_absence_end_time)
+    @OnClick(R.id.vg_select_absence_end_time)
     void showEndDateChoiceView() {
+        hideKeyboard();
         CalendarDialogFragment fragment = new CalendarDialogFragment();
         if (endDate != null) {
             fragment.setInitDate(endDate);
@@ -391,5 +402,8 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
         }
     }
 
+    private void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(etAbsenceOptionMessage.getWindowToken(), 0);
+    }
 
 }

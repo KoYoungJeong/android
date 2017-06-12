@@ -264,7 +264,7 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (firstVisibleIndex == 0) {
             return -1;
         }
-        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+        for (int i = 0; i <= firstVisibleIndex - 1; i++) {
             if (topicItemDataList.get(i).getUnreadCount() > 0) {
                 return i;
             }
@@ -277,7 +277,7 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 || lastVisibleIndex == topicItemDataList.size() - 1) {
             return -1;
         }
-        for (int i = lastVisibleIndex; i < topicItemDataList.size(); i++) {
+        for (int i = topicItemDataList.size() - 1; i >= lastVisibleIndex + 1; i--) {
             if (topicItemDataList.get(i).getUnreadCount() > 0) {
                 return i;
             }

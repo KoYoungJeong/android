@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.ui.settings.absence.dagger;
 
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.ui.settings.absence.presenter.SettingAbsencePresenter;
 import com.tosslab.jandi.app.ui.settings.absence.presenter.SettingAbsencePresenterImpl;
 
@@ -28,6 +32,13 @@ public class SettingAbsenceModule {
     SettingAbsencePresenter provideSettingAbsencePresenter(
             SettingAbsencePresenterImpl SettingAbsencePresenter) {
         return SettingAbsencePresenter;
+    }
+
+    @Provides
+    InputMethodManager provideInputMethodManager() {
+        return (InputMethodManager) JandiApplication
+                .getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
 }

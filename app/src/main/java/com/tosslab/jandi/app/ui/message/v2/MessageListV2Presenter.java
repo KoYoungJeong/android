@@ -729,9 +729,14 @@ public class MessageListV2Presenter {
 
     private List<ResMessages.Link> getNewMessages(NewMessageContainer messageContainer) {
         ResMessages.Link lastOldLink = adapterModel.getItem(adapterModel.getCount() - 1);
-        long lastUpdateLinkId = lastOldLink.id;
+        long lastUpdateLinkId;
+        try {
+            lastUpdateLinkId = lastOldLink.id;
+        } catch (Exception e) {
+            e.printStackTrace();
+            lastUpdateLinkId = MessageRepository.getRepository().getLastMessage(room.getRoomId()).id;
+        }
         return messageRepositoryModel.getAfterMessages(lastUpdateLinkId, room.getRoomId());
-
     }
 
     private Observable<List<ResMessages.Link>> checkNullNewMessage(List<ResMessages.Link> links) {
@@ -1253,7 +1258,8 @@ public class MessageListV2Presenter {
             StringBuilder sb = new StringBuilder();
             sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getStartAt()));
             sb.append(" - ");
-            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(absence.getEndAt()));
+            Date endDate = new Date(absence.getEndAt().getTime() - 86400000);
+            sb.append(new SimpleDateFormat("yyyy.MM.dd").format(endDate));
             view.setAbsenceView(sb.toString());
         }
     }

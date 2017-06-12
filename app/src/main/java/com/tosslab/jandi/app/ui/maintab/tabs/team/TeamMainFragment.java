@@ -21,6 +21,7 @@ import android.widget.CheckBox;
 import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
@@ -128,7 +129,11 @@ public class TeamMainFragment extends BaseLazyFragment implements TabFocusListen
         }
         MenuItem item = menu.findItem(R.id.action_main_absence);
         Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
-        if (absenceInfo.getStatus().equals("enabled")) {
+        long todayInMillis = System.currentTimeMillis();
+        if (absenceInfo != null &&
+                todayInMillis > absenceInfo.getStartAt().getTime() &&
+                todayInMillis < absenceInfo.getEndAt().getTime() &&
+                absenceInfo.getStatus().equals("enabled")) {
             item.setVisible(true);
         } else {
             item.setVisible(false);
@@ -241,6 +246,10 @@ public class TeamMainFragment extends BaseLazyFragment implements TabFocusListen
                 AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TeamTab, AnalyticsValue.Action.InviteMember);
             });
         }
+    }
+
+    public void onEventMainThread(AbsenceInfoUpdatedEvent event) {
+        getActivity().invalidateOptionsMenu();
     }
 
 }

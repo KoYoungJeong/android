@@ -188,7 +188,9 @@
                     <com.tosslab.jandi.app.views.settings.SettingsBodyCheckView
                         android:id="@+id/vg_setting_push_alarm_enable_checkbox"
                         style="@style/JandiSettings.Body"
-                        app:sbvChcked="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        app:sbvChcked="false"
                         app:sbvSummary="@string/vacancy_pushnoti_desc"
                         app:sbvTitle="@string/vacancy_pushnoti_title" />
 
