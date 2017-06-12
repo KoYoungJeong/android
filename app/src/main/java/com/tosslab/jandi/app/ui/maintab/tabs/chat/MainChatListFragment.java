@@ -440,6 +440,7 @@ public class MainChatListFragment extends BaseLazyFragment
             long todayInMillis = System.currentTimeMillis();
 
             if (absenceInfo != null &&
+                    todayInMillis > absenceInfo.getStartAt().getTime() &&
                     todayInMillis < absenceInfo.getEndAt().getTime() &&
                     absenceInfo.getStatus().equals("enabled")) {
                 item.setVisible(true);
@@ -535,10 +536,10 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void onClickTopUnreadMessage() {
         if (unreadUpperIndex != -1) {
-            if (unreadUpperIndex < 8) {
+            if (unreadUpperIndex < 0) {
                 lvChat.smoothScrollToPosition(0);
             } else {
-                lvChat.smoothScrollToPosition(unreadUpperIndex - 8);
+                lvChat.smoothScrollToPosition(unreadUpperIndex);
             }
         }
     }
@@ -546,10 +547,10 @@ public class MainChatListFragment extends BaseLazyFragment
     @Override
     public void onClickBottomUnreadMessage() {
         if (unreadLowerIndex != -1) {
-            if (lvChat.getAdapter().getItemCount() - 1 < unreadLowerIndex + 8) {
+            if (lvChat.getAdapter().getItemCount() - 1 < unreadLowerIndex + 1) {
                 lvChat.smoothScrollToPosition(lvChat.getAdapter().getItemCount() - 1);
             } else {
-                lvChat.smoothScrollToPosition(unreadLowerIndex + 8);
+                lvChat.smoothScrollToPosition(unreadLowerIndex + 1);
             }
         }
     }

@@ -4,7 +4,7 @@
         <item
             android:id="@+id/nav_setting_absence_notification"
             android:icon="@drawable/side_bar_away"
-            android:title="부재중 설정" />
+            android:title="@string/vacancy_title" />
         <item
             android:id="@+id/nav_setting_notification"
             android:icon="@drawable/side_bar_notifications"

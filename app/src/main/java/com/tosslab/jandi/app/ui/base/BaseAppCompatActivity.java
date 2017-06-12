@@ -3,7 +3,13 @@ package com.tosslab.jandi.app.ui.base;
 import android.support.v7.app.AppCompatActivity;
 
 import com.facebook.appevents.AppEventsLogger;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.network.NetworkConnectEvent;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
+import com.tosslab.jandi.app.network.client.start.StartApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.InnerApiRetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.UnLockPassCodeManager;
 import com.tosslab.jandi.app.utils.activity.ActivityHelper;
@@ -13,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
 import rx.Completable;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class BaseAppCompatActivity extends AppCompatActivity {
 
@@ -60,6 +68,12 @@ public class BaseAppCompatActivity extends AppCompatActivity {
 
         if (shouldReconnectSocketService && !JandiSocketService.checkSocketConnection(getApplicationContext())) {
             JandiSocketService.startServiceIfNeed(getApplicationContext());
+            Observable.just(0)
+                    .observeOn(Schedulers.io())
+                    .subscribe(i -> {
+                        updateAbsenceInfo();
+                        EventBus.getDefault().post(new AbsenceInfoUpdatedEvent());
+                    });
         }
     }
 
@@ -67,5 +81,16 @@ public class BaseAppCompatActivity extends AppCompatActivity {
     protected void onPause() {
         AppEventsLogger.deactivateApp(this);
         super.onPause();
+    }
+
+    private void updateAbsenceInfo() {
+        try {
+            StartApi startApi = new StartApi(InnerApiRetrofitBuilder.getInstance());
+            ResStartAccountInfo resStartAccountInfo = startApi.getAccountInitializeInfo();
+            InitialAccountInfoRepository initialAccountInfoRepository = InitialAccountInfoRepository.getInstance();
+            initialAccountInfoRepository.upsertAbsenceInfo(resStartAccountInfo.getAbsence());
+        } catch (RetrofitException e) {
+            e.printStackTrace();
+        }
     }
 }

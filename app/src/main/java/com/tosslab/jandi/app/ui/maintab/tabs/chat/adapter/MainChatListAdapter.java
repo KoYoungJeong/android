@@ -232,7 +232,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (firstVisibleIndex == 0) {
             return -1;
         }
-        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+        for (int i = 0; i <= firstVisibleIndex - 1; i++) {
             if (entities.get(i).getUnread() > 0) {
                 return i;
             }
@@ -245,7 +245,7 @@ public class MainChatListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 || lastVisibleIndex == entities.size() - 1) {
             return -1;
         }
-        for (int i = lastVisibleIndex; i < entities.size(); i++) {
+        for (int i = entities.size() - 1; i >= lastVisibleIndex + 1; i--) {
             if (entities.get(i).getUnread() > 0) {
                 return i;
             }

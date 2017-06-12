@@ -224,7 +224,7 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
         setConfirmButton();
     }
 
-    @OnClick(R.id.tv_select_absence_start_time)
+    @OnClick(R.id.vg_select_absence_start_time)
     void showStartDateChoiceView() {
         hideKeyboard();
         CalendarDialogFragment fragment = new CalendarDialogFragment();
@@ -275,7 +275,7 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
         tvSelectAbsenceStartTime.setText(new SimpleDateFormat("yyyy-MM-dd").format(startDate));
     }
 
-    @OnClick(R.id.tv_select_absence_end_time)
+    @OnClick(R.id.vg_select_absence_end_time)
     void showEndDateChoiceView() {
         hideKeyboard();
         CalendarDialogFragment fragment = new CalendarDialogFragment();
@@ -405,6 +405,5 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
     private void hideKeyboard() {
         inputMethodManager.hideSoftInputFromWindow(etAbsenceOptionMessage.getWindowToken(), 0);
     }
-
 
 }

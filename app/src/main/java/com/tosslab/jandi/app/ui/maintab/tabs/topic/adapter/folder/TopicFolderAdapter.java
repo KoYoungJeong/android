@@ -311,7 +311,7 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
         if (firstVisibleIndex <= 0) {
             return -1;
         }
-        for (int i = firstVisibleIndex - 1; i >= 0; i--) {
+        for (int i = 0; i <= firstVisibleIndex - 1; i++) {
             IMarkerTopicFolderItem item = cloneItems.get(i);
             if (item instanceof TopicFolderData) {
                 TopicFolderData topicFolderData = (TopicFolderData) item;
@@ -329,11 +329,10 @@ public class TopicFolderAdapter extends RecyclerView.Adapter<MainTopicViewHolder
     }
 
     public int getLowerViewIndexIfHasUnreadCnt(int lastVisibleIndex) {
-        if (lastVisibleIndex < 0 ||
-                lastVisibleIndex == cloneItems.size() - 1) {
+        if (lastVisibleIndex < 0 || lastVisibleIndex == cloneItems.size() - 1) {
             return -1;
         }
-        for (int i = lastVisibleIndex; i < cloneItems.size(); i++) {
+        for (int i = cloneItems.size() - 1; i >= lastVisibleIndex + 1; i--) {
             IMarkerTopicFolderItem item = cloneItems.get(i);
             if (item instanceof TopicFolderData) {
                 TopicFolderData topicFolderData = (TopicFolderData) item;

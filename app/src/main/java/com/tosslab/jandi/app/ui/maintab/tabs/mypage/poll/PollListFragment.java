@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicJoinEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeftEvent;
@@ -236,6 +237,10 @@ public class PollListFragment extends Fragment implements PollListPresenter.View
 
     @Override
     public void onFocus() {
+    }
+
+    public void onEventMainThread(AbsenceInfoUpdatedEvent event) {
+        getActivity().invalidateOptionsMenu();
     }
 
     private class MorePollListRequestHandler implements PollListAdapter.OnLoadMoreCallback {

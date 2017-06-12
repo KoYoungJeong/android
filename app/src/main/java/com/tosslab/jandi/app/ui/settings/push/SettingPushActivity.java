@@ -7,30 +7,51 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class SettingPushActivity extends BaseAppCompatActivity {
+
+    @Bind(R.id.fl_content)
+    ViewGroup flContent;
+
+    @Bind(R.id.tv_unavailable)
+    TextView tvUnavailable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_push);
+        ButterKnife.bind(this);
+
         initView();
+
     }
 
     void initView() {
         setUpActionBar();
 
-        Fragment settingPushFragment =
-                getFragmentManager().findFragmentByTag(SettingsPushFragment.class.getName());
-        if (settingPushFragment == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fl_content,
-                            new SettingsPushFragment(),
-                            SettingsPushFragment.class.getName())
-                    .commit();
+        if (InitialAccountInfoRepository.getInstance().getAbsenceInfo().isDisablePush()) {
+            flContent.setVisibility(View.GONE);
+            tvUnavailable.setVisibility(View.VISIBLE);
+        } else {
+            Fragment settingPushFragment =
+                    getFragmentManager().findFragmentByTag(SettingsPushFragment.class.getName());
+            if (settingPushFragment == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fl_content,
+                                new SettingsPushFragment(),
+                                SettingsPushFragment.class.getName())
+                        .commit();
+            }
         }
     }
 

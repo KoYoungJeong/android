@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RefreshMentionBadgeCountEvent;
 import com.tosslab.jandi.app.events.RefreshMypageBadgeCountEvent;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.messages.MentionMessageEvent;
 import com.tosslab.jandi.app.events.messages.SocketPollEvent;
 import com.tosslab.jandi.app.events.poll.RequestRefreshPollBadgeCountEvent;
@@ -255,6 +256,7 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
         Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
         long todayInMillis = System.currentTimeMillis();
         if (absenceInfo != null &&
+                todayInMillis > absenceInfo.getStartAt().getTime() &&
                 todayInMillis < absenceInfo.getEndAt().getTime() &&
                 absenceInfo.getStatus().equals("enabled")) {
             item.setVisible(true);
@@ -308,6 +310,10 @@ public class MyPageFragment extends BaseLazyFragment implements TabFocusListener
                 ((TabFocusListener) item).onFocus();
             }
         }
+    }
+
+    public void onEventMainThread(AbsenceInfoUpdatedEvent event) {
+        getActivity().invalidateOptionsMenu();
     }
 
 }

@@ -435,6 +435,7 @@ public class FileListFragment extends BaseLazyFragment implements FileListPresen
             Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
             long todayInMillis = System.currentTimeMillis();
             if (absenceInfo != null &&
+                    todayInMillis > absenceInfo.getStartAt().getTime() &&
                     todayInMillis < absenceInfo.getEndAt().getTime() &&
                     absenceInfo.getStatus().equals("enabled")) {
                 item.setVisible(true);

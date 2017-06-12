@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.Henson;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.events.absence.AbsenceInfoUpdatedEvent;
 import com.tosslab.jandi.app.events.entities.JoinableTopicCallEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicFolderMoveCallEvent;
@@ -416,6 +417,7 @@ public class MainTopicListFragment extends BaseLazyFragment
             Absence absenceInfo = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
             long todayInMillis = System.currentTimeMillis();
             if (absenceInfo != null &&
+                    todayInMillis > absenceInfo.getStartAt().getTime() &&
                     todayInMillis < absenceInfo.getEndAt().getTime() &&
                     absenceInfo.getStatus() != null &&
                     absenceInfo.getStatus().equals("enabled")) {
@@ -832,10 +834,10 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void onClickTopUnreadMessage() {
         if (unreadUpperIndex != -1) {
-            if (unreadUpperIndex < 8) {
+            if (unreadUpperIndex < 0) {
                 lvMainTopic.smoothScrollToPosition(0);
             } else {
-                lvMainTopic.smoothScrollToPosition(unreadUpperIndex - 8);
+                lvMainTopic.smoothScrollToPosition(unreadUpperIndex);
             }
         }
     }
@@ -843,11 +845,15 @@ public class MainTopicListFragment extends BaseLazyFragment
     @Override
     public void onClickBottomUnreadMessage() {
         if (unreadLowerIndex != -1) {
-            if (lvMainTopic.getAdapter().getItemCount() - 1 < unreadLowerIndex + 8) {
+            if (lvMainTopic.getAdapter().getItemCount() - 1 < unreadLowerIndex + 1) {
                 lvMainTopic.smoothScrollToPosition(lvMainTopic.getAdapter().getItemCount() - 1);
             } else {
-                lvMainTopic.smoothScrollToPosition(unreadLowerIndex + 8);
+                lvMainTopic.smoothScrollToPosition(unreadLowerIndex + 1);
             }
         }
+    }
+
+    public void onEventMainThread(AbsenceInfoUpdatedEvent event) {
+        getActivity().invalidateOptionsMenu();
     }
 }
