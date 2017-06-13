@@ -966,6 +966,9 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="vacancy_period_pastperiod_popup">"The selected period is a past date. Please check the date again."</string>
 	<string name="vacancy_pushnoti_desc">"By turning this off, you will not receive push notifications on your mobile. By turning it on, your previous push notification settings will be appiled. "</string>
 	<string name="vacancy_pushnoti_title">"Mobile Push Notification Settings"</string>
+	<string name="vacancy_pushoff_desc_layer">"Due to Vacation Mode settings, you will not receive push notifications on your mobile during the set vacation period.
+
+To reset your notification settings, please go to vacation mode and turn on mobile push notification settings."</string>
 	<string name="vacancy_startday">"Starts at"</string>
 	<string name="vacancy_title">"Vacation Mode"</string>
 	<string name="vacancy_toast_off">"Vacation mode is off."</string>

@@ -996,6 +996,11 @@
 	<string name="vacancy_period_pastperiod_popup">"설정한 기간이 과거 일정 입니다. 기간을 다시 확인해주세요."</string>
 	<string name="vacancy_pushnoti_desc">"설정을 OFF시 설정 기간 동안 사용 중인 모바일로 푸시 알림을 보내지 않습니다. ON시 기존 모바일 푸시 설정이 유지됩니다."</string>
 	<string name="vacancy_pushnoti_title">"모바일 푸시 알림 설정"</string>
+	<string name="vacancy_pushoff_desc_layer">"부재 중 설정의 알림 설정에 따라 부재 중 기간 동안 
+모바일에 푸쉬 알림을 발송하지 않고 있습니다.
+
+알림을 다시 설정하시려면
+부재 중 설정 > 모바일 푸시 알림 설정을 켜주세요."</string>
 	<string name="vacancy_startday">"시작일"</string>
 	<string name="vacancy_title">"부재 중 설정"</string>
 	<string name="vacancy_toast_off">"부재 중 설정을 해제하였습니다."</string>

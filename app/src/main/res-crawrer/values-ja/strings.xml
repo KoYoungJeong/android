@@ -971,6 +971,10 @@
 	<string name="vacancy_period_pastperiod_popup">"終了日が過去に設定されています。期限をもう一度確認してください。"</string>
 	<string name="vacancy_pushnoti_desc">"設定をOFFにすると設定されて期間にはモバイルプッシュが送信されません。ONすると既存のモバイルプッシュの設定が維持されます。"</string>
 	<string name="vacancy_pushnoti_title">"モバイルプッシュ通知の設定"</string>
+	<string name="vacancy_pushoff_desc_layer">"不在中設定の通知設定によって不在中の期間にはモバイル通知は発信されません。
+
+通知設定で
+不在設定＞モバイルプッシュ通知をONにしてください。"</string>
 	<string name="vacancy_startday">"開始日"</string>
 	<string name="vacancy_title">"不在設定"</string>
 	<string name="vacancy_toast_off">"不在設定が解除されました。"</string>
