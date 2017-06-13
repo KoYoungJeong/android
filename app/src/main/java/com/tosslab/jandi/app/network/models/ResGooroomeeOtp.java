@@ -9,31 +9,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ResGooroomeOtp {
+public class ResGooroomeeOtp {
 
     public Data data;
+    public String description;
     public String resultCode;
-
-    public Data getData() {
-        return data;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
-
-    public String getResultCode() {
-        return resultCode;
-    }
-
-    public void setResultCode(String resultCode) {
-        this.resultCode = resultCode;
-    }
 
     @Override
     public String toString() {
-        return "ResGooroomeOtp{" +
+        return "ResGooroomeeOtp{" +
                 "data=" + data +
+                ", description='" + description + '\'' +
                 ", resultCode='" + resultCode + '\'' +
                 '}';
     }
@@ -43,15 +29,6 @@ public class ResGooroomeOtp {
     public static class Data {
 
         public RoomUserOtp roomUserOtp;
-
-
-        public RoomUserOtp getRoomUserOtp() {
-            return roomUserOtp;
-        }
-
-        public void setRoomUserOtp(RoomUserOtp roomUserOtp) {
-            this.roomUserOtp = roomUserOtp;
-        }
 
         @Override
         public String toString() {
@@ -63,20 +40,15 @@ public class ResGooroomeOtp {
         @JsonIgnoreProperties(ignoreUnknown = true)
         @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
         public static class RoomUserOtp {
+
             public String otp;
-
-            public String getOtp() {
-                return otp;
-            }
-
-            public void setOtp(String otp) {
-                this.otp = otp;
-            }
+            public int expireIn;
 
             @Override
             public String toString() {
                 return "RoomUserOtp{" +
                         "otp='" + otp + '\'' +
+                        ", expireIn=" + expireIn +
                         '}';
             }
         }

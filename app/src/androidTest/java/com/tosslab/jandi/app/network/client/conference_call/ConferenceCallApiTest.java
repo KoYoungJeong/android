@@ -1,22 +1,35 @@
 package com.tosslab.jandi.app.network.client.conference_call;
 
-import com.tosslab.jandi.app.network.models.ReqGooroomeOtp;
-import com.tosslab.jandi.app.network.models.ResGooroomeOtp;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.GooroomeeRetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ReqGooroomeeOtp;
+import com.tosslab.jandi.app.network.models.ResGooroomeeOtp;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Created by tee on 2017. 6. 7..
  */
 public class ConferenceCallApiTest {
+
+
+    private ConferenceCallApi conferenceCallApi;
+
+    @Before
+    public void setUp() throws Exception {
+        conferenceCallApi = new ConferenceCallApi(GooroomeeRetrofitBuilder.getInstance());
+    }
+
     @Test
     public void getGooroomeOtp() throws Exception {
-        ReqGooroomeOtp reqGooroomeOtp = new ReqGooroomeOtp();
-        reqGooroomeOtp.setRoomId("72988b0f5f3b414da9a6714967f22fc4");
-        reqGooroomeOtp.setUserName("hahahaha");
-        reqGooroomeOtp.setRoleId("participant");
-        ResGooroomeOtp resGooroomeOtp = ConferenceCallApi.get().getGooroomeOtp(reqGooroomeOtp);
+        ReqGooroomeeOtp reqGooroomeOtp = new ReqGooroomeeOtp();
+        reqGooroomeOtp.roomId = "994e726e327048d99b5b95b0021fce81";
+        reqGooroomeOtp.userName = "hahahaha";
+        reqGooroomeOtp.roleId = "speaker";
+        ResGooroomeeOtp resGooroomeOtp = conferenceCallApi.getGooroomeOtp(reqGooroomeOtp);
         LogUtil.e("res", resGooroomeOtp.toString());
     }
+
+
 }
