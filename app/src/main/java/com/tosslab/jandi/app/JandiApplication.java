@@ -58,6 +58,7 @@ public class JandiApplication extends MultiDexApplication {
     static Context context;
     static OkHttpClient okHttpClient;
     static boolean isApplicationDeactive = true;
+    static boolean isPushPopupActivityActive = false;
 
     Map<TrackerName, Tracker> mTrackers = new HashMap<>();
 
@@ -142,6 +143,14 @@ public class JandiApplication extends MultiDexApplication {
         }
 
         return uuid;
+    }
+
+    public static boolean isPushPopupActivityActive() {
+        return isPushPopupActivityActive;
+    }
+
+    public static void setIsPushPopupActivityActive(boolean isPushPopupActivityActive) {
+        JandiApplication.isPushPopupActivityActive = isPushPopupActivityActive;
     }
 
     @Override
@@ -323,7 +332,6 @@ public class JandiApplication extends MultiDexApplication {
         }
         sprinkler.setActive(true);
     }
-
 
     public enum TrackerName {
         APP_TRACKER,

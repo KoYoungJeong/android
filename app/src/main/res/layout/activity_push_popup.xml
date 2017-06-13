@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/vg_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/popup_bg"
+        android:paddingBottom="29dp"
+        android:paddingTop="18dp">
+
+        <ImageView
+            android:id="@+id/iv_member_profile"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="16dp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="46dp"
+            android:layout_marginTop="42dp"
+            android:src="@drawable/popup_member_profile_jandi" />
+
+        <LinearLayout
+            android:id="@+id/vg_message_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="44dp"
+            android:layout_marginTop="18dp"
+            android:layout_toRightOf="@id/iv_member_profile"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_member_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Tee Kim"
+                android:textColor="@color/rgb_333333"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_room_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="[Android developer]"
+                android:textColor="@color/rgb_999999"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_push_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vg_message_info"
+            android:layout_marginBottom="18dp"
+            android:layout_marginRight="44dp"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@id/iv_member_profile"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="오늘 12:30분에 크라운에서 Free Launch 있습니다. 하하하하하 "
+            android:textColor="@color/rgb_333333"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/iv_close_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:paddingBottom="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="6dp"
+            android:src="@drawable/bar_icon_close_grey" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

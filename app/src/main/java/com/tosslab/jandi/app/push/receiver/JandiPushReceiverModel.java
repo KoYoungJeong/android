@@ -26,8 +26,10 @@ import com.tosslab.jandi.app.push.to.FilePushInfo;
 import com.tosslab.jandi.app.push.to.MessagePushInfo;
 import com.tosslab.jandi.app.push.to.PushRoomType;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
+import com.tosslab.jandi.app.ui.push.PushPopupActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.PushWakeLock;
 import com.tosslab.jandi.app.utils.image.ImageUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -104,12 +106,12 @@ public class JandiPushReceiverModel {
                                                        String notificationTitle,
                                                        String roomName,
                                                        String message, Bitmap writerProfile,
-                                                       int badgeCount, PendingIntent pendingIntent) {
+                                                       int badgeCount, boolean isScreenOff,
+                                                       PendingIntent pendingIntent) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.icon_push_notification)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setSubText(roomName)
@@ -118,6 +120,12 @@ public class JandiPushReceiverModel {
                 .setNumber(badgeCount)
                 .setStyle(getBigTextStyle(notificationTitle, message, roomName))
                 .setContentIntent(pendingIntent);
+
+        if (isScreenOff) {
+            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        } else {
+            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
 
         if (writerProfile != null) {    // 작성자의 프로필 사진
             builder.setLargeIcon(writerProfile);
@@ -195,6 +203,31 @@ public class JandiPushReceiverModel {
         long teamId = baseMessagePushInfo.getTeamId();
         long roomId = baseMessagePushInfo.getRoomId();
         String writerThumb = baseMessagePushInfo.getWriterThumb();
+
+        String roomType = baseMessagePushInfo.getRoomType();
+        int roomTypeInt = getEntityType(roomType);
+        String roomName = getRoomName(context, baseMessagePushInfo, roomTypeInt);
+        String message = getPlainMarkdownContent(context, baseMessagePushInfo);
+
+        boolean isScreenOff = false;
+
+        if (JandiApplication.isPushPopupActivityActive() || !PushWakeLock.isScreenOn(context)) {
+            /*
+            Context context, String profileUrl, String memberName, String roomName,
+            String desc, int teamId, int roomId, int roomTypeInt, String roomType
+             */
+            PushPopupActivity.startActivity(
+                    context,
+                    writerThumb,
+                    writerName,
+                    roomName,
+                    message,
+                    teamId,
+                    roomId,
+                    roomTypeInt,
+                    roomType);
+            isScreenOff = true;
+        }
         Bitmap profileImage = null;
         if (!TextUtils.isEmpty(writerThumb)) {
             try {
@@ -212,16 +245,11 @@ public class JandiPushReceiverModel {
 
         int badgeCount = baseMessagePushInfo.getBadgeCount();
 
-        String roomType = baseMessagePushInfo.getRoomType();
-        int roomTypeInt = getEntityType(roomType);
-        String roomName = getRoomName(context, baseMessagePushInfo, roomTypeInt);
-
-        String message = getPlainMarkdownContent(context, baseMessagePushInfo);
         String outMessage = getOutMessage(roomTypeInt, message);
 
         NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
-                        roomName, outMessage, profileImage, badgeCount,
+                        roomName, outMessage, profileImage, badgeCount, isScreenOff,
                         generatePendingIntent(context, roomId, roomTypeInt, teamId, roomType));
 
         setUpNotificationEffect(notificationBuilder, context, isMentionMessage, roomTypeInt);
