@@ -39,12 +39,15 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by tee on 2017. 5. 23..
@@ -328,7 +331,12 @@ public class SettingAbsenceActivity extends BaseAppCompatActivity implements Set
 
     @Override
     public void finish() {
-        super.finish();
+        Observable.just(1)
+                .delay(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(i -> {
+                    super.finish();
+                });
     }
 
     public void setConfirmButton() {
