@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepository;
+import com.tosslab.jandi.app.network.models.start.Absence;
 import com.tosslab.jandi.app.ui.base.BaseAppCompatActivity;
+import com.tosslab.jandi.app.ui.settings.Settings;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +41,14 @@ public class SettingPushActivity extends BaseAppCompatActivity {
     void initView() {
         setUpActionBar();
 
-        if (InitialAccountInfoRepository.getInstance().getAbsenceInfo().isDisablePush()) {
+        Absence absence = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
+
+        long todayInMillis = System.currentTimeMillis();
+
+        if (absence != null &&
+                (absence.getStartAt().getTime() < todayInMillis) &&
+                (absence.getEndAt().getTime() > todayInMillis) &&
+                absence.getStatus().equals("enabled") && !Settings.isPushOn()) {
             flContent.setVisibility(View.GONE);
             tvUnavailable.setVisibility(View.VISIBLE);
         } else {
