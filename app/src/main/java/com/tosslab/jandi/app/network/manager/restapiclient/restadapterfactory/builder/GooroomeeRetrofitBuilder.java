@@ -86,7 +86,10 @@ public class GooroomeeRetrofitBuilder implements RetrofitBuilder {
 
         okhttpClientBuilder.addNetworkInterceptor(chain -> {
             Request.Builder requestBuilder = chain.request().newBuilder();
-            requestBuilder.addHeader("X-GRM-AuthToken", "1ee7011f351a0d71540916d881112912706194221439118008");
+            requestBuilder.addHeader(
+                    "X-GRM-AuthToken", "1ee7011f351a0d71540916d881112912706194221439118008");
+            requestBuilder.addHeader(
+                    "Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
             return chain.proceed(requestBuilder.build());
         });
 

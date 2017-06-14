@@ -24,9 +24,9 @@ public class ConferenceCallApiTest {
     @Test
     public void getGooroomeOtp() throws Exception {
         ReqGooroomeeOtp reqGooroomeOtp = new ReqGooroomeeOtp();
-        reqGooroomeOtp.roomId = "994e726e327048d99b5b95b0021fce81";
-        reqGooroomeOtp.userName = "hahahaha";
-        reqGooroomeOtp.roleId = "speaker";
+        reqGooroomeOtp.roomId = "0471ab391d1c46fcb3f9d051f8d706bf";
+        reqGooroomeOtp.userName = "hahahaha123";
+        reqGooroomeOtp.roleId = "participant";
         ResGooroomeeOtp resGooroomeOtp = conferenceCallApi.getGooroomeOtp(reqGooroomeOtp);
         LogUtil.e("res", resGooroomeOtp.toString());
     }
