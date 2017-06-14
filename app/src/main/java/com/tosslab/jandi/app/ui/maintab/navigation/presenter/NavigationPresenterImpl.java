@@ -478,6 +478,7 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(deviceInfo -> {
                         if (deviceInfo == null) {
+                            setAlarmIconChanged();
                             return;
                         }
                         if (deviceInfo.getDays() != null && deviceInfo.getDays().size() > 0) {
@@ -487,8 +488,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                             Settings.setPreferencePushAlarmScheduleStartTime(deviceInfo.getStartTime());
                             Settings.setPreferencePushAlarmScheduleEndTime(deviceInfo.getEndTime());
                             Settings.setPreferencePushAlarmScheduleTimeZone(deviceInfo.getTimezone());
-                            setAlarmIconChanged();
                         }
+                        setAlarmIconChanged();
                     }, t -> {
                         t.printStackTrace();
                     });
@@ -628,6 +629,9 @@ public class NavigationPresenterImpl implements NavigationPresenter {
                 (absence.getEndAt().getTime() > todayInMillis) && absence.getStatus().equals("enabled")) {
             long endTime = absence.getEndAt().getTime() - 86400000;
             navigationView.showAbsenceInfo(true, absence.getStartAt(), new Date(endTime));
+            if (absence.isDisablePush()) {
+                Settings.setPushOn(false);
+            }
         } else {
             navigationView.showAbsenceInfo(false, null, null);
         }

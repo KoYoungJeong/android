@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.JacksonConverter;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.JacksonConverterForGooroomee;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -75,7 +75,7 @@ public class GooroomeeRetrofitBuilder implements RetrofitBuilder {
     private Retrofit initRetrofit() {
         Retrofit.Builder retofitBuilder = new Retrofit.Builder()
                 .baseUrl(url)
-                .addConverterFactory(JacksonConverter.create());
+                .addConverterFactory(JacksonConverterForGooroomee.create());
 
         retofitBuilder.client(getOkHttpClient());
         return retofitBuilder.build();

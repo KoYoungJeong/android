@@ -50,11 +50,11 @@ import com.tosslab.jandi.app.ui.maintab.navigation.presenter.NavigationPresenter
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.util.ProfileUtil;
 import com.tosslab.jandi.app.ui.profile.modify.view.ModifyProfileActivity;
 import com.tosslab.jandi.app.ui.settings.Settings;
+import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.ui.settings.account.SettingAccountActivity;
 import com.tosslab.jandi.app.ui.settings.model.SettingsModel;
 import com.tosslab.jandi.app.ui.settings.privacy.SettingPrivacyActivity;
 import com.tosslab.jandi.app.ui.settings.push.SettingPushActivity;
-import com.tosslab.jandi.app.ui.settings.absence.SettingAbsenceActivity;
 import com.tosslab.jandi.app.ui.team.create.CreateTeamActivity;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.ui.term.TermActivity;

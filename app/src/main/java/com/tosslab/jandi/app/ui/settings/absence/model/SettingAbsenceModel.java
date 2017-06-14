@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.local.orm.repositories.info.InitialAccountInfoRepos
 import com.tosslab.jandi.app.network.client.account.absence.AccountAbsenceApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.models.ReqAbsenceInfo;
-import com.tosslab.jandi.app.network.models.ResStartAccountInfo;
 import com.tosslab.jandi.app.network.models.start.Absence;
 
 import java.util.Date;
