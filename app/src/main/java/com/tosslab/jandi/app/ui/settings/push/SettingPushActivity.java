@@ -47,8 +47,7 @@ public class SettingPushActivity extends BaseAppCompatActivity {
         if (absence != null &&
                 (absence.getStartAt().getTime() < todayInMillis) &&
                 (absence.getEndAt().getTime() > todayInMillis) &&
-                absence.getStatus().equals("enabled") &&
-                !Settings.isPushOn()) {
+                absence.getStatus().equals("enabled") && !Settings.isPushOn()) {
             flContent.setVisibility(View.GONE);
             tvUnavailable.setVisibility(View.VISIBLE);
         } else {

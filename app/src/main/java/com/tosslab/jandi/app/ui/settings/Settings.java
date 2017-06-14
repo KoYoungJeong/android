@@ -34,6 +34,11 @@ public class Settings {
                 .getBoolean(Settings.SETTING_PUSH_AUTO_ALARM, true);
     }
 
+    public static void setPushOn(boolean isPushOn) {
+        PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext()).edit()
+                .putBoolean(Settings.SETTING_PUSH_AUTO_ALARM, isPushOn).commit();
+    }
+
     public static boolean getPreferencePushAlarmSchedule() {
         return PreferenceManager.getDefaultSharedPreferences(JandiApplication.getContext())
                 .getBoolean(Settings.SETTING_PUSH_ALARM_SCHEDULE, false);

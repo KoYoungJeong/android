@@ -139,6 +139,7 @@ import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.restart.RankResetActivity;
 import com.tosslab.jandi.app.ui.restart.TeamPlanResetActivity;
+import com.tosslab.jandi.app.ui.settings.Settings;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -1750,6 +1751,17 @@ public class JandiSocketServiceModel {
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketAbsenceUpdatedEvent.class);
             saveEvent(event);
             Absence absence = event.getData().getAbsence();
+            Absence localAbsence = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
+            if (absence.getStatus().equals("disabled")) {
+                if (TextUtils.equals(localAbsence.getApplyStatus(), "applied") && localAbsence.isDisablePush()) {
+                    Settings.setPushOn(true);
+                }
+            } else {
+                if (TextUtils.equals(absence.getApplyStatus(), "applied") && absence.isDisablePush()) {
+                    Settings.setPushOn(false);
+                }
+            }
+
             InitialAccountInfoRepository.getInstance().upsertAbsenceInfo(absence);
             postEvent(new AbsenceInfoUpdatedEvent());
         } catch (Exception e) {

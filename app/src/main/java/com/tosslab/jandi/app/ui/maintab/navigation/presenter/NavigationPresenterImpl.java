@@ -626,7 +626,8 @@ public class NavigationPresenterImpl implements NavigationPresenter {
 
         if (absence != null &&
                 (absence.getStartAt().getTime() < todayInMillis) &&
-                (absence.getEndAt().getTime() > todayInMillis) && absence.getStatus().equals("enabled")) {
+                (absence.getEndAt().getTime() > todayInMillis) &&
+                absence.getStatus().equals("enabled")) {
             long endTime = absence.getEndAt().getTime() - 86400000;
             navigationView.showAbsenceInfo(true, absence.getStartAt(), new Date(endTime));
         } else {
