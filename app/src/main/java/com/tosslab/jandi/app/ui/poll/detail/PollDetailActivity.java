@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.jandi.app.Henson;
@@ -640,8 +639,6 @@ public class PollDetailActivity extends BaseAppCompatActivity implements PollDet
 
     @OnClick(R.id.btn_send_message)
     void sendComment() {
-        hideKeyboard();
-
         ResultMentionsVO mentionInfo = getMentionInfo();
         String message = mentionInfo.getMessage().trim();
         List<MentionObject> mentions = mentionInfo.getMentions();
