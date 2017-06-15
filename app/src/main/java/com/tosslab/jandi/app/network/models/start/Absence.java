@@ -100,4 +100,17 @@ public class Absence {
     public void setEndAt(Date endAt) {
         this.endAt = endAt;
     }
+
+    @Override
+    public String toString() {
+        return "Absence{" +
+                "id=" + id +
+                ", status='" + status + '\'' +
+                ", applyStatus='" + applyStatus + '\'' +
+                ", disablePush=" + disablePush +
+                ", message='" + message + '\'' +
+                ", startAt=" + startAt +
+                ", endAt=" + endAt +
+                '}';
+    }
 }

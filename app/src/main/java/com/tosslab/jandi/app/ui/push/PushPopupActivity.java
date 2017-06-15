@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.push;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -147,7 +148,14 @@ public class PushPopupActivity extends AppCompatActivity {
 
         tvMemberName.setText(memberName);
 
-        Rect realSize = new Rect();
+        Paint paint = new Paint();
+        Rect bounds = new Rect();
+
+        paint.setTypeface(tvMemberName.getTypeface());
+        float textSize = tvMemberName.getTextSize();
+        paint.setTextSize(textSize);
+        String text = tvMemberName.getText().toString();
+        paint.getTextBounds(text, 0, text.length(), bounds);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -157,14 +165,17 @@ public class PushPopupActivity extends AppCompatActivity {
         int memberInfoWith = displayWidth - memberInfoLeftMargin - memberInfoRightMargin;
 
         int maxNameWidth = (memberInfoWith * 65) / 100; // memberInfo width의 65 %
-        if (realSize.width() > maxNameWidth) {
-            LinearLayout.LayoutParams nameLayoutParams =
-                    (LinearLayout.LayoutParams) tvMemberName.getLayoutParams();
+        LinearLayout.LayoutParams nameLayoutParams =
+                (LinearLayout.LayoutParams) tvMemberName.getLayoutParams();
+        if (bounds.width() > maxNameWidth) {
             nameLayoutParams.width = maxNameWidth;
+            tvMemberName.setLayoutParams(nameLayoutParams);
+        } else {
+            nameLayoutParams.width = bounds.width() + 5;
             tvMemberName.setLayoutParams(nameLayoutParams);
         }
 
-        tvRoomName.setText(roomName);
+        tvRoomName.setText("[" + roomName + "]");
         tvPushMessage.setText(getOutMessage(roomTypeInt, message));
     }
 

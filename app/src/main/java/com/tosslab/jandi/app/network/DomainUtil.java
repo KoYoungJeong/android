@@ -14,12 +14,12 @@ import com.tosslab.jandi.app.services.SignOutService;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 public class DomainUtil {
-    private static final String KEY_DOMAIN = "domain";
     public static final String[] DOMAINS = new String[]{"jandi.com",
             "a-jandi.com",
             "b-jandi.com",
             "d-jandi.com",
             "jandi.io"};
+    private static final String KEY_DOMAIN = "domain";
 
     private static SharedPreferences getPreference() {
         return JandiApplication.getContext().getSharedPreferences("domain", Context.MODE_PRIVATE);

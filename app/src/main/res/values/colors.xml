@@ -124,7 +124,7 @@
     <color name="jandi_more_bottom_bg">#FFF4F4F4</color>
     <color name="jandi_list_item_background_pressed">#FFDCDCDC</color>
     <color name="jandi_list_item_background">#FFFFFFFF</color>
-    <color name="jandi_list_item_background_inner_folder">#FFf7f7f7</color>
+    <color name="jandi_list_item_background_inner_folder">#FFf5f5f5</color>
     <color name="jandi_topic_folder_expand">#FF154A67</color>
     <color name="jandi_topic_folder_collapse">#FFA6A6A6</color>
     <color name="jandi_team_member_divider">#FFECECEC</color>
