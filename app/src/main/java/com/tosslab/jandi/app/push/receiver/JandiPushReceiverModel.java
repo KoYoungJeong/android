@@ -106,7 +106,7 @@ public class JandiPushReceiverModel {
                                                        String notificationTitle,
                                                        String roomName,
                                                        String message, Bitmap writerProfile,
-                                                       int badgeCount, boolean isScreenOff,
+                                                       int badgeCount,
                                                        PendingIntent pendingIntent) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -120,12 +120,6 @@ public class JandiPushReceiverModel {
                 .setNumber(badgeCount)
                 .setStyle(getBigTextStyle(notificationTitle, message, roomName))
                 .setContentIntent(pendingIntent);
-
-        if (isScreenOff) {
-            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        } else {
-            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        }
 
         if (writerProfile != null) {    // 작성자의 프로필 사진
             builder.setLargeIcon(writerProfile);
@@ -249,13 +243,19 @@ public class JandiPushReceiverModel {
 
         NotificationCompat.Builder notificationBuilder =
                 getNotification(context, notificationTitle,
-                        roomName, outMessage, profileImage, badgeCount, isScreenOff,
+                        roomName, outMessage, profileImage, badgeCount,
                         generatePendingIntent(context, roomId, roomTypeInt, teamId, roomType));
 
         setUpNotificationEffect(notificationBuilder, context, isMentionMessage, roomTypeInt);
 
+        if (isScreenOff) {
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        } else {
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
+        }
+
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때,
-        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...
+        // 해당 채팅 방에 들어갈 때만 이 노티가 삭제되도록...+1q    wqdf
         JandiPreference.setChatIdFromPush(context, roomId);
         sendNotification(context, notificationBuilder.build());
     }
