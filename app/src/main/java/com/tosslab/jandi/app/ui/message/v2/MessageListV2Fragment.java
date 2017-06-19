@@ -763,12 +763,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     isEmptyViewAnimatedHide = true;
                 }
                 if (vgEmptyLayout != null && vgEmptyLayout.getVisibility() == View.VISIBLE) {
-                    Animation animation = new AlphaAnimation(1.0f, 0.0f);
-                    animation.setDuration(500);
-                    animation.setFillEnabled(true);
-                    animation.setFillAfter(true);
-                    ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
-                    layoutViewGroup.getChildAt(0).startAnimation(animation);
+                    try {
+                        Animation animation = new AlphaAnimation(1.0f, 0.0f);
+                        animation.setDuration(500);
+                        animation.setFillEnabled(true);
+                        animation.setFillAfter(true);
+                        ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
+                        layoutViewGroup.getChildAt(0).startAnimation(animation);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 if (!isEmptyViewAnimatedHide) {
@@ -777,12 +781,16 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
                     isEmptyViewAnimatedHide = false;
                 }
                 if (vgEmptyLayout != null && vgEmptyLayout.getVisibility() == View.VISIBLE) {
-                    Animation animation = new AlphaAnimation(0.0f, 1.0f);
-                    animation.setDuration(500);
-                    animation.setFillEnabled(true);
-                    animation.setFillAfter(true);
-                    ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
-                    layoutViewGroup.getChildAt(0).startAnimation(animation);
+                    try {
+                        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+                        animation.setDuration(500);
+                        animation.setFillEnabled(true);
+                        animation.setFillAfter(true);
+                        ViewGroup layoutViewGroup = (ViewGroup) vgEmptyLayout.getChildAt(0);
+                        layoutViewGroup.getChildAt(0).startAnimation(animation);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
