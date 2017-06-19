@@ -34,7 +34,6 @@ public class SettingPushActivity extends BaseAppCompatActivity {
         ButterKnife.bind(this);
 
         initView();
-
     }
 
     void initView() {

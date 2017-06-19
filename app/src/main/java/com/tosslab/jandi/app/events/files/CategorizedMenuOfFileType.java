@@ -21,16 +21,16 @@ public class CategorizedMenuOfFileType {
             R.string.jandi_file_category_zip
     };
     public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
-            R.drawable.icon_search_all_files,
-            R.drawable.file_icon_set_googledocs,
-            R.drawable.file_icon_txt,
-            R.drawable.file_icon_ppt,
-            R.drawable.file_icon_exel,
-            R.drawable.file_icon_pdf,
-            R.drawable.file_icon_img,
-            R.drawable.file_icon_video,
-            R.drawable.file_icon_audio,
-            R.drawable.file_icon_zip
+            R.drawable.file_icon_etc_135,
+            R.drawable.file_icon_google_docs_135,
+            R.drawable.file_icon_text_135,
+            R.drawable.file_icon_ppt_135,
+            R.drawable.file_icon_excel_135,
+            R.drawable.file_icon_pdf_135,
+            R.drawable.file_icon_img_135,
+            R.drawable.file_icon_video_135,
+            R.drawable.file_icon_audio_135,
+            R.drawable.file_icon_zip_135
     };
 
     // 서버 통신용 쿼리

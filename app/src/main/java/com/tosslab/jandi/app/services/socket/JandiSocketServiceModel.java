@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.services.socket;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jakewharton.rxrelay.PublishRelay;
 import com.tosslab.jandi.app.Henson;
@@ -1751,6 +1752,7 @@ public class JandiSocketServiceModel {
                     SocketModelExtractor.getObjectWithoutCheckTeam(object, SocketAbsenceUpdatedEvent.class);
             saveEvent(event);
             Absence absence = event.getData().getAbsence();
+            Log.e("absence", absence.toString());
             Absence localAbsence = InitialAccountInfoRepository.getInstance().getAbsenceInfo();
             if (absence.getStatus().equals("disabled")) {
                 if (TextUtils.equals(localAbsence.getApplyStatus(), "applied") && localAbsence.isDisablePush()) {

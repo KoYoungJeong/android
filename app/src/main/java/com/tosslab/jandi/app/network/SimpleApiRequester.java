@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.concurrent.Executor;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
@@ -19,18 +18,16 @@ public class SimpleApiRequester {
     private static Observable<Executor> observable;
 
     static {
-        observable = Observable.create(new Observable.OnSubscribe<Executor>() {
-            @Override
-            public void call(final Subscriber<? super Executor> subscriber) {
-                subscriber.onNext(new Executor() {
-                    @Override
-                    public void execute(Runnable command) {
-                        command.run();
-                        subscriber.onCompleted();
-                    }
-                });
-            }
-        }).observeOn(Schedulers.io());
+        observable = Observable.create(
+                (Observable.OnSubscribe<Executor>) subscriber ->
+                        subscriber.onNext(
+                                new Executor() {
+                                    @Override
+                                    public void execute(Runnable command) {
+                                        command.run();
+                                        subscriber.onCompleted();
+                                    }
+                                })).observeOn(Schedulers.io());
 
     }
 

@@ -1299,9 +1299,6 @@ public class FileDetailActivity extends BaseAppCompatActivity implements FileDet
 
     @OnClick(R.id.btn_send_message)
     void sendComment() {
-        hideKeyboard();
-
-
         ResultMentionsVO mentionInfo = getMentionInfo();
         String message = mentionInfo.getMessage().trim();
         List<MentionObject> mentions = mentionInfo.getMentions();

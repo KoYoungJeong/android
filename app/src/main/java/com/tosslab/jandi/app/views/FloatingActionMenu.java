@@ -240,13 +240,13 @@ public class FloatingActionMenu extends FrameLayout {
                 btMenuIcon,
                 "rotation",
                 0f,
-                135f
+                90f
         );
 
         ObjectAnimator collapseAnimator = ObjectAnimator.ofFloat(
                 btMenuIcon,
                 "rotation",
-                135f,
+                90f,
                 0f
         );
 

@@ -586,6 +586,13 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
+        <activity
+            android:name=".ui.push.PushPopupActivity"
+            android:excludeFromRecents="true"
+            android:showOnLockScreen="true"
+            android:taskAffinity=".popup"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+
         <service android:name=".services.socket.JandiSocketService" />
 
         <receiver
@@ -733,5 +740,7 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
 </manifest>
