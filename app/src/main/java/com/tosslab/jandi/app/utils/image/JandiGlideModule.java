@@ -7,6 +7,9 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.module.GlideModule;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +35,11 @@ import okio.Source;
 public class JandiGlideModule implements GlideModule {
     private static Interceptor createInterceptor(final ResponseProgressListener listener) {
         return chain -> {
-            Request request = chain.request();
+            Request request = chain.request()
+                    .newBuilder()
+                    .addHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication())
+                    .addHeader("User-Agent", UserAgentUtil.getDefaultUserAgent())
+                    .build();
             Response response = chain.proceed(request);
             return response.newBuilder()
                     .body(new OkHttpProgressResponseBody(request.url(), response.body(), listener))
