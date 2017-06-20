@@ -33,6 +33,8 @@
                     style="@style/JandiSettings.Body"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
                     app:sbvChcked="false"
                     app:sbvSummary="@string/vacancy_desc"
                     app:sbvTitle="@string/vacancy_title" />
@@ -47,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -80,7 +82,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="57dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:layout_marginTop="16dp"
@@ -97,16 +99,17 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/vacancy_startday"
-                                android:textSize="12dp" />
+                                android:textSize="12sp" />
 
                             <LinearLayout
                                 android:id="@+id/vg_select_absence_start_time"
                                 android:layout_width="match_parent"
-                                android:layout_height="33dp"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:layout_weight="35"
                                 android:background="@drawable/bg_poll_create_edittext"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:paddingBottom="15dp">
 
                                 <TextView
                                     android:id="@+id/tv_select_absence_start_time"
@@ -115,11 +118,12 @@
                                     android:layout_weight="1"
                                     android:text="2016-06-07"
                                     android:textColor="@color/jandi_text"
-                                    android:textSize="16dp" />
+                                    android:textSize="16sp" />
 
                                 <View
                                     android:layout_width="10dp"
                                     android:layout_height="17dp"
+                                    android:layout_gravity="center_vertical"
                                     android:layout_marginLeft="10dp"
                                     android:background="@drawable/poll_dropdown" />
 
@@ -138,16 +142,17 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/vacancy_endday"
-                                android:textSize="12dp" />
+                                android:textSize="12sp" />
 
                             <LinearLayout
                                 android:id="@+id/vg_select_absence_end_time"
                                 android:layout_width="match_parent"
-                                android:layout_height="33dp"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:layout_weight="35"
                                 android:background="@drawable/bg_poll_create_edittext"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:paddingBottom="15dp">
 
                                 <TextView
                                     android:id="@+id/tv_select_absence_end_time"
@@ -156,11 +161,12 @@
                                     android:layout_weight="1"
                                     android:text="2016-06-08"
                                     android:textColor="@color/jandi_text"
-                                    android:textSize="16dp" />
+                                    android:textSize="16sp" />
 
                                 <View
                                     android:layout_width="10dp"
                                     android:layout_height="17dp"
+                                    android:layout_gravity="center_vertical"
                                     android:layout_marginLeft="10dp"
                                     android:background="@drawable/poll_dropdown" />
                             </LinearLayout>
@@ -172,9 +178,11 @@
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="36dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
                         android:text="@string/vacancy_period_desc"
                         android:textColor="@color/rgb_999999"
@@ -190,6 +198,8 @@
                         style="@style/JandiSettings.Body"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp"
                         app:sbvChcked="false"
                         app:sbvSummary="@string/vacancy_pushnoti_desc"
                         app:sbvTitle="@string/vacancy_pushnoti_title" />
@@ -238,13 +248,15 @@
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="54dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
+                            android:layout_marginTop="10dp"
                             android:gravity="center_vertical"
                             android:text="@string/vacancy_info_desc"
                             android:textColor="@color/rgb_999999"
-                            android:textSize="12dp" />
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 

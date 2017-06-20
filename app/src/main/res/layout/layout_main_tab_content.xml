@@ -114,8 +114,9 @@
                     android:layout_marginTop="42dp"
                     android:background="@drawable/unread_message_bg"
                     android:clickable="true"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -183,6 +184,7 @@
         android:layout_marginBottom="63dp"
         android:background="@drawable/unread_message_bg"
         android:clickable="true"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:visibility="visible">
 
@@ -196,6 +198,7 @@
             android:textStyle="bold" />
 
         <ImageView
+
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:src="@drawable/unread_message_bottom" />

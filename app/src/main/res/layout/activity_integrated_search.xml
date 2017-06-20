@@ -24,7 +24,7 @@
             android:paddingLeft="64dp"
             android:paddingRight="64dp"
             android:textColor="#333333"
-            android:textSize="@dimen/jandi_text_size_larger_2" />
+            android:textSize="18dp" />
 
         <ImageView
             android:id="@+id/iv_search_backkey"

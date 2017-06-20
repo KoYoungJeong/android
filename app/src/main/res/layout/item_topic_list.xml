@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_topic_item_container"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true">
 
@@ -18,13 +18,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
+        android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@+id/vg_entity_listitem_badge"
         android:layout_toRightOf="@+id/iv_profile"
         android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="9dp"
+        android:paddingTop="9dp">
 
         <com.tosslab.jandi.app.views.FixedLinearLayout
             android:id="@+id/vg_entity_listitem_name"
@@ -87,7 +90,7 @@
                 android:paddingStart="6dp"
                 android:text="@string/topic_viewonly_label"
                 android:textColor="@color/rgb_999999"
-                android:textSize="@dimen/jandi_text_size_11sp" />
+                android:textSize="11dp" />
 
             <TextView
                 android:id="@+id/tv_entity_listitem_description"
@@ -122,6 +125,7 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/topiclist_unread_badge"
             android:gravity="center"
+            android:paddingBottom="2dp"
             android:text="121"
             android:textColor="@color/jandi_text_white"
             android:textSize="11sp" />

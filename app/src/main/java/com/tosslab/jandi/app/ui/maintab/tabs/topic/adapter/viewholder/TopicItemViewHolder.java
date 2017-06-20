@@ -54,6 +54,8 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
 
     private OnItemLongClickListener onItemLongClickListener;
 
+    private int itemHeight = 0;
+
     public TopicItemViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -70,6 +72,10 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
 
     @Override
     public void bind(TopicItemData item) {
+
+        itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int measuredHeight = itemView.getMeasuredHeight();
+
         if (item == null) {
             return;
         }
@@ -164,6 +170,11 @@ public class TopicItemViewHolder extends MainTopicViewHolder<TopicItemData> {
             }
             return false;
         });
+
+        itemView.getLayoutParams().height = measuredHeight;
+
+        itemView.setLayoutParams(itemView.getLayoutParams());
+
     }
 
     public interface OnItemLongClickListener {

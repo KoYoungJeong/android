@@ -97,6 +97,8 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         UpdatedTopicItemViewHolder updatedHolder = (UpdatedTopicItemViewHolder) holder;
+        updatedHolder.itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int measuredHeight = updatedHolder.itemView.getMeasuredHeight();
         Topic item = getItem(position);
         updatedHolder.container.setBackgroundResource(R.drawable.bg_list_item);
         updatedHolder.ivFolderItemUnderline.setVisibility(View.GONE);
@@ -177,6 +179,9 @@ public class UpdatedTopicAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (isSelectedEntity && animStatus == AnimStatus.READY) {
             animateForSelectedEntity(updatedHolder.vAnimator);
         }
+
+        updatedHolder.itemView.getLayoutParams().height = measuredHeight;
+        updatedHolder.itemView.setLayoutParams(updatedHolder.itemView.getLayoutParams());
     }
 
     @Override
