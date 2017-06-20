@@ -8,9 +8,10 @@ import zipfile
 
 __author__ = 'jsuch2362'
 
-LIST_URL = 'http://jandidesign.myds.me:5000/webapi/entry.cgi'
-DOWNLOAD_URL = 'http://jandidesign.myds.me:5000/webapi/entry.cgi'
+LIST_URL = 'http://192.168.1.202:5000//webapi/entry.cgi'
+DOWNLOAD_URL = 'http://192.168.1.202:5000//webapi/entry.cgi'
 DRAWABLE_PATH = 'drawable-xxhdpi'
+
 
 def getDownloadPath(sid):
     params = {}
@@ -57,6 +58,7 @@ def download(sid, downloadFilePath):
     local_file.close()
 
     return local_file.name
+
 
 def unarchive(file, absResourcePath):
     drawablePath = absResourcePath + '/' + DRAWABLE_PATH;

@@ -49,6 +49,10 @@ public class JoinableTopicListAdapter extends RecyclerView.Adapter<JoinableTopic
 
     @Override
     public void onBindViewHolder(TopicViewHolder holder, int position) {
+
+        holder.itemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int measuredHeight = holder.itemView.getMeasuredHeight();
+
         Topic topic = getItem(position);
         if (topic == null) {
             return;
@@ -62,6 +66,10 @@ public class JoinableTopicListAdapter extends RecyclerView.Adapter<JoinableTopic
                         holder.itemView, JoinableTopicListAdapter.this, position);
             }
         });
+
+        holder.itemView.getLayoutParams().height = measuredHeight;
+        holder.itemView.setLayoutParams(holder.itemView.getLayoutParams());
+
     }
 
     @Nullable

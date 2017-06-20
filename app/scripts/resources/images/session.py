@@ -4,7 +4,7 @@ import urllib2
 
 __author__ = 'jsuch2362'
 
-AUTH_URL = "http://jandidesign.myds.me:5000//webapi/auth.cgi"
+AUTH_URL = "http://192.168.1.202:5000//webapi/auth.cgi"
 ACCOUNT = 'tee'
 PASSWORD = '1234qwer'
 
