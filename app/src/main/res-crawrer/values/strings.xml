@@ -974,6 +974,9 @@ To reset your notification settings, please go to vacation mode and turn on mobi
 	<string name="vacancy_toast_off">"Vacation mode is off."</string>
 	<string name="vacancy_toast_on">"Vacation mode is on."</string>
 	<string name="vacancy_toast_update">"Vacation mode settings have been changed."</string>
+	<string name="videochat_download_chrome_playstore">"Video chats are only available in Chrome browser. 
+Would you like to install Chrome?"</string>
+	<string name="videochat_link_expired">"The link to this video chat has been expired. Please begin a new video chat."</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>
 	<string name="warn_no_more_files">"No more files found"</string>

@@ -980,6 +980,9 @@
 	<string name="vacancy_toast_off">"不在設定が解除されました。"</string>
 	<string name="vacancy_toast_on">"不在設定が保存されました。"</string>
 	<string name="vacancy_toast_update">"不在設定が変更されました。"</string>
+	<string name="videochat_download_chrome_playstore">"Web会議はChromeブラウザのみサポートしています。
+Chromeブラウザをダウンロードしますか？"</string>
+	<string name="videochat_link_expired">"すでに終了したWeb会議リンクです。新しいWeb会議を始めてください。"</string>
 	<string name="warn_all_users_are_already_invited">"既にメンバー全員がこのトピックに参加しています"</string>
 	<string name="warn_messages_empty">"メッセージはありません"</string>
 	<string name="warn_no_more_files">"これ以上のファイルは見つかりませんでした"</string>

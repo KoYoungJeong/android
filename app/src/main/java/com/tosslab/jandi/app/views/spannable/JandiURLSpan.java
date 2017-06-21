@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.text.TextPaint;
 import android.text.style.UnderlineSpan;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.conference_call.ConferenceCallApi;
 import com.tosslab.jandi.app.network.exception.RetrofitException;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.GooroomeeRetrofitBuilder;
@@ -15,6 +16,7 @@ import com.tosslab.jandi.app.network.models.ResGooroomeeOtp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
 import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.utils.ApplicationUtil;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsUtil;
 import com.tosslab.jandi.app.utils.analytics.AnalyticsValue;
 
@@ -75,6 +77,7 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
                         if (resGooroomeeOtp != null) {
                             if (resGooroomeeOtp.resultCode.equals("GRM_700")) {
                                 //토스트 메세지 띄워주기
+                                ColoredToast.showError(R.string.videochat_link_expired);
                             } else if (resGooroomeeOtp.data != null &&
                                     resGooroomeeOtp.data.roomUserOtp != null) {
                                 try {
@@ -96,9 +99,11 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
                                                 new Intent(Intent.ACTION_VIEW,
                                                         Uri.parse("https://play.google.com/store/apps/details?id=com.android.chrome")));
                                     }
+                                    ColoredToast.showError(R.string.videochat_download_chrome_playstore);
                                 }
                             } else {
                                 //토스트 메세지 띄워주기
+                                ColoredToast.showError(R.string.videochat_link_expired);
                             }
                         }
                     });

@@ -969,6 +969,9 @@
 	<string name="vacancy_toast_off">"休假模式已关闭"</string>
 	<string name="vacancy_toast_on">"休假模式已开启"</string>
 	<string name="vacancy_toast_update">"休假模式设置已变更"</string>
+	<string name="videochat_download_chrome_playstore">"视频会议 (Video chat) 仅于 Chrome 浏览器中支援，
+想要安装 Chrome 浏览器吗？"</string>
+	<string name="videochat_link_expired">"此链接已失效，请重新开始一场视频会议"</string>
 	<string name="warn_all_users_are_already_invited">"所有的团队成员已加入此议题"</string>
 	<string name="warn_messages_empty">"现在没有信息"</string>
 	<string name="warn_no_more_files">"找不到符合条件的内容"</string>

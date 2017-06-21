@@ -1006,6 +1006,9 @@
 	<string name="vacancy_toast_off">"부재 중 설정을 해제하였습니다."</string>
 	<string name="vacancy_toast_on">"부재 중 설정이 등록되었습니다."</string>
 	<string name="vacancy_toast_update">"부재 중 설정이 변경되었습니다."</string>
+	<string name="videochat_download_chrome_playstore">"영상통화는 크롬 브라우저에서만 가능합니다. 
+크롬 브라우저를 설치하시겠습니까?"</string>
+	<string name="videochat_link_expired">"이미 종료된 영상 통화 링크입니다. 새로운 영상 통화를 시작해보세요."</string>
 	<string name="warn_all_users_are_already_invited">"이미 모든 멤버가 이 토픽에 참여하고 있습니다."</string>
 	<string name="warn_messages_empty">"등록된 메시지가 없습니다"</string>
 	<string name="warn_no_more_files">"더 이상 검색된 파일이 없습니다"</string>
