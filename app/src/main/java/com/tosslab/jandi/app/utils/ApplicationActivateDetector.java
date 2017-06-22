@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Bundle;
 
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.ui.push.PushPopupActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.util.Logger;
 
@@ -15,12 +16,7 @@ import java.util.List;
  * Created by tonyjs on 15. 10. 6..
  */
 public class ApplicationActivateDetector implements Application.ActivityLifecycleCallbacks {
-    public interface OnActiveListener {
-        void onActive();
-    }
-
     public static final String TAG = JandiApplication.TAG_LIFECYCLE;
-
     private List<OnActiveListener> activeListenerList = new ArrayList<>();
 
     public ApplicationActivateDetector addActiveListener(OnActiveListener listener) {
@@ -51,7 +47,9 @@ public class ApplicationActivateDetector implements Application.ActivityLifecycl
                 listener.onActive();
             }
         }
-        JandiApplication.setIsApplicationDeactive(false);
+
+        if (!(activity instanceof PushPopupActivity))
+            JandiApplication.setIsApplicationDeactive(false);
     }
 
     @Override
@@ -76,6 +74,10 @@ public class ApplicationActivateDetector implements Application.ActivityLifecycl
     public void onActivityDestroyed(Activity activity) {
         String activityName = activity.getClass().getName();
         Logger.e(TAG, activityName + " - onActivityDestroyed");
+    }
+
+    public interface OnActiveListener {
+        void onActive();
     }
 
 }
