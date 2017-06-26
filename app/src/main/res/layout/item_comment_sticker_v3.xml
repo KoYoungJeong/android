@@ -113,6 +113,7 @@
                 android:id="@+id/iv_profile_nested_comment_sticker"
                 android:layout_width="107dp"
                 android:layout_height="107dp"
+                android:color="@color/white"
                 android:layout_below="@+id/tv_profile_nested_comment_user_name_for_sticker"
                 android:layout_marginLeft="41dp"
                 android:layout_marginTop="4dp"

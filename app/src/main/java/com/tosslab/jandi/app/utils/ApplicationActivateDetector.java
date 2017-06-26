@@ -5,7 +5,6 @@ import android.app.Application;
 import android.os.Bundle;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.ui.push.PushPopupActivity;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.lib.sprinkler.util.Logger;
 
@@ -48,8 +47,7 @@ public class ApplicationActivateDetector implements Application.ActivityLifecycl
             }
         }
 
-        if (!(activity instanceof PushPopupActivity))
-            JandiApplication.setIsApplicationDeactive(false);
+        JandiApplication.setIsApplicationDeactive(false);
     }
 
     @Override

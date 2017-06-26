@@ -68,6 +68,7 @@
         android:layout_below="@+id/tv_message_user_name"
         android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
         android:layout_marginTop="5dp"
+        android:background="@color/white"
         android:focusable="false" />
 
     <LinearLayout

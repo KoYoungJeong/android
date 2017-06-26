@@ -117,7 +117,6 @@ public class PushPopupActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-
     }
 
     @Override
@@ -139,6 +138,12 @@ public class PushPopupActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        JandiApplication.setIsPushPopupActivityActive(false);
+        Observable.just(1)
+                .delay(1500, TimeUnit.MILLISECONDS)
+                .subscribe(i -> {
+                    JandiApplication.setIsApplicationDeactive(true);
+                });
     }
 
     private void initPopupViews() {

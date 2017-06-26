@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.PushWakeLock;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -114,7 +115,9 @@ public class JandiPushIntentService extends IntentService {
         boolean userWantsNotification = isPushOn();
         boolean isRingIng = messagePushInfo.isRingIng(); // 타 플랫폼 active && 토픽 푸쉬 on
 
-        boolean isActive = !JandiApplication.isApplicationDeactive();
+        boolean isActive = !JandiApplication.isApplicationDeactive()
+                && !JandiApplication.isPushPopupActivityActive()
+                && PushWakeLock.isScreenOn(JandiApplication.getContext());
 
         long currentTeamId = TeamInfoLoader.getInstance().getTeamId();
 
