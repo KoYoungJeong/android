@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_message_user_profile"
+        android:layout_width="@dimen/jandi_messages_profile_size"
+        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_marginLeft="@dimen/jandi_messages_profile_margin_right"
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right" />
+
+    <LinearLayout
+        android:id="@+id/vg_profile_absence"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
+        android:background="@drawable/bg_round_black_transparent60_radius_20"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/profile_image_away_02" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_message_user_profile_cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_message_user_profile"
+        android:layout_alignLeft="@+id/iv_message_user_profile"
+        android:layout_alignRight="@+id/iv_message_user_profile"
+        android:layout_alignTop="@+id/iv_message_user_profile" />
+
+    <TextView
+        android:id="@+id/tv_message_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/jandi_messages_name_margin_right"
+        android:layout_toRightOf="@+id/iv_message_user_profile"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/jandi_messages_name"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_name_line_through"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_message_user_name"
+        android:layout_alignLeft="@+id/tv_message_user_name"
+        android:layout_alignRight="@+id/tv_message_user_name"
+        android:layout_alignTop="@+id/tv_message_user_name"
+        android:src="@drawable/line_gray" />
+
+
+    <com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout
+        android:id="@+id/vg_message_conference_call"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_below="@+id/tv_message_user_name"
+        android:layout_marginLeft="@dimen/jandi_messages_content_left_margin"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_message_item_selector"
+        android:clickable="true"
+        android:paddingBottom="6.5dp"
+        android:paddingLeft="6.5dp"
+        android:paddingRight="9dp"
+        android:paddingTop="6.5dp"
+        app:boundWidth="59dp">
+
+        <ImageView
+            android:id="@+id/iv_message_conference_call"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/file_icon_videochat_active"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6.5dp"
+            android:layout_toRightOf="@+id/iv_message_conference_call">
+
+            <TextView
+                android:id="@+id/tv_message_conference_call_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/videochat_link"
+                android:textColor="@color/dark_gray"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_conference_call_discription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_message_conference_call_name"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/videochat_link_start"
+                android:textColor="#999999"
+                android:textSize="11sp" />
+
+        </RelativeLayout>
+
+    </com.tosslab.jandi.app.views.viewgroup.MessageWidthRelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/vg_message_conference_call"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/vg_message_conference_call"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_message_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:textColor="#ff00ace9"
+            android:textSize="9dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="-2dp"
+            android:text="오전 11:30"
+            android:textColor="#ff999999"
+            android:textSize="10dp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/v_margin"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@+id/vg_message_conference_call"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/vg_message_last_read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vg_message_conference_call"
+        android:visibility="gone">
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -96,7 +97,12 @@ import com.tosslab.jandi.app.events.team.TeamLeaveEvent;
 import com.tosslab.jandi.app.files.upload.FileUploadController;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
+import com.tosslab.jandi.app.network.client.conference_call.ConferenceCallApi;
+import com.tosslab.jandi.app.network.exception.RetrofitException;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.GooroomeeRetrofitBuilder;
+import com.tosslab.jandi.app.network.models.ReqGooroomeeOtp;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
+import com.tosslab.jandi.app.network.models.ResGooroomeeOtp;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.commonobject.MentionObject;
 import com.tosslab.jandi.app.network.models.start.Announcement;
@@ -112,6 +118,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMessageDeletedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketServiceStopEvent;
 import com.tosslab.jandi.app.spannable.SpannableLookUp;
 import com.tosslab.jandi.app.team.TeamInfoLoader;
+import com.tosslab.jandi.app.team.authority.Level;
 import com.tosslab.jandi.app.team.member.User;
 import com.tosslab.jandi.app.team.member.WebhookBot;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
@@ -1197,6 +1204,71 @@ public class MessageListV2Fragment extends Fragment implements MessageListV2Pres
 
         if (link instanceof DummyMessageLink) {
             showDummyMessageDialog(((DummyMessageLink) link));
+            return;
+        }
+
+        if(link.message instanceof ResMessages.TextMessage) {
+            final String url = ((ResMessages.TextMessage) link.message).content.body;
+            if (url.contains("jandiapp://GOOROOMEE?roomId=")) {
+                Observable.defer(() -> {
+                    ConferenceCallApi conferenceCallApi =
+                            new ConferenceCallApi(GooroomeeRetrofitBuilder.getInstance());
+                    ReqGooroomeeOtp reqGooroomeeOtp = new ReqGooroomeeOtp();
+                    int startIdx = url.indexOf("jandiapp://GOOROOMEE?roomId=");
+                     reqGooroomeeOtp.roomId = url.substring(startIdx, url.length()-1)
+                                     .replace("jandiapp://GOOROOMEE?roomId=","");
+                    TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
+                    long myId = teamInfoLoader.getMyId();
+                    reqGooroomeeOtp.userName = teamInfoLoader.getUser(myId).getName();
+                    Level myLevel = teamInfoLoader.getMyLevel();
+                    reqGooroomeeOtp.roleId = "emcee";
+                    if (myLevel == Level.Guest) {
+                        reqGooroomeeOtp.roleId = "participant";
+                    }
+                    ResGooroomeeOtp resGooroomeeOtp = null;
+                    try {
+                        resGooroomeeOtp = conferenceCallApi.getGooroomeOtp(reqGooroomeeOtp);
+                    } catch (RetrofitException e) {
+                        e.printStackTrace();
+                    }
+                    return Observable.just(resGooroomeeOtp);
+                }).subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(resGooroomeeOtp -> {
+                            if (resGooroomeeOtp != null) {
+                                if (resGooroomeeOtp.resultCode.equals("GRM_700")) {
+                                    //토스트 메세지 띄워주기
+                                    ColoredToast.showError(R.string.videochat_link_expired);
+                                } else if (resGooroomeeOtp.data != null &&
+                                        resGooroomeeOtp.data.roomUserOtp != null) {
+                                    try {
+                                        String uriScheme = "https://gooroomee.com/room/otp/"
+                                                + resGooroomeeOtp.data.roomUserOtp.otp;
+                                        Uri uri = Uri.parse(uriScheme);
+                                        Intent intent = new Intent(Intent.ACTION_VIEW)
+                                                .setData(uri)
+                                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                .setPackage("com.android.chrome");
+                                        startActivity(intent);
+                                    } catch (ActivityNotFoundException e) {
+                                        try {
+                                            startActivity(
+                                                    new Intent(Intent.ACTION_VIEW,
+                                                            Uri.parse("market://details?id=com.android.chrome")));
+                                        } catch (ActivityNotFoundException e1) {
+                                            startActivity(
+                                                    new Intent(Intent.ACTION_VIEW,
+                                                            Uri.parse("https://play.google.com/store/apps/details?id=com.android.chrome")));
+                                        }
+                                        ColoredToast.showError(R.string.videochat_download_chrome_playstore);
+                                    }
+                                } else {
+                                    //토스트 메세지 띄워주기
+                                    ColoredToast.showError(R.string.videochat_link_expired);
+                                }
+                            }
+                        });
+            }
             return;
         }
 

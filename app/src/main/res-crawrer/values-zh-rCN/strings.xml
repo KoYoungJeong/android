@@ -382,6 +382,7 @@
 	<string name="jandi_file_search_user">"按成员筛选搜索结果"</string>
 	<string name="jandi_file_share_action">"分享"</string>
 	<string name="jandi_file_size_large_error">"无法上传大於300MB的文件"</string>
+	<string name="jandi_file_size_large_error_1gb">"无法上传大於1GB的文件"</string>
 	<string name="jandi_file_upload_finish">"文件已成功上传"</string>
 	<string name="jandi_file_upload_go_topic">"点击进入JANDI浏览"</string>
 	<string name="jandi_file_upload_state">"上传文件中 (%1$s/%2$s)"</string>
@@ -971,7 +972,10 @@
 	<string name="vacancy_toast_update">"休假模式设置已变更"</string>
 	<string name="videochat_download_chrome_playstore">"视频会议 (Video chat) 仅于 Chrome 浏览器中支援，
 想要安装 Chrome 浏览器吗？"</string>
+	<string name="videochat_link">"视频会议"</string>
 	<string name="videochat_link_expired">"此链接已失效，请重新开始一场视频会议"</string>
+	<string name="videochat_link_start">"开始一场视频会议"</string>
+	<string name="videochat_link_unavailable">"此视频会议已失效"</string>
 	<string name="warn_all_users_are_already_invited">"所有的团队成员已加入此议题"</string>
 	<string name="warn_messages_empty">"现在没有信息"</string>
 	<string name="warn_no_more_files">"找不到符合条件的内容"</string>

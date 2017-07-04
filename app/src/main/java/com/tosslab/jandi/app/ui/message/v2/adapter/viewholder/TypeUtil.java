@@ -24,6 +24,7 @@ public class TypeUtil {
     public static final int TYPE_VIEW_STICKER_COMMENT_FOR_POLL = 1 << 13;
     public static final int TYPE_VIEW_MESSAGE_COMMENT_FOR_POLL = 1 << 14;
     public static final int TYPE_VIEW_LIMIT_MESSAGE = 1 << 15;
+    public static final int TYPE_VIEW_CONFERENCE_CALL_MESSAGE = 1 << 16;
 
     public static final int TYPE_OPTION_PURE = 1 << 20;
     public static final int TYPE_OPTION_HAS_ONLY_BADGE = 1 << 21;

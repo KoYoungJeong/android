@@ -384,6 +384,7 @@ Currently, there is no topic where you could invite members to. "</string>
 	<string name="jandi_file_search_user">"Filter results by member"</string>
 	<string name="jandi_file_share_action">"Share"</string>
 	<string name="jandi_file_size_large_error">"Currently you cannot upload a file that exceeds 300MB."</string>
+	<string name="jandi_file_size_large_error_1gb">"Currently you cannot upload a file that exceeds 1GB."</string>
 	<string name="jandi_file_upload_finish">"Files have been uploaded"</string>
 	<string name="jandi_file_upload_go_topic">"Tap to view on JANDI"</string>
 	<string name="jandi_file_upload_state">"Uploading files (%1$s/%2$s)"</string>
@@ -976,7 +977,10 @@ To reset your notification settings, please go to vacation mode and turn on mobi
 	<string name="vacancy_toast_update">"Vacation mode settings have been changed."</string>
 	<string name="videochat_download_chrome_playstore">"Video chats are only available in Chrome browser. 
 Would you like to install Chrome?"</string>
+	<string name="videochat_link">"Video Chat"</string>
 	<string name="videochat_link_expired">"The link to this video chat has been expired. Please begin a new video chat."</string>
+	<string name="videochat_link_start">"Begin a new video chat."</string>
+	<string name="videochat_link_unavailable">"This video chat is no longer available."</string>
 	<string name="warn_all_users_are_already_invited">"All of your team members are in this topic"</string>
 	<string name="warn_messages_empty">"There are no messages"</string>
 	<string name="warn_no_more_files">"No more files found"</string>

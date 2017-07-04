@@ -72,10 +72,16 @@ public class BodyViewFactory {
             builder = new JandiBotViewHolder.Builder();
 
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_INTEGRATION_BOT_MESSAGE)) {
+
             builder = new IntegrationBotViewHolder.Builder();
         } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_LIMIT_MESSAGE)) {
+
             builder = new LimitMessageViewHolder.Builder();
+        } else if (TypeUtil.hasTypeElement(viewType, TypeUtil.TYPE_VIEW_CONFERENCE_CALL_MESSAGE)) {
+
+            builder = new ConferenceCallMessageViewHolder.Builder();
         } else {
+
             builder = new EmptyViewHolder.Builder();
         }
 
@@ -219,6 +225,14 @@ public class BodyViewFactory {
                                             ResMessages.Link currentLink,
                                             ResMessages.Link nextLink) {
         int type;
+
+        if(currentLink.message instanceof ResMessages.TextMessage){
+            String content = ((ResMessages.TextMessage)currentLink.message).content.body;
+            if(content.contains("jandiapp://GOOROOMEE?roomId=")){
+                type = TypeUtil.TYPE_VIEW_CONFERENCE_CALL_MESSAGE;
+                return TypeUtil.addType(type, TypeUtil.TYPE_OPTION_HAS_BOTTOM_MARGIN);
+            }
+        }
 
         if (isDummyMessage(currentLink)) {
             type = TypeUtil.TYPE_VIEW_DUMMY_NORMAL_MESSAGE;

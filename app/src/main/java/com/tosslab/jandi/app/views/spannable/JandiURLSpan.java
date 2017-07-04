@@ -50,74 +50,8 @@ public class JandiURLSpan extends UnderlineSpan implements ClickableSpannable {
 
     @Override
     public void onClick() {
-        if (isGooroomeeLink()) {
-            Observable.defer(() -> {
-                ConferenceCallApi conferenceCallApi =
-                        new ConferenceCallApi(GooroomeeRetrofitBuilder.getInstance());
-                ReqGooroomeeOtp reqGooroomeeOtp = new ReqGooroomeeOtp();
-                reqGooroomeeOtp.roomId = getGooroomeeRoomId();
-                TeamInfoLoader teamInfoLoader = TeamInfoLoader.getInstance();
-                long myId = teamInfoLoader.getMyId();
-                reqGooroomeeOtp.userName = teamInfoLoader.getUser(myId).getName();
-                Level myLevel = teamInfoLoader.getMyLevel();
-                reqGooroomeeOtp.roleId = "emcee";
-                if (myLevel == Level.Guest) {
-                    reqGooroomeeOtp.roleId = "participant";
-                }
-                ResGooroomeeOtp resGooroomeeOtp = null;
-                try {
-                    resGooroomeeOtp = conferenceCallApi.getGooroomeOtp(reqGooroomeeOtp);
-                } catch (RetrofitException e) {
-                    e.printStackTrace();
-                }
-                return Observable.just(resGooroomeeOtp);
-            }).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(resGooroomeeOtp -> {
-                        if (resGooroomeeOtp != null) {
-                            if (resGooroomeeOtp.resultCode.equals("GRM_700")) {
-                                //토스트 메세지 띄워주기
-                                ColoredToast.showError(R.string.videochat_link_expired);
-                            } else if (resGooroomeeOtp.data != null &&
-                                    resGooroomeeOtp.data.roomUserOtp != null) {
-                                try {
-                                    String uriScheme = "https://gooroomee.com/room/otp/"
-                                            + resGooroomeeOtp.data.roomUserOtp.otp;
-                                    Uri uri = Uri.parse(uriScheme);
-                                    Intent intent = new Intent(Intent.ACTION_VIEW)
-                                            .setData(uri)
-                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            .setPackage("com.android.chrome");
-                                    context.startActivity(intent);
-                                } catch (ActivityNotFoundException e) {
-                                    try {
-                                        context.startActivity(
-                                                new Intent(Intent.ACTION_VIEW,
-                                                        Uri.parse("market://details?id=com.android.chrome")));
-                                    } catch (ActivityNotFoundException e1) {
-                                        context.startActivity(
-                                                new Intent(Intent.ACTION_VIEW,
-                                                        Uri.parse("https://play.google.com/store/apps/details?id=com.android.chrome")));
-                                    }
-                                    ColoredToast.showError(R.string.videochat_download_chrome_playstore);
-                                }
-                            } else {
-                                //토스트 메세지 띄워주기
-                                ColoredToast.showError(R.string.videochat_link_expired);
-                            }
-                        }
-                    });
-        } else {
-            ApplicationUtil.startWebBrowser(context, url);
-        }
+        ApplicationUtil.startWebBrowser(context, url);
         AnalyticsUtil.sendEvent(AnalyticsValue.Screen.TopicChat, AnalyticsValue.Action.MsgURL);
     }
 
-    public boolean isGooroomeeLink() {
-        return url.contains("jandiapp://GOOROOMEE?");
-    }
-
-    public String getGooroomeeRoomId() {
-        return url.replace("jandiapp://GOOROOMEE?roomId=", "");
-    }
 }

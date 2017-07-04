@@ -386,6 +386,7 @@
 	<string name="jandi_file_search_user">"メンバーを選択してください"</string>
 	<string name="jandi_file_share_action">"共有"</string>
 	<string name="jandi_file_size_large_error">"現在のところ、300MBを超えるファイルはアップロードできません。"</string>
+	<string name="jandi_file_size_large_error_1gb">"現在のところ、1GBを超えるファイルはアップロードできません。"</string>
 	<string name="jandi_file_upload_finish">"ファイルアップロード完了"</string>
 	<string name="jandi_file_upload_go_topic">"タップしてJANDIで見る"</string>
 	<string name="jandi_file_upload_state">"ファイルアップロード中 (%1$s/%2$s)"</string>
@@ -982,7 +983,10 @@
 	<string name="vacancy_toast_update">"不在設定が変更されました。"</string>
 	<string name="videochat_download_chrome_playstore">"Web会議はChromeブラウザのみサポートしています。
 Chromeブラウザをダウンロードしますか？"</string>
+	<string name="videochat_link">"Web会議"</string>
 	<string name="videochat_link_expired">"すでに終了したWeb会議リンクです。新しいWeb会議を始めてください。"</string>
+	<string name="videochat_link_start">"新しいWeb会議を開始します。"</string>
+	<string name="videochat_link_unavailable">"すでに終了されたWeb会議です。"</string>
 	<string name="warn_all_users_are_already_invited">"既にメンバー全員がこのトピックに参加しています"</string>
 	<string name="warn_messages_empty">"メッセージはありません"</string>
 	<string name="warn_no_more_files">"これ以上のファイルは見つかりませんでした"</string>
